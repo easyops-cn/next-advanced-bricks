@@ -1,10 +1,10 @@
 {
   "name": "@next-bricks/illustrations",
   "version": "1.4.5",
-  "homepage": "https://github.com/easyops-cn/next-bricks/tree/master/bricks/illustrations",
+  "homepage": "https://github.com/easyops-cn/next-advanced-bricks/tree/master/bricks/illustrations",
   "repository": {
     "type": "git",
-    "url": "git@github.com:easyops-cn/next-bricks.git",
+    "url": "git@github.com:easyops-cn/next-advanced-bricks.git",
     "directory": "bricks/illustrations"
   },
   "license": "GPL-3.0",

@@ -1,10 +1,10 @@
 {
   "name": "@next-bricks/inject",
   "version": "0.1.12",
-  "homepage": "https://github.com/easyops-cn/next-bricks/tree/master/bricks/inject",
+  "homepage": "https://github.com/easyops-cn/next-advanced-bricks/tree/master/bricks/inject",
   "repository": {
     "type": "git",
-    "url": "git@github.com:easyops-cn/next-bricks.git",
+    "url": "git@github.com:easyops-cn/next-advanced-bricks.git",
     "directory": "bricks/inject"
   },
   "license": "GPL-3.0",
