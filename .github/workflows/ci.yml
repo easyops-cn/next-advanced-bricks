@@ -125,16 +125,16 @@ jobs:
     - uses: actions/download-artifact@v4
       with:
         name: brick-artifacts
-        path: ci-bricks
+        path: ci-advanced-bricks
 
-    - name: Download artifact from next-advanced-bricks
-      id: download-artifact-from-next-advanced-bricks
+    - name: Download artifact from next-bricks
+      id: download-artifact-from-next-bricks
       uses: dawidd6/action-download-artifact@v7
       with:
         name: brick-artifacts
-        path: ci-advanced-bricks
+        path: ci-bricks
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        repo: easyops-cn/next-advanced-bricks
+        repo: easyops-cn/next-bricks
         branch: master
         event: push
         workflow: ci.yml
@@ -200,23 +200,23 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Download artifact from next-advanced-bricks
-      id: download-artifact-from-next-advanced-bricks
+    - uses: actions/download-artifact@v4
+      with:
+        name: brick-artifacts
+        path: ci-advanced-bricks
+
+    - name: Download artifact from next-bricks
+      id: download-artifact-from-next-bricks
       uses: dawidd6/action-download-artifact@v7
       with:
         name: brick-artifacts
         path: ci-bricks
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        repo: easyops-cn/next-advanced-bricks
+        repo: easyops-cn/next-bricks
         branch: master
         event: push
         workflow: ci.yml
         workflow_conclusion: ""
-
-    - uses: actions/download-artifact@v4
-      with:
-        name: brick-artifacts
-        path: ci-advanced-bricks
 
     - name: Merge bricks
       run: cp -r ci-advanced-bricks/* ci-bricks/bricks/
