@@ -3266,6 +3266,11 @@
   resolved "https://registry.yarnpkg.com/@next-dll/react-dnd/-/react-dnd-0.1.710.tgz#e17e435a7a3624c0b1cc57edd12d6b5ee9eb205a"
   integrity sha512-x3GFFeh9fso4e+qdspE4T+mQ6dAdu92fkCsr/KcvOyBxi3PZBReZNTzIU5GINpoe2E/jtPEEyhasWWfDkOrK0w==
 
+"@next-shared/common-bricks@^0.53.1":
+  version "0.53.1"
+  resolved "https://registry.yarnpkg.com/@next-shared/common-bricks/-/common-bricks-0.53.1.tgz#442db871109bb2d1bea51a43def37fb6564f3ca0"
+  integrity sha512-zsxkavhza9CdojCsrzQIgSK430VQxDes/0LS8Z2PTjm15R7JDeHNxKjU7qEM0zSm79Yo9QcGxto5igkjYKeQVw==
+
 "@next-shared/general@^0.10.5":
   version "0.10.5"
   resolved "https://registry.yarnpkg.com/@next-shared/general/-/general-0.10.5.tgz#ad0b343129894decab5d870ed26f93284be2c749"
@@ -3276,6 +3281,14 @@
     "@next-core/runtime" "^1.59.0"
     "@next-core/utils" "^1.7.30"
     history "^4.7.11"
+
+"@next-shared/property-editor@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@next-shared/property-editor/-/property-editor-0.1.3.tgz#de43c0d576c2268a89cf236454a2732b73b24b89"
+  integrity sha512-RAX3ObGEi5CKm3HlPD0RWQy+9wtTAA7RM4MWhe+/PfZSP7hP30RB4L136P+E+j+AsV0vKplsm0xPLIGPMOr6Bw==
+  dependencies:
+    "@formily/core" "^2.3.1"
+    "@formily/react" "^2.3.1"
 
 "@next-shared/story@^0.0.4":
   version "0.0.4"
