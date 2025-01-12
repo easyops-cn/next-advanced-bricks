@@ -1,10 +1,10 @@
 {
-  "name": "next-bricks",
+  "name": "next-advanced-bricks",
   "private": true,
-  "homepage": "https://github.com/easyops-cn/next-bricks",
+  "homepage": "https://github.com/easyops-cn/next-advanced-bricks",
   "repository": {
     "type": "git",
-    "url": "git@github.com:easyops-cn/next-bricks.git"
+    "url": "git@github.com:easyops-cn/next-advanced-bricks.git"
   },
   "license": "GPL-3.0",
   "scripts": {
@@ -45,6 +45,10 @@
   },
   "devDependencies": {
     "@cypress/browserify-preprocessor": "^3.0.2",
+    "@next-bricks/basic": "^1.49.6",
+    "@next-bricks/icons": "^1.3.16",
+    "@next-bricks/illustrations": "^1.4.5",
+    "@next-bricks/shoelace": "^1.1.6",
     "@next-core/babel-preset-next": "^1.0.24",
     "@next-core/brick-container": "^3.20.1",
     "@next-core/brick-playground": "^1.15.49",

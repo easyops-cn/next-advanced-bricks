@@ -215,14 +215,14 @@ jobs:
 
     - name: Report size check result
       run: |
-        curl -v -X POST -H 'Content-Type: text/plain' -H 'Size-Checker-Token: ${{ secrets.SIZE_CHECKER_TOKEN }}' --data-binary @size-check.log.yml https://size-checker.shenwei.xyz/api/upload/easyops-cn--next-bricks/${{ github.sha }}
+        curl -v -X POST -H 'Content-Type: text/plain' -H 'Size-Checker-Token: ${{ secrets.SIZE_CHECKER_TOKEN }}' --data-binary @size-check.log.yml https://size-checker.shenwei.xyz/api/upload/easyops-cn--next-advanced-bricks/${{ github.sha }}
 
     - name: Generate size check comment
       if: github.event_name == 'pull_request'
       run: |
         echo "📐🤏 Size check result (${{ github.event.pull_request.base.sha }}...${{ github.sha }}):" >> size-check-comment.md
         echo "" >> size-check-comment.md
-        curl https://size-checker.shenwei.xyz/api/compare/easyops-cn--next-bricks/${{ github.event.pull_request.base.sha }}/${{ github.sha }}.md >> size-check-comment.md
+        curl https://size-checker.shenwei.xyz/api/compare/easyops-cn--next-advanced-bricks/${{ github.event.pull_request.base.sha }}/${{ github.sha }}.md >> size-check-comment.md
 
     - if: github.event_name == 'pull_request'
       name: Find size check comment

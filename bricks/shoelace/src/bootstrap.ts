@@ -1,1 +1,0 @@
-import "./generated/index.js";
