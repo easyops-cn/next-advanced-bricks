@@ -249,7 +249,12 @@ async function isReactChunk(resourceName) {
   const response = await fetch(`${resourceName}.LICENSE.txt`);
   if (response.ok) {
     const license = await response.text();
-    if (license.includes("@license React")) {
+    if (
+      license.includes("@license React") &&
+      /(?:react(?:-dom(?:-client)?)?|scheduler)\.production(?:\.min)?\.js/.test(
+        license
+      )
+    ) {
       return true;
     }
   }
