@@ -55,7 +55,7 @@
     "three": "^0.150.1"
   },
   "devDependencies": {
-    "@next-core/build-next-bricks": "^1.23.9",
+    "@next-core/build-next-bricks": "^1.23.10",
     "@next-core/test-next": "^1.1.8"
   },
   "peerDependencies": {
