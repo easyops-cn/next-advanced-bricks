@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.13](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/datetime@0.2.12...@next-shared/datetime@0.2.13) (2025-01-13)
+
+**Note:** Version bump only for package @next-shared/datetime
+
+
+
+
+
 ## [0.2.12](https://github.com/easyops-cn/next-bricks/compare/@next-shared/datetime@0.2.11...@next-shared/datetime@0.2.12) (2025-01-10)
 
 **Note:** Version bump only for package @next-shared/datetime

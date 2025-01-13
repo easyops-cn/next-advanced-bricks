@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.12.14](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/markdown@1.12.13...@next-bricks/markdown@1.12.14) (2025-01-13)
+
+
+### Bug Fixes
+
+* add missing deps ([413813b](https://github.com/easyops-cn/next-advanced-bricks/commit/413813b52ba8dbe66f33d3f522a7e3e89f2b4bd2))
+
+
+
+
+
 ## [1.12.13](https://github.com/easyops-cn/next-bricks/compare/@next-bricks/markdown@1.12.12...@next-bricks/markdown@1.12.13) (2025-01-10)
 
 **Note:** Version bump only for package @next-bricks/markdown
