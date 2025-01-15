@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.19.1...@next-bricks/nav@1.20.0) (2025-01-15)
+
+
+### Features
+
+* support config blacklist ([4bc53e5](https://github.com/easyops-cn/next-advanced-bricks/commit/4bc53e50bef1f8ec2c75e63c2cb6bb4b143aaa20))
+
+
+
+
+
 ## [1.19.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.19.0...@next-bricks/nav@1.19.1) (2025-01-13)
 
 **Note:** Version bump only for package @next-bricks/nav
