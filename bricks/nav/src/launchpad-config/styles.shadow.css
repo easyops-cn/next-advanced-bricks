@@ -74,6 +74,10 @@ ul {
   color: var(--local-menu-icon-color);
 }
 
+.menu-group.blocked .menu-group-label,
+.menu-item.blocked > .menu-folder-label-wrapper .menu-item-label,
+.menu-item.blocked > .menu-folder-label-wrapper .menu-icon,
+.menu-item.blocked > .menu-folder-label-wrapper .menu-item-toggle,
 .menu-item.disabled > eo-link::part(link),
 .menu-item.disabled .menu-icon {
   color: var(--color-disabled-text);
@@ -118,6 +122,7 @@ ul {
 .menu-config.active,
 .menu-group-label-wrapper:hover .menu-config,
 .menu-item:not(.folder):not(.disabled):hover .menu-config,
+.menu-item:not(.folder):not(.blocked):hover .menu-config,
 .menu-folder-label-wrapper:hover .menu-config {
   visibility: visible;
   width: 24px;

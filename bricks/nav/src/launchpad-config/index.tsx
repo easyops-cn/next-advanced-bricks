@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { EventEmitter, createDecorators } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
 import "@next-core/theme";
 import type {
   ConfigMenuGroup,
+  ConfigMenuItem,
+  ConfigMenuItemApp,
+  ConfigMenuItemCustom,
+  ConfigMenuItemDir,
+  ConfigVariant,
   MenuAction,
   MenuActionEventDetail,
 } from "./interfaces";
@@ -11,6 +16,8 @@ import { MenuGroup } from "./MenuGroup";
 import styleText from "./styles.shadow.css";
 
 const { defineElement, property, event } = createDecorators();
+
+const BASE_PATH = "/next/";
 
 /**
  * 进行 Launchpad 配置。
@@ -34,7 +41,7 @@ class LaunchpadConfig extends ReactNextElement implements LaunchpadConfigProps {
    * @default "launchpad-config"
    */
   @property()
-  accessor variant: "launchpad-config" | "menu-config" | undefined;
+  accessor variant: ConfigVariant | undefined;
 
   /**
    * 菜单项 APP 类型的链接模板，例如可配置为 `/app/{{ id }}`。
@@ -54,6 +61,14 @@ class LaunchpadConfig extends ReactNextElement implements LaunchpadConfigProps {
   @property()
   accessor customUrlTemplate: string | undefined;
 
+  /**
+   * 屏蔽的 URL 列表，例如可配置为 `["/app/1", "/app/2"]`。
+   *
+   * 注：仅用于 variant: "blacklist-config"。
+   */
+  @property({ attribute: false })
+  accessor blacklist: string[] | undefined;
+
   @event({ type: "action.click" })
   accessor #actionClickEvent!: EventEmitter<MenuActionEventDetail>;
 
@@ -69,6 +84,7 @@ class LaunchpadConfig extends ReactNextElement implements LaunchpadConfigProps {
         variant={this.variant}
         urlTemplate={this.urlTemplate}
         customUrlTemplate={this.customUrlTemplate}
+        blacklist={this.blacklist}
         onActionClick={this.#onActionClick}
       />
     );
@@ -78,9 +94,10 @@ class LaunchpadConfig extends ReactNextElement implements LaunchpadConfigProps {
 export interface LaunchpadConfigProps {
   menuGroups?: ConfigMenuGroup[];
   actions?: MenuAction[];
-  variant?: "launchpad-config" | "menu-config";
+  variant?: ConfigVariant;
   urlTemplate?: string;
   customUrlTemplate?: string;
+  blacklist?: string[];
   onActionClick?: (detail: MenuActionEventDetail) => void;
 }
 
@@ -90,11 +107,47 @@ export function LaunchpadConfigComponent({
   variant,
   urlTemplate,
   customUrlTemplate,
+  blacklist,
   onActionClick,
 }: LaunchpadConfigProps) {
+  const menuGroupsWithBlockedInfo = useMemo<
+    ConfigMenuGroup[] | undefined
+  >(() => {
+    if (variant !== "blacklist-config") {
+      return menuGroups;
+    }
+    return menuGroups?.map((group) => {
+      const items = group.items.map((item) =>
+        getMenuItemWithBlockInfo(item, blacklist)
+      );
+      const blockable = items.some((item) => item.blockable);
+      const hasBlocked = blockable && items.some((item) => item.hasBlocked);
+      const hasUnblocked = blockable && items.some((item) => item.hasUnblocked);
+      const allBlocked =
+        items.length > 0 && items.every((item) => item.allBlocked);
+      const blockableUrls = items.flatMap((item) =>
+        item.blockable
+          ? ((item as ConfigMenuItemDir).blockableUrls ??
+            (item as ConfigMenuItemCustom).blockableUrl ??
+            (item as ConfigMenuItemApp).url)
+          : []
+      );
+      return {
+        ...group,
+        type: "group",
+        items,
+        blockable,
+        hasBlocked,
+        hasUnblocked,
+        allBlocked,
+        blockableUrls,
+      };
+    });
+  }, [variant, menuGroups, blacklist]);
+
   return (
     <ul className="menu-groups">
-      {menuGroups?.map((group) => (
+      {menuGroupsWithBlockedInfo?.map((group) => (
         <MenuGroup
           key={group.instanceId}
           data={group}
@@ -107,4 +160,61 @@ export function LaunchpadConfigComponent({
       ))}
     </ul>
   );
+}
+
+function getMenuItemWithBlockInfo<T extends ConfigMenuItem>(
+  item: T,
+  blacklist: string[] | undefined
+): T {
+  if (item.type === "dir") {
+    const subItems = item.items.map((subItem) =>
+      getMenuItemWithBlockInfo(subItem, blacklist)
+    );
+    const blockable = subItems.some((subItem) => subItem.blockable);
+    const hasBlocked = subItems.some((subItem) => subItem.hasBlocked);
+    const hasUnblocked =
+      blockable && subItems.some((subItem) => subItem.hasUnblocked);
+    const allBlocked =
+      subItems.length > 0 && subItems.every((subItem) => subItem.allBlocked);
+    const blockableUrls = subItems.flatMap((subItem) =>
+      subItem.blockable ? subItem.url : []
+    );
+    return {
+      ...item,
+      items: subItems,
+      blockable,
+      hasBlocked,
+      hasUnblocked,
+      allBlocked,
+      blockableUrls,
+    };
+  }
+
+  if (item.type === "app") {
+    const blockable = !!item.url;
+    const hasBlocked = blockable && blacklist?.includes(item.url);
+    const hasUnblocked = blockable && !hasBlocked;
+    return {
+      ...item,
+      blockable,
+      hasBlocked,
+      hasUnblocked,
+      allBlocked: hasBlocked,
+    };
+  }
+
+  const blockable = !!item.url?.startsWith(BASE_PATH);
+  const blockableUrl = blockable
+    ? item.url.substring(BASE_PATH.length - 1)
+    : undefined;
+  const hasBlocked = blockable && blacklist?.includes(blockableUrl!);
+  const hasUnblocked = blockable && !hasBlocked;
+  return {
+    ...item,
+    blockable,
+    hasBlocked,
+    hasUnblocked,
+    allBlocked: hasBlocked,
+    blockableUrl,
+  };
 }
