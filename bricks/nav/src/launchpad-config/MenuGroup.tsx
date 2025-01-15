@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { get, pick } from "lodash";
 import classNames from "classnames";
-import { checkIfByTransform } from "@next-core/runtime";
+import { __secret_internals, checkIfByTransform } from "@next-core/runtime";
 import type { SimpleAction } from "@next-bricks/basic/actions";
 import {
   WrappedDropdownActions,
@@ -12,6 +12,7 @@ import type {
   ConfigMenuGroup,
   ConfigMenuItemDir,
   ConfigMenuItemNormal,
+  ConfigVariant,
   MenuAction,
   MenuActionEventDetail,
 } from "./interfaces";
@@ -20,7 +21,7 @@ import { getAppLocaleName } from "../shared/getLocaleName";
 export interface MenuGroupProps {
   data: ConfigMenuGroup;
   actions?: MenuAction[];
-  variant?: "launchpad-config" | "menu-config";
+  variant?: ConfigVariant;
   urlTemplate?: string;
   customUrlTemplate?: string;
   onActionClick?: (detail: MenuActionEventDetail) => void;
@@ -39,8 +40,11 @@ export function MenuGroup({
 
   const filteredActions = useMemo(
     () =>
-      actions?.filter((item) => checkIfByTransform(item, { type: "group" })),
-    [actions]
+      __secret_internals.legacyDoTransform(
+        data,
+        actions?.filter((item) => checkIfByTransform(item, data))
+      ) as MenuAction[] | undefined,
+    [actions, data]
   );
 
   const handleActionClick = useCallback(
@@ -54,10 +58,15 @@ export function MenuGroup({
   );
 
   return (
-    <li className={classNames("menu-group", { empty: items.length === 0 })}>
+    <li
+      className={classNames("menu-group", {
+        empty: items.length === 0,
+        blocked: data.allBlocked,
+      })}
+    >
       <div className="menu-group-label-wrapper">
         <span className="menu-group-label">{name}</span>
-        {variant !== "menu-config" && (
+        {variant !== "menu-config" && !!filteredActions?.length && (
           <WrappedDropdownActions
             actions={filteredActions}
             onVisibleChange={(event) => {
@@ -68,7 +77,9 @@ export function MenuGroup({
             <WrappedIcon
               lib="fa"
               icon="gear"
-              className={classNames("menu-config", { active: dropdownActive })}
+              className={classNames("menu-config", {
+                active: dropdownActive,
+              })}
             />
           </WrappedDropdownActions>
         )}
@@ -105,7 +116,7 @@ export function MenuGroup({
 export interface MenuItemProps {
   data: ConfigMenuItemNormal;
   actions?: MenuAction[];
-  variant?: "launchpad-config" | "menu-config";
+  variant?: ConfigVariant;
   urlTemplate?: string;
   customUrlTemplate?: string;
   onActionClick?: (detail: MenuActionEventDetail) => void;
@@ -130,7 +141,11 @@ export function MenuItem({
   const [dropdownActive, setDropdownActive] = useState(false);
 
   const filteredActions = useMemo(
-    () => actions?.filter((item) => checkIfByTransform(item, data)),
+    () =>
+      __secret_internals.legacyDoTransform(
+        data,
+        actions?.filter((item) => checkIfByTransform(item, data))
+      ) as MenuAction[] | undefined,
     [actions, data]
   );
 
@@ -168,7 +183,11 @@ export function MenuItem({
   }
 
   return (
-    <li className={classNames("menu-item", { disabled })}>
+    <li
+      className={classNames("menu-item", {
+        disabled: disabled || data.allBlocked,
+      })}
+    >
       <WrappedLink
         tooltip={disabled ? "该菜单项为外链，不支持配置" : ""}
         url={linkUrl}
@@ -189,7 +208,7 @@ export function MenuItem({
         />
         <span className="menu-item-label">{name}</span>
       </WrappedLink>
-      {variant !== "menu-config" && (
+      {variant !== "menu-config" && !!filteredActions?.length && (
         <WrappedDropdownActions
           actions={filteredActions}
           onVisibleChange={(event) => {
@@ -211,7 +230,7 @@ export function MenuItem({
 export interface MenuItemFolderProps {
   data: ConfigMenuItemDir;
   actions?: MenuAction[];
-  variant?: "launchpad-config" | "menu-config";
+  variant?: ConfigVariant;
   urlTemplate?: string;
   customUrlTemplate?: string;
   onActionClick?: (detail: MenuActionEventDetail) => void;
@@ -230,8 +249,12 @@ function MenuItemFolder({
   const [expanded, setExpanded] = useState(false);
 
   const filteredActions = useMemo(
-    () => actions?.filter((item) => checkIfByTransform(item, { type: "dir" })),
-    [actions]
+    () =>
+      __secret_internals.legacyDoTransform(
+        data,
+        actions?.filter((item) => checkIfByTransform(item, data))
+      ) as MenuAction[] | undefined,
+    [actions, data]
   );
 
   const toggle = useCallback(() => {
@@ -250,7 +273,10 @@ function MenuItemFolder({
 
   return (
     <li
-      className={classNames("menu-item folder", { empty: items.length === 0 })}
+      className={classNames("menu-item folder", {
+        empty: items.length === 0,
+        blocked: data.allBlocked,
+      })}
     >
       <div className="menu-folder-label-wrapper">
         <WrappedLink onClick={toggle}>
@@ -267,7 +293,7 @@ function MenuItemFolder({
             className="menu-item-toggle"
           />
         </WrappedLink>
-        {variant !== "menu-config" && (
+        {variant !== "menu-config" && !!filteredActions?.length && (
           <WrappedDropdownActions
             actions={filteredActions}
             onVisibleChange={(event) => {
@@ -278,7 +304,9 @@ function MenuItemFolder({
             <WrappedIcon
               lib="fa"
               icon="gear"
-              className={classNames("menu-config", { active: dropdownActive })}
+              className={classNames("menu-config", {
+                active: dropdownActive,
+              })}
             />
           </WrappedDropdownActions>
         )}
