@@ -61,5 +61,6 @@ export interface MenuActionEventDetail {
 
 export type ConfigVariant =
   | "launchpad-config"
+  | "factory-launchpad-config"
   | "menu-config"
   | "blacklist-config";

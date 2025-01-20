@@ -7,6 +7,17 @@ import type { LaunchpadConfig } from "./index.js";
 
 jest.mock("@next-core/theme", () => ({}));
 
+jest.mock("@next-core/easyops-runtime", () => ({
+  auth: {
+    isBlockedPath(path: string) {
+      return path.includes("blocked");
+    },
+    isBlockedHref(href: string) {
+      return href.includes("blocked");
+    },
+  },
+}));
+
 class WithShadowElement extends HTMLElement {
   connectedCallback() {
     const shadow = this.attachShadow({ mode: "open" });
@@ -89,6 +100,120 @@ describe("nav.launchpad-config", () => {
       document.body.removeChild(element);
     });
     expect(element.shadowRoot?.childNodes.length).toBe(0);
+  });
+
+  test("launchpad config with license blocking", async () => {
+    const element = document.createElement(
+      "nav.launchpad-config"
+    ) as LaunchpadConfig;
+    element.menuGroups = [
+      {
+        instanceId: "g-1",
+        name: "My Group 1",
+        items: [
+          {
+            instanceId: "i-2",
+            id: "my-app-2",
+            type: "app",
+            name: "My App 2",
+          },
+          {
+            instanceId: "i-3",
+            id: "my-app-3",
+            type: "app",
+            name: "My App 3",
+            url: "/my-app",
+          },
+          {
+            instanceId: "i-4",
+            id: "my-app-4",
+            type: "app",
+            name: "My App 4",
+            url: "/blocked-url",
+          },
+          {
+            instanceId: "i-5",
+            type: "dir",
+            items: [
+              {
+                instanceId: "i-2",
+                id: "my-custom-2",
+                type: "custom",
+                name: "My Custom 2",
+              },
+              {
+                instanceId: "i-3",
+                id: "my-custom-3",
+                type: "custom",
+                name: "My Custom 3",
+                url: "/my-custom",
+              },
+              {
+                instanceId: "i-4",
+                id: "my-custom-4",
+                type: "custom",
+                name: "My Custom 4",
+                url: "/blocked-url",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        instanceId: "g-2",
+        name: "My Group 2",
+        items: [
+          {
+            instanceId: "i-3",
+            id: "my-custom-3",
+            type: "custom",
+            name: "My Custom 3",
+            url: "/blocked-url",
+          },
+          {
+            instanceId: "i-4",
+            id: "my-app-4",
+            type: "app",
+            name: "My App 4",
+            url: "/blocked-url-2",
+          },
+          {
+            instanceId: "i-5",
+            type: "dir",
+            items: [
+              {
+                instanceId: "i-3",
+                id: "my-custom-3",
+                type: "custom",
+                name: "My Custom 3",
+                url: "/blocked-url",
+              },
+              {
+                instanceId: "i-4",
+                id: "my-app-4",
+                type: "app",
+                name: "My App 4",
+                url: "/blocked-url-2",
+              },
+            ],
+          },
+        ],
+      },
+    ] as any;
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    expect(element.shadowRoot?.querySelectorAll(".menu-group").length).toBe(1);
+    expect(
+      element.shadowRoot?.querySelectorAll(".menu-item.folder").length
+    ).toBe(1);
+    expect(element.shadowRoot?.querySelectorAll(".menu-item").length).toBe(5);
+
+    act(() => {
+      document.body.removeChild(element);
+    });
   });
 
   test("menu config", async () => {
