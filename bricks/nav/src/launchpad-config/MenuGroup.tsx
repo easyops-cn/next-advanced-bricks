@@ -35,17 +35,17 @@ export function MenuGroup({
   customUrlTemplate,
   onActionClick,
 }: MenuGroupProps) {
+  // Make it compatible
+  data.type ??= "group";
   const { name, items } = data;
   const [dropdownActive, setDropdownActive] = useState(false);
 
-  const filteredActions = useMemo(
-    () =>
-      __secret_internals.legacyDoTransform(
-        data,
-        actions?.filter((item) => checkIfByTransform(item, data))
-      ) as MenuAction[] | undefined,
-    [actions, data]
-  );
+  const filteredActions = useMemo(() => {
+    return __secret_internals.legacyDoTransform(
+      data,
+      actions?.filter((item) => checkIfByTransform(item, data))
+    ) as MenuAction[] | undefined;
+  }, [actions, data]);
 
   const handleActionClick = useCallback(
     (event: CustomEvent<SimpleAction>) => {

@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { EventEmitter, createDecorators } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
+import { auth } from "@next-core/easyops-runtime";
 import "@next-core/theme";
 import type {
   ConfigMenuGroup,
@@ -81,7 +82,7 @@ class LaunchpadConfig extends ReactNextElement implements LaunchpadConfigProps {
       <LaunchpadConfigComponent
         menuGroups={this.menuGroups}
         actions={this.actions}
-        variant={this.variant}
+        variant={this.variant ?? "launchpad-config"}
         urlTemplate={this.urlTemplate}
         customUrlTemplate={this.customUrlTemplate}
         blacklist={this.blacklist}
@@ -98,6 +99,10 @@ export interface LaunchpadConfigProps {
   urlTemplate?: string;
   customUrlTemplate?: string;
   blacklist?: string[];
+}
+
+export interface LaunchpadConfigComponentProps extends LaunchpadConfigProps {
+  variant: ConfigVariant;
   onActionClick?: (detail: MenuActionEventDetail) => void;
 }
 
@@ -109,45 +114,47 @@ export function LaunchpadConfigComponent({
   customUrlTemplate,
   blacklist,
   onActionClick,
-}: LaunchpadConfigProps) {
-  const menuGroupsWithBlockedInfo = useMemo<
-    ConfigMenuGroup[] | undefined
-  >(() => {
-    if (variant !== "blacklist-config") {
+}: LaunchpadConfigComponentProps) {
+  const processedMenuGroup = useMemo<ConfigMenuGroup[] | undefined>(() => {
+    if (variant === "blacklist-config") {
+      return menuGroups?.map((group) => {
+        const items = group.items.map((item) =>
+          getMenuItemWithBlockInfo(item, blacklist)
+        );
+        const blockable = items.some((item) => item.blockable);
+        const hasBlocked = blockable && items.some((item) => item.hasBlocked);
+        const hasUnblocked =
+          blockable && items.some((item) => item.hasUnblocked);
+        const allBlocked =
+          items.length > 0 && items.every((item) => item.allBlocked);
+        const blockableUrls = items.flatMap((item) =>
+          item.blockable
+            ? ((item as ConfigMenuItemDir).blockableUrls ??
+              (item as ConfigMenuItemCustom).blockableUrl ??
+              (item as ConfigMenuItemApp).url)
+            : []
+        );
+        return {
+          ...group,
+          type: "group",
+          items,
+          blockable,
+          hasBlocked,
+          hasUnblocked,
+          allBlocked,
+          blockableUrls,
+        };
+      });
+    } else if (variant === "launchpad-config") {
+      return getMenuGroupsWithoutBlockedItems(menuGroups)?.filter(Boolean);
+    } else {
       return menuGroups;
     }
-    return menuGroups?.map((group) => {
-      const items = group.items.map((item) =>
-        getMenuItemWithBlockInfo(item, blacklist)
-      );
-      const blockable = items.some((item) => item.blockable);
-      const hasBlocked = blockable && items.some((item) => item.hasBlocked);
-      const hasUnblocked = blockable && items.some((item) => item.hasUnblocked);
-      const allBlocked =
-        items.length > 0 && items.every((item) => item.allBlocked);
-      const blockableUrls = items.flatMap((item) =>
-        item.blockable
-          ? ((item as ConfigMenuItemDir).blockableUrls ??
-            (item as ConfigMenuItemCustom).blockableUrl ??
-            (item as ConfigMenuItemApp).url)
-          : []
-      );
-      return {
-        ...group,
-        type: "group",
-        items,
-        blockable,
-        hasBlocked,
-        hasUnblocked,
-        allBlocked,
-        blockableUrls,
-      };
-    });
   }, [variant, menuGroups, blacklist]);
 
   return (
     <ul className="menu-groups">
-      {menuGroupsWithBlockedInfo?.map((group) => (
+      {processedMenuGroup?.map((group) => (
         <MenuGroup
           key={group.instanceId}
           data={group}
@@ -160,6 +167,34 @@ export function LaunchpadConfigComponent({
       ))}
     </ul>
   );
+}
+
+function getMenuGroupsWithoutBlockedItems<T extends ConfigMenuGroup>(
+  menuGroups: T[] | undefined
+): T[] | undefined {
+  return menuGroups
+    ?.map<T | null>((group) => {
+      const items = group.items
+        .map((item) => getMenuItemWithoutBlockedItems(item))
+        .filter(Boolean) as ConfigMenuItem[];
+      return items.length > 0 ? { ...group, items } : null;
+    })
+    .filter(Boolean) as T[];
+}
+
+function getMenuItemWithoutBlockedItems<T extends ConfigMenuItem>(
+  item: T
+): T | null {
+  if (item.type === "dir") {
+    const subItems = item.items
+      .map((subItem) => getMenuItemWithoutBlockedItems(subItem))
+      .filter(Boolean) as T[];
+    return subItems.length > 0 ? { ...item, items: subItems } : null;
+  }
+  if (item.type === "app") {
+    return item.url && auth.isBlockedPath(item.url) ? null : item;
+  }
+  return item.url && auth.isBlockedHref(item.url) ? null : item;
 }
 
 function getMenuItemWithBlockInfo<T extends ConfigMenuItem>(
