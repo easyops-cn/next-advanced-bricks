@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.20.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.20.0...@next-bricks/nav@1.20.1) (2025-01-20)
+
+
+### Bug Fixes
+
+* ignore blocked items for launchpad config ([b65a460](https://github.com/easyops-cn/next-advanced-bricks/commit/b65a4605f04cfe09fd6de1dbffd7eda6f8f69866))
+
+
+
+
+
 # [1.20.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.19.1...@next-bricks/nav@1.20.0) (2025-01-15)
 
 
