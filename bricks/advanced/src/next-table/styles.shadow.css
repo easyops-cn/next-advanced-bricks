@@ -106,3 +106,24 @@
   left: auto;
   right: 11px;
 }
+
+.next-table.ant-table-wrapper
+  .ant-table-ping-right
+  .ant-table-cell-fix-right-first::after,
+.next-table.ant-table-wrapper
+  .ant-table-ping-right
+  .ant-table-cell-fix-right-last::after {
+  box-shadow: inset -10px 0 8px -8px rgba(0, 0, 0, 0.15);
+}
+
+.next-table.ant-table-wrapper .ant-table-column-sorters {
+  justify-content: initial;
+}
+
+.next-table.ant-table-wrapper .ant-table-column-title {
+  flex: initial;
+}
+
+.next-table.ant-table-wrapper .ant-table-column-sorter {
+  margin-inline-start: 8px;
+}

@@ -17,10 +17,11 @@ import {
   Sort,
   CellConfig,
 } from "./interface.js";
-import { Table, ConfigProvider, theme } from "antd";
+import { Table, ConfigProvider, theme, Select } from "antd";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
 import { useCurrentTheme } from "@next-core/react-runtime";
 import { RowSelectMethod, type SortOrder } from "antd/es/table/interface.js";
+import type { SelectProps } from "antd/es/select";
 import type { TableProps } from "antd/es/table";
 import { i18n } from "@next-core/i18n";
 import { useTranslation, initializeReactI18n } from "@next-core/i18n/react";
@@ -67,6 +68,15 @@ import { CacheUseBrickItem } from "./CacheUseBrickItem.js";
 initializeReactI18n(NS, locales);
 
 const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
+
+type CompoundedSelect = React.FC<SelectProps> & {
+  Option: typeof Select.Option;
+};
+
+const SelectWithoutSearch: CompoundedSelect = (props) => (
+  <Select {...props} variant="borderless" />
+);
+SelectWithoutSearch.Option = Select.Option;
 
 export interface NextTableComponentProps {
   shadowRoot: ShadowRoot | null;
@@ -297,7 +307,7 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
                 data={data}
               />
             ) : (
-              <>{col.title}</>
+              <>{col.title as string}</>
             );
           },
           onCell(record: RecordType) {
@@ -415,7 +425,13 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
           Table: {
             headerBorderRadius: 0,
             headerSplitColor: "none",
-            ...(bordered ? { borderColor: "#f0f0f0" } : {}),
+            headerBg: "var(--antd-table-header-bg)",
+            headerSortActiveBg: "var(--antd-table-header-sort-active-bg)",
+            headerSortHoverBg: "var(--antd-table-header-sort-active-bg)",
+            bodySortBg: "var(--antd-table-header-overwrite-sort-td-active-bg)",
+            ...(bordered
+              ? { borderColor: "var(var(--antd-table-border-color)" }
+              : {}),
           },
         },
       }}
@@ -462,6 +478,7 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
                       total: dataSource?.total,
                       current: page,
                       pageSize: pageSize,
+                      selectComponentClass: SelectWithoutSearch,
                       showTotal: (total: number) => {
                         return (
                           <div className="pagination-wrapper">
