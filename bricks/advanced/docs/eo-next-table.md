@@ -1037,3 +1037,45 @@ context:
         }))
       %>
 ```
+
+### Cell status
+
+```yaml preview
+- brick: eo-next-table
+  properties:
+    columns:
+      - dataIndex: name
+        key: name
+        title: Name
+        cellStatus:
+          dataIndex: age
+          mapping:
+            - value: 18
+              leftBorderColor: green
+            - value: 20
+              leftBorderColor: blue
+            - value: 28
+              leftBorderColor: red
+      - dataIndex: age
+        key: age
+        title: Age
+      - dataIndex: address
+        key: address
+        title: Address
+    dataSource:
+      pageSize: 5
+      page: 1
+      list:
+        - key: 0
+          name: Jack
+          age: 18
+          address: Guangzhou
+        - key: 1
+          name: Alex
+          age: 20
+          address: Shanghai
+        - key: 3
+          name: Sam
+          age: 28
+          address: Shenzhen
+```

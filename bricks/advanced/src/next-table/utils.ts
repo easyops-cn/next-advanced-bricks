@@ -153,3 +153,36 @@ export function naturalComparator(
 
   return a == b ? 0 : a > b ? 1 : -1;
 }
+
+const THEME_COLORS = [
+  "green",
+  "red",
+  "blue",
+  "orange",
+  "cyan",
+  "purple",
+  "geekblue",
+  "gray",
+];
+
+export function getCellStatusStyle(
+  record: RecordType,
+  col: Column
+): React.CSSProperties | null {
+  if (!col.cellStatus) {
+    return null;
+  }
+  const dataIndex = col.cellStatus.dataIndex ?? col.dataIndex;
+  const value = getValueByDataIndex(record, dataIndex);
+
+  const match = col.cellStatus.mapping?.find((m) => m.value === value);
+  if (!match) {
+    return null;
+  }
+
+  const color = THEME_COLORS.includes(match.leftBorderColor)
+    ? `var(--theme-${match.leftBorderColor}-color)`
+    : match.leftBorderColor;
+
+  return { boxShadow: `inset 4px 0 ${color}` };
+}
