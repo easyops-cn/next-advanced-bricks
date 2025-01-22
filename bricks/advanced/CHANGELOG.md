@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.41.18](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.41.17...@next-bricks/advanced@0.41.18) (2025-01-22)
+
+
+### Bug Fixes
+
+* set default expand icon as v2, fix row height ([27c1c3b](https://github.com/easyops-cn/next-advanced-bricks/commit/27c1c3b3c60e93727070cf48d4c2ff338d7c6e93))
+* sync table style with v2 ([2c05c36](https://github.com/easyops-cn/next-advanced-bricks/commit/2c05c36785d6d1dec30957fcf321ff6c54a619d7))
+
+
+
+
+
 ## [0.41.17](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.41.16...@next-bricks/advanced@0.41.17) (2025-01-20)
 
 **Note:** Version bump only for package @next-bricks/advanced
