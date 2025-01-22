@@ -182,6 +182,7 @@ class EoNextTable extends ReactNextElement {
   /**
    * 是否显示边框
    */
+  @property({ type: Boolean })
   accessor bordered: boolean | undefined;
 
   /**

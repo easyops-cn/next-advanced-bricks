@@ -434,20 +434,15 @@
       - action: console.log
   properties:
     expandable:
-      columnWidth: 100px
       rowExpandable: <% DATA.rowData.key % 2 === 0 %>
-      expandIconBrick:
-        useBrick:
-          brick: eo-link
-          properties:
-            disabled: "<% !DATA.expandable %>"
-            textContent: "<% DATA.expanded ? '点击收起' : '点击展开' %>"
       expandedRowBrick:
         useBrick:
           brick: eo-next-table
           properties:
+            scrollConfig: false
             pagination: false
             bordered: true
+            rowKey: title
             columns:
               - dataIndex: title
                 key: title
@@ -459,21 +454,9 @@
                 key: operator
                 title: 操作
                 useBrick:
-                  - brick: div
-                    properties:
-                      style:
-                        display: flex
-                        gap: 4px
-                    children:
-                      - brick: eo-button
-                        properties:
-                          type: link
-                          textContent: 操作
-                        events:
-                          click:
-                            - action: message.info
-                              args:
-                                - <% `id:${DATA.rowData.id}` %>
+                  brick: eo-link
+                  properties:
+                    textContent: 操作
             dataSource:
               list: <% DATA.rowData.info %>
     pagination:
@@ -524,7 +507,7 @@
         - key: 3
           name: Sam
           age: 28
-          address: Guangzhou
+          address: Shenzhen
         - key: 4
           name: Bob
           age: 35
@@ -536,7 +519,7 @@
         - key: 6
           name: Sophia
           age: 20
-          address: Shanghai
+          address: Nanjing
         - key: 7
           name: Charlotte
           age: 33
@@ -548,7 +531,7 @@
         - key: 9
           name: Noah
           age: 38
-          address: Hainan
+          address: Wuhan
         - key: 10
           name: William
           age: 16

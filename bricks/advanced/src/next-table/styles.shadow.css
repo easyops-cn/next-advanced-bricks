@@ -1,9 +1,14 @@
 :host {
   display: block;
+  --eo-next-table-header-border-radius: 0;
 }
 
 :host([hidden]) {
   display: none;
+}
+
+:host([bordered]) {
+  --eo-next-table-header-border-radius: 4px;
 }
 
 .pagination-wrapper {
@@ -37,11 +42,33 @@
 
 .ant-table-wrapper {
   background: var(--eo-table-wrapper-background);
-  padding: var(--eo-table-wrapper-padding);
 }
 
-.ant-table-wrapper .ant-table-thead .ant-table-cell {
+.next-table.ant-table-wrapper
+  .ant-table
+  .ant-table-container
+  .ant-table-thead
+  > tr
+  > th,
+.next-table.ant-table-wrapper
+  .ant-table
+  .ant-table-container
+  .ant-table-tbody
+  > tr
+  > th,
+.next-table.ant-table-wrapper .ant-table .ant-table-container tfoot > tr > th {
   padding: var(--eo-table-head-cell-padding);
+}
+
+.next-table.ant-table-wrapper .ant-table .ant-table-container .ant-table-cell,
+.next-table.ant-table-wrapper
+  .ant-table
+  .ant-table-container
+  .ant-table-tbody
+  > tr
+  > td,
+.next-table.ant-table-wrapper .ant-table .ant-table-container tfoot > tr > td {
+  padding: var(--eo-table-body-cell-padding);
 }
 
 .ant-table-wrapper
@@ -64,9 +91,9 @@
   padding-right: 16px;
 }
 
-.ant-table-wrapper .ant-table-tbody .ant-table-cell {
+/* .ant-table-wrapper .ant-table-tbody .ant-table-cell {
   padding: var(--eo-table-body-cell-padding);
-}
+} */
 
 .ant-table-ping-left .ant-table-cell-fix-left-last::after {
   box-shadow: var(--left-slide-shadow);
@@ -88,7 +115,32 @@
 
 .ant-table-expanded-row eo-next-table {
   --eo-table-wrapper-background: var(--antd-table-row-expand-nested-wrapper);
-  --eo-table-wrapper-padding: 20px 32px;
+  --antd-table-header-bg: initial;
+}
+
+.next-table.ant-table-wrapper .ant-table-container,
+.next-table.ant-table-wrapper
+  .ant-table-container
+  table
+  > tbody
+  > tr:last-child
+  > *:first-child {
+  border-end-start-radius: var(--eo-next-table-header-border-radius);
+}
+.next-table.ant-table-wrapper
+  .ant-table-container
+  table
+  > tbody
+  > tr:last-child
+  > *:last-child {
+  border-end-end-radius: var(--eo-next-table-header-border-radius);
+}
+
+.next-table.ant-table-wrapper tr.ant-table-expanded-row > th,
+.next-table.ant-table-wrapper tr.ant-table-expanded-row:hover > th,
+.next-table.ant-table-wrapper tr.ant-table-expanded-row > td,
+.next-table.ant-table-wrapper tr.ant-table-expanded-row:hover > td {
+  background-color: var(--color-fill-global-bg-1);
 }
 
 /* Antd uses inset-inline-start/end which is not supported in Chrome < 87 */
@@ -105,4 +157,41 @@
 .ant-pagination-options .ant-select .ant-select-arrow {
   left: auto;
   right: 11px;
+}
+
+.next-table.ant-table-wrapper
+  .ant-table-ping-right
+  .ant-table-cell-fix-right-first::after,
+.next-table.ant-table-wrapper
+  .ant-table-ping-right
+  .ant-table-cell-fix-right-last::after {
+  box-shadow: inset -10px 0 8px -8px rgba(0, 0, 0, 0.15);
+}
+
+.next-table.ant-table-wrapper .ant-table-column-sorters {
+  justify-content: initial;
+}
+
+.next-table.ant-table-wrapper .ant-table-column-title {
+  flex: initial;
+}
+
+.next-table.ant-table-wrapper .ant-table-column-sorter {
+  margin-inline-start: 8px;
+}
+
+.expand-icon {
+  font-size: 11px;
+  background: var(--antd-table-row-expand-icon-action-bg);
+  border-radius: 2px;
+  padding: 3px;
+}
+
+.next-table.ant-table-wrapper .ant-table-row-indent + .expand-icon {
+  margin-top: 2.5px;
+  margin-inline-end: 8px;
+}
+
+.invisible {
+  visibility: hidden;
 }
