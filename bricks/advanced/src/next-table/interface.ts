@@ -42,6 +42,17 @@ export interface Column
   cellStyle?: CSSProperties;
   /** 头部单元格样式 */
   headerStyle?: CSSProperties;
+  cellStatus?: CellStatus;
+}
+
+export interface CellStatus {
+  dataIndex?: string;
+  mapping: CellStatusMap[];
+}
+
+export interface CellStatusMap {
+  value: unknown;
+  leftBorderColor: string;
 }
 
 export interface CellConfig extends WithUseBrick {

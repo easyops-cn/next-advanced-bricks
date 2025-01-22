@@ -35,6 +35,7 @@ import {
   defaultPaginationConfig,
   defaultRowSelectionConfig,
   getAllKeys,
+  getCellStatusStyle,
   getValueByDataIndex,
   isPlainObject,
   naturalComparator,
@@ -313,6 +314,7 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
                 : undefined,
               style: {
                 ...col.cellStyle,
+                ...getCellStatusStyle(record, col),
                 verticalAlign: col.verticalAlign,
               },
             };
