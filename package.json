@@ -48,7 +48,7 @@
     "@next-bricks/basic": "^1.49.6",
     "@next-bricks/containers": "^1.14.4",
     "@next-bricks/icons": "^1.3.16",
-    "@next-bricks/illustrations": "^1.4.5",
+    "@next-bricks/illustrations": "^1.4.8",
     "@next-bricks/shoelace": "^1.1.6",
     "@next-core/babel-preset-next": "^1.0.24",
     "@next-core/brick-container": "^3.20.4",

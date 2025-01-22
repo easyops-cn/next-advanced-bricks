@@ -2918,6 +2918,11 @@
   resolved "https://registry.yarnpkg.com/@next-bricks/icons/-/icons-1.3.16.tgz#dd356eeff0dceb813e598f9e2ca94ac0a52ee706"
   integrity sha512-d0mwKPB8ROV+R+pOkZmbA5hBbSrfBcdUJWMkVcxQgIuiXyQPKKM/rAtCEqUImBOqZViUignRbeFMkp3UgQ6zUw==
 
+"@next-bricks/illustrations@^1.4.8":
+  version "1.4.8"
+  resolved "https://registry.yarnpkg.com/@next-bricks/illustrations/-/illustrations-1.4.8.tgz#ad9e028cb1359a7dff2d843d96fd356118902b4e"
+  integrity sha512-7AyfMjDZNtmI94AX9qX1Ue5qxQYfr2VnN3Q6Zbp3sPHZoecIf8XYEBPiX/BA/cw9leWhkQtMqUe7oMcraI89Fw==
+
 "@next-bricks/shoelace@^1.1.6":
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/@next-bricks/shoelace/-/shoelace-1.1.6.tgz#26e5d21e309a52e8fdbe3a4347321c848a8b6c5c"
@@ -3091,11 +3096,6 @@
     "@next-core/utils" "^1.7.28"
     i18next "^22.5.1"
     i18next-browser-languagedetector "^7.2.2"
-
-"@next-core/illustrations@^0.11.34":
-  version "0.11.34"
-  resolved "https://registry.yarnpkg.com/@next-core/illustrations/-/illustrations-0.11.34.tgz#5b97a5ddc9c064538e8a90321ac29164efd462a2"
-  integrity sha512-ism85NF1tkMgYT0+lILoldjFRFKRZLr5RaqZzehPkAsYlG6iVlr89DThhKXUK8XzXBqg8UhnDOOqy1Vl9X78kg==
 
 "@next-core/inject@^1.0.51":
   version "1.0.51"
