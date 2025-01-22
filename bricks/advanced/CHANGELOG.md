@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.42.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.41.18...@next-bricks/advanced@0.42.0) (2025-01-22)
+
+
+### Features
+
+* **eo-next-table:** support columns:cellStatus ([aaa3f54](https://github.com/easyops-cn/next-advanced-bricks/commit/aaa3f54eb1202527ca26bd2bf24bc61a7d9b584c))
+
+
+
+
+
 ## [0.41.18](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.41.17...@next-bricks/advanced@0.41.18) (2025-01-22)
 
 
