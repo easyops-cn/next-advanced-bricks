@@ -1188,10 +1188,10 @@ describe("rowSelection", () => {
           // Not including halfChecked
           keys: [
             ...treeDataSource.list[0].student
-              .filter((v, i) => i !== 0)
+              .filter((_v, i) => i !== 0)
               .map((v) => v.key),
           ],
-          rows: [...treeDataSource.list[0].student.filter((v, i) => i !== 0)],
+          rows: [...treeDataSource.list[0].student.filter((_v, i) => i !== 0)],
           info: {
             type: "single",
           },
@@ -1286,7 +1286,9 @@ describe("expandable", () => {
 
     await act(async () => {
       fireEvent.click(
-        element.shadowRoot?.querySelectorAll(".expand-icon")[1] as Element
+        element.shadowRoot?.querySelectorAll(
+          ".expand-icon:not(.invisible)"
+        )[1] as Element
       );
     });
     expect(onRowExpand).not.toBeCalled();
@@ -1294,7 +1296,9 @@ describe("expandable", () => {
 
     await act(async () => {
       fireEvent.click(
-        element.shadowRoot?.querySelectorAll(".expand-icon")[0] as Element
+        element.shadowRoot?.querySelectorAll(
+          ".expand-icon:not(.invisible)"
+        )[0] as Element
       );
     });
     expect(
@@ -1318,7 +1322,9 @@ describe("expandable", () => {
 
     await act(async () => {
       fireEvent.click(
-        element.shadowRoot?.querySelectorAll(".expand-icon")[0] as Element
+        element.shadowRoot?.querySelectorAll(
+          ".expand-icon:not(.invisible)"
+        )[0] as Element
       );
     });
     expect(onRowExpand).lastCalledWith(
@@ -1366,7 +1372,7 @@ describe("expandable", () => {
     await act(async () => {
       fireEvent.click(
         element.shadowRoot?.querySelectorAll(
-          ".ant-table-row-expand-icon:not(.ant-table-row-expand-icon-spaced)"
+          ".expand-icon:not(.invisible)"
         )[1] as Element
       );
     });
@@ -1390,7 +1396,7 @@ describe("expandable", () => {
     await act(async () => {
       fireEvent.click(
         element.shadowRoot?.querySelectorAll(
-          ".ant-table-row-expand-icon:not(.ant-table-row-expand-icon-spaced)"
+          ".expand-icon:not(.invisible)"
         )[2] as Element
       );
     });
@@ -1452,7 +1458,7 @@ describe("expandable", () => {
     await act(async () => {
       fireEvent.click(
         element.shadowRoot?.querySelectorAll(
-          ".ant-table-row-expand-icon:not(.ant-table-row-expand-icon-spaced)"
+          ".expand-icon:not(.invisible)"
         )[1] as Element
       );
     });
@@ -1545,7 +1551,7 @@ describe("draggable", () => {
 });
 
 describe("define cell brick", () => {
-  const columns = new Array(3).fill(null).map((d, key) => ({
+  const columns = new Array(3).fill(null).map((_d, key) => ({
     dataIndex: key,
     key,
     title: key,

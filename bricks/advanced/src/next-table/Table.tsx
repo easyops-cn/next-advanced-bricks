@@ -17,15 +17,17 @@ import {
   Sort,
   CellConfig,
 } from "./interface.js";
-import { Table, ConfigProvider, theme, Select } from "antd";
+import { Table, ConfigProvider, theme } from "antd";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
 import { useCurrentTheme } from "@next-core/react-runtime";
 import { RowSelectMethod, type SortOrder } from "antd/es/table/interface.js";
-import type { SelectProps } from "antd/es/select";
 import type { TableProps } from "antd/es/table";
+import { DownOutlined, RightOutlined } from "@ant-design/icons";
+import type { RenderExpandIconProps } from "rc-table/lib/interface.js";
 import { i18n } from "@next-core/i18n";
 import { useTranslation, initializeReactI18n } from "@next-core/i18n/react";
 import { Trans } from "react-i18next";
+import classNames from "classnames";
 import { K, NS, locales } from "./i18n.js";
 import {
   DEFAULT_PAGE,
@@ -68,15 +70,6 @@ import { CacheUseBrickItem } from "./CacheUseBrickItem.js";
 initializeReactI18n(NS, locales);
 
 const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
-
-type CompoundedSelect = React.FC<SelectProps> & {
-  Option: typeof Select.Option;
-};
-
-const SelectWithoutSearch: CompoundedSelect = (props) => (
-  <Select {...props} variant="borderless" />
-);
-SelectWithoutSearch.Option = Select.Option;
 
 export interface NextTableComponentProps {
   shadowRoot: ShadowRoot | null;
@@ -423,14 +416,21 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
             : theme.defaultAlgorithm,
         components: {
           Table: {
-            headerBorderRadius: 0,
+            headerBorderRadius:
+              "var(--eo-next-table-header-border-radius)" as unknown as number,
             headerSplitColor: "none",
             headerBg: "var(--antd-table-header-bg)",
             headerSortActiveBg: "var(--antd-table-header-sort-active-bg)",
             headerSortHoverBg: "var(--antd-table-header-sort-active-bg)",
             bodySortBg: "var(--antd-table-header-overwrite-sort-td-active-bg)",
+            // cellPaddingBlock: 11,
+            // cellPaddingInline: 12,
+            // cellPaddingBlockMD: 8,
+            // cellPaddingInlineMD: 12,
+            // cellPaddingBlockSM: 4,
+            // cellPaddingInlineSM: 12,
             ...(bordered
-              ? { borderColor: "var(var(--antd-table-border-color)" }
+              ? { borderColor: "var(--theme-gray-border-color)" }
               : {}),
           },
         },
@@ -478,7 +478,10 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
                       total: dataSource?.total,
                       current: page,
                       pageSize: pageSize,
-                      selectComponentClass: SelectWithoutSearch,
+                      showSizeChanger: {
+                        showSearch: false,
+                        variant: "borderless",
+                      },
                       showTotal: (total: number) => {
                         return (
                           <div className="pagination-wrapper">
@@ -575,12 +578,14 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
                           : true;
                       },
                       expandedRowRender: expandConfig.expandedRowBrick?.useBrick
-                        ? (record, index, indent, expanded) => {
+                        ? (record, index, indent /* , expanded */) => {
                             const data = {
                               rowData: record,
                               index,
                               indent,
-                              expanded,
+                              // Do not pass `expanded`, it changes every time the row is toggled,
+                              // thus the brick will be re-rendered every time as well.
+                              // expanded,
                             };
                             return (
                               <CacheUseBrickItem
@@ -614,7 +619,7 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
                               </span>
                             );
                           }
-                        : undefined,
+                        : DefaultExpandIcon,
                       onExpand: (expanded, record) => {
                         onRowExpand?.({ expanded, record });
                       },
@@ -679,3 +684,18 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
     </ConfigProvider>
   );
 });
+
+function DefaultExpandIcon({
+  expanded,
+  expandable,
+  onExpand,
+  record,
+}: RenderExpandIconProps<RecordType>) {
+  const IconComponent = expanded ? DownOutlined : RightOutlined;
+  return (
+    <IconComponent
+      className={classNames("expand-icon", { invisible: !expandable })}
+      onClick={(e) => expandable && onExpand(record, e)}
+    />
+  );
+}
