@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.42.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.42.0...@next-bricks/advanced@0.42.1) (2025-01-23)
+
+
+### Bug Fixes
+
+* fix table cell padding ([6fdbc1c](https://github.com/easyops-cn/next-advanced-bricks/commit/6fdbc1c7d544e0106cefb0918b3ef0e39b7dbe9c))
+* refine table row height ([0343fc8](https://github.com/easyops-cn/next-advanced-bricks/commit/0343fc85f3524eda0347e4bab9fe6d0c9321f19c))
+
+
+
+
+
 # [0.42.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.41.18...@next-bricks/advanced@0.42.0) (2025-01-22)
 
 
