@@ -58,6 +58,7 @@
   > th,
 .next-table.ant-table-wrapper .ant-table .ant-table-container tfoot > tr > th {
   padding: var(--eo-table-head-cell-padding);
+  height: var(--eo-table-head-cell-height);
 }
 
 .next-table.ant-table-wrapper .ant-table .ant-table-container .ant-table-cell,
@@ -69,6 +70,7 @@
   > td,
 .next-table.ant-table-wrapper .ant-table .ant-table-container tfoot > tr > td {
   padding: var(--eo-table-body-cell-padding);
+  height: var(--eo-table-body-cell-height);
 }
 
 .ant-table-wrapper
@@ -160,11 +162,32 @@
 }
 
 .next-table.ant-table-wrapper
+  .ant-table-ping-left
+  .ant-table-cell-fix-left-first::after,
+.next-table.ant-table-wrapper
+  .ant-table-ping-left
+  .ant-table-cell-fix-left-last::after {
+  box-shadow: inset 10px 0 8px -8px rgba(0, 0, 0, 0.15);
+}
+
+.next-table.ant-table-wrapper
   .ant-table-ping-right
   .ant-table-cell-fix-right-first::after,
 .next-table.ant-table-wrapper
   .ant-table-ping-right
   .ant-table-cell-fix-right-last::after {
+  box-shadow: inset -10px 0 8px -8px rgba(0, 0, 0, 0.15);
+}
+
+.next-table.ant-table-wrapper
+  .ant-table-ping-left:not(.ant-table-has-fix-left)
+  .ant-table-container::before {
+  box-shadow: inset 10px 0 8px -8px rgba(0, 0, 0, 0.15);
+}
+
+.next-table.ant-table-wrapper
+  .ant-table-ping-right:not(.ant-table-has-fix-right)
+  .ant-table-container::after {
   box-shadow: inset -10px 0 8px -8px rgba(0, 0, 0, 0.15);
 }
 

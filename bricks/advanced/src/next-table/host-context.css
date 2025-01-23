@@ -1,22 +1,30 @@
 :root {
   --eo-table-head-cell-padding: 14px 12px;
+  --eo-table-head-cell-height: 51px;
   --eo-table-body-cell-padding: 11px 12px;
+  --eo-table-body-cell-height: 45px;
 }
 
 html[data-ui="v8-2"] {
   --eo-table-head-cell-padding: 9px 12px;
+  --eo-table-head-cell-height: 41px;
 
   eo-next-table[size="large"] {
-    --eo-table-body-cell-padding: 11px 12px;
+    --eo-table-body-cell-padding: 9px 12px;
+    --eo-table-body-cell-height: 45px;
   }
 
   eo-next-table[size="middle"] {
     --eo-table-head-cell-padding: 7px 12px;
-    --eo-table-body-cell-padding: 8px 12px;
+    --eo-table-head-cell-height: 37px;
+    --eo-table-body-cell-padding: 6px 12px;
+    --eo-table-body-cell-height: 39px;
   }
 
   eo-next-table[size="small"] {
     --eo-table-head-cell-padding: 3px 12px;
-    --eo-table-body-cell-padding: 4px 12px;
+    --eo-table-head-cell-height: 29px;
+    --eo-table-body-cell-padding: 1px 12px;
+    --eo-table-body-cell-height: 31px;
   }
 }
