@@ -73,30 +73,6 @@
   height: var(--eo-table-body-cell-height);
 }
 
-.ant-table-wrapper
-  .ant-table-container
-  table
-  > thead
-  > tr:first-child
-  > *:first-child,
-.ant-table-tbody .ant-table-row .ant-table-cell:first-child {
-  padding-left: 16px;
-}
-
-.ant-table-wrapper
-  .ant-table-container
-  table
-  > thead
-  > tr:first-child
-  > *:last-child,
-.ant-table-tbody .ant-table-row .ant-table-cell:last-child {
-  padding-right: 16px;
-}
-
-/* .ant-table-wrapper .ant-table-tbody .ant-table-cell {
-  padding: var(--eo-table-body-cell-padding);
-} */
-
 .ant-table-ping-left .ant-table-cell-fix-left-last::after {
   box-shadow: var(--left-slide-shadow);
 }
