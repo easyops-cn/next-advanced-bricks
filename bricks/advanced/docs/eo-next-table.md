@@ -48,6 +48,7 @@
               - brick: eo-button
                 properties:
                   type: link
+                  size: small
                   icon:
                     lib: antd
                     icon: edit
@@ -59,6 +60,7 @@
               - brick: eo-button
                 properties:
                   type: link
+                  size: small
                   danger: true
                   icon:
                     lib: antd
@@ -693,6 +695,7 @@ children:
 - brick: eo-next-table
   properties:
     pagination: false
+    bordered: true
     columns:
       - dataIndex: name
         key: name
