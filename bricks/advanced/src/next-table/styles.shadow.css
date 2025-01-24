@@ -194,3 +194,38 @@
 .invisible {
   visibility: hidden;
 }
+
+.next-table
+  .ant-table
+  .ant-checkbox-wrapper:not(.ant-checkbox-wrapper-disabled):hover
+  .ant-checkbox-checked:not(.ant-checkbox-disabled)
+  .ant-checkbox-inner,
+.next-table
+  .ant-table
+  .ant-checkbox-wrapper-checked:not(.ant-checkbox-wrapper-disabled):hover
+  .ant-checkbox-inner,
+.next-table
+  .ant-checkbox.ant-checkbox-checked:not(.ant-checkbox-disabled):hover
+  .ant-checkbox-inner {
+  background-color: var(--antd-checkbox-color);
+  border-color: var(--antd-checkbox-color);
+}
+
+.next-table .ant-checkbox.ant-checkbox-indeterminate .ant-checkbox-inner {
+  background-color: var(--antd-checkbox-color) !important;
+  border-color: var(--antd-checkbox-color) !important;
+}
+
+.next-table
+  .ant-checkbox.ant-checkbox-indeterminate
+  .ant-checkbox-inner::after {
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 2px;
+  background-color: #fff;
+  border: 0;
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  content: " ";
+}
