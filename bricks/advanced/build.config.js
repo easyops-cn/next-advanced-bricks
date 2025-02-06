@@ -12,7 +12,7 @@ export default {
           from: path.join(
             "../../node_modules/pdfjs-dist/build/pdf.worker.min.js"
           ),
-          to: "",
+          to: "workers",
         },
       ],
     }),
