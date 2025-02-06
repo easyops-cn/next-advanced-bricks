@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.42.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.42.1...@next-bricks/advanced@0.42.2) (2025-02-06)
+
+
+### Bug Fixes
+
+* no js entries in dist root ([1012f94](https://github.com/easyops-cn/next-advanced-bricks/commit/1012f948077094613c9e03fffe7f0c0733d9427b))
+
+
+
+
+
 ## [0.42.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.42.0...@next-bricks/advanced@0.42.1) (2025-01-23)
 
 
