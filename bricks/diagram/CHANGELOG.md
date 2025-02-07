@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.54.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.54.7...@next-bricks/diagram@0.54.8) (2025-02-07)
+
+
+### Performance Improvements
+
+* use clip-path instead of mask ([a183873](https://github.com/easyops-cn/next-advanced-bricks/commit/a183873ad25e6cb6c3f3dbb2b7b865563340fadf))
+
+
+
+
+
 ## [0.54.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.54.6...@next-bricks/diagram@0.54.7) (2025-01-22)
 
 **Note:** Version bump only for package @next-bricks/diagram
