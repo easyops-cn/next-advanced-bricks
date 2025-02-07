@@ -64,7 +64,7 @@ export function EdgeComponent({
     );
   }, [lineConf, linePoints]);
 
-  const lineMaskPrefix = useMemo(() => uniqueId("line-mask-"), []);
+  const lineClipPathPrefix = useMemo(() => uniqueId("line-mask-"), []);
 
   const [labelPosition, setLabelPosition] = useState<PositionAndAngle | null>(
     null
@@ -213,6 +213,30 @@ export function EdgeComponent({
     [labelPosition, labelSize]
   );
 
+  const clipPathPoints = useMemo(() => {
+    if (!mask || !lineRect) {
+      return null;
+    }
+    const right = lineRect.x + lineRect.width;
+    const bottom = lineRect.y + lineRect.height;
+    const maskRight = mask.left + mask.width;
+    const maskBottom = mask.top + mask.height;
+    return [
+      [mask.left, maskBottom],
+      [maskRight, maskBottom],
+      [maskRight, mask.top],
+      [mask.left, mask.top],
+      [mask.left, lineRect.y],
+      [right, lineRect.y],
+      [right, bottom],
+      [lineRect.x, bottom],
+      [lineRect.x, lineRect.y],
+      [mask.left, lineRect.y],
+    ]
+      .map((points) => points.join(","))
+      .join(" ");
+  }, [lineRect, mask]);
+
   if (!line || !linePoints) {
     // This happens when source or target is not found,
     // or when source or target has not been positioned yet.
@@ -283,37 +307,17 @@ export function EdgeComponent({
     lineConf.overrides?.activeRelated?.motion?.shape,
   ].some((item) => item === "dot" || item === "triangle");
 
-  const maskUrl = mask ? `url(#${lineMaskPrefix})` : undefined;
+  const clipPathUrl = clipPathPoints
+    ? `url(#${lineClipPathPrefix})`
+    : undefined;
 
   return (
     <>
-      {mask && lineRect && (
+      {clipPathPoints && (
         <defs>
-          <mask
-            id={lineMaskPrefix}
-            maskUnits="userSpaceOnUse"
-            x={lineRect.x}
-            y={lineRect.y}
-            width={lineRect.width}
-            height={lineRect.height}
-          >
-            <rect
-              x={lineRect.x}
-              y={lineRect.y}
-              width={lineRect.width}
-              height={lineRect.height}
-              // Everything under a white pixel will be visible
-              fill="white"
-            />
-            <rect
-              x={mask.left}
-              y={mask.top}
-              width={mask.width}
-              height={mask.height}
-              // Everything under a black pixel will be invisible
-              fill="black"
-            />
-          </mask>
+          <clipPath id={lineClipPathPrefix}>
+            <polygon points={clipPathPoints} />
+          </clipPath>
         </defs>
       )}
       <g className="line-group" onDoubleClick={onDoubleClick}>
@@ -323,7 +327,7 @@ export function EdgeComponent({
           fill="none"
           stroke="transparent"
           strokeWidth={lineConf.interactStrokeWidth}
-          mask={maskUrl}
+          clipPath={clipPathUrl}
         />
         <path
           ref={pathRefCallback}
@@ -333,7 +337,7 @@ export function EdgeComponent({
             [`${lineConf.dashed ? "dashed" : lineConf.dotted ? "dotted" : "solid"}-animation`]:
               lineConf.animate.useAnimate,
           })}
-          mask={maskUrl}
+          clipPath={clipPathUrl}
           style={
             {
               "--time": `${lineConf.animate.duration ?? DEFAULT_LINE_INTERACT_ANIMATE_DURATION}s`,
@@ -352,7 +356,7 @@ export function EdgeComponent({
             className="line-active-bg"
             d={line}
             fill="none"
-            mask={maskUrl}
+            clipPath={clipPathUrl}
           />
         )}
         {
