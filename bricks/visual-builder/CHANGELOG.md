@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.36.30](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.36.29...@next-bricks/visual-builder@1.36.30) (2025-02-08)
+
+
+### Bug Fixes
+
+* make a v2/v3 compatible secret internals ([f35c79f](https://github.com/easyops-cn/next-advanced-bricks/commit/f35c79fdc2ec09c1a20fcfb1092811375eb4b296))
+
+
+
+
+
 ## [1.36.29](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.36.28...@next-bricks/visual-builder@1.36.29) (2025-01-22)
 
 **Note:** Version bump only for package @next-bricks/visual-builder
