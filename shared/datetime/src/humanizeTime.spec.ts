@@ -149,6 +149,43 @@ describe("humanizeTime", () => {
     expect(humanizeTime(m)).toBe(m.format("LL ah:mm"));
   });
 
+  it("show relative past time", function () {
+    const pastMoment = moment().add(-5, "days");
+    expect(humanizeTime(pastMoment, HumanizeTimeFormat.relative)).toBe(
+      "5 天前"
+    );
+  });
+
+  it("show relative future time", function () {
+    const futureMoment = moment().add(5, "days");
+    expect(humanizeTime(futureMoment, HumanizeTimeFormat.relative)).toBe(
+      "5 天后"
+    );
+  });
+
+  it("show past time", function () {
+    const pastMoment = moment().add(-5, "days");
+    expect(humanizeTime(pastMoment, HumanizeTimeFormat.past)).toBe("5 天前");
+  });
+  it("show past time even if it is future time", function () {
+    const pastMoment = moment().add(5, "days");
+    expect(humanizeTime(pastMoment, HumanizeTimeFormat.past)).toBe("几秒前");
+  });
+
+  it("show future time", function () {
+    const futureMoment = moment().add(5, "days");
+    expect(humanizeTime(futureMoment, HumanizeTimeFormat.future)).toBe(
+      "5 天后"
+    );
+  });
+
+  it("show future time even if it is past time", function () {
+    const futureMoment = moment().add(-5, "days");
+    expect(humanizeTime(futureMoment, HumanizeTimeFormat.future)).toBe(
+      "几秒后"
+    );
+  });
+
   it("return null when given a nil", function () {
     expect(humanizeTime(undefined)).toBe(null);
     expect(humanizeTime(null)).toBe(null);

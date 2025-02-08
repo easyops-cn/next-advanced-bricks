@@ -11,6 +11,7 @@ export enum HumanizeTimeFormat {
   full = "full",
   default = "default",
   relative = "relative",
+  past = "past",
   future = "future",
   accurate = "accurate",
   auto = "auto",
@@ -95,7 +96,17 @@ export const humanizeTime = (
     case HumanizeTimeFormat.default:
       text = m.format(fDefault);
       break;
-    case HumanizeTimeFormat.relative:
+    case HumanizeTimeFormat.relative: {
+      const diff = +m - +now;
+      text =
+        diff <= 0
+          ? moment.duration(diff).humanize(true)
+          : i18n.t(`${NS_LIBS_DATETIME}:${K.FUTURE_AFTER}`, {
+              time: moment.duration(diff).humanize(),
+            });
+      break;
+    }
+    case HumanizeTimeFormat.past:
       text = moment.duration(Math.min(+m - +now, 0)).humanize(true);
       break;
     case HumanizeTimeFormat.future:
