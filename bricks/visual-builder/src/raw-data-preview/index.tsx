@@ -4,9 +4,10 @@ import { ReactNextElement } from "@next-core/react-element";
 import "@next-core/theme";
 import type { BrickConf, ContextConf, MicroApp } from "@next-core/types";
 import classNames from "classnames";
-import { __secret_internals, getBasePath } from "@next-core/runtime";
+import { getBasePath } from "@next-core/runtime";
 import type { PreviewWindow } from "@next-core/preview/types";
 import { JSON_SCHEMA, safeDump } from "js-yaml";
+import { __compat_internals } from "../shared/compat_internals";
 import type { VisualConfig } from "./raw-data-interfaces";
 import { convertToStoryboard } from "./convert";
 import styleText from "./styles.shadow.css";
@@ -268,13 +269,13 @@ export function RawDataPreviewComponent({
         iframeWin.removeEventListener("message", onMessage);
       };
     }
-  }, [onApprove, onComment, ready]);
+  }, [onApprove, onComment, onViewAttrPrompt, ready]);
 
   useEffect(() => {
     if (!ready) {
       return;
     }
-    const pkg = __secret_internals.getBrickPackagesById(
+    const pkg = __compat_internals.getBrickPackagesById(
       "bricks/visual-builder"
     );
     if (!pkg) {
