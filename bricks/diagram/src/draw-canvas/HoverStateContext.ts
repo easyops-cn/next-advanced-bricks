@@ -23,7 +23,7 @@ export const HoverStateContext = React.createContext<{
   smartConnectLineState: SmartConnectLineState | null;
   unsetHoverStateTimeoutRef: React.MutableRefObject<number | null>;
   hoverState: HoverState | null;
-  activeEditableEdge: EdgeCell | null;
+  activeEditableEdges: EdgeCell[];
   lineEditorState: LineEditorState | null;
   setLineEditorState: React.Dispatch<
     React.SetStateAction<LineEditorState | null>
@@ -48,7 +48,7 @@ export const HoverStateContext = React.createContext<{
   smartConnectLineState: null,
   unsetHoverStateTimeoutRef: { current: null },
   hoverState: null,
-  activeEditableEdge: null,
+  activeEditableEdges: [],
   lineEditorState: null,
   setLineEditorState: () => {},
   setHoverState: () => {},

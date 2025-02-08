@@ -26,6 +26,7 @@ export interface EditingLineComponentProps {
   editableLineMap: WeakMap<EdgeCell, EditableLine>;
   transform: TransformLiteral;
   options: ComputedLineConnecterConf;
+  activeEditableEdge: EdgeCell | null;
 }
 
 export function EditingLineComponent({
@@ -33,17 +34,13 @@ export function EditingLineComponent({
   editableLineMap,
   transform,
   options,
+  activeEditableEdge,
 }: EditingLineComponentProps): JSX.Element {
   const [connectLineTo, setConnectLineTo] = useState<PositionTuple | null>(
     null
   );
-  const {
-    activeEditableEdge,
-    hoverState,
-    lineEditorState,
-    setLineEditorState,
-    onChangeEdgeView,
-  } = useHoverStateContext();
+  const { hoverState, lineEditorState, setLineEditorState, onChangeEdgeView } =
+    useHoverStateContext();
   const movedRef = useRef(false);
 
   useEffect(() => {

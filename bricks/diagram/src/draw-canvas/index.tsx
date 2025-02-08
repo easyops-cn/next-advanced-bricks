@@ -13,7 +13,7 @@ import { ReactNextElement } from "@next-core/react-element";
 import type { UseSingleBrickConf } from "@next-core/react-runtime";
 import { unwrapProvider } from "@next-core/utils/general";
 import "@next-core/theme";
-import { uniqueId } from "lodash";
+import { get, uniqueId } from "lodash";
 import classNames from "classnames";
 import { select } from "d3-selection";
 import type { lockBodyScroll as _lockBodyScroll } from "@next-bricks/basic/data-providers/lock-body-scroll/lock-body-scroll";
@@ -49,6 +49,7 @@ import type {
   LineEditorState,
   EdgeView,
   LineSettings,
+  BaseEdgeCell,
 } from "./interfaces";
 import { rootReducer } from "./reducers";
 import { MarkerComponent } from "../diagram/MarkerComponent";
@@ -520,7 +521,7 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
       source,
       target,
       data,
-      view: this.lineSettings,
+      view: this.lineSettings!,
     };
     this.#canvasRef.current?.addEdge(newEdge);
     return newEdge;
@@ -722,6 +723,8 @@ function LegacyEoDrawCanvasComponent(
   );
   const [editingTexts, setEditingTexts] = useState<string[]>([]);
   const [activeContainers, setActiveContainers] = useState<string[]>([]);
+  const [curActiveEditableEdge, setCurActiveEditableEdge] =
+    useState<BaseEdgeCell | null>(null);
   const { grabbing, transform, zoomer, scaleRange } = useZoom({
     rootRef,
     zoomable,
@@ -1041,25 +1044,24 @@ function LegacyEoDrawCanvasComponent(
     },
     [zoomer]
   );
-
   const { lineConfMap, lineConnectorConf, markers } = useLineMarkers({
     cells,
     defaultEdgeLines,
     lineConnector,
     markerPrefix,
   });
+
   const editableLineMap = useEditableLineMap({ cells, lineConfMap });
-  const activeEditableEdge = useMemo(() => {
-    let edge: EdgeCell | undefined;
-    if (activeTarget?.type === "edge") {
-      edge = cells.find((cell) =>
-        targetIsActive(cell, activeTarget)
-      ) as EdgeCell;
-    }
-    if (edge && editableLineMap.has(edge)) {
-      return edge;
-    }
-    return null;
+
+  const activeEditableEdges = useMemo(() => {
+    let edges: EdgeCell[] = [];
+    edges = cells.filter(
+      (cell) =>
+        targetIsActive(cell, activeTarget) &&
+        cell.type === "edge" &&
+        editableLineMap.has(cell)
+    ) as EdgeCell[];
+    return edges;
   }, [activeTarget, cells, editableLineMap]);
 
   const ready = useReady({ cells, layout, centered });
@@ -1181,7 +1183,7 @@ function LegacyEoDrawCanvasComponent(
       smartConnectLineState,
       unsetHoverStateTimeoutRef,
       hoverState,
-      activeEditableEdge,
+      activeEditableEdges,
       lineEditorState,
       setLineEditorState,
       setHoverState,
@@ -1190,7 +1192,7 @@ function LegacyEoDrawCanvasComponent(
       onChangeEdgeView: handleEdgeChangeView,
     }),
     [
-      activeEditableEdge,
+      activeEditableEdges,
       handleEdgeChangeView,
       handleSmartConnect,
       hoverState,
@@ -1198,13 +1200,13 @@ function LegacyEoDrawCanvasComponent(
       smartConnectLineState,
     ]
   );
-
   useEffect(() => {
     const root = rootRef.current;
     if (!root || dragBehavior !== "lasso") {
       return;
     }
     const rootRect = root.getBoundingClientRect();
+    // istanbul ignore next
     const onMouseDown = (event: MouseEvent) => {
       handleLasso(event, {
         transform,
@@ -1214,20 +1216,23 @@ function LegacyEoDrawCanvasComponent(
         },
         onLassoed(rect) {
           setLassoRect(null);
-          const lassoedCells: (NodeCell | DecoratorCell)[] = [];
+          const lassoedCells: (NodeCell | DecoratorCell | EdgeCell)[] = [];
           for (const cell of cells) {
             if (
               isContainerDecoratorCell(cell) ||
               isNodeOrAreaDecoratorCell(cell) ||
-              isTextDecoratorCell(cell)
+              isTextDecoratorCell(cell) ||
+              isEdgeCell(cell)
             ) {
-              const x = cell.view.x;
-              const y = cell.view.y;
+              const x = get(cell, "view.x", 0);
+              const y = get(cell, "view.y", 0);
+              const width = get(cell, "view.width", 0);
+              const height = get(cell, "view.height", 0);
               if (
                 x >= rect.x &&
-                x + cell.view.width <= rect.x + rect.width &&
+                x + width <= rect.x + rect.width &&
                 y >= rect.y &&
-                y + cell.view.height <= rect.y + rect.height
+                y + height <= rect.y + rect.height
               ) {
                 lassoedCells.push(cell);
               }
@@ -1291,6 +1296,8 @@ function LegacyEoDrawCanvasComponent(
                 activeTarget={activeTarget}
                 unrelatedCells={unrelatedCells}
                 allowEdgeToArea={allowEdgeToArea}
+                curActiveEditableEdge={curActiveEditableEdge}
+                updateCurActiveEditableEdge={setCurActiveEditableEdge}
                 onCellsMoving={handleCellsMoving}
                 onCellsMoved={handleCellsMoved}
                 onCellResizing={handleCellResizing}
@@ -1337,6 +1344,7 @@ function LegacyEoDrawCanvasComponent(
                 editableLineMap={editableLineMap}
                 transform={transform}
                 options={lineConnectorConf}
+                activeEditableEdge={curActiveEditableEdge}
               />
             </g>
           )}
@@ -1352,18 +1360,23 @@ function LegacyEoDrawCanvasComponent(
             ))}
           </g>
           <g>
-            {lineConnectorConf && (
-              <LineEditorComponent
-                editableLineMap={editableLineMap}
-                scale={transform.k}
-              />
-            )}
+            {lineConnectorConf &&
+              activeEditableEdges?.map((activeEdge) => (
+                <LineEditorComponent
+                  editableLineMap={editableLineMap}
+                  scale={transform.k}
+                  activeEditableEdge={activeEdge}
+                  updateCurActiveEditableEdge={setCurActiveEditableEdge}
+                  key={`${activeEdge.source}-${activeEdge.target}`}
+                />
+              ))}
           </g>
           {lineConnectorConf && (
             <LineConnectorComponent
               activeTarget={activeTarget}
               editableLineMap={editableLineMap}
               scale={transform.k}
+              activeEditableEdge={curActiveEditableEdge}
               disabled={!!connectLineState}
             />
           )}

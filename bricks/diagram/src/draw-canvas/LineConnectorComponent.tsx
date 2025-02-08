@@ -22,6 +22,7 @@ export interface LineConnectorComponentProps {
   activeTarget: ActiveTarget | null;
   editableLineMap: WeakMap<EdgeCell, EditableLine>;
   scale: number;
+  activeEditableEdge: EdgeCell | null;
   disabled?: boolean;
 }
 
@@ -29,6 +30,7 @@ export function LineConnectorComponent({
   activeTarget,
   editableLineMap,
   scale,
+  activeEditableEdge,
   disabled,
 }: LineConnectorComponentProps): JSX.Element | null {
   const {
@@ -36,7 +38,6 @@ export function LineConnectorComponent({
     hoverState,
     setHoverState,
     smartConnectLineState,
-    activeEditableEdge,
     lineEditorState,
   } = useHoverStateContext();
 
@@ -112,6 +113,7 @@ export function LineConnectorComponent({
               index={index}
               point={point}
               scale={scale}
+              activeEditableEdge={activeEditableEdge}
               unsetActivePointIndex={unsetActivePointIndex}
               unsetTimeout={unsetTimeout}
             />
@@ -127,6 +129,7 @@ interface ConnectPointComponentProps {
   index: number;
   point: NodePosition;
   scale: number;
+  activeEditableEdge: EdgeCell | null;
   unsetTimeout: () => void;
   unsetActivePointIndex: () => void;
 }
@@ -136,6 +139,7 @@ function ConnectPointComponent({
   index,
   point,
   scale,
+  activeEditableEdge,
   unsetTimeout,
   unsetActivePointIndex,
 }: ConnectPointComponentProps): JSX.Element {
@@ -146,7 +150,6 @@ function ConnectPointComponent({
     setHoverState,
     setSmartConnectLineState,
     onConnect,
-    activeEditableEdge,
     lineEditorState,
     setLineEditorState,
     onChangeEdgeView,

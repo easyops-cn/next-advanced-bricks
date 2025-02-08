@@ -99,6 +99,10 @@ export interface EdgeView extends LineSettings {
   exitPosition?: NodePosition | null;
   entryPosition?: NodePosition | null;
   vertices?: NodePosition[] | null;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
 }
 
 export interface EdgeLineConf extends BaseEdgeLineConf {
