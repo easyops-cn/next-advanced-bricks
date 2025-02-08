@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/datetime@0.2.13...@next-shared/datetime@0.3.0) (2025-02-08)
+
+
+### Features
+
+* add humanize time format "past", and support future time for "relative" ([c537ca3](https://github.com/easyops-cn/next-advanced-bricks/commit/c537ca3a1279314d401fbfbec3a8433d26ae2194))
+
+
+
+
+
 ## [0.2.13](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/datetime@0.2.12...@next-shared/datetime@0.2.13) (2025-01-13)
 
 **Note:** Version bump only for package @next-shared/datetime
