@@ -139,10 +139,18 @@ export function EdgeComponent({
       if (element) {
         // Jest does not support `SVGPathElement::getTotalLength`
         setPathLength(element.getTotalLength?.() ?? 100);
+        const rect = element.getBBox?.();
+        edge.view = {
+          ...edge.view,
+          x: rect?.x,
+          y: rect?.y,
+          width: rect?.width,
+          height: rect?.height,
+        };
       }
       updateLabelPosition();
     },
-    [updateLabelPosition]
+    [updateLabelPosition, edge]
   );
 
   const [labelElement, setLabelElement] = useState<HTMLElement | null>(null);

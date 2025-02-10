@@ -7,6 +7,8 @@ import type {
   LayoutType,
   NodeCell,
   SnapToObjectPosition,
+  ActiveTargetOfSingular,
+  BaseEdgeCell,
 } from "../interfaces";
 import type {
   MoveCellPayload,
@@ -21,6 +23,7 @@ import {
 import { cellToTarget } from "./cellToTarget";
 import { getSnapPositions, type SnapPositions } from "./getSnapPositions";
 import { normalizeSnapOptions } from "./normalizeSnapOptions";
+import { sameTarget } from "./sameTarget";
 import { targetIsActive } from "./targetIsActive";
 
 const HORIZONTAL_POSITIONS = ["left", "center", "right"];
@@ -41,6 +44,7 @@ export function handleMouseDown(
     onCellResizing,
     onCellResized,
     onSwitchActiveTarget,
+    updateCurActiveEditableEdge,
   }: {
     action: "move" | "resize";
     cell: Cell;
@@ -54,13 +58,41 @@ export function handleMouseDown(
     onCellResizing?(info: ResizeCellPayload): void;
     onCellResized?(info: ResizeCellPayload): void;
     onSwitchActiveTarget?(activeTarget: ActiveTarget | null): void;
+    updateCurActiveEditableEdge?: (
+      activeEditableEdge: BaseEdgeCell | null
+    ) => void;
   }
 ) {
   event.stopPropagation();
   // Drag node
-  if (action === "resize" || !targetIsActive(cell, activeTarget)) {
-    onSwitchActiveTarget?.(cellToTarget(cell));
+  const preActive = targetIsActive(cell, activeTarget);
+  if (event.shiftKey) {
+    const activeTargets = activeTarget
+      ? activeTarget?.type === "multi"
+        ? activeTarget.targets
+        : [activeTarget]
+      : [];
+    let targets: ActiveTargetOfSingular[] = [];
+    if (preActive) {
+      targets = activeTargets.filter((target) => !sameTarget(target, cell));
+    } else {
+      targets = [...activeTargets, cell];
+      if (cell.type === "edge") {
+        updateCurActiveEditableEdge?.(cell);
+      }
+    }
+    onSwitchActiveTarget?.(
+      targets.length > 0 ? { type: "multi", targets } : null
+    );
+  } else {
+    if (action === "resize" || !preActive) {
+      onSwitchActiveTarget?.(cellToTarget(cell));
+      if (cell.type === "edge") {
+        updateCurActiveEditableEdge?.(cell);
+      }
+    }
   }
+
   if (isEdgeCell(cell)) {
     return;
   }

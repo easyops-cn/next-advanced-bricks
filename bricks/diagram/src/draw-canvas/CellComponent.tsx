@@ -13,6 +13,7 @@ import type {
   NodeBrickConf,
   NodeCell,
   EditableLine,
+  BaseEdgeCell,
 } from "./interfaces";
 import {
   isContainerDecoratorCell,
@@ -51,6 +52,10 @@ export interface CellComponentProps {
   unrelatedCells: Cell[];
   dragNodeToContainerActive?: boolean;
   allowEdgeToArea?: boolean;
+  curActiveEditableEdge?: BaseEdgeCell | null;
+  updateCurActiveEditableEdge?: (
+    activeEditableEdge: BaseEdgeCell | null
+  ) => void;
   onCellsMoving?(info: MoveCellPayload[]): void;
   onCellsMoved?(info: MoveCellPayload[]): void;
   onCellResizing?(info: ResizeCellPayload): void;
@@ -82,6 +87,8 @@ export function CellComponent({
   hoverCell,
   unrelatedCells,
   allowEdgeToArea,
+  curActiveEditableEdge,
+  updateCurActiveEditableEdge,
   onCellsMoving,
   onCellsMoved,
   onCellResizing,
@@ -96,7 +103,6 @@ export function CellComponent({
   onCellMouseLeave,
 }: CellComponentProps): JSX.Element | null {
   const {
-    activeEditableEdge,
     lineEditorState,
     smartConnectLineState,
     setSmartConnectLineState,
@@ -109,7 +115,7 @@ export function CellComponent({
     () => unrelatedCells.some((item) => sameTarget(item, cell)),
     [cell, unrelatedCells]
   );
-  // `containerRect` is undefined when it's an edge cell.
+
   const containerRect = useMemo((): DecoratorView | undefined => {
     if (isContainerDecoratorCell(cell) && isNoManualLayout(layout)) {
       const containCells = cells.filter(
@@ -150,6 +156,7 @@ export function CellComponent({
           onCellsMoving,
           onCellsMoved,
           onSwitchActiveTarget,
+          updateCurActiveEditableEdge,
         });
       }
     };
@@ -169,7 +176,6 @@ export function CellComponent({
     readOnly,
     transform.k,
   ]);
-
   // istanbul ignore next: experimental
   useEffect(() => {
     const g = gRef.current;
@@ -196,10 +202,10 @@ export function CellComponent({
           );
         }
         setSmartConnectLineState(null);
-      } else if (activeEditableEdge && lineEditorState) {
+      } else if (curActiveEditableEdge && lineEditorState) {
         const { type } = lineEditorState;
-        const { source, target } = editableLineMap.get(activeEditableEdge)!;
-        const { view } = activeEditableEdge;
+        const { source, target } = editableLineMap.get(curActiveEditableEdge)!;
+        const { view } = curActiveEditableEdge;
 
         const isEntry = type === "entry";
         if ((isEntry ? target : source) === cell) {
@@ -225,7 +231,7 @@ export function CellComponent({
       g.removeEventListener("mouseup", onMouseUp);
     };
   }, [
-    activeEditableEdge,
+    curActiveEditableEdge,
     editableLineMap,
     allowEdgeToArea,
     cell,
@@ -235,6 +241,7 @@ export function CellComponent({
     setLineEditorState,
     setSmartConnectLineState,
     smartConnectLineState,
+    updateCurActiveEditableEdge,
   ]);
 
   const handleContextMenu = useCallback(
@@ -276,7 +283,6 @@ export function CellComponent({
   }, [cell, onCellMouseLeave]);
 
   const active = targetIsActive(cell, activeTarget);
-
   return (
     <g
       className={classNames("cell", {

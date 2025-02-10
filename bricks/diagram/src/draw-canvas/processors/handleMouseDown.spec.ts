@@ -1,7 +1,7 @@
 import { describe, test, expect, jest } from "@jest/globals";
 import { fireEvent } from "@testing-library/dom";
 import { handleMouseDown } from "./handleMouseDown";
-import type { Cell } from "../interfaces";
+import type { ActiveTarget, Cell } from "../interfaces";
 
 describe("handleMouseDown", () => {
   const onCellsMoving = jest.fn();
@@ -431,5 +431,41 @@ describe("handleMouseDown", () => {
       type: "node",
       id: "a",
     });
+  });
+
+  test("shift select", () => {
+    const mousedown = new MouseEvent("mousedown", {
+      clientX: 10,
+      clientY: 20,
+      shiftKey: true,
+    });
+    handleMouseDown(mousedown, {
+      action: "move",
+      cell: { type: "node", id: "b", view: { x: 4, y: 6 } } as any,
+      layoutOptions: {
+        snap: {
+          grid: true,
+        },
+      },
+      ...methods,
+    });
+    const activeTarget = {
+      type: "multi",
+      targets: [{ type: "node", id: "b", view: { x: 4, y: 6 } }],
+    } as any as ActiveTarget;
+    expect(onSwitchActiveTarget).toHaveBeenCalledWith(activeTarget);
+
+    handleMouseDown(mousedown, {
+      action: "move",
+      cell: { type: "node", id: "b", view: { x: 4, y: 6 } } as any,
+      layoutOptions: {
+        snap: {
+          grid: true,
+        },
+      },
+      ...methods,
+      activeTarget,
+    });
+    expect(onSwitchActiveTarget).toHaveBeenCalledWith(null);
   });
 });
