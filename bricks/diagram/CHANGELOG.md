@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.55.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.54.8...@next-bricks/diagram@0.55.0) (2025-02-10)
+
+
+### Features
+
+* 拓扑图支持快捷键shift快速选择和取消选择多个元素，原框选功能需要支持选中边 ([9b2b01b](https://github.com/easyops-cn/next-advanced-bricks/commit/9b2b01b9119f3b9e748d52de25f080bea2412c6a))
+
+
+
+
+
 ## [0.54.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.54.7...@next-bricks/diagram@0.54.8) (2025-02-07)
 
 
