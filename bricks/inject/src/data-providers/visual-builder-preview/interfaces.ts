@@ -17,6 +17,7 @@ export interface PreviewBaseMessage {
   sender: "builder" | "preview-container" | "previewer";
   type: string;
   forwardedFor?: "builder" | "previewer";
+  _id?: string;
 }
 
 export interface PreviewMessageBuilderHoverOnIframe

@@ -21,3 +21,6 @@ import "./raw-data-preview/index.js";
 import "./data-providers/parse-path.js";
 import "./data-providers/batch-update-raw-data-generated-view.js";
 import "./data-providers/get-raw-data-system-prompts.js";
+import "./pre-generated-config/index.js";
+import "./pre-generated-config-preview/index.js";
+import "./data-providers/get-config-by-data-for-ai.js";
