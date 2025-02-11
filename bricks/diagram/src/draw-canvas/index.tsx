@@ -54,12 +54,10 @@ import type {
 import { rootReducer } from "./reducers";
 import { MarkerComponent } from "../diagram/MarkerComponent";
 import {
-  isContainerDecoratorCell,
   isEdgeCell,
   isEdgeSide,
   isNodeCell,
-  isNodeOrAreaDecoratorCell,
-  isTextDecoratorCell,
+  isDecoratorCell,
 } from "./processors/asserts";
 import type {
   EdgeViewChangePayload,
@@ -1218,12 +1216,7 @@ function LegacyEoDrawCanvasComponent(
           setLassoRect(null);
           const lassoedCells: (NodeCell | DecoratorCell | EdgeCell)[] = [];
           for (const cell of cells) {
-            if (
-              isContainerDecoratorCell(cell) ||
-              isNodeOrAreaDecoratorCell(cell) ||
-              isTextDecoratorCell(cell) ||
-              isEdgeCell(cell)
-            ) {
+            if (isEdgeCell(cell) || isNodeCell(cell) || isDecoratorCell(cell)) {
               const x = get(cell, "view.x", 0);
               const y = get(cell, "view.y", 0);
               const width = get(cell, "view.width", 0);

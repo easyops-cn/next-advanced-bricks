@@ -52,7 +52,7 @@ export interface BaseEdgeCell extends BaseCell {
   view?: EdgeView;
 }
 
-export type DecoratorType = "text" | "area" | "container";
+export type DecoratorType = "text" | "area" | "container" | "rect";
 export type Direction = "top" | "right" | "bottom" | "left";
 
 export interface DecoratorCell extends BaseCell {
