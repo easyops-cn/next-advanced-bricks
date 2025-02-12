@@ -31,6 +31,17 @@
             },
             {
               type: "decorator",
+              id: "rect-1",
+              decorator: "rect",
+              view: {
+                x: 10,
+                y: 20,
+                width: 400,
+                height: 300,
+              },
+            },
+            {
+              type: "decorator",
               id: "container-1",
               decorator: "container",
               view: {

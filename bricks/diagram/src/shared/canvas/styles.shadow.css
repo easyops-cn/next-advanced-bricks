@@ -82,6 +82,15 @@
   stroke-width: 0;
 }
 
+.decorator-rect-container .rect-container {
+  fill: rgba(73, 126, 255, 0);
+  stroke: rgba(73, 126, 255, 0.7);
+}
+.cell.active .decorator-rect-container .rect-container {
+  fill: rgba(73, 126, 255, 0);
+  stroke: rgba(73, 126, 255, 1);
+  stroke-width: 2;
+}
 .node,
 .decorator-text {
   overflow: visible;

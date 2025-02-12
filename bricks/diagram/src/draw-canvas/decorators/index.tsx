@@ -3,6 +3,7 @@ import type { BasicDecoratorProps } from "../interfaces";
 import { DecoratorArea } from "./DecoratorArea";
 import { DecoratorText } from "./DecoratorText";
 import { DecoratorContainer } from "./DecoratorContainer";
+import { DecoratorRect } from "./DecoratorRect";
 
 export function DecoratorComponent({
   cell,
@@ -30,6 +31,9 @@ export function DecoratorComponent({
       break;
     case "text":
       SpecifiedComponent = DecoratorText;
+      break;
+    case "rect":
+      SpecifiedComponent = DecoratorRect;
       break;
     // istanbul ignore next
     default:

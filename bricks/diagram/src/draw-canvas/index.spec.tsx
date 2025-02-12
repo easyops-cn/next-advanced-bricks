@@ -1251,6 +1251,39 @@ describe("eo-draw-canvas", () => {
     });
   });
 
+  test("edit decorator rect", async () => {
+    const element = document.createElement("eo-draw-canvas") as EoDrawCanvas;
+    element.cells = [
+      {
+        type: "decorator",
+        decorator: "rect",
+        id: "rect-1",
+        view: {
+          x: 100,
+          y: 400,
+          width: 280,
+          height: 120,
+          text: "上层服务",
+        },
+      } as Cell,
+    ];
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    await act(() => new Promise((resolve) => setTimeout(resolve, 1)));
+
+    expect(
+      element.shadowRoot!.querySelector(".decorator-rect-container")?.children
+        .length
+    ).toBe(2);
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
+
   test("zoom bar", async () => {
     const element = document.createElement("eo-draw-canvas") as EoDrawCanvas;
     element.defaultNodeBricks = [{ useBrick: { brick: "div" } }];

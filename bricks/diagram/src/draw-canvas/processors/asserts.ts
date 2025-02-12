@@ -69,6 +69,12 @@ export function isContainerDecoratorCell(
   return cell.type === "decorator" && cell.decorator === "container";
 }
 
+export function isRectDecoratorCell(
+  cell: Cell | MoveCellPayload
+): cell is DecoratorCell {
+  return cell.type === "decorator" && cell.decorator === "rect";
+}
+
 export function isNoManualLayout(layout: LayoutType) {
   return !["manual", undefined].includes(layout!);
 }
