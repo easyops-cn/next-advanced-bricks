@@ -5,7 +5,7 @@ import styleText from "./styles.shadow.css";
 import { wrapBrick } from "@next-core/react-element";
 import { formatOptions } from "../utils/formatOptions.js";
 import { cloneDeep, isEqual, toLower } from "lodash";
-import {
+import type {
   Input,
   InputEvents,
   InputEventsMap,
