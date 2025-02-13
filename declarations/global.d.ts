@@ -71,6 +71,11 @@ declare module "*.md" {
   export default source;
 }
 
+declare module "*?raw" {
+  const source: string;
+  export default source;
+}
+
 declare module "@ungap/event-target" {
   export default EventTarget;
 }

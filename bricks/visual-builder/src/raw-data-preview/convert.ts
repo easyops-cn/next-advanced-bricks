@@ -2,12 +2,19 @@ import type { BrickConf } from "@next-core/types";
 import { pick } from "lodash";
 import type { CSSProperties } from "react";
 import type { VisualConfig, VisualStyle } from "./raw-data-interfaces";
+import { getMemberAccessor } from "../shared/getMemberAccessor";
 
 export function convertToStoryboard(
   config: VisualConfig,
   attr: string
 ): BrickConf | null {
-  const attrAccessor = `[${JSON.stringify(attr)}]`;
+  return lowLevelConvertToStoryboard(config, getMemberAccessor(attr));
+}
+
+export function lowLevelConvertToStoryboard(
+  config: VisualConfig,
+  attrAccessor: string
+): BrickConf | null {
   let brickItem: BrickConf;
 
   switch (config.display) {
@@ -42,7 +49,13 @@ export function convertToStoryboard(
           color: config.style?.background
             ? `${config.style.background}${colorSuffix}`
             : config.style?.palette
-              ? `<% \`\${(${JSON.stringify(config.style.palette)})[${valueAccessor}] ?? "gray"}${colorSuffix}\` %>`
+              ? `<%
+  \`\${new Map(Object.entries(${JSON.stringify(
+    config.style.palette,
+    null,
+    2
+  ).replaceAll("\n", "\n  ")})).get(${valueAccessor}) ?? "gray"}${colorSuffix}\`
+%>`
               : `gray${colorSuffix}`,
           outline: config.style?.variant === "outline",
         },
@@ -219,7 +232,7 @@ function getValueAccessor(config: VisualConfig, attrAccessor: string): string {
     (config.type === "struct" || config.type === "struct-list") &&
     config.field
   ) {
-    return `${config.type === "struct" ? `DATA${attrAccessor}` : "ITEM"}[${JSON.stringify(config.field)}]`;
+    return `${config.type === "struct" ? `DATA${attrAccessor}` : "ITEM"}${getMemberAccessor(config.field)}`;
   }
   return `DATA${attrAccessor}`;
 }
