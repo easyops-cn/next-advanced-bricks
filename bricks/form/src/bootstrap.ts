@@ -1,7 +1,6 @@
-import "./input/index.js";
+import "./input.js";
 import "./textarea/index.js";
 import "./form/index.js";
-import "./form-item/index.js";
 import "./radio/index.js";
 import "./select/index.js";
 import "./submit-buttons/index.js";

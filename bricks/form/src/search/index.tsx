@@ -8,7 +8,7 @@ import type {
   GeneralIconProps,
 } from "@next-bricks/icons/general-icon";
 import { debounce } from "lodash";
-import {
+import type {
   Input,
   InputEvents,
   InputEventsMap,

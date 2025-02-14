@@ -9,7 +9,7 @@ import React, {
   type MouseEvent,
   type CSSProperties,
 } from "react";
-import { wrapBrick } from "@next-core/react-element";
+import { wrapBrick, wrapLocalBrick } from "@next-core/react-element";
 import { EventEmitter, createDecorators } from "@next-core/element";
 import type {
   GeneralIcon,
@@ -20,14 +20,14 @@ import classNames from "classnames";
 import { isNil } from "lodash";
 import styleText from "./input.shadow.css";
 import { FormItemElementBase, MessageBody } from "@next-shared/form";
-import { FormItem, FormItemProps } from "../form-item/index.jsx";
+import type { FormItem, FormItemProps } from "../form-item/index.jsx";
 import { ComponentSize, InputType } from "../interface.js";
 import { useMergeRefs } from "@next-shared/hooks";
 
 const { defineElement, property, event, method } = createDecorators();
 
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
-const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
+const WrappedFormItem = wrapLocalBrick<FormItem, FormItemProps>("eo-form-item");
 
 export interface InputProps extends FormItemProps {
   value?: string;
