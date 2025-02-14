@@ -3,15 +3,17 @@ import React, { useEffect, useMemo, useRef } from "react";
 import type { NodePosition } from "../diagram/interfaces";
 import { useHoverStateContext } from "./HoverStateContext";
 import type {
-  BaseEdgeCell,
   ControlPoint,
-  EdgeCell,
   EditableLine,
+  EditableLineCell,
+  EditableLineView,
 } from "./interfaces";
-import { isStraightType } from "./processors/asserts";
+import { isLineDecoratorCell, isStraightType } from "./processors/asserts";
 
 const POINT_HELPER_IMAGE =
   "data:image/svg+xml;base64,PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSIyMnB4IiBoZWlnaHQ9IjIycHgiIHZlcnNpb249IjEuMSI+PGNpcmNsZSBjeD0iMTEiIGN5PSIxMSIgcj0iNyIgc3Ryb2tlPSIjZmZmIiBmaWxsPSIjMjliNmYyIi8+PGNpcmNsZSBjeD0iMTEiIGN5PSIxMSIgcj0iMyIgc3Ryb2tlPSIjZmZmIiBmaWxsPSJ0cmFuc3BhcmVudCIvPjwvc3ZnPg==";
+const END_POINT_HELPER_IMAGE =
+  "data:image/svg+xml;base64,PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSIxOHB4IiBoZWlnaHQ9IjE4cHgiIHZlcnNpb249IjEuMSIgc3R5bGU9ImNvbG9yLXNjaGVtZTogbGlnaHQgZGFyazsiPjxjaXJjbGUgY3g9IjkiIGN5PSI5IiByPSI2IiBzdHJva2U9IiNmZmYiIGZpbGw9IiMyOWI2ZjIiLz48L3N2Zz4=";
 const ANCHORED_POINT_HELPER_IMAGE =
   "data:image/svg+xml;base64,PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSIyMnB4IiBoZWlnaHQ9IjIycHgiIHZlcnNpb249IjEuMSI+PGNpcmNsZSBjeD0iMTEiIGN5PSIxMSIgcj0iNyIgc3Ryb2tlPSIjZmZmIiBmaWxsPSIjMDFiZDIyIi8+PHBhdGggZD0ibSA4IDggTCAxNCAxNE0gOCAxNCBMIDE0IDgiIHN0cm9rZT0iI2ZmZiIvPjwvc3ZnPg==";
 const VERTEX_HELPER_IMAGE =
@@ -20,10 +22,10 @@ const POINT_HELPER_BG_SIZE = 22;
 
 export interface LineEditorComponentProps {
   scale: number;
-  editableLineMap: WeakMap<EdgeCell, EditableLine>;
-  activeEditableEdge: EdgeCell;
+  editableLineMap: WeakMap<EditableLineCell, EditableLine>;
+  activeEditableEdge: EditableLineCell;
   updateCurActiveEditableEdge?: (
-    activeEditableEdge: BaseEdgeCell | null
+    activeEditableEdge: EditableLineCell | null
   ) => void;
 }
 
@@ -37,6 +39,8 @@ export function LineEditorComponent({
   const exitRef = useRef<SVGImageElement>(null);
   const entryRef = useRef<SVGImageElement>(null);
   const controlPointsRef = useRef<(SVGImageElement | null)[]>([]);
+  const isLineDecorator = isLineDecoratorCell(activeEditableEdge);
+
   useEffect(() => {
     const exit = exitRef.current;
     const entry = entryRef.current;
@@ -72,10 +76,19 @@ export function LineEditorComponent({
   ]);
 
   const controlPoints = useMemo(() => {
-    return activeEditableEdge && !isStraightType(activeEditableEdge.view?.type)
-      ? getControlPoints(editableLineMap.get(activeEditableEdge)!.points!)
-      : [];
-  }, [activeEditableEdge, editableLineMap]);
+    if (!activeEditableEdge) {
+      return [];
+    }
+
+    const points = editableLineMap.get(activeEditableEdge)!.points!;
+
+    if (isStraightType((activeEditableEdge.view as EditableLineView)?.type)) {
+      return isLineDecorator ? getStraightControlPoints(points) : [];
+    }
+
+    return getControlPoints(points);
+  }, [activeEditableEdge, editableLineMap, isLineDecorator]);
+
   useEffect(() => {
     if (!activeEditableEdge) {
       return;
@@ -90,7 +103,7 @@ export function LineEditorComponent({
         setLineEditorState({
           offset: [rect.left, rect.top],
           from: [e.clientX, e.clientY],
-          type: "control",
+          type: control.type,
           control,
         });
       };
@@ -127,10 +140,7 @@ export function LineEditorComponent({
     };
   }, []);
 
-  if (!activeEditableEdge) {
-    return null;
-  }
-  const { view } = activeEditableEdge;
+  const view = activeEditableEdge.view as EditableLineView;
   const linePoints = editableLineMap.get(activeEditableEdge)!.points!;
   const { exitPosition, entryPosition } = view ?? {};
 
@@ -153,7 +163,11 @@ export function LineEditorComponent({
         x={exitPoint.x - offset}
         y={exitPoint.y - offset}
         xlinkHref={
-          exitPosition ? ANCHORED_POINT_HELPER_IMAGE : POINT_HELPER_IMAGE
+          isLineDecorator
+            ? VERTEX_HELPER_IMAGE
+            : exitPosition
+              ? ANCHORED_POINT_HELPER_IMAGE
+              : POINT_HELPER_IMAGE
         }
       />
       {controlPoints.map((point, i) => (
@@ -165,8 +179,15 @@ export function LineEditorComponent({
           {...commonProps}
           x={point.x - offset}
           y={point.y - offset}
+          opacity={point.type === "break" ? 0.4 : 1}
           xlinkHref={VERTEX_HELPER_IMAGE}
-          cursor={point.direction === "ns" ? "row-resize" : "col-resize"}
+          cursor={
+            isLineDecorator
+              ? "crosshair"
+              : point.direction === "ns"
+                ? "row-resize"
+                : "col-resize"
+          }
         />
       ))}
       <image
@@ -175,7 +196,11 @@ export function LineEditorComponent({
         x={entryPoint.x - offset}
         y={entryPoint.y - offset}
         xlinkHref={
-          entryPosition ? ANCHORED_POINT_HELPER_IMAGE : POINT_HELPER_IMAGE
+          isLineDecorator
+            ? END_POINT_HELPER_IMAGE
+            : entryPosition
+              ? ANCHORED_POINT_HELPER_IMAGE
+              : POINT_HELPER_IMAGE
         }
       />
     </g>
@@ -193,10 +218,37 @@ function getControlPoints(linePoints: NodePosition[]): ControlPoint[] {
     if (!(ns && ew)) {
       const direction = ns ? "ns" : "ew";
       controlPoints.push({
+        type: "control",
         direction,
         index: cursor - 1,
         x: (prev.x + next.x) / 2,
         y: (prev.y + next.y) / 2,
+      });
+    }
+    prev = next;
+    cursor++;
+  }
+
+  return controlPoints;
+}
+
+function getStraightControlPoints(linePoints: NodePosition[]): ControlPoint[] {
+  const controlPoints: ControlPoint[] = [];
+  let prev = linePoints[0];
+  let cursor = 1;
+  while (cursor < linePoints.length) {
+    const next = linePoints[cursor];
+    controlPoints.push({
+      type: "break",
+      index: cursor - 1,
+      x: (prev.x + next.x) / 2,
+      y: (prev.y + next.y) / 2,
+    });
+    if (cursor < linePoints.length - 1) {
+      controlPoints.push({
+        ...next,
+        type: "corner",
+        index: cursor - 1,
       });
     }
     prev = next;

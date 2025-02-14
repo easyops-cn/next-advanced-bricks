@@ -650,6 +650,32 @@
         <%
           [
             {
+              type: "decorator",
+              decorator: "line",
+              id: "line-1",
+              view: {
+                source: {
+                  x: 200,
+                  y: 200,
+                },
+                target: {
+                  x: 250,
+                  y: 150,
+                },
+                // type: "polyline",
+                vertices: [
+                  {
+                    x: 180,
+                    y: 125,
+                  },
+                ],
+                markers: [{
+                  placement: "end",
+                  type: "arrow",
+                }],
+              },
+            },
+            {
               type: "edge",
               source: "X",
               target: "Y",

@@ -4,8 +4,10 @@ import classNames from "classnames";
 import type {
   Cell,
   ComputedLineConnecterConf,
-  EdgeCell,
+  EditableEdgeLine,
   EditableLine,
+  EditableLineCell,
+  EditableLineView,
 } from "./interfaces";
 import type {
   LineMarkerConf,
@@ -23,10 +25,10 @@ import { getMarkers } from "../shared/canvas/useLineMarkers";
 
 export interface EditingLineComponentProps {
   cells: Cell[];
-  editableLineMap: WeakMap<EdgeCell, EditableLine>;
+  editableLineMap: WeakMap<EditableLineCell, EditableLine>;
   transform: TransformLiteral;
   options: ComputedLineConnecterConf;
-  activeEditableEdge: EdgeCell | null;
+  activeEditableEdge: EditableLineCell | null;
 }
 
 export function EditingLineComponent({
@@ -118,13 +120,16 @@ export function EditingLineComponent({
     function onMouseUp(e: MouseEvent) {
       e.preventDefault();
       reset();
+      // Assert: the activeEditableEdge is an edge.
       if (lineEditorState?.type === "control") {
         const newConnectTo = getConnectTo(e);
         if (movedRef.current) {
-          const { source, target } = editableLineMap.get(activeEditableEdge!)!;
-          const { view } = activeEditableEdge!;
+          const editableLine = editableLineMap.get(
+            activeEditableEdge!
+          ) as EditableEdgeLine;
+          const { source, target } = editableLine;
           onChangeEdgeView?.(source, target, {
-            ...view,
+            ...activeEditableEdge!.view,
             vertices: getNewLineVertices(
               activeEditableEdge!,
               lineEditorState,
@@ -179,11 +184,10 @@ export function EditingLineComponent({
       connectLineTo,
       hoverState
     );
+    const view = activeEditableEdge?.view as EditableLineView | undefined;
     return curveLine(
       points,
-      activeEditableEdge?.view?.type === "curve"
-        ? activeEditableEdge.view.curveType
-        : "curveLinear",
+      view?.type === "curve" ? view.curveType : "curveLinear",
       0,
       1
     );

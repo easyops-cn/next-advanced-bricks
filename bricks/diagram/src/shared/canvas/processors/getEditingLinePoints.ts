@@ -2,17 +2,21 @@ import { pick } from "lodash";
 import type { NodePosition, PositionTuple } from "../../../diagram/interfaces";
 import type { HoverState } from "../../../draw-canvas/HoverStateContext";
 import type {
-  EdgeCell,
   LineEditorState,
   LineEditorStateOfControl,
   EditableLine,
+  EditableLineCell,
+  EditableLineView,
+  DecoratorLineView,
+  NodeView,
 } from "../../../draw-canvas/interfaces";
 import { getSmartLinePoints, simplifyVertices } from "./getSmartLinePoints";
+import { isEditableEdgeLine } from "../../../draw-canvas/processors/asserts";
 
 export function getEditingLinePoints(
-  activeEditableEdge: EdgeCell | null,
+  activeEditableEdge: EditableLineCell | null,
   lineEditorState: LineEditorState | null,
-  editableLineMap: WeakMap<EdgeCell, EditableLine>,
+  editableLineMap: WeakMap<EditableLineCell, EditableLine>,
   connectLineTo: PositionTuple | null,
   hoverState: HoverState | null
 ): NodePosition[] | null {
@@ -29,10 +33,21 @@ export function getEditingLinePoints(
   }
 
   const { type } = lineEditorState;
-  const { source, target } = editableLineMap.get(activeEditableEdge)!;
-  const { view } = activeEditableEdge;
-  const { exitPosition, entryPosition, vertices } = view ?? {};
+  const editableLine = editableLineMap.get(activeEditableEdge)!;
+  let sourceView: NodeView;
+  let targetView: NodeView;
 
+  const cellType = activeEditableEdge.type;
+  if (isEditableEdgeLine(editableLine)) {
+    sourceView = editableLine.source.view;
+    targetView = editableLine.target.view;
+  } else {
+    const view = editableLine.decorator.view as DecoratorLineView;
+    sourceView = { ...view.source, width: 0, height: 0 };
+    targetView = { ...view.target, width: 0, height: 0 };
+  }
+  const view = activeEditableEdge.view as EditableLineView;
+  const { exitPosition, entryPosition, vertices } = view ?? {};
   const lineSettings = pick(view, ["type", "curveType"]);
 
   if (type === "control") {
@@ -43,53 +58,111 @@ export function getEditingLinePoints(
       connectLineTo!
     );
 
-    return getSmartLinePoints(source.view, target.view, {
-      ...lineSettings,
-      exitPosition,
-      entryPosition,
-      vertices: newVertices,
-    });
+    return getSmartLinePoints(
+      sourceView,
+      targetView,
+      {
+        ...lineSettings,
+        exitPosition,
+        entryPosition,
+        vertices: newVertices,
+      },
+      0,
+      cellType
+    );
   }
 
-  if (hoverState?.activePointIndex !== undefined) {
+  if (type === "corner") {
+    const newVertices = [...vertices!];
+    newVertices.splice(lineEditorState.control.index, 1, {
+      x: connectLineTo![0],
+      y: connectLineTo![1],
+    });
+
+    return getSmartLinePoints(
+      sourceView,
+      targetView,
+      {
+        ...lineSettings,
+        exitPosition,
+        entryPosition,
+        vertices: newVertices,
+      },
+      0,
+      cellType
+    );
+  }
+
+  if (type === "break") {
+    const newVertices = [...(vertices ?? [])];
+    newVertices.splice(lineEditorState.control.index, 0, {
+      x: connectLineTo![0],
+      y: connectLineTo![1],
+    });
+
+    return getSmartLinePoints(
+      sourceView,
+      targetView,
+      {
+        ...lineSettings,
+        exitPosition,
+        entryPosition,
+        vertices: newVertices,
+      },
+      0,
+      cellType
+    );
+  }
+
+  if (cellType === "edge" && hoverState?.activePointIndex !== undefined) {
     const position = hoverState.relativePoints[hoverState.activePointIndex];
     // Assert `hoverState.cell` is `target`
-    return getSmartLinePoints(source.view, target.view, {
-      ...lineSettings,
-      ...(type === "entry"
-        ? {
-            exitPosition,
-            entryPosition: position,
-          }
-        : {
-            exitPosition: position,
-            entryPosition,
-          }),
-      vertices,
-    });
+    return getSmartLinePoints(
+      sourceView,
+      targetView,
+      {
+        ...lineSettings,
+        ...(type === "entry"
+          ? {
+              exitPosition,
+              entryPosition: position,
+            }
+          : {
+              exitPosition: position,
+              entryPosition,
+            }),
+        vertices,
+      },
+      0,
+      cellType
+    );
   }
 
   const [x1, y1] = connectLineTo!;
 
   if (type === "entry") {
     return getSmartLinePoints(
-      source.view,
+      sourceView,
       { x: x1, y: y1, width: 0, height: 0 },
-      { ...lineSettings, exitPosition, vertices }
+      { ...lineSettings, exitPosition, vertices },
+      0,
+      cellType
     );
   }
 
   return getSmartLinePoints(
     { x: x1, y: y1, width: 0, height: 0 },
-    target.view,
-    { ...lineSettings, entryPosition, vertices }
+    targetView,
+    { ...lineSettings, entryPosition, vertices },
+    0,
+    cellType
   );
 }
 
 export function getNewLineVertices(
-  activeEditableEdge: EdgeCell,
+  activeEditableEdge: EditableLineCell,
   lineEditorState: LineEditorStateOfControl,
-  editableLineMap: WeakMap<EdgeCell, EditableLine>,
+  editableLineMap: WeakMap<EditableLineCell, EditableLine>,
   connectLineTo: PositionTuple
 ) {
   const { control } = lineEditorState;

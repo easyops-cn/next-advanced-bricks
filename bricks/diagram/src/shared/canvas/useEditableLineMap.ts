@@ -2,11 +2,14 @@ import { useMemo } from "react";
 import type {
   Cell,
   ComputedEdgeLineConf,
+  DecoratorCell,
+  DecoratorLineView,
   EdgeCell,
   EditableLine,
 } from "../../draw-canvas/interfaces";
 import {
   isEdgeCell,
+  isLineDecoratorCell,
   isStraightType,
 } from "../../draw-canvas/processors/asserts";
 import { findNodeOrAreaDecorator } from "../../draw-canvas/processors/findNodeOrAreaDecorator";
@@ -17,26 +20,26 @@ export function useEditableLineMap({
   lineConfMap,
 }: {
   cells: Cell[];
-  lineConfMap: WeakMap<EdgeCell, ComputedEdgeLineConf>;
+  lineConfMap: WeakMap<EdgeCell | DecoratorCell, ComputedEdgeLineConf>;
 }) {
   return useMemo(() => {
-    const map = new WeakMap<EdgeCell, EditableLine>();
+    const map = new WeakMap<EdgeCell | DecoratorCell, EditableLine>();
 
-    for (const edge of cells) {
-      if (isEdgeCell(edge)) {
-        const lineConf = lineConfMap.get(edge)!;
+    for (const cell of cells) {
+      if (isEdgeCell(cell)) {
+        const lineConf = lineConfMap.get(cell)!;
 
-        const sourceNode = findNodeOrAreaDecorator(cells, edge.source);
-        const targetNode = findNodeOrAreaDecorator(cells, edge.target);
+        const sourceNode = findNodeOrAreaDecorator(cells, cell.source);
+        const targetNode = findNodeOrAreaDecorator(cells, cell.target);
 
         const hasOppositeEdge =
-          isStraightType(edge.view?.type) &&
+          isStraightType(cell.view?.type) &&
           cells.some(
-            (cell) =>
-              isEdgeCell(cell) &&
-              cell.source === edge.target &&
-              cell.target === edge.source &&
-              isStraightType(cell.view?.type)
+            (c) =>
+              isEdgeCell(c) &&
+              c.source === c.target &&
+              c.target === c.source &&
+              isStraightType(c.view?.type)
           );
         const parallelGap = hasOppositeEdge ? lineConf.parallelGap : 0;
 
@@ -48,18 +51,40 @@ export function useEditableLineMap({
             ? getSmartLinePoints(
                 sourceNode.view,
                 targetNode.view,
-                edge.view,
-                parallelGap
+                cell.view,
+                parallelGap,
+                cell.type
               )
             : null;
 
         if (points) {
-          map.set(edge, {
-            edge,
+          map.set(cell, {
+            edge: cell,
             points,
             source: sourceNode!,
             target: targetNode!,
             parallelGap,
+          });
+        }
+      } else if (isLineDecoratorCell(cell)) {
+        const { source, target } = cell.view as DecoratorLineView;
+
+        const points =
+          source && target
+            ? getSmartLinePoints(
+                { ...source, width: 0, height: 0 },
+                { ...target, width: 0, height: 0 },
+                cell.view,
+                0,
+                cell.type
+              )
+            : null;
+
+        if (points) {
+          map.set(cell, {
+            decorator: cell,
+            points,
+            parallelGap: 0,
           });
         }
       }

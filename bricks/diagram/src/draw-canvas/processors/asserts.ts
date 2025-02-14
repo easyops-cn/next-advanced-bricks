@@ -2,6 +2,9 @@ import type {
   Cell,
   DecoratorCell,
   EdgeCell,
+  EditableDecoratorLine,
+  EditableEdgeLine,
+  EditableLine,
   InitialCell,
   InitialNodeCell,
   LayoutType,
@@ -75,10 +78,28 @@ export function isRectDecoratorCell(
   return cell.type === "decorator" && cell.decorator === "rect";
 }
 
+export function isLineDecoratorCell(
+  cell: Cell | MoveCellPayload
+): cell is DecoratorCell {
+  return cell.type === "decorator" && cell.decorator === "line";
+}
+
 export function isNoManualLayout(layout: LayoutType) {
   return !["manual", undefined].includes(layout!);
 }
 
 export function isStraightType(type: LineType | undefined) {
   return !(type === "polyline" || type === "curve");
+}
+
+export function isEditableEdgeLine(
+  line: EditableLine
+): line is EditableEdgeLine {
+  return !!(line as EditableEdgeLine).edge;
+}
+
+export function isEditableDecoratorLine(
+  line: EditableLine
+): line is EditableEdgeLine {
+  return !!(line as EditableDecoratorLine).decorator;
 }

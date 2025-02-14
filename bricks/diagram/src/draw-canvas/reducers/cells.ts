@@ -78,6 +78,24 @@ export const cells: Reducer<Cell[], DrawCanvasAction> = (state, action) => {
             ...state.slice(existedEdgeIndex + 1),
           ];
     }
+    case "change-decorator-view": {
+      const existedDecoratorIndex = state.findIndex(
+        (cell) => cell.type === "decorator" && cell.id === action.payload.id
+      );
+      return existedDecoratorIndex === -1
+        ? state
+        : [
+            ...state.slice(0, existedDecoratorIndex),
+            {
+              ...(state[existedDecoratorIndex] as EdgeCell),
+              view: {
+                ...(state[existedDecoratorIndex] as EdgeCell).view,
+                ...action.payload.view,
+              },
+            },
+            ...state.slice(existedDecoratorIndex + 1),
+          ];
+    }
     case "move-cells": {
       let matched = false;
       const newState = state.map((cell) => {

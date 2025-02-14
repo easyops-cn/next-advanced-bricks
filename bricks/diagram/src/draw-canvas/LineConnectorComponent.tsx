@@ -4,13 +4,15 @@ import { useHoverStateContext } from "./HoverStateContext";
 import type {
   ActiveTarget,
   Cell,
-  EdgeCell,
+  EditableEdgeLine,
   EditableLine,
+  EditableLineCell,
   NodeCell,
 } from "./interfaces";
 import { targetIsActive } from "./processors/targetIsActive";
 import type { NodePosition } from "../diagram/interfaces";
 import { DEFAULT_NODE_PADDING_FOR_SMART_LINES } from "./constants";
+import { isEditableEdgeLine } from "./processors/asserts";
 
 const HELPER_IMAGE =
   "data:image/svg+xml;base64,PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSI1cHgiIGhlaWdodD0iNXB4IiB2ZXJzaW9uPSIxLjEiPjxwYXRoIGQ9Im0gMCAwIEwgNSA1IE0gMCA1IEwgNSAwIiBzdHJva2Utd2lkdGg9IjIiIHN0eWxlPSJzdHJva2Utb3BhY2l0eTowLjQiIHN0cm9rZT0iI2ZmZmZmZiIvPjxwYXRoIGQ9Im0gMCAwIEwgNSA1IE0gMCA1IEwgNSAwIiBzdHJva2U9IiMyOWI2ZjIiLz48L3N2Zz4=";
@@ -20,9 +22,9 @@ const HALF_HELPER_RADIUS = HELPER_RADIUS / 2;
 
 export interface LineConnectorComponentProps {
   activeTarget: ActiveTarget | null;
-  editableLineMap: WeakMap<EdgeCell, EditableLine>;
+  editableLineMap: WeakMap<EditableLineCell, EditableLine>;
   scale: number;
-  activeEditableEdge: EdgeCell | null;
+  activeEditableEdge: EditableLineCell | null;
   disabled?: boolean;
 }
 
@@ -65,17 +67,21 @@ export function LineConnectorComponent({
 
   let source: Cell | undefined;
   let target: Cell | undefined;
+  let editableLine: EditableLine | undefined;
 
   const available =
     !disabled &&
     hoverState &&
     (!!smartConnectLineState ||
-      (activeEditableEdge &&
-      lineEditorState &&
-      (({ source, target } = editableLineMap.get(activeEditableEdge)!), true)
-        ? lineEditorState.type === "entry"
-          ? hoverState.cell === target
-          : lineEditorState.type === "exit" && hoverState.cell === source
+      (activeEditableEdge && lineEditorState
+        ? (editableLine = editableLineMap.get(activeEditableEdge)) &&
+          (isEditableEdgeLine(editableLine)
+            ? (({ source, target } = editableLine),
+              lineEditorState.type === "entry")
+              ? hoverState.cell === target
+              : lineEditorState.type === "exit" && hoverState.cell === source
+            : // TODO(steve): decorator line
+              false)
         : !targetIsActive(hoverState.cell, activeTarget) &&
           !hasActiveEdge(activeTarget)));
 
@@ -125,11 +131,11 @@ export function LineConnectorComponent({
 }
 
 interface ConnectPointComponentProps {
-  editableLineMap: WeakMap<EdgeCell, EditableLine>;
+  editableLineMap: WeakMap<EditableLineCell, EditableLine>;
   index: number;
   point: NodePosition;
   scale: number;
-  activeEditableEdge: EdgeCell | null;
+  activeEditableEdge: EditableLineCell | null;
   unsetTimeout: () => void;
   unsetActivePointIndex: () => void;
 }
@@ -204,6 +210,13 @@ function ConnectPointComponent({
 
   useEffect(() => {
     const handleMouseUp = (e: MouseEvent) => {
+      if (
+        activeEditableEdge &&
+        lineEditorState &&
+        activeEditableEdge.type === "decorator"
+      ) {
+        return;
+      }
       e.preventDefault();
       e.stopPropagation();
       if (smartConnectLineState) {
@@ -220,7 +233,9 @@ function ConnectPointComponent({
         const position =
           hoverState!.relativePoints[hoverState!.activePointIndex!];
         const { type } = lineEditorState;
-        const { source, target } = editableLineMap.get(activeEditableEdge!)!;
+        const { source, target } = editableLineMap.get(
+          activeEditableEdge!
+        ) as EditableEdgeLine;
         const { view } = activeEditableEdge!;
         if (type === "entry") {
           onChangeEdgeView?.(source, target, {

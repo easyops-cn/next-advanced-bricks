@@ -7,19 +7,20 @@ import type {
   ComputedEdgeLineConf,
   DecoratorTextChangeDetail,
   DecoratorView,
-  EdgeCell,
   LayoutOptions,
   LayoutType,
   NodeBrickConf,
   NodeCell,
   EditableLine,
-  BaseEdgeCell,
+  EditableLineCell,
+  EditableEdgeLine,
 } from "./interfaces";
 import {
   isContainerDecoratorCell,
   isDecoratorCell,
   isEdgeCell,
   isEdgeSide,
+  isLineDecoratorCell,
   isNoManualLayout,
   isNodeCell,
 } from "./processors/asserts";
@@ -44,17 +45,17 @@ export interface CellComponentProps {
   degradedNodeLabel?: string;
   defaultNodeBricks?: NodeBrickConf[];
   transform: TransformLiteral;
-  lineConfMap: WeakMap<EdgeCell, ComputedEdgeLineConf>;
-  editableLineMap: WeakMap<EdgeCell, EditableLine>;
+  lineConfMap: WeakMap<EditableLineCell, ComputedEdgeLineConf>;
+  editableLineMap: WeakMap<EditableLineCell, EditableLine>;
   activeTarget: ActiveTarget | null | undefined;
   readOnly?: boolean;
   hoverCell?: Cell | null | undefined;
   unrelatedCells: Cell[];
   dragNodeToContainerActive?: boolean;
   allowEdgeToArea?: boolean;
-  curActiveEditableEdge?: BaseEdgeCell | null;
+  curActiveEditableEdge?: EditableLineCell | null;
   updateCurActiveEditableEdge?: (
-    activeEditableEdge: BaseEdgeCell | null
+    activeEditableEdge: EditableLineCell | null
   ) => void;
   onCellsMoving?(info: MoveCellPayload[]): void;
   onCellsMoved?(info: MoveCellPayload[]): void;
@@ -128,7 +129,7 @@ export function CellComponent({
       cell.view = view; //Update the rect container to make sure Lasso gets the correct size
       return view;
     }
-    return isEdgeCell(cell)
+    return isEdgeCell(cell) || isLineDecoratorCell(cell)
       ? undefined
       : get(cell, "view", { x: 0, y: 0, width: 0, height: 0 });
   }, [layout, cell, cells]);
@@ -173,9 +174,11 @@ export function CellComponent({
     onCellsMoved,
     onCellsMoving,
     onSwitchActiveTarget,
+    updateCurActiveEditableEdge,
     readOnly,
     transform.k,
   ]);
+
   // istanbul ignore next: experimental
   useEffect(() => {
     const g = gRef.current;
@@ -190,6 +193,13 @@ export function CellComponent({
       return;
     }
     const onMouseUp = (e: MouseEvent) => {
+      if (
+        curActiveEditableEdge &&
+        lineEditorState &&
+        curActiveEditableEdge.type === "decorator"
+      ) {
+        return;
+      }
       e.preventDefault();
       e.stopPropagation();
       if (smartConnectLineState) {
@@ -204,7 +214,9 @@ export function CellComponent({
         setSmartConnectLineState(null);
       } else if (curActiveEditableEdge && lineEditorState) {
         const { type } = lineEditorState;
-        const { source, target } = editableLineMap.get(curActiveEditableEdge)!;
+        const { source, target } = editableLineMap.get(
+          curActiveEditableEdge
+        ) as EditableEdgeLine;
         const { view } = curActiveEditableEdge;
 
         const isEntry = type === "entry";
@@ -293,7 +305,7 @@ export function CellComponent({
       })}
       ref={gRef}
       transform={
-        cell.type === "edge" || cell.view.x == null
+        isEdgeCell(cell) || isLineDecoratorCell(cell) || cell.view.x == null
           ? undefined
           : `translate(${containerRect!.x} ${containerRect!.y})`
       }
@@ -313,9 +325,7 @@ export function CellComponent({
       ) : isEdgeCell(cell) ? (
         <EdgeComponent
           edge={cell}
-          active={
-            readOnly ? hoverCell === cell : sameTarget(activeTarget, cell)
-          }
+          active={readOnly ? hoverCell === cell : active}
           activeRelated={!!(readOnly ? hoverCell : activeTarget) && !unrelated}
           lineConfMap={lineConfMap}
           editableLineMap={editableLineMap}
@@ -330,8 +340,11 @@ export function CellComponent({
           readOnly={readOnly}
           layout={layout}
           layoutOptions={layoutOptions}
+          active={active}
           activeTarget={activeTarget}
           cells={cells}
+          lineConfMap={lineConfMap}
+          editableLineMap={editableLineMap}
           onCellResizing={onCellResizing}
           onCellResized={onCellResized}
           onSwitchActiveTarget={onSwitchActiveTarget}
