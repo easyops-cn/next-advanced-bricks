@@ -212,7 +212,11 @@ function getMenuItemWithBlockInfo<T extends ConfigMenuItem>(
     const allBlocked =
       subItems.length > 0 && subItems.every((subItem) => subItem.allBlocked);
     const blockableUrls = subItems.flatMap((subItem) =>
-      subItem.blockable ? subItem.url : []
+      subItem.blockable
+        ? ((subItem as unknown as ConfigMenuItemDir).blockableUrls ??
+          (subItem as ConfigMenuItemCustom).blockableUrl ??
+          subItem.url)
+        : []
     );
     return {
       ...item,
