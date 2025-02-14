@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.20.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.20.1...@next-bricks/nav@1.20.2) (2025-02-14)
+
+
+### Bug Fixes
+
+* fix an issue that custom items in dir not blockable ([f80f44c](https://github.com/easyops-cn/next-advanced-bricks/commit/f80f44cf1a1f04b45fef285e15e31f7d1c062928))
+
+
+
+
+
 ## [1.20.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.20.0...@next-bricks/nav@1.20.1) (2025-01-20)
 
 
