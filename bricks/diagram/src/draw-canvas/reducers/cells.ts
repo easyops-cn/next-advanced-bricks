@@ -1,40 +1,51 @@
 import type { Reducer } from "react";
+import { pick } from "lodash";
 import type { DrawCanvasAction } from "./interfaces";
-import type { Cell, EdgeCell, NodeCell } from "../interfaces";
+import type {
+  Cell,
+  DecoratorCell,
+  DecoratorType,
+  EdgeCell,
+  NodeCell,
+} from "../interfaces";
 import { isNodeCell } from "../processors/asserts";
 import { SYMBOL_FOR_SIZE_INITIALIZED } from "../constants";
-import { pick } from "lodash";
+
+type CellOrder = CellOrderOfDecorator | CellOrderOfOthers;
+
+interface CellOrderOfDecorator {
+  type: "decorator";
+  decorators: DecoratorType[];
+}
+
+interface CellOrderOfOthers {
+  type: "node" | "edge";
+}
+
+// NOTE: keep the cells in the following order by default, when adding new cells:
+//   1. decorators other than text
+//   2. edges
+//   3. nodes
+//   4. decorators of text
+const DEFAULT_CELL_ORDERS: CellOrder[] = [
+  {
+    type: "decorator",
+    decorators: ["line", "area", "container", "rect"],
+  },
+  { type: "edge" },
+  { type: "node" },
+  { type: "decorator", decorators: ["text"] },
+];
 
 export const cells: Reducer<Cell[], DrawCanvasAction> = (state, action) => {
   switch (action.type) {
     case "drop-node":
-      return insertCellAfter(
-        state,
-        action.payload,
-        (cell) => !(cell.type === "decorator" && cell.decorator === "text")
-      );
-    case "drop-decorator": {
-      if (action.payload.decorator === "text") {
-        return [...state, action.payload];
-      }
-      return insertCellAfter(
-        state,
-        action.payload,
-        (cell) => cell.type === "decorator" && cell.decorator === "area"
-      );
-    }
-    case "add-nodes": {
-      const index =
-        state.findLastIndex(
-          (cell) => !(cell.type === "decorator" && cell.decorator === "text")
-        ) + 1;
-      return [
-        ...state.slice(0, index),
-        ...action.payload,
-        ...state.slice(index),
-      ];
-    }
+    case "drop-decorator":
+      return insertCell(state, action.payload);
+    case "add-nodes":
+      return insertCells(state, action.payload);
     case "add-edge": {
+      // If the new edge between the source and target already exists, override the old one.
       const existedEdgeIndex = state.findIndex(
         (cell) =>
           cell.type === "edge" &&
@@ -44,13 +55,7 @@ export const cells: Reducer<Cell[], DrawCanvasAction> = (state, action) => {
       if (existedEdgeIndex === -1) {
         // Add the edge to just next to the previous last edge or area decorator.
         // If not found, append to the start.
-        return insertCellAfter(
-          state,
-          action.payload,
-          (cell) =>
-            cell.type === "edge" ||
-            (cell.type === "decorator" && cell.decorator === "area")
-        );
+        return insertCell(state, action.payload);
       }
       return [
         ...state.slice(0, existedEdgeIndex),
@@ -150,11 +155,48 @@ export const cells: Reducer<Cell[], DrawCanvasAction> = (state, action) => {
   return state;
 };
 
-function insertCellAfter(
-  cells: Cell[],
-  newCell: Cell,
-  after: (cell: Cell) => boolean
-) {
-  const index = cells.findLastIndex(after) + 1;
-  return [...cells.slice(0, index), newCell, ...cells.slice(index)];
+function insertCell(cells: Cell[], newCell: Cell): Cell[] {
+  return insertCells(cells, [newCell]);
+}
+
+/**
+ * Insert new cells (with same types and some decorators) to the cells.
+ */
+function insertCells(cells: Cell[], newCells: Cell[]): Cell[] {
+  if (newCells.length === 0) {
+    return cells;
+  }
+  const index = DEFAULT_CELL_ORDERS.findIndex((order) =>
+    matchCellOrder(newCells[0], order)
+  );
+
+  // istanbul ignore next
+  if (index === -1) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      "Default order index unhandled for the cell: %o.\n%s",
+      newCells[0],
+      "This is a bug of diagram-NB, please report it."
+    );
+  }
+
+  const lastIndex = cells.findLastIndex(
+    (cell) =>
+      DEFAULT_CELL_ORDERS.findIndex((order) => matchCellOrder(cell, order)) <=
+      index
+  );
+  const targetIndex = lastIndex + 1;
+  return [
+    ...cells.slice(0, targetIndex),
+    ...newCells,
+    ...cells.slice(targetIndex),
+  ];
+}
+
+function matchCellOrder(cell: Cell, order: CellOrder) {
+  return (
+    cell.type === order.type &&
+    (order.type !== "decorator" ||
+      order.decorators.includes((cell as DecoratorCell).decorator))
+  );
 }
