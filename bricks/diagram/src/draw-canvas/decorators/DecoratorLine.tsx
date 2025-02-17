@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useRef } from "react";
+import classNames from "classnames";
 import type { BasicDecoratorProps } from "../interfaces";
 import { getMarkers } from "../../shared/canvas/useLineMarkers";
 import type { LineMarkerConf } from "../../diagram/interfaces";
@@ -90,7 +91,10 @@ export function DecoratorLine({
         strokeWidth={lineConf.interactStrokeWidth}
       />
       <path
-        // className="decorator-line-path"
+        className={classNames("line", {
+          dashed: lineConf.dashed,
+          dotted: lineConf.dotted,
+        })}
         ref={pathRefCallback}
         d={line}
         fill="none"
