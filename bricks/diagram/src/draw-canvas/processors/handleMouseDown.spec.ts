@@ -1,7 +1,7 @@
 import { describe, test, expect, jest } from "@jest/globals";
 import { fireEvent } from "@testing-library/dom";
 import { handleMouseDown } from "./handleMouseDown";
-import type { ActiveTarget, Cell } from "../interfaces";
+import type { ActiveTarget, Cell, DecoratorCell } from "../interfaces";
 
 describe("handleMouseDown", () => {
   const onCellsMoving = jest.fn();
@@ -67,8 +67,6 @@ describe("handleMouseDown", () => {
     ]);
 
     expect(onSwitchActiveTarget).toHaveBeenCalledTimes(1);
-
-    document.body.replaceChildren();
   });
 
   test("move container node", () => {
@@ -165,8 +163,6 @@ describe("handleMouseDown", () => {
     ]);
 
     expect(onSwitchActiveTarget).toHaveBeenCalledTimes(1);
-
-    document.body.replaceChildren();
   });
 
   test("move node and snap to grid", () => {
@@ -204,8 +200,6 @@ describe("handleMouseDown", () => {
     ]);
 
     expect(onSwitchActiveTarget).toHaveBeenCalledTimes(1);
-
-    document.body.replaceChildren();
   });
 
   test("move node and snap to object", () => {
@@ -282,8 +276,6 @@ describe("handleMouseDown", () => {
     ]);
 
     expect(onSwitchActiveTarget).toHaveBeenCalledTimes(1);
-
-    document.body.replaceChildren();
   });
 
   test("move multi nodes", () => {
@@ -340,8 +332,6 @@ describe("handleMouseDown", () => {
     ]);
 
     expect(onSwitchActiveTarget).not.toHaveBeenCalled();
-
-    document.body.replaceChildren();
   });
 
   test("no movable nodes", () => {
@@ -374,8 +364,6 @@ describe("handleMouseDown", () => {
     fireEvent.mouseMove(document, { clientX: 25, clientY: 50 });
     expect(onCellsMoving).not.toBeCalled();
     expect(onSwitchActiveTarget).not.toHaveBeenCalled();
-
-    document.body.replaceChildren();
   });
 
   test("resize node", () => {
@@ -415,8 +403,6 @@ describe("handleMouseDown", () => {
     });
 
     expect(onSwitchActiveTarget).toHaveBeenCalledTimes(1);
-
-    document.body.replaceChildren();
   });
 
   test("mousedown on node with force layout", () => {
@@ -467,5 +453,76 @@ describe("handleMouseDown", () => {
       activeTarget,
     });
     expect(onSwitchActiveTarget).toHaveBeenCalledWith(null);
+
+    fireEvent.mouseUp(document, { clientX: 10, clientY: 20 });
+  });
+
+  test("move line decorator", () => {
+    const mousedown = new MouseEvent("mousedown", { clientX: 10, clientY: 20 });
+    const cell = {
+      type: "decorator",
+      id: "decorator-1",
+      decorator: "line",
+      view: {
+        source: { x: 4, y: 6 },
+        target: { x: 100, y: 200 },
+        x: 4,
+        y: 6,
+        width: 96,
+        height: 194,
+        vertices: [{ x: 4, y: 200 }],
+      },
+    } as unknown as DecoratorCell;
+
+    handleMouseDown(mousedown, {
+      action: "move",
+      cell,
+      ...methods,
+      cells: [cell],
+    });
+
+    expect(onSwitchActiveTarget).toHaveBeenCalledWith({
+      type: "decorator",
+      id: "decorator-1",
+    });
+
+    fireEvent.mouseMove(document, { clientX: 11, clientY: 22 });
+    expect(onCellsMoving).not.toBeCalled();
+
+    fireEvent.mouseMove(document, { clientX: 25, clientY: 50 });
+    expect(onCellsMoving).toBeCalledWith([
+      {
+        decorator: "line",
+        id: "decorator-1",
+        type: "decorator",
+        source: { x: 19, y: 36 },
+        target: { x: 115, y: 230 },
+        vertices: [{ x: 19, y: 230 }],
+        x: 19,
+        y: 36,
+        width: 96,
+        height: 194,
+        guideLines: [],
+      },
+    ]);
+
+    fireEvent.mouseUp(document, { clientX: 26, clientY: 51 });
+    expect(onCellsMoved).toBeCalledWith([
+      {
+        decorator: "line",
+        id: "decorator-1",
+        type: "decorator",
+        source: { x: 20, y: 37 },
+        target: { x: 116, y: 231 },
+        vertices: [{ x: 20, y: 231 }],
+        x: 20,
+        y: 37,
+        width: 96,
+        height: 194,
+        guideLines: undefined,
+      },
+    ]);
+
+    expect(onSwitchActiveTarget).toHaveBeenCalledTimes(1);
   });
 });

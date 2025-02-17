@@ -49,7 +49,9 @@ import type {
   LineEditorState,
   EdgeView,
   LineSettings,
-  BaseEdgeCell,
+  EditableLineCell,
+  DecoratorView,
+  DecoratorLineView,
 } from "./interfaces";
 import { rootReducer } from "./reducers";
 import { MarkerComponent } from "../diagram/MarkerComponent";
@@ -58,8 +60,10 @@ import {
   isEdgeSide,
   isNodeCell,
   isDecoratorCell,
+  isLineDecoratorCell,
 } from "./processors/asserts";
 import type {
+  DecoratorViewChangePayload,
   EdgeViewChangePayload,
   LineTuple,
   MoveCellPayload,
@@ -143,6 +147,18 @@ export interface DropDecoratorInfo {
   position: PositionTuple;
   text?: string;
   direction?: Direction;
+  /**
+   * Line decorator only: setting initial source position related to (0, 0)
+   * @default {x:-30,y:30}
+   */
+  source?: NodePosition;
+  /**
+   * Line decorator only: setting initial source position related to (0, 0)
+   * @default {x:30,y:-30}
+   */
+  target?: NodePosition;
+  /** Override decorator view settings */
+  view?: DecoratorView & DecoratorLineView;
 }
 
 export interface AddNodeInfo {
@@ -388,6 +404,13 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     this.#edgeViewChange.emit(detail);
   };
 
+  @event({ type: "decorator.view.change" })
+  accessor #decoratorViewChange!: EventEmitter<DecoratorViewChangePayload>;
+
+  #handleDecoratorViewChange = (detail: DecoratorViewChangePayload) => {
+    this.#decoratorViewChange.emit(detail);
+  };
+
   @event({ type: "decorator.text.change" })
   accessor #decoratorTextChange!: EventEmitter<DecoratorTextChangeDetail>;
 
@@ -462,6 +485,9 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     decorator,
     text,
     direction,
+    source,
+    target,
+    view,
   }: DropDecoratorInfo): Promise<DecoratorCell | null> {
     // Drag and then drop a node
     const droppedInside = document
@@ -470,19 +496,36 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     if (droppedInside) {
       const boundingClientRect = this.getBoundingClientRect();
       const transform = this.#canvasRef.current!.getTransform();
+      const x =
+        (position[0] - boundingClientRect.left - transform.x) / transform.k;
+      const y =
+        (position[1] - boundingClientRect.top - transform.y) / transform.k;
       const newDecorator: DecoratorCell = {
         type: "decorator",
         decorator,
         id: uuidV4(),
-        view: {
-          x:
-            (position[0] - boundingClientRect.left - transform.x) / transform.k,
-          y: (position[1] - boundingClientRect.top - transform.y) / transform.k,
-          width: DEFAULT_AREA_WIDTH,
-          height: DEFAULT_AREA_HEIGHT,
-          text,
-          direction,
-        },
+        view:
+          decorator === "line"
+            ? ({
+                source: {
+                  x: x + (source?.x ?? -30),
+                  y: y + (source?.y ?? 30),
+                },
+                target: {
+                  x: x + (target?.x ?? 30),
+                  y: y + (target?.y ?? -30),
+                },
+                ...view,
+              } as unknown as DecoratorView)
+            : {
+                width: DEFAULT_AREA_WIDTH,
+                height: DEFAULT_AREA_HEIGHT,
+                x,
+                y,
+                text,
+                direction,
+                ...view,
+              },
       };
       this.#canvasRef.current?.dropDecorator(newDecorator);
       return newDecorator;
@@ -614,6 +657,7 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
         onContainerContainerChange={this.#handleContainerContainerChange}
         onScaleChange={this.#handleScaleChange}
         onEdgeViewChange={this.#handleEdgeViewChange}
+        onDecoratorViewChange={this.#handleDecoratorViewChange}
       />
     );
   }
@@ -632,6 +676,7 @@ export interface EoDrawCanvasComponentProps extends EoDrawCanvasProps {
   onEdgeAdd(detail: ConnectNodesDetail): void;
   onEdgeViewChange(detail: EdgeViewChangePayload): void;
   onDecoratorTextChange(detail: DecoratorTextChangeDetail): void;
+  onDecoratorViewChange(detail: DecoratorViewChangePayload): void;
   onContainerContainerChange(detail: MoveCellPayload[]): void;
   onScaleChange(scale: number): void;
 }
@@ -694,6 +739,7 @@ function LegacyEoDrawCanvasComponent(
     onScaleChange,
     onContainerContainerChange,
     onEdgeViewChange,
+    onDecoratorViewChange,
   }: EoDrawCanvasComponentProps,
   ref: React.Ref<DrawCanvasRef>
 ) {
@@ -721,8 +767,8 @@ function LegacyEoDrawCanvasComponent(
   );
   const [editingTexts, setEditingTexts] = useState<string[]>([]);
   const [activeContainers, setActiveContainers] = useState<string[]>([]);
-  const [curActiveEditableEdge, setCurActiveEditableEdge] =
-    useState<BaseEdgeCell | null>(null);
+  const [curActiveEditableLine, setCurActiveEditableLine] =
+    useState<EditableLineCell | null>(null);
   const { grabbing, transform, zoomer, scaleRange } = useZoom({
     rootRef,
     zoomable,
@@ -966,6 +1012,7 @@ function LegacyEoDrawCanvasComponent(
   const markerPrefix = `${defPrefix}line-arrow-`;
 
   const [guideLines, setGuideLines] = useState<LineTuple[]>([]);
+  const [movingCells, setMovingCells] = useState(false);
 
   /* istanbul ignore next */
   const handleCellsMoving = useCallback(
@@ -977,6 +1024,7 @@ function LegacyEoDrawCanvasComponent(
       });
       setActiveContainers(containedIds);
       setGuideLines(info.flatMap((c) => c.guideLines ?? []));
+      setMovingCells(true);
     },
     [cells]
   );
@@ -992,6 +1040,7 @@ function LegacyEoDrawCanvasComponent(
       handleNodeContainedChange(info, cells, onContainerContainerChange);
       setActiveContainers([]);
       setGuideLines([]);
+      setMovingCells(false);
     },
     [onCellMove, onCellsMove, cells, onContainerContainerChange]
   );
@@ -1051,14 +1100,14 @@ function LegacyEoDrawCanvasComponent(
 
   const editableLineMap = useEditableLineMap({ cells, lineConfMap });
 
-  const activeEditableEdges = useMemo(() => {
-    let edges: EdgeCell[] = [];
+  const activeEditableLines = useMemo(() => {
+    let edges: EditableLineCell[] = [];
     edges = cells.filter(
       (cell) =>
         targetIsActive(cell, activeTarget) &&
-        cell.type === "edge" &&
+        (isEdgeCell(cell) || isLineDecoratorCell(cell)) &&
         editableLineMap.has(cell)
-    ) as EdgeCell[];
+    ) as EditableLineCell[];
     return edges;
   }, [activeTarget, cells, editableLineMap]);
 
@@ -1174,6 +1223,22 @@ function LegacyEoDrawCanvasComponent(
     [onEdgeViewChange]
   );
 
+  // istanbul ignore next
+  const handleDecoratorChangeView = useCallback(
+    (cell: DecoratorCell, view: DecoratorView | DecoratorLineView) => {
+      const payload: DecoratorViewChangePayload = {
+        id: cell.id,
+        view,
+      };
+      dispatch({
+        type: "change-decorator-view",
+        payload,
+      });
+      onDecoratorViewChange?.(payload);
+    },
+    [onDecoratorViewChange]
+  );
+
   // istanbul ignore next: experimental
   const hoverStateContextValue = useMemo(
     () => ({
@@ -1181,21 +1246,25 @@ function LegacyEoDrawCanvasComponent(
       smartConnectLineState,
       unsetHoverStateTimeoutRef,
       hoverState,
-      activeEditableEdges,
+      activeEditableLines,
       lineEditorState,
+      movingCells,
       setLineEditorState,
       setHoverState,
       setSmartConnectLineState,
       onConnect: handleSmartConnect,
       onChangeEdgeView: handleEdgeChangeView,
+      onChangeDecoratorView: handleDecoratorChangeView,
     }),
     [
-      activeEditableEdges,
+      activeEditableLines,
       handleEdgeChangeView,
+      handleDecoratorChangeView,
       handleSmartConnect,
       hoverState,
       lineEditorState,
       smartConnectLineState,
+      movingCells,
     ]
   );
   useEffect(() => {
@@ -1289,8 +1358,8 @@ function LegacyEoDrawCanvasComponent(
                 activeTarget={activeTarget}
                 unrelatedCells={unrelatedCells}
                 allowEdgeToArea={allowEdgeToArea}
-                curActiveEditableEdge={curActiveEditableEdge}
-                updateCurActiveEditableEdge={setCurActiveEditableEdge}
+                curActiveEditableLine={curActiveEditableLine}
+                updateCurActiveEditableLine={setCurActiveEditableLine}
                 onCellsMoving={handleCellsMoving}
                 onCellsMoved={handleCellsMoved}
                 onCellResizing={handleCellResizing}
@@ -1337,7 +1406,7 @@ function LegacyEoDrawCanvasComponent(
                 editableLineMap={editableLineMap}
                 transform={transform}
                 options={lineConnectorConf}
-                activeEditableEdge={curActiveEditableEdge}
+                activeEditableLine={curActiveEditableLine}
               />
             </g>
           )}
@@ -1354,13 +1423,17 @@ function LegacyEoDrawCanvasComponent(
           </g>
           <g>
             {lineConnectorConf &&
-              activeEditableEdges?.map((activeEdge) => (
+              activeEditableLines?.map((activeEdge) => (
                 <LineEditorComponent
                   editableLineMap={editableLineMap}
                   scale={transform.k}
-                  activeEditableEdge={activeEdge}
-                  updateCurActiveEditableEdge={setCurActiveEditableEdge}
-                  key={`${activeEdge.source}-${activeEdge.target}`}
+                  activeEditableLine={activeEdge}
+                  updateCurActiveEditableLine={setCurActiveEditableLine}
+                  key={
+                    isEdgeCell(activeEdge)
+                      ? `${activeEdge.source}-${activeEdge.target}`
+                      : activeEdge.id
+                  }
                 />
               ))}
           </g>
@@ -1369,7 +1442,7 @@ function LegacyEoDrawCanvasComponent(
               activeTarget={activeTarget}
               editableLineMap={editableLineMap}
               scale={transform.k}
-              activeEditableEdge={curActiveEditableEdge}
+              activeEditableLine={curActiveEditableLine}
               disabled={!!connectLineState}
             />
           )}

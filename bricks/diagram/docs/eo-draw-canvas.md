@@ -267,6 +267,8 @@
           dataSource:
             - area
             - text
+            - line
+            - rect
             - container.top
             - container.right
             - container.bottom
@@ -291,21 +293,26 @@
                   - target: eo-draw-canvas
                     method: dropDecorator
                     args:
-                      - position: <% EVENT.detail %>
-                        decorator: <% ITEM.split(".")[0] %>
-                        text: <% ITEM %>
-                        direction: <% ITEM.split(".").pop() %>
+                      - |
+                        <%
+                          ITEM === "line"
+                            ? {
+                                position: EVENT.detail,
+                                decorator: ITEM.split(".")[0],
+                              }
+                            : {
+                                position: EVENT.detail,
+                                decorator: ITEM.split(".")[0],
+                                text: _.upperFirst(ITEM),
+                                direction: ITEM.split(".").pop(),
+                              }
+                        %>
                     callback:
                       success:
-                        if: <% EVENT.detail %>
-                        then:
-                          # action: message.success
-                          # args:
-                          #   - <% JSON.stringify(EVENT.detail) %>
-                        else:
-                          action: message.warn
-                          args:
-                            - Unexpected drop position
+                        if: <% !EVENT.detail %>
+                        action: message.warn
+                        args:
+                          - Unexpected drop position
     - brick: div
       properties:
         style:
@@ -400,6 +407,11 @@
               args:
                 - |
                   <% `Edge view changed: ${JSON.stringify(EVENT.detail)}` %>
+            decorator.view.change:
+              action: message.info
+              args:
+                - |
+                  <% `Decorator view changed: ${JSON.stringify(EVENT.detail)}` %>
             decorator.text.change:
               action: message.info
               args:
@@ -649,6 +661,32 @@
       value: |
         <%
           [
+            {
+              type: "decorator",
+              decorator: "line",
+              id: "line-1",
+              view: {
+                source: {
+                  x: 200,
+                  y: 200,
+                },
+                target: {
+                  x: 250,
+                  y: 150,
+                },
+                // type: "polyline",
+                vertices: [
+                  {
+                    x: 180,
+                    y: 125,
+                  },
+                ],
+                markers: [{
+                  placement: "end",
+                  type: "arrow",
+                }],
+              },
+            },
             {
               type: "edge",
               source: "X",
@@ -1107,15 +1145,10 @@
                         text: '<% ITEM === "text" ? "Text" : undefined %>'
                     callback:
                       success:
-                        if: <% EVENT.detail %>
-                        then:
-                          # action: message.success
-                          # args:
-                          #   - <% JSON.stringify(EVENT.detail) %>
-                        else:
-                          action: message.warn
-                          args:
-                            - Unexpected drop position
+                        if: <% !EVENT.detail %>
+                        action: message.warn
+                        args:
+                          - Unexpected drop position
     - brick: div
       properties:
         style:
@@ -1498,15 +1531,10 @@
                         text: '<% ITEM === "text" ? "Text" : undefined %>'
                     callback:
                       success:
-                        if: <% EVENT.detail %>
-                        then:
-                          # action: message.success
-                          # args:
-                          #   - <% JSON.stringify(EVENT.detail) %>
-                        else:
-                          action: message.warn
-                          args:
-                            - Unexpected drop position
+                        if: <% !EVENT.detail %>
+                        action: message.warn
+                        args:
+                          - Unexpected drop position
     - brick: div
       properties:
         style:

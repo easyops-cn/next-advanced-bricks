@@ -11,10 +11,14 @@ import type {
   ComputedLineConnecterConf,
   EdgeCell,
   EdgeLineConf,
+  EditableLineCell,
   LineConnecterConf,
   LineMarker,
 } from "../../draw-canvas/interfaces";
-import { isEdgeCell } from "../../draw-canvas/processors/asserts";
+import {
+  isEdgeCell,
+  isLineDecoratorCell,
+} from "../../draw-canvas/processors/asserts";
 import {
   DEFAULT_LINE_STROKE_COLOR,
   DEFAULT_LINE_STROKE_WIDTH,
@@ -22,6 +26,7 @@ import {
   DEFAULT_LINE_INTERACT_SHOW_START_ARROW,
   DEFAULT_LINE_INTERACT_SHOW_END_ARROW,
   DEFAULT_LINE_INTERACT_ANIMATE_DURATION,
+  DEFAULT_DECORATOR_LINE_STROKE_COLOR,
 } from "../../draw-canvas/constants";
 import { LineMarkerConf } from "../../diagram/interfaces";
 
@@ -38,7 +43,7 @@ export function useLineMarkers({
   markerPrefix,
   lineConnector,
 }: UseLineMarkersOptions): {
-  lineConfMap: WeakMap<EdgeCell, ComputedEdgeLineConf>;
+  lineConfMap: WeakMap<EditableLineCell, ComputedEdgeLineConf>;
   lineConnectorConf: ComputedLineConnecterConf | null;
   markers: LineMarker[];
 } {
@@ -87,9 +92,13 @@ export function useLineMarkers({
       }
     }
 
-    const map = new WeakMap<EdgeCell, ComputedEdgeLineConf>();
+    const map = new WeakMap<EditableLineCell, ComputedEdgeLineConf>();
     for (const cell of cells) {
-      if (isEdgeCell(cell)) {
+      const isEdge = isEdgeCell(cell);
+      const isLineDecorator = isLineDecoratorCell(cell);
+
+      let lineConf: ComputedEdgeLineConf;
+      if (isEdge) {
         const computedLineConf =
           (Array.isArray(defaultEdgeLines)
             ? transformLineConf(
@@ -104,7 +113,7 @@ export function useLineMarkers({
                   defaultEdgeLines
                 ) as EdgeLineConf[]
               )?.find((item) => checkIfOfComputed(item))) ?? {};
-        const lineConf = {
+        lineConf = {
           ...getDefaultLineConf(),
           ...omitBy(computedLineConf, isUndefined),
           ...omitBy(cell.view, isUndefined),
@@ -112,7 +121,16 @@ export function useLineMarkers({
         if (lineConf.parallelGap === undefined) {
           lineConf.parallelGap = lineConf.interactStrokeWidth;
         }
+      } else {
+        lineConf = {
+          ...getDefaultLineConf(),
+          showEndArrow: false,
+          strokeColor: DEFAULT_DECORATOR_LINE_STROKE_COLOR,
+          ...omitBy(cell.view, isUndefined),
+        } as ComputedEdgeLineConf;
+      }
 
+      if (isEdge || isLineDecorator) {
         const lineMarkers: LineMarkerConf[] = getMarkers(lineConf);
 
         for (const marker of lineMarkers) {
@@ -147,23 +165,25 @@ export function useLineMarkers({
             }
           }
 
-          const activeRelatedStrokeColor =
-            lineConf.overrides?.activeRelated?.strokeColor;
-          if (
-            activeRelatedStrokeColor &&
-            activeRelatedStrokeColor !== lineConf.strokeColor
-          ) {
-            const activeRelatedMarkerIndex = addMarker(
-              {
-                strokeColor: activeRelatedStrokeColor,
-                markerType: type,
-              },
-              markers
-            );
-            if (placement === "start") {
-              lineConf.$activeRelatedMarkerStartUrl = `url(#${markerPrefix}${activeRelatedMarkerIndex})`;
-            } else {
-              lineConf.$activeRelatedMarkerEndUrl = `url(#${markerPrefix}${activeRelatedMarkerIndex})`;
+          if (isEdge) {
+            const activeRelatedStrokeColor =
+              lineConf.overrides?.activeRelated?.strokeColor;
+            if (
+              activeRelatedStrokeColor &&
+              activeRelatedStrokeColor !== lineConf.strokeColor
+            ) {
+              const activeRelatedMarkerIndex = addMarker(
+                {
+                  strokeColor: activeRelatedStrokeColor,
+                  markerType: type,
+                },
+                markers
+              );
+              if (placement === "start") {
+                lineConf.$activeRelatedMarkerStartUrl = `url(#${markerPrefix}${activeRelatedMarkerIndex})`;
+              } else {
+                lineConf.$activeRelatedMarkerEndUrl = `url(#${markerPrefix}${activeRelatedMarkerIndex})`;
+              }
             }
           }
         }

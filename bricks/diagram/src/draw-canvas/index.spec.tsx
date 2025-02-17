@@ -477,6 +477,27 @@ describe("eo-draw-canvas", () => {
         },
       },
       {
+        type: "decorator",
+        decorator: "line",
+        id: "line-1",
+        view: {
+          source: {
+            x: 100,
+            y: 200,
+          },
+          target: {
+            x: 300,
+            y: 150,
+          },
+        },
+      },
+      {
+        type: "decorator",
+        decorator: "line",
+        id: "line-invalid",
+        view: {},
+      },
+      {
         type: "edge",
         source: "b",
         target: "c",
@@ -569,7 +590,7 @@ describe("eo-draw-canvas", () => {
         element.shadowRoot!.querySelector(".cells div:not(.label)")!
       );
     });
-    expect(handleMouseDown).toBeCalled();
+    expect(handleMouseDown).toHaveBeenCalledTimes(1);
 
     await act(() => new Promise((resolve) => setTimeout(resolve, 1)));
     expect(onActiveTargetChange).toHaveBeenCalledWith({
@@ -580,7 +601,7 @@ describe("eo-draw-canvas", () => {
       [...element.shadowRoot!.querySelectorAll(".cells .cell")].map((cell) =>
         cell.classList.contains("faded")
       )
-    ).toEqual([true, true, true, false, true, true, true, true]);
+    ).toEqual([true, true, true, true, true, false, true, true, true, true]);
     expect(
       [...element.shadowRoot!.querySelectorAll(".motion")].map((cell) =>
         cell.classList.contains("visible")
@@ -607,7 +628,7 @@ describe("eo-draw-canvas", () => {
         element.shadowRoot!.querySelector(".cells .line-group")!
       );
     });
-    expect(handleMouseDown).toBeCalled();
+    expect(handleMouseDown).toHaveBeenCalledTimes(2);
     await act(() => new Promise((resolve) => setTimeout(resolve, 1)));
     expect(onActiveTargetChange).toHaveBeenCalledWith({
       type: "edge",
@@ -623,17 +644,37 @@ describe("eo-draw-canvas", () => {
     // Line connector images
     expect(element.shadowRoot!.querySelectorAll("g > image")?.length).toBe(2);
 
+    // Click on a decorator line
+    act(() => {
+      fireEvent.mouseDown(
+        element.shadowRoot!.querySelectorAll(".cells .decorator-line")[0]
+      );
+    });
+    expect(handleMouseDown).toHaveBeenCalledTimes(3);
+    await act(() => new Promise((resolve) => setTimeout(resolve, 1)));
+    expect(onActiveTargetChange).toHaveBeenCalledWith({
+      type: "decorator",
+      id: "line-1",
+    });
+    expect(onActiveTargetChange).toHaveBeenCalledTimes(3);
+    expect(onActiveTargetChange).toHaveBeenNthCalledWith(3, {
+      type: "decorator",
+      id: "line-1",
+    });
+    // Line connector images
+    expect(element.shadowRoot!.querySelectorAll("g > image")?.length).toBe(3);
+
     // Click on node b
     act(() => {
       fireEvent.mouseDown(
         element.shadowRoot!.querySelectorAll(".cells div:not(.label)")[1]
       );
     });
-    expect(handleMouseDown).toBeCalled();
+    expect(handleMouseDown).toHaveBeenCalledTimes(4);
 
     await act(() => new Promise((resolve) => setTimeout(resolve, 1)));
-    expect(onActiveTargetChange).toHaveBeenCalledTimes(3);
-    expect(onActiveTargetChange).toHaveBeenNthCalledWith(3, {
+    expect(onActiveTargetChange).toHaveBeenCalledTimes(4);
+    expect(onActiveTargetChange).toHaveBeenNthCalledWith(4, {
       type: "node",
       id: "b",
     });
@@ -641,7 +682,18 @@ describe("eo-draw-canvas", () => {
       [...element.shadowRoot!.querySelectorAll(".cells .cell")].map((cell) =>
         cell.classList.contains("faded")
       )
-    ).toEqual([true, false, false, true, false, false, false, true]);
+    ).toEqual([
+      true,
+      true,
+      true,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+    ]);
     expect(
       [...element.shadowRoot!.querySelectorAll(".motion")].map((cell) =>
         cell.classList.contains("visible")
@@ -654,13 +706,13 @@ describe("eo-draw-canvas", () => {
     act(() => {
       fireEvent.click(omitTarget);
     });
-    expect(onActiveTargetChange).toHaveBeenCalledTimes(3);
+    expect(onActiveTargetChange).toHaveBeenCalledTimes(4);
 
     act(() => {
       fireEvent.click(element.shadowRoot!.querySelector("svg")!);
     });
-    expect(onActiveTargetChange).toHaveBeenCalledTimes(4);
-    expect(onActiveTargetChange).toHaveBeenNthCalledWith(4, null);
+    expect(onActiveTargetChange).toHaveBeenCalledTimes(5);
+    expect(onActiveTargetChange).toHaveBeenNthCalledWith(5, null);
 
     act(() => {
       document.body.removeChild(element);
@@ -727,6 +779,27 @@ describe("eo-draw-canvas", () => {
           height: 120,
           text: "上层服务",
           direction: undefined,
+        },
+      });
+    });
+    await act(async () => {
+      const dropResult3 = await element.dropDecorator({
+        decorator: "line",
+        position: [800, 600],
+      });
+      expect(dropResult3).toEqual({
+        type: "decorator",
+        decorator: "line",
+        id: expect.any(String),
+        view: {
+          source: {
+            x: 590,
+            y: 510,
+          },
+          target: {
+            x: 650,
+            y: 450,
+          },
         },
       });
     });

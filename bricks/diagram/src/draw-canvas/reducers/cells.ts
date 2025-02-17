@@ -3,6 +3,7 @@ import type { DrawCanvasAction } from "./interfaces";
 import type { Cell, EdgeCell, NodeCell } from "../interfaces";
 import { isNodeCell } from "../processors/asserts";
 import { SYMBOL_FOR_SIZE_INITIALIZED } from "../constants";
+import { pick } from "lodash";
 
 export const cells: Reducer<Cell[], DrawCanvasAction> = (state, action) => {
   switch (action.type) {
@@ -70,12 +71,24 @@ export const cells: Reducer<Cell[], DrawCanvasAction> = (state, action) => {
             ...state.slice(0, existedEdgeIndex),
             {
               ...(state[existedEdgeIndex] as EdgeCell),
-              view: {
-                ...(state[existedEdgeIndex] as EdgeCell).view,
-                ...action.payload.view,
-              },
+              view: action.payload.view,
             },
             ...state.slice(existedEdgeIndex + 1),
+          ];
+    }
+    case "change-decorator-view": {
+      const existedDecoratorIndex = state.findIndex(
+        (cell) => cell.type === "decorator" && cell.id === action.payload.id
+      );
+      return existedDecoratorIndex === -1
+        ? state
+        : [
+            ...state.slice(0, existedDecoratorIndex),
+            {
+              ...(state[existedDecoratorIndex] as EdgeCell),
+              view: action.payload.view,
+            },
+            ...state.slice(existedDecoratorIndex + 1),
           ];
     }
     case "move-cells": {
@@ -88,7 +101,12 @@ export const cells: Reducer<Cell[], DrawCanvasAction> = (state, action) => {
           matched = true;
           return {
             ...(cell as NodeCell),
-            view: { ...(cell as NodeCell).view, x: newCell.x, y: newCell.y },
+            view: {
+              ...(cell as NodeCell).view,
+              x: newCell.x,
+              y: newCell.y,
+              ...pick(newCell, "source", "target", "vertices"),
+            },
           };
         }
         return cell;
