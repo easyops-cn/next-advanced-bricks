@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.56.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.55.1...@next-bricks/diagram@0.56.0) (2025-02-17)
+
+
+### Features
+
+* **canvas:** support line decorators ([399a280](https://github.com/easyops-cn/next-advanced-bricks/commit/399a280aac3bd0b0ad0671b328c73246c67bd2d4))
+
+
+
+
+
 ## [0.55.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.55.0...@next-bricks/diagram@0.55.1) (2025-02-12)
 
 **Note:** Version bump only for package @next-bricks/diagram
