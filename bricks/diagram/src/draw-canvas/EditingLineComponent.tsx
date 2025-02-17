@@ -82,7 +82,6 @@ export function EditingLineComponent({
       const linePoints = editableLineMap.get(activeEditableLine)!.points;
       const snapDistance = 5;
       const diff: NodePosition = { x: Infinity, y: Infinity };
-      // let original: NodePosition;
       let otherPoints: NodePosition[];
       let axises: ("x" | "y")[];
 
@@ -99,10 +98,6 @@ export function EditingLineComponent({
       if (LOOSE_CONTROL_TYPES.includes(type) && !e.altKey) {
         // Snap to other points
         const control = (lineEditorState as LineEditorStateOfControl).control;
-        // original = {
-        //   x: control.x,
-        //   y: control.y,
-        // };
         axises =
           type === "control"
             ? [control.direction === "ns" ? "y" : "x"]
@@ -122,7 +117,6 @@ export function EditingLineComponent({
       ) {
         const endpoint =
           type === "exit" ? linePoints[0] : linePoints[linePoints.length - 1];
-        // original = clone(endpoint);
         otherPoints = linePoints.filter((p) => p !== endpoint);
         axises = ["x", "y"];
       } else {
