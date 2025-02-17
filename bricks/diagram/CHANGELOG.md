@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.56.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.56.0...@next-bricks/diagram@0.56.1) (2025-02-17)
+
+
+### Bug Fixes
+
+* handle default order when adding new cells ([16ca06c](https://github.com/easyops-cn/next-advanced-bricks/commit/16ca06ced84dc94f0809932a7942a1efd05ea085))
+* support dashed or dotted decorator lines ([e2de693](https://github.com/easyops-cn/next-advanced-bricks/commit/e2de693f62f1408660849fda22cf7fbb6d8fca17))
+
+
+
+
+
 # [0.56.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.55.1...@next-bricks/diagram@0.56.0) (2025-02-17)
 
 
