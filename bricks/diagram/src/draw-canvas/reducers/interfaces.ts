@@ -1,8 +1,14 @@
-import type { PositionTuple, SizeTuple } from "../../diagram/interfaces";
+import type {
+  NodePosition,
+  PositionTuple,
+  SizeTuple,
+} from "../../diagram/interfaces";
 import type {
   Cell,
   DecoratorCell,
+  DecoratorLineView,
   DecoratorType,
+  DecoratorView,
   EdgeCell,
   NodeCell,
   NodeId,
@@ -19,6 +25,7 @@ export type DrawCanvasAction =
   | AddNodeAction
   | AddEdgeAction
   | ChangeEdgeViewAction
+  | ChangeDecoratorViewAction
   | MoveCellsAction
   | ResizeCellAction
   | UpdateCellsAction
@@ -47,6 +54,11 @@ export interface AddEdgeAction {
 export interface ChangeEdgeViewAction {
   type: "change-edge-view";
   payload: EdgeViewChangePayload;
+}
+
+export interface ChangeDecoratorViewAction {
+  type: "change-decorator-view";
+  payload: DecoratorViewChangePayload;
 }
 
 export interface MoveCellsAction {
@@ -85,6 +97,9 @@ export interface MoveCellPayload {
   decorator?: DecoratorType;
   containerCell?: DecoratorCell;
   guideLines?: LineTuple[];
+  source?: NodePosition;
+  target?: NodePosition;
+  vertices?: NodePosition[];
 }
 
 export interface ResizeCellPayload {
@@ -104,3 +119,8 @@ export type EdgeViewChangePayload = Pick<
   EdgeCell,
   "source" | "target" | "view"
 >;
+
+export type DecoratorViewChangePayload = {
+  id: NodeId;
+  view: DecoratorView | DecoratorLineView;
+};

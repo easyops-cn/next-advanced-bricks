@@ -8,7 +8,7 @@ import type {
   NodeCell,
   SnapToObjectPosition,
   ActiveTargetOfSingular,
-  BaseEdgeCell,
+  EditableLineCell,
 } from "../interfaces";
 import type {
   MoveCellPayload,
@@ -18,6 +18,7 @@ import {
   isContainerDecoratorCell,
   isDecoratorCell,
   isEdgeCell,
+  isLineDecoratorCell,
   isNodeCell,
 } from "./asserts";
 import { cellToTarget } from "./cellToTarget";
@@ -44,7 +45,7 @@ export function handleMouseDown(
     onCellResizing,
     onCellResized,
     onSwitchActiveTarget,
-    updateCurActiveEditableEdge,
+    updateCurActiveEditableLine,
   }: {
     action: "move" | "resize";
     cell: Cell;
@@ -58,8 +59,8 @@ export function handleMouseDown(
     onCellResizing?(info: ResizeCellPayload): void;
     onCellResized?(info: ResizeCellPayload): void;
     onSwitchActiveTarget?(activeTarget: ActiveTarget | null): void;
-    updateCurActiveEditableEdge?: (
-      activeEditableEdge: BaseEdgeCell | null
+    updateCurActiveEditableLine?: (
+      activeEditableLine: EditableLineCell | null
     ) => void;
   }
 ) {
@@ -77,8 +78,8 @@ export function handleMouseDown(
       targets = activeTargets.filter((target) => !sameTarget(target, cell));
     } else {
       targets = [...activeTargets, cell];
-      if (cell.type === "edge") {
-        updateCurActiveEditableEdge?.(cell);
+      if (isEdgeCell(cell) || isLineDecoratorCell(cell)) {
+        updateCurActiveEditableLine?.(cell);
       }
     }
     onSwitchActiveTarget?.(
@@ -87,8 +88,8 @@ export function handleMouseDown(
   } else {
     if (action === "resize" || !preActive) {
       onSwitchActiveTarget?.(cellToTarget(cell));
-      if (cell.type === "edge") {
-        updateCurActiveEditableEdge?.(cell);
+      if (isEdgeCell(cell) || isLineDecoratorCell(cell)) {
+        updateCurActiveEditableLine?.(cell);
       }
     }
   }
@@ -138,7 +139,7 @@ export function handleMouseDown(
         : null,
   }));
   const firstOriginalPosition = originals[0].position;
-  let previousPositions = originals.map(({ position }) => position);
+  // let previousPositions = originals.map(({ position }) => position);
 
   // Get the positions of the objects (cells that are not active) to snap to
   let snapToObjectTargets: {
@@ -147,7 +148,9 @@ export function handleMouseDown(
   }[] = [];
   if (action === "move" && snap.object) {
     const objectCells = cells.filter(
-      (c) => !isEdgeCell(c) && !activeCells.includes(c)
+      // Edge and line cells are not snap targets
+      (c) =>
+        !isEdgeCell(c) && !isLineDecoratorCell(c) && !activeCells.includes(c)
     ) as (NodeCell | DecoratorCell)[];
     snapToObjectTargets = objectCells.map((c) => ({
       cell: c,
@@ -163,11 +166,16 @@ export function handleMouseDown(
   const handleMove = (e: MouseEvent, finished?: boolean) => {
     // Respect the scale
     const movement = getMovement(e);
+    const snapMovement: PositionTuple = [...movement];
     let newPositions: PositionTuple[];
     let xAlign: [PositionTuple, PositionTuple] | undefined;
     let yAlign: [PositionTuple, PositionTuple] | undefined;
     let xAlignCell: Cell | undefined;
     let yAlignCell: Cell | undefined;
+
+    if (!moved) {
+      moved = movement[0] ** 2 + movement[1] ** 2 >= 9;
+    }
 
     // Use alt key (or option key ⌥ on Mac) to disable snap
     if ((!snap.grid && !snap.object) || e.altKey) {
@@ -176,14 +184,10 @@ export function handleMouseDown(
         position[0] + movement[0],
         position[1] + movement[1],
       ]);
-      if (!moved) {
-        moved = movement[0] ** 2 + movement[1] ** 2 >= 9;
-      }
     } else {
       // Snap
       let diffX = Infinity;
       let diffY = Infinity;
-      const snapMovement: PositionTuple = [...movement];
 
       if (snap.object) {
         const snapToObjectDistance = snap.object.distance;
@@ -291,16 +295,9 @@ export function handleMouseDown(
       }
 
       newPositions = originals.map(({ position }) => [
-        Math.round(position[0] + snapMovement[0]),
-        Math.round(position[1] + snapMovement[1]),
+        position[0] + snapMovement[0],
+        position[1] + snapMovement[1],
       ]);
-      const changed =
-        newPositions[0][0] !== previousPositions[0][0] ||
-        newPositions[0][1] !== previousPositions[0][1];
-      if (changed) {
-        previousPositions = newPositions;
-        moved = true;
-      }
     }
 
     if (moved) {
@@ -319,6 +316,22 @@ export function handleMouseDown(
                 ...(xAlignCell === c ? [xAlign!] : []),
                 ...(yAlignCell === c ? [yAlign!] : []),
               ],
+          ...(isLineDecoratorCell(c)
+            ? {
+                source: {
+                  x: c.view.source.x + snapMovement[0],
+                  y: c.view.source.y + snapMovement[1],
+                },
+                target: {
+                  x: c.view.target.x + snapMovement[0],
+                  y: c.view.target.y + snapMovement[1],
+                },
+                vertices: c.view.vertices?.map((v) => ({
+                  x: v.x + snapMovement[0],
+                  y: v.y + snapMovement[1],
+                })),
+              }
+            : null),
         }));
         (finished ? onCellsMoved : onCellsMoving)?.(payloads);
       } else {

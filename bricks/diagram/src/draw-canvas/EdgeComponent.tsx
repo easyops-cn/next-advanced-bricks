@@ -15,6 +15,7 @@ import type {
   EdgeCell,
   EdgeLineMotion,
   EditableLine,
+  EditableLineCell,
   PositionAndAngle,
 } from "./interfaces";
 import {
@@ -34,8 +35,8 @@ import { getLabelMaskAndOffset } from "./processors/getLabelMaskAndOffset";
 
 export interface EdgeComponentProps {
   edge: EdgeCell;
-  lineConfMap: WeakMap<EdgeCell, ComputedEdgeLineConf>;
-  editableLineMap: WeakMap<EdgeCell, EditableLine>;
+  lineConfMap: WeakMap<EditableLineCell, ComputedEdgeLineConf>;
+  editableLineMap: WeakMap<EditableLineCell, EditableLine>;
   readOnly?: boolean;
   active?: boolean;
   activeRelated?: boolean;
@@ -245,7 +246,7 @@ export function EdgeComponent({
       .join(" ");
   }, [lineRect, mask]);
 
-  if (!line || !linePoints) {
+  if (!line) {
     // This happens when source or target is not found,
     // or when source or target has not been positioned yet.
     return null;

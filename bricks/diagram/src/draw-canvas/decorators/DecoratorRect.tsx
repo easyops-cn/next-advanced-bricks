@@ -3,6 +3,11 @@ import type { BasicDecoratorProps } from "../interfaces";
 import { handleMouseDown } from "../processors/handleMouseDown";
 import { isNoManualLayout } from "../processors/asserts";
 
+export type DecoratorRectProps = Omit<
+  BasicDecoratorProps,
+  "lineConfMap" | "editableLineMap"
+>;
+
 export function DecoratorRect({
   cell,
   transform,
@@ -14,7 +19,7 @@ export function DecoratorRect({
   onCellResizing,
   onCellResized,
   onSwitchActiveTarget,
-}: BasicDecoratorProps): JSX.Element {
+}: DecoratorRectProps): JSX.Element {
   const resizeHandleRef = React.useRef<SVGGElement>(null);
 
   useEffect(() => {

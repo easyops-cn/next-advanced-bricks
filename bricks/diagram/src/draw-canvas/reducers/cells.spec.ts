@@ -314,4 +314,42 @@ describe("cells reducer", () => {
       } as any)
     ).toEqual([{ id: "x" }]);
   });
+
+  test("change decorator view", () => {
+    const newCells = cells(
+      [
+        {
+          type: "decorator",
+          decorator: "line",
+          id: "line-1",
+          view: {
+            type: "polyline",
+          },
+        },
+        { type: "node", id: "2" } as any,
+      ],
+      {
+        type: "change-decorator-view",
+        payload: {
+          id: "line-1",
+          view: { source: { x: 1, y: 2 }, target: { x: 3, y: 4 } } as any,
+        },
+      }
+    );
+    expect(newCells).toEqual([
+      {
+        type: "decorator",
+        decorator: "line",
+        id: "line-1",
+        view: {
+          source: { x: 1, y: 2 },
+          target: { x: 3, y: 4 },
+        },
+      },
+      {
+        id: "2",
+        type: "node",
+      },
+    ]);
+  });
 });

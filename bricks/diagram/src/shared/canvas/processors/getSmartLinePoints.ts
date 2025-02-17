@@ -3,7 +3,7 @@ import type { NodePosition } from "../../../diagram/interfaces";
 import { getConnectPointsOfRectangleWithDirection } from "../shapes/Rectangle";
 import type {
   BiDirection,
-  EdgeView,
+  EditableLineView,
   NodeView,
 } from "../../../draw-canvas/interfaces";
 import { getPolyLinePoints } from "../../../diagram/lines/getPolyLinePoints";
@@ -20,17 +20,27 @@ const DEFAULT_DIRECTIONS = ["right", "top", "left", "bottom"] as const;
 export function getSmartLinePoints(
   sourceView: NodeView,
   targetView: NodeView,
-  edgeView: EdgeView | undefined,
-  parallelGap?: number
+  lineView: EditableLineView | undefined,
+  parallelGap?: number,
+  /** @default "edge" */
+  cellType?: "edge" | "decorator"
 ): NodePosition[] | null {
   const {
     type,
     vertices,
     exitPosition: originalExit,
     entryPosition: originalEntry,
-  } = edgeView ?? {};
+  } = lineView ?? {};
 
   if (isStraightType(type)) {
+    if (cellType === "decorator") {
+      return [
+        { x: sourceView.x, y: sourceView.y },
+        ...(vertices ?? []),
+        { x: targetView.x, y: targetView.y },
+      ];
+    }
+
     return getDirectLinePoints(
       nodeViewToNodeRect(
         sourceView,
@@ -45,7 +55,7 @@ export function getSmartLinePoints(
           : DEFAULT_NODE_PADDING_FOR_LINES
       ),
       parallelGap,
-      edgeView
+      lineView
     );
   }
 

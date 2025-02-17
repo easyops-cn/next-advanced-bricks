@@ -329,4 +329,31 @@ describe("getSmartLinePoints", () => {
       { x: 305, y: 120 },
     ]);
   });
+
+  test("straight line decorator", () => {
+    expect(
+      getSmartLinePoints(
+        {
+          x: 100,
+          y: 200,
+          width: 0,
+          height: 0,
+        },
+        {
+          x: 305,
+          y: 96,
+          width: 0,
+          height: 0,
+        },
+        {
+          type: "straight",
+        },
+        0,
+        "decorator"
+      )
+    ).toEqual([
+      { x: 100, y: 200 },
+      { x: 305, y: 96 },
+    ]);
+  });
 });

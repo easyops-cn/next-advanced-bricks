@@ -23,11 +23,7 @@ export type BrickCell = NodeBrickCell /*  | EdgeBrickCell */;
 
 export type NodeCell = NodeBrickCell /* | NodeShapeCell */;
 
-export type EdgeCell = BaseEdgeCell;
-
 export type NodeBrickCell = BaseBrickCell & BaseNodeCell;
-
-// export type EdgeBrickCell = BaseBrickCell & BaseEdgeCell;
 
 export type NodeId = string /* | number */;
 
@@ -45,14 +41,14 @@ export interface BaseNodeCell extends BaseCell {
   [SYMBOL_FOR_LAYOUT_INITIALIZED]?: boolean;
 }
 
-export interface BaseEdgeCell extends BaseCell {
+export interface EdgeCell extends BaseCell {
   type: "edge";
   source: NodeId;
   target: NodeId;
   view?: EdgeView;
 }
 
-export type DecoratorType = "text" | "area" | "container" | "rect";
+export type DecoratorType = "text" | "area" | "container" | "rect" | "line";
 export type Direction = "top" | "right" | "bottom" | "left";
 
 export interface DecoratorCell extends BaseCell {
@@ -60,6 +56,11 @@ export interface DecoratorCell extends BaseCell {
   decorator: DecoratorType;
   id: NodeId;
   view: DecoratorView;
+}
+
+export interface LineDecoratorCell extends Omit<DecoratorCell, "view"> {
+  decorator: "line";
+  view: DecoratorLineView;
 }
 
 export interface BaseCell {
@@ -73,9 +74,23 @@ export interface NodeView extends InitialNodeView {
 }
 
 export interface DecoratorView extends NodeView {
+  /** 用于文本装饰器和容器装饰器 */
   text?: string;
+  /** 设置容器装饰器的文本位置 */
   direction?: Direction;
+  vertices?: NodePosition[] | null;
 }
+
+export interface DecoratorLineView extends NodeView, BaseEdgeLineConf {
+  source: NodePosition;
+  target: NodePosition;
+  vertices?: NodePosition[] | null;
+  exitPosition?: undefined;
+  entryPosition?: undefined;
+}
+
+export type EditableLineCell = EdgeCell | DecoratorCell;
+export type EditableLineView = EdgeView | DecoratorLineView;
 
 export interface InitialNodeView {
   x: number;
@@ -231,8 +246,11 @@ export interface BasicDecoratorProps {
   layout?: LayoutType;
   view: DecoratorView;
   layoutOptions?: LayoutOptions;
+  active?: boolean;
   activeTarget: ActiveTarget | null | undefined;
   cells: Cell[];
+  lineConfMap: WeakMap<EditableLineCell, ComputedEdgeLineConf>;
+  editableLineMap: WeakMap<EditableLineCell, EditableLine>;
   onCellResizing?(info: ResizeCellPayload): void;
   onCellResized?(info: ResizeCellPayload): void;
   onSwitchActiveTarget?(activeTarget: ActiveTarget | null): void;
@@ -272,7 +290,7 @@ export interface ConnectNodesDetail {
 
 export interface DecoratorTextChangeDetail {
   id: string;
-  view: DecoratorView;
+  view: DecoratorView | DecoratorLineView;
 }
 
 export type LayoutType = "manual" | "force" | "dagre" | undefined;
@@ -389,7 +407,7 @@ export interface LineEditorStateOfEndPoint {
 }
 
 export interface LineEditorStateOfControl {
-  type: "control";
+  type: "control" | "corner" | "break";
   offset: PositionTuple;
   from: PositionTuple;
   control: ControlPoint;
@@ -413,15 +431,24 @@ export type BiDirection = "ns" | "ew";
  * ```
  */
 export interface ControlPoint extends NodePosition {
-  direction: BiDirection;
+  type: "control" | "corner" | "break";
+  direction?: BiDirection;
   index: number;
 }
 
-export interface EditableLine {
+export type EditableLine = EditableEdgeLine | EditableDecoratorLine;
+
+export interface EditableEdgeLine {
   edge: EdgeCell;
   points: NodePosition[];
   source: NodeBrickCell | DecoratorCell;
   target: NodeBrickCell | DecoratorCell;
+  parallelGap: number;
+}
+
+export interface EditableDecoratorLine {
+  decorator: DecoratorCell;
+  points: NodePosition[];
   parallelGap: number;
 }
 

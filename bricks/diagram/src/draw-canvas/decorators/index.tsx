@@ -1,9 +1,21 @@
 import React from "react";
-import type { BasicDecoratorProps } from "../interfaces";
+import type { BasicDecoratorProps, DecoratorType } from "../interfaces";
 import { DecoratorArea } from "./DecoratorArea";
 import { DecoratorText } from "./DecoratorText";
 import { DecoratorContainer } from "./DecoratorContainer";
 import { DecoratorRect } from "./DecoratorRect";
+import { DecoratorLine } from "./DecoratorLine";
+
+const decoratorComponents = new Map<
+  DecoratorType,
+  React.ComponentType<BasicDecoratorProps>
+>([
+  ["container", DecoratorContainer],
+  ["area", DecoratorArea],
+  ["text", DecoratorText],
+  ["rect", DecoratorRect],
+  ["line", DecoratorLine],
+]);
 
 export function DecoratorComponent({
   cell,
@@ -12,34 +24,23 @@ export function DecoratorComponent({
   readOnly,
   layout,
   layoutOptions,
+  active,
   activeTarget,
   cells,
+  lineConfMap,
+  editableLineMap,
   onCellResizing,
   onCellResized,
   onSwitchActiveTarget,
   onDecoratorTextEditing,
   onDecoratorTextChange,
 }: BasicDecoratorProps): JSX.Element | null {
-  let SpecifiedComponent: (props: BasicDecoratorProps) => JSX.Element | null;
+  const SpecifiedComponent = decoratorComponents.get(cell.decorator);
 
-  switch (cell.decorator) {
-    case "container":
-      SpecifiedComponent = DecoratorContainer;
-      break;
-    case "area":
-      SpecifiedComponent = DecoratorArea;
-      break;
-    case "text":
-      SpecifiedComponent = DecoratorText;
-      break;
-    case "rect":
-      SpecifiedComponent = DecoratorRect;
-      break;
-    // istanbul ignore next
-    default:
-      // eslint-disable-next-line no-console
-      console.error(`Unknown decorator: ${cell.decorator}`);
-      return null;
+  if (!SpecifiedComponent) {
+    // eslint-disable-next-line no-console
+    console.error(`Unknown decorator: ${cell.decorator}`);
+    return null;
   }
 
   return (
@@ -50,8 +51,11 @@ export function DecoratorComponent({
       readOnly={readOnly}
       layout={layout}
       layoutOptions={layoutOptions}
+      active={active}
       activeTarget={activeTarget}
       cells={cells}
+      lineConfMap={lineConfMap}
+      editableLineMap={editableLineMap}
       onCellResizing={onCellResizing}
       onCellResized={onCellResized}
       onSwitchActiveTarget={onSwitchActiveTarget}
