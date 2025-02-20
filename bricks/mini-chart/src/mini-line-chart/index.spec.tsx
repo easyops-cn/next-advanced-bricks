@@ -2,8 +2,11 @@ import { describe, test, expect, jest } from "@jest/globals";
 import { act } from "react-dom/test-utils";
 import "./";
 import type { MiniLineChart } from "./index.js";
+import { drawMiniLineChart } from "./draw";
 
 jest.mock("@next-core/theme", () => ({}));
+jest.mock("./worker.mjs", () => ({}));
+jest.mock("./draw.js");
 
 describe("eo-mini-line-chart", () => {
   test("basic usage", async () => {
@@ -30,25 +33,32 @@ describe("eo-mini-line-chart", () => {
         <style>
           styles.shadow.css
         </style>,
-        <svg
+        <canvas
+          data-id="canvas-1"
           height="40"
+          style="width: 155px; height: 40px;"
           width="155"
-        >
-          <g
-            transform="translate(1,1)"
-          >
-            <path
-              d="M0,38C25.5,19,51,0,76.5,0C102,0,127.5,7.6,153,15.2"
-              fill="none"
-              stroke="gray"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-            />
-          </g>
-        </svg>,
+        />,
+        <span
+          class="detector"
+          style="color: gray;"
+        />,
       ]
     `);
+    expect(drawMiniLineChart).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        pixelRatio: 1,
+        width: 155,
+        height: 40,
+        padding: 1,
+        smooth: undefined,
+        lineColor: "gray",
+        xField: "x",
+        yField: "y",
+        data: element.data,
+      })
+    );
 
     act(() => {
       document.body.removeChild(element);
@@ -71,29 +81,20 @@ describe("eo-mini-line-chart", () => {
       document.body.appendChild(element);
     });
 
-    expect(element.shadowRoot?.childNodes).toMatchInlineSnapshot(`
-      NodeList [
-        <style>
-          styles.shadow.css
-        </style>,
-        <svg
-          height="40"
-          width="155"
-        >
-          <g
-            transform="translate(1,1)"
-          >
-            <path
-              d="M0,38L76.5,0L153,15.2"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-            />
-          </g>
-        </svg>,
-      ]
-    `);
+    expect(drawMiniLineChart).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        pixelRatio: 1,
+        width: 155,
+        height: 40,
+        padding: 1,
+        smooth: false,
+        lineColor: "",
+        xField: "0",
+        yField: "1",
+        data: element.data,
+      })
+    );
 
     act(() => {
       document.body.removeChild(element);
@@ -116,29 +117,20 @@ describe("eo-mini-line-chart", () => {
       document.body.appendChild(element);
     });
 
-    expect(element.shadowRoot?.childNodes).toMatchInlineSnapshot(`
-      NodeList [
-        <style>
-          styles.shadow.css
-        </style>,
-        <svg
-          height="40"
-          width="155"
-        >
-          <g
-            transform="translate(1,1)"
-          >
-            <path
-              d="M0,19L153,19"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-            />
-          </g>
-        </svg>,
-      ]
-    `);
+    expect(drawMiniLineChart).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        pixelRatio: 1,
+        width: 155,
+        height: 40,
+        padding: 1,
+        smooth: undefined,
+        lineColor: "",
+        xField: "x",
+        yField: "y",
+        data: element.data,
+      })
+    );
 
     act(() => {
       document.body.removeChild(element);
@@ -161,29 +153,20 @@ describe("eo-mini-line-chart", () => {
       document.body.appendChild(element);
     });
 
-    expect(element.shadowRoot?.childNodes).toMatchInlineSnapshot(`
-      NodeList [
-        <style>
-          styles.shadow.css
-        </style>,
-        <svg
-          height="40"
-          width="155"
-        >
-          <g
-            transform="translate(1,1)"
-          >
-            <path
-              d="M0,38L153,38"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-            />
-          </g>
-        </svg>,
-      ]
-    `);
+    expect(drawMiniLineChart).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        pixelRatio: 1,
+        width: 155,
+        height: 40,
+        padding: 1,
+        smooth: undefined,
+        lineColor: "",
+        xField: "x",
+        yField: "y",
+        data: element.data,
+      })
+    );
 
     act(() => {
       document.body.removeChild(element);
