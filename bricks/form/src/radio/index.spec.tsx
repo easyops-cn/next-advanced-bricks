@@ -196,9 +196,7 @@ describe("eo-button", () => {
       document.body.appendChild(element);
     });
 
-    expect(element.shadowRoot?.querySelectorAll(".button-content").length).toBe(
-      2
-    );
+    expect(element.shadowRoot?.querySelectorAll(".content").length).toBe(2);
 
     act(() => {
       document.body.removeChild(element);
