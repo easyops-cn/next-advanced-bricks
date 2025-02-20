@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.15.10](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.15.9...@next-bricks/form@1.15.10) (2025-02-20)
+
+
+### Bug Fixes
+
+* **select:** enable flip of sl-popup ([38ffba2](https://github.com/easyops-cn/next-advanced-bricks/commit/38ffba25b365f243aba5a31c65236aa465658308))
+
+
+
+
+
 ## [1.15.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.15.8...@next-bricks/form@1.15.9) (2025-02-20)
 
 
