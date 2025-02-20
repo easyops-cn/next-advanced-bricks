@@ -5,17 +5,36 @@ import {
   convertToStoryboard,
   lowLevelConvertToStoryboard,
 } from "../raw-data-preview/convert.js";
+import { has } from "lodash";
 
 export function convertToBrickConf(
   attrList: AttrConfig[],
-  { type, dataName, dataType }: ContainerConfig
+  { type, dataName, dataType, settings }: ContainerConfig
 ): BrickConf | null {
   if (!type || !dataName) {
     return null;
   }
 
+  const valueAccessor = `${dataType === "state" ? "STATE" : "CTX"}${getMemberAccessor(dataName)}`;
+
+  if (type === "chart") {
+    const dataSource = `<%= ${valueAccessor}${settings?.pagination ? ".list" : ""} %>`;
+
+    return {
+      brick: "eo-mini-line-chart",
+      properties: {
+        width: 600,
+        height: 200,
+        xField: settings.fields?.xField,
+        yField: settings.fields?.yField,
+        lineColor: "var(--palette-orange-6)",
+        data: dataSource,
+      },
+    };
+  }
+
   if (type === "cards") {
-    const dataSource = `<%= ${dataType === "state" ? "STATE" : "CTX"}${getMemberAccessor(dataName)}.list %>`;
+    const dataSource = `<%= ${valueAccessor}${settings?.pagination ? ".list" : ""} %>`;
 
     return {
       brick: "eo-grid-layout",
@@ -38,12 +57,14 @@ export function convertToBrickConf(
                       brick: "eo-card-item",
                       properties: {
                         cardTitle:
-                          attrList.length >= 1
-                            ? `<% ITEM${getMemberAccessor(attrList[0].id)} %>`
+                          has(settings?.fields, "title") &&
+                          typeof settings.fields.title === "string"
+                            ? `<% ITEM${getMemberAccessor(settings.fields.title)} %>`
                             : undefined,
                         description:
-                          attrList.length >= 2
-                            ? `<% ITEM${getMemberAccessor(attrList[1].id)} %>`
+                          has(settings?.fields, "description") &&
+                          typeof settings.fields.description === "string"
+                            ? `<% ITEM${getMemberAccessor(settings.fields.description)} %>`
                             : undefined,
                       },
                     },
@@ -57,7 +78,7 @@ export function convertToBrickConf(
     };
   }
 
-  const dataSource = `<%= ${dataType === "state" ? "STATE" : "CTX"}${getMemberAccessor(dataName)} %>`;
+  const dataSource = `<%= ${settings?.pagination ? valueAccessor : `{ list: ${valueAccessor} }`} %>`;
 
   const brickMap = new Map<string, BrickConf>();
   for (const attr of attrList) {
@@ -106,6 +127,7 @@ export function convertToBrickConf(
             return col;
           }),
           dataSource,
+          ...(settings?.pagination ? null : { pagination: false }),
         },
         slots,
       };

@@ -110,45 +110,6 @@ export async function getConfigByDataForAi(
     }
   }
 
-  if (
-    !(
-      isObject(datum) &&
-      hasOwnProperty(datum, "_object_id") &&
-      typeof datum._object_id === "string"
-    )
-  ) {
-    // eslint-disable-next-line no-console
-    console.warn("Can not detect objectId with data:", data);
-    return { type: "unknown", error: "Can not detect objectId" };
-  }
-
-  const objectId = datum._object_id;
-
-  const { list } = (await InstanceApi_postSearchV3("MODEL_OBJECT", {
-    fields: [
-      "name",
-      "objectId",
-      "attrList.id",
-      "attrList.name",
-      "attrList.generatedView.list",
-    ],
-    query: {
-      objectId,
-      ignore: { $ne: true },
-    },
-    page: 1,
-  })) as { list: ModelObject[] };
-
-  if (list.length === 0) {
-    // eslint-disable-next-line no-console
-    console.warn("Can not find object by objectId:", objectId);
-    // eslint-disable-next-line no-console
-    return {
-      type: "unknown",
-      error: `Can not find object by objectId: "${objectId}"`,
-    };
-  }
-
   const keys = new Set<string>();
   for (const item of dataList) {
     if (isObject(item)) {
@@ -158,17 +119,53 @@ export async function getConfigByDataForAi(
     }
   }
 
-  const attrList = list[0].attrList
-    .map<Attr>((attr) =>
-      keys.has(attr.id)
-        ? {
-            id: attr.id,
-            name: attr.name,
-            candidates: attr.generatedView?.[0]?.list,
-          }
-        : null
-    )
-    .filter(Boolean);
+  let attrList: Attr[];
+
+  if (
+    isObject(datum) &&
+    hasOwnProperty(datum, "_object_id") &&
+    typeof datum._object_id === "string"
+  ) {
+    const objectId = datum._object_id;
+
+    const { list } = (await InstanceApi_postSearchV3("MODEL_OBJECT", {
+      fields: [
+        "name",
+        "objectId",
+        "attrList.id",
+        "attrList.name",
+        "attrList.generatedView.list",
+      ],
+      query: {
+        objectId,
+        ignore: { $ne: true },
+      },
+      page: 1,
+    })) as { list: ModelObject[] };
+
+    if (list.length === 0) {
+      // eslint-disable-next-line no-console
+      console.warn("Can not find object by objectId:", objectId);
+    }
+
+    attrList = list[0].attrList
+      .map<Attr>((attr) =>
+        keys.has(attr.id)
+          ? {
+              id: attr.id,
+              name: attr.name,
+              candidates: attr.generatedView?.[0]?.list,
+            }
+          : null
+      )
+      .filter(Boolean);
+  } else {
+    // eslint-disable-next-line no-console
+    console.warn("Can not detect objectId with data:", data);
+
+    // Fallback to attributes retrieval by data keys
+    attrList = [...keys].map((id) => ({ id, name: id }));
+  }
 
   return {
     type,
@@ -190,6 +187,10 @@ function getAvailableContainersByType(type: ConfigType): ContainerOption[] {
           label: "卡片列表",
           value: "cards",
         },
+        {
+          label: "图表",
+          value: "chart",
+        },
       ];
     case "list-with-pagination":
       return [
@@ -203,6 +204,13 @@ function getAvailableContainersByType(type: ConfigType): ContainerOption[] {
         {
           label: "卡片列表",
           value: "cards",
+          settings: {
+            pagination: true,
+          },
+        },
+        {
+          label: "图表",
+          value: "chart",
           settings: {
             pagination: true,
           },

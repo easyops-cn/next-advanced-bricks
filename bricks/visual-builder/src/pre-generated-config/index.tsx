@@ -65,9 +65,13 @@ export interface AttrConfig {
 }
 
 export interface ContainerConfig {
-  type: "table" | "descriptions" | "cards" | null | undefined;
+  type: "table" | "descriptions" | "cards" | "chart" | null | undefined;
   dataName: string;
   dataType?: "context" | "state";
+  settings?: {
+    pagination?: boolean;
+    fields?: Record<string, string>;
+  };
 }
 
 /**
