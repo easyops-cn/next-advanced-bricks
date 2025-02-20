@@ -2940,12 +2940,12 @@
     "@babel/preset-typescript" "^7.26.0"
     "@babel/runtime" "^7.26.0"
 
-"@next-core/brick-container@^3.20.4":
-  version "3.20.4"
-  resolved "https://registry.yarnpkg.com/@next-core/brick-container/-/brick-container-3.20.4.tgz#f5b826606611031640db7176c451e6de116a293f"
-  integrity sha512-jl42R0kVveo+xYNbzHwcI9iXFsBuXKkleLfiMijOqrljZitBew0pTHWu0Rqw+KVZheJMoq+R3YjpFpJQENrrbQ==
+"@next-core/brick-container@^3.20.5":
+  version "3.20.5"
+  resolved "https://registry.yarnpkg.com/@next-core/brick-container/-/brick-container-3.20.5.tgz#3128461e65e1538bbc8d2f838d9b5ceb62fd0d3d"
+  integrity sha512-/i73PTPazMH4kky1WdbdPvI8lpSB71lqX6YYBM8Sz0OoIsGRc3R1GUMqv0ODjRZDnYk18nbWsOe9kRnhM+1Czw==
   dependencies:
-    "@next-core/serve-helpers" "^1.2.4"
+    "@next-core/serve-helpers" "^1.2.5"
     body-parser "^1.20.3"
     chalk "^4.1.2"
     chokidar "^4.0.1"
@@ -2969,13 +2969,13 @@
   resolved "https://registry.yarnpkg.com/@next-core/brick-manifest/-/brick-manifest-0.7.1.tgz#3c11e7108b2bd147a4e9876fe95e2eb0d723e2dd"
   integrity sha512-g+4m/Ran4ZBIUpIMhqx/fH91F2lYmci18tlI9TCRte2AFnmA/jsTFULdbPQtd/OMIhodrGnjkhN0WshbqeTzew==
 
-"@next-core/brick-playground@^1.15.51":
-  version "1.15.51"
-  resolved "https://registry.yarnpkg.com/@next-core/brick-playground/-/brick-playground-1.15.51.tgz#fe016a89ee1e8b731f2ad933b5d9a6dc80c162d1"
-  integrity sha512-9idYeKIN5dH8x2qcBG0xOXXkcf6o0zIrHfSTaNvx+qZYoQOu+dMEi/+2B4GsH9furXJ38mFNN3aQ5EcqnCsmNg==
+"@next-core/brick-playground@^1.15.52":
+  version "1.15.52"
+  resolved "https://registry.yarnpkg.com/@next-core/brick-playground/-/brick-playground-1.15.52.tgz#d1b71272be6a941fdb51e8e8d3a5cb2573c0e424"
+  integrity sha512-Mzr+H83Af2271Es/G/Gyb0/arVndim7/HKGD+fgp6xQxu/YH1TeNUWZKODE5jurcRlYw+tQ9qzV9b5eyZVDEMw==
   dependencies:
     "@next-core/doc-helpers" "^0.2.16"
-    "@next-core/serve-helpers" "^1.2.4"
+    "@next-core/serve-helpers" "^1.2.5"
     compression "^1.7.5"
     express "^4.21.1"
     glob "^8.1.0"
@@ -3172,10 +3172,10 @@
     moment "^2.30.1"
     path-to-regexp "^6.3.0"
 
-"@next-core/serve-helpers@^1.2.4":
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/@next-core/serve-helpers/-/serve-helpers-1.2.4.tgz#26a9c7c0b4303b6ac5c0cb6bcfbe055179799b11"
-  integrity sha512-EiBXaC+8uS5bOaGoTtr7GlokhYHPUWkSEqsTb+eLsHNdgL0jIcpQ7NLA/q8Jrr6RvxMBJdDIxZMhkCEmX0oXFw==
+"@next-core/serve-helpers@^1.2.5":
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/@next-core/serve-helpers/-/serve-helpers-1.2.5.tgz#663fa94d3345bce08f3fad83cf24bb2eaa150d60"
+  integrity sha512-x3R8g1wFY3apq39RnDrJb9bVl+ashSv8KZwy5PmrRCQxehgzFHUVLnUev4zssib7M8g3tgUHqXcw5fpbuFLrPQ==
 
 "@next-core/storyboard@^0.6.17":
   version "0.6.17"
