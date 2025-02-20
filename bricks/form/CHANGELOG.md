@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.15.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.15.8...@next-bricks/form@1.15.9) (2025-02-20)
+
+
+### Bug Fixes
+
+* **date-picker:** custom styles ([f6f3ffe](https://github.com/easyops-cn/next-advanced-bricks/commit/f6f3ffe6ea097137d37a8966bdb6d54f626bda47))
+* **radio:** fix disabled styles ([00456bf](https://github.com/easyops-cn/next-advanced-bricks/commit/00456bf1ea4eff70738936c285c055bd67102629))
+* wrapLocalBrick requires import order ([f58c3fa](https://github.com/easyops-cn/next-advanced-bricks/commit/f58c3fa01bf0ab336fdaeca293ff9f50bd0d972e))
+
+
+
+
+
 ## [1.15.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.15.7...@next-bricks/form@1.15.8) (2025-02-14)
 
 
