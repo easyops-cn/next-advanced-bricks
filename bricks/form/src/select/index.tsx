@@ -59,6 +59,7 @@ export interface SlPopupProps {
   strategy?: "absolute" | "fixed";
   distance?: number;
   sync?: Sync;
+  flip?: boolean;
 }
 
 export interface SlPopupElement extends HTMLElement, SlPopupProps {}
@@ -924,6 +925,7 @@ export function SelectComponent(props: SelectProps) {
           strategy={dropdownHoist ? "fixed" : "absolute"}
           distance={5}
           sync="width"
+          flip
           className="select-dropdown-popup"
           data-testid="select-dropdown-popup"
         >
