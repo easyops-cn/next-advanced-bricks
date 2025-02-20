@@ -145,3 +145,16 @@
   color: var(--text-color-disabled);
   background: var(--antd-background-color-base);
 }
+
+.ant-picker-dropdown {
+  .ant-picker-panel-container {
+    border-radius: 3px;
+  }
+
+  .ant-picker-cell {
+    & .ant-picker-cell-inner,
+    &.ant-picker-cell-today .ant-picker-cell-inner:before {
+      border-radius: 50%;
+    }
+  }
+}
