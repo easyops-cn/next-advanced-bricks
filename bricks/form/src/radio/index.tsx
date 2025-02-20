@@ -199,7 +199,6 @@ class Radio extends FormItemElementBase {
         name={this.name}
         label={this.label}
         useBrick={this.useBrick}
-        ui={this.ui}
         disabled={this.disabled}
         size={this.size}
         options={this.#formatOptions}
@@ -219,7 +218,9 @@ class Radio extends FormItemElementBase {
   }
 }
 
-interface RadioComponentProps extends RadioProps, Omit<FormItemProps, "type"> {
+interface RadioComponentProps
+  extends RadioProps,
+    Omit<FormItemProps, "type" | "ui"> {
   onChange?: (value: any) => void;
   optionsChange?: (options: any, name: string) => void;
 }
@@ -251,11 +252,7 @@ export function RadioComponent(props: RadioComponentProps) {
 
   return (
     <WrappedFormItem exportparts="message" {...props}>
-      <div
-        className={classNames("radio-group", {
-          dashboard: props.ui === "dashboard",
-        })}
-      >
+      <div className="radio-group">
         {options?.map((item: any) => {
           const icon = item.icon;
           const iconStyle: CSSProperties = icon?.iconStyle;
@@ -275,7 +272,7 @@ export function RadioComponent(props: RadioComponentProps) {
               key={key}
               onClick={(e) => !isDisabled && handleChange(e, item)}
             >
-              <span className="raido">
+              <span className="radio">
                 <input
                   type="radio"
                   name={name}
@@ -303,7 +300,7 @@ export function RadioComponent(props: RadioComponentProps) {
                   <div>{item.label}</div>
                 </div>
               ) : type === "custom" ? (
-                <div className="custom-content">
+                <div className="content">
                   {props.useBrick && (
                     <ReactUseBrick
                       useBrick={props.useBrick}
@@ -312,15 +309,10 @@ export function RadioComponent(props: RadioComponentProps) {
                   )}
                 </div>
               ) : type === "icon-circle" || type === "icon-square" ? (
-                <div
-                  className={classNames({
-                    "icon-content":
-                      type === "icon-circle" || type === "icon-square",
-                  })}
-                >
+                <div className="content">
                   {item.icon && (
                     <div
-                      className={classNames({
+                      className={classNames("icon", {
                         "circle-icon": type === "icon-circle",
                         "square-icon": type === "icon-square",
                       })}
@@ -337,11 +329,7 @@ export function RadioComponent(props: RadioComponentProps) {
                   <span title={item.label}>{item.label}</span>
                 </div>
               ) : type === "button" ? (
-                <div
-                  className={classNames("button-content", {
-                    disabled: isDisabled,
-                  })}
-                >
+                <div className="content">
                   <span>
                     {icon && (
                       <WrappedGeneralIcon
