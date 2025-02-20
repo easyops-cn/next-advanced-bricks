@@ -3,15 +3,34 @@ import { createDecorators } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
 import { useTranslation, initializeReactI18n } from "@next-core/i18n/react";
 import "@next-core/theme";
-import { curveLinear, curveMonotoneX, line } from "d3-shape";
-import styleText from "./styles.shadow.css";
+import * as Comlink from "comlink";
 import { K, NS, locales } from "./i18n.js";
+import type { MiniLineChartOptions } from "./worker";
+import styleText from "./styles.shadow.css";
 
 initializeReactI18n(NS, locales);
 
 const PIXEL_RATIO = window.devicePixelRatio ?? 1;
 
 const { defineElement, property } = createDecorators();
+
+interface RemoteWorker {
+  draw(canvas: OffscreenCanvas, options: MiniLineChartOptions): Promise<void>;
+}
+
+let remoteWorkerPromise: Promise<RemoteWorker> | undefined;
+
+function getRemoteWorker() {
+  if (!remoteWorkerPromise) {
+    remoteWorkerPromise = (async () => {
+      const Remote = Comlink.wrap(
+        new Worker(new URL("./worker.ts", import.meta.url))
+      ) as any;
+      return await new Remote();
+    })();
+  }
+  return remoteWorkerPromise;
+}
 
 export interface MiniLineChartProps {
   width?: number;
@@ -100,8 +119,6 @@ export function MiniLineChartComponent({
   const xField = _xField ?? "0";
   const yField = _yField ?? "1";
   const padding = 1;
-  const innerWidth = width - padding * 2;
-  const innerHeight = height - padding * 2;
 
   const { t } = useTranslation(NS);
 
@@ -115,77 +132,23 @@ export function MiniLineChartComponent({
       return;
     }
 
-    const ctx = canvas.getContext("2d")!;
-    ctx.save();
-    ctx.scale(PIXEL_RATIO, PIXEL_RATIO);
-    ctx.clearRect(0, 0, width, height);
+    const offscreen = canvas.transferControlToOffscreen();
 
-    if (!data?.length) {
-      ctx.restore();
-      return;
-    }
-
-    ctx.lineWidth = 2;
-    ctx.lineJoin = "round";
-    ctx.lineCap = "round";
-    if (lineColor) {
-      ctx.strokeStyle = getComputedStyle(detector).color;
-    }
-
-    ctx.beginPath();
-    ctx.translate(padding, padding);
-
-    let min = Infinity;
-    let max = -Infinity;
-    for (const item of data) {
-      const value = item[yField];
-      if (value < min) {
-        min = value;
-      }
-      if (value > max) {
-        max = value;
-      }
-    }
-
-    let path: Point[];
-
-    if (min === max) {
-      const y = min === 0 ? innerHeight : innerHeight / 2;
-      path = [
-        [0, y],
-        [innerWidth, y],
-      ];
-    } else {
-      const start = data[0][xField];
-      const end = data[data.length - 1][xField];
-      const xScale = innerWidth / (end - start);
-      const yScale = innerHeight / (max - min);
-
-      path = data.map<Point>((item) => {
-        const x = (item[xField] - start) * xScale;
-        const y = innerHeight! - (item[yField] - min) * yScale;
-        return [x, y];
+    (async () => {
+      const remote = await getRemoteWorker();
+      await remote.draw(Comlink.transfer(offscreen, [offscreen]), {
+        pixelRation: PIXEL_RATIO,
+        width,
+        height,
+        padding,
+        smooth,
+        lineColor: getComputedStyle(detector).color,
+        xField,
+        yField,
+        data,
       });
-    }
-
-    // Keep smooth behavior as G2 line chart implementation
-    // See https://github.com/antvis/G2/blob/6013d72881276aca9d17d93908d33b21194979c6/src/shape/line/smooth.ts#L20
-    line()
-      .context(ctx)
-      .curve(smooth === false ? curveLinear : curveMonotoneX)(path);
-    ctx.stroke();
-    ctx.restore();
-  }, [
-    data,
-    height,
-    innerHeight,
-    innerWidth,
-    lineColor,
-    smooth,
-    width,
-    xField,
-    yField,
-  ]);
+    })();
+  }, [data, height, lineColor, smooth, width, xField, yField]);
 
   if (!data?.length) {
     // No data
