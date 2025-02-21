@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.14.10](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.14.9...@next-bricks/vs@1.14.10) (2025-02-21)
+
+
+### Bug Fixes
+
+* fix style, avoid conflicts with v2 vs editor ([2e0aa82](https://github.com/easyops-cn/next-advanced-bricks/commit/2e0aa822d225882366b90ac80d7841bdd0510de5))
+* make toolbar sticky ([1dc6d10](https://github.com/easyops-cn/next-advanced-bricks/commit/1dc6d10d15e3e355857fd68e0206d8288088611e))
+
+
+
+
+
 ## [1.14.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.14.8...@next-bricks/vs@1.14.9) (2025-01-20)
 
 **Note:** Version bump only for package @next-bricks/vs
