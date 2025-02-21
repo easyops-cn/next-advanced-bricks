@@ -10,7 +10,7 @@
   box-sizing: border-box;
 }
 
-svg {
+canvas {
   display: block;
 }
 
@@ -27,4 +27,8 @@ span {
   border-bottom: 1px dashed var(--palette-gray-5);
   line-height: 1;
   font-size: 14px;
+}
+
+.detector {
+  display: none;
 }
