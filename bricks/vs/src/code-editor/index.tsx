@@ -593,8 +593,9 @@ export function CodeEditorComponent({
     if (!editorRef.current) return;
     editorRef.current.updateOptions({
       readOnly,
+      lineNumbersMinChars: expanded ? 5 : 3,
     });
-  }, [readOnly]);
+  }, [readOnly, expanded]);
 
   useEffect(() => {
     if (editorRef.current || !containerRef.current) {
@@ -612,6 +613,7 @@ export function CodeEditorComponent({
     }
 
     editorRef.current = monaco.editor.create(containerRef.current, {
+      extraEditorClassName: "monaco-editor-v3",
       model,
       minimap: {
         enabled: false,

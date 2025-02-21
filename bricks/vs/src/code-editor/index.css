@@ -46,6 +46,7 @@
 .toolbar {
   display: none;
   position: absolute;
+  z-index: 4;
   top: 15px;
   right: 20px;
   line-height: 12px;
@@ -68,4 +69,19 @@
 .copy-icon:hover,
 .expand-icon:hover {
   opacity: 1;
+}
+
+/* Avoid conflicts with v2 vs code editor */
+.monaco-editor.monaco-editor-v3 .find-widget > .find-part,
+.monaco-editor.monaco-editor-v3 .find-widget > .replace-part {
+  margin-right: 25px;
+}
+
+.monaco-editor.monaco-editor-v3 .find-widget .button {
+  box-sizing: content-box;
+}
+
+.monaco-editor.monaco-editor-v3 .sticky-line-number {
+  text-align: initial;
+  float: initial;
 }
