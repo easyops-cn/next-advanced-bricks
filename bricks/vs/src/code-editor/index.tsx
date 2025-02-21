@@ -593,8 +593,9 @@ export function CodeEditorComponent({
     if (!editorRef.current) return;
     editorRef.current.updateOptions({
       readOnly,
+      lineNumbersMinChars: expanded ? 5 : 3,
     });
-  }, [readOnly]);
+  }, [readOnly, expanded]);
 
   useEffect(() => {
     if (editorRef.current || !containerRef.current) {
@@ -612,6 +613,7 @@ export function CodeEditorComponent({
     }
 
     editorRef.current = monaco.editor.create(containerRef.current, {
+      extraEditorClassName: "monaco-editor-v3",
       model,
       minimap: {
         enabled: false,
@@ -1026,31 +1028,33 @@ export function CodeEditorComponent({
           overflow: expanded ? "scroll" : "",
         }}
       />
-      <div className="toolbar">
-        {showCopyButton && (
-          <WrappedTooltip content={t(K.COPY) as string}>
-            <WrappedIcon
-              className="copy-icon"
-              icon="copy"
-              lib="antd"
-              theme="outlined"
-              onClick={handleCopyIconClick}
-            />
-          </WrappedTooltip>
-        )}
-        {showExpandButton && (
-          <WrappedTooltip
-            content={(expanded ? t(K.COLLAPSE) : t(K.EXPAND)) as string}
-          >
-            <WrappedIcon
-              className="expand-icon"
-              icon={expanded ? "compress" : "expand"}
-              lib="antd"
-              theme="outlined"
-              onClick={handleExpandedClick}
-            />
-          </WrappedTooltip>
-        )}
+      <div className="toolbar-wrapper">
+        <div className="toolbar sticky">
+          {showCopyButton && (
+            <WrappedTooltip content={t(K.COPY) as string}>
+              <WrappedIcon
+                className="copy-icon"
+                icon="copy"
+                lib="antd"
+                theme="outlined"
+                onClick={handleCopyIconClick}
+              />
+            </WrappedTooltip>
+          )}
+          {showExpandButton && (
+            <WrappedTooltip
+              content={(expanded ? t(K.COLLAPSE) : t(K.EXPAND)) as string}
+            >
+              <WrappedIcon
+                className="expand-icon"
+                icon={expanded ? "compress" : "expand"}
+                lib="antd"
+                theme="outlined"
+                onClick={handleExpandedClick}
+              />
+            </WrappedTooltip>
+          )}
+        </div>
       </div>
     </div>
   );

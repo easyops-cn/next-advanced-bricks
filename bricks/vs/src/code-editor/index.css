@@ -34,20 +34,19 @@
   backdrop-filter: blur(5px);
 }
 
-.code-editor-wrapper.expanded .toolbar {
-  right: 40px;
-  top: 40px;
-}
-
-.code-editor-wrapper:hover .toolbar {
-  display: flex;
+.toolbar-wrapper {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  pointer-events: none;
+  padding: 15px 20px;
 }
 
 .toolbar {
+  pointer-events: auto;
   display: none;
-  position: absolute;
-  top: 15px;
-  right: 20px;
   line-height: 12px;
   font-size: 12px;
   text-align: center;
@@ -56,6 +55,20 @@
   transition: none;
   border-radius: 50%;
   border: none;
+}
+
+.code-editor-wrapper:not(.expanded) .toolbar.sticky {
+  position: sticky;
+  top: 15px;
+}
+
+.code-editor-wrapper.expanded .toolbar-wrapper {
+  right: 40px;
+  top: 40px;
+}
+
+.code-editor-wrapper:hover .toolbar {
+  display: flex;
 }
 
 .copy-icon,
@@ -68,4 +81,19 @@
 .copy-icon:hover,
 .expand-icon:hover {
   opacity: 1;
+}
+
+/* Avoid conflicts with v2 vs code editor */
+.monaco-editor.monaco-editor-v3 .find-widget > .find-part,
+.monaco-editor.monaco-editor-v3 .find-widget > .replace-part {
+  margin-right: 25px;
+}
+
+.monaco-editor.monaco-editor-v3 .find-widget .button {
+  box-sizing: content-box;
+}
+
+.monaco-editor.monaco-editor-v3 .sticky-line-number {
+  text-align: initial;
+  float: initial;
 }
