@@ -7,6 +7,7 @@ import promptOfNumber from "./prompts/raw-data-number.md";
 import promptOfOthers from "./prompts/raw-data-others.md";
 import promptOfStructList from "./prompts/raw-data-struct-list.md";
 import promptOfStruct from "./prompts/raw-data-struct.md";
+import promptOfJson from "./prompts/raw-data-json.md";
 
 export function getRawDataSystemPrompts(): Record<string, string> {
   return {
@@ -17,6 +18,7 @@ export function getRawDataSystemPrompts(): Record<string, string> {
     others: promptOfOthers,
     "struct-list": promptOfStructList,
     struct: promptOfStruct,
+    json: promptOfJson,
   };
 }
 

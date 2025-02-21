@@ -137,6 +137,23 @@ function getIconBrick(config: VisualConfig, attrAccessor: string): BrickConf {
       },
     };
   }
+
+  if (config.type === "json") {
+    const valueAccessor = getValueAccessor(config, attrAccessor);
+    return {
+      brick: "eo-icon",
+      errorBoundary: true,
+      properties: {
+        lib: `<% ${valueAccessor}?.lib %>`,
+        prefix: `<% ${valueAccessor}?.prefix %>`,
+        category: `<% ${valueAccessor}?.category %>`,
+        theme: `<% ${valueAccessor}?.theme %>`,
+        icon: `<% ${valueAccessor}?.icon %>`,
+        style: getPlainStyle(config.style),
+      },
+    };
+  }
+
   return {
     brick: "eo-icon",
     errorBoundary: true,
@@ -204,6 +221,7 @@ function getPlainBrick(config: VisualConfig, attrAccessor: string): BrickConf {
     default: {
       let textContent: string | undefined;
       let style: CSSProperties | string | undefined;
+      let tag = "span";
       if (config.type === "boolean") {
         const trueContent = config.true?.text ?? "Yes";
         const falseContent = config.false?.text ?? "No";
@@ -212,11 +230,20 @@ function getPlainBrick(config: VisualConfig, attrAccessor: string): BrickConf {
         textContent = `<% ${valueAccessor} ? ${JSON.stringify(trueContent)} : ${JSON.stringify(falseContent)} %>`;
         style = `<% ${valueAccessor} ? ${JSON.stringify(trueStyle)} : ${JSON.stringify(falseStyle)} %>`;
       } else {
-        textContent = value;
         style = getPlainStyle(config.style);
+        if (config.type === "json") {
+          if (config.display === "link") {
+            textContent = `<% I18N("VIEW", "查看") %>`;
+          } else {
+            tag = "pre";
+            textContent = `<% PIPES.jsonStringify(${valueAccessor}) %>`;
+          }
+        } else {
+          textContent = value;
+        }
       }
       return {
-        brick: "span",
+        brick: tag,
         errorBoundary: true,
         properties: {
           textContent,

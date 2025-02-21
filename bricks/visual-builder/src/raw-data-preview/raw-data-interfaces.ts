@@ -16,7 +16,7 @@ export interface VisualConfig {
     | "struct"
     | "struct-list"
     // | "array"
-    // | "json"
+    | "json"
     | "date"
     | "date-time";
 
