@@ -54,16 +54,17 @@ export function EdgeComponent({
 }: EdgeComponentProps): JSX.Element | null {
   const pathRef = useRef<SVGPathElement | null>(null);
   const lineConf = lineConfMap.get(edge)!;
-  const { points: linePoints } = editableLineMap.get(edge) ?? {};
+  const { points: linePoints, jumpsMap } = editableLineMap.get(edge) ?? {};
 
   const line = useMemo(() => {
     return curveLine(
       linePoints,
       lineConf.type === "curve" ? lineConf.curveType : "curveLinear",
       0,
-      1
+      1,
+      jumpsMap
     );
-  }, [lineConf, linePoints]);
+  }, [lineConf, linePoints, jumpsMap]);
 
   const lineClipPathPrefix = useMemo(() => uniqueId("line-mask-"), []);
 

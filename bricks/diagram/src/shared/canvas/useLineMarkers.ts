@@ -266,5 +266,6 @@ function getDefaultLineConf(): EdgeLineConf {
       useAnimate: false,
       duration: DEFAULT_LINE_INTERACT_ANIMATE_DURATION,
     },
+    jumps: false,
   };
 }
