@@ -14,6 +14,7 @@ import {
 } from "../../draw-canvas/processors/asserts";
 import { findNodeOrAreaDecorator } from "../../draw-canvas/processors/findNodeOrAreaDecorator";
 import { getSmartLinePoints } from "./processors/getSmartLinePoints";
+import { collectLineJumpsFactory } from "./collectLineJumpsFactory";
 
 export function useEditableLineMap({
   cells,
@@ -21,9 +22,11 @@ export function useEditableLineMap({
 }: {
   cells: Cell[];
   lineConfMap: WeakMap<EdgeCell | DecoratorCell, ComputedEdgeLineConf>;
-}) {
+}): WeakMap<EdgeCell | DecoratorCell, EditableLine> {
   return useMemo(() => {
     const map = new WeakMap<EdgeCell | DecoratorCell, EditableLine>();
+
+    const collectLineJumps = collectLineJumpsFactory();
 
     for (const cell of cells) {
       if (isEdgeCell(cell)) {
@@ -58,12 +61,15 @@ export function useEditableLineMap({
             : null;
 
         if (points) {
+          const jumpsMap = collectLineJumps(points, lineConf);
+
           map.set(cell, {
             edge: cell,
             points,
             source: sourceNode!,
             target: targetNode!,
             parallelGap,
+            jumpsMap,
           });
         }
       } else if (isLineDecoratorCell(cell)) {
@@ -81,10 +87,14 @@ export function useEditableLineMap({
             : null;
 
         if (points) {
+          const lineConf = lineConfMap.get(cell)!;
+          const jumpsMap = collectLineJumps(points, lineConf);
+
           map.set(cell, {
             decorator: cell,
             points,
             parallelGap: 0,
+            jumpsMap,
           });
         }
       }

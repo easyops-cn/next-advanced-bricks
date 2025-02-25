@@ -170,6 +170,7 @@ export interface BaseEdgeLineConf {
   showEndArrow?: boolean;
   animate?: LineAnimate;
   overrides?: EdgeLineConfOverrides;
+  jumps?: boolean;
 }
 
 export interface EdgeLineConfOverrides {
@@ -438,18 +439,20 @@ export interface ControlPoint extends NodePosition {
 
 export type EditableLine = EditableEdgeLine | EditableDecoratorLine;
 
-export interface EditableEdgeLine {
+export interface EditableEdgeLine extends BaseEditableLine {
   edge: EdgeCell;
-  points: NodePosition[];
   source: NodeBrickCell | DecoratorCell;
   target: NodeBrickCell | DecoratorCell;
-  parallelGap: number;
 }
 
-export interface EditableDecoratorLine {
+export interface EditableDecoratorLine extends BaseEditableLine {
   decorator: DecoratorCell;
+}
+
+export interface BaseEditableLine {
   points: NodePosition[];
   parallelGap: number;
+  jumpsMap?: Map<number, LineSegmentJumps> | null;
 }
 
 export type PositionAndAngle = [
@@ -459,3 +462,15 @@ export type PositionAndAngle = [
   angle: number,
   offset: number,
 ];
+
+/**
+ * 一段线段上的交叉跨线点列表
+ */
+export interface LineSegmentJumps {
+  /** 交叉跨线圆弧的中心点列表，这些点应该遵循从线段起点到终点的顺序 */
+  jumpPoints: NodePosition[];
+  /** 该线段在整个连线中的索引 */
+  index: number;
+  /** 交叉跨线圆弧的半径 */
+  radius: number;
+}

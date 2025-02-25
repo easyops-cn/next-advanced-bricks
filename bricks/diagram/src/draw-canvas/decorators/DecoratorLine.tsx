@@ -17,16 +17,17 @@ export function DecoratorLine({
   editableLineMap,
 }: DecoratorLineProps): JSX.Element | null {
   const lineConf = lineConfMap.get(cell)!;
-  const { points: linePoints } = editableLineMap.get(cell) ?? {};
+  const { points: linePoints, jumpsMap } = editableLineMap.get(cell) ?? {};
 
   const line = useMemo(() => {
     return curveLine(
       linePoints,
       lineConf.type === "curve" ? lineConf.curveType : "curveLinear",
       0,
-      1
+      1,
+      jumpsMap
     );
-  }, [lineConf, linePoints]);
+  }, [lineConf, linePoints, jumpsMap]);
 
   const pathRef = useRef<SVGPathElement | null>(null);
   const pathRefCallback = useCallback(

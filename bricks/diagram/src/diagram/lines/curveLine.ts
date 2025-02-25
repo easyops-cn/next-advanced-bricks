@@ -10,6 +10,7 @@ import {
   curveMonotoneY,
 } from "d3-shape";
 import type { CurveType, NodePosition } from "../interfaces";
+import type { LineSegmentJumps } from "../../draw-canvas/interfaces";
 
 /**
  * Generate Line from points
@@ -18,7 +19,8 @@ export function curveLine(
   points: Array<NodePosition> | null | undefined,
   curveType: CurveType | undefined,
   startOffset: number,
-  endOffset: number
+  endOffset: number,
+  jumpsMap?: Map<number, LineSegmentJumps> | null
 ): string {
   if (!Array.isArray(points)) {
     return "";
@@ -52,10 +54,10 @@ export function curveLine(
     points[points.length - 1],
     endOffset
   );
-  const lineFunction = line()
+  const lineFunction = line<NodePosition>()
     .x(
       (d, index) =>
-        (d as unknown as { x: number }).x -
+        d.x -
         (index === 0
           ? startOffsets.x
           : index === points.length - 1
@@ -64,7 +66,7 @@ export function curveLine(
     )
     .y(
       (d, index) =>
-        (d as unknown as { y: number }).y -
+        d.y -
         (index === 0
           ? startOffsets.y
           : index === points.length - 1
@@ -72,7 +74,46 @@ export function curveLine(
             : 0)
     )
     .curve(curveFactory);
-  return lineFunction(points as unknown as Array<[number, number]>)!;
+
+  if (jumpsMap && curveType == "curveLinear") {
+    const d: string[] = [];
+    for (let i = 0; i < points.length - 1; i++) {
+      const start = points[i];
+      const end = points[i + 1];
+      if (i === 0) {
+        d.push(`M${start.x},${start.y}`);
+      }
+      // 处理交叉跨线点
+      const jump = jumpsMap.get(i);
+      if (jump) {
+        // 跨线点近似为一段半圆，参考 draw.io 使用三次贝赛尔曲线实现。
+        // 一条 jump 记录中所有的 jumpPoints 都在同一线段上，因此角度一致、尺寸一致。
+        const dx = end.x - start.x;
+        const dy = end.y - start.y;
+        const angle = Math.atan2(dy, dx);
+        const direction = Math.abs(angle) <= Math.PI / 2 ? -1 : 1;
+        const verticalAngle = angle + (Math.PI / 2) * direction;
+        const offsetX = jump.radius * 1.3 * Math.cos(verticalAngle);
+        const offsetY = jump.radius * 1.3 * Math.sin(verticalAngle);
+        const xDiff = jump.radius * Math.cos(angle);
+        const yDiff = jump.radius * Math.sin(angle);
+        for (const p of jump.jumpPoints) {
+          const x0 = p.x - xDiff;
+          const y0 = p.y - yDiff;
+          const x1 = p.x + xDiff;
+          const y1 = p.y + yDiff;
+          d.push(`L${x0},${y0}`);
+          d.push(
+            `C${x0 + offsetX},${y0 + offsetY} ${x1 + offsetX},${y1 + offsetY} ${x1},${y1}`
+          );
+        }
+      }
+      d.push(`L${end.x},${end.y}`);
+    }
+    return d.join("");
+  }
+
+  return lineFunction(points)!;
 }
 
 function getOffsets(

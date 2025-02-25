@@ -794,6 +794,8 @@
                           : "default"
                       %>
             cells: <% CTX.initialCells %>
+            defaultEdgeLines:
+              - jumps: true
             lineConnector: true
             lineSettings: |
               <%= { type: CTX.lineType } %>

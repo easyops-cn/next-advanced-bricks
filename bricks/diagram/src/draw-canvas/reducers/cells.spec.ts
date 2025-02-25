@@ -5,17 +5,23 @@ import { SYMBOL_FOR_SIZE_INITIALIZED } from "../constants";
 describe("cells reducer", () => {
   test("drop node", () => {
     expect(
-      cells([], { type: "drop-node", payload: { id: "1" } as any })
-    ).toEqual([{ id: "1" }]);
+      cells([], {
+        type: "drop-node",
+        payload: { type: "node", id: "1" } as any,
+      })
+    ).toEqual([{ type: "node", id: "1" }]);
   });
 
   test("add nodes", () => {
     expect(
-      cells([{ id: "2" } as any], {
+      cells([{ type: "node", id: "2" } as any], {
         type: "add-nodes",
-        payload: [{ id: "3" }] as any,
+        payload: [{ type: "node", id: "3" }] as any,
       })
-    ).toEqual([{ id: "2" }, { id: "3" }]);
+    ).toEqual([
+      { type: "node", id: "2" },
+      { type: "node", id: "3" },
+    ]);
   });
 
   test("add edge", () => {
