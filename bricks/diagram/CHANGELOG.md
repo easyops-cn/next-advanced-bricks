@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.57.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.56.1...@next-bricks/diagram@0.57.0) (2025-02-25)
+
+
+### Bug Fixes
+
+* use cubic bezier curve instead of arc ([88c42ba](https://github.com/easyops-cn/next-advanced-bricks/commit/88c42baac9f941c8b3bfe0b36d9f7d9a9c92d074))
+
+
+### Features
+
+* support line jumps ([6159e4c](https://github.com/easyops-cn/next-advanced-bricks/commit/6159e4cfbedb6039799f5efbf75fae01f9edc3d1))
+
+
+
+
+
 ## [0.56.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.56.0...@next-bricks/diagram@0.56.1) (2025-02-17)
 
 
