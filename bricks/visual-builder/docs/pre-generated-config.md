@@ -3485,6 +3485,9 @@ children:
             "maintenance_time_end",
           ].map((attr) => CTX.attrList.find(a => a.id === attr)).filter(Boolean)
         %>
+      containerConfig:
+        type: table
+        dataName: myData
     events:
       change:
         - target: visual-builder\.pre-generated-config-preview
