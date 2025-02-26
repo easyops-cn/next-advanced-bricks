@@ -1,4 +1,5 @@
-import type { BrickConf } from "@next-core/types";
+import type { BrickConf, SlotConfOfBricks, SlotsConf } from "@next-core/types";
+import { hasOwnProperty } from "@next-core/utils/general";
 import type { AttrConfig, ContainerConfig } from "./index.js";
 import { getMemberAccessor } from "../shared/getMemberAccessor.js";
 import {
@@ -88,7 +89,7 @@ export function convertToBrickConf(
           ? lowLevelConvertToStoryboard(attr.config, ".cellData")
           : convertToStoryboard(attr.config, attr.id);
       if (brick) {
-        brickMap.set(attr.id, brick);
+        brickMap.set(attr.id, getCompatibleBrickConf(brick));
       }
     }
   }
@@ -152,4 +153,35 @@ export function convertToBrickConf(
   }
 
   return null;
+}
+
+function getCompatibleBrickConf(brick: BrickConf) {
+  const { children, slots, ...rest } = brick;
+  return {
+    ...rest,
+    slots: childrenToSlots(children, slots),
+  };
+}
+
+function childrenToSlots(
+  children: BrickConf[] | undefined,
+  originalSlots: SlotsConf | undefined
+) {
+  let newSlots = originalSlots;
+  if (Array.isArray(children) && !newSlots) {
+    newSlots = {};
+    for (const { slot: sl, ...child } of children) {
+      const slot = sl ?? "";
+      if (!hasOwnProperty(newSlots, slot)) {
+        newSlots[slot] = {
+          type: "bricks",
+          bricks: [],
+        };
+      }
+      (newSlots[slot] as SlotConfOfBricks).bricks.push(
+        getCompatibleBrickConf(child)
+      );
+    }
+  }
+  return newSlots;
 }
