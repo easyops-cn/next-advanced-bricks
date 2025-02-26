@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.37.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.37.0...@next-bricks/visual-builder@1.37.1) (2025-02-26)
+
+
+### Bug Fixes
+
+* covert children to slots ([9769987](https://github.com/easyops-cn/next-advanced-bricks/commit/976998767a9ff5f53f72b188aa7b58a8c9c8970c))
+
+
+
+
+
 # [1.37.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.36.30...@next-bricks/visual-builder@1.37.0) (2025-02-26)
 
 
