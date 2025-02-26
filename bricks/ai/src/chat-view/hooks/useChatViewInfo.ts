@@ -198,7 +198,7 @@ export function useChatViewInfo({
                 text: item.input,
               },
               key: uniqueId("msg-"),
-              created: item.time,
+              created: item.inputTime,
               type: DEFAULT_TYPE,
             },
             {
@@ -211,7 +211,7 @@ export function useChatViewInfo({
                 text: item.output,
               },
               key: uniqueId("msg-"),
-              created: item.inputTime,
+              created: item.time,
               tag: item.tag,
               type: DEFAULT_TYPE,
               toolCalls,
