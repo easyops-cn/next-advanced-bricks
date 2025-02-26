@@ -244,7 +244,11 @@ export default async function connect(
     getHistory().reload();
   };
 
-  const handlePreviewData = (name: string, option: PreviewDataOption): void => {
+  const handlePreviewData = (
+    name: string,
+    option: PreviewDataOption,
+    _id?: string
+  ): void => {
     try {
       const { dataType } = option;
       let tplStateStoreId;
@@ -255,6 +259,7 @@ export default async function connect(
         if (!tplStateStoreId) {
           sendMessage<PreviewMessagePreviewDataValueError>({
             type: "inspect-data-value-error",
+            _id,
             data: {
               error: {
                 message:
@@ -283,6 +288,7 @@ export default async function connect(
 
       sendMessage<PreviewMessagePreviewDataValueSuccess>({
         type,
+        _id,
         data: {
           name,
           value,
@@ -293,6 +299,7 @@ export default async function connect(
     } catch (error) {
       sendMessage<PreviewMessagePreviewDataValueError>({
         type: "inspect-data-value-error",
+        _id,
         data: {
           message: (error as Error).message,
         },
@@ -469,7 +476,7 @@ export default async function connect(
             );
             break;
           case "inspect-data-value":
-            handlePreviewData(data.name, data.option);
+            handlePreviewData(data.name, data.option, data._id);
             break;
           case "update-preview-url": {
             // Remove origin first.

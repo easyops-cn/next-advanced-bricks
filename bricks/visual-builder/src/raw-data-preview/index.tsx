@@ -703,7 +703,7 @@ export function RawDataPreviewComponent({
                   properties: {
                     value: `<%= CTX.propertyApproveState.includes(${JSON.stringify(generation.propertyId)}) ? ["approved"] : [] %>`,
                     options: [{ label: "", value: "approved" }],
-                    disabled: "<%= CTX.busy %>",
+                    disabled: `<%= CTX.busy || ${JSON.stringify(!generation.generationId)} %>`,
                   },
                   events: {
                     change: [

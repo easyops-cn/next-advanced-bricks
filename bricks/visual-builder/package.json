@@ -40,6 +40,7 @@
     "@formily/core": "^2.3.1",
     "@formily/react": "^2.3.1",
     "@formily/reactive": "^2.3.1",
+    "@next-api-sdk/cmdb-sdk": "^1.1.1",
     "@next-api-sdk/next-builder-sdk": "^1.2.2",
     "@next-core/element": "^1.2.16",
     "@next-core/http": "^1.2.11",

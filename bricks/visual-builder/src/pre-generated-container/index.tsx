@@ -43,6 +43,9 @@ export function PreGeneratedContainerComponent({
   useBrick,
   dataSource,
 }: PreGeneratedContainerProps) {
+  if (!useBrick) {
+    return null;
+  }
   return (
     <ReactUseMultipleBricks
       useBrick={useBrick}

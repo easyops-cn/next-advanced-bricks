@@ -2,12 +2,19 @@ import type { BrickConf } from "@next-core/types";
 import { pick } from "lodash";
 import type { CSSProperties } from "react";
 import type { VisualConfig, VisualStyle } from "./raw-data-interfaces";
+import { getMemberAccessor } from "../shared/getMemberAccessor";
 
 export function convertToStoryboard(
   config: VisualConfig,
   attr: string
 ): BrickConf | null {
-  const attrAccessor = `[${JSON.stringify(attr)}]`;
+  return lowLevelConvertToStoryboard(config, getMemberAccessor(attr));
+}
+
+export function lowLevelConvertToStoryboard(
+  config: VisualConfig,
+  attrAccessor: string
+): BrickConf | null {
   let brickItem: BrickConf;
 
   switch (config.display) {
@@ -42,7 +49,13 @@ export function convertToStoryboard(
           color: config.style?.background
             ? `${config.style.background}${colorSuffix}`
             : config.style?.palette
-              ? `<% \`\${(${JSON.stringify(config.style.palette)})[${valueAccessor}] ?? "gray"}${colorSuffix}\` %>`
+              ? `<%
+  \`\${new Map(Object.entries(${JSON.stringify(
+    config.style.palette,
+    null,
+    2
+  ).replaceAll("\n", "\n  ")})).get(${valueAccessor}) ?? "gray"}${colorSuffix}\`
+%>`
               : `gray${colorSuffix}`,
           outline: config.style?.variant === "outline",
         },
@@ -124,6 +137,23 @@ function getIconBrick(config: VisualConfig, attrAccessor: string): BrickConf {
       },
     };
   }
+
+  if (config.type === "json") {
+    const valueAccessor = getValueAccessor(config, attrAccessor);
+    return {
+      brick: "eo-icon",
+      errorBoundary: true,
+      properties: {
+        lib: `<% ${valueAccessor}?.lib %>`,
+        prefix: `<% ${valueAccessor}?.prefix %>`,
+        category: `<% ${valueAccessor}?.category %>`,
+        theme: `<% ${valueAccessor}?.theme %>`,
+        icon: `<% ${valueAccessor}?.icon %>`,
+        style: getPlainStyle(config.style),
+      },
+    };
+  }
+
   return {
     brick: "eo-icon",
     errorBoundary: true,
@@ -191,6 +221,7 @@ function getPlainBrick(config: VisualConfig, attrAccessor: string): BrickConf {
     default: {
       let textContent: string | undefined;
       let style: CSSProperties | string | undefined;
+      let tag = "span";
       if (config.type === "boolean") {
         const trueContent = config.true?.text ?? "Yes";
         const falseContent = config.false?.text ?? "No";
@@ -199,11 +230,20 @@ function getPlainBrick(config: VisualConfig, attrAccessor: string): BrickConf {
         textContent = `<% ${valueAccessor} ? ${JSON.stringify(trueContent)} : ${JSON.stringify(falseContent)} %>`;
         style = `<% ${valueAccessor} ? ${JSON.stringify(trueStyle)} : ${JSON.stringify(falseStyle)} %>`;
       } else {
-        textContent = value;
         style = getPlainStyle(config.style);
+        if (config.type === "json") {
+          if (config.display === "link") {
+            textContent = `<% I18N("VIEW", "查看") %>`;
+          } else {
+            tag = "pre";
+            textContent = `<% PIPES.jsonStringify(${valueAccessor}) %>`;
+          }
+        } else {
+          textContent = value;
+        }
       }
       return {
-        brick: "span",
+        brick: tag,
         errorBoundary: true,
         properties: {
           textContent,
@@ -219,7 +259,7 @@ function getValueAccessor(config: VisualConfig, attrAccessor: string): string {
     (config.type === "struct" || config.type === "struct-list") &&
     config.field
   ) {
-    return `${config.type === "struct" ? `DATA${attrAccessor}` : "ITEM"}[${JSON.stringify(config.field)}]`;
+    return `${config.type === "struct" ? `DATA${attrAccessor}` : "ITEM"}${getMemberAccessor(config.field)}`;
   }
   return `DATA${attrAccessor}`;
 }
