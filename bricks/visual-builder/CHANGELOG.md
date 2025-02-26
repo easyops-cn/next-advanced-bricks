@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.37.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.36.30...@next-bricks/visual-builder@1.37.0) (2025-02-26)
+
+
+### Bug Fixes
+
+* **pre-generate:** support json type ([ca36a18](https://github.com/easyops-cn/next-advanced-bricks/commit/ca36a1836275b3af7d0b11c17b5ac5025cbda6a7))
+
+
+### Features
+
+* new brick: pre-generated-config ([1960ad1](https://github.com/easyops-cn/next-advanced-bricks/commit/1960ad1ddfdf5f3882fa626ffba38cb789f20c48))
+
+
+
+
+
 ## [1.36.30](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.36.29...@next-bricks/visual-builder@1.36.30) (2025-02-08)
 
 

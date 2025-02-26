@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/inject@0.1.15...@next-bricks/inject@0.2.0) (2025-02-26)
+
+
+### Features
+
+* new brick: pre-generated-config ([1960ad1](https://github.com/easyops-cn/next-advanced-bricks/commit/1960ad1ddfdf5f3882fa626ffba38cb789f20c48))
+
+
+
+
+
 ## [0.1.15](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/inject@0.1.14...@next-bricks/inject@0.1.15) (2025-01-20)
 
 **Note:** Version bump only for package @next-bricks/inject
