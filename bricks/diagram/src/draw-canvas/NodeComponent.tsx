@@ -34,10 +34,10 @@ export function NodeComponent({
   const useBrick = useMemo(() => {
     return degraded
       ? null
-      : specifiedUseBrick ??
+      : (specifiedUseBrick ??
           defaultNodeBricks?.find((item) =>
             checkIfByTransform(item, memoizedData)
-          )?.useBrick;
+          )?.useBrick);
   }, [degraded, specifiedUseBrick, defaultNodeBricks, memoizedData]);
 
   const label = useMemo<string>(
@@ -93,12 +93,32 @@ export function NodeComponent({
     [node.id, onResize]
   );
 
+  const foreignObjectRef = useRef<SVGForeignObjectElement | null>(null);
+
+  // Workaround for Firefox bug:
+  // https://bugzilla.mozilla.org/show_bug.cgi?id=1644680
+  // istanbul ignore next
+  useEffect(() => {
+    const fo = foreignObjectRef.current;
+    if (!fo || !/firefox/i.test(navigator.userAgent)) {
+      return;
+    }
+    fo.style.overflow = "hidden";
+    // 延时 500ms 是经验值，实际测试如果机器性能较差，可能需要更长的时间。
+    // MacBook Air M1 >= 100ms 可以工作，<= 50ms 则不行。
+    const timeoutId = setTimeout(() => {
+      fo.style.overflow = "visible";
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, []);
+
   return useBrick ? (
     <foreignObject
       // Make a large size to avoid the brick inside to be clipped by the foreignObject.
       width={9999}
       height={9999}
       className="node"
+      ref={foreignObjectRef}
     >
       {useBrick && (
         <ReactUseBrick
