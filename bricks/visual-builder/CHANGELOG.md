@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.37.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.37.1...@next-bricks/visual-builder@1.37.2) (2025-02-27)
+
+
+### Bug Fixes
+
+* disable comment if generation is not saved, refine enum prompt ([526d656](https://github.com/easyops-cn/next-advanced-bricks/commit/526d656024b5c5c4baa497fe137b800151fab09a))
+
+
+
+
+
 ## [1.37.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.37.0...@next-bricks/visual-builder@1.37.1) (2025-02-26)
 
 
