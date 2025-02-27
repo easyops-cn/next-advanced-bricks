@@ -758,7 +758,7 @@ export function RawDataPreviewComponent({
                     style: {
                       width: "100%",
                     },
-                    disabled: `<%= CTX.busy || CTX.propertyApproveState.includes(${JSON.stringify(generation.propertyId)}) %>`,
+                    disabled: `<%= CTX.busy || ${JSON.stringify(!generation.generationId)} || CTX.propertyApproveState.includes(${JSON.stringify(generation.propertyId)}) %>`,
                   },
                   events: {
                     keydown: {
