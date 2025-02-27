@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.57.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.57.0...@next-bricks/diagram@0.57.1) (2025-02-27)
+
+
+### Bug Fixes
+
+* workaround for firefox bug of foreign object overflow visible not working ([bcb51eb](https://github.com/easyops-cn/next-advanced-bricks/commit/bcb51eb4f1f4c0e99e0e341420d5669f8ecaae7a))
+
+
+
+
+
 # [0.57.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.56.1...@next-bricks/diagram@0.57.0) (2025-02-25)
 
 
