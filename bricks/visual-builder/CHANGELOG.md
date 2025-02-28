@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.37.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.37.2...@next-bricks/visual-builder@1.37.3) (2025-02-28)
+
+
+### Bug Fixes
+
+* handle page_size ([4e66d67](https://github.com/easyops-cn/next-advanced-bricks/commit/4e66d6766135f34831f850750862624fac397d55))
+* handle parent objects ([cefef07](https://github.com/easyops-cn/next-advanced-bricks/commit/cefef079dbc6263f7ac6713f3f3528dde7e0ba42))
+
+
+
+
+
 ## [1.37.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.37.1...@next-bricks/visual-builder@1.37.2) (2025-02-27)
 
 

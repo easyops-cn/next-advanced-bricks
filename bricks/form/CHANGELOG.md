@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.15.12](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.15.11...@next-bricks/form@1.15.12) (2025-02-28)
+
+
+### Bug Fixes
+
+* **select:** refine text color when focused ([5efad25](https://github.com/easyops-cn/next-advanced-bricks/commit/5efad259654a52f226470ec8dec2dc0dd41b0d41))
+
+
+
+
+
 ## [1.15.11](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.15.10...@next-bricks/form@1.15.11) (2025-02-20)
 
 
