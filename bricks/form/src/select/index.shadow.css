@@ -122,6 +122,10 @@
   }
 }
 
+.selector-focused .select-single-item .text {
+  color: var(--antd-input-placeholder-color);
+}
+
 .select-multiple .select-selection-search {
   padding-right: 22px;
 }

@@ -53,6 +53,7 @@ interface DatumWithObjectId {
 
 interface ModelObject {
   attrList: ModelAttr[];
+  parentObjectIds?: string[];
 }
 
 interface ModelAttr {
@@ -77,6 +78,7 @@ export async function getConfigByDataForAi(
   let datum: DatumWithObjectId | undefined;
   let type: ConfigType = "unknown";
   let dataList: unknown[] = [];
+  let fields: Record<string, string> | undefined;
 
   // Detect value type
   if (Array.isArray(value)) {
@@ -101,6 +103,12 @@ export async function getConfigByDataForAi(
         type = "list-with-pagination";
         datum = listValue.list[0];
         dataList = listValue.list;
+      }
+      if (
+        typeof listValue.page_size === "number" &&
+        typeof listValue.pageSize !== "number"
+      ) {
+        fields = { pageSize: "page_size" };
       }
     } else {
       // It's a single object
@@ -131,38 +139,7 @@ export async function getConfigByDataForAi(
     typeof datum._object_id === "string"
   ) {
     const objectId = datum._object_id;
-
-    const { list } = (await InstanceApi_postSearchV3("MODEL_OBJECT", {
-      fields: [
-        "name",
-        "objectId",
-        "attrList.id",
-        "attrList.name",
-        "attrList.generatedView.list",
-      ],
-      query: {
-        objectId,
-        ignore: { $ne: true },
-      },
-      page: 1,
-    })) as { list: ModelObject[] };
-
-    if (list.length === 0) {
-      // eslint-disable-next-line no-console
-      console.warn("Can not find object by objectId:", objectId);
-    } else {
-      attrList = list[0].attrList
-        .map<Attr>((attr) =>
-          keys.has(attr.id)
-            ? {
-                id: attr.id,
-                name: attr.name,
-                candidates: attr.generatedView?.[0]?.list,
-              }
-            : null
-        )
-        .filter(Boolean);
-    }
+    attrList = await getMergedAttrList(objectId, keys);
   } else {
     // eslint-disable-next-line no-console
     console.warn("Can not detect objectId with data:", data);
@@ -171,15 +148,22 @@ export async function getConfigByDataForAi(
     attrList = [...keys].map((id) => ({ id, name: id }));
   }
 
+  if (attrList.length === 0) {
+    type = "unknown";
+  }
+
   return {
     type,
     attrList,
     dataList,
-    containerOptions: getAvailableContainersByType(type),
+    containerOptions: getAvailableContainersByType(type, fields),
   };
 }
 
-function getAvailableContainersByType(type: ConfigType): ContainerOption[] {
+function getAvailableContainersByType(
+  type: ConfigType,
+  fields?: Record<string, string>
+): ContainerOption[] {
   switch (type) {
     case "list":
       return [
@@ -203,6 +187,7 @@ function getAvailableContainersByType(type: ConfigType): ContainerOption[] {
           value: "table",
           settings: {
             pagination: true,
+            fields,
           },
         },
         {
@@ -210,6 +195,7 @@ function getAvailableContainersByType(type: ConfigType): ContainerOption[] {
           value: "cards",
           settings: {
             pagination: true,
+            fields,
           },
         },
         // {
@@ -230,6 +216,65 @@ function getAvailableContainersByType(type: ConfigType): ContainerOption[] {
     default:
       return [];
   }
+}
+
+async function getMergedAttrList(
+  objectIdWithNamespace: string,
+  keys: Set<string>
+): Promise<Attr[]> {
+  const attrList: Attr[] = [];
+
+  const [objectId, namespace] = objectIdWithNamespace.split("@");
+
+  const { list } = (await InstanceApi_postSearchV3("MODEL_OBJECT", {
+    fields: [
+      "name",
+      "objectId",
+      "attrList.id",
+      "attrList.name",
+      "attrList.generatedView.list",
+      "parentObjectIds",
+    ],
+    query: {
+      objectId,
+      ignore: { $ne: true },
+      "space.name": namespace || { $exists: false },
+    },
+    page: 1,
+  })) as { list: ModelObject[] };
+
+  if (list.length === 0) {
+    // eslint-disable-next-line no-console
+    console.warn("Can not find object by objectId:", objectIdWithNamespace);
+  } else {
+    const { attrList: attrs, parentObjectIds } = list[0];
+
+    if (parentObjectIds?.length) {
+      attrList.push(
+        ...(
+          await Promise.all(
+            parentObjectIds.map((parentId) => getMergedAttrList(parentId, keys))
+          )
+        ).flat()
+      );
+    }
+
+    attrList.push(
+      ...attrs
+        .map<Attr>((attr) =>
+          keys.has(attr.id)
+            ? {
+                id: attr.id,
+                name: attr.name,
+                candidates: attr.generatedView?.[0]?.list,
+              }
+            : null
+        )
+        .filter(Boolean)
+    );
+  }
+
+  return attrList;
 }
 
 customElements.define(
