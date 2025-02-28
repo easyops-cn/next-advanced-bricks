@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.37.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.37.3...@next-bricks/visual-builder@1.37.4) (2025-02-28)
+
+
+### Bug Fixes
+
+* do not use attr as query for relation existence ([df5c143](https://github.com/easyops-cn/next-advanced-bricks/commit/df5c1430ef01f99d42d57d37cb640f2ebb1394fe))
+
+
+
+
+
 ## [1.37.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.37.2...@next-bricks/visual-builder@1.37.3) (2025-02-28)
 
 
