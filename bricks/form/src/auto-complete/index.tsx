@@ -14,6 +14,7 @@ import type {
 import classNames from "classnames";
 import { FormItemElementBase, MessageBody } from "@next-shared/form";
 import type { FormItem, FormItemProps } from "../form-item/index.jsx";
+import { pickFormItemProps } from "../form-item/pickFormItemProps";
 
 const { defineElement, property, event } = createDecorators();
 const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
@@ -277,7 +278,7 @@ export function EoAutoCompleteComponent(props: AutoCompleteProps) {
   };
 
   return (
-    <WrappedFormItem exportparts="message" {...props}>
+    <WrappedFormItem exportparts="message" {...pickFormItemProps(props)}>
       <div className="complete-container" ref={containerRef}>
         <WrappedInput
           ref={inputRef}

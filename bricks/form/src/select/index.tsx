@@ -30,6 +30,7 @@ import { UseSingleBrickConf } from "@next-core/types";
 import { ReactUseBrick } from "@next-core/react-runtime";
 import { handleHttpError, fetchByProvider } from "@next-core/runtime";
 import Empty from "./empty.svg";
+import { pickFormItemProps } from "../form-item/pickFormItemProps.js";
 
 interface UseBackendConf {
   provider: string;
@@ -908,7 +909,7 @@ export function SelectComponent(props: SelectProps) {
   ]);
 
   return (
-    <WrappedFormItem exportparts="message" {...(props as FormItemProps)}>
+    <WrappedFormItem exportparts="message" {...pickFormItemProps(props)}>
       <div
         className={classNames("select", {
           "select-disabled": disabled,
