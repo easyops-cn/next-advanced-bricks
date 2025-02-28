@@ -68,7 +68,7 @@ describe("getConfigByDataForAi", () => {
     });
   });
 
-  test("should warn when object not found", async () => {
+  test("should return unknown when object not found", async () => {
     consoleWarn.mockImplementationOnce(() => {});
     const data = {
       name: "test",
@@ -86,7 +86,7 @@ describe("getConfigByDataForAi", () => {
 
     const config = await getConfigByDataForAi(data);
     expect(config).toEqual({
-      type: "list",
+      type: "unknown",
       attrList: [],
       dataList: [
         {
@@ -95,11 +95,7 @@ describe("getConfigByDataForAi", () => {
           attr2: "value2",
         },
       ],
-      containerOptions: [
-        { label: "表格", value: "table" },
-        { label: "卡片列表", value: "cards" },
-        // { label: "图表", value: "chart" },
-      ],
+      containerOptions: [],
     });
     expect(consoleWarn).toHaveBeenCalledWith(
       "Can not find object by objectId:",
@@ -171,6 +167,7 @@ describe("getConfigByDataForAi", () => {
         list: [{ _object_id: "1", attr1: "value1", attr2: "value2" }],
         page: 1,
         total: 1,
+        pageSize: 10,
       },
     };
     (InstanceApi_postSearchV3 as jest.Mock).mockResolvedValue({
@@ -196,6 +193,86 @@ describe("getConfigByDataForAi", () => {
         { label: "表格", value: "table", settings: { pagination: true } },
         { label: "卡片列表", value: "cards", settings: { pagination: true } },
         // { label: "图表", value: "chart", settings: { pagination: true } },
+      ],
+    });
+  });
+
+  test("should handle parentObjectIds", async () => {
+    const data = {
+      name: "test",
+      value: {
+        list: [
+          {
+            _object_id: "1",
+            attr1: "value1",
+            attr2: "value2",
+            attr3: "value3",
+          },
+        ],
+        page: 1,
+        total: 1,
+        page_size: 10,
+      },
+    };
+    (InstanceApi_postSearchV3 as jest.Mock).mockImplementation(
+      (_id, options: { query: { objectId: string } }) => {
+        switch (options.query.objectId) {
+          case "1":
+            return Promise.resolve({
+              list: [
+                {
+                  attrList: [{ id: "attr1", name: "Attr 1" }],
+                  parentObjectIds: ["2", "3"],
+                },
+              ],
+            });
+          case "2":
+            return Promise.resolve({
+              list: [
+                {
+                  attrList: [{ id: "attr2", name: "Attr 2" }],
+                },
+              ],
+            });
+          case "3":
+            return Promise.resolve({
+              list: [
+                {
+                  attrList: [{ id: "attr3", name: "Attr 3" }],
+                },
+              ],
+            });
+        }
+      }
+    );
+
+    const config = await getConfigByDataForAi(data);
+    expect(config).toEqual({
+      type: "list-with-pagination",
+      attrList: [
+        { id: "attr2", name: "Attr 2" },
+        { id: "attr3", name: "Attr 3" },
+        { id: "attr1", name: "Attr 1" },
+      ],
+      dataList: [
+        {
+          _object_id: "1",
+          attr1: "value1",
+          attr2: "value2",
+          attr3: "value3",
+        },
+      ],
+      containerOptions: [
+        {
+          label: "表格",
+          value: "table",
+          settings: { pagination: true, fields: { pageSize: "page_size" } },
+        },
+        {
+          label: "卡片列表",
+          value: "cards",
+          settings: { pagination: true, fields: { pageSize: "page_size" } },
+        },
       ],
     });
   });

@@ -53,6 +53,7 @@ interface DatumWithObjectId {
 
 interface ModelObject {
   attrList: ModelAttr[];
+  parentObjectIds?: string[];
 }
 
 interface ModelAttr {
@@ -138,44 +139,17 @@ export async function getConfigByDataForAi(
     typeof datum._object_id === "string"
   ) {
     const objectId = datum._object_id;
-
-    const { list } = (await InstanceApi_postSearchV3("MODEL_OBJECT", {
-      fields: [
-        "name",
-        "objectId",
-        "attrList.id",
-        "attrList.name",
-        "attrList.generatedView.list",
-      ],
-      query: {
-        objectId,
-        ignore: { $ne: true },
-      },
-      page: 1,
-    })) as { list: ModelObject[] };
-
-    if (list.length === 0) {
-      // eslint-disable-next-line no-console
-      console.warn("Can not find object by objectId:", objectId);
-    } else {
-      attrList = list[0].attrList
-        .map<Attr>((attr) =>
-          keys.has(attr.id)
-            ? {
-                id: attr.id,
-                name: attr.name,
-                candidates: attr.generatedView?.[0]?.list,
-              }
-            : null
-        )
-        .filter(Boolean);
-    }
+    attrList = await getMergedAttrList(objectId, keys);
   } else {
     // eslint-disable-next-line no-console
     console.warn("Can not detect objectId with data:", data);
 
     // Fallback to attributes retrieval by data keys
     attrList = [...keys].map((id) => ({ id, name: id }));
+  }
+
+  if (attrList.length === 0) {
+    type = "unknown";
   }
 
   return {
@@ -242,6 +216,65 @@ function getAvailableContainersByType(
     default:
       return [];
   }
+}
+
+async function getMergedAttrList(
+  objectIdWithNamespace: string,
+  keys: Set<string>
+): Promise<Attr[]> {
+  const attrList: Attr[] = [];
+
+  const [objectId, namespace] = objectIdWithNamespace.split("@");
+
+  const { list } = (await InstanceApi_postSearchV3("MODEL_OBJECT", {
+    fields: [
+      "name",
+      "objectId",
+      "attrList.id",
+      "attrList.name",
+      "attrList.generatedView.list",
+      "parentObjectIds",
+    ],
+    query: {
+      objectId,
+      ignore: { $ne: true },
+      "space.name": namespace || { $exists: false },
+    },
+    page: 1,
+  })) as { list: ModelObject[] };
+
+  if (list.length === 0) {
+    // eslint-disable-next-line no-console
+    console.warn("Can not find object by objectId:", objectIdWithNamespace);
+  } else {
+    const { attrList: attrs, parentObjectIds } = list[0];
+
+    if (parentObjectIds?.length) {
+      attrList.push(
+        ...(
+          await Promise.all(
+            parentObjectIds.map((parentId) => getMergedAttrList(parentId, keys))
+          )
+        ).flat()
+      );
+    }
+
+    attrList.push(
+      ...attrs
+        .map<Attr>((attr) =>
+          keys.has(attr.id)
+            ? {
+                id: attr.id,
+                name: attr.name,
+                candidates: attr.generatedView?.[0]?.list,
+              }
+            : null
+        )
+        .filter(Boolean)
+    );
+  }
+
+  return attrList;
 }
 
 customElements.define(
