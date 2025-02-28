@@ -16,7 +16,8 @@ export function convertToBrickConf(
     return null;
   }
 
-  const valueAccessor = `${dataType === "state" ? "STATE" : "CTX"}${getMemberAccessor(dataName)}`;
+  const dataAccessor = dataType === "state" ? "STATE" : "CTX";
+  const valueAccessor = `${dataAccessor}${getMemberAccessor(dataName)}`;
 
   if (type === "chart") {
     const dataSource = `<%= ${valueAccessor}${settings?.pagination ? ".list" : ""} %>`;
@@ -79,7 +80,13 @@ export function convertToBrickConf(
     };
   }
 
-  const dataSource = `<%= ${settings?.pagination ? valueAccessor : `{ list: ${valueAccessor} }`} %>`;
+  const dataSource = `<%= ${
+    settings?.pagination
+      ? settings?.fields?.pageSize
+        ? `{...${valueAccessor},pageSize: ${valueAccessor}${getMemberAccessor(settings.fields.pageSize)}}`
+        : valueAccessor
+      : `{ list: ${valueAccessor} }`
+  } %>`;
 
   const brickMap = new Map<string, BrickConf>();
   for (const attr of attrList) {

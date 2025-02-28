@@ -77,6 +77,7 @@ export async function getConfigByDataForAi(
   let datum: DatumWithObjectId | undefined;
   let type: ConfigType = "unknown";
   let dataList: unknown[] = [];
+  let fields: Record<string, string> | undefined;
 
   // Detect value type
   if (Array.isArray(value)) {
@@ -101,6 +102,12 @@ export async function getConfigByDataForAi(
         type = "list-with-pagination";
         datum = listValue.list[0];
         dataList = listValue.list;
+      }
+      if (
+        typeof listValue.page_size === "number" &&
+        typeof listValue.pageSize !== "number"
+      ) {
+        fields = { pageSize: "page_size" };
       }
     } else {
       // It's a single object
@@ -175,11 +182,14 @@ export async function getConfigByDataForAi(
     type,
     attrList,
     dataList,
-    containerOptions: getAvailableContainersByType(type),
+    containerOptions: getAvailableContainersByType(type, fields),
   };
 }
 
-function getAvailableContainersByType(type: ConfigType): ContainerOption[] {
+function getAvailableContainersByType(
+  type: ConfigType,
+  fields?: Record<string, string>
+): ContainerOption[] {
   switch (type) {
     case "list":
       return [
@@ -203,6 +213,7 @@ function getAvailableContainersByType(type: ConfigType): ContainerOption[] {
           value: "table",
           settings: {
             pagination: true,
+            fields,
           },
         },
         {
@@ -210,6 +221,7 @@ function getAvailableContainersByType(type: ConfigType): ContainerOption[] {
           value: "cards",
           settings: {
             pagination: true,
+            fields,
           },
         },
         // {
