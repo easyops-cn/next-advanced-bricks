@@ -238,7 +238,9 @@ async function getMergedAttrList(
     query: {
       objectId,
       ignore: { $ne: true },
-      "space.name": namespace || { $exists: false },
+      ...(namespace
+        ? { "space.name": namespace }
+        : { space: { $exists: false } }),
     },
     page: 1,
   })) as { list: ModelObject[] };
