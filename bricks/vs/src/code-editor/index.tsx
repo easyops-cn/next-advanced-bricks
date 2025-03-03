@@ -298,6 +298,9 @@ class CodeEditor extends FormItemElementBase implements CodeEditorProps {
   })
   accessor extraLibs: ExtraLib[] | undefined;
 
+  /**
+   * @default true
+   */
   @property({ type: Boolean })
   accessor fixedOverflowWidgets: boolean | undefined;
 
@@ -414,7 +417,7 @@ export function CodeEditorComponent({
   // onUserInput,
   onTokenClick,
   customValidationInBrickNextYaml,
-  fixedOverflowWidgets,
+  fixedOverflowWidgets: _fixedOverflowWidgets,
 }: CodeEditorProps & {
   onChange(value: string): void;
   onUserInput: (value: any) => void;
@@ -426,6 +429,7 @@ export function CodeEditorComponent({
   const minLines = _minLines ?? 3;
   const maxLines = _maxLines ?? Infinity;
   const height = _height ?? 500;
+  const fixedOverflowWidgets = _fixedOverflowWidgets ?? true;
   const [expanded, setExpanded] = useState(false);
   const workerId = useMemo(() => uniqueId("worker"), []);
 
