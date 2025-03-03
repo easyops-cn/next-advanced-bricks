@@ -12,7 +12,7 @@ import type {
   GeneralIcon,
   GeneralIconProps,
 } from "@next-bricks/icons/general-icon";
-import { FormItemElementBase } from "@next-shared/form";
+import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
 import type { FormItem, FormItemProps } from "../../form-item/index.js";
 import classNames from "classnames";
 import { UploadActions, ItemActions, Upload } from "../Upload.js";
@@ -261,7 +261,7 @@ export function UploadImageComponent(props: UploadImageComponentProps) {
   return (
     <WrappedFormItem
       exportparts="message"
-      {...(props as FormItemProps)}
+      {...pickFormItemProps(props)}
       validator={validator}
     >
       <Upload

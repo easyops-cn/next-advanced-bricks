@@ -3,7 +3,7 @@ import { createDecorators, EventEmitter } from "@next-core/element";
 import { wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
 import styleText from "./styles.shadow.css";
-import { FormItemElementBase } from "@next-shared/form";
+import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
 import type { FormItem, FormItemProps } from "../form-item/index.js";
 import type {
   GeneralIcon,
@@ -146,7 +146,7 @@ export function GeneralSwitchComponent(props: SwitchProps) {
     setChecked(!checked);
   };
   return (
-    <WrappedFormItem exportparts="message" {...props}>
+    <WrappedFormItem exportparts="message" {...pickFormItemProps(props)}>
       <button
         disabled={disabled}
         className={classNames(size, {

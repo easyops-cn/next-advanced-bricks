@@ -1,7 +1,7 @@
 import React from "react";
 import { createDecorators, EventEmitter } from "@next-core/element";
 import { wrapBrick } from "@next-core/react-element";
-import { FormItemElementBase } from "@next-shared/form";
+import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
 import styleText from "./index.shadow.css";
 import type { FormItem, FormItemProps } from "../form-item/index.js";
 import type { Button, ButtonProps } from "@next-bricks/basic/button";
@@ -113,7 +113,7 @@ class SubmitButtons extends FormItemElementBase {
 
 export function ButtonsComponent(props: SubmitButtonsProps) {
   return (
-    <WrappedFormItem exportparts="message" {...props}>
+    <WrappedFormItem exportparts="message" {...pickFormItemProps(props)}>
       {props.submitText && (
         <WrappedButton
           className={"submitBtn"}

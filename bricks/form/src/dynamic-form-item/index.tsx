@@ -24,7 +24,7 @@ import { UseBrickConf, UseSingleBrickConf } from "@next-core/types";
 import styleText from "./dynamic-form-item.shadow.css";
 import "@next-core/theme";
 import { isEqual, flatten, omit, isEmpty } from "lodash";
-import { FormItemElementBase } from "@next-shared/form";
+import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
 import { K, NS, locales } from "./i18n.js";
 import { useTranslation, initializeReactI18n } from "@next-core/i18n/react";
 import classNames from "classnames";
@@ -370,7 +370,7 @@ export function DynamicFormItemComponent(props: DynamicFormItemProps) {
   return (
     <WrappedFormItem
       exportparts="message"
-      {...(props as FormItemProps)}
+      {...pickFormItemProps(props)}
       validator={validate}
     >
       <div className="dynamic-form-wrapper" ref={formWrapperRef}>

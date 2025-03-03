@@ -13,7 +13,7 @@ import "@next-core/theme";
 import styleText from "./styles.shadow.css";
 import { FormItem, FormItemProps } from "@next-bricks/form/form-item";
 import { Select, SelectProps } from "@next-bricks/form/select";
-import { FormItemElementBase } from "@next-shared/form";
+import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
 import {
   InstanceApi_postSearch,
   CmdbModels,
@@ -736,7 +736,7 @@ export function EoUserOrUserGroupSelectComponent(
   };
 
   return (
-    <WrappedFormItem exportparts="message" {...(props as FormItemProps)}>
+    <WrappedFormItem exportparts="message" {...pickFormItemProps(props)}>
       <div className="select-wrapper">
         <WrappedSelect
           clearable={true}

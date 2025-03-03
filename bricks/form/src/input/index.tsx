@@ -19,7 +19,11 @@ import "@next-core/theme";
 import classNames from "classnames";
 import { isNil } from "lodash";
 import styleText from "./input.shadow.css";
-import { FormItemElementBase, MessageBody } from "@next-shared/form";
+import {
+  FormItemElementBase,
+  MessageBody,
+  pickFormItemProps,
+} from "@next-shared/form";
 import type { FormItem, FormItemProps } from "../form-item/index.jsx";
 import { ComponentSize, InputType } from "../interface.js";
 import { useMergeRefs } from "@next-shared/hooks";
@@ -431,7 +435,7 @@ export const RCInput = forwardRef<RCInputRef, RCInputProps>((props, ref) => {
   };
 
   return (
-    <WrappedFormItem exportparts="message" {...props}>
+    <WrappedFormItem exportparts="message" {...pickFormItemProps(props)}>
       <div
         part="addon-wrapper"
         className={classNames(

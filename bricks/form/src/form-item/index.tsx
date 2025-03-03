@@ -1,56 +1,22 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { createDecorators } from "@next-core/element";
 import {
-  AbstractForm,
   FormItemElementBase,
   MessageBody,
-  ColProps,
+  FormItemProps,
 } from "@next-shared/form";
 import { ReactUseMultipleBricks } from "@next-core/react-runtime";
-import type { Form } from "../form/index.jsx";
-import styleText from "./FormItem.shadow.less";
+import "@next-core/theme";
 import classNames from "classnames";
 import type { ComponentSize, Layout } from "../interface.js";
 import {
   convertToItemColName,
   calcWrapperColOffsetWithoutLabel,
 } from "./convertToItemColName.js";
-import "@next-core/theme";
-import { UseSingleBrickConf } from "@next-core/types";
+import type { Form } from "../form/index.js";
+import styleText from "./FormItem.shadow.less";
 
-type CurrentElement = HTMLElement & {
-  size?: ComponentSize;
-  validateState?: MessageBody | string;
-  [key: string]: any;
-};
-
-export interface FormItemProps {
-  formElement?: AbstractForm | null;
-  curElement?: CurrentElement;
-  name?: string;
-  label?: string;
-  current?: HTMLElement;
-  required?: boolean;
-  pattern?: string;
-  type?: string;
-  min?: number;
-  max?: number;
-  labelCol?: ColProps;
-  wrapperCol?: ColProps;
-  message?: Record<string, string>;
-  layout?: Layout;
-  size?: ComponentSize;
-  trigger?: string;
-  valuePropsName?: string;
-  notRender?: boolean;
-  helpBrick?: {
-    useBrick: UseSingleBrickConf | UseSingleBrickConf[];
-    placement?: "right" | "bottom";
-  };
-  labelBrick?: { useBrick: UseSingleBrickConf | UseSingleBrickConf[] };
-  needValidate?: boolean;
-  validator?: (value: any) => MessageBody | string;
-}
+export type { FormItemProps };
 
 const { defineElement, property } = createDecorators();
 
