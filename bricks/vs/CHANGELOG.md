@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.14.11](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.14.10...@next-bricks/vs@1.14.11) (2025-03-03)
+
+
+### Bug Fixes
+
+* set fixedOverflowWidgets defaults to true ([e556d9c](https://github.com/easyops-cn/next-advanced-bricks/commit/e556d9c42d2fe0312a6fd660fff18406033b3bac))
+
+
+
+
+
 ## [1.14.10](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.14.9...@next-bricks/vs@1.14.10) (2025-02-21)
 
 
