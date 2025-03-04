@@ -8,17 +8,18 @@ import { getBasePath } from "@next-core/runtime";
 import type { PreviewWindow } from "@next-core/preview/types";
 import { JSON_SCHEMA, safeDump } from "js-yaml";
 import { __compat_internals } from "../shared/compat_internals";
-import type { VisualConfig } from "./raw-data-interfaces";
-import { convertToStoryboard } from "./convert";
+import type { VisualConfig } from "./raw-metric-interfaces";
+// import { convertToStoryboard } from "./convert";
 import styleText from "./styles.shadow.css";
+import sharedPreviewStyleText from "../raw-data-preview/preview.shadow.css";
 import previewStyleText from "./preview.shadow.css";
 
 const { defineElement, property, event } = createDecorators();
 
-export interface RawDataPreviewProps {
+export interface RawMetricPreviewProps {
   previewUrl?: string;
-  generations?: AttributeGeneration[];
-  mocks?: Record<string, unknown>[];
+  generations?: MetricGeneration[];
+  // mocks?: Record<string, unknown>;
   busy?: boolean;
   category?: PreviewCategory;
   theme?: string;
@@ -26,19 +27,19 @@ export interface RawDataPreviewProps {
   app?: MicroApp;
 }
 
-export interface AttributeGeneration {
+export interface MetricGeneration {
   generationId?: string;
   objectId: string;
   objectName: string;
   propertyId: string;
   propertyName: string;
-  propertyType?: string;
-  propertyValues?: unknown[];
+  // propertyType?: string;
+  // propertyValues?: unknown[];
   propertyInstanceId?: string;
   comment?: string;
   approved?: boolean;
   candidates: VisualConfig[] | null;
-  mockData: Record<string, unknown>[];
+  mockData: unknown[];
 }
 
 export interface CommentDetail {
@@ -52,7 +53,7 @@ export interface ApproveDetail {
 }
 
 interface BasePreviewMessage {
-  channel: "raw-data-preview";
+  channel: "raw-metric-preview";
 }
 
 interface CommentMessage extends BasePreviewMessage {
@@ -67,17 +68,15 @@ interface ApproveMessage extends BasePreviewMessage {
 
 interface ViewAttrPromptMessage extends BasePreviewMessage {
   type: "viewAttrPrompt";
-  payload: AttributeGeneration;
+  payload: MetricGeneration;
 }
 
-interface UpdatePropertyToggleStateMessage extends BasePreviewMessage {
-  type: "updatePropertyToggleState";
-  payload: string[];
-}
-
-interface UpdatePropertyExpandStateMessage extends BasePreviewMessage {
-  type: "updatePropertyExpandState";
-  payload: string[];
+interface ResizeMessage extends BasePreviewMessage {
+  type: "resize";
+  payload: {
+    width: number;
+    height: number;
+  };
 }
 
 interface UpdatePropertyApproveStateMessage extends BasePreviewMessage {
@@ -89,8 +88,7 @@ type PreviewMessage =
   | CommentMessage
   | ApproveMessage
   | ViewAttrPromptMessage
-  | UpdatePropertyToggleStateMessage
-  | UpdatePropertyExpandStateMessage
+  | ResizeMessage
   | UpdatePropertyApproveStateMessage;
 
 export type PreviewCategory =
@@ -102,23 +100,23 @@ export type PreviewCategory =
   | "value";
 
 /**
- * 构件 `visual-builder.raw-data-preview`
+ * 构件 `visual-builder.raw-metric-preview`
  *
  * @internal
  */
 export
-@defineElement("visual-builder.raw-data-preview", {
+@defineElement("visual-builder.raw-metric-preview", {
   styleTexts: [styleText],
 })
-class RawDataPreview extends ReactNextElement {
+class RawMetricPreview extends ReactNextElement {
   @property()
   accessor previewUrl: string | undefined;
 
   @property({ attribute: false })
-  accessor generations: AttributeGeneration[] | undefined;
+  accessor generations: MetricGeneration[] | undefined;
 
-  @property({ attribute: false })
-  accessor mocks: Record<string, unknown>[] | undefined;
+  // @property({ attribute: false })
+  // accessor mocks: Record<string, unknown> | undefined;
 
   @property({ type: Boolean })
   accessor busy: boolean | undefined;
@@ -153,18 +151,19 @@ class RawDataPreview extends ReactNextElement {
   };
 
   @event({ type: "view.attr.prompt" })
-  accessor #viewAttrPromptEvent: EventEmitter<AttributeGeneration>;
+  accessor #viewAttrPromptEvent: EventEmitter<MetricGeneration>;
 
-  #handleViewAttrPrompt = (detail: AttributeGeneration) => {
+  #handleViewAttrPrompt = (detail: MetricGeneration) => {
     this.#viewAttrPromptEvent.emit(detail);
   };
 
   render() {
     return (
-      <RawDataPreviewComponent
+      <RawMetricPreviewComponent
+        root={this}
         previewUrl={this.previewUrl}
         generations={this.generations}
-        mocks={this.mocks}
+        // mocks={this.mocks}
         busy={this.busy}
         category={this.category}
         theme={this.theme}
@@ -178,16 +177,18 @@ class RawDataPreview extends ReactNextElement {
   }
 }
 
-export interface RawDataPreviewComponentProps extends RawDataPreviewProps {
+export interface RawMetricPreviewComponentProps extends RawMetricPreviewProps {
+  root: HTMLElement;
   onComment: (detail: CommentDetail) => void;
   onApprove: (detail: ApproveDetail) => void;
-  onViewAttrPrompt: (detail: AttributeGeneration) => void;
+  onViewAttrPrompt: (detail: MetricGeneration) => void;
 }
 
-export function RawDataPreviewComponent({
+export function RawMetricPreviewComponent({
+  root,
   previewUrl,
   generations,
-  mocks,
+  // mocks,
   busy,
   category,
   theme,
@@ -196,12 +197,12 @@ export function RawDataPreviewComponent({
   onComment,
   onApprove,
   onViewAttrPrompt,
-}: RawDataPreviewComponentProps) {
+}: RawMetricPreviewComponentProps) {
   const iframeRef = useRef<HTMLIFrameElement>();
   const [ready, setReady] = useState(false);
   const [injected, setInjected] = useState(false);
-  const propertyToggleStateRef = useRef<string[]>([]);
-  const propertyExpandStateRef = useRef<string[]>([]);
+  // const propertyToggleStateRef = useRef<string[]>([]);
+  // const propertyExpandStateRef = useRef<string[]>([]);
   const propertyApproveStateRef = useRef<string[]>([]);
 
   useEffect(() => {
@@ -228,7 +229,7 @@ export function RawDataPreviewComponent({
       const iframeWin = iframeRef.current!.contentWindow as PreviewWindow;
       iframeWin.postMessage(
         {
-          channel: "raw-data-preview",
+          channel: "raw-metric-preview",
           type: "busy",
           payload: busy,
         },
@@ -241,7 +242,7 @@ export function RawDataPreviewComponent({
     if (ready) {
       const iframeWin = iframeRef.current!.contentWindow as PreviewWindow;
       const onMessage = ({ data }: MessageEvent<PreviewMessage>) => {
-        if (data?.channel === "raw-data-preview") {
+        if (data?.channel === "raw-metric-preview") {
           switch (data.type) {
             case "comment":
               onComment(data.payload);
@@ -252,11 +253,8 @@ export function RawDataPreviewComponent({
             case "viewAttrPrompt":
               onViewAttrPrompt(data.payload);
               break;
-            case "updatePropertyToggleState":
-              propertyToggleStateRef.current = data.payload;
-              break;
-            case "updatePropertyExpandState":
-              propertyExpandStateRef.current = data.payload;
+            case "resize":
+              root.style.height = `${data.payload.height + 2}px`;
               break;
             case "updatePropertyApproveState":
               propertyApproveStateRef.current = data.payload;
@@ -269,7 +267,7 @@ export function RawDataPreviewComponent({
         iframeWin.removeEventListener("message", onMessage);
       };
     }
-  }, [onApprove, onComment, onViewAttrPrompt, ready]);
+  }, [onApprove, onComment, onViewAttrPrompt, ready, root]);
 
   useEffect(() => {
     if (!ready) {
@@ -319,7 +317,14 @@ export function RawDataPreviewComponent({
       {
         brick: "div",
         properties: {
-          textContent: "属性",
+          textContent: "指标",
+          className: "head-cell",
+        },
+      },
+      {
+        brick: "div",
+        properties: {
+          textContent: "别名",
           className: "head-cell",
         },
       },
@@ -327,20 +332,6 @@ export function RawDataPreviewComponent({
         brick: "div",
         properties: {
           textContent: "",
-          className: "head-cell",
-        },
-      },
-      {
-        brick: "div",
-        properties: {
-          textContent: "类型",
-          className: "head-cell",
-        },
-      },
-      {
-        brick: "div",
-        properties: {
-          textContent: "原始数据",
           className: "head-cell",
         },
       },
@@ -388,41 +379,13 @@ export function RawDataPreviewComponent({
       brick: "visual-builder.pre-generated-table-view",
       context: [
         {
-          name: "propertyToggleState",
-          value: propertyToggleStateRef.current,
-          onChange: {
-            action: "window.postMessage",
-            args: [
-              {
-                channel: "raw-data-preview",
-                type: "updatePropertyToggleState",
-                payload: "<% CTX.propertyToggleState %>",
-              },
-            ],
-          },
-        },
-        {
-          name: "propertyExpandState",
-          value: propertyExpandStateRef.current,
-          onChange: {
-            action: "window.postMessage",
-            args: [
-              {
-                channel: "raw-data-preview",
-                type: "updatePropertyExpandState",
-                payload: "<% CTX.propertyExpandState %>",
-              },
-            ],
-          },
-        },
-        {
           name: "propertyApproveState",
           value: propertyApproveStateRef.current,
           onChange: {
             action: "window.postMessage",
             args: [
               {
-                channel: "raw-data-preview",
+                channel: "raw-metric-preview",
                 type: "updatePropertyApproveState",
                 payload: "<% CTX.propertyApproveState %>",
               },
@@ -436,7 +399,7 @@ export function RawDataPreviewComponent({
       properties: {
         style: {
           gridTemplateColumns:
-            "minmax(120px, 0.5fr) 32px auto repeat(5, 1fr) auto 1fr",
+            "minmax(120px, 1fr) minmax(120px, 0.6fr) 32px repeat(4, 1fr) auto 1fr",
         },
       },
       children: tableChildren,
@@ -463,35 +426,23 @@ export function RawDataPreviewComponent({
             {
               brick: "span",
               properties: {
-                textContent: `${generation.propertyName ?? generation.propertyId}`,
+                textContent: `${generation.propertyId}`,
               },
             },
+          ],
+        },
+        {
+          brick: "div",
+          properties: {
+            className: classNames("body-cell", {
+              "last-row-cell": isLastRow,
+            }),
+          },
+          children: [
             {
-              // 多个示例的展开/收起按钮
-              brick: "eo-button",
+              brick: "span",
               properties: {
-                className: "btn-toggle",
-                type: "text",
-                icon: `<%=
-                  {
-                    lib: "fa",
-                    prefix: "fas",
-                    icon: CTX.propertyToggleState.includes(${JSON.stringify(generation.propertyId)}) ? "chevron-up" : "chevron-down",
-                  }
-                %>`,
-              },
-              events: {
-                click: {
-                  action: "context.replace",
-                  args: [
-                    "propertyToggleState",
-                    `<%
-                      CTX.propertyToggleState.includes(${JSON.stringify(generation.propertyId)})
-                        ? CTX.propertyToggleState.filter((id) => id !== ${JSON.stringify(generation.propertyId)})
-                        : CTX.propertyToggleState.concat(${JSON.stringify(generation.propertyId)})
-                    %>`,
-                  ],
-                },
+                textContent: `${generation.propertyName ?? ""}`,
               },
             },
           ],
@@ -504,153 +455,62 @@ export function RawDataPreviewComponent({
               "last-row-cell": isLastRow,
             }),
           },
-          children: generation.candidates?.length
-            ? [
-                {
-                  brick: "eo-icon",
-                  properties: {
-                    lib: "fa",
-                    prefix: "fas",
-                    icon: "circle",
-                    style: {
-                      color: generation.generationId
-                        ? "var(--palette-green-6)"
-                        : "var(--palette-gray-6)",
-                      transformOrigin: "center center",
-                      transform: "scale(0.5)",
+          children:
+            generation.candidates?.length || generation.mockData
+              ? [
+                  {
+                    brick: "eo-icon",
+                    properties: {
+                      lib: "fa",
+                      prefix: generation.candidates?.length ? "fas" : "far",
+                      icon: "circle",
+                      style: {
+                        color:
+                          generation.generationId &&
+                          generation.candidates?.length
+                            ? "var(--palette-green-6)"
+                            : "var(--palette-gray-6)",
+                        transformOrigin: "center center",
+                        transform: "scale(0.5)",
+                      },
                     },
                   },
-                },
-              ]
-            : undefined,
-        },
-        {
-          brick: "div",
-          properties: {
-            className: classNames("body-cell", {
-              "last-row-cell": isLastRow,
-            }),
-          },
-          children: [
-            {
-              brick: "eo-link",
-              properties: {
-                type: "text",
-                textContent: generation.propertyType,
-              },
-              events: {
-                click: {
-                  action: "window.postMessage",
-                  args: [
-                    {
-                      channel: "raw-data-preview",
-                      type: "viewAttrPrompt",
-                      payload: generation,
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+                ]
+              : undefined,
         }
       );
 
-      let values = generation.propertyValues;
-      if (!values) {
-        const mockList = (generation.mockData ?? mocks ?? []).slice();
-        mockList.sort((ma, mb) => {
-          const a = ma?.[generation.propertyId];
-          const b = mb?.[generation.propertyId];
-          const aIsArray = Array.isArray(a);
-          const bIsArray = Array.isArray(b);
-          if (aIsArray || bIsArray) {
-            return (bIsArray ? b.length : -1) - (aIsArray ? a.length : -1);
-          }
-          const aIsNil = a == null;
-          const bIsNil = b == null;
-          if (aIsNil || bIsNil) {
-            return (bIsNil ? 0 : 1) - (aIsNil ? 0 : 1);
-          }
-
-          const aIsEmpty = typeof a === "string" && a.length === 0;
-          const bIsEmpty = typeof b === "string" && b.length === 0;
-          if (aIsEmpty || bIsEmpty) {
-            return (bIsEmpty ? 0 : 1) - (aIsEmpty ? 0 : 1);
-          }
-          return 0;
-        });
-        values = mockList.map((mock) => mock[generation.propertyId]);
-      }
-
-      // 原始数据
-      tableChildren.push({
-        brick: "div",
-        properties: {
-          className: classNames("body-cell", {
-            "last-row-cell": isLastRow,
-          }),
-        },
-        children: [
-          {
-            brick: "div",
-            properties: {
-              className: "list",
-            },
-            children: values.map((mock, index) => ({
-              brick: "div",
-              if:
-                index === 0
-                  ? true
-                  : `<%= CTX.propertyToggleState.includes(${JSON.stringify(generation.propertyId)}) %>`,
-              properties: {
-                className: `<%= \`raw-content\${ CTX.propertyExpandState.includes(${JSON.stringify(generation.propertyId)}) ? " expand" : "" }\` %>`,
-                textContent:
-                  mock === undefined
-                    ? ""
-                    : typeof mock === "string"
-                      ? mock
-                      : JSON.stringify(mock, null, 2),
-              },
-            })),
-          },
-          {
-            // 原始数据的展开/收起按钮
-            brick: "eo-button",
-            properties: {
-              className: "btn-toggle",
-              type: "text",
-              icon: `<%=
-                {
-                  lib: "fa",
-                  prefix: "fas",
-                  icon: CTX.propertyExpandState.includes(${JSON.stringify(generation.propertyId)}) ? "chevron-up" : "chevron-down",
-                }
-              %>`,
-            },
-            events: {
-              click: {
-                action: "context.replace",
-                args: [
-                  "propertyExpandState",
-                  `<%
-                    CTX.propertyExpandState.includes(${JSON.stringify(generation.propertyId)})
-                      ? CTX.propertyExpandState.filter((id) => id !== ${JSON.stringify(generation.propertyId)})
-                      : CTX.propertyExpandState.concat(${JSON.stringify(generation.propertyId)})
-                  %>`,
-                ],
-              },
-            },
-          },
-        ],
-      });
-
       // 生成的编排
       for (let i = -1; i < 3; i++) {
-        const candidate = candidatesByVisualWeight.get(i);
+        // const candidate = candidatesByVisualWeight.get(i);
 
         let brick: BrickConf;
-        if (candidate) {
-          brick = convertToStoryboard(candidate, generation.propertyId);
+        // if (candidate) {
+        //   brick = convertToStoryboard(candidate, generation.propertyId);
+        // }
+        if (i === 0) {
+          brick = {
+            brick: "eo-mini-line-chart",
+            properties: {
+              data: "<% DATA %>",
+              xField: "time",
+              yField: generation.propertyId,
+              lineColor: "var(--palette-orange-5)",
+            },
+          };
+        } else if (i === 1) {
+          brick = {
+            brick: "chart-v2.time-series-chart",
+            properties: {
+              data: "<% DATA %>",
+              xField: "time",
+              yField: generation.propertyId,
+              lineColor: "var(--palette-orange-5)",
+              height: 200,
+              width: 400,
+              timeFormat: "HH:mm",
+            },
+          };
         }
 
         tableChildren.push({
@@ -659,6 +519,9 @@ export function RawDataPreviewComponent({
             className: classNames("body-cell", {
               "last-row-cell": isLastRow,
             }),
+            style: {
+              justifyContent: "center",
+            },
           },
           children: [
             {
@@ -667,20 +530,24 @@ export function RawDataPreviewComponent({
                 className: "list",
               },
               children: brick
-                ? values.map((mock, index) => ({
-                    brick: "visual-builder.pre-generated-container",
-                    if:
-                      index === 0
-                        ? true
-                        : `<%= CTX.propertyToggleState.includes(${JSON.stringify(generation.propertyId)}) %>`,
-                    properties: {
-                      useBrick: [brick],
-                      dataSource: {
-                        [generation.propertyId]: mock,
+                ? [
+                    {
+                      brick: "visual-builder.pre-generated-container",
+                      properties: {
+                        useBrick: [brick],
+                        dataSource: generation.mockData?.map(
+                          (value, index) => ({
+                            time:
+                              Math.round(+new Date() / 1000) -
+                              86400 +
+                              index * 300,
+                            [generation.propertyId]: value,
+                          })
+                        ),
                       },
+                      errorBoundary: true,
                     },
-                    errorBoundary: true,
-                  }))
+                  ]
                 : undefined,
             },
           ],
@@ -711,7 +578,7 @@ export function RawDataPreviewComponent({
                         action: "window.postMessage",
                         args: [
                           {
-                            channel: "raw-data-preview",
+                            channel: "raw-metric-preview",
                             type: "approve",
                             payload: {
                               approved: "<% EVENT.detail.length > 0 %>",
@@ -766,7 +633,7 @@ export function RawDataPreviewComponent({
                       action: "window.postMessage",
                       args: [
                         {
-                          channel: "raw-data-preview",
+                          channel: "raw-metric-preview",
                           type: "comment",
                           payload: {
                             comment: "<% EVENT.target.value %>",
@@ -788,7 +655,26 @@ export function RawDataPreviewComponent({
       {
         yaml: safeDump(
           [
-            table,
+            {
+              brick: "sl-resize-observer",
+              children: [table],
+              events: {
+                "sl-resize": {
+                  action: "window.postMessage",
+                  args: [
+                    {
+                      channel: "raw-metric-preview",
+                      type: "resize",
+                      payload: `<%
+                        EVENT.detail.entries[0].borderBoxSize
+                          ? { width: EVENT.detail.entries[0].borderBoxSize[0].inlineSize, height: EVENT.detail.entries[0].borderBoxSize[0].blockSize }
+                          : { width: EVENT.detail.entries[0].contentRect.width, height: EVENT.detail.entries[0].contentRect.height }
+                      %>`,
+                    },
+                  ],
+                },
+              },
+            },
             {
               brick: "eo-message-listener",
               properties: {
@@ -796,7 +682,7 @@ export function RawDataPreviewComponent({
               },
               events: {
                 message: {
-                  if: "<% EVENT.detail.data?.channel === 'raw-data-preview' && EVENT.detail.data.type === 'busy' %>",
+                  if: "<% EVENT.detail.data?.channel === 'raw-metric-preview' && EVENT.detail.data.type === 'busy' %>",
                   action: "context.replace",
                   args: ["busy", "<% EVENT.detail.data.payload %>"],
                 },
@@ -817,10 +703,10 @@ export function RawDataPreviewComponent({
         app,
         theme,
         uiVersion,
-        styleText: previewStyleText,
+        styleText: [sharedPreviewStyleText, previewStyleText].join("\n"),
       }
     );
-  }, [app, injected, generations, theme, uiVersion, category, mocks]);
+  }, [app, injected, generations, theme, uiVersion, category]);
 
   return (
     <div className={classNames("container")}>
