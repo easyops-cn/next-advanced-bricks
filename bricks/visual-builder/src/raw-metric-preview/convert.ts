@@ -1,311 +1,113 @@
 import type { BrickConf } from "@next-core/types";
-import { pick } from "lodash";
-import type { CSSProperties } from "react";
-import type { VisualConfig, VisualStyle } from "./raw-metric-interfaces";
-import { getMemberAccessor } from "../shared/getMemberAccessor";
+import type { VisualConfig } from "./raw-metric-interfaces";
+import { ALLOWED_COLORS } from "./constants";
 
-export function convertToStoryboard(
-  config: VisualConfig,
-  attr: string
-): BrickConf | null {
-  return lowLevelConvertToStoryboard(config, getMemberAccessor(attr));
+export interface RawMetric {
+  name: string;
+  unit?: string;
 }
 
-export function lowLevelConvertToStoryboard(
+export function convertToChart(
   config: VisualConfig,
-  attrAccessor: string
+  metricId: string,
+  metric: RawMetric
 ): BrickConf | null {
-  let brickItem: BrickConf;
+  let brickItem: BrickConf | null = null;
 
-  switch (config.display) {
-    case "link":
-    case "text": {
-      brickItem = getPlainBrick(config, attrAccessor);
-      if (config.type === "struct-list" && !config.countOnly) {
+  const color =
+    config.color && ALLOWED_COLORS.includes(config.color)
+      ? `<% THEME.getCssPropertyValue(${JSON.stringify(`--palette-${config.color}-5`)}) %>`
+      : undefined;
+
+  if (config.size === "small") {
+    switch (config.chartType) {
+      case "line":
         brickItem = {
-          brick: "eo-tag",
-          errorBoundary: true,
-          children: [brickItem],
-        };
-      } else if (config.display === "link") {
-        brickItem = {
-          brick: "eo-link",
-          errorBoundary: true,
-          children: [brickItem],
-        };
-      }
-      break;
-    }
-    case "tag": {
-      const colorSuffix =
-        config.style?.variant === "background" ? "-inverse" : "";
-      const valueAccessor = getValueAccessor(config, attrAccessor);
-      brickItem = {
-        brick: "eo-tag",
-        errorBoundary: true,
-        properties: {
-          textContent: `<% ${valueAccessor} %>`,
-          size: getTagSize(config.style?.size),
-          color: config.style?.background
-            ? `${config.style.background}${colorSuffix}`
-            : config.style?.palette
-              ? `<%
-  \`\${new Map(Object.entries(${JSON.stringify(
-    config.style.palette,
-    null,
-    2
-  ).replaceAll("\n", "\n  ")})).get(${valueAccessor}) ?? "gray"}${colorSuffix}\`
-%>`
-              : `gray${colorSuffix}`,
-          outline: config.style?.variant === "outline",
-        },
-      };
-      break;
-    }
-    case "icon": {
-      brickItem = getIconBrick(config, attrAccessor);
-      break;
-    }
-    case "icon+text": {
-      const iconBrick = getIconBrick(config, attrAccessor);
-      const textBrick = getPlainBrick(config, attrAccessor);
-      brickItem = {
-        brick: "span",
-        errorBoundary: true,
-        properties: {
-          style: {
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "0.5em",
+          brick: "eo-mini-line-chart",
+          properties: {
+            data: "<% DATA %>",
+            xField: "time",
+            yField: metricId,
+            lineColor: color,
           },
-        },
-        children: [iconBrick, textBrick],
-      };
-      break;
-    }
-    default:
-      return null;
-  }
-
-  if (config.type !== "struct-list" || config.countOnly) {
-    return brickItem;
-  }
-
-  const maxItems = Number(config.maxItems) || 3;
-  return {
-    brick: "span",
-    errorBoundary: true,
-    properties: {
-      style: {
-        display: "inline-flex",
-        alignItems: "center",
-        gap: "0.5em",
-      },
-    },
-    children: [
-      {
-        brick: ":forEach",
-        dataSource: `<% DATA${attrAccessor}.slice(0, ${maxItems}) %>`,
-        children: [brickItem],
-      },
-      {
-        brick: "eo-link",
-        if: `<% DATA${attrAccessor}.length > ${maxItems} %>`,
-        properties: {
-          textContent: `<% \`+ \${DATA${attrAccessor}.length - ${maxItems}}\` %>`,
-        },
-      },
-    ],
-  };
-}
-
-function getIconBrick(config: VisualConfig, attrAccessor: string): BrickConf {
-  if (config.type === "boolean") {
-    const valueAccessor = getValueAccessor(config, attrAccessor);
-    const trueIcon = config.true?.icon ?? "check";
-    const falseIcon = config.false?.icon ?? "xmark";
-    const trueStyle = getPlainStyle(config.true?.style);
-    const falseStyle = getPlainStyle(config.false?.style);
-    return {
-      brick: "eo-icon",
-      errorBoundary: true,
-      properties: {
-        lib: "fa",
-        prefix: "fas",
-        icon: `<% ${valueAccessor} ? ${JSON.stringify(trueIcon)} : ${JSON.stringify(falseIcon)} %>`,
-        style: `<% ${valueAccessor} ? ${JSON.stringify(trueStyle)} : ${JSON.stringify(falseStyle)} %>`,
-      },
-    };
-  }
-
-  if (config.type === "json") {
-    const valueAccessor = getValueAccessor(config, attrAccessor);
-    return {
-      brick: "eo-icon",
-      errorBoundary: true,
-      properties: {
-        lib: `<% ${valueAccessor}?.lib %>`,
-        prefix: `<% ${valueAccessor}?.prefix %>`,
-        category: `<% ${valueAccessor}?.category %>`,
-        theme: `<% ${valueAccessor}?.theme %>`,
-        icon: `<% ${valueAccessor}?.icon %>`,
-        style: getPlainStyle(config.style),
-      },
-    };
-  }
-
-  return {
-    brick: "eo-icon",
-    errorBoundary: true,
-    properties: {
-      lib: "fa",
-      prefix: "fas",
-      icon: config.icon,
-      style: getPlainStyle(config.style),
-    },
-  };
-}
-
-function getPlainBrick(config: VisualConfig, attrAccessor: string): BrickConf {
-  if (config.type === "struct-list" && config.countOnly) {
-    return {
-      brick: "span",
-      properties: {
-        textContent: `<% \`\${DATA${attrAccessor}.length}\` %>`,
-      },
-    };
-  }
-
-  const valueAccessor = getValueAccessor(config, attrAccessor);
-  const value = `<% ${valueAccessor} %>`;
-  switch (config.formatter?.type) {
-    case "number":
-      return {
-        brick: "eo-formatter-number",
-        errorBoundary: true,
-        properties: {
-          value,
-          type: config.formatter.format,
-          ...pick(config.formatter, [
-            "currency",
-            // "unit",
-            "originalUnit",
-            "decimals",
-            "thousandsSeparator",
-          ]),
-          style: getPlainStyle(config.style),
-        },
-      };
-    case "date":
-    case "date-time":
-      return {
-        brick: "eo-humanize-time",
-        errorBoundary: true,
-        properties: {
-          value,
-          type: config.type === "date" ? "date" : undefined,
-          formatter: config.formatter.format,
-          style: getPlainStyle(config.style),
-        },
-      };
-    case "cost-time":
-      return {
-        brick: "eo-humanize-time",
-        errorBoundary: true,
-        properties: {
-          value,
-          isCostTime: true,
-          style: getPlainStyle(config.style),
-        },
-      };
-    default: {
-      let textContent: string | undefined;
-      let style: CSSProperties | string | undefined;
-      let tag = "span";
-      if (config.type === "boolean") {
-        const trueContent = config.true?.text ?? "Yes";
-        const falseContent = config.false?.text ?? "No";
-        const trueStyle = getPlainStyle(config.true?.style);
-        const falseStyle = getPlainStyle(config.false?.style);
-        textContent = `<% ${valueAccessor} ? ${JSON.stringify(trueContent)} : ${JSON.stringify(falseContent)} %>`;
-        style = `<% ${valueAccessor} ? ${JSON.stringify(trueStyle)} : ${JSON.stringify(falseStyle)} %>`;
-      } else {
-        style = getPlainStyle(config.style);
-        if (config.type === "json") {
-          if (config.display === "link") {
-            textContent = `<% I18N("VIEW", "查看") %>`;
-          } else {
-            tag = "pre";
-            textContent = `<% PIPES.jsonStringify(${valueAccessor}) %>`;
-          }
-        } else {
-          textContent = value;
-        }
+        };
+        break;
+      case "gauge": {
+        const isPercentBase1 = metric.unit === "percent(1)";
+        const isPercentBase100 =
+          metric.unit === "percent(100)" || /^\s*%\s*$/.test(metric.unit);
+        brickItem = {
+          brick: "chart-v2.gauge-chart",
+          properties: {
+            data: "<% DATA %>",
+            xField: "time",
+            yField: metricId,
+            height: 100,
+            axis: {
+              yAxis: {
+                // 目前图表构件不支持 bibytes 的 ticks
+                unit: metric.unit === "bibytes" ? "bytes" : metric.unit,
+                precision: config.precision,
+                min: config.min,
+                max:
+                  config.max ??
+                  (isPercentBase1 ? 1 : isPercentBase100 ? 100 : undefined),
+              },
+            },
+            thresholdColors:
+              isPercentBase1 || isPercentBase100
+                ? [
+                    {
+                      value: 20,
+                      color: "cyan",
+                    },
+                    {
+                      value: 90,
+                      color: "yellow",
+                    },
+                    {
+                      value: 100,
+                      color: "red",
+                    },
+                  ].map(({ value, color }) => ({
+                    value: isPercentBase100 ? value : value / 100,
+                    color: `<% THEME.getCssPropertyValue(${JSON.stringify(`--palette-${color}-5`)}) %>`,
+                  }))
+                : undefined,
+          },
+        };
+        break;
       }
-      return {
-        brick: tag,
-        errorBoundary: true,
-        properties: {
-          textContent,
-          style,
-        },
-      };
+    }
+  } else {
+    switch (config.chartType) {
+      case "line":
+      case "area":
+        brickItem = {
+          brick: "chart-v2.time-series-chart",
+          properties: {
+            data: "<% DATA %>",
+            xField: "time",
+            yFields: [metricId],
+            colors: [color].filter(Boolean),
+            height: config.size === "large" ? 230 : 200,
+            timeFormat: "HH:mm",
+            areaOpacity: config.chartType === "line" ? 0 : undefined,
+            axis: {
+              yAxis: {
+                // 目前图表构件不支持 bibytes 的 ticks
+                unit: metric.unit === "bibytes" ? "bytes" : metric.unit,
+                precision: config.precision,
+                min: config.min,
+                max: config.max,
+              },
+            },
+            legends: config.size === "large",
+          },
+        };
+        break;
     }
   }
-}
 
-function getValueAccessor(config: VisualConfig, attrAccessor: string): string {
-  if (
-    (config.type === "struct" || config.type === "struct-list") &&
-    config.field
-  ) {
-    return `${config.type === "struct" ? `DATA${attrAccessor}` : "ITEM"}${getMemberAccessor(config.field)}`;
-  }
-  return `DATA${attrAccessor}`;
-}
-
-function getTagSize(size: VisualStyle["size"]): string | undefined {
-  switch (size) {
-    case "large":
-    case "medium":
-    case "small":
-      return size;
-    case "x-large":
-      return "large";
-    // case "x-small":
-    //   return "xs";
-  }
-}
-
-function getPlainStyle(
-  configStyle: VisualStyle | undefined
-): CSSProperties | undefined {
-  if (!configStyle) {
-    return;
-  }
-  const style: CSSProperties = {};
-  switch (configStyle.size) {
-    // case "x-small":
-    case "small":
-      style.fontSize = "var(--sub-title-font-size-small)";
-      break;
-    case "medium":
-      style.fontSize = "var(--normal-font-size)";
-      break;
-    case "large":
-      style.fontSize = "var(--card-title-font-size)";
-      break;
-    case "x-large":
-      style.fontSize = "var(--title-font-size-larger)";
-      break;
-  }
-  switch (configStyle.fontWeight) {
-    case "bold":
-    case "normal":
-      style.fontWeight = configStyle.fontWeight;
-  }
-  if (configStyle.color) {
-    style.color = configStyle.color;
-  }
-  return style;
+  return brickItem;
 }

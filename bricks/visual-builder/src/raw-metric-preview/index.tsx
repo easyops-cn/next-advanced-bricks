@@ -13,6 +13,7 @@ import type { VisualConfig } from "./raw-metric-interfaces";
 import styleText from "./styles.shadow.css";
 import sharedPreviewStyleText from "../raw-data-preview/preview.shadow.css";
 import previewStyleText from "./preview.shadow.css";
+import { convertToChart } from "./convert";
 
 const { defineElement, property, event } = createDecorators();
 
@@ -32,9 +33,9 @@ export interface MetricGeneration {
   objectId: string;
   objectName: string;
   propertyId: string;
-  propertyName: string;
-  // propertyType?: string;
-  // propertyValues?: unknown[];
+  propertyName?: string;
+  propertyUnit: string;
+  propertyDataType: "long" | "double" | "string";
   propertyInstanceId?: string;
   comment?: string;
   approved?: boolean;
@@ -480,38 +481,45 @@ export function RawMetricPreviewComponent({
         }
       );
 
+      const metricId = generation.propertyName ?? generation.propertyId;
+
       // 生成的编排
       for (let i = -1; i < 3; i++) {
         // const candidate = candidatesByVisualWeight.get(i);
 
-        let brick: BrickConf;
+        // let brick: BrickConf;
         // if (candidate) {
         //   brick = convertToStoryboard(candidate, generation.propertyId);
         // }
-        if (i === 0) {
-          brick = {
-            brick: "eo-mini-line-chart",
-            properties: {
-              data: "<% DATA %>",
-              xField: "time",
-              yField: generation.propertyId,
-              lineColor: "var(--palette-orange-5)",
-            },
-          };
-        } else if (i === 1) {
-          brick = {
-            brick: "chart-v2.time-series-chart",
-            properties: {
-              data: "<% DATA %>",
-              xField: "time",
-              yField: generation.propertyId,
-              lineColor: "var(--palette-orange-5)",
-              height: 200,
-              width: 400,
-              timeFormat: "HH:mm",
-            },
-          };
-        }
+
+        const isPercentBase1 = generation.propertyUnit === "percent(1)";
+        const isPercentBase100 =
+          generation.propertyUnit === "percent(100)" ||
+          /^\s*%\s*$/.test(generation.propertyUnit);
+
+        const brick =
+          isPercentBase1 || isPercentBase100 || i >= 0
+            ? convertToChart(
+                {
+                  visualWeight: i,
+                  color: "orange",
+                  chartType: i === -1 ? "gauge" : i === 2 ? "area" : "line",
+                  size: i <= 0 ? "small" : i === 1 ? "medium" : "large",
+                  min: 0,
+                  precision:
+                    isPercentBase1 || isPercentBase100
+                      ? 1
+                      : generation.propertyDataType === "double"
+                        ? 2
+                        : 0,
+                },
+                metricId,
+                {
+                  name: generation.propertyId,
+                  unit: generation.propertyUnit,
+                }
+              )
+            : null;
 
         tableChildren.push({
           brick: "div",
@@ -541,7 +549,7 @@ export function RawMetricPreviewComponent({
                               Math.round(+new Date() / 1000) -
                               86400 +
                               index * 300,
-                            [generation.propertyId]: value,
+                            [metricId]: value,
                           })
                         ),
                       },
