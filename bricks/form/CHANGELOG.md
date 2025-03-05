@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.15.13](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.15.12...@next-bricks/form@1.15.13) (2025-03-05)
+
+
+### Bug Fixes
+
+* pick form item props ([fbfd0ed](https://github.com/easyops-cn/next-advanced-bricks/commit/fbfd0ed4d0d35c64bbe525b7f40e5f96627f398b))
+
+
+
+
+
 ## [1.15.12](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.15.11...@next-bricks/form@1.15.12) (2025-02-28)
 
 

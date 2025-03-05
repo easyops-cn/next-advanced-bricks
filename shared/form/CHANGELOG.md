@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/form@0.7.8...@next-shared/form@0.7.9) (2025-03-05)
+
+
+### Bug Fixes
+
+* pick form item props ([fbfd0ed](https://github.com/easyops-cn/next-advanced-bricks/commit/fbfd0ed4d0d35c64bbe525b7f40e5f96627f398b))
+
+
+
+
+
 ## [0.7.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/form@0.7.7...@next-shared/form@0.7.8) (2025-01-13)
 
 **Note:** Version bump only for package @next-shared/form

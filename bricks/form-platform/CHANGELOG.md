@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.27](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form-platform@0.4.26...@next-bricks/form-platform@0.4.27) (2025-03-05)
+
+
+### Bug Fixes
+
+* pick form item props ([fbfd0ed](https://github.com/easyops-cn/next-advanced-bricks/commit/fbfd0ed4d0d35c64bbe525b7f40e5f96627f398b))
+
+
+
+
+
 ## [0.4.26](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form-platform@0.4.25...@next-bricks/form-platform@0.4.26) (2025-01-15)
 
 **Note:** Version bump only for package @next-bricks/form-platform

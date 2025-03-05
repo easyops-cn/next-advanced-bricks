@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.12.16](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/markdown@1.12.15...@next-bricks/markdown@1.12.16) (2025-03-05)
+
+
+### Bug Fixes
+
+* pick form item props ([fbfd0ed](https://github.com/easyops-cn/next-advanced-bricks/commit/fbfd0ed4d0d35c64bbe525b7f40e5f96627f398b))
+
+
+
+
+
 ## [1.12.15](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/markdown@1.12.14...@next-bricks/markdown@1.12.15) (2025-01-15)
 
 **Note:** Version bump only for package @next-bricks/markdown
