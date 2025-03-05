@@ -12,7 +12,7 @@ import type {
   EasyOpsIconProps,
 } from "@next-bricks/icons/easyops-icon";
 import { EoTooltip, ToolTipProps } from "@next-bricks/basic/tooltip";
-import { FormItemElementBase } from "@next-shared/form";
+import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
 import type { FormItem, FormItemProps } from "../../form-item/index.js";
 import "@next-core/theme";
 import styleText from "./styles.shadow.css";
@@ -353,7 +353,7 @@ export function EoUploadFileComponent(props: UploadFileComponentProps) {
   return (
     <WrappedFormItem
       exportparts="message"
-      {...(props as FormItemProps)}
+      {...pickFormItemProps(props)}
       validator={validator}
     >
       <Upload

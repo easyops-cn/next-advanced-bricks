@@ -2,7 +2,7 @@ import React, { CSSProperties } from "react";
 import { createDecorators, EventEmitter } from "@next-core/element";
 import { wrapBrick } from "@next-core/react-element";
 import { ReactUseBrick } from "@next-core/react-runtime";
-import { FormItemElementBase } from "@next-shared/form";
+import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
 import type {
   RadioType,
   GeneralOption,
@@ -251,7 +251,7 @@ export function RadioComponent(props: RadioComponentProps) {
   };
 
   return (
-    <WrappedFormItem exportparts="message" {...props}>
+    <WrappedFormItem exportparts="message" {...pickFormItemProps(props)}>
       <div className="radio-group">
         {options?.map((item: any) => {
           const icon = item.icon;

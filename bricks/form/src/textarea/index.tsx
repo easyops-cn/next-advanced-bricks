@@ -8,7 +8,7 @@ import React, {
   useState,
 } from "react";
 import { createDecorators, type EventEmitter } from "@next-core/element";
-import { FormItemElementBase } from "@next-shared/form";
+import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
 import ResizeObserver from "resize-observer-polyfill";
 import { wrapBrick } from "@next-core/react-element";
 import classNames from "classnames";
@@ -301,7 +301,11 @@ export const TextareaComponent = forwardRef<
   }, [autoSize, setAutoSize]);
 
   return (
-    <WrappedFormItem exportparts="message" {...props} ref={formItemRef}>
+    <WrappedFormItem
+      exportparts="message"
+      {...pickFormItemProps(props)}
+      ref={formItemRef}
+    >
       <textarea
         ref={textareaRef}
         className={classNames({

@@ -8,7 +8,11 @@ import React, {
 import { createDecorators, EventEmitter } from "@next-core/element";
 import { wrapBrick } from "@next-core/react-element";
 import { useCurrentTheme } from "@next-core/react-runtime";
-import { FormItemElementBase, MessageBody } from "@next-shared/form";
+import {
+  FormItemElementBase,
+  MessageBody,
+  pickFormItemProps,
+} from "@next-shared/form";
 import type { FormItem, FormItemProps } from "../form-item/index.jsx";
 import { TimePicker, DatePicker, ConfigProvider, theme } from "antd";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
@@ -21,7 +25,7 @@ import styleText from "./styles.shadow.css";
 import fixStyleText from "../time-picker/fix-style.shadow.css";
 import { i18n, initializeI18n } from "@next-core/i18n";
 import { K, NS, locales } from "./i18n.js";
-import { omit, isEmpty, uniqueId, difference } from "lodash";
+import { isEmpty, uniqueId, difference } from "lodash";
 import dayjs from "dayjs";
 import type { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
@@ -481,10 +485,7 @@ export function EoTimeRangePickerComponent(props: EoTimeRangePickerProps) {
     return createCache();
   }, []);
   return (
-    <WrappedFormItem
-      exportparts="message"
-      {...(omit(props, ["shadowRoot"]) as any)}
-    >
+    <WrappedFormItem exportparts="message" {...pickFormItemProps(props)}>
       <ConfigProvider
         locale={locale as any}
         theme={{

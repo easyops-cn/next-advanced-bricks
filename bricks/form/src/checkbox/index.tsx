@@ -11,7 +11,7 @@ import type {
   GeneralIcon,
   GeneralIconProps,
 } from "@next-bricks/icons/general-icon";
-import { FormItemElementBase } from "@next-shared/form";
+import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
 import { CaretRightOutlined } from "@ant-design/icons";
 
 const { defineElement, property, event } = createDecorators();
@@ -495,7 +495,7 @@ function CheckboxComponent(props: CheckboxProps) {
     );
   };
   return (
-    <WrappedFormItem exportparts="message" {...(props as FormItemProps)}>
+    <WrappedFormItem exportparts="message" {...pickFormItemProps(props)}>
       {props.type == "icon" ? (
         <IconCheckbox {...props}></IconCheckbox>
       ) : isGroup && props.optionGroups ? (

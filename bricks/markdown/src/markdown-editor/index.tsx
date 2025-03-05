@@ -56,7 +56,7 @@ import {
 } from "./components/TableWidget.js";
 import { CodeBlock } from "./components/CodeBlock.js";
 import type { FormItem, FormItemProps } from "@next-bricks/form/form-item";
-import { FormItemElementBase } from "@next-shared/form";
+import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
 import classNames from "classnames";
 
 const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
@@ -410,7 +410,7 @@ export function MarkdownEditorComponent(props: MarkdownEditorProps) {
   ];
 
   return (
-    <WrappedFormItem exportparts="message" {...props}>
+    <WrappedFormItem exportparts="message" {...pickFormItemProps(props)}>
       <div
         className={classNames("markdown-container", {
           readonly,

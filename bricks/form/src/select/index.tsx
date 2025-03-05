@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { createDecorators, EventEmitter } from "@next-core/element";
 import { wrapBrick } from "@next-core/react-element";
-import { FormItemElementBase } from "@next-shared/form";
+import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
 import type { GeneralComplexOption, GeneralOption } from "../interface.js";
 import styleText from "./index.shadow.css";
 import classNames from "classnames";
@@ -908,7 +908,7 @@ export function SelectComponent(props: SelectProps) {
   ]);
 
   return (
-    <WrappedFormItem exportparts="message" {...(props as FormItemProps)}>
+    <WrappedFormItem exportparts="message" {...pickFormItemProps(props)}>
       <div
         className={classNames("select", {
           "select-disabled": disabled,

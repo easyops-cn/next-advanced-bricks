@@ -16,11 +16,10 @@ import type {
 } from "@next-bricks/icons/general-icon";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
 import { useCurrentTheme } from "@next-core/react-runtime";
-import { FormItemElementBase } from "@next-shared/form";
+import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
 import type { FormItem, FormItemProps } from "../form-item/index.jsx";
 import { i18n, initializeI18n } from "@next-core/i18n";
 import { K, NS, locales } from "./i18n.js";
-import { omit } from "lodash";
 import dayjs from "dayjs";
 import type { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
@@ -662,10 +661,7 @@ export function EoDatePickerComponent(
   }, [props.value, format]);
 
   return (
-    <WrappedFormItem
-      exportparts="message"
-      {...(omit(props, ["shadowRoot"]) as any)}
-    >
+    <WrappedFormItem exportparts="message" {...pickFormItemProps(props)}>
       <ConfigProvider
         locale={locale as any}
         theme={{

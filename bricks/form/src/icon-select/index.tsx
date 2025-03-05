@@ -3,7 +3,7 @@ import { EventEmitter, createDecorators } from "@next-core/element";
 import { wrapBrick } from "@next-core/react-element";
 import { unwrapProvider } from "@next-core/utils/general";
 import { useTranslation, initializeReactI18n } from "@next-core/i18n/react";
-import { FormItemElementBase } from "@next-shared/form";
+import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
 import { K, NS, locales } from "./i18n.js";
 import "@next-core/theme";
 import styleText from "./styles.shadow.css";
@@ -254,7 +254,7 @@ export function IconSelectComponent(props: IconSelectComponentProps) {
   };
 
   return (
-    <WrappedFormItem exportparts="message" {...(props as FormItemProps)}>
+    <WrappedFormItem exportparts="message" {...pickFormItemProps(props)}>
       <span
         onClick={() => !disabled && modalRef.current?.open()}
         className={classNames("show-icon", {

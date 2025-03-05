@@ -6,12 +6,12 @@ import styleText from "./styles.shadow.css";
 import fixStyleText from "./fix-style.shadow.css";
 import { TimePicker, ConfigProvider, theme } from "antd";
 import { useCurrentTheme } from "@next-core/react-runtime";
-import { FormItemElementBase } from "@next-shared/form";
+import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
 import type { FormItem, FormItemProps } from "../form-item/index.jsx";
 import { TimePickerProps } from "antd/lib/time-picker";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
 import { i18n } from "@next-core/i18n";
-import { isNil, omit } from "lodash";
+import { isNil } from "lodash";
 import dayjs from "dayjs";
 import type { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
@@ -177,10 +177,7 @@ export function EoTimePickerComponent(props: EoTimePickerProps) {
   }, []);
 
   return (
-    <WrappedFormItem
-      exportparts="message"
-      {...(omit(props, ["shadowRoot"]) as any)}
-    >
+    <WrappedFormItem exportparts="message" {...pickFormItemProps(props)}>
       <ConfigProvider
         locale={locale as any}
         theme={{
