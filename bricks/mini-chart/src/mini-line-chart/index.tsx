@@ -1,15 +1,40 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { createDecorators } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
 import { useTranslation, initializeReactI18n } from "@next-core/i18n/react";
 import "@next-core/theme";
-import { curveLinear, curveMonotoneX, line } from "d3-shape";
-import styleText from "./styles.shadow.css";
+import { wrap, transfer } from "comlink";
+import { uniqueId } from "lodash";
 import { K, NS, locales } from "./i18n.js";
+import { drawMiniLineChart, type MiniLineChartOptions } from "./draw.js";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { getChartWorker } from "./worker.mjs";
+import styleText from "./styles.shadow.css";
 
 initializeReactI18n(NS, locales);
 
+const PIXEL_RATIO = window.devicePixelRatio ?? 1;
+
 const { defineElement, property } = createDecorators();
+
+interface RemoteWorker {
+  init(id: string, canvas: OffscreenCanvas): Promise<void>;
+  dispose(id: string): Promise<void>;
+  drawMiniLineChart(id: string, options: MiniLineChartOptions): Promise<void>;
+}
+
+let remoteWorkerPromise: Promise<RemoteWorker> | undefined;
+
+function getRemoteWorker() {
+  if (!remoteWorkerPromise) {
+    remoteWorkerPromise = (async () => {
+      const Remote = wrap(getChartWorker()) as any;
+      return await new Remote();
+    })();
+  }
+  return remoteWorkerPromise;
+}
 
 export interface MiniLineChartProps {
   width?: number;
@@ -98,50 +123,84 @@ export function MiniLineChartComponent({
   const xField = _xField ?? "0";
   const yField = _yField ?? "1";
   const padding = 1;
-  const innerWidth = width - padding * 2;
-  const innerHeight = height - padding * 2;
 
   const { t } = useTranslation(NS);
 
-  const d = useMemo(() => {
-    if (!data?.length) {
-      return undefined;
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const detectorRef = useRef<HTMLSpanElement>(null);
+  const transferredCanvasRef = useRef(new WeakSet<HTMLCanvasElement>());
+  const canvasId = useMemo(() => uniqueId("canvas-"), []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const detector = detectorRef.current;
+    if (!canvas || !detector) {
+      return;
     }
 
-    let min = Infinity;
-    let max = -Infinity;
-    for (const item of data) {
-      const value = item[yField];
-      if (value < min) {
-        min = value;
+    const options: MiniLineChartOptions = {
+      pixelRatio: PIXEL_RATIO,
+      width,
+      height,
+      padding,
+      smooth,
+      lineColor: getComputedStyle(detector).color,
+      xField,
+      yField,
+      data,
+    };
+
+    if (process.env.NODE_ENV === "test" || !canvas.transferControlToOffscreen) {
+      // Browser does not support transfer OffscreenCanvas.
+      // Fallback to main thread rendering.
+      const ctx = canvas.getContext("2d")!;
+      drawMiniLineChart(ctx, options);
+      return;
+    }
+
+    let ignore = false;
+    (async () => {
+      const remote = await getRemoteWorker();
+      if (ignore) {
+        return;
       }
-      if (value > max) {
-        max = value;
+
+      if (!transferredCanvasRef.current.has(canvas)) {
+        const offscreen = canvas.transferControlToOffscreen();
+        transferredCanvasRef.current.add(canvas);
+        await remote.init(canvasId, transfer(offscreen, [offscreen]));
+        if (ignore) {
+          return;
+        }
       }
+
+      await remote.drawMiniLineChart(canvasId, options);
+    })();
+
+    return () => {
+      ignore = true;
+    };
+  }, [canvasId, data, height, lineColor, smooth, width, xField, yField]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (
+      process.env.NODE_ENV === "test" ||
+      !canvas ||
+      !canvas.transferControlToOffscreen
+    ) {
+      // Browser does not support transfer OffscreenCanvas.
+      return;
     }
+    return () => {
+      (async () => {
+        const remote = await getRemoteWorker();
+        await remote.dispose(canvasId);
+      })();
+    };
+  }, [canvasId]);
 
-    if (min === max) {
-      const y = min === 0 ? innerHeight : innerHeight / 2;
-      return `M${0},${y}L${innerWidth},${y}`;
-    }
-
-    const start = data[0][xField];
-    const end = data[data.length - 1][xField];
-    const xScale = innerWidth / (end - start);
-    const yScale = innerHeight / (max - min);
-
-    const path = data.map<Point>((item) => {
-      const x = (item[xField] - start) * xScale;
-      const y = innerHeight! - (item[yField] - min) * yScale;
-      return [x, y];
-    });
-
-    // Keep smooth behavior as G2 line chart implementation
-    // See https://github.com/antvis/G2/blob/6013d72881276aca9d17d93908d33b21194979c6/src/shape/line/smooth.ts#L20
-    return line().curve(smooth === false ? curveLinear : curveMonotoneX)(path)!;
-  }, [data, innerHeight, innerWidth, smooth, xField, yField]);
-
-  if (!d) {
+  if (!data?.length) {
     // No data
     return (
       <div style={{ width, height }}>
@@ -151,17 +210,19 @@ export function MiniLineChartComponent({
   }
 
   return (
-    <svg width={width} height={height}>
-      <g transform={`translate(${padding},${padding})`}>
-        <path
-          d={d}
-          fill="none"
-          stroke={lineColor}
-          strokeWidth={2}
-          strokeLinejoin="round"
-          strokeLinecap="round"
-        />
-      </g>
-    </svg>
+    <>
+      <canvas
+        width={width * PIXEL_RATIO}
+        height={height * PIXEL_RATIO}
+        ref={canvasRef}
+        style={{ width, height }}
+        data-id={canvasId}
+      />
+      <span
+        className="detector"
+        ref={detectorRef}
+        style={{ color: lineColor }}
+      ></span>
+    </>
   );
 }
