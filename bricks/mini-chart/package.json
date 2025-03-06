@@ -42,7 +42,8 @@
     "comlink": "^4.4.2",
     "d3-shape": "^3.2.0",
     "react": "0.0.0-experimental-ee8509801-20230117",
-    "react-i18next": "^12.3.1"
+    "react-i18next": "^12.3.1",
+    "resize-observer-polyfill": "^1.5.1"
   },
   "devDependencies": {
     "@next-core/build-next-bricks": "^1.23.10",

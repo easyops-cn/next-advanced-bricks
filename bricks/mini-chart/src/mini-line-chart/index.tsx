@@ -1,44 +1,27 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createDecorators } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
 import { useTranslation, initializeReactI18n } from "@next-core/i18n/react";
 import "@next-core/theme";
-import { wrap, transfer } from "comlink";
+import { transfer } from "comlink";
 import { uniqueId } from "lodash";
+import ResizeObserver from "resize-observer-polyfill";
 import { K, NS, locales } from "./i18n.js";
 import { drawMiniLineChart, type MiniLineChartOptions } from "./draw.js";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { getChartWorker } from "./worker.mjs";
+import { getRemoteWorker } from "./getRemoteWorker.js";
+import { getNumberOrAuto } from "./getNumberOrAuto.js";
 import styleText from "./styles.shadow.css";
 
 initializeReactI18n(NS, locales);
 
+// istanbul ignore next
 const PIXEL_RATIO = window.devicePixelRatio ?? 1;
 
 const { defineElement, property } = createDecorators();
 
-interface RemoteWorker {
-  init(id: string, canvas: OffscreenCanvas): Promise<void>;
-  dispose(id: string): Promise<void>;
-  drawMiniLineChart(id: string, options: MiniLineChartOptions): Promise<void>;
-}
-
-let remoteWorkerPromise: Promise<RemoteWorker> | undefined;
-
-function getRemoteWorker() {
-  if (!remoteWorkerPromise) {
-    remoteWorkerPromise = (async () => {
-      const Remote = wrap(getChartWorker()) as any;
-      return await new Remote();
-    })();
-  }
-  return remoteWorkerPromise;
-}
-
 export interface MiniLineChartProps {
-  width?: number;
-  height?: number;
+  width?: string;
+  height?: string;
   smooth?: boolean;
   lineColor?: string;
   showArea?: boolean;
@@ -59,13 +42,21 @@ export
   styleTexts: [styleText],
 })
 class MiniLineChart extends ReactNextElement implements MiniLineChartProps {
-  /** @default 155 */
-  @property({ type: Number })
-  accessor width: number | undefined;
+  /**
+   * Set `auto` to make it fit the container width.
+   *
+   * @default "155"
+   */
+  @property()
+  accessor width: string | undefined;
 
-  /** @default 40 */
-  @property({ type: Number })
-  accessor height: number | undefined;
+  /**
+   * Set `auto` to make it fit the container height.
+   *
+   * @default "40"
+   */
+  @property()
+  accessor height: string | undefined;
 
   /**
    * Use a smooth curve line or not.
@@ -116,6 +107,7 @@ class MiniLineChart extends ReactNextElement implements MiniLineChartProps {
   render() {
     return (
       <MiniLineChartComponent
+        root={this}
         width={this.width}
         height={this.height}
         smooth={this.smooth}
@@ -132,10 +124,11 @@ class MiniLineChart extends ReactNextElement implements MiniLineChartProps {
 }
 
 export interface MiniLineChartComponentProps extends MiniLineChartProps {
-  // Define react event handlers here.
+  root: HTMLElement;
 }
 
 export function MiniLineChartComponent({
+  root,
   width: _width,
   height: _height,
   smooth,
@@ -147,8 +140,12 @@ export function MiniLineChartComponent({
   yField: _yField,
   data,
 }: MiniLineChartComponentProps) {
-  const width = _width ?? 155;
-  const height = _height ?? 40;
+  const tempWidth = getNumberOrAuto(_width, 155);
+  const tempHeight = getNumberOrAuto(_height, 40);
+  const autoWidth = tempWidth === "auto";
+  const autoHeight = tempHeight === "auto";
+  const [width, setWidth] = useState(autoWidth ? null : tempWidth);
+  const [height, setHeight] = useState(autoHeight ? null : tempHeight);
   const xField = _xField ?? "0";
   const yField = _yField ?? "1";
   const lineColor = _lineColor ?? "var(--color-brand)";
@@ -162,9 +159,51 @@ export function MiniLineChartComponent({
   const canvasId = useMemo(() => uniqueId("canvas-"), []);
 
   useEffect(() => {
+    if (!autoWidth) {
+      setWidth(tempWidth);
+    }
+  }, [autoWidth, tempWidth]);
+
+  useEffect(() => {
+    if (!autoHeight) {
+      setHeight(tempHeight);
+    }
+  }, [autoHeight, tempHeight]);
+
+  useEffect(() => {
+    if (!autoWidth && !autoHeight) {
+      return;
+    }
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.target === root) {
+          if (autoWidth) {
+            // istanbul ignore next
+            const newWidth = entry.contentBoxSize
+              ? entry.contentBoxSize[0].inlineSize
+              : entry.contentRect.width;
+            setWidth(newWidth);
+          }
+          if (autoHeight) {
+            // istanbul ignore next
+            const newHeight = entry.contentBoxSize
+              ? entry.contentBoxSize[0].blockSize
+              : entry.contentRect.height;
+            setHeight(newHeight);
+          }
+        }
+      }
+    });
+    observer.observe(root);
+    return () => {
+      observer.disconnect();
+    };
+  }, [autoHeight, root, autoWidth]);
+
+  useEffect(() => {
     const canvas = canvasRef.current;
     const detector = detectorRef.current;
-    if (!canvas || !detector) {
+    if (!canvas || !detector || !width || !height) {
       return;
     }
 
@@ -229,12 +268,8 @@ export function MiniLineChartComponent({
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (
-      process.env.NODE_ENV === "test" ||
-      !canvas ||
-      !canvas.transferControlToOffscreen
-    ) {
-      // Browser does not support transfer OffscreenCanvas.
+    if (!canvas || !canvas.transferControlToOffscreen) {
+      // For browser do not support transfer OffscreenCanvas.
       return;
     }
     return () => {
@@ -244,6 +279,10 @@ export function MiniLineChartComponent({
       })();
     };
   }, [canvasId]);
+
+  if (width === null || height === null) {
+    return null;
+  }
 
   if (!data?.length) {
     // No data

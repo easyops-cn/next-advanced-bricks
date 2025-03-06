@@ -6,6 +6,18 @@
   display: none;
 }
 
+:host([width="auto"]) {
+  width: 100%;
+}
+
+:host([height="auto"]) {
+  height: 100%;
+}
+
+:host([width="auto"]):not([hidden]) {
+  display: block;
+}
+
 * {
   box-sizing: border-box;
 }

@@ -1,3 +1,4 @@
+// istanbul ignore file
 import { expose } from "comlink";
 import { drawMiniLineChart, type MiniLineChartOptions } from "./draw";
 

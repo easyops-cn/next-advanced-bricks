@@ -1,6 +1,6 @@
+// istanbul ignore file
 import { curveLinear, curveMonotoneX, line } from "d3-shape";
-
-export type Point = [x: number, y: number];
+import { getLinePath } from "./getLinePath";
 
 export interface MiniLineChartOptions {
   pixelRatio: number;
@@ -31,8 +31,8 @@ export function drawMiniLineChart(
     smooth,
     lineColor,
     showArea,
-    min: overrideMin,
-    max: overrideMax,
+    min: _min,
+    max: _max,
     xField,
     yField,
     data,
@@ -40,6 +40,11 @@ export function drawMiniLineChart(
 ): void {
   const innerWidth = width - padding * 2;
   const innerHeight = height - padding * 2;
+
+  // Cannot resize canvas after call to transferControlToOffscreen().
+  // So set width/height by offscreen canvas.
+  ctx.canvas.width = width * pixelRatio;
+  ctx.canvas.height = height * pixelRatio;
 
   ctx.resetTransform?.();
   ctx.reset?.();
@@ -53,42 +58,15 @@ export function drawMiniLineChart(
     return;
   }
 
-  const hasMin = Number.isFinite(overrideMin);
-  const hasMax = Number.isFinite(overrideMax);
-  let min = hasMin ? (overrideMin as number) : Infinity;
-  let max = hasMax ? (overrideMax as number) : -Infinity;
-  if (!(hasMin && hasMax)) {
-    for (const item of data) {
-      const value = item[yField];
-      if (!hasMin && value < min) {
-        min = value;
-      }
-      if (!hasMax && value > max) {
-        max = value;
-      }
-    }
-  }
-
-  let path: Point[];
-
-  if (min === max) {
-    const y = min === 0 ? innerHeight : innerHeight / 2;
-    path = [
-      [0, y],
-      [innerWidth, y],
-    ];
-  } else {
-    const start = data[0][xField];
-    const end = data[data.length - 1][xField];
-    const xScale = innerWidth / (end - start);
-    const yScale = innerHeight / (max - min);
-
-    path = data.map<Point>((item) => {
-      const x = (item[xField] - start) * xScale;
-      const y = innerHeight! - (item[yField] - min) * yScale;
-      return [x, y];
-    });
-  }
+  const path = getLinePath(
+    data,
+    xField,
+    yField,
+    _min,
+    _max,
+    innerWidth,
+    innerHeight
+  );
 
   // Keep smooth behavior as G2 line chart implementation
   // See https://github.com/antvis/G2/blob/6013d72881276aca9d17d93908d33b21194979c6/src/shape/line/smooth.ts#L20
