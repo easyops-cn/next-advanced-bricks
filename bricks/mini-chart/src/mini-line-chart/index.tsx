@@ -41,6 +41,9 @@ export interface MiniLineChartProps {
   height?: number;
   smooth?: boolean;
   lineColor?: string;
+  showArea?: boolean;
+  min?: number;
+  max?: number;
   xField?: string;
   yField?: string;
   data?: Record<string, number>[];
@@ -72,8 +75,28 @@ class MiniLineChart extends ReactNextElement implements MiniLineChartProps {
   @property({ type: Boolean })
   accessor smooth: boolean | undefined;
 
+  /**
+   * @default "var(--color-brand)"
+   */
   @property()
   accessor lineColor: string | undefined;
+
+  @property({ type: Boolean })
+  accessor showArea: boolean | undefined;
+
+  /**
+   * Specify the minimum value of the y-axis.
+   * If not specified, the minimum value will be calculated from the data.
+   */
+  @property({ type: Number })
+  accessor min: number | undefined;
+
+  /**
+   * Specify the maximum value of the y-axis.
+   * If not specified, the maximum value will be calculated from the data.
+   */
+  @property({ type: Number })
+  accessor max: number | undefined;
 
   /**
    * @default "0"
@@ -97,6 +120,9 @@ class MiniLineChart extends ReactNextElement implements MiniLineChartProps {
         height={this.height}
         smooth={this.smooth}
         lineColor={this.lineColor}
+        showArea={this.showArea}
+        min={this.min}
+        max={this.max}
         xField={this.xField}
         yField={this.yField}
         data={this.data}
@@ -113,7 +139,10 @@ export function MiniLineChartComponent({
   width: _width,
   height: _height,
   smooth,
-  lineColor,
+  lineColor: _lineColor,
+  showArea,
+  min,
+  max,
   xField: _xField,
   yField: _yField,
   data,
@@ -122,6 +151,7 @@ export function MiniLineChartComponent({
   const height = _height ?? 40;
   const xField = _xField ?? "0";
   const yField = _yField ?? "1";
+  const lineColor = _lineColor ?? "var(--color-brand)";
   const padding = 1;
 
   const { t } = useTranslation(NS);
@@ -145,14 +175,17 @@ export function MiniLineChartComponent({
       padding,
       smooth,
       lineColor: getComputedStyle(detector).color,
+      showArea,
+      min,
+      max,
       xField,
       yField,
       data,
     };
 
-    if (process.env.NODE_ENV === "test" || !canvas.transferControlToOffscreen) {
-      // Browser does not support transfer OffscreenCanvas.
-      // Fallback to main thread rendering.
+    if (!canvas.transferControlToOffscreen) {
+      // For browser does not support transfer OffscreenCanvas,
+      // fallback to main thread rendering.
       const ctx = canvas.getContext("2d")!;
       drawMiniLineChart(ctx, options);
       return;
@@ -180,7 +213,19 @@ export function MiniLineChartComponent({
     return () => {
       ignore = true;
     };
-  }, [canvasId, data, height, lineColor, smooth, width, xField, yField]);
+  }, [
+    canvasId,
+    data,
+    height,
+    lineColor,
+    max,
+    min,
+    showArea,
+    smooth,
+    width,
+    xField,
+    yField,
+  ]);
 
   useEffect(() => {
     const canvas = canvasRef.current;

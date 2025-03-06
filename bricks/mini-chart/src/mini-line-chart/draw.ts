@@ -8,7 +8,14 @@ export interface MiniLineChartOptions {
   height: number;
   padding: number;
   smooth?: boolean;
-  lineColor?: string;
+  /**
+   * Accept values of `rgb()` or `rgba()` only,
+   * which can be retrieved from `getComputedStyle()`.
+   */
+  lineColor: string;
+  showArea?: boolean;
+  min?: number;
+  max?: number;
   xField: string;
   yField: string;
   data?: Record<string, number>[];
@@ -23,6 +30,9 @@ export function drawMiniLineChart(
     padding,
     smooth,
     lineColor,
+    showArea,
+    min: overrideMin,
+    max: overrideMax,
     xField,
     yField,
     data,
@@ -31,34 +41,31 @@ export function drawMiniLineChart(
   const innerWidth = width - padding * 2;
   const innerHeight = height - padding * 2;
 
+  ctx.resetTransform?.();
+  ctx.reset?.();
   ctx.save();
   ctx.scale(pixelRatio, pixelRatio);
   ctx.clearRect(0, 0, width, height);
+  ctx.translate(padding, padding);
 
   if (!data?.length) {
     ctx.restore();
     return;
   }
 
-  ctx.lineWidth = 2;
-  ctx.lineJoin = "round";
-  ctx.lineCap = "round";
-  if (lineColor) {
-    ctx.strokeStyle = lineColor;
-  }
-
-  ctx.beginPath();
-  ctx.translate(padding, padding);
-
-  let min = Infinity;
-  let max = -Infinity;
-  for (const item of data) {
-    const value = item[yField];
-    if (value < min) {
-      min = value;
-    }
-    if (value > max) {
-      max = value;
+  const hasMin = Number.isFinite(overrideMin);
+  const hasMax = Number.isFinite(overrideMax);
+  let min = hasMin ? (overrideMin as number) : Infinity;
+  let max = hasMax ? (overrideMax as number) : -Infinity;
+  if (!(hasMin && hasMax)) {
+    for (const item of data) {
+      const value = item[yField];
+      if (!hasMin && value < min) {
+        min = value;
+      }
+      if (!hasMax && value > max) {
+        max = value;
+      }
     }
   }
 
@@ -85,9 +92,48 @@ export function drawMiniLineChart(
 
   // Keep smooth behavior as G2 line chart implementation
   // See https://github.com/antvis/G2/blob/6013d72881276aca9d17d93908d33b21194979c6/src/shape/line/smooth.ts#L20
+  const curve = smooth === false ? curveLinear : curveMonotoneX;
+
+  if (showArea) {
+    const matches = lineColor.match(
+      /rgba?\((\d+)[\s,]+(\d+)[\s,]+(\d+)([\s,]+\d+(?:\.\d+)?)?\)/
+    );
+    if (matches) {
+      ctx.save();
+      const [_, r, g, b, a] = matches;
+      const gradient = ctx.createLinearGradient(0, 0, 0, innerHeight);
+      gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${(a ? +a : 1) * 0.3})`);
+      gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+      ctx.fillStyle = gradient;
+
+      ctx.beginPath();
+      line()
+        .context(ctx as unknown as CanvasRenderingContext2D)
+        .curve(curve)(path);
+      ctx.lineTo(innerWidth, innerHeight);
+      ctx.lineTo(0, innerHeight);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    } else {
+      // eslint-disable-next-line no-console
+      console.error(
+        "Invalid line color format. Expected rgb() or rgba(), received:",
+        lineColor
+      );
+    }
+  }
+
+  ctx.lineWidth = 2;
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+  ctx.strokeStyle = lineColor;
+
+  ctx.beginPath();
   line()
     .context(ctx as unknown as CanvasRenderingContext2D)
-    .curve(smooth === false ? curveLinear : curveMonotoneX)(path);
+    .curve(curve)(path);
   ctx.stroke();
+
   ctx.restore();
 }

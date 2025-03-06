@@ -16,6 +16,7 @@ children:
       xField: time
       yField: request_total
       lineColor: <% ITEM %>
+      showArea: true
       data:
         - request_total: 642.2
           time: 1730597995.403
@@ -115,7 +116,4 @@ children:
           time: 1730682000
         - request_total: 563.5
           time: 1730683800
-      properties:
-        style:
-          verticalAlign: middle
 ```
