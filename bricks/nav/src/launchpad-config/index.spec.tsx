@@ -335,7 +335,7 @@ describe("nav.launchpad-config", () => {
             id: "my-custom-4",
             type: "custom",
             name: "My Custom 4",
-            url: "/next/blocked-url",
+            url: "/next/blocked-url?tab=abc",
           },
           {
             instanceId: "i-5",

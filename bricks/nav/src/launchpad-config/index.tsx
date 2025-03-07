@@ -242,10 +242,7 @@ function getMenuItemWithBlockInfo<T extends ConfigMenuItem>(
     };
   }
 
-  const blockable = !!item.url?.startsWith(BASE_PATH);
-  const blockableUrl = blockable
-    ? item.url.substring(BASE_PATH.length - 1)
-    : undefined;
+  const { blockable, blockableUrl } = getBlockableUrl(item.url);
   const hasBlocked = blockable && blacklist?.includes(blockableUrl!);
   const hasUnblocked = blockable && !hasBlocked;
   return {
@@ -256,4 +253,22 @@ function getMenuItemWithBlockInfo<T extends ConfigMenuItem>(
     allBlocked: hasBlocked,
     blockableUrl,
   };
+}
+
+function getBlockableUrl(url: string | undefined) {
+  let blockable = !!url?.startsWith(BASE_PATH);
+  let blockableUrl: string | undefined;
+  if (blockable) {
+    const urlObj = new URL(url!, location.origin);
+    if (
+      urlObj.origin === location.origin &&
+      urlObj.pathname.startsWith(BASE_PATH)
+    ) {
+      blockableUrl = urlObj.pathname.substring(BASE_PATH.length - 1);
+    } else {
+      blockable = false;
+      blockableUrl = undefined;
+    }
+  }
+  return { blockable, blockableUrl };
 }
