@@ -79,7 +79,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
 
-      .content {
+      > .content {
         width: 0;
         flex: 1;
         .title {
@@ -197,7 +197,7 @@
             .wrapper {
               /* display: flex;
               flex-direction: row-reverse; */
-              .content {
+              > .content {
                 background-color: #606f7c;
                 color: #fff;
 
@@ -256,7 +256,7 @@
           .wrapper {
             position: relative;
             overflow: hidden;
-            .content {
+            > .content {
               position: relative;
               padding: 14px;
               border-radius: 6px;
@@ -414,7 +414,7 @@
     right: 12px;
     z-index: 1;
 
-    .content {
+    > .content {
       background-color: var(--antd-input-bg);
       border-radius: 6px;
       border: 1px solid var(--palette-gray-4);
@@ -474,7 +474,7 @@
     right: 12px;
     z-index: 1;
 
-    .content {
+    > .content {
       background-color: var(--antd-input-bg);
       border-radius: 6px;
       border: 1px solid var(--palette-gray-4);
