@@ -6,11 +6,23 @@
   display: none;
 }
 
+:host([width="auto"]) {
+  width: 100%;
+}
+
+:host([height="auto"]) {
+  height: 100%;
+}
+
+:host([width="auto"]):not([hidden]) {
+  display: block;
+}
+
 * {
   box-sizing: border-box;
 }
 
-svg {
+canvas {
   display: block;
 }
 
@@ -27,4 +39,8 @@ span {
   border-bottom: 1px dashed var(--palette-gray-5);
   line-height: 1;
   font-size: 14px;
+}
+
+.detector {
+  display: none;
 }
