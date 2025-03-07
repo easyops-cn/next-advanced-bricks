@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.20.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.20.2...@next-bricks/nav@1.20.3) (2025-03-07)
+
+
+### Bug Fixes
+
+* **launchpad-config:** set blockable url to pathname only ([8f5d0eb](https://github.com/easyops-cn/next-advanced-bricks/commit/8f5d0ebae775ee81316dd3d8a5d942fd434d2e19))
+
+
+
+
+
 ## [1.20.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.20.1...@next-bricks/nav@1.20.2) (2025-02-14)
 
 

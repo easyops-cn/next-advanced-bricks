@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.31.13](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai@1.31.12...@next-bricks/ai@1.31.13) (2025-03-07)
+
+
+### Bug Fixes
+
+* restrict .content class selector ([c44bcd0](https://github.com/easyops-cn/next-advanced-bricks/commit/c44bcd0965e643fb94c4ccb8c4f6162deb78694f))
+
+
+
+
+
 ## [1.31.12](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai@1.31.11...@next-bricks/ai@1.31.12) (2025-02-26)
 
 
