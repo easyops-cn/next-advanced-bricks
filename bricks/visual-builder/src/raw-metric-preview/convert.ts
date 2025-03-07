@@ -1,6 +1,6 @@
 import type { BrickConf } from "@next-core/types";
 import type { VisualConfig } from "./raw-metric-interfaces";
-import { ALLOWED_COLORS } from "./constants";
+// import { ALLOWED_COLORS } from "./constants";
 
 export interface RawMetric {
   name: string;
@@ -10,14 +10,16 @@ export interface RawMetric {
 export function convertToChart(
   config: VisualConfig,
   metricId: string,
-  metric: RawMetric
+  metric: RawMetric,
+  groupMetrics?: string[],
+  counterMetricId?: string
 ): BrickConf | null {
   let brickItem: BrickConf | null = null;
 
-  const color =
-    config.color && ALLOWED_COLORS.includes(config.color)
-      ? `<% THEME.getCssPropertyValue(${JSON.stringify(`--palette-${config.color}-5`)}) %>`
-      : undefined;
+  // const color =
+  //   config.color && ALLOWED_COLORS.includes(config.color)
+  //     ? `<% THEME.getCssPropertyValue(${JSON.stringify(`--palette-${config.color}-5`)}) %>`
+  //     : undefined;
 
   if (config.size === "small") {
     switch (config.chartType) {
@@ -28,14 +30,16 @@ export function convertToChart(
             data: "<% DATA %>",
             xField: "time",
             yField: metricId,
-            lineColor: color,
+            // lineColor: color,
+            width: "auto",
+            showArea: true,
           },
         };
         break;
       case "gauge": {
         const isPercentBase1 = metric.unit === "percent(1)";
         const isPercentBase100 =
-          metric.unit === "percent(100)" || /^\s*%\s*$/.test(metric.unit);
+          metric.unit === "percent(100)" || metric.unit === "%";
         brickItem = {
           brick: "chart-v2.gauge-chart",
           properties: {
@@ -88,8 +92,8 @@ export function convertToChart(
           properties: {
             data: "<% DATA %>",
             xField: "time",
-            yFields: [metricId],
-            colors: [color].filter(Boolean),
+            yFields: groupMetrics ?? [metricId],
+            // colors: groupMetrics ? undefined : [color].filter(Boolean),
             height: config.size === "large" ? 230 : 200,
             timeFormat: "HH:mm",
             areaOpacity: config.chartType === "line" ? 0 : undefined,
@@ -100,8 +104,20 @@ export function convertToChart(
                 precision: config.precision,
                 min: config.min,
                 max: config.max,
+                shape: "smooth",
               },
             },
+            ...(counterMetricId
+              ? {
+                  forceAbsoluteNumbers: true,
+                  series: {
+                    [counterMetricId]: {
+                      isNegative: true,
+                    },
+                  },
+                }
+              : null),
+            areaShape: "smooth",
             legends: config.size === "large",
           },
         };

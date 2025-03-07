@@ -20,9 +20,9 @@ const { defineElement, property, event } = createDecorators();
 export interface RawMetricPreviewProps {
   previewUrl?: string;
   generations?: MetricGeneration[];
+  grouped?: boolean;
   // mocks?: Record<string, unknown>;
   busy?: boolean;
-  category?: PreviewCategory;
   theme?: string;
   uiVersion?: string;
   app?: MicroApp;
@@ -41,6 +41,9 @@ export interface MetricGeneration {
   approved?: boolean;
   candidates: VisualConfig[] | null;
   mockData: unknown[];
+  groupIndex?: number;
+  group?: string;
+  counter?: string;
 }
 
 export interface CommentDetail {
@@ -80,25 +83,17 @@ interface ResizeMessage extends BasePreviewMessage {
   };
 }
 
-interface UpdatePropertyApproveStateMessage extends BasePreviewMessage {
-  type: "updatePropertyApproveState";
-  payload: string[];
-}
+// interface UpdatePropertyApproveStateMessage extends BasePreviewMessage {
+//   type: "updatePropertyApproveState";
+//   payload: string[];
+// }
 
 type PreviewMessage =
   | CommentMessage
   | ApproveMessage
   | ViewAttrPromptMessage
-  | ResizeMessage
-  | UpdatePropertyApproveStateMessage;
-
-export type PreviewCategory =
-  | "detail-item"
-  | "form-item"
-  | "table-column"
-  | "card-item"
-  | "metric-item"
-  | "value";
+  | ResizeMessage;
+/* | UpdatePropertyApproveStateMessage */
 
 /**
  * 构件 `visual-builder.raw-metric-preview`
@@ -116,17 +111,14 @@ class RawMetricPreview extends ReactNextElement {
   @property({ attribute: false })
   accessor generations: MetricGeneration[] | undefined;
 
+  @property({ type: Boolean })
+  accessor grouped: boolean | undefined;
+
   // @property({ attribute: false })
   // accessor mocks: Record<string, unknown> | undefined;
 
   @property({ type: Boolean })
   accessor busy: boolean | undefined;
-
-  /**
-   * @default "value"
-   */
-  @property()
-  accessor category: PreviewCategory | undefined;
 
   @property()
   accessor theme: string | undefined;
@@ -164,9 +156,9 @@ class RawMetricPreview extends ReactNextElement {
         root={this}
         previewUrl={this.previewUrl}
         generations={this.generations}
+        grouped={this.grouped}
         // mocks={this.mocks}
         busy={this.busy}
-        category={this.category}
         theme={this.theme}
         uiVersion={this.uiVersion}
         app={this.app}
@@ -189,9 +181,9 @@ export function RawMetricPreviewComponent({
   root,
   previewUrl,
   generations,
+  grouped,
   // mocks,
   busy,
-  category,
   theme,
   uiVersion,
   app,
@@ -204,14 +196,14 @@ export function RawMetricPreviewComponent({
   const [injected, setInjected] = useState(false);
   // const propertyToggleStateRef = useRef<string[]>([]);
   // const propertyExpandStateRef = useRef<string[]>([]);
-  const propertyApproveStateRef = useRef<string[]>([]);
+  // const propertyApproveStateRef = useRef<string[]>([]);
 
-  useEffect(() => {
-    propertyApproveStateRef.current =
-      generations
-        ?.filter((generation) => generation.approved)
-        .map((generation) => generation.propertyId) ?? [];
-  }, [generations]);
+  // useEffect(() => {
+  //   propertyApproveStateRef.current =
+  //     generations
+  //       ?.filter((generation) => generation.approved)
+  //       .map((generation) => generation.propertyId) ?? [];
+  // }, [generations]);
 
   const handleIframeLoad = useCallback(() => {
     const check = () => {
@@ -257,9 +249,9 @@ export function RawMetricPreviewComponent({
             case "resize":
               root.style.height = `${data.payload.height + 2}px`;
               break;
-            case "updatePropertyApproveState":
-              propertyApproveStateRef.current = data.payload;
-              break;
+            // case "updatePropertyApproveState":
+            //   propertyApproveStateRef.current = data.payload;
+            //   break;
           }
         }
       };
@@ -315,6 +307,17 @@ export function RawMetricPreviewComponent({
     }
 
     const tableChildren: BrickConf[] = [
+      ...(grouped
+        ? [
+            {
+              brick: "div",
+              properties: {
+                textContent: "分组",
+                className: "head-cell",
+              },
+            },
+          ]
+        : []),
       {
         brick: "div",
         properties: {
@@ -347,64 +350,74 @@ export function RawMetricPreviewComponent({
           },
         },
       },
-      {
-        brick: "div",
-        properties: {
-          textContent: "确认",
-          className: "head-cell",
-        },
-      },
-      {
-        brick: "div",
-        properties: {
-          className: "head-cell last-col-cell",
-        },
-        children: [
-          {
-            brick: "span",
-            properties: {
-              textContent: "批注",
-            },
-          },
-          {
-            brick: "span",
-            properties: {
-              className: "tips",
-              textContent: "（补充提示词，按住 ⌘ 或 ctrl + 回车提交）",
-            },
-          },
-        ],
-      },
+      // {
+      //   brick: "div",
+      //   properties: {
+      //     textContent: "确认",
+      //     className: "head-cell",
+      //   },
+      // },
+      // {
+      //   brick: "div",
+      //   properties: {
+      //     className: "head-cell last-col-cell",
+      //   },
+      //   children: [
+      //     {
+      //       brick: "span",
+      //       properties: {
+      //         textContent: "批注",
+      //       },
+      //     },
+      //     {
+      //       brick: "span",
+      //       properties: {
+      //         className: "tips",
+      //         textContent: "（补充提示词，按住 ⌘ 或 ctrl + 回车提交）",
+      //       },
+      //     },
+      //   ],
+      // },
     ];
     const table: BrickConf & { context?: ContextConf[] } = {
       brick: "visual-builder.pre-generated-table-view",
       context: [
-        {
-          name: "propertyApproveState",
-          value: propertyApproveStateRef.current,
-          onChange: {
-            action: "window.postMessage",
-            args: [
-              {
-                channel: "raw-metric-preview",
-                type: "updatePropertyApproveState",
-                payload: "<% CTX.propertyApproveState %>",
-              },
-            ],
-          },
-        },
+        // {
+        //   name: "propertyApproveState",
+        //   value: propertyApproveStateRef.current,
+        //   onChange: {
+        //     action: "window.postMessage",
+        //     args: [
+        //       {
+        //         channel: "raw-metric-preview",
+        //         type: "updatePropertyApproveState",
+        //         payload: "<% CTX.propertyApproveState %>",
+        //       },
+        //     ],
+        //   },
+        // },
         {
           name: "busy",
         },
       ],
       properties: {
         style: {
-          gridTemplateColumns:
-            "minmax(120px, 1fr) minmax(120px, 0.6fr) 32px repeat(4, 1fr) auto 1fr",
+          gridTemplateColumns: `${grouped ? "minmax(129px, 0.5fr) " : ""}minmax(120px, 0.8fr) minmax(120px, 0.5fr) 32px repeat(2, 0.6fr) repeat(2, 1fr)`,
         },
       },
       children: tableChildren,
     };
+
+    const handledGroupIndexes = new Set<number>();
+
+    const groupMap = new Map<number, MetricGeneration[]>();
+    for (const generation of generations) {
+      const index = generation.groupIndex;
+      if (index != null) {
+        const metrics = groupMap.get(index) ?? [];
+        groupMap.set(index, metrics.concat(generation));
+      }
+    }
 
     for (let i = 0, size = generations.length; i < size; i++) {
       const generation = generations[i];
@@ -413,6 +426,42 @@ export function RawMetricPreviewComponent({
       const candidatesByVisualWeight = new Map<number, VisualConfig>();
       for (const candidate of generation.candidates ?? []) {
         candidatesByVisualWeight.set(candidate.visualWeight ?? 0, candidate);
+      }
+
+      let groupedMetrics: MetricGeneration[] | undefined;
+      let isMergedRow = false;
+      if (grouped) {
+        const { groupIndex } = generation;
+        if (groupIndex == null) {
+          tableChildren.push({
+            brick: "div",
+            properties: {
+              textContent: "",
+              className: classNames("body-cell", {
+                "last-row-cell": isLastRow,
+              }),
+            },
+          });
+        } else if (!handledGroupIndexes.has(groupIndex)) {
+          handledGroupIndexes.add(groupIndex);
+          groupedMetrics = groupMap.get(groupIndex)!;
+          const groupCount = groupedMetrics.length;
+          const isLastGroupedRow = i + groupCount - 1 === size - 1;
+          tableChildren.push({
+            brick: "div",
+            properties: {
+              textContent: generation.group,
+              className: classNames("body-cell", {
+                "last-row-cell": isLastGroupedRow,
+              }),
+              style: {
+                gridRow: `span ${groupCount}`,
+              },
+            },
+          });
+        } else {
+          isMergedRow = true;
+        }
       }
 
       tableChildren.push(
@@ -495,40 +544,63 @@ export function RawMetricPreviewComponent({
         const isPercentBase1 = generation.propertyUnit === "percent(1)";
         const isPercentBase100 =
           generation.propertyUnit === "percent(100)" ||
-          /^\s*%\s*$/.test(generation.propertyUnit);
+          generation.propertyUnit === "%";
 
-        const brick =
-          isPercentBase1 || isPercentBase100 || i >= 0
-            ? convertToChart(
-                {
-                  visualWeight: i,
-                  color: "orange",
-                  chartType: i === -1 ? "gauge" : i === 2 ? "area" : "line",
-                  size: i <= 0 ? "small" : i === 1 ? "medium" : "large",
-                  min: 0,
-                  precision:
-                    isPercentBase1 || isPercentBase100
-                      ? 1
-                      : generation.propertyDataType === "double"
-                        ? 2
-                        : 0,
-                },
-                metricId,
-                {
-                  name: generation.propertyId,
-                  unit: generation.propertyUnit,
-                }
-              )
-            : null;
+        let brick: BrickConf | undefined;
+        const size = i <= 0 ? "small" : i === 1 ? "medium" : "large";
+        const isMergedCell = size !== "small" && isMergedRow;
+        const counterMetric = generation.counter
+          ? groupedMetrics?.find((gen) => gen.propertyId === generation.counter)
+          : undefined;
+        const counterMetricId =
+          counterMetric?.propertyName ?? counterMetric?.propertyId;
+        if (isMergedCell) {
+          continue;
+        }
+
+        const isGroupedCell = size !== "small" && groupedMetrics;
+        if (
+          generation.mockData &&
+          (isPercentBase1 || isPercentBase100 || i >= 0)
+        ) {
+          const chartType = i === -1 ? "gauge" : i === 2 ? "area" : "line";
+
+          brick = convertToChart(
+            {
+              visualWeight: i,
+              color: "orange",
+              chartType,
+              size,
+              min: counterMetricId ? undefined : 0,
+              precision:
+                isPercentBase1 || isPercentBase100
+                  ? 1
+                  : generation.propertyDataType === "double"
+                    ? 2
+                    : 0,
+            },
+            metricId,
+            {
+              name: generation.propertyId,
+              unit: generation.propertyUnit,
+            },
+            groupedMetrics?.map((gen) => gen.propertyName ?? gen.propertyId),
+            counterMetricId
+          );
+        }
 
         tableChildren.push({
           brick: "div",
           properties: {
             className: classNames("body-cell", {
               "last-row-cell": isLastRow,
+              "large-chart-cell": size !== "small",
             }),
             style: {
               justifyContent: "center",
+              ...(isGroupedCell
+                ? { gridRow: `span ${groupedMetrics.length}` }
+                : null),
             },
           },
           children: [
@@ -543,15 +615,20 @@ export function RawMetricPreviewComponent({
                       brick: "visual-builder.pre-generated-container",
                       properties: {
                         useBrick: [brick],
-                        dataSource: generation.mockData?.map(
-                          (value, index) => ({
-                            time:
-                              Math.round(+new Date() / 1000) -
-                              86400 +
-                              index * 300,
-                            [metricId]: value,
-                          })
-                        ),
+                        dataSource: generation.mockData.map((value, index) => ({
+                          time:
+                            Math.round(+new Date() / 1000) -
+                            86400 +
+                            index * 300,
+                          ...(isGroupedCell
+                            ? Object.fromEntries(
+                                groupedMetrics.map((gen) => [
+                                  gen.propertyName ?? gen.propertyId,
+                                  gen.mockData?.[index],
+                                ])
+                              )
+                            : { [metricId]: value }),
+                        })),
                       },
                       errorBoundary: true,
                     },
@@ -562,100 +639,100 @@ export function RawMetricPreviewComponent({
         });
       }
 
-      tableChildren.push(
-        {
-          // 确认 checkbox
-          brick: "div",
-          properties: {
-            className: classNames("body-cell", {
-              "last-row-cell": isLastRow,
-            }),
-          },
-          children: generation.candidates
-            ? [
-                {
-                  brick: "eo-checkbox",
-                  properties: {
-                    value: `<%= CTX.propertyApproveState.includes(${JSON.stringify(generation.propertyId)}) ? ["approved"] : [] %>`,
-                    options: [{ label: "", value: "approved" }],
-                    disabled: `<%= CTX.busy || ${JSON.stringify(!generation.generationId)} %>`,
-                  },
-                  events: {
-                    change: [
-                      {
-                        action: "window.postMessage",
-                        args: [
-                          {
-                            channel: "raw-metric-preview",
-                            type: "approve",
-                            payload: {
-                              approved: "<% EVENT.detail.length > 0 %>",
-                              propertyInstanceId: generation.propertyInstanceId,
-                            },
-                          },
-                        ],
-                      },
-                      {
-                        action: "context.replace",
-                        args: [
-                          "propertyApproveState",
-                          `<%
-                            EVENT.detail.length > 0
-                              ? CTX.propertyApproveState.concat(${JSON.stringify(generation.propertyId)})
-                              : CTX.propertyApproveState.filter((id) => id !== ${JSON.stringify(generation.propertyId)})
-                          %>`,
-                        ],
-                      },
-                    ],
-                  },
-                },
-              ]
-            : undefined,
-        },
-        {
-          // 批注 textarea
-          brick: "div",
-          properties: {
-            className: classNames("body-cell", {
-              "last-col-cell": true,
-              "last-row-cell": isLastRow,
-            }),
-          },
-          children: generation.candidates
-            ? [
-                {
-                  brick: "eo-textarea",
-                  properties: {
-                    value: generation.comment
-                      ? `<% ${JSON.stringify(generation.comment)} %>`
-                      : undefined,
-                    autoSize: true,
-                    style: {
-                      width: "100%",
-                    },
-                    disabled: `<%= CTX.busy || ${JSON.stringify(!generation.generationId)} || CTX.propertyApproveState.includes(${JSON.stringify(generation.propertyId)}) %>`,
-                  },
-                  events: {
-                    keydown: {
-                      if: "<% EVENT.code === 'Enter' && (EVENT.metaKey || EVENT.ctrlKey) %>",
-                      action: "window.postMessage",
-                      args: [
-                        {
-                          channel: "raw-metric-preview",
-                          type: "comment",
-                          payload: {
-                            comment: "<% EVENT.target.value %>",
-                            propertyInstanceId: generation.propertyInstanceId,
-                          },
-                        },
-                      ],
-                    },
-                  },
-                },
-              ]
-            : undefined,
-        }
-      );
+      // tableChildren.push(
+      //   {
+      //     // 确认 checkbox
+      //     brick: "div",
+      //     properties: {
+      //       className: classNames("body-cell", {
+      //         "last-row-cell": isLastRow,
+      //       }),
+      //     },
+      //     children: generation.candidates
+      //       ? [
+      //           {
+      //             brick: "eo-checkbox",
+      //             properties: {
+      //               value: `<%= CTX.propertyApproveState.includes(${JSON.stringify(generation.propertyId)}) ? ["approved"] : [] %>`,
+      //               options: [{ label: "", value: "approved" }],
+      //               disabled: `<%= CTX.busy || ${JSON.stringify(!generation.generationId)} %>`,
+      //             },
+      //             events: {
+      //               change: [
+      //                 {
+      //                   action: "window.postMessage",
+      //                   args: [
+      //                     {
+      //                       channel: "raw-metric-preview",
+      //                       type: "approve",
+      //                       payload: {
+      //                         approved: "<% EVENT.detail.length > 0 %>",
+      //                         propertyInstanceId: generation.propertyInstanceId,
+      //                       },
+      //                     },
+      //                   ],
+      //                 },
+      //                 {
+      //                   action: "context.replace",
+      //                   args: [
+      //                     "propertyApproveState",
+      //                     `<%
+      //                       EVENT.detail.length > 0
+      //                         ? CTX.propertyApproveState.concat(${JSON.stringify(generation.propertyId)})
+      //                         : CTX.propertyApproveState.filter((id) => id !== ${JSON.stringify(generation.propertyId)})
+      //                     %>`,
+      //                   ],
+      //                 },
+      //               ],
+      //             },
+      //           },
+      //         ]
+      //       : undefined,
+      //   },
+      //   {
+      //     // 批注 textarea
+      //     brick: "div",
+      //     properties: {
+      //       className: classNames("body-cell", {
+      //         "last-col-cell": true,
+      //         "last-row-cell": isLastRow,
+      //       }),
+      //     },
+      //     children: generation.candidates
+      //       ? [
+      //           {
+      //             brick: "eo-textarea",
+      //             properties: {
+      //               value: generation.comment
+      //                 ? `<% ${JSON.stringify(generation.comment)} %>`
+      //                 : undefined,
+      //               autoSize: true,
+      //               style: {
+      //                 width: "100%",
+      //               },
+      //               disabled: `<%= CTX.busy || ${JSON.stringify(!generation.generationId)} || CTX.propertyApproveState.includes(${JSON.stringify(generation.propertyId)}) %>`,
+      //             },
+      //             events: {
+      //               keydown: {
+      //                 if: "<% EVENT.code === 'Enter' && (EVENT.metaKey || EVENT.ctrlKey) %>",
+      //                 action: "window.postMessage",
+      //                 args: [
+      //                   {
+      //                     channel: "raw-metric-preview",
+      //                     type: "comment",
+      //                     payload: {
+      //                       comment: "<% EVENT.target.value %>",
+      //                       propertyInstanceId: generation.propertyInstanceId,
+      //                     },
+      //                   },
+      //                 ],
+      //               },
+      //             },
+      //           },
+      //         ]
+      //       : undefined,
+      //   }
+      // );
     }
 
     render(
@@ -714,7 +791,7 @@ export function RawMetricPreviewComponent({
         styleText: [sharedPreviewStyleText, previewStyleText].join("\n"),
       }
     );
-  }, [app, injected, generations, theme, uiVersion, category]);
+  }, [app, injected, generations, theme, uiVersion, grouped]);
 
   return (
     <div className={classNames("container")}>

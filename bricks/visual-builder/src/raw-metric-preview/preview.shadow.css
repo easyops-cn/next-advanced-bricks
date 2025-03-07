@@ -2,3 +2,7 @@
   overflow-y: initial;
   max-height: initial;
 }
+
+.body-cell.large-chart-cell {
+  padding: 16px;
+}
