@@ -1,0 +1,19 @@
+/* Try to inject chart-v2 styles inside eo-next-table */
+/* This is a very hacky way to make bricks implemented with light DOM to work inside a shadow DOM. */
+/* See original css file: /next-charts/-/blob/master/bricks/chart-v2/src/base-chart/styles.module.css */
+[class^="chartWrap--"] {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  img::selection {
+    background: transparent;
+  }
+
+  [class^="chartEle--"] {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+  }
+}
