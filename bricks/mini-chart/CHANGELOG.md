@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/mini-chart@0.1.6...@next-bricks/mini-chart@0.2.0) (2025-03-10)
+
+
+### Features
+
+* support auto width and height ([c171ce8](https://github.com/easyops-cn/next-advanced-bricks/commit/c171ce89d334ea19646cc3de7952abc98dd667ed))
+* support showArea ([d68c210](https://github.com/easyops-cn/next-advanced-bricks/commit/d68c21069da47bef6b8d339839b89478be432df8))
+
+
+
+
+
 ## [0.1.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/mini-chart@0.1.5...@next-bricks/mini-chart@0.1.6) (2025-01-15)
 
 **Note:** Version bump only for package @next-bricks/mini-chart
