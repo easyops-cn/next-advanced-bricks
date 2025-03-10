@@ -2,10 +2,50 @@ import { describe, test, expect, jest } from "@jest/globals";
 import { act } from "react-dom/test-utils";
 import "./";
 import type { MiniLineChart } from "./index.js";
+import { drawMiniLineChart } from "./draw";
 
 jest.mock("@next-core/theme", () => ({}));
+jest.mock("./getRemoteWorker.js", () => ({
+  getRemoteWorker() {
+    return Promise.resolve({
+      async init() {},
+      async drawMiniLineChart() {},
+      async dispose() {},
+    });
+  },
+}));
+jest.mock("./worker.mjs", () => ({}));
+jest.mock("./draw.js");
+
+jest.mock(
+  "resize-observer-polyfill",
+  () =>
+    class {
+      #callback: ResizeObserverCallback;
+      constructor(callback: ResizeObserverCallback) {
+        this.#callback = callback;
+      }
+      disconnect() {}
+      observe(target: Element) {
+        Promise.resolve().then(() => {
+          this.#callback(
+            [
+              { target, contentBoxSize: [{ inlineSize: 300, blockSize: 200 }] },
+              {},
+            ] as any,
+            this
+          );
+        });
+      }
+      unobserve() {}
+    }
+);
 
 describe("eo-mini-line-chart", () => {
+  beforeEach(() => {
+    HTMLCanvasElement.prototype.transferControlToOffscreen = null!;
+  });
+
   test("basic usage", async () => {
     const element = document.createElement(
       "eo-mini-line-chart"
@@ -30,25 +70,32 @@ describe("eo-mini-line-chart", () => {
         <style>
           styles.shadow.css
         </style>,
-        <svg
+        <canvas
+          data-id="canvas-1"
           height="40"
+          style="width: 155px; height: 40px;"
           width="155"
-        >
-          <g
-            transform="translate(1,1)"
-          >
-            <path
-              d="M0,38C25.5,19,51,0,76.5,0C102,0,127.5,7.6,153,15.2"
-              fill="none"
-              stroke="gray"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-            />
-          </g>
-        </svg>,
+        />,
+        <span
+          class="detector"
+          style="color: gray;"
+        />,
       ]
     `);
+    expect(drawMiniLineChart).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        pixelRatio: 1,
+        width: 155,
+        height: 40,
+        padding: 1,
+        smooth: undefined,
+        lineColor: "gray",
+        xField: "x",
+        yField: "y",
+        data: element.data,
+      })
+    );
 
     act(() => {
       document.body.removeChild(element);
@@ -56,7 +103,17 @@ describe("eo-mini-line-chart", () => {
     expect(element.shadowRoot?.childNodes.length).toBe(0);
   });
 
-  test("no smooth", async () => {
+  test("support transfer offscreen canvas", async () => {
+    HTMLCanvasElement.prototype.transferControlToOffscreen = function (
+      this: HTMLCanvasElement & { _transferred?: boolean }
+    ) {
+      if (this._transferred) {
+        throw new Error("Canvas has already been transferred");
+      }
+      this._transferred = true;
+      return { mock: "OffscreenCanvas" };
+    } as any;
+
     const element = document.createElement(
       "eo-mini-line-chart"
     ) as MiniLineChart;
@@ -71,119 +128,14 @@ describe("eo-mini-line-chart", () => {
       document.body.appendChild(element);
     });
 
-    expect(element.shadowRoot?.childNodes).toMatchInlineSnapshot(`
-      NodeList [
-        <style>
-          styles.shadow.css
-        </style>,
-        <svg
-          height="40"
-          width="155"
-        >
-          <g
-            transform="translate(1,1)"
-          >
-            <path
-              d="M0,38L76.5,0L153,15.2"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-            />
-          </g>
-        </svg>,
-      ]
-    `);
+    await Promise.resolve();
 
-    act(() => {
-      document.body.removeChild(element);
+    expect(drawMiniLineChart).not.toBeCalled();
+
+    element.smooth = true;
+    await act(async () => {
+      await Promise.resolve();
     });
-  });
-
-  test("min equals to max while not zero", async () => {
-    const element = document.createElement(
-      "eo-mini-line-chart"
-    ) as MiniLineChart;
-    element.xField = "x";
-    element.yField = "y";
-    element.data = [
-      { x: 1000, y: 5 },
-      { x: 1010, y: 5 },
-      { x: 1020, y: 5 },
-    ];
-
-    act(() => {
-      document.body.appendChild(element);
-    });
-
-    expect(element.shadowRoot?.childNodes).toMatchInlineSnapshot(`
-      NodeList [
-        <style>
-          styles.shadow.css
-        </style>,
-        <svg
-          height="40"
-          width="155"
-        >
-          <g
-            transform="translate(1,1)"
-          >
-            <path
-              d="M0,19L153,19"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-            />
-          </g>
-        </svg>,
-      ]
-    `);
-
-    act(() => {
-      document.body.removeChild(element);
-    });
-  });
-
-  test("min equals to max equals to zero", async () => {
-    const element = document.createElement(
-      "eo-mini-line-chart"
-    ) as MiniLineChart;
-    element.xField = "x";
-    element.yField = "y";
-    element.data = [
-      { x: 1000, y: 0 },
-      { x: 1010, y: 0 },
-      { x: 1020, y: 0 },
-    ];
-
-    act(() => {
-      document.body.appendChild(element);
-    });
-
-    expect(element.shadowRoot?.childNodes).toMatchInlineSnapshot(`
-      NodeList [
-        <style>
-          styles.shadow.css
-        </style>,
-        <svg
-          height="40"
-          width="155"
-        >
-          <g
-            transform="translate(1,1)"
-          >
-            <path
-              d="M0,38L153,38"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-            />
-          </g>
-        </svg>,
-      ]
-    `);
 
     act(() => {
       document.body.removeChild(element);
@@ -194,8 +146,8 @@ describe("eo-mini-line-chart", () => {
     const element = document.createElement(
       "eo-mini-line-chart"
     ) as MiniLineChart;
-    element.width = 120;
-    element.height = 60;
+    element.width = "120";
+    element.height = "60";
 
     act(() => {
       document.body.appendChild(element);
@@ -215,6 +167,68 @@ describe("eo-mini-line-chart", () => {
         </div>,
       ]
     `);
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
+
+  test("auto width", async () => {
+    const element = document.createElement(
+      "eo-mini-line-chart"
+    ) as MiniLineChart;
+    element.width = "auto";
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(element.shadowRoot?.querySelector("div")?.style.width).toEqual(
+      "300px"
+    );
+
+    // Switch to fixed width
+    element.width = "260px";
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(element.shadowRoot?.querySelector("div")?.style.width).toEqual(
+      "260px"
+    );
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
+
+  test("auto height", async () => {
+    const element = document.createElement(
+      "eo-mini-line-chart"
+    ) as MiniLineChart;
+    element.height = "auto";
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(element.shadowRoot?.querySelector("div")?.style.height).toEqual(
+      "200px"
+    );
+
+    // Switch to fixed height
+    element.height = "260px";
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(element.shadowRoot?.querySelector("div")?.style.height).toEqual(
+      "260px"
+    );
 
     act(() => {
       document.body.removeChild(element);
