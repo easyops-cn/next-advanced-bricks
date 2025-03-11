@@ -17,6 +17,7 @@ body {
   top: 0;
   z-index: 1;
   font-weight: bold;
+  align-content: center;
 }
 
 .head-cell,
@@ -46,7 +47,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  overflow: hidden;
+  /* overflow: hidden; */
+  width: 100%;
 }
 
 .raw-content {

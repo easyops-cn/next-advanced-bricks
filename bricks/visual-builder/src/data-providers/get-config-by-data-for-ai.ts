@@ -1,6 +1,10 @@
 import { createProviderClass, hasOwnProperty } from "@next-core/utils/general";
 import { InstanceApi_postSearchV3 } from "@next-api-sdk/cmdb-sdk";
 import { isObject } from "lodash";
+import {
+  generateMetricCandidates,
+  type Metric,
+} from "../raw-metric-preview/generateMetricCandidates";
 
 export interface Data {
   name: string;
@@ -12,6 +16,7 @@ export type Config = NormalConfig | UnknownConfig;
 export interface NormalConfig {
   type: ConfigType;
   attrList: Attr[];
+  metricGroups: MetricGroup[];
   dataList: unknown[];
   containerOptions?: ContainerOption[];
 }
@@ -31,12 +36,26 @@ export interface Attr {
   id: string;
   name: string;
   candidates?: unknown[];
+  metricKey?: string;
+  unit?: string;
+}
+
+export interface MetricGroup {
+  group: string;
+  metrics: string[];
+  counter?: string;
+}
+
+export interface ObjectInfo {
+  attrList: Attr[];
+  metricGroups: MetricGroup[];
 }
 
 export interface ContainerOption {
   label: string;
   value: string;
   settings?: unknown;
+  prefer?: boolean;
 }
 
 interface ListWithPagination {
@@ -49,11 +68,13 @@ interface ListWithPagination {
 
 interface DatumWithObjectId {
   _object_id: string;
+  time?: number;
 }
 
 interface ModelObject {
   attrList: ModelAttr[];
   parentObjectIds?: string[];
+  metricGroups?: MetricGroup[];
 }
 
 interface ModelAttr {
@@ -131,6 +152,7 @@ export async function getConfigByDataForAi(
   }
 
   let attrList: Attr[] = [];
+  let metricGroups: MetricGroup[] = [];
 
   if (
     type !== "unknown" &&
@@ -139,7 +161,14 @@ export async function getConfigByDataForAi(
     typeof datum._object_id === "string"
   ) {
     const objectId = datum._object_id;
-    attrList = await getMergedAttrList(objectId, keys);
+
+    const isTimeSeries =
+      hasOwnProperty(datum, "time") && typeof datum.time === "number";
+    ({ attrList, metricGroups } = await getMergedObjectInfo(
+      objectId,
+      keys,
+      isTimeSeries
+    ));
   } else {
     // eslint-disable-next-line no-console
     console.warn("Can not detect objectId with data:", data);
@@ -155,18 +184,22 @@ export async function getConfigByDataForAi(
   return {
     type,
     attrList,
+    metricGroups,
     dataList,
-    containerOptions: getAvailableContainersByType(type, fields),
+    containerOptions: getAvailableContainersByType(type, fields, attrList),
   };
 }
 
 function getAvailableContainersByType(
   type: ConfigType,
-  fields?: Record<string, string>
+  fields: Record<string, string> | undefined,
+  attrList: Attr[]
 ): ContainerOption[] {
+  let result: ContainerOption[] = [];
+
   switch (type) {
     case "list":
-      return [
+      result = [
         {
           label: "表格",
           value: "table",
@@ -175,13 +208,10 @@ function getAvailableContainersByType(
           label: "卡片列表",
           value: "cards",
         },
-        // {
-        //   label: "图表",
-        //   value: "chart",
-        // },
       ];
+      break;
     case "list-with-pagination":
-      return [
+      result = [
         {
           label: "表格",
           value: "table",
@@ -198,14 +228,8 @@ function getAvailableContainersByType(
             fields,
           },
         },
-        // {
-        //   label: "图表",
-        //   value: "chart",
-        //   settings: {
-        //     pagination: true,
-        //   },
-        // },
       ];
+      break;
     case "object":
       return [
         {
@@ -216,13 +240,36 @@ function getAvailableContainersByType(
     default:
       return [];
   }
+
+  // Count metrics and non-metrics, prefer to show chart first
+  // if there are more metrics than non-metrics
+  let metricCount = 0;
+  let nonMetricCount = 0;
+  for (const attr of attrList) {
+    if (attr.metricKey) {
+      metricCount++;
+    } else {
+      nonMetricCount++;
+    }
+  }
+  if (metricCount > 0) {
+    result.push({
+      label: "图表",
+      value: "chart",
+      settings: type === "list" ? undefined : { pagination: true },
+      prefer: metricCount > nonMetricCount,
+    });
+  }
+  return result;
 }
 
-async function getMergedAttrList(
+async function getMergedObjectInfo(
   objectIdWithNamespace: string,
-  keys: Set<string>
-): Promise<Attr[]> {
+  keys: Set<string>,
+  isTimeSeries: boolean
+): Promise<ObjectInfo> {
   const attrList: Attr[] = [];
+  const metricGroups: MetricGroup[] = [];
 
   const [objectId, namespace] = objectIdWithNamespace.split("@");
 
@@ -234,6 +281,7 @@ async function getMergedAttrList(
       "attrList.name",
       "attrList.generatedView.list",
       "parentObjectIds",
+      "metricGroups",
     ],
     query: {
       objectId,
@@ -249,16 +297,19 @@ async function getMergedAttrList(
     // eslint-disable-next-line no-console
     console.warn("Can not find object by objectId:", objectIdWithNamespace);
   } else {
-    const { attrList: attrs, parentObjectIds } = list[0];
+    const { attrList: attrs, parentObjectIds, metricGroups: groups } = list[0];
 
     if (parentObjectIds?.length) {
-      attrList.push(
-        ...(
-          await Promise.all(
-            parentObjectIds.map((parentId) => getMergedAttrList(parentId, keys))
-          )
-        ).flat()
+      const parents = await Promise.all(
+        parentObjectIds.map((parentId) =>
+          getMergedObjectInfo(parentId, keys, isTimeSeries)
+        )
       );
+
+      for (const parent of parents) {
+        attrList.push(...parent.attrList);
+        metricGroups.push(...parent.metricGroups);
+      }
     }
 
     attrList.push(
@@ -274,9 +325,52 @@ async function getMergedAttrList(
         )
         .filter(Boolean)
     );
+    if (groups?.length) {
+      metricGroups.push(...groups);
+    }
+
+    if (isTimeSeries) {
+      const { list: metrics } = (await InstanceApi_postSearchV3(
+        "_COLLECTOR_ALIAS_METRIC",
+        {
+          fields: ["name", "displayName", "unit", "dataType"],
+          page_size: 3000,
+          query: {
+            dataType: {
+              $ne: "string",
+            },
+            objectId: objectIdWithNamespace,
+          },
+          sort: [
+            {
+              key: "name",
+              order: 1,
+            },
+          ],
+        }
+      )) as { list: Metric[] };
+
+      attrList.push(
+        ...metrics
+          .map<Attr>((metric) => {
+            const hasMetricName =
+              metric.displayName && keys.has(metric.displayName);
+            return hasMetricName || keys.has(metric.name)
+              ? {
+                  id: metric.name,
+                  name: metric.displayName,
+                  metricKey: hasMetricName ? metric.displayName : metric.name,
+                  unit: metric.unit,
+                  candidates: generateMetricCandidates(metric),
+                }
+              : null;
+          })
+          .filter(Boolean)
+      );
+    }
   }
 
-  return attrList;
+  return { attrList, metricGroups };
 }
 
 customElements.define(

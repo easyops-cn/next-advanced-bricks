@@ -15,7 +15,7 @@ import previewStyleText from "./preview.shadow.css";
 
 const { defineElement, property, event } = createDecorators();
 
-export interface RawPreviewProps {
+export interface RawDataPreviewProps {
   previewUrl?: string;
   generations?: AttributeGeneration[];
   mocks?: Record<string, unknown>[];
@@ -178,7 +178,7 @@ class RawDataPreview extends ReactNextElement {
   }
 }
 
-export interface RawDataPreviewComponentProps extends RawPreviewProps {
+export interface RawDataPreviewComponentProps extends RawDataPreviewProps {
   onComment: (detail: CommentDetail) => void;
   onApprove: (detail: ApproveDetail) => void;
   onViewAttrPrompt: (detail: AttributeGeneration) => void;

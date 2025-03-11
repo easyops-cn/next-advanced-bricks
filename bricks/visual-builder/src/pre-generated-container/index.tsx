@@ -4,7 +4,6 @@ import { ReactNextElement } from "@next-core/react-element";
 import { ReactUseMultipleBricks } from "@next-core/react-runtime";
 import type { UseBrickConf } from "@next-core/types";
 import "@next-core/theme";
-import styleText from "./styles.shadow.css";
 
 const { defineElement, property } = createDecorators();
 
@@ -15,7 +14,7 @@ const { defineElement, property } = createDecorators();
  */
 export
 @defineElement("visual-builder.pre-generated-container", {
-  styleTexts: [styleText],
+  shadowOptions: false,
 })
 class PreGeneratedContainer extends ReactNextElement {
   @property({ attribute: false })

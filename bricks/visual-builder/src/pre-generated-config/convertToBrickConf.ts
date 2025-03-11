@@ -1,18 +1,25 @@
 import type { BrickConf, SlotConfOfBricks, SlotsConf } from "@next-core/types";
 import { hasOwnProperty } from "@next-core/utils/general";
-import type { AttrConfig, ContainerConfig } from "./index.js";
+import type {
+  ChartConfig,
+  Config,
+  ContainerConfig,
+  DefaultConfig,
+  GroupedChartConfig,
+} from "./index.js";
 import { getMemberAccessor } from "../shared/getMemberAccessor.js";
 import {
   convertToStoryboard,
   lowLevelConvertToStoryboard,
 } from "../raw-data-preview/convert.js";
 import { has } from "lodash";
+import { convertToChart } from "../raw-metric-preview/convert.js";
 
 export function convertToBrickConf(
-  attrList: AttrConfig[],
+  configList: Config[],
   { type, dataName, dataType, settings }: ContainerConfig
 ): BrickConf | null {
-  if (!type || !dataName) {
+  if (!type || !dataName || configList.length === 0) {
     return null;
   }
 
@@ -20,20 +27,45 @@ export function convertToBrickConf(
   const valueAccessor = `${dataAccessor}${getMemberAccessor(dataName)}`;
 
   if (type === "chart") {
+    const metricConfigList = configList as (ChartConfig | GroupedChartConfig)[];
     const dataSource = `<%= ${valueAccessor}${settings?.pagination ? ".list" : ""} %>`;
 
+    const charts = metricConfigList.map(({ candidate, meta }) =>
+      convertToChart(
+        {
+          ...candidate,
+          min: meta.counterMetricKey ? undefined : candidate.min,
+        },
+        dataSource,
+        meta.metric.metricKey,
+        {
+          unit: meta.metric.unit,
+        },
+        meta.groupedMetricKeys,
+        meta.counterMetricKey
+      )
+    );
+
+    if (charts.length === 1) {
+      return charts[0];
+    }
+
     return {
-      brick: "eo-mini-line-chart",
+      brick: "eo-grid-layout",
       properties: {
-        width: 600,
-        height: 200,
-        xField: settings.fields?.xField,
-        yField: settings.fields?.yField,
-        lineColor: "var(--palette-orange-6)",
-        data: dataSource,
+        templateColumns: "repeat(auto-fill, minmax(500px, 1fr))",
+        gap: "var(--card-content-gap)",
+      },
+      slots: {
+        "": {
+          type: "bricks",
+          bricks: charts,
+        },
       },
     };
   }
+
+  const attrConfigList = configList as DefaultConfig[];
 
   if (type === "cards") {
     const dataSource = `<%= ${valueAccessor}${settings?.pagination ? ".list" : ""} %>`;
@@ -89,24 +121,24 @@ export function convertToBrickConf(
   } %>`;
 
   const brickMap = new Map<string, BrickConf>();
-  for (const attr of attrList) {
-    if (attr.config) {
+  for (const config of attrConfigList) {
+    if (config.candidate) {
       const brick =
         type === "table"
-          ? lowLevelConvertToStoryboard(attr.config, ".cellData")
-          : convertToStoryboard(attr.config, attr.id);
+          ? lowLevelConvertToStoryboard(config.candidate, ".cellData")
+          : convertToStoryboard(config.candidate, config.meta.attr.id);
       if (brick) {
-        brickMap.set(attr.id, getCompatibleBrickConf(brick));
+        brickMap.set(config.meta.attr.id, getCompatibleBrickConf(brick));
       }
     }
   }
   const slots = Object.fromEntries(
-    attrList
-      .map((attr) => {
-        const brick = brickMap.get(attr.id);
+    attrConfigList
+      .map((config) => {
+        const brick = brickMap.get(config.meta.attr.id);
         return brick
           ? [
-              `[${attr.id}]`,
+              `[${config.meta.attr.id}]`,
               {
                 type: "bricks",
                 bricks: [brick],
@@ -123,7 +155,7 @@ export function convertToBrickConf(
         brick: "eo-next-table",
         properties: {
           rowKey: "instanceId",
-          columns: attrList.map((attr) => {
+          columns: attrConfigList.map(({ meta: { attr } }) => {
             const col: Record<string, unknown> = {
               title: attr.name,
               dataIndex: attr.id,
@@ -144,11 +176,11 @@ export function convertToBrickConf(
         brick: "eo-descriptions",
         properties: {
           column: 2,
-          list: attrList.map((attr) => {
+          list: attrConfigList.map(({ candidate, meta: { attr } }) => {
             const item: Record<string, unknown> = {
               label: attr.name,
             };
-            if (attr.config) {
+            if (candidate) {
               item.useChildren = `[${attr.id}]`;
             }
             return item;
