@@ -69,12 +69,16 @@ describe("useContract", () => {
       new Error("http error")
     );
 
-    const spyOnConsoleError = jest.spyOn(window.console, "error");
+    const spyOnConsoleError = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
 
     renderHook(() => useContractList({}));
 
-    await (global as any).flushPromises();
+    await act(() => (global as any).flushPromises());
     expect(spyOnConsoleError).toHaveBeenCalled();
     (ContractCenterApi_searchContract as jest.Mock).mockClear();
+
+    spyOnConsoleError.mockRestore();
   });
 });

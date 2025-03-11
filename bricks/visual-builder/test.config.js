@@ -5,8 +5,10 @@ export default {
   testPathIgnorePatterns: [
     "<rootDir>/src/chat-conversation/",
     "<rootDir>/src/chat-preview/",
+    "<rootDir>/src/property-editor/",
     "<rootDir>/src/pre-generated-",
     "<rootDir>/src/raw-data-preview/",
+    "<rootDir>/src/raw-metric-preview/",
   ],
   coveragePathIgnorePatterns: [
     "<rootDir>/src/chat-conversation/",
@@ -17,5 +19,6 @@ export default {
     // Todo(sailor): Work in progress
     "<rootDir>/src/property-editor/",
     "<rootDir>/src/raw-data-preview/",
+    "<rootDir>/src/raw-metric-preview/",
   ],
 };
