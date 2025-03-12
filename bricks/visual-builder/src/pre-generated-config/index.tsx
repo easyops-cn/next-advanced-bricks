@@ -131,11 +131,19 @@ export interface GroupedChartConfig {
 }
 
 export interface ContainerConfig {
-  type: "table" | "descriptions" | "cards" | "chart" | null | undefined;
+  type:
+    | "table"
+    | "descriptions"
+    | "cards"
+    | "chart"
+    | "grouped-chart"
+    | null
+    | undefined;
   dataName: string;
   dataType?: "context" | "state";
   settings?: {
     pagination?: boolean;
+    wrapper?: boolean;
     fields?: Record<string, string>;
   };
 }
@@ -215,10 +223,10 @@ export function PreGeneratedConfigComponent({
 
   const viewType =
     containerConfig?.type === "chart"
-      ? metricGroups?.length
+      ? "chart"
+      : containerConfig?.type === "grouped-chart"
         ? "grouped-chart"
-        : "chart"
-      : "default";
+        : "default";
 
   const viewAttrList = useMemo(() => {
     return viewType === "default"
@@ -521,7 +529,7 @@ export function PreGeneratedConfigComponent({
                         }
 
                         const bricks = filteredCandidates
-                          .map((candidate) => {
+                          ?.map((candidate) => {
                             const condition = `<%=
                                 DATA.rowData.id === ${JSON.stringify(item.id)} &&
                                 ${JSON.stringify(candidate.visualWeight)} === CTX.weightMap.get(${JSON.stringify(item.id)})

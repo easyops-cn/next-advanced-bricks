@@ -317,6 +317,7 @@ export function RawMetricPreviewComponent({
     for (let i = 0, size = generations.length; i < size; i++) {
       const generation = generations[i];
       const isLastRow = i === size - 1;
+      let isLastGroupedRow = false;
 
       // const candidatesByVisualWeight = new Map<number, VisualConfig>();
       // for (const candidate of generation.candidates ?? []) {
@@ -341,7 +342,7 @@ export function RawMetricPreviewComponent({
           handledGroupIndexes.add(groupIndex);
           groupedMetrics = groupMap.get(groupIndex)!;
           const groupCount = groupedMetrics.length;
-          const isLastGroupedRow = i + groupCount - 1 === size - 1;
+          isLastGroupedRow = i + groupCount - 1 === size - 1;
           tableChildren.push({
             brick: "div",
             properties: {
@@ -497,7 +498,7 @@ export function RawMetricPreviewComponent({
           brick: "div",
           properties: {
             className: classNames("body-cell", {
-              "last-row-cell": isLastRow,
+              "last-row-cell": isLastRow || isLastGroupedRow,
               "large-chart-cell": size !== "small",
             }),
             style: {
