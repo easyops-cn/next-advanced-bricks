@@ -165,5 +165,9 @@ describe("visual-builder.generate-snippets-context-menu", () => {
       text: "item",
       dragConf: { format: "text/plain", data: {} },
     });
+
+    act(() => {
+      document.body.removeChild(element);
+    });
   });
 });

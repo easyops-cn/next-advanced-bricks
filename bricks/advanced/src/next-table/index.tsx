@@ -18,6 +18,7 @@ import { RowSelectMethod } from "antd/es/table/interface.js";
 import type { TableProps } from "antd/es/table";
 import type { NextTableComponentProps } from "./Table.js";
 import "./host-context.css";
+import chartStyleText from "./chart-v2.shadow.css";
 
 const { defineElement, property, method, event } = createDecorators();
 
@@ -202,6 +203,14 @@ class EoNextTable extends ReactNextElement {
   accessor optimizedColumns: (string | number)[] | undefined;
 
   /**
+   * 注入 chart-v2 所需的样式（因其使用 light DOM 实现），仅 EasyOps 内部使用。
+   *
+   * @internal
+   */
+  @property({ type: Boolean })
+  accessor injectChartV2Styles: boolean | undefined;
+
+  /**
    * 前端搜索
    */
   @method()
@@ -311,39 +320,42 @@ class EoNextTable extends ReactNextElement {
 
   render() {
     return (
-      <NextTableComponent
-        ref={this.#tableRef}
-        shadowRoot={this.shadowRoot}
-        rowKey={this.rowKey}
-        columns={this.columns}
-        cell={this.cell}
-        dataSource={this.dataSource}
-        frontSearch={this.frontSearch}
-        pagination={this.pagination}
-        loading={this.loading}
-        multiSort={this.multiSort}
-        sort={this.sort}
-        rowSelection={this.rowSelection}
-        selectedRowKeys={this.selectedRowKeys}
-        hiddenColumns={this.hiddenColumns}
-        expandable={this.expandable}
-        expandedRowKeys={this.expandedRowKeys}
-        childrenColumnName={this.childrenColumnName}
-        rowDraggable={this.rowDraggable}
-        searchFields={this.searchFields}
-        size={this.size}
-        showHeader={this.showHeader}
-        bordered={this.bordered}
-        scrollConfig={this.scrollConfig}
-        optimizedColumns={this.optimizedColumns}
-        onPageChange={this.#handlePageChange}
-        onPageSizeChange={this.#handlePageSizeChange}
-        onSort={this.#handleSort}
-        onRowSelect={this.#handleRowSelect}
-        onRowExpand={this.#handleRowExpand}
-        onExpandedRowsChange={this.#handleExpandedRowsChange}
-        onRowDrag={this.#handleRowDrag}
-      />
+      <>
+        {this.injectChartV2Styles && <style>{chartStyleText}</style>}
+        <NextTableComponent
+          ref={this.#tableRef}
+          shadowRoot={this.shadowRoot}
+          rowKey={this.rowKey}
+          columns={this.columns}
+          cell={this.cell}
+          dataSource={this.dataSource}
+          frontSearch={this.frontSearch}
+          pagination={this.pagination}
+          loading={this.loading}
+          multiSort={this.multiSort}
+          sort={this.sort}
+          rowSelection={this.rowSelection}
+          selectedRowKeys={this.selectedRowKeys}
+          hiddenColumns={this.hiddenColumns}
+          expandable={this.expandable}
+          expandedRowKeys={this.expandedRowKeys}
+          childrenColumnName={this.childrenColumnName}
+          rowDraggable={this.rowDraggable}
+          searchFields={this.searchFields}
+          size={this.size}
+          showHeader={this.showHeader}
+          bordered={this.bordered}
+          scrollConfig={this.scrollConfig}
+          optimizedColumns={this.optimizedColumns}
+          onPageChange={this.#handlePageChange}
+          onPageSizeChange={this.#handlePageSizeChange}
+          onSort={this.#handleSort}
+          onRowSelect={this.#handleRowSelect}
+          onRowExpand={this.#handleRowExpand}
+          onExpandedRowsChange={this.#handleExpandedRowsChange}
+          onRowDrag={this.#handleRowDrag}
+        />
+      </>
     );
   }
 }

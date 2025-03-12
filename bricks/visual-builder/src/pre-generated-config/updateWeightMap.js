@@ -1,7 +1,7 @@
 /**
  * @param {Map<string, number>} weightMap
  * @param {Map<string, number[]>} availableWeights
- * @param {string} key
+ * @param {string | null} key
  * @param {1 | -1} direction
  * @returns {Map<string, number>}
  */
@@ -9,7 +9,7 @@
 function updateWeightMap(weightMap, availableWeights, key, direction) {
   return new Map(
     [...weightMap].map(([k, v]) => {
-      if (k === key) {
+      if (key === null || k === key) {
         const weights = availableWeights.get(k);
         const index = weights.indexOf(v);
         const nextIndex = Math.max(
