@@ -30,7 +30,12 @@ export interface Options {
   dataType?: "context" | "state";
 }
 
-export type ConfigType = "list" | "list-with-pagination" | "object" | "unknown";
+export type ConfigType =
+  | "list"
+  | "list-with-pagination"
+  | "list-with-wrapper"
+  | "object"
+  | "unknown";
 
 export interface Attr {
   id: string;
@@ -111,21 +116,21 @@ export async function getConfigByDataForAi(
     }
   } else if (isObject(value)) {
     const listValue = value as ListWithPagination;
-    if (
-      hasOwnProperty(listValue, "list") &&
-      Array.isArray(listValue.list) &&
-      hasOwnProperty(listValue, "page") &&
-      typeof listValue.page === "number" &&
-      hasOwnProperty(listValue, "total") &&
-      typeof listValue.total === "number"
-    ) {
+    if (hasOwnProperty(listValue, "list") && Array.isArray(listValue.list)) {
       // It's a list with pagination
       if (listValue.list.length > 0) {
-        type = "list-with-pagination";
+        type =
+          hasOwnProperty(listValue, "page") &&
+          typeof listValue.page === "number" &&
+          hasOwnProperty(listValue, "total") &&
+          typeof listValue.total === "number"
+            ? "list-with-pagination"
+            : "list-with-wrapper";
         datum = listValue.list[0];
         dataList = listValue.list;
       }
       if (
+        type === "list-with-pagination" &&
         typeof listValue.page_size === "number" &&
         typeof listValue.pageSize !== "number"
       ) {
@@ -163,7 +168,9 @@ export async function getConfigByDataForAi(
     const objectId = datum._object_id;
 
     const isTimeSeries =
-      hasOwnProperty(datum, "time") && typeof datum.time === "number";
+      type !== "object" &&
+      hasOwnProperty(datum, "time") &&
+      typeof datum.time === "number";
     ({ attrList, metricGroups } = await getMergedObjectInfo(
       objectId,
       keys,
@@ -230,6 +237,29 @@ function getAvailableContainersByType(
         },
       ];
       break;
+    case "list-with-wrapper":
+      result = [
+        {
+          label: "属性详情",
+          value: "descriptions",
+        },
+        {
+          label: "表格",
+          value: "table",
+          settings: {
+            wrapper: true,
+            fields,
+          },
+        },
+        {
+          label: "卡片列表",
+          value: "cards",
+          settings: {
+            wrapper: true,
+          },
+        },
+      ];
+      break;
     case "object":
       return [
         {
@@ -252,12 +282,26 @@ function getAvailableContainersByType(
       nonMetricCount++;
     }
   }
+  const settings =
+    type === "list-with-pagination"
+      ? { pagination: true }
+      : type === "list-with-wrapper"
+        ? { wrapper: true }
+        : undefined;
   if (metricCount > 0) {
     result.push({
       label: "图表",
       value: "chart",
-      settings: type === "list" ? undefined : { pagination: true },
-      prefer: metricCount > nonMetricCount,
+      settings,
+      prefer: metricCount > nonMetricCount && metricCount < 6,
+    });
+  }
+  if (metricCount > 1) {
+    result.push({
+      label: "组合图表",
+      value: "grouped-chart",
+      settings,
+      prefer: metricCount > nonMetricCount && metricCount >= 6,
     });
   }
   return result;

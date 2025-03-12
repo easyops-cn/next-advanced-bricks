@@ -443,6 +443,114 @@ describe("getConfigByDataForAi", () => {
         { label: "表格", value: "table" },
         { label: "卡片列表", value: "cards" },
         { label: "图表", value: "chart", prefer: true },
+        { label: "组合图表", value: "grouped-chart", prefer: false },
+      ],
+    });
+  });
+
+  test("should handle time series data with list correctly", async () => {
+    const data = {
+      name: "test",
+      value: {
+        list: [
+          {
+            _object_id: "1",
+            time: 1636372800000,
+            cpu_usage: 75.5,
+            "Memory Usage": 1024,
+            attr1: "value1",
+          },
+        ],
+      },
+    };
+
+    (InstanceApi_postSearchV3 as jest.Mock).mockImplementation((objectType) => {
+      if (objectType === "MODEL_OBJECT") {
+        return Promise.resolve({
+          list: [
+            {
+              attrList: [{ id: "attr1", name: "Attr 1" }],
+              metricGroups: [
+                {
+                  group: "performance",
+                  metrics: ["cpu_usage", "memory_usage"],
+                },
+              ],
+            },
+          ],
+        });
+      } else if (objectType === "_COLLECTOR_ALIAS_METRIC") {
+        return Promise.resolve({
+          list: [
+            {
+              name: "cpu_usage",
+              displayName: "CPU Usage",
+              unit: "%",
+              dataType: "float",
+            },
+            {
+              name: "memory_usage",
+              displayName: "Memory Usage",
+              unit: "MB",
+              dataType: "float",
+            },
+            {
+              name: "system_load",
+            },
+          ],
+        });
+      }
+    });
+
+    const config = await getConfigByDataForAi(data);
+
+    expect(config).toEqual({
+      type: "list-with-wrapper",
+      attrList: [
+        { id: "attr1", name: "Attr 1" },
+        {
+          id: "cpu_usage",
+          name: "CPU Usage",
+          metricKey: "cpu_usage",
+          unit: "%",
+          candidates: expect.any(Array),
+        },
+        {
+          id: "memory_usage",
+          name: "Memory Usage",
+          metricKey: "Memory Usage",
+          unit: "MB",
+          candidates: expect.any(Array),
+        },
+      ],
+      metricGroups: [
+        { group: "performance", metrics: ["cpu_usage", "memory_usage"] },
+      ],
+      dataList: [
+        {
+          _object_id: "1",
+          time: 1636372800000,
+          cpu_usage: 75.5,
+          "Memory Usage": 1024,
+          attr1: "value1",
+        },
+      ],
+      containerOptions: [
+        { label: "属性详情", value: "descriptions" },
+        { label: "表格", value: "table", settings: { wrapper: true } },
+        { label: "卡片列表", value: "cards", settings: { wrapper: true } },
+        {
+          label: "图表",
+          value: "chart",
+          prefer: true,
+          settings: { wrapper: true },
+        },
+        {
+          label: "组合图表",
+          value: "grouped-chart",
+          prefer: false,
+          settings: { wrapper: true },
+        },
       ],
     });
   });

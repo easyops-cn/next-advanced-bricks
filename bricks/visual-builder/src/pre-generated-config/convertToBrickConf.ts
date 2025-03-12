@@ -26,9 +26,9 @@ export function convertToBrickConf(
   const dataAccessor = dataType === "state" ? "STATE" : "CTX";
   const valueAccessor = `${dataAccessor}${getMemberAccessor(dataName)}`;
 
-  if (type === "chart") {
+  if (type === "chart" || type === "grouped-chart") {
     const metricConfigList = configList as (ChartConfig | GroupedChartConfig)[];
-    const dataSource = `<%= ${valueAccessor}${settings?.pagination ? ".list" : ""} %>`;
+    const dataSource = `<%= ${valueAccessor}${settings?.pagination || settings?.wrapper ? ".list" : ""} %>`;
 
     const charts = metricConfigList.map(({ candidate, meta }) =>
       convertToChart(
@@ -68,7 +68,7 @@ export function convertToBrickConf(
   const attrConfigList = configList as DefaultConfig[];
 
   if (type === "cards") {
-    const dataSource = `<%= ${valueAccessor}${settings?.pagination ? ".list" : ""} %>`;
+    const dataSource = `<%= ${valueAccessor}${settings?.pagination || settings?.wrapper ? ".list" : ""} %>`;
 
     return {
       brick: "eo-grid-layout",
@@ -117,7 +117,9 @@ export function convertToBrickConf(
       ? settings?.fields?.pageSize
         ? `{...${valueAccessor},pageSize: ${valueAccessor}${getMemberAccessor(settings.fields.pageSize)}}`
         : valueAccessor
-      : `{ list: ${valueAccessor} }`
+      : settings?.wrapper
+        ? valueAccessor
+        : `{ list: ${valueAccessor} }`
   } %>`;
 
   const brickMap = new Map<string, BrickConf>();
