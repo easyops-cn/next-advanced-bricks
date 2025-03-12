@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.42.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.42.3...@next-bricks/advanced@0.42.4) (2025-03-12)
+
+
+### Bug Fixes
+
+* **eo-next-table:** internal usage: append chart-v2 styles ([71a7fa0](https://github.com/easyops-cn/next-advanced-bricks/commit/71a7fa02bb1e209009bf682d8fe89dd2f9f9ba53))
+
+
+
+
+
 ## [0.42.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.42.2...@next-bricks/advanced@0.42.3) (2025-02-06)
 
 

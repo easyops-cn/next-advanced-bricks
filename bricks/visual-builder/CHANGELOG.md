@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.38.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.37.4...@next-bricks/visual-builder@1.38.0) (2025-03-12)
+
+
+### Features
+
+* support metric pre-generate ([6deab11](https://github.com/easyops-cn/next-advanced-bricks/commit/6deab1155ebec318bc147232c16dccb450fa50b5))
+
+
+
+
+
 ## [1.37.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.37.3...@next-bricks/visual-builder@1.37.4) (2025-02-28)
 
 
