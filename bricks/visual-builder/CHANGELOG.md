@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.38.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.38.0...@next-bricks/visual-builder@1.38.1) (2025-03-12)
+
+
+### Bug Fixes
+
+* explicitly use grouped-chart ([6563e4f](https://github.com/easyops-cn/next-advanced-bricks/commit/6563e4f25b84ff93a5e14a279f3a6df15ebf02eb))
+
+
+
+
+
 # [1.38.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.37.4...@next-bricks/visual-builder@1.38.0) (2025-03-12)
 
 
