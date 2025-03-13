@@ -58,13 +58,13 @@
   },
   "dependencies": {
     "@babel/types": "^7.22.5",
-    "@next-core/cook": "^2.5.6",
-    "@next-core/element": "^1.2.16",
+    "@next-core/cook": "^2.5.7",
+    "@next-core/element": "^1.2.17",
     "@next-core/monaco-contributions": "^0.3.13",
-    "@next-core/react-element": "^1.0.35",
-    "@next-core/react-runtime": "^1.7.9",
+    "@next-core/react-element": "^1.0.36",
+    "@next-core/react-runtime": "^1.7.10",
     "@next-core/theme": "^1.5.4",
-    "@next-core/utils": "^1.7.31",
+    "@next-core/utils": "^1.7.32",
     "@next-shared/form": "^0.7.9",
     "monaco-editor": "^0.50.0",
     "monaco-editor-webpack-plugin": "^7.1.0",
@@ -73,8 +73,8 @@
     "yaml": "^2.5.1"
   },
   "devDependencies": {
-    "@next-core/build-next-bricks": "^1.23.10",
-    "@next-core/test-next": "^1.1.8",
+    "@next-core/build-next-bricks": "^1.23.11",
+    "@next-core/test-next": "^1.1.9",
     "resize-observer-polyfill": "^1.5.1"
   },
   "peerDependencies": {
