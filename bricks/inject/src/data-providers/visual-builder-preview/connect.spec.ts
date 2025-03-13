@@ -82,7 +82,7 @@ jest.spyOn(runtime.__secret_internals, "setRealTimeDataInspectRoot");
 const mockCapture = capture as jest.Mock;
 
 delete (window as any).location;
-window.location = {
+(window as any).location = {
   origin: "http://localhost",
   reload: jest.fn(),
 } as unknown as Location;
