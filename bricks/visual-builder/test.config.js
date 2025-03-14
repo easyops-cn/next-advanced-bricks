@@ -9,6 +9,7 @@ export default {
     "<rootDir>/src/pre-generated-",
     "<rootDir>/src/raw-data-preview/",
     "<rootDir>/src/raw-metric-preview/",
+    "<rootDir>/src/raw-form-preview/",
   ],
   coveragePathIgnorePatterns: [
     "<rootDir>/src/chat-conversation/",
@@ -20,5 +21,6 @@ export default {
     "<rootDir>/src/property-editor/",
     "<rootDir>/src/raw-data-preview/",
     "<rootDir>/src/raw-metric-preview/",
+    "<rootDir>/src/raw-form-preview/",
   ],
 };

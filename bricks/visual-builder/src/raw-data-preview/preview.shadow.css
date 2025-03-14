@@ -47,8 +47,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  /* overflow: hidden; */
   width: 100%;
+  min-width: 0;
 }
 
 .raw-content {

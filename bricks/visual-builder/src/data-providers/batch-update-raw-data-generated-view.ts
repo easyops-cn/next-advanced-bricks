@@ -11,13 +11,14 @@ export interface GeneratedView {
 }
 
 export async function batchUpdateRawDataGeneratedView(
-  generations: GeneratedView[]
+  generations: GeneratedView[],
+  type?: "form" | "data"
 ): Promise<unknown> {
   return Promise.allSettled(
     generations.map(({ attrInstanceId, ...props }) =>
       InstanceApi_createInstance("RAW_DATA_GENERATED_VIEW@EASYOPS", {
         ...props,
-        attr: [attrInstanceId],
+        [type === "form" ? "formAttr" : "attr"]: [attrInstanceId],
       })
     )
   );
