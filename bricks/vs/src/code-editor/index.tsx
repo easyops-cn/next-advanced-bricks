@@ -52,9 +52,7 @@ import classNames from "classnames";
 import "./index.css";
 import { EmbeddedModelContext } from "./utils/embeddedModelState.js";
 import { PlaceholderContentWidget } from "./widget/Placeholder.js";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { getYamlLinterWorker } from "./workers/yamlLinter.mjs";
+import { getYamlLinterWorker } from "./workers/yamlLinter.js";
 import type { LintResponse } from "./workers/lintYaml.js";
 import { register as registerCel } from "./languages/cel.js";
 import { register as registerCelYaml } from "./languages/cel-yaml.js";

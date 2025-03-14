@@ -1,9 +1,6 @@
 // istanbul ignore file
 import { wrap } from "comlink";
 import type { MiniLineChartOptions } from "./draw.js";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { getChartWorker } from "./worker.mjs";
 
 export interface RemoteWorker {
   init(id: string, canvas: OffscreenCanvas): Promise<void>;
@@ -13,12 +10,21 @@ export interface RemoteWorker {
 
 let remoteWorkerPromise: Promise<RemoteWorker> | undefined;
 
+let worker: Worker | undefined;
+
 export function getRemoteWorker() {
   if (!remoteWorkerPromise) {
     remoteWorkerPromise = (async () => {
-      const Remote = wrap(getChartWorker()) as any;
+      const Remote = wrap<{ new (): RemoteWorker }>(getWorker());
       return await new Remote();
     })();
   }
   return remoteWorkerPromise;
+}
+
+function getWorker() {
+  if (!worker) {
+    worker = new Worker(new URL("./chart.worker.ts", import.meta.url));
+  }
+  return worker;
 }

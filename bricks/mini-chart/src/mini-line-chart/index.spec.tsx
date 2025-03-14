@@ -14,7 +14,6 @@ jest.mock("./getRemoteWorker.js", () => ({
     });
   },
 }));
-jest.mock("./worker.mjs", () => ({}));
 jest.mock("./draw.js");
 
 jest.mock(
