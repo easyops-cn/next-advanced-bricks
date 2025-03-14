@@ -4,11 +4,9 @@ import { lintYaml } from "./lintYaml";
 describe("lintYaml", () => {
   test("plain with no expressions", async () => {
     const result = await lintYaml({
-      id: "1",
       source: "a",
     });
     expect(result).toEqual({
-      id: "1",
       lintMarkers: [],
       lintDecorations: [],
     });
@@ -16,11 +14,9 @@ describe("lintYaml", () => {
 
   test("plain with not string value", async () => {
     const result = await lintYaml({
-      id: "1",
       source: "1",
     });
     expect(result).toEqual({
-      id: "1",
       lintMarkers: [],
       lintDecorations: [],
     });
@@ -28,11 +24,9 @@ describe("lintYaml", () => {
 
   test("plain with correct expression", async () => {
     const result = await lintYaml({
-      id: "1",
       source: "<% a %>",
     });
     expect(result).toEqual({
-      id: "1",
       lintMarkers: [],
       lintDecorations: [],
     });
@@ -40,11 +34,9 @@ describe("lintYaml", () => {
 
   test("plain with incorrect expression", async () => {
     const result = await lintYaml({
-      id: "1",
       source: "<% a. %>",
     });
     expect(result).toEqual({
-      id: "1",
       lintMarkers: [
         {
           start: 5,
@@ -59,12 +51,10 @@ describe("lintYaml", () => {
 
   test("block with CTX of links", async () => {
     const result = await lintYaml({
-      id: "1",
       source: "|\n  <%\n    STATE.b,\n    CTX.abc\n    %>\n",
       links: ["CTX"],
     });
     expect(result).toEqual({
-      id: "1",
       lintMarkers: [],
       lintDecorations: [
         {
@@ -80,7 +70,6 @@ describe("lintYaml", () => {
 
   test("block with STATE of markers", async () => {
     const result = await lintYaml({
-      id: "1",
       source: "|-\n  <%\n    STATE.b,\n    CTX.abc\n    %>\n",
       markers: [
         {
@@ -91,7 +80,6 @@ describe("lintYaml", () => {
       ],
     });
     expect(result).toEqual({
-      id: "1",
       lintMarkers: [
         {
           start: 12,
@@ -106,7 +94,6 @@ describe("lintYaml", () => {
 
   test("single-quote with non-expressions", async () => {
     const result = await lintYaml({
-      id: "1",
       source: "'CTX.a'",
       links: ["CTX"],
       markers: [
@@ -118,7 +105,6 @@ describe("lintYaml", () => {
       ],
     });
     expect(result).toEqual({
-      id: "1",
       lintMarkers: [],
       lintDecorations: [],
     });
@@ -126,7 +112,6 @@ describe("lintYaml", () => {
 
   test("single-quote with CTX", async () => {
     const result = await lintYaml({
-      id: "1",
       source: "'<% CTX(), CTX.b, STATE.c %>'",
       links: ["CTX"],
       markers: [
@@ -138,7 +123,6 @@ describe("lintYaml", () => {
       ],
     });
     expect(result).toEqual({
-      id: "1",
       lintMarkers: [
         {
           start: 18,
@@ -161,12 +145,10 @@ describe("lintYaml", () => {
 
   test("single-quote incorrect expression", async () => {
     const result = await lintYaml({
-      id: "1",
       source: "'<% CTX[''a''], CTX'' %>'",
       links: ["CTX"],
     });
     expect(result).toEqual({
-      id: "1",
       lintMarkers: [
         {
           start: 19,
@@ -181,12 +163,10 @@ describe("lintYaml", () => {
 
   test("double-quote with CTX", async () => {
     const result = await lintYaml({
-      id: "1",
       source: '"<% CTX[\\"a\\"], CTX.b, CTX[\\"c\\"] %>"',
       links: ["CTX"],
     });
     expect(result).toEqual({
-      id: "1",
       lintMarkers: [],
       lintDecorations: [
         {
@@ -202,12 +182,10 @@ describe("lintYaml", () => {
 
   test("double-quote incorrect expression", async () => {
     const result = await lintYaml({
-      id: "1",
       source: '"<% CTX[\\"a\\"], CTX) %>"',
       links: ["CTX"],
     });
     expect(result).toEqual({
-      id: "1",
       lintMarkers: [
         {
           start: 19,
