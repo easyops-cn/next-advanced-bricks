@@ -59,8 +59,8 @@ export async function lintYaml({
   links,
   markers,
 }: LintRequest): Promise<LintResponse> {
-  const { parseDocument, visit } = await import("yaml");
-  const { preevaluate, isEvaluable } = await import("@next-core/cook");
+  const [{ parseDocument, visit }, { preevaluate, isEvaluable }] =
+    await Promise.all([import("yaml"), import("@next-core/cook")]);
 
   const lintMarkers: LintMarker[] = [];
   const lintDecorations: LintDecoration[] = [];
