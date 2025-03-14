@@ -52,10 +52,7 @@ import classNames from "classnames";
 import "./index.css";
 import { EmbeddedModelContext } from "./utils/embeddedModelState.js";
 import { PlaceholderContentWidget } from "./widget/Placeholder.js";
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { getYamlLinterWorker } from "./workers/yamlLinter.mjs";
-import type { LintResponse } from "./workers/lintYaml.js";
+import { getRemoteYamlLinterWorker } from "./workers/yamlLinter.js";
 import { register as registerCel } from "./languages/cel.js";
 import { register as registerCelYaml } from "./languages/cel-yaml.js";
 import { register as registerCelStr } from "./languages/cel-str.js";
@@ -955,67 +952,65 @@ export function CodeEditorComponent({
   // istanbul ignore next
   useEffect(() => {
     const editor = editorRef.current;
-    if (editor && language === "brick_next_yaml") {
-      const yamlLinter = getYamlLinterWorker();
-      const handleChange = (): void => {
-        const value = editor.getValue();
-        yamlLinter.postMessage({
-          id: workerId,
-          source: value,
-          links,
-          markers,
-        });
-      };
-      const debounceChange = debounce(handleChange, 200);
-      const handleLintResponse = (event: MessageEvent<LintResponse>): void => {
-        const { id, lintMarkers, lintDecorations } = event.data;
-        if (id !== workerId) {
-          return;
-        }
-        const model = editor.getModel();
-        if (!model) {
-          return;
-        }
-        monaco.editor.setModelMarkers(
-          model,
-          "brick_next_yaml_lint",
-          lintMarkers.map(({ start, end, message, severity, code }) => {
-            const startPos = model.getPositionAt(start);
-            const endPos = model.getPositionAt(end);
-            return {
-              startLineNumber: startPos.lineNumber,
-              startColumn: startPos.column,
-              endLineNumber: endPos.lineNumber,
-              endColumn: endPos.column,
-              severity: monaco.MarkerSeverity[severity],
-              message,
-              code: code as monaco.editor.IMarkerData["code"],
-            };
-          })
-        );
-        decorationsCollection.current?.set(
-          lintDecorations.map(({ start, end, options }) => ({
-            range: monaco.Range.fromPositions(
-              model.getPositionAt(start),
-              model.getPositionAt(end)
-            ),
-            options,
-          }))
-        );
-      };
-      yamlLinter.addEventListener("message", handleLintResponse);
-      const change = editor.onDidChangeModelContent(debounceChange);
-      debounceChange();
-      return () => {
-        change.dispose();
-        monaco.editor.setModelMarkers(
-          editor.getModel()!,
-          "brick_next_yaml_lint",
-          []
-        );
-        yamlLinter.removeEventListener("message", handleLintResponse);
-      };
+    if (!(editor && language === "brick_next_yaml")) {
+      return;
     }
+
+    let ignore = false;
+    const handleChange = async () => {
+      const worker = await getRemoteYamlLinterWorker();
+      if (ignore) {
+        return;
+      }
+      const { lintMarkers, lintDecorations } = await worker.lint({
+        source: editor.getValue(),
+        links,
+        markers,
+      });
+      const model = editor.getModel();
+      if (ignore || !model) {
+        return;
+      }
+      monaco.editor.setModelMarkers(
+        model,
+        "brick_next_yaml_lint",
+        lintMarkers.map(({ start, end, message, severity, code }) => {
+          const startPos = model.getPositionAt(start);
+          const endPos = model.getPositionAt(end);
+          return {
+            startLineNumber: startPos.lineNumber,
+            startColumn: startPos.column,
+            endLineNumber: endPos.lineNumber,
+            endColumn: endPos.column,
+            severity: monaco.MarkerSeverity[severity],
+            message,
+            code: code as monaco.editor.IMarkerData["code"],
+          };
+        })
+      );
+      decorationsCollection.current?.set(
+        lintDecorations.map(({ start, end, options }) => ({
+          range: monaco.Range.fromPositions(
+            model.getPositionAt(start),
+            model.getPositionAt(end)
+          ),
+          options,
+        }))
+      );
+    };
+    const debounceChange = debounce(handleChange, 200);
+    const change = editor.onDidChangeModelContent(debounceChange);
+    debounceChange();
+
+    return () => {
+      ignore = true;
+      change.dispose();
+      monaco.editor.setModelMarkers(
+        editor.getModel()!,
+        "brick_next_yaml_lint",
+        []
+      );
+    };
   }, [language, links, markers, theme, workerId]);
 
   return (

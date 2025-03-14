@@ -5,14 +5,12 @@ import type * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
 import type { Marker } from "..";
 
 export interface LintRequest {
-  id: string;
   source: string;
   links?: string[];
   markers?: Marker[];
 }
 
 export interface LintResponse {
-  id: string;
   lintMarkers: LintMarker[];
   lintDecorations: LintDecoration[];
 }
@@ -57,13 +55,12 @@ const LEVEL_TO_SEVERITY_NAME = {
 } as const;
 
 export async function lintYaml({
-  id,
   source,
   links,
   markers,
 }: LintRequest): Promise<LintResponse> {
-  const { parseDocument, visit } = await import("yaml");
-  const { preevaluate, isEvaluable } = await import("@next-core/cook");
+  const [{ parseDocument, visit }, { preevaluate, isEvaluable }] =
+    await Promise.all([import("yaml"), import("@next-core/cook")]);
 
   const lintMarkers: LintMarker[] = [];
   const lintDecorations: LintDecoration[] = [];
@@ -279,7 +276,6 @@ export async function lintYaml({
   }
 
   return {
-    id,
     lintMarkers,
     lintDecorations,
   };
