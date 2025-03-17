@@ -282,15 +282,25 @@ export const TextareaComponent = forwardRef<
     }
     let previousInlineSize: number | undefined;
     const observer = new ResizeObserver((entries) => {
-      const currentInlineSize = entries[0]?.contentBoxSize[0]?.inlineSize;
-      if (
-        currentInlineSize !== undefined &&
-        currentInlineSize !== previousInlineSize
-      ) {
-        const isInitial = !previousInlineSize;
-        previousInlineSize = currentInlineSize;
-        if (!isInitial) {
-          requestAnimationFrame(setAutoSize);
+      for (const entry of entries) {
+        if (entry.target === container) {
+          // istanbul ignore next: compatibility
+          const currentInlineSize = entry.contentBoxSize
+            ? entry.contentBoxSize[0]
+              ? entry.contentBoxSize[0].inlineSize
+              : (entry.contentBoxSize as unknown as ResizeObserverSize)
+                  .inlineSize
+            : entry.contentRect.width;
+          if (
+            currentInlineSize !== undefined &&
+            currentInlineSize !== previousInlineSize
+          ) {
+            const isInitial = !previousInlineSize;
+            previousInlineSize = currentInlineSize;
+            if (!isInitial) {
+              requestAnimationFrame(setAutoSize);
+            }
+          }
         }
       }
     });

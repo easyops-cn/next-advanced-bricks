@@ -538,11 +538,19 @@ export function CodeEditorComponent({
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         if (entry.target === containerRef.current) {
+          // istanbul ignore next: compatibility
           const newWidth = entry.contentBoxSize
-            ? entry.contentBoxSize[0].inlineSize
+            ? entry.contentBoxSize[0]
+              ? entry.contentBoxSize[0].inlineSize
+              : (entry.contentBoxSize as unknown as ResizeObserverSize)
+                  .inlineSize
             : entry.contentRect.width;
+          // istanbul ignore next: compatibility
           const newHeight = entry.contentBoxSize
-            ? entry.contentBoxSize[0].blockSize
+            ? entry.contentBoxSize[0]
+              ? entry.contentBoxSize[0].blockSize
+              : (entry.contentBoxSize as unknown as ResizeObserverSize)
+                  .blockSize
             : entry.contentRect.height;
           if (newWidth !== size.current.width || expanded) {
             size.current.width = newWidth;
