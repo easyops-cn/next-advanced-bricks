@@ -185,11 +185,13 @@ describe("eo-textarea", () => {
     );
 
     expect(requestAnimationFrame).toBeCalledTimes(1);
+    const target = element.shadowRoot?.querySelector("eo-form-item");
 
     act(() => {
       observerCallback?.(
         [
           {
+            target,
             contentBoxSize: [{ inlineSize: 300, blockSize: 100 }],
           } as any,
         ],
@@ -202,7 +204,22 @@ describe("eo-textarea", () => {
       observerCallback?.(
         [
           {
+            target,
             contentBoxSize: [{ inlineSize: 300, blockSize: 120 }],
+          } as any,
+        ],
+        null!
+      );
+    });
+    expect(requestAnimationFrame).toBeCalledTimes(1);
+
+    // Target not matched.
+    act(() => {
+      observerCallback?.(
+        [
+          {
+            target: null,
+            contentBoxSize: [{ inlineSize: 320, blockSize: 120 }],
           } as any,
         ],
         null!
@@ -214,6 +231,7 @@ describe("eo-textarea", () => {
       observerCallback?.(
         [
           {
+            target,
             contentBoxSize: [{ inlineSize: 320, blockSize: 120 }],
           } as any,
         ],

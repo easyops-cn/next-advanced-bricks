@@ -178,16 +178,22 @@ export function MiniLineChartComponent({
       for (const entry of entries) {
         if (entry.target === root) {
           if (autoWidth) {
-            // istanbul ignore next
+            // istanbul ignore next: compatibility
             const newWidth = entry.contentBoxSize
-              ? entry.contentBoxSize[0].inlineSize
+              ? entry.contentBoxSize[0]
+                ? entry.contentBoxSize[0].inlineSize
+                : (entry.contentBoxSize as unknown as ResizeObserverSize)
+                    .inlineSize
               : entry.contentRect.width;
             setWidth(newWidth);
           }
           if (autoHeight) {
-            // istanbul ignore next
+            // istanbul ignore next: compatibility
             const newHeight = entry.contentBoxSize
-              ? entry.contentBoxSize[0].blockSize
+              ? entry.contentBoxSize[0]
+                ? entry.contentBoxSize[0].blockSize
+                : (entry.contentBoxSize as unknown as ResizeObserverSize)
+                    .blockSize
               : entry.contentRect.height;
             setHeight(newHeight);
           }
