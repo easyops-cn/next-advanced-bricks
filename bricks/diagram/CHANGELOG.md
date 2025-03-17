@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.57.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.57.1...@next-bricks/diagram@0.57.2) (2025-03-17)
+
+
+### Bug Fixes
+
+* use position instead of transform to fix perf issues on clients without GPU ([417d158](https://github.com/easyops-cn/next-advanced-bricks/commit/417d1583920d2dbc52b9dcc5dfe55dabdb6eee26))
+
+
+
+
+
 ## [0.57.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.57.0...@next-bricks/diagram@0.57.1) (2025-02-27)
 
 

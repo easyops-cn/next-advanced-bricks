@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.42](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.0.41...@next-bricks/vb-experiment@1.0.42) (2025-03-17)
+
+**Note:** Version bump only for package @next-bricks/vb-experiment
+
+
+
+
+
 ## [1.0.41](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.0.40...@next-bricks/vb-experiment@1.0.41) (2025-01-15)
 
 **Note:** Version bump only for package @next-bricks/vb-experiment

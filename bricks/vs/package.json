@@ -1,6 +1,6 @@
 {
   "name": "@next-bricks/vs",
-  "version": "1.14.12",
+  "version": "1.14.13",
   "homepage": "https://github.com/easyops-cn/next-advanced-bricks/tree/master/bricks/vs",
   "repository": {
     "type": "git",
@@ -65,7 +65,7 @@
     "@next-core/react-runtime": "^1.7.10",
     "@next-core/theme": "^1.5.4",
     "@next-core/utils": "^1.7.32",
-    "@next-shared/form": "^0.7.9",
+    "@next-shared/form": "^0.7.10",
     "comlink": "^4.4.2",
     "monaco-editor": "^0.50.0",
     "monaco-editor-webpack-plugin": "^7.1.0",

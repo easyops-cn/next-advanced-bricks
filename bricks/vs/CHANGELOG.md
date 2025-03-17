@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.14.13](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.14.12...@next-bricks/vs@1.14.13) (2025-03-17)
+
+
+### Bug Fixes
+
+* import in parallel ([0d504e4](https://github.com/easyops-cn/next-advanced-bricks/commit/0d504e4a715e0e23269259266fc6e423d99aaa7d))
+* use comlink to simplify worker usage ([106cd63](https://github.com/easyops-cn/next-advanced-bricks/commit/106cd633d46ae4463a5e01c02398e4430629ac52))
+
+
+
+
+
 ## [1.14.12](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.14.11...@next-bricks/vs@1.14.12) (2025-03-05)
 
 **Note:** Version bump only for package @next-bricks/vs
