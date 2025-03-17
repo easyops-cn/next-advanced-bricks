@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import {
   __secret_internals,
   checkIfByTransform,
@@ -35,6 +35,14 @@ export interface UseLineMarkersOptions {
   defaultEdgeLines: EdgeLineConf[] | undefined;
   markerPrefix: string;
   lineConnector?: LineConnecterConf | boolean;
+  /** Use memoized result when moving and resizing cells */
+  useMemoizedResult?: boolean;
+}
+
+export interface UseLineMarkersResult {
+  lineConfMap: WeakMap<EditableLineCell, ComputedEdgeLineConf>;
+  lineConnectorConf: ComputedLineConnecterConf | null;
+  markers: LineMarker[];
 }
 
 export function useLineMarkers({
@@ -42,12 +50,16 @@ export function useLineMarkers({
   defaultEdgeLines,
   markerPrefix,
   lineConnector,
-}: UseLineMarkersOptions): {
-  lineConfMap: WeakMap<EditableLineCell, ComputedEdgeLineConf>;
-  lineConnectorConf: ComputedLineConnecterConf | null;
-  markers: LineMarker[];
-} {
-  return useMemo(() => {
+  useMemoizedResult,
+}: UseLineMarkersOptions): UseLineMarkersResult {
+  const memoizedResult = useRef<UseLineMarkersResult | null>(null);
+
+  return useMemo<UseLineMarkersResult>(() => {
+    if (useMemoizedResult && memoizedResult.current) {
+      // If cells are moving or resizing, we can use the previous memoized result.
+      return memoizedResult.current;
+    }
+
     // Always put the default stroke marker at the first position,
     // since the connecting line will use it.
     const markers: LineMarker[] = [
@@ -190,8 +202,12 @@ export function useLineMarkers({
         map.set(cell, lineConf);
       }
     }
-    return { lineConfMap: map, lineConnectorConf, markers };
-  }, [cells, defaultEdgeLines, lineConnector, markerPrefix]);
+    return (memoizedResult.current = {
+      lineConfMap: map,
+      lineConnectorConf,
+      markers,
+    });
+  }, [cells, defaultEdgeLines, lineConnector, markerPrefix, useMemoizedResult]);
 }
 
 function transformLineConf(

@@ -1013,6 +1013,7 @@ function LegacyEoDrawCanvasComponent(
 
   const [guideLines, setGuideLines] = useState<LineTuple[]>([]);
   const [movingCells, setMovingCells] = useState(false);
+  const [resizingCells, setResizingCells] = useState(false);
 
   /* istanbul ignore next */
   const handleCellsMoving = useCallback(
@@ -1047,12 +1048,14 @@ function LegacyEoDrawCanvasComponent(
 
   const handleCellResizing = useCallback((info: ResizeCellPayload) => {
     dispatch({ type: "resize-cell", payload: info });
+    setResizingCells(true);
   }, []);
 
   const handleCellResized = useCallback(
     (info: ResizeCellPayload) => {
       dispatch({ type: "resize-cell", payload: info });
       onCellResize(info);
+      setResizingCells(false);
     },
     [onCellResize]
   );
@@ -1096,6 +1099,7 @@ function LegacyEoDrawCanvasComponent(
     defaultEdgeLines,
     lineConnector,
     markerPrefix,
+    useMemoizedResult: movingCells || resizingCells,
   });
 
   const editableLineMap = useEditableLineMap({ cells, lineConfMap });

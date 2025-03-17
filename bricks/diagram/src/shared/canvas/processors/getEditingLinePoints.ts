@@ -32,8 +32,12 @@ export function getEditingLinePoints(
     return null;
   }
 
+  const editableLine = editableLineMap.get(activeEditableLine);
+  if (!editableLine) {
+    return null;
+  }
+
   const { type } = lineEditorState;
-  const editableLine = editableLineMap.get(activeEditableLine)!;
   let sourceView: NodeView;
   let targetView: NodeView;
 
