@@ -14,6 +14,8 @@ import type { SizeTuple } from "../diagram/interfaces";
 
 export interface NodeComponentProps {
   node: NodeCell;
+  x?: number;
+  y?: number;
   degraded: boolean;
   degradedNodeLabel?: string;
   defaultNodeBricks?: NodeBrickConf[];
@@ -22,6 +24,8 @@ export interface NodeComponentProps {
 
 export function NodeComponent({
   node,
+  x,
+  y,
   degraded,
   degradedNodeLabel,
   defaultNodeBricks,
@@ -53,14 +57,21 @@ export function NodeComponent({
     [degraded, degradedNodeLabel, memoizedData]
   );
 
+  const brickRef = useRef<HTMLElement | null>(null);
+
   const refCallback = useCallback(
     (element: HTMLElement | null) => {
+      brickRef.current = element;
       const prevObserver = observerRef.current;
       if (prevObserver) {
         prevObserver.disconnect();
         observerRef.current = null;
       }
       if (element) {
+        if (x != null && y != null) {
+          element.style.left = `${x}px`;
+          element.style.top = `${y}px`;
+        }
         // Todo: correctly wait for `useBrick` in v3 to be rendered (after layout)
         // Wait a macro task to let `useBrick` to be rendered.
         setTimeout(() => {
@@ -74,8 +85,20 @@ export function NodeComponent({
         onResize(node.id, null);
       }
     },
+    // Intentionally ignore x/y
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [node.id, onResize]
   );
+
+  // Use position instead of transform, for clients
+  // that hardware acceleration (GPU) is not available.
+  useEffect(() => {
+    const element = brickRef.current;
+    if (element && x != null && y != null) {
+      element.style.top = `${y}px`;
+      element.style.left = `${x}px`;
+    }
+  }, [x, y]);
 
   const degradedRefCallBack = useCallback(
     (g: SVGGElement | null) => {

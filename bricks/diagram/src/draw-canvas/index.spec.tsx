@@ -979,27 +979,28 @@ describe("eo-draw-canvas", () => {
 
     expect(element.shadowRoot?.querySelectorAll(".cells"))
       .toMatchInlineSnapshot(`
-      NodeList [
-        <g
-          class="cells"
-        >
+        NodeList [
           <g
-            class="cell"
-            transform="translate(20 20)"
+            class="cells"
           >
-            <foreignobject
-              class="node"
-              height="9999"
-              width="9999"
+            <g
+              class="cell"
             >
-              <div>
-                a
-              </div>
-            </foreignobject>
-          </g>
-        </g>,
-      ]
-    `);
+              <foreignobject
+                class="node"
+                height="9999"
+                width="9999"
+              >
+                <div
+                  style="left: 20px; top: 20px;"
+                >
+                  a
+                </div>
+              </foreignobject>
+            </g>
+          </g>,
+        ]
+      `);
 
     await act(async () => {
       await element.updateCells([
@@ -1062,41 +1063,43 @@ describe("eo-draw-canvas", () => {
 
     expect(element.shadowRoot?.querySelectorAll(".cells"))
       .toMatchInlineSnapshot(`
-      NodeList [
-        <g
-          class="cells"
-        >
+        NodeList [
           <g
-            class="cell"
-            transform="translate(20 20)"
+            class="cells"
           >
-            <foreignobject
-              class="node"
-              height="9999"
-              width="9999"
+            <g
+              class="cell"
             >
-              <div>
-                a
-              </div>
-            </foreignobject>
-          </g>
-          <g
-            class="cell"
-            transform="translate(20 320)"
-          >
-            <foreignobject
-              class="node"
-              height="9999"
-              width="9999"
+              <foreignobject
+                class="node"
+                height="9999"
+                width="9999"
+              >
+                <div
+                  style="left: 20px; top: 20px;"
+                >
+                  a
+                </div>
+              </foreignobject>
+            </g>
+            <g
+              class="cell"
             >
-              <div>
-                b
-              </div>
-            </foreignobject>
-          </g>
-        </g>,
-      ]
-    `);
+              <foreignobject
+                class="node"
+                height="9999"
+                width="9999"
+              >
+                <div
+                  style="left: 20px; top: 320px;"
+                >
+                  b
+                </div>
+              </foreignobject>
+            </g>
+          </g>,
+        ]
+      `);
 
     act(() => {
       document.body.removeChild(element);
@@ -1439,6 +1442,38 @@ describe("eo-draw-canvas", () => {
 
     expect(element.shadowRoot?.querySelectorAll(".degraded").length).toBe(50);
     expect(element.shadowRoot?.querySelectorAll("strong").length).toBe(0);
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
+
+  test("disable contextmenu", async () => {
+    const element = document.createElement("eo-draw-canvas") as EoDrawCanvas;
+    element.dragBehavior = "lasso";
+    element.ctrlDragBehavior = "grab";
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    await act(() => new Promise((resolve) => setTimeout(resolve, 1)));
+
+    // Right click only
+    // This should not be prevented
+    const contextMenuEvent1 = new MouseEvent("contextmenu");
+    const preventDefault1 = jest.spyOn(contextMenuEvent1, "preventDefault");
+    document.dispatchEvent(contextMenuEvent1);
+    expect(preventDefault1).not.toBeCalled();
+
+    // Ctrl + Right click
+    // This should be prevented
+    const contextMenuEvent2 = new MouseEvent("contextmenu", {
+      ctrlKey: true,
+    });
+    const preventDefault2 = jest.spyOn(contextMenuEvent2, "preventDefault");
+    document.dispatchEvent(contextMenuEvent2);
+    expect(preventDefault2).toBeCalled();
 
     act(() => {
       document.body.removeChild(element);

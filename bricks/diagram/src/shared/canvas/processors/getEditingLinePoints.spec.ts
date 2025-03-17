@@ -49,6 +49,22 @@ describe("getEditingLinePoints", () => {
     );
   });
 
+  test("Editable line is not found", () => {
+    expect(
+      getEditingLinePoints(
+        activeEditableLine,
+        entryState,
+        new WeakMap(),
+        null,
+        {
+          relativePoints: [{ x: 0, y: 0.5 }],
+          activePointIndex: 0,
+          points: [],
+        } as unknown as HoverState
+      )
+    ).toEqual(null);
+  });
+
   test("entry with hoverState.activePointIndex is defined", () => {
     expect(
       getEditingLinePoints(

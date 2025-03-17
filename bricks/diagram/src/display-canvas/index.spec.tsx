@@ -361,13 +361,16 @@ describe("eo-display-canvas", () => {
       [...element.shadowRoot!.querySelectorAll(".cell")].map((cell) =>
         cell.getAttribute("transform")
       )
-    ).toEqual([
-      "translate(10 10)",
-      null,
-      "translate(0 0)",
-      "translate(0 50)",
-      "translate(150 160)",
-    ]);
+    ).toEqual(["translate(10,10)", null, null, null, "translate(150,160)"]);
+
+    expect(
+      [...element.shadowRoot!.querySelectorAll(".cell .node > *")].map((cell) =>
+        [
+          (cell as HTMLElement).style.left,
+          (cell as HTMLElement).style.top,
+        ].join(",")
+      )
+    ).toEqual(["0px,0px", "0px,50px"]);
 
     act(() => {
       document.body.removeChild(element);
@@ -465,12 +468,18 @@ describe("eo-display-canvas", () => {
       [...element.shadowRoot!.querySelectorAll(".cell")].map((cell) =>
         cell.getAttribute("transform")
       )
+    ).toEqual(["translate(10,10)", null, null, null, "translate(150,160)"]);
+
+    expect(
+      [...element.shadowRoot!.querySelectorAll(".cell .node > *")].map((cell) =>
+        [
+          (cell as HTMLElement).style.left,
+          (cell as HTMLElement).style.top,
+        ].join(",")
+      )
     ).toEqual([
-      "translate(10 10)",
-      null,
-      expect.stringMatching(/^translate\(16\.01\d+ -8\.22\d+\)$/),
-      expect.stringMatching(/^translate\(-16\.01\d+ 8\.22\d+\)$/),
-      "translate(150 160)",
+      expect.stringMatching(/^16\.01\d+px,-8\.22\d+px$/),
+      expect.stringMatching(/^-16\.01\d+px,8\.22\d+px$/),
     ]);
 
     act(() => {

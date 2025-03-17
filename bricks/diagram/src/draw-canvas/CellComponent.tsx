@@ -305,9 +305,13 @@ export function CellComponent({
       })}
       ref={gRef}
       transform={
-        isEdgeCell(cell) || isLineDecoratorCell(cell) || cell.view.x == null
+        (isNodeCell(cell) && !degraded) ||
+        isEdgeCell(cell) ||
+        isLineDecoratorCell(cell) ||
+        cell.view.x == null ||
+        cell.view.y == null
           ? undefined
-          : `translate(${containerRect!.x} ${containerRect!.y})`
+          : `translate(${containerRect!.x},${containerRect!.y})`
       }
       onContextMenu={handleContextMenu}
       onClick={handleCellClick}
@@ -317,6 +321,8 @@ export function CellComponent({
       {isNodeCell(cell) ? (
         <NodeComponent
           node={cell}
+          x={containerRect?.x}
+          y={containerRect?.y}
           degraded={degraded}
           degradedNodeLabel={degradedNodeLabel}
           defaultNodeBricks={defaultNodeBricks}

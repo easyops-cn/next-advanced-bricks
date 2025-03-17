@@ -30,7 +30,11 @@ export function useEditableLineMap({
 
     for (const cell of cells) {
       if (isEdgeCell(cell)) {
-        const lineConf = lineConfMap.get(cell)!;
+        const lineConf = lineConfMap.get(cell);
+        // istanbul ignore next: defensive check
+        if (!lineConf) {
+          continue;
+        }
 
         const sourceNode = findNodeOrAreaDecorator(cells, cell.source);
         const targetNode = findNodeOrAreaDecorator(cells, cell.target);
@@ -73,6 +77,12 @@ export function useEditableLineMap({
           });
         }
       } else if (isLineDecoratorCell(cell)) {
+        const lineConf = lineConfMap.get(cell);
+        // istanbul ignore next: defensive check
+        if (!lineConf) {
+          continue;
+        }
+
         const { source, target } = cell.view as DecoratorLineView;
 
         const points =
@@ -87,7 +97,6 @@ export function useEditableLineMap({
             : null;
 
         if (points) {
-          const lineConf = lineConfMap.get(cell)!;
           const jumpsMap = collectLineJumps(points, lineConf);
 
           map.set(cell, {
