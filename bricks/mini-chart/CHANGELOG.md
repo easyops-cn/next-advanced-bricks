@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/mini-chart@0.2.1...@next-bricks/mini-chart@0.2.2) (2025-03-17)
+
+
+### Bug Fixes
+
+* fix resize entry in old Firefox ([72f06d6](https://github.com/easyops-cn/next-advanced-bricks/commit/72f06d6d37fde3970c902b54d051709f56682fce))
+
+
+
+
+
 ## [0.2.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/mini-chart@0.2.0...@next-bricks/mini-chart@0.2.1) (2025-03-17)
 
 **Note:** Version bump only for package @next-bricks/mini-chart

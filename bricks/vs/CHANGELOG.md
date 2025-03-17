@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.14.14](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.14.13...@next-bricks/vs@1.14.14) (2025-03-17)
+
+
+### Bug Fixes
+
+* fix resize entry in old Firefox ([72f06d6](https://github.com/easyops-cn/next-advanced-bricks/commit/72f06d6d37fde3970c902b54d051709f56682fce))
+
+
+
+
+
 ## [1.14.13](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.14.12...@next-bricks/vs@1.14.13) (2025-03-17)
 
 
