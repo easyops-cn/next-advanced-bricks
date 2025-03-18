@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.14.14...@next-bricks/vs@1.15.0) (2025-03-18)
+
+
+### Features
+
+* **code-editor:** add spell check ([45e24d6](https://github.com/easyops-cn/next-advanced-bricks/commit/45e24d666ae4fb04016a9c69d69b5419e997c29f))
+
+
+
+
+
 ## [1.14.14](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.14.13...@next-bricks/vs@1.14.14) (2025-03-17)
 
 
