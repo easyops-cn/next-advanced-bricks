@@ -20,7 +20,7 @@ export function getRemoteYamlLinterWorker() {
   return remoteWorkerPromise;
 }
 
-export function getWorker() {
+function getWorker() {
   if (!worker) {
     worker = new Worker(new URL("./yamlLinter.worker.ts", import.meta.url));
   }
