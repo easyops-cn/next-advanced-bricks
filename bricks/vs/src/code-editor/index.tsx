@@ -53,6 +53,7 @@ import "./index.css";
 import { EmbeddedModelContext } from "./utils/embeddedModelState.js";
 import { PlaceholderContentWidget } from "./widget/Placeholder.js";
 import { getRemoteYamlLinterWorker } from "./workers/yamlLinter.js";
+import { getRemoteSpellCheckWorker } from "./workers/spellCheckRemoteWorker.js";
 import { register as registerCel } from "./languages/cel.js";
 import { register as registerCelYaml } from "./languages/cel-yaml.js";
 import { register as registerCelStr } from "./languages/cel-str.js";
@@ -100,6 +101,9 @@ const showNotification = unwrapProvider<typeof _showNotification>(
   "basic.show-notification"
 );
 
+const SPELL_CHECK = "spell_check";
+const BRICK_NEXT_YAML_LINT = "brick_next_yaml_lint";
+
 export interface CodeEditorProps {
   name?: string;
   label?: string;
@@ -126,6 +130,8 @@ export interface CodeEditorProps {
   validateState?: string;
   customValidationInBrickNextYaml?: boolean;
   fixedOverflowWidgets?: boolean;
+  spellCheck?: boolean;
+  knownWords?: string[];
 }
 
 export interface Marker {
@@ -288,7 +294,7 @@ class CodeEditor extends FormItemElementBase implements CodeEditorProps {
   accessor glyphMargin: boolean | undefined;
 
   /**
-   * @description 额外声明的 lib 库
+   * 额外声明的 lib 库
    */
   @property({
     attribute: false,
@@ -300,6 +306,19 @@ class CodeEditor extends FormItemElementBase implements CodeEditorProps {
    */
   @property({ type: Boolean })
   accessor fixedOverflowWidgets: boolean | undefined;
+
+  /**
+   * 是否启用英语拼写检查
+   * @default true
+   */
+  @property({ type: Boolean })
+  accessor spellCheck: boolean | undefined;
+
+  /**
+   * 启用英语拼写检查时，除系统设置的词汇表外，指定其他的已知单词（小写）。
+   */
+  @property({ attribute: false })
+  accessor knownWords: string[] | undefined;
 
   @event({ type: "code.change" })
   accessor #codeChange!: EventEmitter<string>;
@@ -383,6 +402,9 @@ class CodeEditor extends FormItemElementBase implements CodeEditorProps {
           onUserInput={this.#handleUserInput}
           onTokenClick={this.#handleTokenClick}
           customValidationInBrickNextYaml={this.customValidationInBrickNextYaml}
+          fixedOverflowWidgets={this.fixedOverflowWidgets}
+          spellCheck={this.spellCheck}
+          knownWords={this.knownWords}
         />
       </WrappedFormItem>
     );
@@ -415,6 +437,8 @@ export function CodeEditorComponent({
   onTokenClick,
   customValidationInBrickNextYaml,
   fixedOverflowWidgets: _fixedOverflowWidgets,
+  spellCheck: _spellCheck,
+  knownWords,
 }: CodeEditorProps & {
   onChange(value: string): void;
   onUserInput: (value: any) => void;
@@ -427,6 +451,7 @@ export function CodeEditorComponent({
   const maxLines = _maxLines ?? Infinity;
   const height = _height ?? 500;
   const fixedOverflowWidgets = _fixedOverflowWidgets ?? true;
+  const spellCheck = _spellCheck ?? true;
   const [expanded, setExpanded] = useState(false);
   const workerId = useMemo(() => uniqueId("worker"), []);
 
@@ -981,7 +1006,7 @@ export function CodeEditorComponent({
       }
       monaco.editor.setModelMarkers(
         model,
-        "brick_next_yaml_lint",
+        BRICK_NEXT_YAML_LINT,
         lintMarkers.map(({ start, end, message, severity, code }) => {
           const startPos = model.getPositionAt(start);
           const endPos = model.getPositionAt(end);
@@ -1015,11 +1040,60 @@ export function CodeEditorComponent({
       change.dispose();
       monaco.editor.setModelMarkers(
         editor.getModel()!,
-        "brick_next_yaml_lint",
+        BRICK_NEXT_YAML_LINT,
         []
       );
     };
   }, [language, links, markers, theme, workerId]);
+
+  // istanbul ignore next
+  useEffect(() => {
+    const editor = editorRef.current;
+    if (!editor || !spellCheck) {
+      return;
+    }
+
+    let ignore = false;
+    const handleChange = async () => {
+      const worker = await getRemoteSpellCheckWorker();
+      if (ignore) {
+        return;
+      }
+      const { markers: spellCheckMarkers } = await worker.spellCheck({
+        source: editor.getValue(),
+        knownWords,
+      });
+      const model = editor.getModel();
+      if (ignore || !model) {
+        return;
+      }
+      monaco.editor.setModelMarkers(
+        model,
+        SPELL_CHECK,
+        spellCheckMarkers.map(({ start, end, message, severity }) => {
+          const startPos = model.getPositionAt(start);
+          const endPos = model.getPositionAt(end);
+          return {
+            startLineNumber: startPos.lineNumber,
+            startColumn: startPos.column,
+            endLineNumber: endPos.lineNumber,
+            endColumn: endPos.column,
+            severity: monaco.MarkerSeverity[severity],
+            message,
+          };
+        })
+      );
+    };
+    const debounceChange = debounce(handleChange, 200);
+    const change = editor.onDidChangeModelContent(debounceChange);
+    debounceChange();
+
+    return () => {
+      ignore = true;
+      change.dispose();
+      monaco.editor.setModelMarkers(editor.getModel()!, SPELL_CHECK, []);
+    };
+  }, [spellCheck, knownWords]);
 
   return (
     <div
