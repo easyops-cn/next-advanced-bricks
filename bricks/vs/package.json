@@ -30,7 +30,8 @@
           "{projectRoot}/dist",
           "{projectRoot}/.pkgbuild",
           "{projectRoot}/deploy",
-          "{projectRoot}/src/generated-actions.js"
+          "{projectRoot}/src/generated-actions.js",
+          "{projectRoot}/src/generated-dictionary.js"
         ]
       },
       "build:main": {
@@ -38,6 +39,7 @@
           "{projectRoot}/dist",
           "{projectRoot}/.pkgbuild",
           "{projectRoot}/deploy",
+          "{projectRoot}/src/generated-dictionary.js",
           "{projectRoot}/src/generated-actions.js"
         ]
       }
