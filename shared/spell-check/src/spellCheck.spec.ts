@@ -143,6 +143,19 @@ describe("spellCheck", () => {
     expect(response.markers).toHaveLength(0);
   });
 
+  it("should handle hasn't", () => {
+    const request: SpellCheckRequest = { source: "hasn't hasn'top" };
+    const response = spellCheck(request);
+
+    expect(mockCheck).toHaveBeenCalledWith("hasn");
+    expect(response.markers[0]).toEqual({
+      start: 7,
+      end: 11,
+      message: '"hasn": Unknown word.',
+      severity: "Info",
+    });
+  });
+
   it("should handle css hex colors", () => {
     const request: SpellCheckRequest = {
       source: "#FFEE00 #00AABB #CCDDEE #FFEEDDCC #FFEEDD00 #00FFEEDD asdf",

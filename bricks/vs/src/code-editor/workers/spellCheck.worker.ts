@@ -2,9 +2,9 @@
 import { expose } from "comlink";
 import {
   spellCheck,
-  SpellCheckRequest,
-  SpellCheckResponse,
-} from "./spellCheck";
+  type SpellCheckRequest,
+  type SpellCheckResponse,
+} from "@next-shared/spell-check";
 
 class SpellCheckWorker {
   spellCheck(req: SpellCheckRequest): SpellCheckResponse {

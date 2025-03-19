@@ -1,9 +1,9 @@
 import Typo from "typo-js";
 import { noCase } from "change-case";
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
-import { aff, dic } from "../../generated-dictionary.js";
+import { aff, dic } from "./generated-dictionary.js";
 
 const WORD_REGEX = /(?<![a-zA-Z])[a-zA-Z]{4,}(?![a-zA-Z])/g;
+const NOT_ABBR_REGEX = /^'[tT]\b/;
 
 const WELL_KNOWN_WORDS: string[] = [
   ...[
@@ -40,6 +40,16 @@ const WELL_KNOWN_WORDS: string[] = [
     "kube",
     "changelog",
     "upsert",
+
+    "toolbar",
+    "macrotask",
+    "microtask",
+    "viewport",
+    "popup",
+    "util",
+    "screenshot",
+    "plugin",
+    "inline",
   ].flatMap((word) => [word, `${word}s`]),
   ...["checkbox", "regex"].flatMap((word) => [word, `${word}es`]),
   "antd",
@@ -98,6 +108,18 @@ const WELL_KNOWN_WORDS: string[] = [
   "kubernetes",
   "otel",
   "deepflow",
+
+  "aiops",
+  "devops",
+  "openai",
+  "closable",
+  "draggable",
+  "resizable",
+  "backend",
+  "frontend",
+  "localhost",
+  "nowrap",
+  "webkit",
 ];
 
 export interface SpellCheckRequest {
@@ -113,7 +135,7 @@ export interface Marker {
   start: number;
   end: number;
   message: string;
-  severity: keyof typeof monaco.MarkerSeverity;
+  severity: "Hint" | "Info" | "Warning" | "Error";
 }
 
 let typo: Typo;
@@ -164,10 +186,13 @@ export function spellCheck({
           continue;
         }
 
-        // Handle special case of "doesn't"
+        // Handle special case of "doesn't", "hasn't", and "aren't".
+        // Tips: ignore "isn't" because it has less than 4 characters before "'".
         if (
-          lowerWord === "doesn" &&
-          source.slice(start, end + 2).toLowerCase() === "doesn't"
+          (lowerWord === "doesn" ||
+            lowerWord === "hasn" ||
+            lowerWord === "aren") &&
+          NOT_ABBR_REGEX.test(source.slice(end, end + 3))
         ) {
           continue;
         }
