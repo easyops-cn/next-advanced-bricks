@@ -120,6 +120,7 @@ const WELL_KNOWN_WORDS: string[] = [
   "localhost",
   "nowrap",
   "webkit",
+  "minmax",
 ];
 
 export interface SpellCheckRequest {
