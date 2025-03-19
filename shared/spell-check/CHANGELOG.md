@@ -1,0 +1,16 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+# 0.1.0 (2025-03-19)
+
+
+### Bug Fixes
+
+* use shared spell-check ([a33fe5a](https://github.com/easyops-cn/next-advanced-bricks/commit/a33fe5aedbbc970c2d289aad0bf773b1c7889851))
+
+
+### Features
+
+* make spell check as a shared lib ([acbfe8f](https://github.com/easyops-cn/next-advanced-bricks/commit/acbfe8f1c5b5e79dc86ba702a3ac53c74c41c761))
