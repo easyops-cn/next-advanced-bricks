@@ -1,6 +1,9 @@
 // istanbul ignore file
 import { wrap } from "comlink";
-import type { SpellCheckRequest, SpellCheckResponse } from "./spellCheck";
+import type {
+  SpellCheckRequest,
+  SpellCheckResponse,
+} from "@next-shared/spell-check";
 
 export interface RemoteSpellCheckWorker {
   spellCheck(req: SpellCheckRequest): Promise<SpellCheckResponse>;

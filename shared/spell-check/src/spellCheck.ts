@@ -49,6 +49,7 @@ const WELL_KNOWN_WORDS: string[] = [
     "util",
     "screenshot",
     "plugin",
+    "inline",
   ].flatMap((word) => [word, `${word}s`]),
   ...["checkbox", "regex"].flatMap((word) => [word, `${word}es`]),
   "antd",
@@ -185,9 +186,12 @@ export function spellCheck({
           continue;
         }
 
-        // Handle special case of "doesn't" and "hasn't"
+        // Handle special case of "doesn't", "hasn't", and "aren't".
+        // Tips: ignore "isn't" because it has less than 4 characters before "'".
         if (
-          (lowerWord === "doesn" || lowerWord === "hasn") &&
+          (lowerWord === "doesn" ||
+            lowerWord === "hasn" ||
+            lowerWord === "aren") &&
           NOT_ABBR_REGEX.test(source.slice(end, end + 3))
         ) {
           continue;
