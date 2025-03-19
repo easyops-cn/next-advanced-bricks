@@ -1,0 +1,61 @@
+{
+  "name": "@next-shared/spell-check",
+  "version": "0.0.0",
+  "homepage": "https://github.com/easyops-cn/next-advanced-bricks/tree/master/shared/spell-check",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:easyops-cn/next-advanced-bricks.git",
+    "directory": "shared/spell-check"
+  },
+  "license": "GPL-3.0",
+  "sideEffects": false,
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "outputs": [
+          "{projectRoot}/dist",
+          "{projectRoot}/src/generated-dictionary.js"
+        ]
+      },
+      "build:main": {
+        "outputs": [
+          "{projectRoot}/dist",
+          "{projectRoot}/src/generated-dictionary.js"
+        ]
+      }
+    }
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "prestart": "npm run clean && node ./scripts/pre-build.js",
+    "start": "concurrently -k -n types,main \"npm run start:types\" \"npm run start:main\"",
+    "start:main": "cross-env NODE_ENV=development build-next-libs --watch",
+    "start:types": "tsc --emitDeclarationOnly --declaration --declarationDir dist/types --project tsconfig.build.json --watch",
+    "prebuild": "npm run clean && node ./scripts/pre-build.js",
+    "build": "npm run build:types && npm run build:main",
+    "build:main": "cross-env NODE_ENV=production build-next-libs",
+    "build:types": "tsc --emitDeclarationOnly --declaration --declarationDir dist/types --project tsconfig.build.json",
+    "test": "cross-env NODE_ENV='test' test-next",
+    "test:ci": "cross-env NODE_ENV='test' CI=true test-next"
+  },
+  "devDependencies": {
+    "@next-core/build-next-libs": "^1.0.24",
+    "@next-core/test-next": "^1.1.9"
+  },
+  "dependencies": {
+    "change-case": "^5.4.4",
+    "typo-js": "^1.2.5"
+  }
+}
