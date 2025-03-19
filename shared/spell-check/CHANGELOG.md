@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/spell-check@0.1.0...@next-shared/spell-check@0.1.1) (2025-03-19)
+
+
+### Bug Fixes
+
+* compatible with legacy node.js ([2933aca](https://github.com/easyops-cn/next-advanced-bricks/commit/2933acae5bd8a47a72a118ae2307d70f41f3abde))
+
+
+
+
+
 # 0.1.0 (2025-03-19)
 
 
