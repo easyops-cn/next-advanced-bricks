@@ -10,6 +10,8 @@
   "license": "GPL-3.0",
   "sideEffects": false,
   "type": "module",
+  "main": "./dist/esm/index.js",
+  "types": "./dist/types/spellCheck.d.ts",
   "files": [
     "dist"
   ],
