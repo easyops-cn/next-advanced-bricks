@@ -132,6 +132,7 @@ export interface CodeEditorProps {
   fixedOverflowWidgets?: boolean;
   spellCheck?: boolean;
   knownWords?: string[];
+  domLibsEnabled?: boolean;
 }
 
 export interface Marker {
@@ -320,6 +321,12 @@ class CodeEditor extends FormItemElementBase implements CodeEditorProps {
   @property({ attribute: false })
   accessor knownWords: string[] | undefined;
 
+  /**
+   * 是否启用 DOM 相关接口的自动提示。
+   */
+  @property({ type: Boolean })
+  accessor domLibsEnabled: boolean | undefined;
+
   @event({ type: "code.change" })
   accessor #codeChange!: EventEmitter<string>;
 
@@ -405,6 +412,7 @@ class CodeEditor extends FormItemElementBase implements CodeEditorProps {
           fixedOverflowWidgets={this.fixedOverflowWidgets}
           spellCheck={this.spellCheck}
           knownWords={this.knownWords}
+          domLibsEnabled={this.domLibsEnabled}
         />
       </WrappedFormItem>
     );
@@ -439,6 +447,7 @@ export function CodeEditorComponent({
   fixedOverflowWidgets: _fixedOverflowWidgets,
   spellCheck: _spellCheck,
   knownWords,
+  domLibsEnabled,
 }: CodeEditorProps & {
   onChange(value: string): void;
   onUserInput: (value: any) => void;
@@ -700,11 +709,12 @@ export function CodeEditorComponent({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const languageDefaults =
+    language === "typescript" ? "typescriptDefaults" : "javascriptDefaults";
+
   useEffect(() => {
     const libs: ExtraLib[] = extraLibs ?? [];
 
-    const languageDefaults =
-      language === "typescript" ? "typescriptDefaults" : "javascriptDefaults";
     const disposables = addExtraLibs(libs, {
       languageDefaults,
     });
@@ -713,7 +723,23 @@ export function CodeEditorComponent({
         item.dispose();
       }
     };
-  }, [extraLibs, language]);
+  }, [extraLibs, language, languageDefaults]);
+
+  useEffect(() => {
+    if (
+      language === "javascript" ||
+      language === "typescript" ||
+      language === "brick_next_yaml"
+    ) {
+      monaco.languages.typescript[languageDefaults].setCompilerOptions({
+        allowNonTsExtensions: true,
+        lib: domLibsEnabled ? undefined : ["esnext"],
+        target: monaco.languages.typescript.ScriptTarget.ESNext,
+        moduleResolution:
+          monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+      });
+    }
+  }, [language, domLibsEnabled, languageDefaults]);
 
   useEffect(() => {
     const editor = editorRef.current;
