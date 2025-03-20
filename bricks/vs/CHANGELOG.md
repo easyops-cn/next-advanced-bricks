@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.15.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.15.2...@next-bricks/vs@1.15.3) (2025-03-20)
+
+
+### Bug Fixes
+
+* disable dom libs by default ([60aed65](https://github.com/easyops-cn/next-advanced-bricks/commit/60aed65d823ceb6b8a3031076f3de81e0075be33))
+
+
+
+
+
 ## [1.15.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.15.1...@next-bricks/vs@1.15.2) (2025-03-19)
 
 **Note:** Version bump only for package @next-bricks/vs
