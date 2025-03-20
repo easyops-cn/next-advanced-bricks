@@ -6,7 +6,7 @@ const extraLibsMap = new Map<string, monaco.IDisposable[]>();
 export function addExtraLibs(
   libs: ExtraLib[],
   options: {
-    languageDefaults?: string;
+    languageDefaults: "javascriptDefaults" | "typescriptDefaults";
   }
 ): monaco.IDisposable[] {
   return libs.flatMap((lib) => {
@@ -17,11 +17,7 @@ export function addExtraLibs(
       previousLibs.forEach((lib) => lib.dispose());
     }
     // Add libs for both js and ts.
-    const disposables = (
-      [options.languageDefaults] as Array<
-        "javascriptDefaults" | "typescriptDefaults"
-      >
-    ).map((key) =>
+    const disposables = [options.languageDefaults].map((key) =>
       monaco.languages.typescript[key].addExtraLib(lib.content, uriString)
     );
 
