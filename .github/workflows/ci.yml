@@ -129,7 +129,7 @@ jobs:
 
     - name: Download artifact from next-bricks
       id: download-artifact-from-next-bricks
-      uses: dawidd6/action-download-artifact@v7
+      uses: dawidd6/action-download-artifact@v9
       with:
         name: brick-artifacts
         path: ci-bricks
@@ -207,7 +207,7 @@ jobs:
 
     - name: Download artifact from next-bricks
       id: download-artifact-from-next-bricks
-      uses: dawidd6/action-download-artifact@v7
+      uses: dawidd6/action-download-artifact@v9
       with:
         name: brick-artifacts
         path: ci-bricks
