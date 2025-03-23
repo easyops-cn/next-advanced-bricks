@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, {
   useCallback,
   useEffect,
@@ -63,6 +62,7 @@ import {
   celCommonCompletionProviderFactory,
   celSpecificCompletionProviderFactory,
 } from "./utils/celCompletionProvider.js";
+import { CopilotProvider } from "./utils/CopilotProvider.js";
 
 initializeReactI18n(NS, locales);
 
@@ -90,57 +90,10 @@ for (const lang of CEL_FAMILY) {
   );
 }
 
-monaco.languages.registerInlineCompletionsProvider("typescript", {
-  async provideInlineCompletions(model, position, context, token) {
-    console.log("Try to provide inline completions");
-    const nearby = model.getValueInRange({
-      startLineNumber: position.lineNumber,
-      startColumn: position.column - 2,
-      endLineNumber: position.lineNumber,
-      endColumn: position.column,
-    });
-
-    if (token.isCancellationRequested) {
-      console.log("isCancellationRequested");
-      return;
-    }
-
-    token.onCancellationRequested(() => {
-      console.log("onCancellationRequested");
-    });
-
-    if (nearby === "  ") {
-      console.log("oops");
-      return {
-        items: [
-          {
-            insertText: `if (!groups) {
-    return undefined;
-  }
-
-  return groups.filter(group => {
-    const presentMetrics = group.metrics.filter(metric => metricSets.has(metric));
-    return presentMetrics.length > 1;
-  });`,
-            range: new monaco.Range(
-              position.lineNumber,
-              position.column,
-              position.lineNumber,
-              position.column
-            ),
-          },
-        ],
-      };
-    }
-
-    console.log("missed");
-    return;
-  },
-  freeInlineCompletions() {
-    // noop
-    console.log("freeInlineCompletions");
-  },
-});
+monaco.languages.registerInlineCompletionsProvider(
+  ["typescript", "javascript", "brick_next_yaml"],
+  new CopilotProvider()
+);
 
 const { defineElement, property, event } = createDecorators();
 
