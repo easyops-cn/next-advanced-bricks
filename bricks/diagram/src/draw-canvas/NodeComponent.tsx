@@ -58,6 +58,8 @@ export function NodeComponent({
   );
 
   const brickRef = useRef<HTMLElement | null>(null);
+  const xRef = useRef<number | undefined>(x);
+  const yRef = useRef<number | undefined>(y);
 
   const refCallback = useCallback(
     (element: HTMLElement | null) => {
@@ -68,9 +70,9 @@ export function NodeComponent({
         observerRef.current = null;
       }
       if (element) {
-        if (x != null && y != null) {
-          element.style.left = `${x}px`;
-          element.style.top = `${y}px`;
+        if (xRef.current != null && yRef.current != null) {
+          element.style.left = `${xRef.current}px`;
+          element.style.top = `${yRef.current}px`;
         }
         // Todo: correctly wait for `useBrick` in v3 to be rendered (after layout)
         // Wait a macro task to let `useBrick` to be rendered.
@@ -85,14 +87,14 @@ export function NodeComponent({
         onResize(node.id, null);
       }
     },
-    // Intentionally ignore x/y
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [node.id, onResize]
   );
 
   // Use position instead of transform, for clients
   // that hardware acceleration (GPU) is not available.
   useEffect(() => {
+    xRef.current = x;
+    yRef.current = y;
     const element = brickRef.current;
     if (element && x != null && y != null) {
       element.style.top = `${y}px`;
