@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.57.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.57.3...@next-bricks/diagram@0.57.4) (2025-03-24)
+
+
+### Bug Fixes
+
+* fix node position when node re-render ([d91f3a2](https://github.com/easyops-cn/next-advanced-bricks/commit/d91f3a2c6d8937c381987b9b61d98439ff60a11f))
+
+
+
+
+
 ## [0.57.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.57.2...@next-bricks/diagram@0.57.3) (2025-03-17)
 
 **Note:** Version bump only for package @next-bricks/diagram
