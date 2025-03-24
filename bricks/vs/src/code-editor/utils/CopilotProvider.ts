@@ -90,7 +90,7 @@ function getInlineCompletion(
   position: monaco.Position,
   inlineEdit: string
 ): monaco.languages.InlineCompletion {
-  let prefix = model.getValueInRange(
+  const prefix = model.getValueInRange(
     new monaco.Range(
       position.lineNumber,
       1,
@@ -100,23 +100,27 @@ function getInlineCompletion(
   );
 
   const editLines = inlineEdit.split("\n");
-
   const comparePreviousLine =
     !/\S/.test(prefix) && position.lineNumber > 1 && editLines.length > 1;
+  let insertText = inlineEdit;
+  let firstLineEdit = editLines[0];
+
   if (comparePreviousLine) {
     // The current line has spaces only
-    prefix = model.getValueInRange(
+    const previousLineNumber = position.lineNumber - 1;
+    const previousLine = model.getValueInRange(
       new monaco.Range(
-        position.lineNumber - 1,
+        previousLineNumber,
         1,
-        position.lineNumber,
-        position.column
+        previousLineNumber,
+        model.getLineLength(previousLineNumber) + 1
       )
     );
+    if (previousLine.trim() === editLines[0].trim()) {
+      insertText = editLines.slice(1).join("\n");
+      firstLineEdit = editLines[1];
+    }
   }
-  const firstLineEdit = comparePreviousLine
-    ? editLines.slice(0, 2).join("\n")
-    : editLines[0];
 
   const prefixChunks = getChunksWithMergedSpaces(prefix);
   const firstLineEditChunks = getChunksWithMergedSpaces(firstLineEdit);
@@ -126,7 +130,6 @@ function getInlineCompletion(
     firstLineEditChunks.length
   );
   let prefixOffset = 0;
-  let realPrefixOffset = 0;
   for (let i = minPrefixOffset; i > 0; i--) {
     const editChunks = firstLineEditChunks.slice(0, i);
     if (chunksEndWith(prefixChunks, editChunks)) {
@@ -134,21 +137,6 @@ function getInlineCompletion(
         (acc, chunk) => acc + chunk.content.length,
         0
       );
-      realPrefixOffset = prefixOffset;
-      if (comparePreviousLine) {
-        realPrefixOffset = 0;
-        for (let j = editChunks.length - 1; j >= 0; j--) {
-          const chunk = editChunks[j];
-          if (chunk.space) {
-            const lineBreakIndex = chunk.content.lastIndexOf("\n");
-            if (lineBreakIndex >= 0) {
-              realPrefixOffset += chunk.content.length - lineBreakIndex - 1;
-              break;
-            }
-          }
-          realPrefixOffset += chunk.content.length;
-        }
-      }
       break;
     }
   }
@@ -184,12 +172,10 @@ function getInlineCompletion(
   }
 
   return {
-    insertText: comparePreviousLine
-      ? editLines.slice(1).join("\n")
-      : inlineEdit,
+    insertText: insertText,
     range: new monaco.Range(
       position.lineNumber,
-      position.column - realPrefixOffset,
+      position.column - prefixOffset,
       position.lineNumber,
       position.column + suffixOffset
     ),
