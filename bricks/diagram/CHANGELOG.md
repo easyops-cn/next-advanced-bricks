@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.57.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.57.4...@next-bricks/diagram@0.57.5) (2025-03-24)
+
+
+### Bug Fixes
+
+* fix moving decorator lines ([0a32023](https://github.com/easyops-cn/next-advanced-bricks/commit/0a320238d4cea419c57f5f128477d6962665ba14))
+
+
+
+
+
 ## [0.57.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.57.3...@next-bricks/diagram@0.57.4) (2025-03-24)
 
 
