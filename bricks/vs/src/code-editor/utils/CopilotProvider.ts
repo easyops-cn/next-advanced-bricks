@@ -1,6 +1,7 @@
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
-// import { getInlineEdit } from "./getInlineEdit";
-import { getFullEdit } from "./getFullEdit";
+import { HttpAbortError } from "@next-core/http";
+import { getInlineEdit } from "./getInlineEdit";
+// import { getFullEdit } from "./getFullEdit";
 
 export class CopilotProvider
   implements monaco.languages.InlineCompletionsProvider
@@ -48,9 +49,7 @@ export class CopilotProvider
 
           try {
             const source = model.getValue();
-            // const lineContent = model.getLineContent(position.lineNumber);
-
-            const edit = await getFullEdit({
+            const edit = await getInlineEdit({
               source,
               offset: model.getOffsetAt(position),
               language: model.getLanguageId(),
@@ -63,16 +62,13 @@ export class CopilotProvider
 
             resolve({
               enableForwardStability: true,
-              items: [
-                {
-                  insertText: edit,
-                  range: model.getFullModelRange(),
-                },
-              ],
+              items: [getInlineCompletion(model, position, edit)],
             });
           } catch (error) {
-            // eslint-disable-next-line no-console
-            console.error("Error fetching inline completion:", error);
+            if (!(error instanceof HttpAbortError)) {
+              // eslint-disable-next-line no-console
+              console.error("Error fetching inline completion:", error);
+            }
             resolve(null);
           } finally {
             clearTimeout(requestTimeout);
@@ -87,4 +83,168 @@ export class CopilotProvider
   freeInlineCompletions() {
     // Do nothing
   }
+}
+
+function getInlineCompletion(
+  model: monaco.editor.IModel,
+  position: monaco.Position,
+  inlineEdit: string
+): monaco.languages.InlineCompletion {
+  let prefix = model.getValueInRange(
+    new monaco.Range(
+      position.lineNumber,
+      1,
+      position.lineNumber,
+      position.column
+    )
+  );
+
+  const editLines = inlineEdit.split("\n");
+
+  const comparePreviousLine =
+    !/\S/.test(prefix) && position.lineNumber > 1 && editLines.length > 1;
+  if (comparePreviousLine) {
+    // The current line has spaces only
+    prefix = model.getValueInRange(
+      new monaco.Range(
+        position.lineNumber - 1,
+        1,
+        position.lineNumber,
+        position.column
+      )
+    );
+  }
+  const firstLineEdit = comparePreviousLine
+    ? editLines.slice(0, 2).join("\n")
+    : editLines[0];
+
+  const prefixChunks = getChunksWithMergedSpaces(prefix);
+  const firstLineEditChunks = getChunksWithMergedSpaces(firstLineEdit);
+
+  const minPrefixOffset = Math.min(
+    prefixChunks.length,
+    firstLineEditChunks.length
+  );
+  let prefixOffset = 0;
+  let realPrefixOffset = 0;
+  for (let i = minPrefixOffset; i > 0; i--) {
+    const editChunks = firstLineEditChunks.slice(0, i);
+    if (chunksEndWith(prefixChunks, editChunks)) {
+      prefixOffset = editChunks.reduce(
+        (acc, chunk) => acc + chunk.content.length,
+        0
+      );
+      realPrefixOffset = prefixOffset;
+      if (comparePreviousLine) {
+        realPrefixOffset = 0;
+        for (let j = editChunks.length - 1; j >= 0; j--) {
+          const chunk = editChunks[j];
+          if (chunk.space) {
+            const lineBreakIndex = chunk.content.lastIndexOf("\n");
+            if (lineBreakIndex >= 0) {
+              realPrefixOffset += chunk.content.length - lineBreakIndex - 1;
+              break;
+            }
+          }
+          realPrefixOffset += chunk.content.length;
+        }
+      }
+      break;
+    }
+  }
+
+  let suffixOffset = 0;
+  if (prefixOffset < firstLineEdit.length) {
+    const suffix = model.getValueInRange(
+      new monaco.Range(
+        position.lineNumber,
+        position.column,
+        position.lineNumber,
+        model.getLineLength(position.lineNumber) + 1
+      )
+    );
+    const suffixChunks = getChunksWithMergedSpaces(suffix);
+    const firstLineRemaining = firstLineEdit.slice(prefixOffset);
+    const firstLineRemainingChunks =
+      getChunksWithMergedSpaces(firstLineRemaining);
+    const minSuffixOffset = Math.min(
+      suffixChunks.length,
+      firstLineRemainingChunks.length
+    );
+    for (let i = minSuffixOffset; i > 0; i--) {
+      const editChunks = firstLineRemainingChunks.slice(-i);
+      if (chunksEndWith(suffixChunks, editChunks)) {
+        suffixOffset = editChunks.reduce(
+          (acc, chunk) => acc + chunk.content.length,
+          0
+        );
+        break;
+      }
+    }
+  }
+
+  return {
+    insertText: comparePreviousLine
+      ? editLines.slice(1).join("\n")
+      : inlineEdit,
+    range: new monaco.Range(
+      position.lineNumber,
+      position.column - realPrefixOffset,
+      position.lineNumber,
+      position.column + suffixOffset
+    ),
+  };
+}
+
+export function getChunksWithMergedSpaces(content: string) {
+  const regex = /\s+/g;
+  const chunks: ChunkWithMergedSpaces[] = [];
+  let match: RegExpExecArray | null = null;
+  let lastIndex = (regex.lastIndex = 0);
+  while ((match = regex.exec(content)) !== null) {
+    const start = match.index;
+    const end = regex.lastIndex;
+    if (start > lastIndex) {
+      chunks.push(
+        ...[...content.slice(lastIndex, start)].map((str) => ({
+          content: str,
+          space: false,
+        }))
+      );
+    }
+    chunks.push({ content: content.slice(start, end), space: true });
+    lastIndex = end;
+  }
+  if (lastIndex < content.length) {
+    chunks.push(
+      ...[...content.slice(lastIndex)].map((str) => ({
+        content: str,
+        space: false,
+      }))
+    );
+  }
+  return chunks;
+}
+
+interface ChunkWithMergedSpaces {
+  content: string;
+  space: boolean;
+}
+
+function chunksEndWith(
+  source: ChunkWithMergedSpaces[],
+  target: ChunkWithMergedSpaces[]
+) {
+  if (source.length < target.length) {
+    return false;
+  }
+  for (let i = 0; i < target.length; i++) {
+    if (
+      source[source.length - 1 - i].content !==
+      target[target.length - 1 - i].content
+    ) {
+      return false;
+    }
+  }
+  return true;
 }

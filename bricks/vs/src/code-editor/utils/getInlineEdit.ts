@@ -16,8 +16,8 @@ export async function getInlineEdit({
   const response = await AiopsBaseApi_openaiChat(
     {
       // model: "qwen-turbo",
-      model: "qwen-plus",
-      // model: "claude-3-5-sonnet-latest",
+      // model: "qwen-plus",
+      model: "claude-3-5-sonnet-latest",
       stream: false,
       messages: [
         {
@@ -26,9 +26,9 @@ export async function getInlineEdit({
 
 提供简洁易读的代码补全，语法和逻辑准确，与现有上下文无缝集成，格式优雅。
 
-用户会给出代码内容，其中会标注光标位置（\`${CURSOR_PLACEHOLDER}\`），你输出要插入光标位置的代码内容，但应同时包含光标位置所在行原有的前后内容，而不要包含光标位置之外其他行的原有内容，也不要包含光标占位符。
+用户会给出代码内容，其中会标注光标位置（\`${CURSOR_PLACEHOLDER}\`），你输出要插入光标位置的代码内容、以及光标所在行原有的前后内容，注意不要包含光标之外其他行的原有内容。
 
-不输出任何附加说明。`,
+使用 markdown 的代码块格式返回结果。不输出任何附加说明。`,
         },
         {
           role: "user",
@@ -40,6 +40,9 @@ ${"```"}`,
     },
     {
       signal,
+      interceptorParams: {
+        ignoreLoadingBar: true,
+      },
     }
   );
 

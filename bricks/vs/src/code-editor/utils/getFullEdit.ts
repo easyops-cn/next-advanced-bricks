@@ -64,6 +64,9 @@ ${"```"}`,
     },
     {
       signal,
+      interceptorParams: {
+        ignoreLoadingBar: true,
+      },
     }
   );
 
@@ -147,6 +150,9 @@ ${"```"}`,
     },
     {
       signal,
+      interceptorParams: {
+        ignoreLoadingBar: true,
+      },
     }
   );
 
