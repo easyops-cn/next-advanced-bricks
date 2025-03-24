@@ -16,10 +16,14 @@ export function DecoratorLine({
   lineConfMap,
   editableLineMap,
 }: DecoratorLineProps): JSX.Element | null {
-  const lineConf = lineConfMap.get(cell)!;
+  const lineConf = lineConfMap.get(cell);
   const { points: linePoints, jumpsMap } = editableLineMap.get(cell) ?? {};
 
   const line = useMemo(() => {
+    // istanbul ignore next: defensive check
+    if (!lineConf) {
+      return null;
+    }
     return curveLine(
       linePoints,
       lineConf.type === "curve" ? lineConf.curveType : "curveLinear",
@@ -48,7 +52,7 @@ export function DecoratorLine({
     [cell]
   );
 
-  if (!line) {
+  if (!line || !lineConf) {
     return null;
   }
 
