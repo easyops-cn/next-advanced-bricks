@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.32.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai@1.31.14...@next-bricks/ai@1.32.0) (2025-03-25)
+
+
+### Features
+
+* support set config and form data ([d6d016c](https://github.com/easyops-cn/next-advanced-bricks/commit/d6d016c3d4e38f639a66490517b86e0959f2016f))
+
+
+
+
+
 ## [1.31.14](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai@1.31.13...@next-bricks/ai@1.31.14) (2025-03-17)
 
 **Note:** Version bump only for package @next-bricks/ai
