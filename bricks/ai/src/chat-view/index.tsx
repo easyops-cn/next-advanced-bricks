@@ -1,4 +1,9 @@
-import React, { forwardRef, useEffect } from "react";
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from "react";
 import { EventEmitter, createDecorators } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
 import {
@@ -20,6 +25,11 @@ import { ChatBody } from "./ChatService.js";
 const { defineElement, property, method, event } = createDecorators();
 
 type InputToolbarBrick = { useBrick: UseBrickConf };
+
+export interface ChatViewRef extends SearchInputRef {
+  setConfig(config: Record<string, unknown> | undefined): void;
+  setFormData(formData: Record<string, unknown> | undefined): void;
+}
 
 export interface ChatViewProps {
   agentId: string;
@@ -67,7 +77,7 @@ export function LegacyChatViewComponent(
     onRobotIdChange,
     onQaFinish,
   }: ChatViewProps,
-  ref: React.Ref<SearchInputRef>
+  ref: React.Ref<ChatViewRef>
 ) {
   const {
     sessionEnd,
@@ -91,6 +101,8 @@ export function LegacyChatViewComponent(
     checkSession,
     setSearchStr,
     querySessionHistory,
+    setConfig,
+    setFormData,
   } = useChatViewInfo({
     agentId,
     robotId,
@@ -118,6 +130,23 @@ export function LegacyChatViewComponent(
       onQaFinish(activeSessionId);
     }
   }, [chatting]);
+
+  const inputRef = useRef<SearchInputRef>(null);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      handleInsertQuestion(value) {
+        return inputRef.current?.handleInsertQuestion(value);
+      },
+      sendMsg(msg) {
+        return inputRef.current?.sendMsg(msg);
+      },
+      setConfig,
+      setFormData,
+    }),
+    [setConfig, setFormData]
+  );
 
   return (
     <ChatViewContext.Provider
@@ -161,7 +190,7 @@ export function LegacyChatViewComponent(
         <div className="chat-view-content">
           <MessageList showAvatar={showAvatar} />
           {!readonly && (
-            <SearchInput inputToolbarBrick={inputToolbarBrick} ref={ref} />
+            <SearchInput inputToolbarBrick={inputToolbarBrick} ref={inputRef} />
           )}
         </div>
       </div>
@@ -311,7 +340,19 @@ class ChatView extends ReactNextElement {
   @property({ type: Boolean })
   accessor showToolCalls: boolean | undefined;
 
-  #ref = React.createRef<SearchInputRef>();
+  /** 设置接口 config */
+  @method()
+  setConfig(config: Record<string, unknown> | undefined): void {
+    this.#ref.current?.setConfig(config);
+  }
+
+  /** 设置接口 formData */
+  @method()
+  setFormData(formData: Record<string, unknown> | undefined): void {
+    this.#ref.current?.setFormData(formData);
+  }
+
+  #ref = React.createRef<ChatViewRef>();
 
   @event({ type: "sessionId.change" })
   accessor #sessionIdChange!: EventEmitter<string | undefined>;

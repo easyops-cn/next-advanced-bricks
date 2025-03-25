@@ -130,6 +130,20 @@ export function useChatViewInfo({
     [chatService]
   );
 
+  const setConfig = useCallback(
+    (config: Record<string, unknown> | undefined) => {
+      chatService.setConfig(config);
+    },
+    [chatService]
+  );
+
+  const setFormData = useCallback(
+    (formData: Record<string, unknown> | undefined) => {
+      chatService.setFormData(formData);
+    },
+    [chatService]
+  );
+
   const checkSession = useCallback(
     async (id?: string, isInit = false) => {
       if (isInit && id) {
@@ -624,5 +638,7 @@ export function useChatViewInfo({
     setSearchStr,
     querySessionHistory,
     handleIsLike,
+    setConfig,
+    setFormData,
   };
 }
