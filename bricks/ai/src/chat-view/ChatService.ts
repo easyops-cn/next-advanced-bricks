@@ -89,6 +89,9 @@ export class ChatService {
   // 消息
   #messageNextToken?: string;
 
+  #config: Record<string, unknown> | undefined;
+  #formData: Record<string, unknown> | undefined;
+
   #useSpiltWord = false;
 
   constructor({
@@ -183,6 +186,14 @@ export class ChatService {
 
   setConversationId(id?: string) {
     this.#conversationId = id;
+  }
+
+  setConfig(config: Record<string, unknown> | undefined) {
+    this.#config = config;
+  }
+
+  setFormData(formData: Record<string, unknown> | undefined) {
+    this.#formData = formData;
   }
 
   async getSessionHistory(
@@ -404,8 +415,10 @@ export class ChatService {
           stream: true,
           config: {
             debug: this.#debug,
-            ...(this.#answerLanguage ? { lang: this.#answerLanguage } : {}),
+            ...(this.#answerLanguage ? { lang: this.#answerLanguage } : null),
+            ...this.#config,
           },
+          formData: this.#formData,
           ...(typeof msg === "string"
             ? {
                 input: msg,
