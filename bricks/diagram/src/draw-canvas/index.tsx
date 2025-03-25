@@ -1030,7 +1030,7 @@ function LegacyEoDrawCanvasComponent(
       setActiveContainers(containedIds);
       setGuideLines(info.flatMap((c) => c.guideLines ?? []));
       setMovingCells(true);
-      if (!cells.some((cell) => isLineDecoratorCell(cell))) {
+      if (!info.some((cell) => isLineDecoratorCell(cell))) {
         setMovingCellsOtherThanDecoratorLine(true);
       }
     },
