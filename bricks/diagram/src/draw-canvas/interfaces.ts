@@ -1,5 +1,6 @@
 import type { UseSingleBrickConf } from "@next-core/react-runtime";
 import type { SimulationLinkDatum, SimulationNodeDatum } from "d3-force";
+import type { CSSProperties } from "react";
 import type { ResizeCellPayload } from "./reducers/interfaces";
 import type {
   CurveType,
@@ -76,6 +77,10 @@ export interface NodeView extends InitialNodeView {
 export interface DecoratorView extends NodeView {
   /** 用于文本装饰器和容器装饰器 */
   text?: string;
+  /** 设置文本/区域/方框/容器装饰器的样式 */
+  style?: CSSProperties;
+  /** 设置容器装饰器的标题的样式 */
+  titleStyle?: CSSProperties;
   /** 设置容器装饰器的文本位置 */
   direction?: Direction;
   vertices?: NodePosition[] | null;
@@ -301,6 +306,7 @@ export type LayoutOptions =
   | LayoutOptionsDagre
   | LayoutOptionsForce;
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface LayoutOptionsManual extends LayoutSnapOptions {}
 
 export interface LayoutSnapOptions {

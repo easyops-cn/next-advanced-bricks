@@ -58,11 +58,16 @@ export function DecoratorRect({
 
   return (
     <g className="decorator-rect-container">
-      <rect
-        width={view.width}
-        height={view.height}
-        className="rect-container"
-      />
+      <foreignObject className="decorator-rect" width="9999" height="9999">
+        <div
+          className="rect-container"
+          style={{
+            ...cell.view.style,
+            width: view.width,
+            height: view.height,
+          }}
+        />
+      </foreignObject>
       {!readOnly && !isNoManualLayout(layout) && (
         <g
           ref={resizeHandleRef}

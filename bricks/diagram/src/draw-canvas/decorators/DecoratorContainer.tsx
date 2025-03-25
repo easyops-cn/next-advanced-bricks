@@ -159,6 +159,7 @@ export function DecoratorContainer({
               true,
           })}
           onDoubleClick={handleEnableEdit}
+          style={cell.view.titleStyle}
         >
           <div
             className="text"
@@ -169,7 +170,16 @@ export function DecoratorContainer({
           />
         </div>
       </foreignObject>
-      <rect width={view.width} height={view.height} className="container" />
+      <foreignObject className="container-wrapper">
+        <div
+          className="container"
+          style={{
+            ...cell.view.style,
+            width: view.width,
+            height: view.height,
+          }}
+        />
+      </foreignObject>
       {!readOnly && !isNoManualLayout(layout) && (
         <g
           ref={resizeHandleRef}

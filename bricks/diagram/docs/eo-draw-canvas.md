@@ -27,6 +27,9 @@
                 y: 20,
                 width: 400,
                 height: 300,
+                style: {
+                  backgroundColor: "var(--palette-green-3)",
+                }
               },
             },
             {
@@ -38,6 +41,9 @@
                 y: 20,
                 width: 400,
                 height: 300,
+                style: {
+                  borderColor: "var(--palette-purple-3)",
+                }
               },
             },
             {
@@ -97,7 +103,11 @@
                 y: 120,
                 width: 100,
                 height: 20,
-                text: "Hello!"
+                text: "Hello\nWorld!",
+                style: {
+                  // 垂直书写（从右到左）
+                  writingMode: "vertical-rl",
+                },
               },
             },
           ])
