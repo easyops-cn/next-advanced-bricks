@@ -587,7 +587,7 @@ describe("eo-draw-canvas", () => {
 
     act(() => {
       fireEvent.mouseDown(
-        element.shadowRoot!.querySelector(".cells div:not(.label)")!
+        element.shadowRoot!.querySelector(".cells .node div:not(.label)")!
       );
     });
     expect(handleMouseDown).toHaveBeenCalledTimes(1);
@@ -667,7 +667,7 @@ describe("eo-draw-canvas", () => {
     // Click on node b
     act(() => {
       fireEvent.mouseDown(
-        element.shadowRoot!.querySelectorAll(".cells div:not(.label)")[1]
+        element.shadowRoot!.querySelectorAll(".cells .node div:not(.label)")[1]
       );
     });
     expect(handleMouseDown).toHaveBeenCalledTimes(4);

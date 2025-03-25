@@ -1354,8 +1354,8 @@ function LegacyEoDrawCanvasComponent(
             {cells.map((cell) => (
               <CellComponent
                 key={`${cell.type}:${isEdgeCell(cell) ? `${cell.source}~${cell.target}` : cell.id}`}
-                dragNodeToContainerActive={
-                  isEdgeCell(cell) ? false : activeContainers.includes(cell.id)
+                dragoverContainer={
+                  !isEdgeCell(cell) && activeContainers.includes(cell.id)
                 }
                 layout={layout}
                 layoutOptions={layoutOptions}

@@ -51,7 +51,7 @@ export interface CellComponentProps {
   readOnly?: boolean;
   hoverCell?: Cell | null | undefined;
   unrelatedCells: Cell[];
-  dragNodeToContainerActive?: boolean;
+  dragoverContainer?: boolean;
   allowEdgeToArea?: boolean;
   curActiveEditableLine?: EditableLineCell | null;
   updateCurActiveEditableLine?: (
@@ -82,7 +82,7 @@ export function CellComponent({
   lineConfMap,
   editableLineMap,
   activeTarget,
-  dragNodeToContainerActive,
+  dragoverContainer,
   readOnly,
   transform,
   hoverCell,
@@ -301,7 +301,7 @@ export function CellComponent({
         active,
         faded: unrelated,
         "read-only": readOnly,
-        "container-active": dragNodeToContainerActive,
+        "container-dragover": dragoverContainer,
       })}
       ref={gRef}
       transform={

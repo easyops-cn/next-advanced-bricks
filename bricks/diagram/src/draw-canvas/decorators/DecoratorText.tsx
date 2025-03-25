@@ -91,10 +91,11 @@ export function DecoratorText({
   }, [cell, currentLabel, onDecoratorTextChange, shouldEmitLabelChange]);
 
   return (
-    <foreignObject className="decorator-text">
+    <foreignObject className="decorator-text" width="9999" height="9999">
       <div
         className={classNames("text-container", { editing: editingLabel })}
         onDoubleClick={handleEnableEdit}
+        style={cell.view.style}
       >
         <div
           className="text"

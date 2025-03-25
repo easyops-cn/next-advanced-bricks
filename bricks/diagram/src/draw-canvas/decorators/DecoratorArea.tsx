@@ -50,12 +50,17 @@ export function DecoratorArea({
   ]);
 
   return (
-    <g className="decorator-area">
-      <rect
-        width={cell.view.width}
-        height={cell.view.height}
-        className="area"
-      />
+    <g className="decorator-area-container">
+      <foreignObject className="decorator-area" width="9999" height="9999">
+        <div
+          className="area"
+          style={{
+            ...cell.view.style,
+            width: cell.view.width,
+            height: cell.view.height,
+          }}
+        />
+      </foreignObject>
       {!readOnly && (
         <g
           ref={resizeHandleRef}

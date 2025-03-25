@@ -77,38 +77,49 @@
 }
 
 .decorator-area .area,
-.decorator-container .container {
-  fill: var(--area-bg-color);
-  stroke: none;
-  stroke-width: 0;
+.container-wrapper .container {
+  background-color: var(--area-bg-color);
+  border: 1px solid transparent;
+}
+
+.decorator-text .text-container {
+  border: 1px solid transparent;
 }
 
 .decorator-rect-container .rect-container {
-  fill: rgba(73, 126, 255, 0);
-  stroke: rgba(73, 126, 255, 0.7);
-}
-.cell.active .decorator-rect-container .rect-container {
-  fill: rgba(73, 126, 255, 0);
-  stroke: rgba(73, 126, 255, 1);
-  stroke-width: 2;
-}
-.node,
-.decorator-text {
-  overflow: visible;
+  border: 1px solid rgba(73, 126, 255, 0.7);
 }
 
 .cell.active .decorator-area .area,
-.cell.active .decorator-container .container,
-.cell:not(.read-only) .decorator-container .container:hover,
-.allowEdgeToArea .decorator-area .area:hover,
+.cell.active .decorator-rect-container .rect-container,
+.cell.active .decorator-text .text-container,
+.cell.active .container-wrapper .container,
+.container-dragover .decorator-container .container {
+  border-style: dashed;
+  border-color: rgba(73, 126, 255, 0.7);
+}
+
+.node,
+.container-wrapper {
+  overflow: visible;
+}
+
+.decorator-text,
+.decorator-rect,
+.decorator-area {
+  overflow: visible;
+  pointer-events: none;
+}
+
+.decorator-text > *,
+.decorator-rect > *,
+.decorator-area > * {
+  pointer-events: auto;
+}
+
 .cell.active .line-active-bg {
   stroke: var(--palette-blue-5);
   stroke-dasharray: var(--dasharray);
-  stroke-width: 1;
-}
-
-.container-active .decorator-container .container {
-  stroke: var(--palette-blue-5);
   stroke-width: 1;
 }
 
@@ -132,8 +143,8 @@
   stroke-width: 1.5;
 }
 
-.cell.active .decorator-area .resize-handle,
-.decorator-area:hover .resize-handle,
+.decorator-area-container:hover .resize-handle,
+.decorator-rect-container:hover .resize-handle,
 .decorator-container:hover .resize-handle {
   opacity: 1;
 }
@@ -164,13 +175,14 @@
   stroke-dasharray: var(--dotted);
 }
 
-.cell.active .decorator-text .text-container {
-  outline: 1px dashed var(--palette-blue-5);
-}
-
 .decorator-text .text-container {
   width: max-content;
   padding: 0.5em;
+  white-space: pre;
+}
+
+.cell:not(.read-only) .decorator-text .text-container:hover {
+  color: #497eff;
 }
 
 .decorator-text .text:focus {
@@ -181,7 +193,7 @@
   opacity: 0.3;
 }
 
-.cell.container-active {
+.cell.container-dragover {
   opacity: 1;
 }
 
