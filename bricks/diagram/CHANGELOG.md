@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.58.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.58.1...@next-bricks/diagram@0.58.2) (2025-03-25)
+
+
+### Bug Fixes
+
+* use memoized line markers when moving cells other than decorator lines ([1331ec5](https://github.com/easyops-cn/next-advanced-bricks/commit/1331ec5a11ce2f769c7b3d8c4acb8ca7fb574c28))
+
+
+
+
+
 ## [0.58.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.58.0...@next-bricks/diagram@0.58.1) (2025-03-25)
 
 **Note:** Version bump only for package @next-bricks/diagram
