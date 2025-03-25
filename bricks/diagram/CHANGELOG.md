@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.58.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.57.5...@next-bricks/diagram@0.58.0) (2025-03-25)
+
+
+### Features
+
+* support set decorator style ([4bbeabc](https://github.com/easyops-cn/next-advanced-bricks/commit/4bbeabc2c4cb3c7dad03eea3b1f2f0189937934c))
+
+
+
+
+
 ## [0.57.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.57.4...@next-bricks/diagram@0.57.5) (2025-03-24)
 
 
