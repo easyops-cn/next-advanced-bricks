@@ -114,7 +114,7 @@
         %>
     - name: dragging
     - name: activeTarget
-    - name: targetCell
+    - name: contextMenuTarget
     - name: scale
       value: 1
   children:
@@ -348,7 +348,7 @@
               - useBrick:
                   brick: diagram.experimental-node
                   properties:
-                    textContent: <% `Node ${DATA.node.id}` %>
+                    textContent: '<% `Node ${DATA.node.id}${DATA.node.locked ? " (locked)" : ""}` %>'
                     status: |
                       <%=
                         (CTX.activeTarget?.type === "multi"
@@ -369,9 +369,9 @@
                 dotted: true
                 showStartArrow: true
                 markers:
-                  - placement: end
-                    type: circle
                   - placement: start
+                    type: circle
+                  - placement: end
                     type: arrow
             cells: <% CTX.initialCells %>
             lineConnector: true
@@ -405,8 +405,8 @@
                       - <% EVENT.detail.clientY %>
               - action: context.replace
                 args:
-                  - targetCell
-                  - <% EVENT.detail.cell %>
+                  - contextMenuTarget
+                  - <% EVENT.detail %>
             edge.add:
               action: message.info
               args:
@@ -457,21 +457,26 @@
   properties:
     actions: |
       <%=
-        (["node"].includes(CTX.targetCell?.type )||CTX.targetCell?.decorator=="area") ? [
-          {
+        !CTX.contextMenuTarget
+        ? []
+        : [
+          ...(CTX.contextMenuTarget.locked ? [] : [{
             text: "添加边",
             event: "add-edge",
-          }
-        ] : [
-          {
-            text: `Test ${CTX.targetCell?.type}`,
-            event: `test-${CTX.targetCell?.type}`,
-          },
-          {
-            text: "Remove",
+          },{
+            text: "移除",
             event: "remove"
-          }
-        ]
+          }]),
+          {
+            text: "锁定/取消锁定",
+            event: "toggle-lock",
+          },
+        ].filter((action) =>
+          CTX.contextMenuTarget.cell.type === "node" || (
+            CTX.contextMenuTarget.cell.type === "decorator" &&
+            CTX.contextMenuTarget.cell.decorator === "area"
+          ) || action.event !== "add-edge"
+        )
       %>
   events:
     remove:
@@ -481,14 +486,21 @@
         - |
           <%
             CTX.initialCells.filter((cell) =>
-              !(cell.type === "edge" && CTX.targetCell.source === cell.source && CTX.targetCell.target === cell.target)
+              !(
+                CTX.contextMenuTarget.cell.type === "edge"
+                  ? cell.type === "edge" && CTX.contextMenuTarget.cell.source === cell.source && CTX.contextMenuTarget.cell.target === cell.target
+                  : cell.id === CTX.contextMenuTarget.cell.id ||
+                    (cell.type === "edge" && (
+                      CTX.contextMenuTarget.cell.id === cell.source ||
+                      CTX.contextMenuTarget.cell.id === cell.target))
+              )
             )
           %>
     add-edge:
       target: eo-draw-canvas
       method: manuallyConnectNodes
       args:
-        - <% CTX.targetCell.id %>
+        - <% CTX.contextMenuTarget.cell.id %>
       callback:
         success:
           - target: eo-draw-canvas
@@ -496,6 +508,17 @@
             args:
               - source: <% EVENT.detail.source.id %>
                 target: <% EVENT.detail.target.id %>
+    toggle-lock:
+      target: eo-draw-canvas
+      method: toggleLock
+      args:
+        - <% CTX.contextMenuTarget.cell %>
+      callback:
+        success:
+          action: console.log
+          args:
+            - "Updated cells after toggle lock:"
+            - <% EVENT.detail %>
 ```
 
 ### Line labels

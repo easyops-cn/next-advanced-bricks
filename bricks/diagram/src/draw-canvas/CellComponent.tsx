@@ -54,6 +54,8 @@ export interface CellComponentProps {
   dragoverContainer?: boolean;
   allowEdgeToArea?: boolean;
   curActiveEditableLine?: EditableLineCell | null;
+  locked?: boolean;
+  containerLocked?: boolean;
   updateCurActiveEditableLine?: (
     activeEditableLine: EditableLineCell | null
   ) => void;
@@ -89,6 +91,8 @@ export function CellComponent({
   unrelatedCells,
   allowEdgeToArea,
   curActiveEditableLine,
+  locked,
+  containerLocked,
   updateCurActiveEditableLine,
   onCellsMoving,
   onCellsMoved,
@@ -267,9 +271,10 @@ export function CellComponent({
         cell,
         clientX: event.clientX,
         clientY: event.clientY,
+        locked,
       });
     },
-    [cell, onCellContextMenu, onSwitchActiveTarget, readOnly]
+    [cell, onCellContextMenu, onSwitchActiveTarget, readOnly, locked]
   );
 
   const handleCellClick = useCallback(
@@ -281,9 +286,10 @@ export function CellComponent({
         cell,
         clientX: event.clientX,
         clientY: event.clientY,
+        locked,
       });
     },
-    [cell, onCellClick]
+    [cell, onCellClick, locked]
   );
 
   const handleMouseEnter = useCallback(() => {
@@ -326,6 +332,8 @@ export function CellComponent({
           degraded={degraded}
           degradedNodeLabel={degradedNodeLabel}
           defaultNodeBricks={defaultNodeBricks}
+          locked={locked}
+          containerLocked={containerLocked}
           onResize={onNodeBrickResize}
         />
       ) : isEdgeCell(cell) ? (
@@ -351,6 +359,7 @@ export function CellComponent({
           cells={cells}
           lineConfMap={lineConfMap}
           editableLineMap={editableLineMap}
+          locked={locked}
           onCellResizing={onCellResizing}
           onCellResized={onCellResized}
           onSwitchActiveTarget={onSwitchActiveTarget}

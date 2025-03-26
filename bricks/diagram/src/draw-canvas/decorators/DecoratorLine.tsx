@@ -4,10 +4,12 @@ import type { BasicDecoratorProps } from "../interfaces";
 import { getMarkers } from "../../shared/canvas/useLineMarkers";
 import type { LineMarkerConf } from "../../diagram/interfaces";
 import { curveLine } from "../../diagram/lines/curveLine";
+import { LockIcon } from "../LockIcon";
+import { getLineLockIconPosition } from "../processors/getLineLockIconPosition";
 
 export type DecoratorLineProps = Pick<
   BasicDecoratorProps,
-  "cell" | "active" | "lineConfMap" | "editableLineMap"
+  "cell" | "active" | "locked" | "lineConfMap" | "editableLineMap"
 >;
 
 export function DecoratorLine({
@@ -15,6 +17,7 @@ export function DecoratorLine({
   active,
   lineConfMap,
   editableLineMap,
+  locked,
 }: DecoratorLineProps): JSX.Element | null {
   const lineConf = lineConfMap.get(cell);
   const { points: linePoints, jumpsMap } = editableLineMap.get(cell) ?? {};
@@ -50,6 +53,11 @@ export function DecoratorLine({
       }
     },
     [cell]
+  );
+
+  const lockedPosition = useMemo(
+    () => (locked && linePoints ? getLineLockIconPosition(linePoints) : null),
+    [locked, linePoints]
   );
 
   if (!line || !lineConf) {
@@ -108,6 +116,7 @@ export function DecoratorLine({
         markerStart={markerStart}
         markerEnd={markerEnd}
       />
+      {locked && <LockIcon x={lockedPosition!.x} y={lockedPosition!.y} />}
     </g>
   );
 }

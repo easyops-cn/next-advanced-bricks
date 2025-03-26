@@ -11,6 +11,7 @@ import { isEqual } from "lodash";
 import ResizeObserver from "resize-observer-polyfill";
 import type { NodeBrickCell, NodeBrickConf, NodeCell } from "./interfaces";
 import type { SizeTuple } from "../diagram/interfaces";
+import { LockIcon } from "./LockIcon";
 
 export interface NodeComponentProps {
   node: NodeCell;
@@ -19,6 +20,8 @@ export interface NodeComponentProps {
   degraded: boolean;
   degradedNodeLabel?: string;
   defaultNodeBricks?: NodeBrickConf[];
+  locked?: boolean;
+  containerLocked?: boolean;
   onResize(id: string, size: SizeTuple | null): void;
 }
 
@@ -29,9 +32,13 @@ export function NodeComponent({
   degraded,
   degradedNodeLabel,
   defaultNodeBricks,
+  locked,
+  containerLocked,
   onResize,
 }: NodeComponentProps): JSX.Element | null {
-  const memoizedData = useDeepMemo({ node: { id: node.id, data: node.data } });
+  const memoizedData = useDeepMemo({
+    node: { id: node.id, data: node.data, locked: !!locked },
+  });
   const specifiedUseBrick = (node as NodeBrickCell).useBrick;
   const observerRef = useRef<ResizeObserver | null>(null);
 
@@ -137,30 +144,37 @@ export function NodeComponent({
     return () => clearTimeout(timeoutId);
   }, []);
 
-  return useBrick ? (
-    <foreignObject
-      // Make a large size to avoid the brick inside to be clipped by the foreignObject.
-      width={9999}
-      height={9999}
-      className="node"
-      ref={foreignObjectRef}
-    >
-      {useBrick && (
-        <ReactUseBrick
-          useBrick={useBrick}
-          data={memoizedData}
-          refCallback={refCallback}
-        />
+  return (
+    <>
+      {useBrick ? (
+        <foreignObject
+          // Make a large size to avoid the brick inside to be clipped by the foreignObject.
+          width={9999}
+          height={9999}
+          className="node"
+          ref={foreignObjectRef}
+        >
+          {useBrick && (
+            <ReactUseBrick
+              useBrick={useBrick}
+              data={memoizedData}
+              refCallback={refCallback}
+            />
+          )}
+        </foreignObject>
+      ) : degraded ? (
+        <g className="degraded" ref={degradedRefCallBack}>
+          <circle cx={8} cy={8} r={8} />
+          <text x={8} y={32}>
+            {label}
+          </text>
+        </g>
+      ) : null}
+      {locked && !containerLocked && x != null && y != null && (
+        <LockIcon x={x + node.view.width + 4} y={y + node.view.height - 12} />
       )}
-    </foreignObject>
-  ) : degraded ? (
-    <g className="degraded" ref={degradedRefCallBack}>
-      <circle cx={8} cy={8} r={8} />
-      <text x={8} y={32}>
-        {label}
-      </text>
-    </g>
-  ) : null;
+    </>
+  );
 }
 
 function useDeepMemo<T>(value: T): T {

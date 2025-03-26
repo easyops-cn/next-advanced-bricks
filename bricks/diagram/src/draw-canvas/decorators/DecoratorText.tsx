@@ -1,15 +1,22 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { BasicDecoratorProps } from "../interfaces";
 import classNames from "classnames";
+import { LockIcon } from "../LockIcon";
+import { getContentEditable } from "../processors/getContentEditable";
 
 export type DecoratorTextProps = Pick<
   BasicDecoratorProps,
-  "cell" | "readOnly" | "onDecoratorTextEditing" | "onDecoratorTextChange"
+  | "cell"
+  | "readOnly"
+  | "locked"
+  | "onDecoratorTextEditing"
+  | "onDecoratorTextChange"
 >;
 
 export function DecoratorText({
   cell,
   readOnly,
+  locked,
   onDecoratorTextEditing,
   onDecoratorTextChange,
 }: DecoratorTextProps): JSX.Element {
@@ -22,14 +29,14 @@ export function DecoratorText({
 
   const handleEnableEdit = useCallback(
     (e: React.MouseEvent) => {
-      if (readOnly) {
+      if (readOnly || locked) {
         return;
       }
       e.preventDefault();
       e.stopPropagation();
       setEditingLabel(true);
     },
-    [readOnly]
+    [readOnly, locked]
   );
 
   useEffect(() => {
@@ -91,21 +98,26 @@ export function DecoratorText({
   }, [cell, currentLabel, onDecoratorTextChange, shouldEmitLabelChange]);
 
   return (
-    <foreignObject className="decorator-text" width="9999" height="9999">
-      <div
-        className={classNames("text-container", { editing: editingLabel })}
-        onDoubleClick={handleEnableEdit}
-        style={cell.view.style}
-      >
+    <>
+      <foreignObject className="decorator-text" width="9999" height="9999">
         <div
-          className="text"
-          contentEditable={editingLabel}
-          ref={ref}
-          onInput={handleInput}
-          onBlur={handleBlur}
-        />
-      </div>
-    </foreignObject>
+          className={classNames("text-container", { editing: editingLabel })}
+          onDoubleClick={handleEnableEdit}
+          style={cell.view.style}
+        >
+          <div
+            className="text"
+            contentEditable={getContentEditable(editingLabel)}
+            ref={ref}
+            onInput={handleInput}
+            onBlur={handleBlur}
+          />
+        </div>
+      </foreignObject>
+      {locked && (
+        <LockIcon x={cell.view.width} y={(cell.view.height - 12) / 2} />
+      )}
+    </>
   );
 }
 

@@ -23,7 +23,8 @@ export function handleNodeContainedChange(
     const top = payload.y;
     const bottom = payload.y + payload!.height!;
     const containerDecoratorCells = cells.filter(
-      (cell): cell is DecoratorCell => isContainerDecoratorCell(cell)
+      (cell): cell is DecoratorCell =>
+        isContainerDecoratorCell(cell) && !cell.view?.locked
     );
     for (const containerCell of containerDecoratorCells) {
       const containerLeft = containerCell.view.x;

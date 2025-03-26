@@ -111,6 +111,7 @@
   pointer-events: none;
 }
 
+.lock-icon,
 .decorator-text > *,
 .decorator-rect > *,
 .decorator-area > * {

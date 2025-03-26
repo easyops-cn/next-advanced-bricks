@@ -29,6 +29,7 @@ export function DecoratorComponent({
   cells,
   lineConfMap,
   editableLineMap,
+  locked,
   onCellResizing,
   onCellResized,
   onSwitchActiveTarget,
@@ -56,6 +57,7 @@ export function DecoratorComponent({
       cells={cells}
       lineConfMap={lineConfMap}
       editableLineMap={editableLineMap}
+      locked={locked}
       onCellResizing={onCellResizing}
       onCellResized={onCellResized}
       onSwitchActiveTarget={onSwitchActiveTarget}
