@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@next-core/brick-dll-v3": "^0.8.26",
-    "@next-core/build-next-bricks": "^1.23.11",
+    "@next-core/build-next-bricks": "^1.23.12",
     "@next-core/styles-v3": "^0.3.5",
     "@next-core/test-next": "^1.1.9",
     "@next-dll/ace": "^2.0.791",
