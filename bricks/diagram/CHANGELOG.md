@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.59.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.58.2...@next-bricks/diagram@0.59.0) (2025-03-27)
+
+
+### Features
+
+* **eo-draw-canvas:** support lock cells ([7f0cc71](https://github.com/easyops-cn/next-advanced-bricks/commit/7f0cc717f8f3cd3a052449781c56cd3d960397dd))
+
+
+
+
+
 ## [0.58.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.58.1...@next-bricks/diagram@0.58.2) (2025-03-25)
 
 
