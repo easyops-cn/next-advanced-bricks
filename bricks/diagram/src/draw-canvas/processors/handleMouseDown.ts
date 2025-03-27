@@ -23,6 +23,7 @@ import {
 } from "./asserts";
 import { cellToTarget } from "./cellToTarget";
 import { getSnapPositions, type SnapPositions } from "./getSnapPositions";
+import { getLockedContainerIds, isLocked } from "./isLocked";
 import { normalizeSnapOptions } from "./normalizeSnapOptions";
 import { sameTarget } from "./sameTarget";
 import { targetIsActive } from "./targetIsActive";
@@ -65,8 +66,16 @@ export function handleMouseDown(
   }
 ) {
   event.stopPropagation();
+
+  // Ignore contextmenu click
+  if (event.button === 2 || (event.button === 0 && event.ctrlKey)) {
+    return;
+  }
+
   // Drag node
   const preActive = targetIsActive(cell, activeTarget);
+  const lockedContainerIds = getLockedContainerIds(cells);
+  let canUpdateActiveEditableLine = false;
   if (event.shiftKey) {
     const activeTargets = activeTarget
       ? activeTarget?.type === "multi"
@@ -78,9 +87,7 @@ export function handleMouseDown(
       targets = activeTargets.filter((target) => !sameTarget(target, cell));
     } else {
       targets = [...activeTargets, cell];
-      if (isEdgeCell(cell) || isLineDecoratorCell(cell)) {
-        updateCurActiveEditableLine?.(cell);
-      }
+      canUpdateActiveEditableLine = true;
     }
     onSwitchActiveTarget?.(
       targets.length > 0 ? { type: "multi", targets } : null
@@ -88,15 +95,25 @@ export function handleMouseDown(
   } else {
     if (action === "resize" || !preActive) {
       onSwitchActiveTarget?.(cellToTarget(cell));
-      if (isEdgeCell(cell) || isLineDecoratorCell(cell)) {
-        updateCurActiveEditableLine?.(cell);
-      }
+      canUpdateActiveEditableLine = true;
     }
+  }
+
+  if (isLocked(cell, lockedContainerIds)) {
+    return;
+  }
+
+  if (
+    canUpdateActiveEditableLine &&
+    (isEdgeCell(cell) || isLineDecoratorCell(cell))
+  ) {
+    updateCurActiveEditableLine?.(cell);
   }
 
   if (isEdgeCell(cell)) {
     return;
   }
+
   const activeCells: Cell[] = [];
   const actives =
     activeTarget?.type === "multi" && action === "move"
@@ -114,7 +131,9 @@ export function handleMouseDown(
   });
   const isAutoLayout = layout === "force" || layout === "dagre";
   const movableActiveCells = activeCells.filter(
-    (c) => (isNodeCell(c) && !isAutoLayout) || isDecoratorCell(c)
+    (c) =>
+      !isLocked(c, lockedContainerIds) &&
+      ((isNodeCell(c) && !isAutoLayout) || isDecoratorCell(c))
   ) as (NodeCell | DecoratorCell)[];
 
   if (movableActiveCells.length === 0) {

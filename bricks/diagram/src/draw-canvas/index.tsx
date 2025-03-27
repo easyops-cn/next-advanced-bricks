@@ -102,6 +102,8 @@ import { LineEditorComponent } from "./LineEditorComponent";
 import { EditingLineComponent } from "./EditingLineComponent";
 import { useEditableLineMap } from "../shared/canvas/useEditableLineMap";
 import { targetIsActive } from "./processors/targetIsActive";
+import { getLockedContainerIds, isLocked } from "./processors/isLocked";
+import { toggleLock } from "./processors/toggleLock";
 
 const lockBodyScroll = unwrapProvider<typeof _lockBodyScroll>(
   "basic.lock-body-scroll"
@@ -594,6 +596,45 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     this.#canvasRef.current?.reCenter();
   }
 
+  /**
+   * 切换锁定状态。
+   *
+   * 如果目标中包含未锁定且可以锁定的元素，则将这些元素锁定；
+   * 否则，如果目标中包含已锁定且可以解锁的元素，则将这些元素解锁；
+   * 否则，不执行任何操作。
+   *
+   * 另，如果容器当前处于锁定状态，其子节点不可执行锁定或解锁操作。
+   *
+   * @param target 当前选中的目标
+   * @returns 有更新的元素列表，其中仅 view 信息有变更
+   */
+  @method()
+  async toggleLock(target: ActiveTarget): Promise<Cell[] | null> {
+    return this.#canvasRef.current!.toggleLock(target, "toggle");
+  }
+
+  /**
+   * 锁定选中的目标。规则类似 `toggleLock`，但仅执行锁定操作。
+   *
+   * @param target 当前选中的目标
+   * @returns 有更新的元素列表，其中仅 view 信息有变更
+   */
+  @method()
+  async lock(target: ActiveTarget): Promise<Cell[] | null> {
+    return this.#canvasRef.current!.toggleLock(target, "lock");
+  }
+
+  /**
+   * 解锁选中的目标。规则类似 `toggleLock`，但仅执行解锁操作。
+   *
+   * @param target 当前选中的目标
+   * @returns 有更新的元素列表，其中仅 view 信息有变更
+   */
+  @method()
+  async unlock(target: ActiveTarget): Promise<Cell[] | null> {
+    return this.#canvasRef.current!.toggleLock(target, "unlock");
+  }
+
   #waitForCanvasRef() {
     return new Promise<void>((resolve) => {
       const check = () => {
@@ -700,6 +741,10 @@ export interface DrawCanvasRef {
   };
   getTransform(): TransformLiteral;
   reCenter(): void;
+  toggleLock(
+    target: ActiveTarget,
+    type: "toggle" | "lock" | "unlock"
+  ): Cell[] | null;
 }
 
 function LegacyEoDrawCanvasComponent(
@@ -806,6 +851,11 @@ function LegacyEoDrawCanvasComponent(
     setCentered(false);
   }, [setCentered]);
 
+  const lockedContainerIds = useMemo(
+    () => getLockedContainerIds(cells),
+    [cells]
+  );
+
   useImperativeHandle(
     ref,
     () => ({
@@ -903,6 +953,22 @@ function LegacyEoDrawCanvasComponent(
         return Promise.reject(null);
       },
       reCenter,
+      toggleLock(
+        target: ActiveTarget,
+        type: "toggle" | "lock" | "unlock"
+      ): Cell[] | null {
+        const { newCells, updates } = toggleLock(
+          target,
+          type,
+          cells,
+          lockedContainerIds
+        );
+        if (!newCells) {
+          return null;
+        }
+        dispatch({ type: "update-cells", payload: newCells });
+        return updates;
+      },
     }),
     [
       cells,
@@ -912,6 +978,7 @@ function LegacyEoDrawCanvasComponent(
       transform,
       allowEdgeToArea,
       reCenter,
+      lockedContainerIds,
     ]
   );
 
@@ -991,6 +1058,7 @@ function LegacyEoDrawCanvasComponent(
       const action = handleKeyboard(event, {
         cells,
         activeTarget,
+        lockedContainerIds,
       });
 
       switch (action?.action) {
@@ -1006,7 +1074,14 @@ function LegacyEoDrawCanvasComponent(
     return () => {
       root.removeEventListener("keydown", onKeydown);
     };
-  }, [activeTarget, cells, editingTexts.length, onCellDelete, onCellsDelete]);
+  }, [
+    activeTarget,
+    cells,
+    editingTexts.length,
+    lockedContainerIds,
+    onCellDelete,
+    onCellsDelete,
+  ]);
 
   const defPrefix = useMemo(() => `${uniqueId("diagram-")}-`, []);
   const markerPrefix = `${defPrefix}line-arrow-`;
@@ -1116,12 +1191,13 @@ function LegacyEoDrawCanvasComponent(
     let edges: EditableLineCell[] = [];
     edges = cells.filter(
       (cell) =>
+        !isLocked(cell, lockedContainerIds) &&
         targetIsActive(cell, activeTarget) &&
         (isEdgeCell(cell) || isLineDecoratorCell(cell)) &&
         editableLineMap.has(cell)
     ) as EditableLineCell[];
     return edges;
-  }, [activeTarget, cells, editableLineMap]);
+  }, [activeTarget, cells, editableLineMap, lockedContainerIds]);
 
   const ready = useReady({ cells, layout, centered });
 
@@ -1136,6 +1212,7 @@ function LegacyEoDrawCanvasComponent(
     (cell: Cell) => {
       if (
         lineConnectorConf &&
+        !isLocked(cell, lockedContainerIds) &&
         isEdgeSide(cell, allowEdgeToArea) &&
         (!lineEditorState || lineEditorState.type !== "control")
       ) {
@@ -1151,7 +1228,7 @@ function LegacyEoDrawCanvasComponent(
         });
       }
     },
-    [allowEdgeToArea, lineConnectorConf, lineEditorState]
+    [allowEdgeToArea, lineConnectorConf, lineEditorState, lockedContainerIds]
   );
 
   const handleCellMouseLeave = useCallback(
@@ -1371,6 +1448,12 @@ function LegacyEoDrawCanvasComponent(
                 unrelatedCells={unrelatedCells}
                 allowEdgeToArea={allowEdgeToArea}
                 curActiveEditableLine={curActiveEditableLine}
+                locked={isLocked(cell, lockedContainerIds)}
+                containerLocked={
+                  isNodeCell(cell) &&
+                  !!cell.containerId &&
+                  lockedContainerIds.includes(cell.containerId)
+                }
                 updateCurActiveEditableLine={setCurActiveEditableLine}
                 onCellsMoving={handleCellsMoving}
                 onCellsMoved={handleCellsMoved}

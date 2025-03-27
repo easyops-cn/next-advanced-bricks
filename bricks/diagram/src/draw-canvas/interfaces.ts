@@ -102,6 +102,7 @@ export interface InitialNodeView {
   y: number;
   width?: number;
   height?: number;
+  locked?: boolean;
 }
 
 export type InitialNodeCell = Omit<NodeCell, "view"> & {
@@ -123,6 +124,7 @@ export interface EdgeView extends LineSettings {
   y?: number;
   width?: number;
   height?: number;
+  locked?: boolean;
 }
 
 export interface EdgeLineConf extends BaseEdgeLineConf {
@@ -257,6 +259,7 @@ export interface BasicDecoratorProps {
   cells: Cell[];
   lineConfMap: WeakMap<EditableLineCell, ComputedEdgeLineConf>;
   editableLineMap: WeakMap<EditableLineCell, EditableLine>;
+  locked?: boolean;
   onCellResizing?(info: ResizeCellPayload): void;
   onCellResized?(info: ResizeCellPayload): void;
   onSwitchActiveTarget?(activeTarget: ActiveTarget | null): void;
@@ -268,6 +271,8 @@ export interface CellContextMenuDetail {
   cell: Cell;
   clientX: number;
   clientY: number;
+  /** 该元素或其容器是否处于锁定状态 */
+  locked?: boolean;
 }
 
 export interface ConnectLineState {
@@ -355,12 +360,30 @@ export interface LayoutOptionsDagre extends BaseLayoutOptions {
 }
 
 export interface LayoutOptionsForce extends BaseLayoutOptions {
+  /** 设置碰撞参数 */
   collide?: boolean | ForceCollideOptions;
 }
 
 export interface ForceCollideOptions {
+  /**
+   * 在计算节点碰撞关系时，节点半径 = 节点固有半径 + radiusDiff。
+   *
+   * 其中，节点固有半径 = 节点矩形对角线长度 / 2。
+   *
+   * @default 18
+   */
   radiusDiff?: number;
+  /**
+   * See https://d3js.org/d3-force/collide#collide_strength
+   *
+   * @default 1
+   */
   strength?: number;
+  /**
+   * See https://d3js.org/d3-force/collide#collide_iterations
+   *
+   * @default 1
+   */
   iterations?: number;
 }
 

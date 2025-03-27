@@ -1,4 +1,5 @@
 import type { ActiveTarget, Cell } from "../interfaces";
+import { isLocked } from "./isLocked";
 import { targetIsActive } from "./targetIsActive";
 
 export type KeyboardAction = KeyboardActionDeleteCells;
@@ -13,13 +14,16 @@ export function handleKeyboard(
   {
     cells,
     activeTarget,
+    lockedContainerIds,
   }: {
     cells: Cell[];
     activeTarget: ActiveTarget | null | undefined;
+    lockedContainerIds?: string[];
   }
 ): KeyboardAction | undefined {
-  const activeCells = cells.filter((cell) =>
-    targetIsActive(cell, activeTarget)
+  const activeCells = cells.filter(
+    (cell) =>
+      targetIsActive(cell, activeTarget) && !isLocked(cell, lockedContainerIds)
   );
 
   if (activeCells.length === 0) {

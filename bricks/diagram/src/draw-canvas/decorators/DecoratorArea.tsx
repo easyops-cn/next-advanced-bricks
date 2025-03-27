@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import type { BasicDecoratorProps } from "../interfaces";
 import { handleMouseDown } from "../processors/handleMouseDown";
+import { LockIcon } from "../LockIcon";
 
 export function DecoratorArea({
   cell,
@@ -9,6 +10,7 @@ export function DecoratorArea({
   layoutOptions,
   activeTarget,
   cells,
+  locked,
   onCellResizing,
   onCellResized,
   onSwitchActiveTarget,
@@ -61,7 +63,7 @@ export function DecoratorArea({
           }}
         />
       </foreignObject>
-      {!readOnly && (
+      {!readOnly && !locked && (
         <g
           ref={resizeHandleRef}
           className="resize-handle"
@@ -70,6 +72,9 @@ export function DecoratorArea({
           <rect width={20} height={20} />
           <path d="M10 18L18 10 M15 18L18 15" />
         </g>
+      )}
+      {locked && (
+        <LockIcon x={cell.view.width - 16} y={cell.view.height - 16} />
       )}
     </g>
   );

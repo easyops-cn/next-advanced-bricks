@@ -6,6 +6,8 @@ import { get } from "lodash";
 import { selectAllText } from "./DecoratorText";
 import { isNoManualLayout } from "../processors/asserts";
 import { uuidV4 } from "..";
+import { LockIcon } from "../LockIcon";
+import { getContentEditable } from "../processors/getContentEditable";
 
 export function DecoratorContainer({
   cell,
@@ -15,6 +17,7 @@ export function DecoratorContainer({
   view,
   activeTarget,
   cells,
+  locked,
   onCellResizing,
   onCellResized,
   onSwitchActiveTarget,
@@ -37,14 +40,14 @@ export function DecoratorContainer({
   });
   const handleEnableEdit = useCallback(
     (e: React.MouseEvent) => {
-      if (readOnly) {
+      if (readOnly || locked) {
         return;
       }
       e.preventDefault();
       e.stopPropagation();
       setEditingLabel(true);
     },
-    [readOnly]
+    [readOnly, locked]
   );
   const handleInput = useCallback(
     (event: React.FormEvent<HTMLDivElement>) => {
@@ -163,7 +166,7 @@ export function DecoratorContainer({
         >
           <div
             className="text"
-            contentEditable={editingLabel}
+            contentEditable={getContentEditable(editingLabel)}
             ref={textRef}
             onInput={handleInput}
             onBlur={handleBlur}
@@ -180,7 +183,7 @@ export function DecoratorContainer({
           }}
         />
       </foreignObject>
-      {!readOnly && !isNoManualLayout(layout) && (
+      {!readOnly && !locked && !isNoManualLayout(layout) && (
         <g
           ref={resizeHandleRef}
           className="resize-handle"
@@ -189,6 +192,9 @@ export function DecoratorContainer({
           <rect width={20} height={20} />
           <path d="M10 18L18 10 M15 18L18 15" />
         </g>
+      )}
+      {locked && (
+        <LockIcon x={cell.view.width - 16} y={cell.view.height - 16} />
       )}
     </g>
   );

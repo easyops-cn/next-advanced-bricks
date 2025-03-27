@@ -868,6 +868,7 @@ describe("eo-draw-canvas", () => {
       },
       clientX: 100,
       clientY: 200,
+      locked: false,
     });
 
     act(() => {
@@ -1474,6 +1475,96 @@ describe("eo-draw-canvas", () => {
     const preventDefault2 = jest.spyOn(contextMenuEvent2, "preventDefault");
     document.dispatchEvent(contextMenuEvent2);
     expect(preventDefault2).toBeCalled();
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
+
+  test("toggle lock", async () => {
+    const element = document.createElement("eo-draw-canvas") as EoDrawCanvas;
+    element.cells = [
+      {
+        type: "node",
+        id: "a",
+        view: {
+          x: 20,
+          y: 20,
+        },
+      },
+    ] as NodeBrickCell[];
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    await act(() => new Promise((resolve) => setTimeout(resolve, 1)));
+
+    expect(element.shadowRoot?.querySelector(".lock-icon")).toBe(null);
+
+    let result1: Cell[] | null | undefined;
+    await act(async () => {
+      result1 = await element.toggleLock({ type: "node", id: "a" });
+    });
+    expect(result1).toEqual([
+      {
+        type: "node",
+        id: "a",
+        view: {
+          x: 20,
+          y: 20,
+          width: 20,
+          height: 20,
+          locked: true,
+        },
+      },
+    ]);
+    expect(element.shadowRoot?.querySelector(".lock-icon")).not.toBe(null);
+
+    let result2: Cell[] | null | undefined;
+    await act(async () => {
+      result2 = await element.toggleLock({ type: "node", id: "a" });
+    });
+    expect(result2).toEqual([
+      {
+        type: "node",
+        id: "a",
+        view: {
+          x: 20,
+          y: 20,
+          width: 20,
+          height: 20,
+          locked: false,
+        },
+      },
+    ]);
+    expect(element.shadowRoot?.querySelector(".lock-icon")).toBe(null);
+
+    let result3: Cell[] | null | undefined;
+    await act(async () => {
+      result3 = await element.unlock({ type: "node", id: "a" });
+    });
+    expect(result3).toEqual(null);
+    expect(element.shadowRoot?.querySelector(".lock-icon")).toBe(null);
+
+    let result4: Cell[] | null | undefined;
+    await act(async () => {
+      result4 = await element.lock({ type: "node", id: "a" });
+    });
+    expect(result4).toEqual([
+      {
+        type: "node",
+        id: "a",
+        view: {
+          x: 20,
+          y: 20,
+          width: 20,
+          height: 20,
+          locked: true,
+        },
+      },
+    ]);
+    expect(element.shadowRoot?.querySelector(".lock-icon")).not.toBe(null);
 
     act(() => {
       document.body.removeChild(element);

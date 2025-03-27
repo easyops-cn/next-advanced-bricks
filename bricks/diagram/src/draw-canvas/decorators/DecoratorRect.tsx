@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import type { BasicDecoratorProps } from "../interfaces";
 import { handleMouseDown } from "../processors/handleMouseDown";
 import { isNoManualLayout } from "../processors/asserts";
+import { LockIcon } from "../LockIcon";
 
 export type DecoratorRectProps = Omit<
   BasicDecoratorProps,
@@ -16,6 +17,7 @@ export function DecoratorRect({
   view,
   activeTarget,
   cells,
+  locked,
   onCellResizing,
   onCellResized,
   onSwitchActiveTarget,
@@ -68,7 +70,7 @@ export function DecoratorRect({
           }}
         />
       </foreignObject>
-      {!readOnly && !isNoManualLayout(layout) && (
+      {!readOnly && !locked && !isNoManualLayout(layout) && (
         <g
           ref={resizeHandleRef}
           className="resize-handle"
@@ -77,6 +79,9 @@ export function DecoratorRect({
           <rect width={20} height={20} />
           <path d="M10 18L18 10 M15 18L18 15" />
         </g>
+      )}
+      {locked && (
+        <LockIcon x={cell.view.width - 16} y={cell.view.height - 16} />
       )}
     </g>
   );
