@@ -61,7 +61,18 @@ export class CopilotProvider
 
             resolve({
               enableForwardStability: true,
-              items: [getInlineCompletion(model, position, edit)],
+              // items: [getInlineCompletion(model, position, edit)],
+              items: [
+                {
+                  insertText: edit,
+                  range: new monaco.Range(
+                    position.lineNumber,
+                    position.column,
+                    position.lineNumber,
+                    position.column
+                  ),
+                },
+              ],
             });
           } catch (error) {
             if (!(error instanceof HttpAbortError)) {
@@ -84,7 +95,7 @@ export class CopilotProvider
   }
 }
 
-function getInlineCompletion(
+export function getInlineCompletion(
   model: monaco.editor.IModel,
   position: monaco.Position,
   inlineEdit: string

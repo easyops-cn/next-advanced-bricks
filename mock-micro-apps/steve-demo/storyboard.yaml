@@ -1,0 +1,52 @@
+app:
+  name: Steve Demo
+  id: steve-demo
+  homepage: /steve-demo
+  # noAuthGuard: true
+  standaloneMode: true
+routes:
+- path: ${APP.homepage}
+  context:
+  - name: language
+    value: brick_next_yaml
+  bricks:
+  - brick: base-layout-v3.tpl-page-layout
+    properties:
+      pageTitle: 页面标题
+      showSidebar: false
+      showBreadcrumb: false
+      fillContainer: true
+    children:
+    - brick: eo-content-layout
+      properties:
+        style:
+          height: 100%
+      children:
+      - brick: eo-radio
+        properties:
+          label: 语言
+          options:
+            - label: TypeScript
+              value: typescript
+            - label: JavaScript
+              value: javascript
+            - label: YAML
+              value: brick_next_yaml
+          value: <% CTX.language %>
+        events:
+          change:
+            action: context.replace
+            args:
+              - language
+              - <% EVENT.detail.value %>
+      - brick: div
+        properties:
+          style:
+            flex: 1
+            minHeight: 0
+        children:
+        - brick: vs.code-editor
+          properties:
+            language: <%= CTX.language %>
+            automaticLayout: fit-container
+            theme: vs-dark
