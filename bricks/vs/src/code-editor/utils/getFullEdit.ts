@@ -18,8 +18,8 @@ export async function getFullEdit({
   const response = await AiopsBaseApi_openaiChat(
     {
       // model: "qwen-turbo",
-      model: "qwen-plus",
-      // model: "claude-3-5-sonnet-latest",
+      // model: "qwen-plus",
+      model: "claude-3-5-sonnet-latest",
       stream: false,
       messages: [
         {
@@ -123,6 +123,7 @@ async function applyFullEdit({
       // model: "qwen-plus",
       // model: "claude-3-5-sonnet-latest",
       stream: false,
+      enableSensitiveWordsFilter: false,
       messages: [
         {
           role: "system",

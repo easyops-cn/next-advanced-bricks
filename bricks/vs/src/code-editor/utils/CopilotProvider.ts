@@ -1,7 +1,6 @@
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
 import { HttpAbortError } from "@next-core/http";
 import { getInlineEdit } from "./getInlineEdit";
-// import { getFullEdit } from "./getFullEdit";
 
 export class CopilotProvider
   implements monaco.languages.InlineCompletionsProvider
@@ -98,6 +97,7 @@ function getInlineCompletion(
       position.column
     )
   );
+  let leadingSpaces = prefix.match(/^\s+/);
 
   const editLines = inlineEdit.split("\n");
   const comparePreviousLine =
@@ -117,9 +117,17 @@ function getInlineCompletion(
       )
     );
     if (previousLine.trim() === editLines[0].trim()) {
+      leadingSpaces = previousLine.match(/^\s+/);
       insertText = editLines.slice(1).join("\n");
       firstLineEdit = editLines[1];
     }
+  }
+
+  if (insertText) {
+    insertText = insertText
+      .split("\n")
+      .map((line, index) => (index === 0 ? line : `${leadingSpaces}${line}`))
+      .join("\n");
   }
 
   const prefixChunks = getChunksWithMergedSpaces(prefix);
@@ -172,7 +180,7 @@ function getInlineCompletion(
   }
 
   return {
-    insertText: insertText,
+    insertText,
     range: new monaco.Range(
       position.lineNumber,
       position.column - prefixOffset,
