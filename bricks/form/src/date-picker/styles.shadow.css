@@ -23,12 +23,12 @@
 }
 .quarterPicker .quarterContent:hover {
   background: var(--antd-picker-basic-cell-hover-bg);
-  border-radius: 12px;
+  border-radius: 15px;
 }
 .quarterPicker .selectedQuarter {
   color: var(--antd-picker-panel-cell-selected-color);
   background: var(--palette-blue-6);
-  border-radius: 12px;
+  border-radius: 15px;
 }
 .quarterPicker .ant-picker-quarter-panel .ant-picker-content tr {
   display: flex;
