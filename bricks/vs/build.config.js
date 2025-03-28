@@ -24,6 +24,10 @@ export default {
         rootMode: "upward",
       },
     },
+    {
+      test: /\.txt$/,
+      type: "asset/source",
+    },
   ],
   plugins: [
     new MonacoWebpackPlugin({
