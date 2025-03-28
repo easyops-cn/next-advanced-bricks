@@ -69,11 +69,5 @@
     "@next-core/build-next-bricks": "^1.23.11",
     "@next-core/test-next": "^1.1.9",
     "copy-webpack-plugin": "^12.0.2"
-  },
-  "peerDependencies": {
-    "@next-bricks/basic": "*",
-    "@next-bricks/form": "*",
-    "@next-bricks/icons": "*",
-    "@next-bricks/markdown": "*"
   }
 }

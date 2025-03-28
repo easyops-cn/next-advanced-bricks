@@ -57,11 +57,5 @@
     "@milkdown/theme-nord": "^7.3.5",
     "@next-core/build-next-bricks": "^1.23.11",
     "@next-core/test-next": "^1.1.9"
-  },
-  "peerDependencies": {
-    "@next-bricks/basic": "*",
-    "@next-bricks/containers": "*",
-    "@next-bricks/form": "*",
-    "@next-bricks/icons": "*"
   }
 }

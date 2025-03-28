@@ -19,14 +19,16 @@
   align-items: center;
   justify-content: center;
   width: 60%;
-  padding: 4px;
+  padding: 4px 16px;
 }
 .quarterPicker .quarterContent:hover {
   background: var(--antd-picker-basic-cell-hover-bg);
+  border-radius: 12px;
 }
 .quarterPicker .selectedQuarter {
   color: var(--antd-picker-panel-cell-selected-color);
-  background: var(--antd-picker-panel-cell-selected-bg);
+  background: var(--palette-blue-6);
+  border-radius: 12px;
 }
 .quarterPicker .ant-picker-quarter-panel .ant-picker-content tr {
   display: flex;
@@ -155,6 +157,14 @@
     & .ant-picker-cell-inner,
     &.ant-picker-cell-today .ant-picker-cell-inner:before {
       border-radius: 50%;
+    }
+  }
+}
+
+.ant-picker-month-panel {
+  .ant-picker-cell {
+    .ant-picker-cell-inner {
+      border-radius: 12px;
     }
   }
 }
