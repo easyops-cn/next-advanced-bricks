@@ -42,9 +42,10 @@ export class CopilotProvider
             resolve(null);
           }
 
+          // Timeout after 15 seconds.
           const requestTimeout = setTimeout(() => {
             abortCtrl.abort();
-          }, 3e4);
+          }, 1.5e4);
 
           try {
             const source = model.getValue();
@@ -64,10 +65,10 @@ export class CopilotProvider
               // items: [getInlineCompletion(model, position, edit)],
               items: [
                 {
-                  insertText: edit,
+                  insertText: edit.insertText,
                   range: new monaco.Range(
                     position.lineNumber,
-                    position.column,
+                    position.column - edit.prefixOffset,
                     position.lineNumber,
                     position.column
                   ),
