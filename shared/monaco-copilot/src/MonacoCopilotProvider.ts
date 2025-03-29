@@ -1,5 +1,4 @@
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
-import { diffLines, type Change } from "diff";
 import { DEFAULT_SYSTEM_PROMPT } from "./prompt.js";
 
 export const SUPPORTED_LANGUAGES = Object.freeze([
@@ -143,8 +142,6 @@ interface InlineEditResult {
   suffixOffset: number;
 }
 
-type ChangeAction = "added" | "removed" | "unchanged";
-
 async function getInlineEdit({
   request,
   model,
@@ -248,7 +245,7 @@ function postProcessEdit(
   // Case 4: responded with partial source code.
   /* if (!trimmedPrefixLastLine) {
     // Case 4.1: prefix is an empty line
-  } else  */if (trimmedFull.startsWith(trimmedPrefixLastLine)) {
+  } else  */ if (trimmedFull.startsWith(trimmedPrefixLastLine)) {
     // Case 4.2: with original content for the current line.
     const insertText = trimmedFull
       .split("\n")
@@ -290,95 +287,4 @@ function refineResult(result: InlineEditResult): InlineEditResult | null {
   // eslint-disable-next-line no-console
   console.log("Empty insertText");
   return null;
-}
-
-function postProcessByDiff(
-  trimmedResponse: string,
-  trimmedPrefix: string,
-  trimmedSuffix: string,
-): InlineEditResult | null {
-  const responseLines = trimmedResponse.split("\n");
-  const trimmedPrefixLines = trimmedPrefix.split("\n");
-  const trimmedSuffixLines = trimmedSuffix.split("\n");
-  const cursorLineNumber = trimmedPrefixLines.length;
-
-  const diffLinesOffset = Math.max(0, trimmedPrefixLines.length - responseLines.length);
-  const truncatedPrefix = diffLinesOffset > 0 ? trimmedPrefixLines.slice(
-    diffLinesOffset
-  ).join("\n") : trimmedPrefix;
-  const truncatedSuffix = trimmedSuffixLines.length > responseLines.length ? trimmedSuffixLines.slice(0, responseLines.length).join("\n") : trimmedSuffix;
-
-  const changes = diffLines(`${truncatedPrefix}${truncatedSuffix}`, trimmedResponse, {
-    ignoreWhitespace: true,
-  }) as Required<Change>[];
-  // console.log(changes);
-  let oldLineIndex = diffLinesOffset;
-  let beforeCursor = true;
-  let lastAction: ChangeAction = "unchanged";
-  // let prevAction = lastAction;
-  const actions: ChangeAction[] = [lastAction];
-  // for (const change of changes) {
-  for (let i = 0; i < changes.length; i++) {
-    const change = changes[i];
-    beforeCursor = oldLineIndex < cursorLineNumber;
-    // prevAction = lastAction;
-    if (change.removed) {
-      oldLineIndex += change.count;
-      lastAction = "removed";
-    } else if (change.added) {
-      if (lastAction === "removed") {
-        oldLineIndex += change.count;
-      }
-      lastAction = "added";
-    } else {
-      oldLineIndex += change.count;
-      // newLineIndex += change.count;
-      lastAction = "unchanged";
-    }
-    if (beforeCursor) {
-      beforeCursor = oldLineIndex >= cursorLineNumber;
-      if (!beforeCursor) {
-        const offset = oldLineIndex - cursorLineNumber;
-        const nextChange = changes[i + 1];
-        if (!nextChange) {
-          break;
-        }
-        const nextAction = nextChange.removed ? "removed" : nextChange.added ? "added" : "unchanged";
-        switch (lastAction) {
-          case "unchanged":
-            if (offset === 0) {
-              switch (nextAction) {
-                case "added":
-                  // insertText = nextChange.value;
-                  break;
-                case "removed":
-                  if (nextChange.count === 1) {
-                    const afterNextChange = changes[i + 2];
-                    if (afterNextChange?.added) {
-                      if (afterNextChange.value.split("\n")[0].endsWith(nextChange.value)) {
-                        // insertText = afterNextChange.value;
-                      }
-                    }
-                  }
-                  break;
-              }
-            }
-            break;
-          case "added":
-            if (offset === 0) {
-              // insertText = nextChange.value;
-            }
-            break;
-          case "removed":
-            if (nextAction === "added") {
-              // if (nextChange.value.startsWith(linePrefix) && nextChange.value.endsWith(lineSuffix))
-              //   insertText = nextChange.value.slice(...);
-            }
-            break;
-        }
-        break;
-      }
-    }
-    actions.push(lastAction);
-  }
 }
