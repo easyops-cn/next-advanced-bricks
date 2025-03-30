@@ -88,13 +88,55 @@ children:
 
 ```yaml preview
 - brick: vs.code-editor
+  context:
+    - name: commonMarkers
+      value:
+        - token: PATH
+          message: 这是 PATH
+          level: hit
+        - token: QUERY
+          message: 这是 QUERY
+          level: info
+        - token: ANCHOR
+          message: 这是 ANCHOR
+          level: warn
+        - token: STATE
+          message: 这里不能写 STATE
+          level: error
+          code:
+            value: 详情地址
+            target: https://brick-next.js.org/docs/concepts/context
+        - token: TPL
+          level: warn
+          message: 不允许写入TPL
+    - name: commonLibs
+      value:
+        - filePath: base.d.ts
+          content: |
+            declare namespace CTX {
+              const pageTitle: string;
+              const name: string;
+              const a;
+              const b;
+            };
+            declare namespace FN {
+              function getPageDetail();
+              function getInstance();
+            };
+            declare namespace PATH {
+              const instanceId: string;
+              const name: string;
+            };
+            declare namespace QUERY {
+              const activeId: string;
+            }
   events:
     token.click:
       - action: console.log
   properties:
     language: brick_next_yaml
     value: |
-      basicUsige:
+      basicUsage:
         keyword:
          Expression:
           expression1: <% CTX.work %>
@@ -176,7 +218,7 @@ children:
               %>
             test7: |
               <%  "track context",  CTX.name 
-          exporession16:
+          expression16:
             - <% CTX.a %>     
             - CTX.b
             -   <% CTX.c %>    
@@ -198,25 +240,6 @@ children:
     links:
       - CTX
       - FN
-    markers:
-      - token: PATH
-        message: “这是 PATH”
-        level: hit
-      - token: QUERY
-        message: “这是 QUERY”
-        level: info
-      - token: ANCHOR
-        message: “这是 ANCHOR“
-        level: warn
-      - token: STATE
-        message: "这里不能写 STATE"
-        level: error
-        code:
-          value: "详情地址"
-          target: https://brick-next.js.org/docs/concepts/context
-      - token: TPL
-        level: warn
-        message: 不允许写入TPL
     completers:
       - label: buttonName
         detail: string
@@ -230,26 +253,8 @@ children:
         completers:
           - label: a
           - label: b
-    extraLibs:
-      - filePath: base.d.ts
-        content: |
-          declare namespace CTX {
-            const pageTitle: string;
-            const name: string;
-            const a;
-            const b;
-          };
-          declare namespace FN {
-            function getPageDetail();
-            function getInstance();
-          };
-          declare namespace PATH {
-            const instanceId: string;
-            const name: string;
-          };
-          declare namespace QUERY {
-            const activeId: string;
-          }
+    markers: <% CTX.commonMarkers %>
+    extraLibs: <% CTX.commonLibs %>
 - brick: vs.code-editor
   events:
     highlight.click:
@@ -264,6 +269,8 @@ children:
     links:
       - CTX
       - FN
+    markers: <% CTX.commonMarkers %>
+    extraLibs: <% CTX.commonLibs %>
 - brick: vs.code-editor
   events:
     highlight.click:
@@ -276,6 +283,8 @@ children:
     links:
       - CTX
       - FN
+    markers: <% CTX.commonMarkers %>
+    extraLibs: <% CTX.commonLibs %>
 - brick: vs.code-editor
   events:
     highlight.click:
@@ -289,6 +298,8 @@ children:
     links:
       - CTX
       - FN
+    markers: <% CTX.commonMarkers %>
+    extraLibs: <% CTX.commonLibs %>
 ```
 
 ### Show CTX.DS

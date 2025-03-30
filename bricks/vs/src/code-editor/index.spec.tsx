@@ -6,6 +6,14 @@ import { CodeEditor } from "./index.js";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
 
 jest.mock("@next-core/theme", () => ({}));
+jest.mock("@next-core/runtime", () => ({
+  getRuntime() {
+    return null;
+  },
+  getV2RuntimeFromDll() {
+    return null;
+  },
+}));
 jest.mock("@next-core/react-runtime");
 jest.mock("./workers/yamlLinter.js", () => ({}));
 jest.mock("./workers/spellCheckRemoteWorker.js", () => ({}));
