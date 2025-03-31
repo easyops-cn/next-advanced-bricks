@@ -77,6 +77,10 @@ class Editor {
     return { dispose: jest.fn() };
   }
 
+  onDidFocusEditorWidget() {
+    return { dispose: jest.fn() };
+  }
+
   layout = jest.fn();
 
   dispose = jest.fn();

@@ -10,6 +10,8 @@ import { EventEmitter, createDecorators } from "@next-core/element";
 import { unwrapProvider } from "@next-core/utils/general";
 import { wrapBrick } from "@next-core/react-element";
 import { useCurrentTheme } from "@next-core/react-runtime";
+import { getRuntime } from "@next-core/runtime";
+import { HttpAbortError } from "@next-core/http";
 import { FormItemElementBase } from "@next-shared/form";
 import type { FormItem, FormItemProps } from "@next-bricks/form/form-item";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
@@ -38,7 +40,6 @@ import {
   getEmbeddedJavascriptUri,
   getBrickYamlBuiltInDeclare,
 } from "./utils/jsSuggestInBrickYaml.js";
-import { addExtraLibs } from "./utils/addExtraLibs.js";
 import type { EoTooltip, ToolTipProps } from "@next-bricks/basic/tooltip";
 import type {
   GeneralIcon,
@@ -49,6 +50,11 @@ import { K, NS, locales } from "./i18n.js";
 import type { copyToClipboard as _copyToClipboard } from "@next-bricks/basic/data-providers/copy-to-clipboard";
 import type { showNotification as _showNotification } from "@next-bricks/basic/data-providers/show-notification/show-notification";
 import classNames from "classnames";
+import {
+  MonacoCopilotProvider,
+  SUPPORTED_LANGUAGES,
+} from "@next-shared/monaco-copilot";
+import { AiopsBaseApi_openaiChat } from "@next-api-sdk/llm-sdk";
 import "./index.css";
 import { EmbeddedModelContext } from "./utils/embeddedModelState.js";
 import { PlaceholderContentWidget } from "./widget/Placeholder.js";
@@ -62,6 +68,12 @@ import {
   celCommonCompletionProviderFactory,
   celSpecificCompletionProviderFactory,
 } from "./utils/celCompletionProvider.js";
+import {
+  disposeEditor,
+  isCurrentEditor,
+  switchEditor,
+} from "./utils/EditorService.js";
+import { setExtraLibs } from "./utils/setExtraLibs.js";
 
 initializeReactI18n(NS, locales);
 
@@ -86,6 +98,47 @@ for (const lang of CEL_FAMILY) {
   monaco.languages.registerCompletionItemProvider(
     lang,
     celCommonCompletionProviderFactory(lang)
+  );
+}
+
+// istanbul ignore next
+const { enabled: copilotEnabled, ...copilotOptions } =
+  (getRuntime()?.getMiscSettings().globalMonacoEditorCopilotOptions ?? {}) as {
+    enabled?: boolean;
+    model?: string;
+    debounce?: number;
+    timeout?: number;
+  };
+
+// istanbul ignore next
+if (copilotEnabled) {
+  monaco.languages.registerInlineCompletionsProvider(
+    SUPPORTED_LANGUAGES,
+    new MonacoCopilotProvider({
+      ...copilotOptions,
+      async request({ model, temperature, system, prompt, signal }) {
+        const response = await AiopsBaseApi_openaiChat(
+          {
+            model,
+            temperature,
+            enableSensitiveWordsFilter: false,
+            stream: false,
+            messages: [
+              ...(system ? [{ role: "system", content: system }] : []),
+              { role: "user", content: prompt },
+            ],
+          },
+          {
+            signal,
+            interceptorParams: {
+              ignoreLoadingBar: true,
+            },
+          }
+        );
+        return response.choices?.[0]?.message?.content?.trim();
+      },
+      HttpAbortError,
+    })
   );
 }
 
@@ -713,19 +766,6 @@ export function CodeEditorComponent({
     language === "typescript" ? "typescriptDefaults" : "javascriptDefaults";
 
   useEffect(() => {
-    const libs: ExtraLib[] = extraLibs ?? [];
-
-    const disposables = addExtraLibs(libs, {
-      languageDefaults,
-    });
-    return () => {
-      for (const item of disposables) {
-        item.dispose();
-      }
-    };
-  }, [extraLibs, language, languageDefaults]);
-
-  useEffect(() => {
     if (
       language === "javascript" ||
       language === "typescript" ||
@@ -740,6 +780,55 @@ export function CodeEditorComponent({
       });
     }
   }, [language, domLibsEnabled, languageDefaults]);
+
+  useEffect(() => {
+    const editor = editorRef.current;
+    if (!editor) {
+      return;
+    }
+    return () => {
+      disposeEditor(editor);
+    };
+  }, []);
+
+  useEffect(() => {
+    const editor = editorRef.current;
+    if (!editor) {
+      return;
+    }
+
+    const setupLanguageService = () => {
+      setExtraLibs(extraLibs, { languageDefaults });
+
+      if (
+        language === "javascript" ||
+        language === "typescript" ||
+        language === "brick_next_yaml"
+      ) {
+        monaco.languages.typescript[languageDefaults].setCompilerOptions({
+          allowNonTsExtensions: true,
+          lib: domLibsEnabled ? undefined : ["esnext"],
+          target: monaco.languages.typescript.ScriptTarget.ESNext,
+          moduleResolution:
+            monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+        });
+      }
+    };
+
+    if (isCurrentEditor(editor)) {
+      setupLanguageService();
+    }
+
+    const disposable = editor.onDidFocusEditorWidget(() => {
+      // Set language service for this particular editor instance
+      if (switchEditor(editor)) {
+        setupLanguageService();
+      }
+    });
+    return () => {
+      disposable.dispose();
+    };
+  }, [domLibsEnabled, extraLibs, language, languageDefaults]);
 
   useEffect(() => {
     const editor = editorRef.current;
@@ -970,13 +1059,6 @@ export function CodeEditorComponent({
       };
     }
   }, [expanded]);
-
-  useEffect(() => {
-    return () => {
-      editorRef.current?.getModel()?.dispose();
-      editorRef.current?.dispose();
-    };
-  }, []);
 
   useEffect(() => {
     if (!editorRef.current && !placeholder) return;
