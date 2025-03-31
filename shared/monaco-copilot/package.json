@@ -39,7 +39,7 @@
   "devDependencies": {
     "@next-core/build-next-libs": "^1.0.24",
     "@next-core/test-next": "^1.1.9",
-    "monaco-editor": "^0.50.0"
+    "monaco-editor": "^0.52.2"
   },
   "dependencies": {
     "diff": "^7.0.0"
