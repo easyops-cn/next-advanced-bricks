@@ -1,6 +1,6 @@
 {
   "name": "@next-shared/monaco-copilot",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "homepage": "https://github.com/easyops-cn/next-advanced-bricks/tree/master/shared/monaco-copilot",
   "repository": {
     "type": "git",
@@ -37,9 +37,9 @@
     "test:ci": "cross-env NODE_ENV='test' CI=true test-next"
   },
   "devDependencies": {
-    "monaco-editor": "^0.50.0",
     "@next-core/build-next-libs": "^1.0.24",
-    "@next-core/test-next": "^1.1.9"
+    "@next-core/test-next": "^1.1.9",
+    "monaco-editor": "^0.50.0"
   },
   "dependencies": {
     "diff": "^7.0.0"

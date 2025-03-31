@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.16.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.15.5...@next-bricks/vs@1.16.0) (2025-03-31)
+
+
+### Features
+
+* monaco editor copilot ([d4bc041](https://github.com/easyops-cn/next-advanced-bricks/commit/d4bc04159bfd25badbb490132d61e84f7a0ad133))
+
+
+
+
+
 ## [1.15.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.15.4...@next-bricks/vs@1.15.5) (2025-03-27)
 
 **Note:** Version bump only for package @next-bricks/vs
