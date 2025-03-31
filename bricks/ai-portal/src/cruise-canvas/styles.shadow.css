@@ -1,0 +1,134 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.root {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.canvas,
+.edges {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transform-origin: 0% 0%;
+  user-select: none;
+}
+
+.node {
+  position: absolute;
+  user-select: text;
+  cursor: auto;
+}
+
+.canvas:not(.ready) .node {
+  visibility: hidden;
+}
+
+.edges {
+  pointer-events: none;
+  overflow: visible;
+}
+
+.edge {
+  fill: none;
+  stroke-width: 1px;
+  stroke: gray;
+  stroke-dasharray: 5, 5;
+}
+
+.node-start {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  border: 2px solid gray;
+}
+
+.node-end {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: gray;
+}
+
+.node-requirement {
+  width: 380px;
+  border: 1px solid gray;
+  border-radius: 6px;
+  padding: 6px;
+  white-space: pre-wrap;
+}
+
+.node-instruction {
+  width: 380px;
+  border: 1px solid gray;
+  border-radius: 9999px;
+  padding: 4px 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.node-default {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid gray;
+}
+
+.node-summarize {
+  width: 764px;
+  border: 1px solid gray;
+  border-radius: 6px;
+  padding: 6px;
+}
+
+.node-online-search {
+  width: 380px;
+  height: 412px;
+  border: 1px solid gray;
+  border-radius: 6px;
+  padding: 6px;
+  overflow-y: auto;
+}
+
+.node-online-search p,
+.node-summarize p {
+  white-space: pre-line;
+}
+
+.node-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.node-title:empty {
+  display: none;
+}
+
+.node-generate-image {
+  width: 380px;
+  border: 1px solid gray;
+  border-radius: 6px;
+  padding: 6px;
+  display: flex;
+  justify-content: center;
+
+  img {
+    max-width: 100%;
+  }
+}
