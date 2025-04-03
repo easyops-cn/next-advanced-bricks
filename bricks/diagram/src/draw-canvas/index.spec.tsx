@@ -841,6 +841,11 @@ describe("eo-draw-canvas", () => {
       onCellContextMenu((e as CustomEvent).detail)
     );
 
+    const onCanvasContextMenu = jest.fn();
+    element.addEventListener("canvas.contextmenu", (e) =>
+      onCanvasContextMenu((e as CustomEvent).detail)
+    );
+
     act(() => {
       document.body.appendChild(element);
     });
@@ -870,6 +875,8 @@ describe("eo-draw-canvas", () => {
       clientY: 200,
       locked: false,
     });
+
+    expect(onCanvasContextMenu).toHaveBeenCalled();
 
     act(() => {
       document.body.removeChild(element);

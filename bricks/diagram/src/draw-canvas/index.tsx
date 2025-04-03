@@ -191,6 +191,15 @@ export const EoDrawCanvasComponent = React.forwardRef(
   LegacyEoDrawCanvasComponent
 );
 
+export interface CanvasContextMenuDetail {
+  clientX: number;
+  clientY: number;
+  view: {
+    x: number;
+    y: number;
+  };
+}
+
 /**
  * 用于手工绘图的画布。
  *
@@ -440,6 +449,26 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     this.#scaleChange.emit(scale);
   };
 
+  #getViewFromPosition(position: PositionTuple) {
+    const boundingClientRect = this.getBoundingClientRect();
+    const transform = this.#canvasRef.current!.getTransform();
+    return {
+      x: (position[0] - boundingClientRect.left - transform.x) / transform.k,
+      y: (position[1] - boundingClientRect.top - transform.y) / transform.k,
+    };
+  }
+
+  @event({ type: "canvas.contextmenu" })
+  accessor #canvasContextMenu!: EventEmitter<CanvasContextMenuDetail>;
+
+  #handleCanvasContextMenu = (detail: PositionTuple) => {
+    this.#canvasContextMenu.emit({
+      clientX: detail[0],
+      clientY: detail[1],
+      view: this.#getViewFromPosition(detail),
+    });
+  };
+
   @method()
   async dropNode({
     id,
@@ -453,22 +482,13 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
       .elementsFromPoint?.(position[0], position[1])
       ?.includes(this);
     if (droppedInside) {
-      const boundingClientRect = this.getBoundingClientRect();
-      const transform = this.#canvasRef.current!.getTransform();
       const newNode = {
         type: "node",
         id,
         view: {
           ...(this.layout === "force" || this.layout === "dagre"
             ? null
-            : {
-                x:
-                  (position[0] - boundingClientRect.left - transform.x) /
-                  transform.k,
-                y:
-                  (position[1] - boundingClientRect.top - transform.y) /
-                  transform.k,
-              }),
+            : this.#getViewFromPosition(position)),
           width: size?.[0] ?? this.defaultNodeSize[0],
           height: size?.[1] ?? this.defaultNodeSize[0],
         },
@@ -694,6 +714,7 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
         onCellsDelete={this.#handleCellsDelete}
         onEdgeAdd={this.#handleEdgeAdd}
         onCellContextMenu={this.#handleCellContextMenu}
+        onCanvasContextMenu={this.#handleCanvasContextMenu}
         onDecoratorTextChange={this.#handleDecoratorTextChange}
         onContainerContainerChange={this.#handleContainerContainerChange}
         onScaleChange={this.#handleScaleChange}
@@ -720,6 +741,7 @@ export interface EoDrawCanvasComponentProps extends EoDrawCanvasProps {
   onDecoratorViewChange(detail: DecoratorViewChangePayload): void;
   onContainerContainerChange(detail: MoveCellPayload[]): void;
   onScaleChange(scale: number): void;
+  onCanvasContextMenu(detail: PositionTuple): void;
 }
 
 export interface DrawCanvasRef {
@@ -785,6 +807,7 @@ function LegacyEoDrawCanvasComponent(
     onContainerContainerChange,
     onEdgeViewChange,
     onDecoratorViewChange,
+    onCanvasContextMenu,
   }: EoDrawCanvasComponentProps,
   ref: React.Ref<DrawCanvasRef>
 ) {
@@ -1356,6 +1379,14 @@ function LegacyEoDrawCanvasComponent(
       movingCells,
     ]
   );
+  // istanbul ignore next
+  const handleCanvasContextMenu = useCallback(
+    (event: React.MouseEvent<SVGElement>) => {
+      event.preventDefault();
+      onCanvasContextMenu([event.clientX, event.clientY]);
+    },
+    [onCanvasContextMenu]
+  );
   useEffect(() => {
     const root = rootRef.current;
     if (!root || dragBehavior !== "lasso") {
@@ -1408,6 +1439,7 @@ function LegacyEoDrawCanvasComponent(
   return (
     <HoverStateContext.Provider value={hoverStateContextValue}>
       <svg
+        onContextMenu={handleCanvasContextMenu}
         width="100%"
         height="100%"
         ref={rootRef}
