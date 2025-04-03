@@ -266,6 +266,7 @@ export function CellComponent({
         return;
       }
       event.preventDefault();
+      event.stopPropagation();
       onSwitchActiveTarget(cellToTarget(cell));
       onCellContextMenu({
         cell,

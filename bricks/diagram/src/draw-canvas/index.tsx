@@ -1384,8 +1384,9 @@ function LegacyEoDrawCanvasComponent(
     (event: React.MouseEvent<SVGElement>) => {
       event.preventDefault();
       onCanvasContextMenu([event.clientX, event.clientY]);
+      onSwitchActiveTarget?.(null);
     },
-    [onCanvasContextMenu]
+    [onCanvasContextMenu, onSwitchActiveTarget]
   );
   useEffect(() => {
     const root = rootRef.current;
