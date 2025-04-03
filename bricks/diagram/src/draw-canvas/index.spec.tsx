@@ -876,7 +876,28 @@ describe("eo-draw-canvas", () => {
       locked: false,
     });
 
-    expect(onCanvasContextMenu).toHaveBeenCalled();
+    // Context-menu event propagation is stopped.
+    expect(onCanvasContextMenu).not.toHaveBeenCalled();
+
+    act(() => {
+      fireEvent.contextMenu(element.shadowRoot!.querySelector("svg")!, {
+        clientX: 100,
+        clientY: 200,
+      });
+    });
+
+    expect(onCanvasContextMenu).toBeCalledWith({
+      clientX: 100,
+      clientY: 200,
+      view: {
+        x: 100,
+        y: 200,
+      },
+    });
+
+    // Active target is reset to null when right-click the canvas space area.
+    await act(() => new Promise((resolve) => setTimeout(resolve, 1)));
+    expect(onActiveTargetChange).toHaveBeenCalledWith(null);
 
     act(() => {
       document.body.removeChild(element);
