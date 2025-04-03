@@ -267,7 +267,13 @@ export interface BasicDecoratorProps {
   onDecoratorTextChange?(detail: DecoratorTextChangeDetail): void;
 }
 
-export interface CellContextMenuDetail {
+export interface CellContextMenuDetail extends CellClickDetail {
+  /** @deprecated use `target` instead */
+  cell: Cell;
+  target: ActiveTarget;
+}
+
+export interface CellClickDetail {
   cell: Cell;
   clientX: number;
   clientY: number;

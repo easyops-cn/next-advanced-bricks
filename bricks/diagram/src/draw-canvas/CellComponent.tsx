@@ -14,6 +14,7 @@ import type {
   EditableLine,
   EditableLineCell,
   EditableEdgeLine,
+  CellClickDetail,
 } from "./interfaces";
 import {
   isContainerDecoratorCell,
@@ -65,7 +66,7 @@ export interface CellComponentProps {
   onCellResized?(info: ResizeCellPayload): void;
   onSwitchActiveTarget(target: ActiveTarget | null): void;
   onCellContextMenu(detail: CellContextMenuDetail): void;
-  onCellClick?(detail: CellContextMenuDetail): void;
+  onCellClick?(detail: CellClickDetail): void;
   onDecoratorTextEditing?(detail: { id: string; editing: boolean }): void;
   onDecoratorTextChange?(detail: DecoratorTextChangeDetail): void;
   onNodeBrickResize(id: string, size: SizeTuple | null): void;
@@ -267,15 +268,30 @@ export function CellComponent({
       }
       event.preventDefault();
       event.stopPropagation();
-      onSwitchActiveTarget(cellToTarget(cell));
+      let target = activeTarget;
+      // When right-click a cell,
+      // - if it's already active, use previous active target (including multiple targets)
+      // - if it's inactive, use the cell as the new only target (excluding previous active target)
+      if (!targetIsActive(cell, activeTarget)) {
+        target = cellToTarget(cell);
+        onSwitchActiveTarget(target);
+      }
       onCellContextMenu({
         cell,
         clientX: event.clientX,
         clientY: event.clientY,
         locked,
+        target: target!,
       });
     },
-    [cell, onCellContextMenu, onSwitchActiveTarget, readOnly, locked]
+    [
+      readOnly,
+      cell,
+      activeTarget,
+      onCellContextMenu,
+      locked,
+      onSwitchActiveTarget,
+    ]
   );
 
   const handleCellClick = useCallback(
