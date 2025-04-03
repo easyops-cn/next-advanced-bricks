@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.60.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.60.0...@next-bricks/diagram@0.60.1) (2025-04-03)
+
+
+### Bug Fixes
+
+* stop context menu event propagation from cell ([3310e21](https://github.com/easyops-cn/next-advanced-bricks/commit/3310e2179bb9ead85fb39b9d4f14aae40218fcf2))
+
+
+
+
+
 # [0.60.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.59.0...@next-bricks/diagram@0.60.0) (2025-04-03)
 
 
