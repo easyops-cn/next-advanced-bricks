@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.60.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.59.0...@next-bricks/diagram@0.60.0) (2025-04-03)
+
+
+### Features
+
+* draw-canvas添加canvas.contextmenu事件用于实现右键粘贴节点功能 ref CUSTOMIZE-1091 ([96c21b6](https://github.com/easyops-cn/next-advanced-bricks/commit/96c21b632316a2645de746afd9abdfc64aa42c1e))
+
+
+
+
+
 # [0.59.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.58.2...@next-bricks/diagram@0.59.0) (2025-03-27)
 
 
