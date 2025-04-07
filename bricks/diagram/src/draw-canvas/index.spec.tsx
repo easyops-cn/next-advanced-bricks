@@ -874,6 +874,10 @@ describe("eo-draw-canvas", () => {
       clientX: 100,
       clientY: 200,
       locked: false,
+      target: {
+        type: "node",
+        id: "a",
+      },
     });
 
     // Context-menu event propagation is stopped.

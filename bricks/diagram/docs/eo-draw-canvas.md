@@ -114,7 +114,7 @@
         %>
     - name: dragging
     - name: activeTarget
-    - name: contextMenuTarget
+    - name: contextMenuDetail
     - name: scale
       value: 1
   children:
@@ -405,7 +405,7 @@
                       - <% EVENT.detail.clientY %>
               - action: context.replace
                 args:
-                  - contextMenuTarget
+                  - contextMenuDetail
                   - <% EVENT.detail %>
             edge.add:
               action: message.info
@@ -457,10 +457,17 @@
   properties:
     actions: |
       <%=
-        !CTX.contextMenuTarget
+        !CTX.contextMenuDetail
         ? []
+        : CTX.contextMenuDetail.target?.type === "multi"
+        ? [
+            {
+              text: "锁定/取消锁定",
+              event: "toggle-lock",
+            },
+          ]
         : [
-          ...(CTX.contextMenuTarget.locked ? [] : [{
+          ...(CTX.contextMenuDetail.locked ? [] : [{
             text: "添加边",
             event: "add-edge",
           },{
@@ -472,9 +479,9 @@
             event: "toggle-lock",
           },
         ].filter((action) =>
-          CTX.contextMenuTarget.cell.type === "node" || (
-            CTX.contextMenuTarget.cell.type === "decorator" &&
-            CTX.contextMenuTarget.cell.decorator === "area"
+          CTX.contextMenuDetail.cell.type === "node" || (
+            CTX.contextMenuDetail.cell.type === "decorator" &&
+            CTX.contextMenuDetail.cell.decorator === "area"
           ) || action.event !== "add-edge"
         )
       %>
@@ -487,12 +494,12 @@
           <%
             CTX.initialCells.filter((cell) =>
               !(
-                CTX.contextMenuTarget.cell.type === "edge"
-                  ? cell.type === "edge" && CTX.contextMenuTarget.cell.source === cell.source && CTX.contextMenuTarget.cell.target === cell.target
-                  : cell.id === CTX.contextMenuTarget.cell.id ||
+                CTX.contextMenuDetail.cell.type === "edge"
+                  ? cell.type === "edge" && CTX.contextMenuDetail.cell.source === cell.source && CTX.contextMenuDetail.cell.target === cell.target
+                  : cell.id === CTX.contextMenuDetail.cell.id ||
                     (cell.type === "edge" && (
-                      CTX.contextMenuTarget.cell.id === cell.source ||
-                      CTX.contextMenuTarget.cell.id === cell.target))
+                      CTX.contextMenuDetail.cell.id === cell.source ||
+                      CTX.contextMenuDetail.cell.id === cell.target))
               )
             )
           %>
@@ -500,7 +507,7 @@
       target: eo-draw-canvas
       method: manuallyConnectNodes
       args:
-        - <% CTX.contextMenuTarget.cell.id %>
+        - <% CTX.contextMenuDetail.cell.id %>
       callback:
         success:
           - target: eo-draw-canvas
@@ -512,7 +519,7 @@
       target: eo-draw-canvas
       method: toggleLock
       args:
-        - <% CTX.contextMenuTarget.cell %>
+        - <% CTX.contextMenuDetail.target %>
       callback:
         success:
           action: console.log
