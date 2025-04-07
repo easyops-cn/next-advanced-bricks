@@ -5,3 +5,6 @@
 :host([hidden]) {
   display: none;
 }
+.ant-color-picker-trigger {
+  align-items: center;
+}
