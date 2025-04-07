@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.61.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.60.1...@next-bricks/diagram@0.61.0) (2025-04-07)
+
+
+### Features
+
+* event 'cell.contextmenu' supports multiple targets ([a28bef6](https://github.com/easyops-cn/next-advanced-bricks/commit/a28bef6b2efae981cfa27d6a7b266be401ca084f))
+
+
+
+
+
 ## [0.60.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.60.0...@next-bricks/diagram@0.60.1) (2025-04-03)
 
 
