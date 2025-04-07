@@ -8,4 +8,8 @@
 .ant-color-picker-trigger {
   align-items: center;
   padding: 0 3px;
+  border-radius: 3px;
+}
+.ant-color-picker-trigger-text {
+  min-width: 95px;
 }
