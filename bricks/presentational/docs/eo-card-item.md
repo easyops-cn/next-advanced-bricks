@@ -184,6 +184,13 @@ properties:
       size: 20
       bgColor: var(--theme-geekblue-background)
   slots:
+    title-suffix:
+      type: bricks
+      bricks:
+        - brick: eo-tag
+          properties:
+            textContent: 已启用
+            color: green
     expanded-area-1:
       type: bricks
       bricks:

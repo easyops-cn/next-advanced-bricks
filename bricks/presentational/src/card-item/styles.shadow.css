@@ -251,6 +251,12 @@ eo-tooltip::part(popup) {
   text-overflow: ellipsis;
 }
 
+.card-title-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .card-wrapper:hover .card-title {
   color: var(--local-card-hovered-title-color);
 }
