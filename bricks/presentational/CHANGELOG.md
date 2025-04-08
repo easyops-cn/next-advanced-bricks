@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.13.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.12.9...@next-bricks/presentational@1.13.0) (2025-04-08)
+
+
+### Features
+
+* support title sufix slot ([2bfe9a5](https://github.com/easyops-cn/next-advanced-bricks/commit/2bfe9a5c99f5d9430662067796306eec562d904e))
+
+
+
+
+
 ## [1.12.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.12.8...@next-bricks/presentational@1.12.9) (2025-03-27)
 
 **Note:** Version bump only for package @next-bricks/presentational
