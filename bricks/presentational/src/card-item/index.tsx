@@ -489,8 +489,13 @@ export function EoCardItemComponent(props: EoCardItemComponentProps) {
         <div className="card-content">
           {avatarPosition !== "cover" && Avatar}
           <div className="card-content-container">
-            <div className="card-title" title={cardTitle}>
-              {cardTitle}
+            <div className="card-title-wrapper">
+              <div className="card-title" title={cardTitle}>
+                {cardTitle}
+              </div>
+              <div className="title-suffix">
+                <slot name="title-suffix" />
+              </div>
             </div>
             <div className="card-description">{description}</div>
           </div>
