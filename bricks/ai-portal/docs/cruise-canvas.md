@@ -20,6 +20,104 @@ children:
       - id: "1"
         type: requirement
         content: |-
+          帮我在CMDB中完成手机银行系统的资源纳管
+      - id: "2"
+        parent: "1"
+        type: instruction
+        content: |-
+          深度搜素内部知识库，确认手机银行系统包含的逻辑组件和部署要求
+      - id: "3"
+        parent: "2"
+        type: group
+        groupChildren:
+          - "4"
+          - "5"
+      - id: "4"
+        parent: "2"
+        type: online search
+        title: 《手机银行系统》
+        content: |-
+          依据内部知识库，手机银行系统的逻辑组件包含用户认证，交易接入和理财中心三个模块组成。
+      - id: "5"
+        parent: "2"
+        type: online search
+        title: 《XX公司运维管理文件》
+        content: |-
+          依据《XX公司运维管理文件》该系统的重要等级为一级，可用性要求99.999%，MTTR为小于3分钟，该系统部署需要实现异地容灾，建议采用双中心部署，且单中心内核心模块无单点。
+      - id: "7"
+        parent: "3"
+        type: tool
+        content: |-
+          依据内部知识库，手机银行系统的逻辑组件包含用户认证，交易接入和理财中心三个模块组成。依据《XX公司运维管理文件》该系统的重要等级为一级，可用性要求99.999%，MTTR为小于3分钟，该系统部署需要实现异地容灾，建议采用双中心部署，且单中心内核心模块无单点。
+      - id: "8"
+        parent: "7"
+        type: instruction
+        content: |-
+          深度搜素CMDB给出资源的纳管现状
+      - id: "9"
+        parent: "8"
+        type: summarize
+        title: 总结
+        content: |-
+          基于CMDB查询手机银行的资源纳管情况，纳管现状总结如下：
+
+          实例数据的完整性
+          1. 系统录入（已完成）
+          2. 模块录入（部分完成），交易接入模块未录入
+          3. 环境录入（已完成）
+          4. 主机录入（部分完成），交易接入模块主机未录入
+          5. 部署实例录入（部分完成），交易接入模块的部署实例未录入
+
+          关系数据的完整性
+          1. 系统和模块（部分完成），系统和交易接入模块的关系未建立
+          2. 系统和环境（√）
+          3. 模块和主机（部分完成）
+          4. ...
+      - id: "10"
+        parent: "9"
+        type: instruction
+        content: |-
+          利用深度思考能力，给出手机银行系统的资源纳管优化方案，该方案用户可以微调或确认
+      - id: "11"
+        parent: "10"
+        type: tool
+        tag: ask user more
+        content: |-
+          - 交易接入模块的录入；
+          - 系统和交易接入模块的关系创建 ；
+          - 部署实例自动采集特征录入。
+      - id: "12"
+        parent: "11"
+        type: instruction
+        content: |-
+          在CMDB中完成手机银行系统的资源纳管
+      - id: "13"
+        parent: "12"
+        type: tool
+        content: |-
+          方案执行的过程信息
+      - id: "14"
+        parent: "13"
+        type: instruction
+        content: |-
+          生成纳管后手机银行系统的逻辑架构和部署架构图
+      - id: "15"
+        parent: "14"
+        type: tool
+        content: |-
+          ...
+      - id: "16"
+        parent: "15"
+        type: summarize
+        title: 综合分析
+        finished: true
+        content: |-
+          该手机银行系统的资源纳管已经完成，本次纳管新增了交易接入模块和该模块相关的主机，以及部署实例信息，模块的纳管建议和架构管理平台打通，部署实例的纳管建议和自动发布平台打通，以便自动完成数据变更，确保数据的准确性，降低架构维护成本。
+
+    _nodes:
+      - id: "1"
+        type: requirement
+        content: |-
           给开源项目创建一个 logo 图标，SVG 格式，项目地址：https://github.com/easyops-cn/next-core
 
       - id: "2"
@@ -200,29 +298,36 @@ children:
 
           选择哪个或哪几个元素进行组合，取决于希望传递的首要信息和期望的视觉风格（例如，是更强调其“核心引擎”的稳固性，还是“积木构建”的灵活性，或是“下一代”的前瞻性）。
 
+      # - id: "8"
+      #   parent: "7"
+      #   type: tool
+      #   tag: search images
+      #   resources:
+      #     - type: image
+      #       title: 四季複製畫- 莫內Claude Monet 世界名畫複製畫專業品質
+      #       url: |-
+      #         https://fine-art-print.tw/P/Claude-Monet/s/Antibes,%20Afternoon%20Effect,%201888.jpg?v=4
+      #       height: 280
+      #       width: 350
+      #     - type: image
+      #       title: 艺谭|莫奈的海印象的海_手机搜狐网
+      #       url: |-
+      #         http://5b0988e595225.cdn.sohucs.com/images/20191021/a5c37b43eb324ce09d582da971c7cfd5.jpeg
+      #       height: 531
+      #       width: 640
+      #     - type: image
+      #       title: 四季複製畫- 莫內Claude Monet 世界名畫複製畫專業品質
+      #       url: |-
+      #         https://fine-art-print.tw/P/Claude-Monet/s/Low%20Tide%20at%20Pourville%2002,%201882.jpg?v=4
+      #       height: 259
+      #       width: 350
+
       - id: "8"
         parent: "7"
         type: tool
-        tag: search images
-        resources:
-          - type: image
-            title: 四季複製畫- 莫內Claude Monet 世界名畫複製畫專業品質
-            url: |-
-              https://fine-art-print.tw/P/Claude-Monet/s/Antibes,%20Afternoon%20Effect,%201888.jpg?v=4
-            height: 280
-            width: 350
-          - type: image
-            title: 艺谭|莫奈的海印象的海_手机搜狐网
-            url: |-
-              http://5b0988e595225.cdn.sohucs.com/images/20191021/a5c37b43eb324ce09d582da971c7cfd5.jpeg
-            height: 531
-            width: 640
-          - type: image
-            title: 四季複製畫- 莫內Claude Monet 世界名畫複製畫專業品質
-            url: |-
-              https://fine-art-print.tw/P/Claude-Monet/s/Low%20Tide%20at%20Pourville%2002,%201882.jpg?v=4
-            height: 259
-            width: 350
+        tag: ask user more
+        content: |-
+          请详细说下。
 
       - id: "9"
         parent: "8"
@@ -231,4 +336,26 @@ children:
         finished: true
         content: |-
           https://photo.16pic.com/00/07/99/16pic_799976_b.jpg
+
+- brick: div
+  properties:
+    style:
+      position: absolute
+      bottom: 0
+      left: 0
+      right: 0
+      display: flex
+      justifyContent: center
+      padding: 24px
+  children:
+  - brick: ai-portal.chat-box
+    properties:
+      style:
+        width: 100%
+        maxWidth: 600px
+    events:
+      message.submit:
+        action: message.info
+        args:
+          - '<% `Message: ${EVENT.detail}` %>'
 ```

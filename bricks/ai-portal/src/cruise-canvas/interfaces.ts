@@ -47,6 +47,7 @@ export interface BaseRawNode {
   parent?: string;
   finished?: boolean;
   view?: NodeView;
+  content?: string;
 }
 
 export type Node = RawNode | StartNode | EndNode;

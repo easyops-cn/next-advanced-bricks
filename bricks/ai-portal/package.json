@@ -40,6 +40,7 @@
     "@next-core/i18n": "^1.0.74",
     "@next-core/react-element": "^1.0.36",
     "@next-core/theme": "^1.5.4",
+    "@next-shared/form": "^0.7.10",
     "@next-shared/markdown": "^0.2.7",
     "classnames": "^2.3.2",
     "d3-selection": "^3.0.0",
