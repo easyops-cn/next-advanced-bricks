@@ -1,19 +1,13 @@
-import React, {
-  createRef,
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+import React, { createRef, forwardRef, useCallback, useRef } from "react";
 import { createDecorators, type EventEmitter } from "@next-core/element";
-import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
-import ResizeObserver from "resize-observer-polyfill";
+import {
+  FormItemElementBase,
+  pickFormItemProps,
+  TextareaAutoResize,
+} from "@next-shared/form";
 import { wrapBrick } from "@next-core/react-element";
 import classNames from "classnames";
 import "@next-core/theme";
-import calculateAutoSizeStyle from "./calculateAutoSizeStyle.js";
 import type { FormItem, FormItemProps } from "../form-item/index.jsx";
 import styleText from "./textarea.shadow.css";
 
@@ -207,6 +201,7 @@ export const TextareaComponent = forwardRef<
 >(function TextareaComponent(props, ref) {
   const {
     name,
+    value,
     placeholder,
     disabled,
     textareaStyle,
@@ -216,9 +211,6 @@ export const TextareaComponent = forwardRef<
     validateState,
     onInputChange,
   } = props;
-  const [value, setValue] = useState(props.value ?? "");
-  const [autoSizeStyle, setAutoSizeStyle] = useState<React.CSSProperties>();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [minRows, maxRows] = React.useMemo(() => {
     if (autoSize && typeof autoSize === "object") {
       return [autoSize.minRows, autoSize.maxRows];
@@ -227,88 +219,14 @@ export const TextareaComponent = forwardRef<
     return [];
   }, [autoSize]);
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      focus: () => {
-        const textarea = textareaRef.current;
-
-        if (textarea) {
-          const valueLength = textarea.value?.length;
-
-          textarea.focus();
-          valueLength && textarea.setSelectionRange(valueLength, valueLength);
-        }
-      },
-    }),
-    []
-  );
-
-  const setAutoSize = useCallback(() => {
-    const textareaElement = textareaRef.current;
-    if (textareaElement && autoSize) {
-      const textareaStyles = calculateAutoSizeStyle(
-        textareaElement,
-        minRows,
-        maxRows
-      );
-
-      setAutoSizeStyle(textareaStyles);
-    }
-  }, [autoSize, maxRows, minRows]);
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
-  ): void => {
-    setValue(e.target.value);
-    onInputChange(e.target.value);
-    setAutoSize();
-  };
-
-  useEffect(() => {
-    setValue(props.value ?? "");
-  }, [props.value]);
-
-  useEffect(() => {
-    requestAnimationFrame(setAutoSize);
-  }, [setAutoSize, value]);
-
   const formItemRef = useRef<FormItem>(null);
 
-  useEffect(() => {
-    const container = formItemRef.current;
-    if (!container || !autoSize) {
-      return;
-    }
-    let previousInlineSize: number | undefined;
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.target === container) {
-          // istanbul ignore next: compatibility
-          const currentInlineSize = entry.contentBoxSize
-            ? entry.contentBoxSize[0]
-              ? entry.contentBoxSize[0].inlineSize
-              : (entry.contentBoxSize as unknown as ResizeObserverSize)
-                  .inlineSize
-            : entry.contentRect.width;
-          if (
-            currentInlineSize !== undefined &&
-            currentInlineSize !== previousInlineSize
-          ) {
-            const isInitial = !previousInlineSize;
-            previousInlineSize = currentInlineSize;
-            if (!isInitial) {
-              requestAnimationFrame(setAutoSize);
-            }
-          }
-        }
-      }
-    });
-    observer.observe(container);
-    return () => {
-      observer.disconnect();
-    };
-  }, [autoSize, setAutoSize]);
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      onInputChange(e.target.value);
+    },
+    [onInputChange]
+  );
 
   return (
     <WrappedFormItem
@@ -316,8 +234,12 @@ export const TextareaComponent = forwardRef<
       {...pickFormItemProps(props)}
       ref={formItemRef}
     >
-      <textarea
-        ref={textareaRef}
+      <TextareaAutoResize
+        ref={ref}
+        containerRef={formItemRef}
+        autoResize={!!autoSize}
+        minRows={minRows}
+        maxRows={maxRows}
         className={classNames({
           error: validateState === "error",
         })}
@@ -326,19 +248,21 @@ export const TextareaComponent = forwardRef<
         disabled={disabled}
         style={{
           // Use the minimal height when auto-size enabled, prevent layout shift.
-          // By default, the height is 21px each row + 10px (padding & border).
-          height: autoSize
-            ? (typeof autoSize === "object" ? (autoSize.minRows ?? 1) : 1) *
-                21 +
-              10
-            : 94,
+          // By default, the height is 22px each row + 10px (padding & border).
+          ...(autoSize
+            ? {
+                height:
+                  (typeof autoSize === "object" ? (autoSize.minRows ?? 1) : 1) *
+                    22 +
+                  10,
+              }
+            : null),
           ...textareaStyle,
-          ...autoSizeStyle,
         }}
         placeholder={placeholder}
         minLength={minLength}
         maxLength={maxLength}
-        onChange={handleInputChange}
+        onChange={handleChange}
       />
     </WrappedFormItem>
   );
