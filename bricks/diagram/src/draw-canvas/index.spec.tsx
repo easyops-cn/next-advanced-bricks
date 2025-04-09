@@ -1602,4 +1602,56 @@ describe("eo-draw-canvas", () => {
       document.body.removeChild(element);
     });
   });
+
+  test("copy and paste ", async () => {
+    const element = document.createElement("eo-draw-canvas") as EoDrawCanvas;
+    element.defaultNodeBricks = [{ useBrick: { brick: "div" } }];
+    element.cells = [
+      {
+        type: "node",
+        id: "a",
+        view: {
+          x: 20,
+          y: 20,
+        },
+      },
+      {
+        type: "node",
+        id: "b",
+        view: {
+          x: 20,
+          y: 320,
+        },
+      },
+    ] as NodeBrickCell[];
+
+    const onCanvasCopy = jest.fn();
+    const onCanvasPaste = jest.fn();
+    element.addEventListener("canvas.copy", () => onCanvasCopy());
+
+    element.addEventListener("canvas.paste", () => onCanvasPaste());
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    await act(() => new Promise((resolve) => setTimeout(resolve, 1)));
+
+    fireEvent.keyDown(element.shadowRoot!.querySelector("svg")!, {
+      key: "c",
+      ctrlKey: true,
+    });
+
+    expect(onCanvasCopy).toBeCalledTimes(1);
+
+    fireEvent.keyDown(element.shadowRoot!.querySelector("svg")!, {
+      key: "v",
+      ctrlKey: true,
+    });
+    expect(onCanvasPaste).toBeCalledTimes(1);
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
 });
