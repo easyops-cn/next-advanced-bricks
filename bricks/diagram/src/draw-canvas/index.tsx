@@ -469,6 +469,20 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     });
   };
 
+  @event({ type: "canvas.copy" })
+  accessor #canvasCopy!: EventEmitter<void>;
+
+  #handleCanvasCopy = () => {
+    this.#canvasCopy.emit();
+  };
+
+  @event({ type: "canvas.paste" })
+  accessor #canvasPaste!: EventEmitter<void>;
+
+  #handleCanvasPaste = () => {
+    this.#canvasPaste.emit();
+  };
+
   @method()
   async dropNode({
     id,
@@ -720,6 +734,8 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
         onScaleChange={this.#handleScaleChange}
         onEdgeViewChange={this.#handleEdgeViewChange}
         onDecoratorViewChange={this.#handleDecoratorViewChange}
+        onCanvasCopy={this.#handleCanvasCopy}
+        onCanvasPaste={this.#handleCanvasPaste}
       />
     );
   }
@@ -742,6 +758,8 @@ export interface EoDrawCanvasComponentProps extends EoDrawCanvasProps {
   onContainerContainerChange(detail: MoveCellPayload[]): void;
   onScaleChange(scale: number): void;
   onCanvasContextMenu(detail: PositionTuple): void;
+  onCanvasCopy(): void;
+  onCanvasPaste(): void;
 }
 
 export interface DrawCanvasRef {
@@ -808,6 +826,8 @@ function LegacyEoDrawCanvasComponent(
     onEdgeViewChange,
     onDecoratorViewChange,
     onCanvasContextMenu,
+    onCanvasCopy,
+    onCanvasPaste,
   }: EoDrawCanvasComponentProps,
   ref: React.Ref<DrawCanvasRef>
 ) {
@@ -1388,6 +1408,24 @@ function LegacyEoDrawCanvasComponent(
     },
     [onCanvasContextMenu, onSwitchActiveTarget]
   );
+  // istanbul ignore next
+  const handleCanvasKeyDown = useCallback(
+    (event: React.KeyboardEvent<SVGElement>) => {
+      const modKey = /Mac|iPod|iPhone|iPad/.test(navigator.platform)
+        ? "metaKey"
+        : "ctrlKey";
+      if (event[modKey]) {
+        if (event.key === "c") {
+          onCanvasCopy();
+          event.preventDefault();
+        } else if (event.key === "v") {
+          onCanvasPaste();
+          event.preventDefault();
+        }
+      }
+    },
+    [onCanvasCopy, onCanvasPaste]
+  );
   useEffect(() => {
     const root = rootRef.current;
     if (!root || dragBehavior !== "lasso") {
@@ -1440,6 +1478,7 @@ function LegacyEoDrawCanvasComponent(
   return (
     <HoverStateContext.Provider value={hoverStateContextValue}>
       <svg
+        onKeyDown={handleCanvasKeyDown}
         onContextMenu={handleCanvasContextMenu}
         width="100%"
         height="100%"
