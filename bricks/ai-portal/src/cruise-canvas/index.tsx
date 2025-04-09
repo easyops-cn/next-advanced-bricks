@@ -1,20 +1,19 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createDecorators } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
-import dagre from "@dagrejs/dagre";
 import classNames from "classnames";
-import { select } from "d3-selection";
-import { ZoomTransform } from "d3-zoom";
 import ResizeObserver from "resize-observer-polyfill";
+import { TextareaAutoResize } from "@next-shared/form";
 import { MarkdownComponent } from "@next-shared/markdown";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
 import { useZoom } from "./useZoom.js";
-import type { Edge, Node, NodePosition, RawNode, SizeTuple } from "./interfaces.js";
-import Summarization from "./summarization.md";
-import { END_NODE_ID, START_NODE_ID } from "./constants.js";
+import type { Node, RawNode, SizeTuple, ToolRawNode } from "./interfaces.js";
+// import Summarization from "./summarization.md";
+import { useAutoCenter } from "./useAutoCenter.js";
+import { useLayout } from "./useLayout.js";
 
 initializeI18n(NS, locales);
 
@@ -66,127 +65,10 @@ export function CruiseCanvasComponent({ nodes: rawNodes }: CruiseCanvasComponent
     });
   }, []);
 
-  const { initialNodes, initialEdges } = useMemo(() => {
-    const initialNodes: Node[] = [
-      {
-        id: START_NODE_ID,
-        type: "start",
-      }
-    ];
-    const initialEdges: Omit<Edge, "points">[] = [];
-    const groupChildrenMap = new Map<string, string[]>();
-    const finishedNodeIds: string[] = [];
-
-    for (const node of rawNodes ?? []) {
-
-      if (node.type === "group") {
-        groupChildrenMap.set(node.id, node.groupChildren);
-      } else {
-        const groupChildren = node.parent ? groupChildrenMap.get(node.parent) : undefined;
-        if (groupChildren) {
-          for (const child of groupChildren) {
-            initialEdges.push({
-              source: child,
-              target: node.id,
-            });
-          }
-        } else {
-          initialEdges.push({
-            source: node.parent ?? START_NODE_ID,
-            target: node.id,
-          });
-        }
-        initialNodes.push(node);
-      }
-
-      if (node.finished) {
-        finishedNodeIds.push(node.id);
-      }
-    }
-
-    if (finishedNodeIds.length > 0) {
-      initialNodes.push({
-        id: END_NODE_ID,
-        type: "end",
-      });
-      initialEdges.push(...finishedNodeIds.map(id => ({
-        source: id,
-        target: END_NODE_ID,
-      })));
-    }
-
-    return { initialNodes, initialEdges };
-  }, [rawNodes]);
-
-  const { sizeReady: sizeReady, nodes, edges } = useMemo(() => {
-    for (const node of initialNodes) {
-      if (!sizeMap?.has(node.id)) {
-        return { sizeReady: false, nodes: initialNodes, edges: [] };
-      }
-    }
-
-    const graph = new dagre.graphlib.Graph();
-    graph.setGraph({
-      rankdir: "TB",
-      nodesep: 50,
-      edgesep: 10,
-      ranksep: 50,
-    });
-    // Default to assigning a new object as a label for each new edge.
-    graph.setDefaultEdgeLabel(function () {
-      return {};
-    });
-    for (const edge of initialEdges) {
-      graph.setEdge(edge.source, edge.target);
-    }
-    for (const node of initialNodes) {
-      const [width, height] = sizeMap!.get(node.id)!;
-      graph.setNode(node.id, {
-        id: node.id,
-        width,
-        height,
-      });
-    }
-    dagre.layout(graph);
-
-    const nodes = initialNodes.map<Node>((node) => {
-      const nodeView = graph.node(node.id);
-      const x = nodeView.x - nodeView.width / 2;
-      const y = nodeView.y - nodeView.height / 2;
-      return {
-        ...node,
-        view: {
-          x,
-          y,
-          width: nodeView.width,
-          height: nodeView.height,
-        },
-      };
-    });
-
-    const edges = initialEdges.map((edge) => {
-      const source = graph.node(edge.source);
-      const target = graph.node(edge.target);
-      const turnY = (source.y + source.height / 2 + target.y - target.height / 2) / 2;
-      const points: NodePosition[] = [
-        { x: source.x, y: source.y + source.height / 2 },
-        { x: source.x, y: turnY },
-        { x: target.x, y: turnY },
-        { x: target.x, y: target.y - target.height / 2 },
-      ];
-
-      return {
-        ...edge,
-        points,
-      };
-    });
-
-    return {
-      sizeReady: true,
-      nodes,
-      edges,
-    };
-  }, [initialEdges, initialNodes, sizeMap]);
+  const { sizeReady, nodes, edges } = useLayout({
+    rawNodes,
+    sizeMap,
+  });
 
   const { grabbing, transform, zoomer/* , scaleRange */ } = useZoom({
     rootRef,
@@ -195,39 +77,12 @@ export function CruiseCanvasComponent({ nodes: rawNodes }: CruiseCanvasComponent
     pannable: sizeReady,
   });
 
-  const [centered, setCentered] = useState(false);
-
-  // Transform to horizontal center once.
-  useEffect(() => {
-    const root = rootRef.current;
-    if (sizeReady && root && !centered) {
-      if (nodes.length === 0) {
-        return;
-      }
-
-      let left = Infinity;
-      let right = -Infinity;
-
-      for (const node of nodes) {
-        const view = node.view!;
-        const r = view.x + view.width;
-        if (view.x < left) {
-          left = view.x;
-        }
-        if (r > right) {
-          right = r;
-        }
-      }
-
-      const width = right - left;
-
-      zoomer.transform(
-        select(root as HTMLElement),
-        new ZoomTransform(1, (root.clientWidth - width) / 2, 30)
-      );
-      setCentered(true);
-    }
-  }, [centered, nodes, sizeReady, zoomer]);
+  const centered = useAutoCenter({
+    nodes,
+    sizeReady,
+    zoomer,
+    rootRef,
+  });
 
   return <div className="root" ref={rootRef} style={{
     cursor: grabbing ? "grabbing" : "grab",
@@ -295,7 +150,7 @@ function NodeComponent({node, onResize}: NodeComponentProps) {
         : type === "end"
         ? <div className="node-end" />
         : type === "requirement"
-        ? <div className="node-requirement">
+        ? <div className="node-requirement size-medium">
             {node.content}
           </div>
         : type === "instruction"
@@ -303,22 +158,46 @@ function NodeComponent({node, onResize}: NodeComponentProps) {
             {node.content}
           </div>
         : type === "summarize"
-        ? <div className="node-summarize">
+        ? <div className="node-summarize size-large">
             <div className="node-title">{node.title}</div>
-            <MarkdownComponent content={Summarization} />
+            <MarkdownComponent content={node.content} />
           </div>
         : type === "tool" && node.tag === "online search"
-        ? <div className="node-online-search">
+        ? <div className="node-online-search size-medium">
             <div className="node-title">{node.title}</div>
             <MarkdownComponent content={node.content} />
           </div>
         : type === "tool" && node.tag === "generate image"
-        ? <div className="node-generate-image">
+        ? <div className="node-generate-image size-medium type-image">
             <img src={node.content} />
           </div>
-        : <div className="node-default" style={{ width: 60, height: 60 }}>
-            Unknown node
+        : type === "tool" && node.tag === "ask user more"
+        ? <NodeAskUserMore node={node} />
+        : <div className="node-default size-medium">
+            <MarkdownComponent content={node.content} />
           </div>}
+    </div>
+  );
+}
+
+function NodeAskUserMore({ node }: { node: ToolRawNode }): JSX.Element {
+  const containerRef = useRef<HTMLDivElement>(null);
+  return (
+    <div className="node-ask-user-more size-medium" ref={containerRef}>
+      <div className="message">
+        <MarkdownComponent content={node.content} />
+      </div>
+      <TextareaAutoResize
+        containerRef={containerRef}
+        autoResize
+        minRows={2}
+        placeholder="Type your message here..."
+        submitWhen="enter-without-shift"
+        onSubmit={(e) => {
+          console.log("user response:");
+          console.log(e.currentTarget.value);
+        }}
+      />
     </div>
   );
 }

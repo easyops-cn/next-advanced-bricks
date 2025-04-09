@@ -3,6 +3,10 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
+
+  --cruise-canvas-node-border: 1px solid gray;
+  --cruise-canvas-node-width-medium: 380px;
+  --cruise-canvas-node-width-large: 764px;
 }
 
 :host([hidden]) {
@@ -64,17 +68,28 @@
   background: gray;
 }
 
-.node-requirement {
-  width: 380px;
-  border: 1px solid gray;
+.size-medium,
+.size-large {
+  border: var(--cruise-canvas-node-border);
   border-radius: 6px;
   padding: 6px;
+}
+
+.size-medium {
+  width: var(--cruise-canvas-node-width-medium);
+}
+
+.size-large {
+  width: var(--cruise-canvas-node-width-large);
+}
+
+.node-requirement {
   white-space: pre-wrap;
 }
 
 .node-instruction {
-  width: 380px;
-  border: 1px solid gray;
+  width: var(--cruise-canvas-node-width-medium);
+  border: var(--cruise-canvas-node-border);
   border-radius: 9999px;
   padding: 4px 8px;
   white-space: nowrap;
@@ -83,25 +98,11 @@
 }
 
 .node-default {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid gray;
-}
-
-.node-summarize {
-  width: 764px;
-  border: 1px solid gray;
-  border-radius: 6px;
-  padding: 6px;
+  border: var(--cruise-canvas-node-border);
 }
 
 .node-online-search {
-  width: 380px;
   height: 412px;
-  border: 1px solid gray;
-  border-radius: 6px;
-  padding: 6px;
   overflow-y: auto;
 }
 
@@ -121,14 +122,46 @@
 }
 
 .node-generate-image {
-  width: 380px;
-  border: 1px solid gray;
-  border-radius: 6px;
-  padding: 6px;
   display: flex;
   justify-content: center;
 
   img {
     max-width: 100%;
   }
+}
+
+.message {
+  padding: 0 1em;
+  border: var(--cruise-canvas-node-border);
+  border-radius: 6px;
+  background-color: lightgray;
+}
+
+textarea {
+  margin-top: 1em;
+  display: block;
+  width: 100%;
+  padding: 0.5em 1em;
+  color: var(--antd-input-color);
+  background: var(--antd-input-bg);
+  box-sizing: border-box;
+  border: 1px solid var(--antd-input-border-color);
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 22px;
+  height: 32px;
+}
+
+textarea:not(:disabled):hover {
+  border: 1px solid var(--antd-input-hover-border-color);
+}
+
+textarea:not(:disabled):focus {
+  border: 1px solid var(--antd-input-focus-border-color);
+  outline: 0;
+  box-shadow: 0 0 0 2px rgb(0 113 235 / 20%);
+}
+
+textarea::placeholder {
+  color: var(--antd-input-placeholder-color);
 }
