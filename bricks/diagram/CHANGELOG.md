@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.62.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.61.0...@next-bricks/diagram@0.62.0) (2025-04-09)
+
+
+### Features
+
+* draw-canvas添加canvas.copy、canvas.paste事件用于实现快捷键复制粘贴节点功能 ref CUSTOMIZE-1091 ([2bf91dc](https://github.com/easyops-cn/next-advanced-bricks/commit/2bf91dc67cbbb295711f55133806182e23e4af5c))
+
+
+
+
+
 # [0.61.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.60.1...@next-bricks/diagram@0.61.0) (2025-04-07)
 
 
