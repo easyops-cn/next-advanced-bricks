@@ -24,6 +24,7 @@ children:
       - id: "2"
         parent: "1"
         type: instruction
+        executing: true
         content: |-
           深度搜素内部知识库，确认手机银行系统包含的逻辑组件和部署要求
       - id: "3"
@@ -94,6 +95,7 @@ children:
       - id: "13"
         parent: "12"
         type: tool
+        tag: ask user confirm
         content: |-
           方案执行的过程信息
       - id: "14"
@@ -104,8 +106,9 @@ children:
       - id: "15"
         parent: "14"
         type: tool
+        tag: topology
         content: |-
-          ...
+          https://example.com/topology
       - id: "16"
         parent: "15"
         type: summarize

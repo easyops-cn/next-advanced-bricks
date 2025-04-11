@@ -14,6 +14,7 @@ import type { Node, RawNode, SizeTuple, ToolRawNode } from "./interfaces.js";
 // import Summarization from "./summarization.md";
 import { useAutoCenter } from "./useAutoCenter.js";
 import { useLayout } from "./useLayout.js";
+import { useRunDetail } from "./useRunDetail.js";
 
 initializeI18n(NS, locales);
 
@@ -22,6 +23,8 @@ const { defineElement, property } = createDecorators();
 
 export interface CruiseCanvasProps {
   nodes: RawNode[] | undefined;
+  runId: string | undefined;
+  requirement: string | undefined;
 }
 
 /**
@@ -35,9 +38,15 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
   @property({ attribute: false })
   accessor nodes: RawNode[] | undefined;
 
+  @property()
+  accessor runId: string | undefined;
+
+  @property()
+  accessor requirement: string | undefined;
+
   render() {
     return (
-      <CruiseCanvasComponent nodes={this.nodes} />
+      <CruiseCanvasComponent runId={this.runId} requirement={this.requirement} nodes={this.nodes} />
     );
   }
 }
@@ -46,8 +55,11 @@ export interface CruiseCanvasComponentProps extends CruiseCanvasProps {
   // Define react event handlers here.
 }
 
-export function CruiseCanvasComponent({ nodes: rawNodes }: CruiseCanvasComponentProps) {
+export function CruiseCanvasComponent({ runId, requirement, nodes: propNodes }: CruiseCanvasComponentProps) {
   const rootRef = useRef<HTMLDivElement>(null);
+
+  const runDetail = useRunDetail(propNodes ? undefined : runId, requirement);
+  const rawNodes = propNodes ?? runDetail?.nodes;
 
   const [sizeMap, setSizeMap] = useState<Map<string, SizeTuple> | null>(null);
   const handleNodeResize = useCallback((id: string, size: SizeTuple | null) => {
@@ -141,7 +153,7 @@ function NodeComponent({node, onResize}: NodeComponentProps) {
   }, []);
 
   return (
-    <div className="node" ref={nodeRef} style={{
+    <div className={classNames("node", { executing: node.executing })} ref={nodeRef} style={{
       left: view?.x,
       top: view?.y,
     }}>

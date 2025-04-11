@@ -1,5 +1,5 @@
 import dagre from "@dagrejs/dagre";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import type {
   Edge,
   Node,
@@ -70,6 +70,8 @@ export function useLayout({ rawNodes, sizeMap }: UseLayoutOptions) {
     return { initialNodes, initialEdges };
   }, [rawNodes]);
 
+  const startNodePositionRef = useRef<NodePosition | null>(null);
+
   return useMemo(() => {
     for (const node of initialNodes) {
       if (!sizeMap?.has(node.id)) {
@@ -101,10 +103,25 @@ export function useLayout({ rawNodes, sizeMap }: UseLayoutOptions) {
     }
     dagre.layout(graph);
 
+    // Make the start node position unchanged
+    let offsets: NodePosition | null = null;
+
     const nodes = initialNodes.map<Node>((node) => {
       const nodeView = graph.node(node.id);
       const x = nodeView.x - nodeView.width / 2;
       const y = nodeView.y - nodeView.height / 2;
+
+      if (node.type === "start") {
+        if (startNodePositionRef.current) {
+          offsets = {
+            x: startNodePositionRef.current.x - x,
+            y: startNodePositionRef.current.y - y,
+          };
+        } else {
+          startNodePositionRef.current = { x, y };
+        }
+      }
+
       return {
         ...node,
         view: {
@@ -116,16 +133,24 @@ export function useLayout({ rawNodes, sizeMap }: UseLayoutOptions) {
       };
     });
 
+    if (offsets) {
+      for (const node of nodes) {
+        Object.assign(node.view!, getPositionWithOffsets(node.view!, offsets));
+      }
+    }
+
     const edges = initialEdges.map((edge) => {
       const source = graph.node(edge.source);
+      const sourcePosition = getPositionWithOffsets(source, offsets);
       const target = graph.node(edge.target);
+      const targetPosition = getPositionWithOffsets(target, offsets);
       const turnY =
-        (source.y + source.height / 2 + target.y - target.height / 2) / 2;
+        (sourcePosition.y + source.height / 2 + targetPosition.y - target.height / 2) / 2;
       const points: NodePosition[] = [
-        { x: source.x, y: source.y + source.height / 2 },
-        { x: source.x, y: turnY },
-        { x: target.x, y: turnY },
-        { x: target.x, y: target.y - target.height / 2 },
+        { x: sourcePosition.x, y: sourcePosition.y + source.height / 2 },
+        { x: sourcePosition.x, y: turnY },
+        { x: targetPosition.x, y: turnY },
+        { x: targetPosition.x, y: targetPosition.y - target.height / 2 },
       ];
 
       return {
@@ -140,4 +165,17 @@ export function useLayout({ rawNodes, sizeMap }: UseLayoutOptions) {
       edges,
     };
   }, [initialEdges, initialNodes, sizeMap]);
+}
+
+function getPositionWithOffsets<T extends NodePosition>(position: T, offsets: NodePosition | null): NodePosition {
+  if (!offsets) {
+    return {
+      x: position.x,
+      y: position.y,
+    };
+  }
+  return {
+    x: position.x + offsets.x,
+    y: position.y + offsets.y,
+  };
 }

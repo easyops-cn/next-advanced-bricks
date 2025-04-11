@@ -101,10 +101,10 @@
   border: var(--cruise-canvas-node-border);
 }
 
-.node-online-search {
+/* .node-online-search {
   height: 412px;
   overflow-y: auto;
-}
+} */
 
 .node-online-search p,
 .node-summarize p {
@@ -164,4 +164,29 @@ textarea:not(:disabled):focus {
 
 textarea::placeholder {
   color: var(--antd-input-placeholder-color);
+}
+
+.executing > * {
+  color: transparent;
+  background: linear-gradient(
+    to right,
+    var(--antd-text-color) 0%,
+    var(--antd-text-color) 40%,
+    rgba(220, 220, 220, 1) 50%,
+    var(--antd-text-color) 60%,
+    var(--antd-text-color) 100%
+  );
+
+  background-size: 200% 100%;
+  background-clip: text;
+  animation: shineEffect 2s infinite linear;
+}
+
+@keyframes shineEffect {
+  0% {
+    background-position: -50% 50%;
+  }
+  100% {
+    background-position: -250% 50%;
+  }
 }
