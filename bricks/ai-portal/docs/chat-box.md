@@ -12,7 +12,6 @@ properties:
 
 ### With cruise canvas
 
-
 ```yaml preview minHeight="600px"
 brick: div
 properties:
@@ -22,9 +21,29 @@ properties:
     position: fixed
     top: 0
     left: 0
+context:
+- name: requirement
 children:
+- brick: ai-portal.chat-box
+  if: <%= !CTX.requirement %>
+  properties:
+    style:
+      position: absolute
+      width: 500px
+      maxWidth: 90vw
+      maxHeight: 90vh
+      top: 50%
+      left: 50%
+      transform: translate(-50%, -50%)
+  events:
+    message.submit:
+      action: context.replace
+      args:
+      - requirement
+      - <% EVENT.detail %>
 - brick: ai-portal.cruise-canvas
+  if: <%= !!CTX.requirement %>
   properties:
     runId: mock-run-id
-    requirement: 帮我在CMDB中完成手机银行系统的资源纳管
+    requirement: <% CTX.requirement %>
 ```
