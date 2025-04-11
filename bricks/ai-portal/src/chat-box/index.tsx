@@ -49,7 +49,7 @@ export function ChatBoxComponent({ onSubmit }: ChatBoxComponentProps) {
       <TextareaAutoResize
         containerRef={containerRef}
         autoResize
-        placeholder="How can I help you?"
+        placeholder="How can I help?"
         submitWhen="enter-without-shift"
         onSubmit={onSubmit}
       />

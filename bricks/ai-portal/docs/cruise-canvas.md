@@ -340,25 +340,25 @@ children:
         content: |-
           https://photo.16pic.com/00/07/99/16pic_799976_b.jpg
 
-- brick: div
-  properties:
-    style:
-      position: absolute
-      bottom: 0
-      left: 0
-      right: 0
-      display: flex
-      justifyContent: center
-      padding: 24px
-  children:
-  - brick: ai-portal.chat-box
-    properties:
-      style:
-        width: 100%
-        maxWidth: 600px
-    events:
-      message.submit:
-        action: message.info
-        args:
-          - '<% `Message: ${EVENT.detail}` %>'
+# - brick: div
+#   properties:
+#     style:
+#       position: absolute
+#       bottom: 0
+#       left: 0
+#       right: 0
+#       display: flex
+#       justifyContent: center
+#       padding: 24px
+#   children:
+#   - brick: ai-portal.chat-box
+#     properties:
+#       style:
+#         width: 100%
+#         maxWidth: 600px
+#     events:
+#       message.submit:
+#         action: message.info
+#         args:
+#           - '<% `Message: ${EVENT.detail}` %>'
 ```
