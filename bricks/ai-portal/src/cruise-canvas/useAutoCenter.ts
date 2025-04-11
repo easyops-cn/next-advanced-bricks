@@ -21,32 +21,36 @@ export function useAutoCenter({
   // Transform to horizontal center once.
   useEffect(() => {
     const root = rootRef.current;
-    if (sizeReady && root && !centered) {
-      if (nodes.length === 0) {
-        return;
-      }
-
-      let left = Infinity;
-      let right = -Infinity;
-
-      for (const node of nodes) {
-        const view = node.view!;
-        const r = view.x + view.width;
-        if (view.x < left) {
-          left = view.x;
+    if (sizeReady && root) {
+      if (centered) {
+        //
+      } else {
+        if (nodes.length === 0) {
+          return;
         }
-        if (r > right) {
-          right = r;
+
+        let left = Infinity;
+        let right = -Infinity;
+
+        for (const node of nodes) {
+          const view = node.view!;
+          const r = view.x + view.width;
+          if (view.x < left) {
+            left = view.x;
+          }
+          if (r > right) {
+            right = r;
+          }
         }
+
+        const width = right - left;
+
+        zoomer.transform(
+          select(root as HTMLElement),
+          new ZoomTransform(1, (root.clientWidth - width) / 2, 30)
+        );
+        setCentered(true);
       }
-
-      const width = right - left;
-
-      zoomer.transform(
-        select(root as HTMLElement),
-        new ZoomTransform(1, (root.clientWidth - width) / 2, 30)
-      );
-      setCentered(true);
     }
   }, [centered, nodes, rootRef, sizeReady, zoomer]);
 
