@@ -22,10 +22,10 @@ properties:
     top: 0
     left: 0
 context:
-- name: requirement
+- name: task
 children:
 - brick: ai-portal.chat-box
-  if: <%= !CTX.requirement %>
+  if: <%= !CTX.task %>
   properties:
     style:
       position: absolute
@@ -37,13 +37,28 @@ children:
       transform: translate(-50%, -50%)
   events:
     message.submit:
-      action: context.replace
+      action: basic.http-request
       args:
-      - requirement
-      - <% EVENT.detail %>
+        - /api/mocks/task/send
+        - method: POST
+          body: |
+            <%
+              JSON.stringify({
+                requirement: EVENT.detail
+              })
+            %>
+          headers:
+            Content-Type: application/json
+      callback:
+        error:
+          action: handleHttpError
+        success:
+          action: context.replace
+          args:
+          - task
+          - <% EVENT.detail %>
 - brick: ai-portal.cruise-canvas
-  if: <%= !!CTX.requirement %>
+  if: <%= !!CTX.task %>
   properties:
-    runId: mock-run-id
-    requirement: <% CTX.requirement %>
+    taskId: <% CTX.task.id %>
 ```

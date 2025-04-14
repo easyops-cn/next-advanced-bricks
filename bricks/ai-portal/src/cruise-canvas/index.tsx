@@ -23,7 +23,7 @@ const { defineElement, property } = createDecorators();
 
 export interface CruiseCanvasProps {
   nodes: RawNode[] | undefined;
-  runId: string | undefined;
+  taskId: string | undefined;
   requirement: string | undefined;
 }
 
@@ -39,14 +39,14 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
   accessor nodes: RawNode[] | undefined;
 
   @property()
-  accessor runId: string | undefined;
+  accessor taskId: string | undefined;
 
   @property()
   accessor requirement: string | undefined;
 
   render() {
     return (
-      <CruiseCanvasComponent runId={this.runId} requirement={this.requirement} nodes={this.nodes} />
+      <CruiseCanvasComponent taskId={this.taskId} requirement={this.requirement} nodes={this.nodes} />
     );
   }
 }
@@ -55,10 +55,10 @@ export interface CruiseCanvasComponentProps extends CruiseCanvasProps {
   // Define react event handlers here.
 }
 
-export function CruiseCanvasComponent({ runId, requirement, nodes: propNodes }: CruiseCanvasComponentProps) {
+export function CruiseCanvasComponent({ taskId, requirement, nodes: propNodes }: CruiseCanvasComponentProps) {
   const rootRef = useRef<HTMLDivElement>(null);
 
-  const runDetail = useRunDetail(propNodes ? undefined : runId, requirement);
+  const runDetail = useRunDetail(propNodes ? undefined : taskId);
   const rawNodes = propNodes ?? runDetail?.nodes;
 
   const [sizeMap, setSizeMap] = useState<Map<string, SizeTuple> | null>(null);

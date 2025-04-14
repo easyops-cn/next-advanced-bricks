@@ -3143,7 +3143,7 @@
   resolved "https://registry.yarnpkg.com/@next-core/http/-/http-1.2.12.tgz#fee4ec8960bb8b6b884460626ee5ed4e41216c42"
   integrity sha512-fkk2mGuzlnrQNo/U9MSvW8eCoERQXbGY9pZIuqd4xy7Si7hNjOspdrisWycWA0ySNYlavS792SuQU1tNF2sj2Q==
 
-"@next-core/i18n@^1.0.75":
+"@next-core/i18n@^1.0.74", "@next-core/i18n@^1.0.75":
   version "1.0.75"
   resolved "https://registry.yarnpkg.com/@next-core/i18n/-/i18n-1.0.75.tgz#4039e5d3cf4851a5e389a7deccf3493efde34267"
   integrity sha512-BIaxGagzwOPSe/kNIbJWE/8wVadQY9SQQ6H/HLgnaBXgzhyPPg2IK7MrhZLci+7k9YmaJjOM2ptwIv7UxuMCxA==
