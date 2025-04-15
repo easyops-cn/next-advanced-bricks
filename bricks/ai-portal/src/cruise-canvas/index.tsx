@@ -10,7 +10,7 @@ import { MarkdownComponent } from "@next-shared/markdown";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
 import { useZoom } from "./useZoom.js";
-import type { Node, RawNode, SizeTuple, ToolRawNode } from "./interfaces.js";
+import type { Node, RawEdge, RawNode, SizeTuple, ToolRawNode } from "./interfaces.js";
 // import Summarization from "./summarization.md";
 import { useAutoCenter } from "./useAutoCenter.js";
 import { useLayout } from "./useLayout.js";
@@ -23,8 +23,8 @@ const { defineElement, property } = createDecorators();
 
 export interface CruiseCanvasProps {
   nodes: RawNode[] | undefined;
+  edges: RawEdge[] | undefined;
   taskId: string | undefined;
-  requirement: string | undefined;
 }
 
 /**
@@ -38,15 +38,15 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
   @property({ attribute: false })
   accessor nodes: RawNode[] | undefined;
 
+  @property({ attribute: false })
+  accessor edges: RawEdge[] | undefined;
+
   @property()
   accessor taskId: string | undefined;
 
-  @property()
-  accessor requirement: string | undefined;
-
   render() {
     return (
-      <CruiseCanvasComponent taskId={this.taskId} requirement={this.requirement} nodes={this.nodes} />
+      <CruiseCanvasComponent taskId={this.taskId} nodes={this.nodes} edges={this.edges} />
     );
   }
 }
@@ -55,11 +55,13 @@ export interface CruiseCanvasComponentProps extends CruiseCanvasProps {
   // Define react event handlers here.
 }
 
-export function CruiseCanvasComponent({ taskId, requirement, nodes: propNodes }: CruiseCanvasComponentProps) {
+export function CruiseCanvasComponent({ taskId, nodes: propNodes, edges: propEdges }: CruiseCanvasComponentProps) {
   const rootRef = useRef<HTMLDivElement>(null);
 
   const runDetail = useRunDetail(propNodes ? undefined : taskId);
   const rawNodes = propNodes ?? runDetail?.nodes;
+  const rawEdges = propEdges ?? runDetail?.edges;
+  const completed = runDetail?.task.state === "completed";
 
   const [sizeMap, setSizeMap] = useState<Map<string, SizeTuple> | null>(null);
   const handleNodeResize = useCallback((id: string, size: SizeTuple | null) => {
@@ -79,6 +81,8 @@ export function CruiseCanvasComponent({ taskId, requirement, nodes: propNodes }:
 
   const { sizeReady, nodes, edges } = useLayout({
     rawNodes,
+    rawEdges,
+    completed,
     sizeMap,
   });
 
@@ -153,7 +157,7 @@ function NodeComponent({node, onResize}: NodeComponentProps) {
   }, []);
 
   return (
-    <div className={classNames("node", { executing: node.executing })} ref={nodeRef} style={{
+    <div className={`node state-${node.state ?? "unknown"}`} ref={nodeRef} style={{
       left: view?.x,
       top: view?.y,
     }}>
@@ -169,11 +173,11 @@ function NodeComponent({node, onResize}: NodeComponentProps) {
         ? <div className="node-instruction">
             {node.content}
           </div>
-        : type === "summarize"
-        ? <div className="node-summarize size-large">
-            <div className="node-title">{node.title}</div>
-            <MarkdownComponent content={node.content} />
-          </div>
+        // : type === "summarize"
+        // ? <div className="node-summarize size-large">
+        //     <div className="node-title">{node.title}</div>
+        //     <MarkdownComponent content={node.content} />
+        //   </div>
         : type === "tool" && node.tag === "online search"
         ? <div className="node-online-search size-medium">
             <div className="node-title">{node.title}</div>
@@ -183,7 +187,7 @@ function NodeComponent({node, onResize}: NodeComponentProps) {
         ? <div className="node-generate-image size-medium type-image">
             <img src={node.content} />
           </div>
-        : type === "tool" && node.tag === "ask user more"
+        : type === "tool" && (node.tag === "ask user more" || node.state === "input-required")
         ? <NodeAskUserMore node={node} />
         : <div className="node-default size-medium">
             <MarkdownComponent content={node.content} />

@@ -25,19 +25,35 @@ export function getTask(id) {
 class MockTask {
   #cursor = -1;
   #getEventStream() {
-    return [
+    const stream = [
+      {
+        state: "submitted",
+        jobs: [],
+        plans: [],
+        __delay: 2000,
+      },
       {
         state: "working",
         jobs: [],
-        __delay: 2000,
+        plans: [
+          {
+            id: "mock-job-id-1",
+            instruction: "Say hello to the world",
+          },
+          {
+            id: "mock-job-id-2",
+            instruction: "Say thank you",
+          },
+        ],
+        __delay: 200,
       },
       {
         jobs: [
           {
             id: "mock-job-id-1",
-            state: "working",
+            state: "submitted",
             instruction: "Say hello to the world",
-            tool: "hello-tool",
+            tag: "hello-tool",
           },
         ],
         __delay: 2000,
@@ -45,7 +61,23 @@ class MockTask {
       {
         jobs: [
           {
-            id: "mock-job-id-1",
+            id: "mock-job-id-1-a",
+            state: "working",
+            parent: ["mock-job-id-1"],
+          },
+          {
+            id: "mock-job-id-1-b",
+            state: "working",
+            parent: ["mock-job-id-1"],
+          },
+        ],
+        __delay: 1000,
+      },
+      {
+        jobs: [
+          {
+            id: "mock-job-id-1-a",
+            state: "working",
             messages: [
               {
                 role: "agent",
@@ -54,9 +86,19 @@ class MockTask {
                     type: "text",
                     text: "Hello",
                   },
+                ],
+              },
+            ],
+          },
+          {
+            id: "mock-job-id-1-b",
+            messages: [
+              {
+                role: "agent",
+                parts: [
                   {
                     type: "text",
-                    text: " world",
+                    text: "How",
                   },
                 ],
               },
@@ -68,19 +110,26 @@ class MockTask {
       {
         jobs: [
           {
-            id: "mock-job-id-1",
+            id: "mock-job-id-1-a",
+            state: "working",
             messages: [
               {
                 role: "agent",
                 parts: [
                   {
                     type: "text",
-                    text: "\n\n",
+                    text: " world",
                   },
-                  {
-                    type: "text",
-                    text: "How",
-                  },
+                ],
+              },
+            ],
+          },
+          {
+            id: "mock-job-id-1-b",
+            messages: [
+              {
+                role: "agent",
+                parts: [
                   {
                     type: "text",
                     text: " are you?",
@@ -99,11 +148,19 @@ class MockTask {
             state: "completed",
           },
           {
+            id: "mock-job-id-1-a",
+            state: "completed",
+          },
+          {
+            id: "mock-job-id-1-b",
+            state: "completed",
+          },
+          {
             id: "mock-job-id-2",
-            parent: "mock-job-id-1",
-            state: "working",
+            parent: ["mock-job-id-1-a", "mock-job-id-1-b"],
+            state: "submitted",
             instruction: "Say thank you",
-            tool: "thank-you-tool",
+            tag: "thank-you-tool",
           },
         ],
         __delay: 2000,
@@ -112,7 +169,6 @@ class MockTask {
         jobs: [
           {
             id: "mock-job-id-2",
-            parent: "mock-job-id-1",
             messages: [
               {
                 role: "agent",
@@ -124,7 +180,7 @@ class MockTask {
                   {
                     type: "text",
                     text: ", thank you!",
-                  }
+                  },
                 ],
               },
             ],
@@ -136,7 +192,6 @@ class MockTask {
         jobs: [
           {
             id: "mock-job-id-2",
-            parent: "mock-job-id-1",
             messages: [
               {
                 role: "agent",
@@ -156,14 +211,107 @@ class MockTask {
         state: "input-required",
         jobs: [
           {
-            id: "mock-job-id-1",
+            id: "mock-job-id-2",
             state: "input-required",
+            // messages: [
+            //   {
+            //     role: "agent",
+            //     parts: [{
+            //       type: "data",
+            //       data: {
+            //         tag: "user-confirm",
+            //         options: [
+            //           {
+            //             label: "确定",
+            //             value: "confirm",
+            //           },
+            //           {
+            //             label: "取消",
+            //             value: "cancel",
+            //           },
+            //         ]
+            //       }
+            //     }]
+            //   }
+            // ]
           },
         ],
       },
     ];
+
+    if (this.#input) {
+      stream.splice(
+        stream.length - 1,
+        1,
+        {
+          state: "working",
+          jobs: [
+            {
+              id: "mock-job-id-2",
+              state: "working",
+              messages: [
+                {
+                  role: "user",
+                  parts: [
+                    {
+                      type: "text",
+                      text: this.#input,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          __delay: 2000,
+        },
+        {
+          state: "working",
+          jobs: [
+            {
+              id: "mock-job-id-2",
+              state: "working",
+              messages: [
+                {
+                  role: "agent",
+                  parts: [
+                    {
+                      type: "text",
+                      text: "Alright alright",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          __delay: 2000,
+        },
+        {
+          state: "completed",
+          jobs: [
+            {
+              id: "mock-job-id-2",
+              state: "completed",
+              messages: [
+                {
+                  role: "agent",
+                  parts: [
+                    {
+                      type: "text",
+                      text: " alright.",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        }
+      );
+    }
+
+    return stream;
   }
   #baseDetail;
+  #input;
   #subscribers = new Set();
 
   #next = () => {
@@ -193,7 +341,7 @@ class MockTask {
     } else {
       setTimeout(this.#next, event.__delay ?? 2000);
     }
-  }
+  };
 
   constructor(baseDetail) {
     this.#baseDetail = baseDetail;
@@ -208,33 +356,51 @@ class MockTask {
     }
   }
 
+  inputTask(jobId, input) {
+    const { value: task } = this.#mergeTask();
+    const job = task.jobs?.find((job) => job.id === jobId);
+
+    if (!job) {
+      throw new Error("Job not found");
+    }
+
+    if (job.state !== "input-required") {
+      throw new Error("Job is not in input-required state");
+    }
+
+    this.#input = input;
+    this.#next();
+  }
+
   #mergeTask() {
     const allEventStream = this.#getEventStream();
-    const task = allEventStream.slice(0, this.#cursor + 1).reduce((acc, event) => {
-      const { jobs: jobsPatch, __delay, ...restEvent } = event;
+    const task = allEventStream
+      .slice(0, this.#cursor + 1)
+      .reduce((acc, event) => {
+        const { jobs: jobsPatch, __delay, ...restEvent } = event;
 
-      if (jobsPatch) {
-        const jobs = acc.jobs?.slice() ?? [];
-        const previousJobsMap = new Map(jobs.map(job => [job.id, job]));
+        if (jobsPatch) {
+          const jobs = acc.jobs?.slice() ?? [];
+          const previousJobsMap = new Map(jobs.map((job) => [job.id, job]));
 
-        for (const patch of jobsPatch) {
-          const previousJob = previousJobsMap.get(patch.id);
-          if (previousJob) {
-            this.#mergeJob(previousJob, patch);
-          } else {
-            jobs.push(patch);
+          for (const patch of jobsPatch) {
+            const previousJob = previousJobsMap.get(patch.id);
+            if (previousJob) {
+              this.#mergeJob(previousJob, patch);
+            } else {
+              jobs.push(patch);
+            }
           }
+
+          restEvent.jobs = jobs;
         }
 
-        restEvent.jobs = jobs;
-      }
-
-      return { ...acc, ...restEvent };
-    }, this.#baseDetail);
+        return { ...acc, ...restEvent };
+      }, this.#baseDetail);
 
     return {
       done: this.#cursor === allEventStream.length - 1,
-      value: task
+      value: task,
     };
   }
 

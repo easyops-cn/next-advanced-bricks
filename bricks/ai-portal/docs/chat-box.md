@@ -37,7 +37,7 @@ children:
       transform: translate(-50%, -50%)
   events:
     message.submit:
-      action: basic.http-request
+      useProvider: basic.http-request
       args:
         - /api/mocks/task/send
         - method: POST

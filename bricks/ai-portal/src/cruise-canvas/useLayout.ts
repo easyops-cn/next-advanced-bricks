@@ -1,9 +1,9 @@
 import dagre from "@dagrejs/dagre";
 import { useMemo, useRef } from "react";
 import type {
-  Edge,
   Node,
   NodePosition,
+  RawEdge,
   RawNode,
   SizeTuple,
 } from "./interfaces";
@@ -11,10 +11,17 @@ import { END_NODE_ID, START_NODE_ID } from "./constants";
 
 export interface UseLayoutOptions {
   rawNodes: RawNode[] | undefined;
+  rawEdges: RawEdge[] | undefined;
+  completed?: boolean;
   sizeMap: Map<string, SizeTuple> | null;
 }
 
-export function useLayout({ rawNodes, sizeMap }: UseLayoutOptions) {
+export function useLayout({
+  rawNodes: _rawNodes,
+  rawEdges: _rawEdges,
+  completed,
+  sizeMap,
+}: UseLayoutOptions) {
   const { initialNodes, initialEdges } = useMemo(() => {
     const initialNodes: Node[] = [
       {
@@ -22,37 +29,31 @@ export function useLayout({ rawNodes, sizeMap }: UseLayoutOptions) {
         type: "start",
       },
     ];
-    const initialEdges: Omit<Edge, "points">[] = [];
-    const groupChildrenMap = new Map<string, string[]>();
+    const initialEdges: RawEdge[] = [];
     const finishedNodeIds: string[] = [];
+    const rawNodes = _rawNodes ?? [];
+    const rawEdges = _rawEdges ?? [];
 
-    for (const node of rawNodes ?? []) {
-      if (node.type === "group") {
-        groupChildrenMap.set(node.id, node.groupChildren);
-      } else {
-        const groupChildren = node.parent
-          ? groupChildrenMap.get(node.parent)
-          : undefined;
-        if (groupChildren) {
-          for (const child of groupChildren) {
-            initialEdges.push({
-              source: child,
-              target: node.id,
-            });
-          }
-        } else {
-          initialEdges.push({
-            source: node.parent ?? START_NODE_ID,
-            target: node.id,
-          });
-        }
-        initialNodes.push(node);
+    const hasSource = new Set<string>(rawEdges.map((edge) => edge.target));
+    const hasTarget = completed
+      ? new Set<string>(rawEdges.map((edge) => edge.source))
+      : null;
+
+    for (const node of rawNodes) {
+      if (!hasSource.has(node.id)) {
+        initialEdges.push({
+          source: START_NODE_ID,
+          target: node.id,
+        });
       }
 
-      if (node.finished) {
+      if (completed && !hasTarget!.has(node.id)) {
         finishedNodeIds.push(node.id);
       }
     }
+
+    initialNodes.push(...rawNodes);
+    initialEdges.push(...rawEdges);
 
     if (finishedNodeIds.length > 0) {
       initialNodes.push({
@@ -68,7 +69,7 @@ export function useLayout({ rawNodes, sizeMap }: UseLayoutOptions) {
     }
 
     return { initialNodes, initialEdges };
-  }, [rawNodes]);
+  }, [completed, _rawEdges, _rawNodes]);
 
   const startNodePositionRef = useRef<NodePosition | null>(null);
 
@@ -145,7 +146,11 @@ export function useLayout({ rawNodes, sizeMap }: UseLayoutOptions) {
       const target = graph.node(edge.target);
       const targetPosition = getPositionWithOffsets(target, offsets);
       const turnY =
-        (sourcePosition.y + source.height / 2 + targetPosition.y - target.height / 2) / 2;
+        (sourcePosition.y +
+          source.height / 2 +
+          targetPosition.y -
+          target.height / 2) /
+        2;
       const points: NodePosition[] = [
         { x: sourcePosition.x, y: sourcePosition.y + source.height / 2 },
         { x: sourcePosition.x, y: turnY },
@@ -167,7 +172,10 @@ export function useLayout({ rawNodes, sizeMap }: UseLayoutOptions) {
   }, [initialEdges, initialNodes, sizeMap]);
 }
 
-function getPositionWithOffsets<T extends NodePosition>(position: T, offsets: NodePosition | null): NodePosition {
+function getPositionWithOffsets<T extends NodePosition>(
+  position: T,
+  offsets: NodePosition | null
+): NodePosition {
   if (!offsets) {
     return {
       x: position.x,

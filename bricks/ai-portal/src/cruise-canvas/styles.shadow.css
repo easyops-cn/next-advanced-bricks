@@ -101,6 +101,14 @@
   border: var(--cruise-canvas-node-border);
 }
 
+.node-default > :first-child {
+  margin-top: 0;
+}
+
+.node-default > :last-child {
+  margin-bottom: 0;
+}
+
 /* .node-online-search {
   height: 412px;
   overflow-y: auto;
@@ -166,7 +174,8 @@ textarea::placeholder {
   color: var(--antd-input-placeholder-color);
 }
 
-.executing > * {
+.state-submitted > *,
+.state-working > * {
   color: transparent;
   background: linear-gradient(
     to right,

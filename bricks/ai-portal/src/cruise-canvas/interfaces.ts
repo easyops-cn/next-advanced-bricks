@@ -12,7 +12,12 @@ export interface TransformLiteral {
   y: number;
 }
 
-export type RawNode = RequirementRawNode | InstructionRawNode | GroupRawNode | ToolRawNode | SummarizeRawNode;
+export type RawNode = RequirementRawNode | InstructionRawNode | ToolRawNode;
+
+export interface RawEdge {
+  source: string;
+  target: string;
+}
 
 export interface RequirementRawNode extends BaseRawNode {
   type: "requirement";
@@ -20,23 +25,15 @@ export interface RequirementRawNode extends BaseRawNode {
 }
 
 export interface InstructionRawNode extends BaseRawNode {
+  jobId: string;
   type: "instruction";
   content: string;
 }
 
-export interface GroupRawNode extends BaseRawNode {
-  type: "group";
-  groupChildren: string[];
-}
-
 export interface ToolRawNode extends BaseRawNode {
+  jobId: string;
   type: "tool";
   tag: string;
-  content: string;
-}
-
-export interface SummarizeRawNode extends BaseRawNode {
-  type: "summarize";
   content: string;
 }
 
@@ -44,11 +41,9 @@ export interface BaseRawNode {
   id: string;
   type: string;
   title?: string;
-  parent?: string;
-  finished?: boolean;
   view?: NodeView;
   content?: string;
-  executing?: boolean;
+  state?: string;
 }
 
 export type Node = RawNode | StartNode | EndNode;
@@ -67,7 +62,5 @@ export interface NodeView extends NodePosition {
 }
 
 export interface Edge {
-  source: string;
-  target: string;
   points: NodePosition[];
 }
