@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createSSEStream } from "@next-core/utils/general";
 import { isMatch, pick } from "lodash";
@@ -17,22 +18,9 @@ export function useRunDetail(taskId: string | undefined) {
 
     let task: Task | null = null;
     let ignore = false;
-    (async () => {
-      const request = await createSSEStream<TaskPatch>(
-        `/api/mocks/task/get?${new URLSearchParams({ id: taskId })}`
-      );
-      const stream = await request;
-      for await (const value of stream) {
-        if (ignore) {
-          return;
-        }
-        task = mergeTask(task, value);
-        setTaskDetail(task);
-      }
-    })();
 
     humanInputRef.current = async (jobId: string, input: string) => {
-      const request = await createSSEStream<TaskPatch>(
+      const response = await fetch(
         `/api/mocks/task/input`,
         {
           method: "POST",
@@ -46,12 +34,26 @@ export function useRunDetail(taskId: string | undefined) {
           }),
         }
       );
+      if (response.ok) {
+        console.log("human input ok");
+      } else {
+        console.error("human input failed", response.status, response.statusText);
+      }
+    };
+
+    (async () => {
+      const request = await createSSEStream<TaskPatch>(
+        `/api/mocks/task/get?${new URLSearchParams({ id: taskId })}`
+      );
       const stream = await request;
       for await (const value of stream) {
+        if (ignore) {
+          return;
+        }
         task = mergeTask(task, value);
         setTaskDetail(task);
       }
-    };
+    })();
 
     return () => {
       ignore = true;
@@ -94,57 +96,83 @@ export function useRunDetail(taskId: string | undefined) {
       }
     }
 
-    const walk = (childJobs: string[], parent: string) => {
-      for (const jobId of childJobs) {
-        const job = jobMap.get(jobId)!;
-        const { messages } = job;
-        const hasMessages = Array.isArray(messages) && messages.length > 0;
-
-        let parentNodeId = parent;
-
-        if (job.instruction) {
-          const instructionNodeId = `instruction:${jobId}`;
-          nodes.push({
-            id: instructionNodeId,
-            jobId: jobId,
-            type: "instruction",
-            content: job.instruction,
-            state: job.state === "working" && hasMessages ? "completed" : job.state,
-          });
-
-          edges.push({ source: parentNodeId, target: instructionNodeId });
-          parentNodeId = instructionNodeId;
-        }
-
-        if (hasMessages) {
-          const jobNodeId = `job:${job.id}`;
-          nodes.push({
-            id: jobNodeId,
-            jobId: job.id,
-            type: "job",
-            tag: job.tag,
-            messages: mergeMessages(messages),
-            state: job.state,
-          });
-          edges.push({
-            source: parentNodeId,
-            target: jobNodeId,
-          });
-          parentNodeId = jobNodeId;
-        }
-
-        if (parentNodeId === parent) {
-          continue;
-        }
-
-        const children = childrenMap.get(jobId);
-        if (children) {
-          walk(children, parentNodeId);
-        }
+    // Get BFS order of jobs
+    const list: string[] = [];
+    const visitedJobs = new Set<string>();
+    const queue: string[] = [...rootChildren];
+    while (queue.length > 0) {
+      const id = queue.shift()!;
+      if (visitedJobs.has(id)) {
+        continue;
       }
-    };
+      visitedJobs.add(id);
+      list.push(id);
+      const children = childrenMap.get(id);
+      if (children) {
+        queue.push(...children);
+      }
+    }
 
-    walk(rootChildren, requirementNodeId);
+    const jobNodesMap = new Map<string, string[]>([[requirementNodeId, [requirementNodeId]]]);
+
+    for (const jobId of list) {
+      const job = jobMap.get(jobId)!;
+      const { messages } = job;
+      const hasMessages = Array.isArray(messages) && messages.length > 0;
+
+      const nodeIds: string[] = [];
+
+      if (job.instruction) {
+        const instructionNodeId = `instruction:${jobId}`;
+        nodes.push({
+          id: instructionNodeId,
+          jobId: jobId,
+          type: "instruction",
+          content: job.instruction,
+          state: job.state === "working" && hasMessages ? "completed" : job.state,
+        });
+
+        nodeIds.push(instructionNodeId);
+      }
+
+      if (hasMessages || !job.instruction) {
+        const jobNodeId = `job:${job.id}`;
+        nodes.push({
+          id: jobNodeId,
+          jobId: job.id,
+          type: "job",
+          tag: job.tag,
+          messages: hasMessages ? mergeMessages(messages) : [{
+            role: "assistant",
+            parts: [{ type: "text", text: "..." }]
+          }],
+          state: job.state,
+        });
+        nodeIds.push(jobNodeId);
+      }
+
+      jobNodesMap.set(jobId, nodeIds);
+    }
+
+    for (const jobId of list) {
+      const job = jobMap.get(jobId)!;
+      const nodeIds = jobNodesMap.get(jobId)!;
+
+      for (const parent of job.parent?.length ? job.parent : [requirementNodeId]) {
+        const parentNodeIds = jobNodesMap.get(parent)!;
+        edges.push({
+          source: parentNodeIds[parentNodeIds.length - 1],
+          target: nodeIds[0],
+        });
+      }
+
+      for (let i = 1; i < nodeIds.length; i++) {
+        edges.push({
+          source: nodeIds[i - 1],
+          target: nodeIds[i],
+        });
+      }
+    }
 
     return {
       task: taskDetail,

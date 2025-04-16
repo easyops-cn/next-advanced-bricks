@@ -54,8 +54,8 @@ const humanInput = (req, res) => {
   }
 
   try {
-    let sent = false;
-    task.humanInput(jobId, req.body.input, ({done, value}) => {
+    // let sent = false;
+    task.humanInput(jobId, req.body.input/* , ({done, value}) => {
       if (!sent) {
         res.status(200);
         res.setHeader("Content-Type", "text/event-stream");
@@ -75,7 +75,8 @@ const humanInput = (req, res) => {
         res.write("data: [DONE]\n\n");
         res.end();
       }
-    });
+    } */);
+    res.status(200).send({ message: "ok" });
   } catch (e) {
     res.status(400).send({ error: e.message });
   }

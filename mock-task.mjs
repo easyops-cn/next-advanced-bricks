@@ -132,14 +132,33 @@ class MockTask {
                 parts: [
                   {
                     type: "text",
-                    text: " are you?",
+                    text: " are",
                   },
                 ],
               },
             ],
           },
         ],
-        __delay: 200,
+        __delay: 500,
+      },
+      {
+        jobs: [
+          {
+            id: "mock-job-id-1-b",
+            messages: [
+              {
+                role: "assistant",
+                parts: [
+                  {
+                    type: "text",
+                    text: " you?",
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        __delay: 500,
       },
       {
         jobs: [
@@ -329,7 +348,7 @@ class MockTask {
               ],
             }
           ],
-          __delay: 200,
+          __delay: 1000,
         },
         {
           state: "completed",
@@ -367,12 +386,14 @@ class MockTask {
     }
 
     if (this.#cursor === allEventStream.length - 1) {
-      for (const subscriber of this.#subscribers) {
-        subscriber({
-          done: true,
-        });
+      if (event.state === "completed") {
+        for (const subscriber of this.#subscribers) {
+          subscriber({
+            done: true,
+          });
+        }
+        this.#subscribers.clear();
       }
-      this.#subscribers.clear();
     } else {
       setTimeout(this.#next, (event.__delay ?? 2000));
     }
@@ -391,7 +412,7 @@ class MockTask {
     }
   }
 
-  humanInput(jobId, input, callback) {
+  humanInput(jobId, input/* , callback */) {
     const { value: task } = this.#mergeTask();
     const job = task.jobs?.find((job) => job.id === jobId);
 
@@ -403,7 +424,7 @@ class MockTask {
       throw new Error("Job is not in input-required state");
     }
 
-    this.#subscribers.add(callback);
+    // this.#subscribers.add(callback);
     this.#input = input;
     this.#cursor--;
     setTimeout(this.#next, 500);

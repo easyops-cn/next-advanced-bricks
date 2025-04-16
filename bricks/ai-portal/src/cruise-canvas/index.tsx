@@ -10,12 +10,7 @@ import { MarkdownComponent } from "@next-shared/markdown";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
 import { useZoom } from "./useZoom.js";
-import type {
-  Node,
-  RawEdge,
-  RawNode,
-  SizeTuple,
-} from "./interfaces.js";
+import type { Node, RawEdge, RawNode, SizeTuple } from "./interfaces.js";
 // import Summarization from "./summarization.md";
 import { useAutoCenter } from "./useAutoCenter.js";
 import { useLayout } from "./useLayout.js";
@@ -192,7 +187,9 @@ function NodeComponent({ node, onResize, humanInput }: NodeComponentProps) {
 
   return (
     <div
-      className={`node state-${node.state ?? "unknown"}`}
+      className={classNames(`node state-${node.state ?? "unknown"}`, {
+        ready: view?.x != null && view?.y != null,
+      })}
       ref={nodeRef}
       style={{
         left: view?.x,

@@ -3,6 +3,7 @@ import { useMemo, useRef } from "react";
 import type {
   Node,
   NodePosition,
+  NodeView,
   RawEdge,
   RawNode,
   SizeTuple,
@@ -22,6 +23,8 @@ export function useLayout({
   completed,
   sizeMap,
 }: UseLayoutOptions) {
+  const memoizedPositionsRef = useRef<Map<string, NodePosition> | null>(null);
+
   const { initialNodes, initialEdges } = useMemo(() => {
     const initialNodes: Node[] = [
       {
@@ -66,6 +69,16 @@ export function useLayout({
           target: END_NODE_ID,
         }))
       );
+    }
+
+    const memoizedPositions = memoizedPositionsRef.current;
+    if (memoizedPositions) {
+      for (const node of initialNodes) {
+        const view = memoizedPositions.get(node.id);
+        if (view) {
+          node.view = view as NodeView;
+        }
+      }
     }
 
     return { initialNodes, initialEdges };
@@ -138,6 +151,12 @@ export function useLayout({
       for (const node of nodes) {
         Object.assign(node.view!, getPositionWithOffsets(node.view!, offsets));
       }
+    }
+
+    const memoizedPositions = (memoizedPositionsRef.current ??= new Map());
+    for (const node of nodes) {
+      const { x, y } = node.view!;
+      memoizedPositions.set(node.id, { x, y });
     }
 
     const edges = initialEdges.map((edge) => {

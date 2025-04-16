@@ -38,7 +38,8 @@
   cursor: auto;
 }
 
-.canvas:not(.ready) .node {
+.node:not(.ready),
+.canvas:not(.ready) > .edges {
   visibility: hidden;
 }
 
@@ -180,8 +181,8 @@ textarea::placeholder {
   color: var(--antd-input-placeholder-color);
 }
 
-.state-submitted > *,
-.state-working > * {
+.state-submitted > .node-instruction,
+.state-working > .node-instruction {
   color: transparent;
   background: linear-gradient(
     to right,
