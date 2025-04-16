@@ -94,6 +94,12 @@ class GeneralSwitch extends FormItemElementBase {
   accessor unCheckedIcon: GeneralIconProps | undefined;
 
   /**
+   * 是否必填
+   */
+  @property({ type: Boolean })
+  accessor required: boolean | undefined;
+
+  /**
    * 开关改变时触发
    */
   @event({ type: "switch" }) accessor #switchEvent!: EventEmitter<boolean>;
@@ -109,6 +115,7 @@ class GeneralSwitch extends FormItemElementBase {
         formElement={this.getFormElement()}
         curElement={this}
         disabled={this.disabled}
+        required={this.required}
         size={this.size}
         value={this.value}
         onSwitch={this.handleSwitch}

@@ -11,6 +11,7 @@ describe("eo-switch", () => {
     element.value = false;
     element.label = "switch";
     element.disabled = false;
+    element.required = false;
     element.checkedIcon = {
       icon: "plus-circle",
       lib: "antd",
