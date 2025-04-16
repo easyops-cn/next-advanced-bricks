@@ -142,7 +142,13 @@
   padding: 0 1em;
   border: var(--cruise-canvas-node-border);
   border-radius: 6px;
+}
+
+.message.role-assistant {
   background-color: lightgray;
+}
+.message:not(:first-child) {
+  margin-top: 1em;
 }
 
 textarea {

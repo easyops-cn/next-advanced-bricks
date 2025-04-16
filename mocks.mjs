@@ -43,7 +43,7 @@ const getTaskDetail = (req, res) => {
   });
 };
 
-const inputTask = (req, res) => {
+const humanInput = (req, res) => {
   const taskId = req.body.id;
   const jobId = req.body.jobId;
   const task = getTask(taskId);
@@ -54,34 +54,31 @@ const inputTask = (req, res) => {
   }
 
   try {
-    task.inputTask(jobId, req.body.input);
+    let sent = false;
+    task.humanInput(jobId, req.body.input, ({done, value}) => {
+      if (!sent) {
+        res.status(200);
+        res.setHeader("Content-Type", "text/event-stream");
+        res.setHeader("Catch-Control", "no-cache");
+        res.flushHeaders();
+
+        sent = true;
+      }
+
+      if (value) {
+        res.write(`data: ${JSON.stringify(value)}\n\n`);
+        // `flush` is added by [compression](https://www.npmjs.com/package/compression)
+        res.flush?.();
+      }
+
+      if (done) {
+        res.write("data: [DONE]\n\n");
+        res.end();
+      }
+    });
   } catch (e) {
     res.status(400).send({ error: e.message });
-    return;
   }
-
-  let sent = false;
-  task.subscribe(({ done, value }) => {
-    if (!sent) {
-      res.status(200);
-      res.setHeader("Content-Type", "text/event-stream");
-      res.setHeader("Catch-Control", "no-cache");
-      res.flushHeaders();
-
-      sent = true;
-    }
-
-    if (value) {
-      res.write(`data: ${JSON.stringify(value)}\n\n`);
-      // `flush` is added by [compression](https://www.npmjs.com/package/compression)
-      res.flush?.();
-    }
-
-    if (done) {
-      res.write("data: [DONE]\n\n");
-      res.end();
-    }
-  });
 }
 
 /** @type {RequestHandler[]} */
@@ -97,7 +94,7 @@ const mocks = [
         getTaskDetail(req, res);
         break;
       case "POST /api/mocks/task/input":
-        bodyParser.json()(req, res, () => inputTask(req, res));
+        bodyParser.json()(req, res, () => humanInput(req, res));
         break;
       default:
         next();

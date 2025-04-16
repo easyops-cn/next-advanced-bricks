@@ -12,7 +12,7 @@ export interface TransformLiteral {
   y: number;
 }
 
-export type RawNode = RequirementRawNode | InstructionRawNode | ToolRawNode;
+export type RawNode = RequirementRawNode | InstructionRawNode | JobRawNode;
 
 export interface RawEdge {
   source: string;
@@ -30,11 +30,11 @@ export interface InstructionRawNode extends BaseRawNode {
   content: string;
 }
 
-export interface ToolRawNode extends BaseRawNode {
+export interface JobRawNode extends BaseRawNode {
   jobId: string;
-  type: "tool";
+  type: "job";
   tag: string;
-  content: string;
+  messages: Message[];
 }
 
 export interface BaseRawNode {
@@ -42,7 +42,6 @@ export interface BaseRawNode {
   type: string;
   title?: string;
   view?: NodeView;
-  content?: string;
   state?: string;
 }
 
@@ -63,4 +62,96 @@ export interface NodeView extends NodePosition {
 
 export interface Edge {
   points: NodePosition[];
+}
+
+export interface Task {
+  // Task ID
+  id: string;
+
+  // User requirement
+  requirement: string;
+
+  // attachments?: File[];
+
+  state: TaskState;
+
+  plan: Step[];
+
+  jobs: Job[];
+}
+
+export interface Step {
+  // Pre-generated Job ID for this step
+  id: string;
+
+  // The instruction for this step
+  instruction: string;
+}
+
+export interface Job {
+  // Job ID
+  id: string;
+
+  // Parent job ID
+  parent?: string[];
+
+  // Instruction from plan
+  instruction?: string;
+
+  // The agent/tool tag used for this job
+  // E.g., "online-search" or "generate-image"
+  tag: string;
+
+  state: JobState;
+
+  messages?: Message[];
+}
+
+export interface TaskPatch extends Omit<Partial<Task>, "jobs"> {
+  jobs?: JobPatch[];
+}
+
+export interface JobPatch extends Partial<Job> {
+  id: string;
+}
+
+export type TaskState =
+  | "submitted"
+  | "working"
+  | "input-required"
+  | "completed"
+  | "canceled"
+  | "failed"
+  | "unknown";
+
+export type JobState = TaskState;
+
+export interface Message {
+  role: string;
+  parts: Part[];
+}
+
+export type Part = TextPart | FilePart | DataPart;
+
+export interface TextPart {
+  type: "text";
+  text: string;
+}
+
+export interface FilePart {
+  type: "file";
+  file: {
+    name?: string;
+    mimeType?: string;
+    // oneof {
+    bytes?: string; // base64 encoded content
+    uri?: string;
+    // }
+  };
+}
+
+// 自定义结构化信息，用于个性化 UI 显示
+export interface DataPart {
+  type: "data";
+  data: Record<string, any>;
 }

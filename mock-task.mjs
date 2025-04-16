@@ -80,7 +80,7 @@ class MockTask {
             state: "working",
             messages: [
               {
-                role: "agent",
+                role: "assistant",
                 parts: [
                   {
                     type: "text",
@@ -94,7 +94,7 @@ class MockTask {
             id: "mock-job-id-1-b",
             messages: [
               {
-                role: "agent",
+                role: "assistant",
                 parts: [
                   {
                     type: "text",
@@ -114,7 +114,7 @@ class MockTask {
             state: "working",
             messages: [
               {
-                role: "agent",
+                role: "assistant",
                 parts: [
                   {
                     type: "text",
@@ -128,7 +128,7 @@ class MockTask {
             id: "mock-job-id-1-b",
             messages: [
               {
-                role: "agent",
+                role: "assistant",
                 parts: [
                   {
                     type: "text",
@@ -171,7 +171,7 @@ class MockTask {
             id: "mock-job-id-2",
             messages: [
               {
-                role: "agent",
+                role: "assistant",
                 parts: [
                   {
                     type: "text",
@@ -194,7 +194,7 @@ class MockTask {
             id: "mock-job-id-2",
             messages: [
               {
-                role: "agent",
+                role: "assistant",
                 parts: [
                   {
                     type: "text",
@@ -215,7 +215,7 @@ class MockTask {
             state: "input-required",
             // messages: [
             //   {
-            //     role: "agent",
+            //     role: "assistant",
             //     parts: [{
             //       type: "data",
             //       data: {
@@ -265,14 +265,13 @@ class MockTask {
           __delay: 2000,
         },
         {
-          state: "working",
           jobs: [
             {
               id: "mock-job-id-2",
               state: "working",
               messages: [
                 {
-                  role: "agent",
+                  role: "assistant",
                   parts: [
                     {
                       type: "text",
@@ -286,14 +285,14 @@ class MockTask {
           __delay: 2000,
         },
         {
-          state: "completed",
+          // plans: [],
           jobs: [
             {
               id: "mock-job-id-2",
               state: "completed",
               messages: [
                 {
-                  role: "agent",
+                  role: "assistant",
                   parts: [
                     {
                       type: "text",
@@ -303,8 +302,44 @@ class MockTask {
                 },
               ],
             },
+            {
+              id: "mock-job-id-3",
+              state: "submitted",
+              parent: ["mock-job-id-2"],
+              instruction: "Say goodbye",
+            },
           ],
-        }
+          __delay: 1000,
+        },
+        {
+          jobs: [
+            {
+              id: "mock-job-id-3",
+              state: "working",
+              messages: [
+                {
+                  role: "assistant",
+                  parts: [
+                    {
+                      type: "text",
+                      text: "Goodbye",
+                    },
+                  ],
+                }
+              ],
+            }
+          ],
+          __delay: 200,
+        },
+        {
+          state: "completed",
+          jobs: [
+            {
+              id: "mock-job-id-3",
+              state: "completed",
+            }
+          ]
+        },
       );
     }
 
@@ -339,7 +374,7 @@ class MockTask {
       }
       this.#subscribers.clear();
     } else {
-      setTimeout(this.#next, event.__delay ?? 2000);
+      setTimeout(this.#next, (event.__delay ?? 2000));
     }
   };
 
@@ -356,7 +391,7 @@ class MockTask {
     }
   }
 
-  inputTask(jobId, input) {
+  humanInput(jobId, input, callback) {
     const { value: task } = this.#mergeTask();
     const job = task.jobs?.find((job) => job.id === jobId);
 
@@ -368,8 +403,10 @@ class MockTask {
       throw new Error("Job is not in input-required state");
     }
 
+    this.#subscribers.add(callback);
     this.#input = input;
-    this.#next();
+    this.#cursor--;
+    setTimeout(this.#next, 500);
   }
 
   #mergeTask() {

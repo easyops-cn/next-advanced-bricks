@@ -1,13 +1,16 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createSSEStream } from "@next-core/utils/general";
 import { isMatch, pick } from "lodash";
-import type { RawEdge, RawNode } from "./interfaces";
+import type { RawEdge, RawNode, Task, TaskPatch, Job, JobPatch, Message, Part, TextPart } from "./interfaces";
 
 export function useRunDetail(taskId: string | undefined) {
   const [taskDetail, setTaskDetail] = useState<Task | null>(null);
 
+  const humanInputRef = useRef<((jobId: string, input: string) => void)>();
+
   useEffect(() => {
     setTaskDetail(null);
+    humanInputRef.current = undefined;
     if (!taskId) {
       return;
     }
@@ -27,6 +30,28 @@ export function useRunDetail(taskId: string | undefined) {
         setTaskDetail(task);
       }
     })();
+
+    humanInputRef.current = async (jobId: string, input: string) => {
+      const request = await createSSEStream<TaskPatch>(
+        `/api/mocks/task/input`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: taskId,
+            jobId: jobId,
+            input,
+          }),
+        }
+      );
+      const stream = await request;
+      for await (const value of stream) {
+        task = mergeTask(task, value);
+        setTaskDetail(task);
+      }
+    };
 
     return () => {
       ignore = true;
@@ -92,14 +117,13 @@ export function useRunDetail(taskId: string | undefined) {
         }
 
         if (hasMessages) {
-          const content = messages.flatMap((msg) => msg.parts.map((part) => (part as TextPart).text)).join("");
           const jobNodeId = `job:${job.id}`;
           nodes.push({
             id: jobNodeId,
             jobId: job.id,
-            type: "tool",
+            type: "job",
             tag: job.tag,
-            content,
+            messages: mergeMessages(messages),
             state: job.state,
           });
           edges.push({
@@ -126,6 +150,7 @@ export function useRunDetail(taskId: string | undefined) {
       task: taskDetail,
       nodes,
       edges,
+      humanInput: humanInputRef.current,
     };
   }, [taskDetail]);
 }
@@ -183,94 +208,37 @@ function mergeTask(previousTask: Task | null, taskPatch: TaskPatch): Task {
   return { ...previousTask, ...restTaskPatch };
 }
 
-interface Task {
-  // Task ID
-  id: string;
+function mergeMessages(messages: Message[]): Message[] {
+  const merged: Message[] = [];
+  let previousRole: Message["role"] | undefined;
+  for (const message of messages) {
+    if (!previousRole || previousRole !== message.role) {
+      merged.push({...message});
+    } else {
+      const lastMessage = merged[merged.length - 1];
+      lastMessage.parts = [...lastMessage.parts, ...message.parts];
+    }
+    previousRole = message.role;
+  }
 
-  // User requirement
-  requirement: string;
+  for (const message of merged) {
+    message.parts = mergeMessageParts(message.parts);
+  }
 
-  // attachments?: File[];
-
-  state: TaskState;
-
-  plan: Step[];
-
-  jobs: Job[];
+  return merged;
 }
 
-interface Step {
-  // Pre-generated Job ID for this step
-  id: string;
-
-  // The instruction for this step
-  instruction: string;
-}
-
-interface Job {
-  // Job ID
-  id: string;
-
-  // Parent job ID
-  parent?: string[];
-
-  // Instruction from plan
-  instruction?: string;
-
-  // The agent/tool tag used for this job
-  // E.g., "online-search" or "generate-image"
-  tag: string;
-
-  state: JobState;
-
-  messages?: Message[];
-}
-
-interface TaskPatch extends Omit<Partial<Task>, "jobs"> {
-  jobs?: JobPatch[];
-}
-
-interface JobPatch extends Partial<Job> {
-  id: string;
-}
-
-type TaskState =
-  | "submitted"
-  | "working"
-  | "input-required"
-  | "completed"
-  | "canceled"
-  | "failed"
-  | "unknown";
-
-type JobState = TaskState;
-
-interface Message {
-  role: string;
-  parts: Part[];
-}
-
-type Part = TextPart | FilePart | DataPart;
-
-interface TextPart {
-  type: "text";
-  text: string;
-}
-
-interface FilePart {
-  type: "file";
-  file: {
-    name?: string;
-    mimeType?: string;
-    // oneof {
-    bytes?: string; // base64 encoded content
-    uri?: string;
-    // }
-  };
-}
-
-// 自定义结构化信息，用于个性化 UI 显示
-interface DataPart {
-  type: "data";
-  data: Record<string, any>;
+function mergeMessageParts(parts: Part[]): Part[] {
+  const merged: Part[] = [];
+  let previousType: Part["type"] | undefined;
+  for (const part of parts) {
+    if (!previousType || previousType !== part.type || part.type !== "text") {
+      merged.push({...part});
+    } else {
+      const lastPart = merged[merged.length - 1] as TextPart;
+      lastPart.text += part.text;
+    }
+    previousType = part.type;
+  }
+  return merged;
 }
