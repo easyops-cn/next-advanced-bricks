@@ -36,8 +36,8 @@
   },
   "dependencies": {
     "@next-core/http": "^1.2.12",
-    "@next-core/runtime": "^1.59.5",
-    "@next-core/storyboard": "^0.6.17",
+    "@next-core/runtime": "^1.60.0",
+    "@next-core/storyboard": "^0.6.18",
     "@next-core/types": "^1.14.0",
     "@next-core/utils": "^1.7.33",
     "html2canvas": "^1.4.1",
