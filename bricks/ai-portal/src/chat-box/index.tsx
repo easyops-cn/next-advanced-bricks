@@ -9,10 +9,10 @@ import styleText from "./styles.shadow.css";
 
 initializeI18n(NS, locales);
 
-const { defineElement, event } = createDecorators();
+const { defineElement, property, event } = createDecorators();
 
 export interface ChatBoxProps {
-  // Define props here.
+  disabled?: boolean;
 }
 
 /**
@@ -23,6 +23,9 @@ export
   styleTexts: [styleText],
 })
 class ChatBox extends ReactNextElement implements ChatBoxProps {
+  @property()
+  accessor disabled: boolean = false;
+
   @event({ type: "message.submit" })
   accessor #messageSubmit!: EventEmitter<string>;
 
@@ -49,7 +52,7 @@ export function ChatBoxComponent({ onSubmit }: ChatBoxComponentProps) {
       <TextareaAutoResize
         containerRef={containerRef}
         autoResize
-        placeholder="How can I help?"
+        placeholder={t(K.HOW_CAN_I_HELP)}
         submitWhen="enter-without-shift"
         onSubmit={onSubmit}
       />

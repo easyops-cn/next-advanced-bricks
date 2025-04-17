@@ -12,47 +12,41 @@ export interface TransformLiteral {
   y: number;
 }
 
-export type RawNode = RequirementRawNode | InstructionRawNode | JobRawNode;
+export type GraphNode = RequirementGraphNode | InstructionGraphNode | JobGraphNode | StartGraphNode | EndGraphNode;
 
-export interface RawEdge {
-  source: string;
-  target: string;
-}
-
-export interface RequirementRawNode extends BaseRawNode {
+export interface RequirementGraphNode extends BaseGraphNode {
   type: "requirement";
-  content: string;
+  content: string,
 }
 
-export interface InstructionRawNode extends BaseRawNode {
-  jobId: string;
+export interface InstructionGraphNode extends BaseGraphNode {
   type: "instruction";
-  content: string;
+  job: Job;
 }
 
-export interface JobRawNode extends BaseRawNode {
-  jobId: string;
+export interface JobGraphNode extends BaseGraphNode {
   type: "job";
-  tag: string;
-  messages: Message[];
+  job: Job;
 }
 
-export interface BaseRawNode {
-  id: string;
-  type: string;
-  title?: string;
-  view?: NodeView;
-  state?: string;
-}
-
-export type Node = RawNode | StartNode | EndNode;
-
-export interface StartNode extends BaseRawNode {
+export interface StartGraphNode extends BaseGraphNode {
   type: "start";
 }
 
-export interface EndNode extends BaseRawNode {
+export interface EndGraphNode extends BaseGraphNode {
   type: "end";
+}
+
+export interface BaseGraphNode {
+  id: string;
+  type: string;
+  state?: string;
+  view?: NodeView;
+}
+
+export interface GraphEdge {
+  source: string;
+  target: string;
 }
 
 export interface NodeView extends NodePosition {
@@ -63,6 +57,8 @@ export interface NodeView extends NodePosition {
 export interface Edge {
   points: NodePosition[];
 }
+
+export type TaskBaseDetail = Omit<Task, "jobs">;
 
 export interface Task {
   // Task ID

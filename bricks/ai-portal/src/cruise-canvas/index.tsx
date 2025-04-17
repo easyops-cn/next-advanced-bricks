@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { createDecorators } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
 import "@next-core/theme";
@@ -10,20 +10,23 @@ import { MarkdownComponent } from "@next-shared/markdown";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
 import { useZoom } from "./useZoom.js";
-import type { Node, RawEdge, RawNode, SizeTuple } from "./interfaces.js";
+import type { SizeTuple, GraphNode, Job, RequirementGraphNode, JobGraphNode, TaskBaseDetail } from "./interfaces.js";
 // import Summarization from "./summarization.md";
 import { useAutoCenter } from "./useAutoCenter.js";
 import { useLayout } from "./useLayout.js";
-import { useRunDetail } from "./useRunDetail.js";
+import { useTaskDetail } from "./useTaskDetail.js";
+import { useTaskGraph } from "./useTaskGraph.js";
 
 initializeI18n(NS, locales);
 
 const { defineElement, property } = createDecorators();
 
+const MemoizedNodeComponent = memo(NodeComponent);
+
 export interface CruiseCanvasProps {
-  nodes: RawNode[] | undefined;
-  edges: RawEdge[] | undefined;
   taskId: string | undefined;
+  task: TaskBaseDetail | undefined;
+  jobs: Job[] | undefined;
 }
 
 /**
@@ -34,21 +37,21 @@ export
   styleTexts: [styleText],
 })
 class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
-  @property({ attribute: false })
-  accessor nodes: RawNode[] | undefined;
-
-  @property({ attribute: false })
-  accessor edges: RawEdge[] | undefined;
-
   @property()
   accessor taskId: string | undefined;
+
+  @property({ attribute: false })
+  accessor task: TaskBaseDetail | undefined;
+
+  @property({ attribute: false })
+  accessor jobs: Job[] | undefined;
 
   render() {
     return (
       <CruiseCanvasComponent
         taskId={this.taskId}
-        nodes={this.nodes}
-        edges={this.edges}
+        jobs={this.jobs}
+        task={this.task}
       />
     );
   }
@@ -60,16 +63,22 @@ export interface CruiseCanvasComponentProps extends CruiseCanvasProps {
 
 export function CruiseCanvasComponent({
   taskId,
-  nodes: propNodes,
-  edges: propEdges,
+  task: propTask,
+  jobs: propJobs,
 }: CruiseCanvasComponentProps) {
   const rootRef = useRef<HTMLDivElement>(null);
 
-  const runDetail = useRunDetail(propNodes ? undefined : taskId);
-  const rawNodes = propNodes ?? runDetail?.nodes;
-  const rawEdges = propEdges ?? runDetail?.edges;
-  const completed = runDetail?.task.state === "completed";
-  const humanInput = runDetail?.humanInput;
+  const { task: _task, jobs: _jobs, humanInputRef } = useTaskDetail(taskId);
+  const task = taskId ? _task : propTask;
+  const jobs = taskId ? _jobs : propJobs ?? [];
+  const graph = useTaskGraph(task, jobs);
+  const rawNodes = graph?.nodes;
+  const rawEdges = graph?.edges;
+  const completed = task?.state === "completed";
+
+  const humanInput = useCallback((jobId: string, input: string) => {
+    humanInputRef.current?.(jobId, input);
+  }, [humanInputRef]);
 
   const [sizeMap, setSizeMap] = useState<Map<string, SizeTuple> | null>(null);
   const handleNodeResize = useCallback((id: string, size: SizeTuple | null) => {
@@ -134,9 +143,15 @@ export function CruiseCanvasComponent({
           ))}
         </svg>
         {nodes.map((node) => (
-          <NodeComponent
+          <MemoizedNodeComponent
             key={node.id}
-            node={node}
+            id={node.id}
+            type={node.type}
+            content={(node as RequirementGraphNode).content}
+            job={(node as JobGraphNode).job}
+            state={node.state}
+            x={node.view?.x}
+            y={node.view?.y}
             onResize={handleNodeResize}
             humanInput={humanInput}
           />
@@ -147,13 +162,18 @@ export function CruiseCanvasComponent({
 }
 
 interface NodeComponentProps {
-  node: Node;
+  id: string;
+  type: GraphNode["type"];
+  content?: string;
+  job?: Job;
+  state?: string;
+  x?: number;
+  y?: number;
   onResize: (id: string, size: SizeTuple | null) => void;
   humanInput?: (jobId: string, input: string) => void;
 }
 
-function NodeComponent({ node, onResize, humanInput }: NodeComponentProps) {
-  const { id, type, view } = node;
+function NodeComponent({ id, type, state, job, content, x, y, onResize, humanInput }: NodeComponentProps) {
   const nodeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -187,13 +207,13 @@ function NodeComponent({ node, onResize, humanInput }: NodeComponentProps) {
 
   return (
     <div
-      className={classNames(`node state-${node.state ?? "unknown"}`, {
-        ready: view?.x != null && view?.y != null,
+      className={classNames(`node state-${state ?? "unknown"}`, {
+        ready: x != null && y != null,
       })}
       ref={nodeRef}
       style={{
-        left: view?.x,
-        top: view?.y,
+        left: x,
+        top: y,
       }}
     >
       {type === "start" ? (
@@ -201,25 +221,13 @@ function NodeComponent({ node, onResize, humanInput }: NodeComponentProps) {
       ) : type === "end" ? (
         <div className="node-end" />
       ) : type === "requirement" ? (
-        <div className="node-requirement size-medium">{node.content}</div>
+        <div className="node-requirement size-medium">{content}</div>
       ) : type === "instruction" ? (
-        <div className="node-instruction">{node.content}</div>
-      ) : // : type === "summarize"
-      // ? <div className="node-summarize size-large">
-      //     <div className="node-title">{node.title}</div>
-      //     <MarkdownComponent content={node.content} />
-      //   </div>
-      // : type === "job" && node.tag === "generate image"
-      // ? <div className="node-generate-image size-medium type-image">
-      //     <img src={node.content} />
-      //   </div>
-      // type === "job" &&
-      //   (node.tag === "ask user more" || node.state === "input-required") ? (
-      //   <NodeAskUserMore node={node} humanInput={humanInput} />
-      // ) :
+        <div className="node-instruction">{job!.instruction}</div>
+      ) :
       type === "job" ? (
         <div className="node-default size-medium">
-          {node.messages?.map((message, index) => (
+          {job!.messages?.map((message, index) => (
             <div key={index} className={`message role-${message.role}`}>
               {message.parts?.map((part, partIndex) => (
                 <React.Fragment key={partIndex}>
@@ -234,8 +242,8 @@ function NodeComponent({ node, onResize, humanInput }: NodeComponentProps) {
               ))}
             </div>
           ))}
-          {node.state === "input-required" && (
-            <NodeAskUserMore jobId={node.jobId} humanInput={humanInput} />
+          {state === "input-required" && (
+            <HumanInputComponent jobId={job!.id} humanInput={humanInput} />
           )}
         </div>
       ) : (
@@ -247,12 +255,10 @@ function NodeComponent({ node, onResize, humanInput }: NodeComponentProps) {
   );
 }
 
-function NodeAskUserMore({
-  // node,
+function HumanInputComponent({
   jobId,
   humanInput,
 }: {
-  // node: ToolRawNode;
   jobId: string;
   humanInput?: (jobId: string, input: string) => void;
 }): JSX.Element {

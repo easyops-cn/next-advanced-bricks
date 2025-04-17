@@ -1,18 +1,17 @@
 import dagre from "@dagrejs/dagre";
 import { useMemo, useRef } from "react";
 import type {
-  Node,
   NodePosition,
   NodeView,
-  RawEdge,
-  RawNode,
+  GraphEdge,
+  GraphNode,
   SizeTuple,
 } from "./interfaces";
 import { END_NODE_ID, START_NODE_ID } from "./constants";
 
 export interface UseLayoutOptions {
-  rawNodes: RawNode[] | undefined;
-  rawEdges: RawEdge[] | undefined;
+  rawNodes: GraphNode[] | undefined;
+  rawEdges: GraphEdge[] | undefined;
   completed?: boolean;
   sizeMap: Map<string, SizeTuple> | null;
 }
@@ -26,13 +25,13 @@ export function useLayout({
   const memoizedPositionsRef = useRef<Map<string, NodePosition> | null>(null);
 
   const { initialNodes, initialEdges } = useMemo(() => {
-    const initialNodes: Node[] = [
+    const initialNodes: GraphNode[] = [
       {
-        id: START_NODE_ID,
         type: "start",
+        id: START_NODE_ID,
       },
     ];
-    const initialEdges: RawEdge[] = [];
+    const initialEdges: GraphEdge[] = [];
     const finishedNodeIds: string[] = [];
     const rawNodes = _rawNodes ?? [];
     const rawEdges = _rawEdges ?? [];
@@ -120,7 +119,7 @@ export function useLayout({
     // Make the start node position unchanged
     let offsets: NodePosition | null = null;
 
-    const nodes = initialNodes.map<Node>((node) => {
+    const nodes = initialNodes.map<GraphNode>((node) => {
       const nodeView = graph.node(node.id);
       const x = nodeView.x - nodeView.width / 2;
       const y = nodeView.y - nodeView.height / 2;
