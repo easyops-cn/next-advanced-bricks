@@ -295,6 +295,9 @@ async function loadMainDll(adapterPkgFilePath: string) {
     applyTheme,
 
     doTransform: __secret_internals.legacyDoTransform,
+    transformProperties: __secret_internals.legacyTransformProperties,
+    transformIntermediateData:
+      __secret_internals.legacyTransformIntermediateData,
 
     BrickWrapper(props: {
       wrapperConfig?: {
