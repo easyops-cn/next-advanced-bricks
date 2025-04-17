@@ -182,7 +182,9 @@ textarea::placeholder {
 }
 
 .state-submitted > .node-instruction,
-.state-working > .node-instruction {
+.state-submitted > .node-requirement,
+.state-working > .node-instruction,
+.state-working > .node-requirement {
   color: transparent;
   background: linear-gradient(
     to right,

@@ -238,15 +238,22 @@ class MockTask {
             //     parts: [{
             //       type: "data",
             //       data: {
-            //         tag: "user-confirm",
+            //         tag: "confirm",
+            //       },
+            //       data: {
+            //         tag: "select",
             //         options: [
             //           {
-            //             label: "确定",
-            //             value: "confirm",
+            //             label: "方案一",
+            //             value: "1",
             //           },
             //           {
-            //             label: "取消",
-            //             value: "cancel",
+            //             label: "方案二",
+            //             value: "2",
+            //           },
+            //           {
+            //             label: "方案三",
+            //             value: "3",
             //           },
             //         ]
             //       }
