@@ -60,7 +60,7 @@ export function useTaskGraph(task: TaskBaseDetail | null | undefined, jobs: Job[
     for (const jobId of list) {
       const job = jobMap.get(jobId)!;
       const { messages } = job;
-      const hasMessages = Array.isArray(messages) && messages.length > 0;
+      const hasMessages = (Array.isArray(messages) && messages.length > 0) || job.toolCall;
 
       const nodeIds: string[] = [];
 

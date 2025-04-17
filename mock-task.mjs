@@ -53,7 +53,7 @@ class MockTask {
             id: "mock-job-id-1",
             state: "submitted",
             instruction: "Say hello to the world",
-            tag: "hello-tool",
+            // tag: "hello-tool",
           },
         ],
         __delay: 2000,
@@ -179,87 +179,65 @@ class MockTask {
             parent: ["mock-job-id-1-a", "mock-job-id-1-b"],
             state: "submitted",
             instruction: "Say thank you",
-            tag: "thank-you-tool",
+            // tag: "thank-you-tool",
           },
         ],
         __delay: 2000,
       },
-      {
-        jobs: [
-          {
-            id: "mock-job-id-2",
-            messages: [
-              {
-                role: "assistant",
-                parts: [
-                  {
-                    type: "text",
-                    text: "Fine",
-                  },
-                  {
-                    type: "text",
-                    text: ", thank you!",
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-        __delay: 1000,
-      },
-      {
-        jobs: [
-          {
-            id: "mock-job-id-2",
-            messages: [
-              {
-                role: "assistant",
-                parts: [
-                  {
-                    type: "text",
-                    text: " And you?",
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-        __delay: 200,
-      },
+      // {
+      //   jobs: [
+      //     {
+      //       id: "mock-job-id-2",
+      //       messages: [
+      //         {
+      //           role: "assistant",
+      //           parts: [
+      //             {
+      //               type: "text",
+      //               text: "Fine",
+      //             },
+      //             {
+      //               type: "text",
+      //               text: ", thank you!",
+      //             },
+      //           ],
+      //         },
+      //       ],
+      //     },
+      //   ],
+      //   __delay: 1000,
+      // },
+      // {
+      //   jobs: [
+      //     {
+      //       id: "mock-job-id-2",
+      //       messages: [
+      //         {
+      //           role: "assistant",
+      //           parts: [
+      //             {
+      //               type: "text",
+      //               text: " And you?",
+      //             },
+      //           ],
+      //         },
+      //       ],
+      //     },
+      //   ],
+      //   __delay: 200,
+      // },
       {
         state: "input-required",
         jobs: [
           {
             id: "mock-job-id-2",
             state: "input-required",
-            // messages: [
-            //   {
-            //     role: "assistant",
-            //     parts: [{
-            //       type: "data",
-            //       data: {
-            //         tag: "confirm",
-            //       },
-            //       data: {
-            //         tag: "select",
-            //         options: [
-            //           {
-            //             label: "方案一",
-            //             value: "1",
-            //           },
-            //           {
-            //             label: "方案二",
-            //             value: "2",
-            //           },
-            //           {
-            //             label: "方案三",
-            //             value: "3",
-            //           },
-            //         ]
-            //       }
-            //     }]
-            //   }
-            // ]
+            toolCall: {
+              name: "ask_user_confirm",
+              arguments: {
+                question: "Fine, thank you! And you?",
+              }
+            },
           },
         ],
       },
@@ -275,6 +253,12 @@ class MockTask {
             {
               id: "mock-job-id-2",
               state: "working",
+              toolCall: {
+                name: "ask_user_confirm",
+                arguments: {
+                  question: "Fine, thank you! And you?",
+                }
+              },
               messages: [
                 {
                   role: "user",
@@ -290,43 +274,43 @@ class MockTask {
           ],
           __delay: 2000,
         },
-        {
-          jobs: [
-            {
-              id: "mock-job-id-2",
-              state: "working",
-              messages: [
-                {
-                  role: "assistant",
-                  parts: [
-                    {
-                      type: "text",
-                      text: "Alright alright",
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-          __delay: 2000,
-        },
+        // {
+        //   jobs: [
+        //     {
+        //       id: "mock-job-id-2",
+        //       state: "working",
+        //       messages: [
+        //         {
+        //           role: "assistant",
+        //           parts: [
+        //             {
+        //               type: "text",
+        //               text: "Alright alright",
+        //             },
+        //           ],
+        //         },
+        //       ],
+        //     },
+        //   ],
+        //   __delay: 2000,
+        // },
         {
           // plans: [],
           jobs: [
             {
               id: "mock-job-id-2",
               state: "completed",
-              messages: [
-                {
-                  role: "assistant",
-                  parts: [
-                    {
-                      type: "text",
-                      text: " alright.",
-                    },
-                  ],
-                },
-              ],
+              // messages: [
+              //   {
+              //     role: "assistant",
+              //     parts: [
+              //       {
+              //         type: "text",
+              //         text: " alright.",
+              //       },
+              //     ],
+              //   },
+              // ],
             },
             {
               id: "mock-job-id-3",

@@ -15,17 +15,24 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
 
       for (const jobPatch of jobsPatch) {
         const previousJobIndex = jobs?.findIndex((job) => job.id === jobPatch.id) ?? -1;
+        const { messages: messagesPatch } = jobPatch;
         if (previousJobIndex === -1) {
-          jobs = [...jobs, jobPatch as Job];
+          if (Array.isArray(messagesPatch) && messagesPatch.length > 1) {
+            jobs = [...jobs, {
+              ...jobPatch,
+              messages: mergeMessages(messagesPatch),
+            } as Job];
+          } else {
+            jobs = [...jobs, jobPatch as Job];
+          }
         } else {
           const previousJob = jobs[previousJobIndex];
-          const { messages: messagesPatch } = jobPatch;
           const restMessagesPatch: JobPatch = pick(jobPatch, [
             "id",
             "parent",
             "state",
             "instruction",
-            "tag",
+            "toolCall",
           ]);
           if (Array.isArray(messagesPatch) && messagesPatch.length > 0) {
             restMessagesPatch.messages = mergeMessages([...(previousJob.messages ?? []), ...messagesPatch]);

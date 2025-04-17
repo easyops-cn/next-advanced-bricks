@@ -1,12 +1,13 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { createDecorators } from "@next-core/element";
-import { ReactNextElement } from "@next-core/react-element";
+import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import classNames from "classnames";
 import ResizeObserver from "resize-observer-polyfill";
 import { TextareaAutoResize } from "@next-shared/form";
 import { MarkdownComponent } from "@next-shared/markdown";
+import type { Button, ButtonProps } from "@next-bricks/basic/button";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
 import { useZoom } from "./useZoom.js";
@@ -22,6 +23,8 @@ initializeI18n(NS, locales);
 const { defineElement, property } = createDecorators();
 
 const MemoizedNodeComponent = memo(NodeComponent);
+
+const WrappedButton = wrapBrick<Button, ButtonProps>("eo-button");
 
 export interface CruiseCanvasProps {
   taskId: string | undefined;
@@ -227,6 +230,20 @@ function NodeComponent({ id, type, state, job, content, x, y, onResize, humanInp
       ) :
       type === "job" ? (
         <div className="node-default size-medium">
+          {["ask_user_more", "ask_user_confirm"].includes(job!.toolCall?.name) ? (
+            <>
+              <div className="message role-assistant">
+                <MarkdownComponent content={job!.toolCall.arguments?.question as string} />
+              </div>
+              {state === "input-required" && (
+                job!.toolCall.name === "ask_user_more"
+                  ? <HumanInputComponent jobId={job!.id} humanInput={humanInput} />
+                  : job!.toolCall.name === "ask_user_confirm"
+                  ? <HumanConfirmComponent jobId={job!.id} humanInput={humanInput} />
+                  : null
+              )}
+            </>
+          ) : null}
           {job!.messages?.map((message, index) => (
             <div key={index} className={`message role-${message.role}`}>
               {message.parts?.map((part, partIndex) => (
@@ -242,9 +259,6 @@ function NodeComponent({ id, type, state, job, content, x, y, onResize, humanInp
               ))}
             </div>
           ))}
-          {state === "input-required" && (
-            <HumanInputComponent jobId={job!.id} humanInput={humanInput} />
-          )}
         </div>
       ) : (
         <div className="node-default size-medium">
@@ -282,6 +296,25 @@ function HumanInputComponent({
           }
         }}
       />
+    </div>
+  );
+}
+
+function HumanConfirmComponent({
+  jobId,
+  humanInput,
+}: {
+  jobId: string;
+  humanInput?: (jobId: string, input: string) => void;
+}): JSX.Element {
+  return (
+    <div style={{ marginTop: "1em" }}>
+      <WrappedButton type="primary" onClick={() => { humanInput(jobId, "yes") }}>
+        Yes
+      </WrappedButton>
+      <WrappedButton onClick={() => { humanInput(jobId, "no") }} style={{ marginLeft: "0.5em" }}>
+        No
+      </WrappedButton>
     </div>
   );
 }

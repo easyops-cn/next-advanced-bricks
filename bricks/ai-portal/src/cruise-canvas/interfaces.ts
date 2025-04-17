@@ -94,11 +94,9 @@ export interface Job {
   // Instruction from plan
   instruction?: string;
 
-  // The agent/tool tag used for this job
-  // E.g., "online-search" or "generate-image"
-  tag: string;
-
   state: JobState;
+
+  toolCall?: ToolCall;
 
   messages?: Message[];
 }
@@ -149,5 +147,10 @@ export interface FilePart {
 // 自定义结构化信息，用于个性化 UI 显示
 export interface DataPart {
   type: "data";
-  data: Record<string, any>;
+  data: Record<string, unknown>;
+}
+
+export interface ToolCall {
+  name: string;
+  arguments?: Record<string, unknown>;
 }

@@ -17,6 +17,30 @@ export function useTaskDetail(taskId: string | undefined) {
     }
 
     let ignore = false;
+    let requesting = false;
+
+    const makeRequest = async () => {
+      if (requesting) {
+        return;
+      }
+      requesting = true;
+      try {
+        const request = await createSSEStream<TaskPatch>(
+          `/api/mocks/task/get?${new URLSearchParams({ id: taskId })}`
+        );
+        const stream = await request;
+        for await (const value of stream) {
+          if (ignore) {
+            requesting = false;
+            return;
+          }
+          dispatch({ type: "sse", payload: value });
+        }
+      } catch (e) {
+        console.error("sse failed", e);
+        requesting = false;
+      }
+    };
 
     humanInputRef.current = async (jobId: string, input: string) => {
       const response = await fetch(
@@ -34,24 +58,13 @@ export function useTaskDetail(taskId: string | undefined) {
         }
       );
       if (response.ok) {
-        console.log("human input ok");
+        makeRequest();
       } else {
         console.error("human input failed", response.status, response.statusText);
       }
     };
 
-    (async () => {
-      const request = await createSSEStream<TaskPatch>(
-        `/api/mocks/task/get?${new URLSearchParams({ id: taskId })}`
-      );
-      const stream = await request;
-      for await (const value of stream) {
-        if (ignore) {
-          return;
-        }
-        dispatch({ type: "sse", payload: value });
-      }
-    })();
+    makeRequest();
 
     return () => {
       ignore = true;

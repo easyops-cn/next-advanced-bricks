@@ -24,7 +24,7 @@ const getTaskDetail = (req, res) => {
     if (!sent) {
       res.status(200);
       res.setHeader("Content-Type", "text/event-stream");
-      res.setHeader("Catch-Control", "no-cache");
+      res.setHeader("Cache-Control", "no-cache");
       res.flushHeaders();
 
       sent = true;
@@ -54,28 +54,7 @@ const humanInput = (req, res) => {
   }
 
   try {
-    // let sent = false;
-    task.humanInput(jobId, req.body.input/* , ({done, value}) => {
-      if (!sent) {
-        res.status(200);
-        res.setHeader("Content-Type", "text/event-stream");
-        res.setHeader("Catch-Control", "no-cache");
-        res.flushHeaders();
-
-        sent = true;
-      }
-
-      if (value) {
-        res.write(`data: ${JSON.stringify(value)}\n\n`);
-        // `flush` is added by [compression](https://www.npmjs.com/package/compression)
-        res.flush?.();
-      }
-
-      if (done) {
-        res.write("data: [DONE]\n\n");
-        res.end();
-      }
-    } */);
+    task.humanInput(jobId, req.body.input);
     res.status(200).send({ message: "ok" });
   } catch (e) {
     res.status(400).send({ error: e.message });
