@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.15](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/v2-adapter@1.3.14...@next-bricks/v2-adapter@1.3.15) (2025-04-17)
+
+
+### Bug Fixes
+
+* support some legacy transform functions ([ada9e2c](https://github.com/easyops-cn/next-advanced-bricks/commit/ada9e2ccc45a5d841d8c62fa8e58d0735c541238))
+
+
+
+
+
 ## [1.3.14](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/v2-adapter@1.3.13...@next-bricks/v2-adapter@1.3.14) (2025-03-27)
 
 **Note:** Version bump only for package @next-bricks/v2-adapter
