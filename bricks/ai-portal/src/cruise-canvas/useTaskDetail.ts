@@ -5,9 +5,12 @@ import type { TaskPatch } from "./interfaces";
 import { createSSEStream } from "@next-core/utils/general";
 
 export function useTaskDetail(taskId: string | undefined) {
-  const [{task, jobs}, dispatch] = useReducer(rootReducer, null, () => ({ task: null, jobs: [] }));
+  const [{ task, jobs }, dispatch] = useReducer(rootReducer, null, () => ({
+    task: null,
+    jobs: [],
+  }));
 
-  const humanInputRef = useRef<((jobId: string, input: string) => void)>();
+  const humanInputRef = useRef<(jobId: string, input: string) => void>();
 
   useEffect(() => {
     dispatch({ type: "reset" });
@@ -26,7 +29,9 @@ export function useTaskDetail(taskId: string | undefined) {
       requesting = true;
       try {
         const request = await createSSEStream<TaskPatch>(
-          `/api/mocks/task/get?${new URLSearchParams({ id: taskId })}`
+          // `/api/mocks/task/get?${new URLSearchParams({ id: taskId })}`
+          `http://localhost:8888/.netlify/functions/task-get?${new URLSearchParams({ id: taskId })}`
+          // `https://serverless-mocks.netlify.app/.netlify/functions/task-get?${new URLSearchParams({ id: taskId })}`
         );
         const stream = await request;
         for await (const value of stream) {
@@ -38,13 +43,16 @@ export function useTaskDetail(taskId: string | undefined) {
         }
       } catch (e) {
         console.error("sse failed", e);
+      } finally {
         requesting = false;
       }
     };
 
     humanInputRef.current = async (jobId: string, input: string) => {
       const response = await fetch(
-        `/api/mocks/task/input`,
+        // `/api/mocks/task/input`,
+        `http://localhost:8888/.netlify/functions/task-input`,
+        // `https://serverless-mocks.netlify.app/.netlify/functions/task-input`,
         {
           method: "POST",
           headers: {
@@ -60,7 +68,11 @@ export function useTaskDetail(taskId: string | undefined) {
       if (response.ok) {
         makeRequest();
       } else {
-        console.error("human input failed", response.status, response.statusText);
+        console.error(
+          "human input failed",
+          response.status,
+          response.statusText
+        );
       }
     };
 
