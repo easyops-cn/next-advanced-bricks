@@ -40,8 +40,8 @@ children:
         useProvider: basic.http-request
         args:
           # - /api/mocks/task/send
-          - "http://localhost:8888/.netlify/functions/task-send"
-          #- 'https://serverless-mocks.netlify.app/.netlify/functions/task-send'
+          # - "http://localhost:8888/.netlify/functions/task-send"
+          - "https://serverless-mocks.netlify.app/.netlify/functions/task-send"
           - method: POST
             body: |
               <%

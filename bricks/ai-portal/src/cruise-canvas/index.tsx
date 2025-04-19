@@ -230,15 +230,15 @@ function NodeComponent({ id, type, state, job, content, x, y, onResize, humanInp
       ) :
       type === "job" ? (
         <div className="node-default size-medium">
-          {["ask_user_more", "ask_user_confirm"].includes(job!.toolCall?.name) ? (
+          {["ask_user_more", "ask_user_confirm"].includes(job!.toolCall?.name as string) ? (
             <>
               <div className="message role-assistant">
-                <MarkdownComponent content={job!.toolCall.arguments?.question as string} />
+                <MarkdownComponent content={job!.toolCall!.arguments?.question as string} />
               </div>
               {state === "input-required" && (
-                job!.toolCall.name === "ask_user_more"
+                job!.toolCall!.name === "ask_user_more"
                   ? <HumanInputComponent jobId={job!.id} humanInput={humanInput} />
-                  : job!.toolCall.name === "ask_user_confirm"
+                  : job!.toolCall!.name === "ask_user_confirm"
                   ? <HumanConfirmComponent jobId={job!.id} humanInput={humanInput} />
                   : null
               )}
@@ -309,10 +309,10 @@ function HumanConfirmComponent({
 }): JSX.Element {
   return (
     <div style={{ marginTop: "1em" }}>
-      <WrappedButton type="primary" onClick={() => { humanInput(jobId, "yes") }}>
+      <WrappedButton type="primary" onClick={() => { humanInput?.(jobId, "yes") }}>
         Yes
       </WrappedButton>
-      <WrappedButton onClick={() => { humanInput(jobId, "no") }} style={{ marginLeft: "0.5em" }}>
+      <WrappedButton onClick={() => { humanInput?.(jobId, "no") }} style={{ marginLeft: "0.5em" }}>
         No
       </WrappedButton>
     </div>

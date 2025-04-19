@@ -30,16 +30,18 @@ export function useTaskDetail(taskId: string | undefined) {
       try {
         const request = await createSSEStream<TaskPatch>(
           // `/api/mocks/task/get?${new URLSearchParams({ id: taskId })}`
-          `http://localhost:8888/.netlify/functions/task-get?${new URLSearchParams({ id: taskId })}`
-          // `https://serverless-mocks.netlify.app/.netlify/functions/task-get?${new URLSearchParams({ id: taskId })}`
+          // `http://localhost:8888/.netlify/functions/task-get?${new URLSearchParams({ id: taskId })}`
+          `https://serverless-mocks.netlify.app/.netlify/functions/task-get?${new URLSearchParams({ id: taskId })}`
         );
         const stream = await request;
+        let isInitial = true;
         for await (const value of stream) {
           if (ignore) {
             requesting = false;
             return;
           }
-          dispatch({ type: "sse", payload: value });
+          dispatch({ type: "sse", payload: value, isInitial });
+          isInitial = false;
         }
       } catch (e) {
         console.error("sse failed", e);
@@ -51,8 +53,8 @@ export function useTaskDetail(taskId: string | undefined) {
     humanInputRef.current = async (jobId: string, input: string) => {
       const response = await fetch(
         // `/api/mocks/task/input`,
-        `http://localhost:8888/.netlify/functions/task-input`,
-        // `https://serverless-mocks.netlify.app/.netlify/functions/task-input`,
+        // `http://localhost:8888/.netlify/functions/task-input`,
+        `https://serverless-mocks.netlify.app/.netlify/functions/task-input`,
         {
           method: "POST",
           headers: {

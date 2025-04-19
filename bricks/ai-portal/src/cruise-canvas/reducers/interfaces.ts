@@ -10,6 +10,7 @@ export type CruiseCanvasAction = TaskSSEAction | TaskResetAction;
 export interface TaskSSEAction {
   type: "sse";
   payload: TaskPatch;
+  isInitial?: boolean;
 }
 
 export interface TaskResetAction {
