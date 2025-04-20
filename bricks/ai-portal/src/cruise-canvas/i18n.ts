@@ -1,14 +1,18 @@
 import { i18n } from "@next-core/i18n";
 
-export enum K {}
-// HELLO = "HELLO",
+export enum K {
+  CONFIRM = "CONFIRM",
+  CANCEL = "CANCEL",
+}
 
 const en: Locale = {
-  // HELLO: "Hello",
+  CONFIRM: "Confirm",
+  CANCEL: "Cancel",
 };
 
 const zh: Locale = {
-  // HELLO: "你好",
+  CONFIRM: "确认",
+  CANCEL: "取消",
 };
 
 export const NS = "bricks/ai-portal/cruise-canvas";

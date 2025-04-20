@@ -39,14 +39,15 @@ children:
       message.submit:
         useProvider: basic.http-request
         args:
+          - "<% `${BASE_URL}/api/gateway/logic.llm.aiops_service/api/v1/llm/agent/flow/create` %>"
           # - /api/mocks/task/send
           # - "http://localhost:8888/.netlify/functions/task-send"
-          - "https://serverless-mocks.netlify.app/.netlify/functions/task-send"
+          # - "https://serverless-mocks.netlify.app/.netlify/functions/task-send"
           - method: POST
             body: |
               <%
                 JSON.stringify({
-                  requirement: EVENT.detail
+                  input: EVENT.detail
                 })
               %>
             headers:

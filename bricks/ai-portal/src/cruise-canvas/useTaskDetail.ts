@@ -1,8 +1,9 @@
 /* eslint-disable no-console */
 import { useEffect, useReducer, useRef } from "react";
+import { createSSEStream } from "@next-core/utils/general";
+import { getBasePath } from "@next-core/runtime";
 import { rootReducer } from "./reducers";
 import type { TaskPatch } from "./interfaces";
-import { createSSEStream } from "@next-core/utils/general";
 
 export function useTaskDetail(taskId: string | undefined) {
   const [{ task, jobs }, dispatch] = useReducer(rootReducer, null, () => ({
@@ -29,9 +30,10 @@ export function useTaskDetail(taskId: string | undefined) {
       requesting = true;
       try {
         const request = await createSSEStream<TaskPatch>(
+          `${getBasePath()}api/gateway/logic.llm.aiops_service/api/v1/llm/agent/flow/${taskId}`
           // `/api/mocks/task/get?${new URLSearchParams({ id: taskId })}`
           // `http://localhost:8888/.netlify/functions/task-get?${new URLSearchParams({ id: taskId })}`
-          `https://serverless-mocks.netlify.app/.netlify/functions/task-get?${new URLSearchParams({ id: taskId })}`
+          // `https://serverless-mocks.netlify.app/.netlify/functions/task-get?${new URLSearchParams({ id: taskId })}`
         );
         const stream = await request;
         let isInitial = true;
@@ -52,9 +54,10 @@ export function useTaskDetail(taskId: string | undefined) {
 
     humanInputRef.current = async (jobId: string, input: string) => {
       const response = await fetch(
+        `${getBasePath()}api/gateway/logic.llm.aiops_service/api/v1/llm/agent/flow/${taskId}/job/${jobId}`,
         // `/api/mocks/task/input`,
         // `http://localhost:8888/.netlify/functions/task-input`,
-        `https://serverless-mocks.netlify.app/.netlify/functions/task-input`,
+        // `https://serverless-mocks.netlify.app/.netlify/functions/task-input`,
         {
           method: "POST",
           headers: {

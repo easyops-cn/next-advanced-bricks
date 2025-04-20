@@ -309,11 +309,11 @@ function HumanConfirmComponent({
 }): JSX.Element {
   return (
     <div style={{ marginTop: "1em" }}>
-      <WrappedButton type="primary" onClick={() => { humanInput?.(jobId, "yes") }}>
-        Yes
+      <WrappedButton type="primary" onClick={() => { humanInput?.(jobId, t(K.CONFIRM)) }}>
+        {t(K.CONFIRM)}
       </WrappedButton>
-      <WrappedButton onClick={() => { humanInput?.(jobId, "no") }} style={{ marginLeft: "0.5em" }}>
-        No
+      <WrappedButton onClick={() => { humanInput?.(jobId, t(K.CANCEL)) }} style={{ marginLeft: "0.5em" }}>
+        {t(K.CANCEL)}
       </WrappedButton>
     </div>
   );
