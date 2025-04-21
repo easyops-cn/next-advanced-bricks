@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.42.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.42.8...@next-bricks/advanced@0.42.9) (2025-04-21)
+
+
+### Bug Fixes
+
+* 工作台样式与布局配置——编排 ([bd2a62b](https://github.com/easyops-cn/next-advanced-bricks/commit/bd2a62b9f1bd20a31bc9cc0e35c00b5f97ea4944))
+
+
+
+
+
 ## [0.42.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.42.7...@next-bricks/advanced@0.42.8) (2025-04-17)
 
 **Note:** Version bump only for package @next-bricks/advanced
