@@ -91,6 +91,7 @@ export interface EoWorkbenchLayoutV2Props {
   };
   componentList?: Item[];
   isEdit?: boolean;
+  showSettingButton?: boolean;
 }
 
 export interface EoWorkbenchLayoutV2ComponentRef {
@@ -103,6 +104,7 @@ export interface EoWorkbenchLayoutV2ComponentProps
   onSave?: (layout: Layout[]) => void;
   onCancel?: () => void;
   onActionClick?: (action: SimpleAction, layouts: Layout[]) => void;
+  onSetting?: () => void;
 }
 
 const getRealKey = (key: string): string =>
@@ -119,10 +121,12 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     toolbarBricks,
     componentList = [],
     isEdit,
+    showSettingButton,
     onChange,
     onSave,
     onCancel,
     onActionClick,
+    onSetting,
   },
   ref
 ) {
@@ -262,6 +266,10 @@ export const EoWorkbenchLayoutComponent = forwardRef<
       }))
     );
   }, [layouts, onSave]);
+
+  const handleSetting = () => {
+    onSetting?.();
+  };
 
   const handleCancel = () => {
     onCancel?.();
@@ -412,6 +420,14 @@ export const EoWorkbenchLayoutComponent = forwardRef<
               保存
             </WrappedButton>
             <WrappedButton onClick={handleCancel}>取消</WrappedButton>
+            {showSettingButton && (
+              <WrappedButton
+                data-testid="setting-button"
+                onClick={handleSetting}
+              >
+                设置
+              </WrappedButton>
+            )}
             <WrappedDropdownButton
               btnText="更多"
               icon={{
@@ -487,6 +503,13 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
     attribute: false,
   })
   accessor componentList: Item[] | undefined;
+  /**
+   * description: 用于设置页面样式和布局的按钮
+   */
+  @property({
+    type: Boolean,
+  })
+  accessor showSettingButton: boolean | undefined;
 
   @event({
     type: "change",
@@ -513,6 +536,14 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
 
   #handleCancel = () => {
     this.#cancelEvent.emit();
+  };
+
+  @event({
+    type: "setting",
+  })
+  accessor #settingEvent!: EventEmitter<void>;
+  #handleSetting = () => {
+    this.#settingEvent.emit();
   };
 
   /**
@@ -557,11 +588,13 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
         layouts={this.layouts}
         toolbarBricks={this.toolbarBricks}
         componentList={this.componentList}
+        showSettingButton={this.showSettingButton}
         isEdit={this.isEdit}
         onChange={this.#handleChange}
         onSave={this.#handleSave}
         onCancel={this.#handleCancel}
         onActionClick={this.#handleActionClick}
+        onSetting={this.#handleSetting}
         ref={this.#componentRef}
       />
     );
