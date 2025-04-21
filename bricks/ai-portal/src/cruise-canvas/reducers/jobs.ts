@@ -17,6 +17,7 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
         const previousJobIndex =
           jobs?.findIndex((job) => job.id === jobPatch.id) ?? -1;
         const { messages: messagesPatch } = jobPatch;
+        const timestamp = performance.now();
         if (previousJobIndex === -1) {
           if (Array.isArray(messagesPatch) && messagesPatch.length > 1) {
             jobs = [
@@ -24,10 +25,16 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
               {
                 ...jobPatch,
                 messages: mergeMessages(messagesPatch),
+                _instruction_timestamp: timestamp,
+                _timestamp: timestamp,
               } as Job,
             ];
           } else {
-            jobs = [...jobs, jobPatch as Job];
+            jobs = [...jobs, {
+              ...jobPatch as Job,
+              _instruction_timestamp: timestamp,
+              _timestamp: timestamp,
+            }];
           }
         } else {
           const previousJob = jobs[previousJobIndex];
@@ -50,6 +57,7 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
               {
                 ...previousJob,
                 ...restMessagesPatch,
+                _timestamp: timestamp,
               },
               ...jobs.slice(previousJobIndex + 1),
             ];

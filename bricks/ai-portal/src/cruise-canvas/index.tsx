@@ -17,6 +17,8 @@ import { useAutoCenter } from "./useAutoCenter.js";
 import { useLayout } from "./useLayout.js";
 import { useTaskDetail } from "./useTaskDetail.js";
 import { useTaskGraph } from "./useTaskGraph.js";
+import { maxBy } from "lodash";
+import { select } from "d3-selection";
 
 initializeI18n(NS, locales);
 
@@ -119,6 +121,29 @@ export function CruiseCanvasComponent({
     zoomer,
     rootRef,
   });
+
+  const transformRef = useRef(transform);
+  transformRef.current = transform;
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || !sizeReady) {
+      return;
+    }
+    const { offsetHeight } = root;
+    const latestNode = maxBy(nodes, (node) => node._timestamp);
+    if (latestNode) {
+      const transform = transformRef.current;
+      const y1 = latestNode.view!.y + latestNode.view!.height;
+      const transformedY1 = y1 * transform.k + transform.y;
+      const padding = 50;
+      const diffY = (offsetHeight - padding) - transformedY1;
+      if (diffY < 0) {
+        // Make the latest node visible
+        zoomer.translateBy(select(root as HTMLElement), 0, diffY);
+      }
+    }
+  }, [nodes, sizeReady, zoomer]);
 
   return (
     <div

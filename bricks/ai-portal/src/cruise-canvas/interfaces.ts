@@ -40,6 +40,7 @@ export interface EndGraphNode extends BaseGraphNode {
 export interface BaseGraphNode {
   id: string;
   type: string;
+  _timestamp: number;
   state?: string;
   view?: NodeView;
 }
@@ -99,6 +100,9 @@ export interface Job {
   toolCall?: ToolCall;
 
   messages?: Message[];
+
+  _instruction_timestamp: number;
+  _timestamp: number;
 }
 
 export interface TaskPatch extends Omit<Partial<Task>, "jobs"> {

@@ -29,6 +29,7 @@ export function useLayout({
       {
         type: "start",
         id: START_NODE_ID,
+        _timestamp: 0,
       },
     ];
     const initialEdges: GraphEdge[] = [];
@@ -61,6 +62,7 @@ export function useLayout({
       initialNodes.push({
         id: END_NODE_ID,
         type: "end",
+        _timestamp: performance.now(),
       });
       initialEdges.push(
         ...finishedNodeIds.map((id) => ({

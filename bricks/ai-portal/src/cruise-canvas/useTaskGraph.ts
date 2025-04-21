@@ -16,6 +16,7 @@ export function useTaskGraph(task: TaskBaseDetail | null | undefined, jobs: Job[
       id: requirementNodeId,
       content: task.requirement,
       state: jobs.length === 0 ? "working" : "completed",
+      _timestamp: 0,
     });
 
     const jobMap = new Map<string, Job>();
@@ -71,6 +72,7 @@ export function useTaskGraph(task: TaskBaseDetail | null | undefined, jobs: Job[
           id: instructionNodeId,
           job,
           state: job.state === "working" && hasMessages ? "completed" : job.state,
+          _timestamp: job._instruction_timestamp,
         });
 
         nodeIds.push(instructionNodeId);
@@ -83,6 +85,7 @@ export function useTaskGraph(task: TaskBaseDetail | null | undefined, jobs: Job[
           id: jobNodeId,
           job,
           state: job.state,
+          _timestamp: job._timestamp,
         });
         nodeIds.push(jobNodeId);
       }
