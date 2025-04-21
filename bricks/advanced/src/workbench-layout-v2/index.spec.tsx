@@ -125,6 +125,7 @@ describe("eo-workbench-layout-v2", () => {
         key: "card-3",
       },
     ];
+    element.showSettingButton = true;
 
     expect(element.childElementCount).toBe(0);
 
@@ -132,10 +133,12 @@ describe("eo-workbench-layout-v2", () => {
     const mockSaveEvent = jest.fn();
     const mockCancelEvent = jest.fn();
     const mockActionClickEventHandler = jest.fn();
+    const mockSettingEVent = jest.fn();
     element.addEventListener("change", mockChangeEvent);
     element.addEventListener("save", mockSaveEvent);
     element.addEventListener("cancel", mockCancelEvent);
     element.addEventListener("action.click", mockActionClickEventHandler);
+    element.addEventListener("setting", mockSettingEVent);
 
     act(() => {
       document.body.appendChild(element);
@@ -182,6 +185,14 @@ describe("eo-workbench-layout-v2", () => {
         detail: newLayout1,
       })
     );
+
+    // 点击设置按钮
+    await act(async () => {
+      fireEvent.click(getByTestId(element, "setting-button"));
+      await (global as any).flushPromises();
+    });
+
+    expect(mockSettingEVent).toHaveBeenCalled();
 
     // insert element
     await act(async () => {
