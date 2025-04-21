@@ -38,11 +38,27 @@ class MockTask {
         plans: [
           {
             id: "mock-job-id-1",
-            instruction: "Say hello to the world",
+            instruction: "创建系统",
           },
           {
             id: "mock-job-id-2",
-            instruction: "Say thank you",
+            instruction: "创建环境",
+          },
+          // {
+          //   id: "mock-job-id-3",
+          //   instruction: "安装Agent",
+          // },
+          {
+            id: "mock-job-id-4",
+            instruction: "关联主机到环境中",
+          },
+          {
+            id: "mock-job-id-5",
+            instruction: "创建基于Agent扫描的节点发现任务",
+          },
+          {
+            id: "mock-job-id-6",
+            instruction: "智能节点聚类",
           },
         ],
         __delay: 200,
@@ -52,23 +68,7 @@ class MockTask {
           {
             id: "mock-job-id-1",
             state: "submitted",
-            instruction: "Say hello to the world",
-            // tag: "hello-tool",
-          },
-        ],
-        __delay: 2000,
-      },
-      {
-        jobs: [
-          {
-            id: "mock-job-id-1-a",
-            state: "working",
-            parent: ["mock-job-id-1"],
-          },
-          {
-            id: "mock-job-id-1-b",
-            state: "working",
-            parent: ["mock-job-id-1"],
+            instruction: "创建系统",
           },
         ],
         __delay: 1000,
@@ -76,7 +76,7 @@ class MockTask {
       {
         jobs: [
           {
-            id: "mock-job-id-1-a",
+            id: "mock-job-id-1",
             state: "working",
             messages: [
               {
@@ -84,81 +84,14 @@ class MockTask {
                 parts: [
                   {
                     type: "text",
-                    text: "Hello",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: "mock-job-id-1-b",
-            messages: [
-              {
-                role: "assistant",
-                parts: [
-                  {
-                    type: "text",
-                    text: "How",
+                    text: "准备创建 XX 系统",
                   },
                 ],
               },
             ],
           },
         ],
-        __delay: 1000,
-      },
-      {
-        jobs: [
-          {
-            id: "mock-job-id-1-a",
-            state: "working",
-            messages: [
-              {
-                role: "assistant",
-                parts: [
-                  {
-                    type: "text",
-                    text: " world",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: "mock-job-id-1-b",
-            messages: [
-              {
-                role: "assistant",
-                parts: [
-                  {
-                    type: "text",
-                    text: " are",
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-        __delay: 500,
-      },
-      {
-        jobs: [
-          {
-            id: "mock-job-id-1-b",
-            messages: [
-              {
-                role: "assistant",
-                parts: [
-                  {
-                    type: "text",
-                    text: " you?",
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-        __delay: 500,
+        __delay: 100,
       },
       {
         jobs: [
@@ -168,78 +101,30 @@ class MockTask {
           },
           {
             id: "mock-job-id-1-a",
-            state: "completed",
-          },
-          {
-            id: "mock-job-id-1-b",
-            state: "completed",
-          },
-          {
-            id: "mock-job-id-2",
-            parent: ["mock-job-id-1-a", "mock-job-id-1-b"],
-            state: "submitted",
-            instruction: "Say thank you",
-            // tag: "thank-you-tool",
+            parent: ["mock-job-id-1"],
+            instruction: "要求用户补充完整的系统信息",
+            state: "working",
           },
         ],
-        __delay: 2000,
+        __delay: 500,
       },
-      // {
-      //   jobs: [
-      //     {
-      //       id: "mock-job-id-2",
-      //       messages: [
-      //         {
-      //           role: "assistant",
-      //           parts: [
-      //             {
-      //               type: "text",
-      //               text: "Fine",
-      //             },
-      //             {
-      //               type: "text",
-      //               text: ", thank you!",
-      //             },
-      //           ],
-      //         },
-      //       ],
-      //     },
-      //   ],
-      //   __delay: 1000,
-      // },
-      // {
-      //   jobs: [
-      //     {
-      //       id: "mock-job-id-2",
-      //       messages: [
-      //         {
-      //           role: "assistant",
-      //           parts: [
-      //             {
-      //               type: "text",
-      //               text: " And you?",
-      //             },
-      //           ],
-      //         },
-      //       ],
-      //     },
-      //   ],
-      //   __delay: 200,
-      // },
       {
         state: "input-required",
         jobs: [
           {
-            id: "mock-job-id-2",
+            id: "mock-job-id-1-a",
+            instruction: "要求用户补充完整的系统信息",
             state: "input-required",
             toolCall: {
-              name: "ask_user_confirm",
+              name: "ask_user_more",
               arguments: {
-                question: "Fine, thank you! And you?",
-              }
+                question:
+                  "请补充完整的系统信息，包括系统编码、运维负责人（默认为当前用户）。",
+              },
             },
           },
         ],
+        __delay: 500,
       },
     ];
 
@@ -251,14 +136,8 @@ class MockTask {
           state: "working",
           jobs: [
             {
-              id: "mock-job-id-2",
-              state: "working",
-              toolCall: {
-                name: "ask_user_confirm",
-                arguments: {
-                  question: "Fine, thank you! And you?",
-                }
-              },
+              id: "mock-job-id-1-a",
+              state: "completed",
               messages: [
                 {
                   role: "user",
@@ -272,59 +151,135 @@ class MockTask {
               ],
             },
           ],
-          __delay: 2000,
+          __delay: 1000,
         },
-        // {
-        //   jobs: [
-        //     {
-        //       id: "mock-job-id-2",
-        //       state: "working",
-        //       messages: [
-        //         {
-        //           role: "assistant",
-        //           parts: [
-        //             {
-        //               type: "text",
-        //               text: "Alright alright",
-        //             },
-        //           ],
-        //         },
-        //       ],
-        //     },
-        //   ],
-        //   __delay: 2000,
-        // },
         {
           // plans: [],
           jobs: [
             {
               id: "mock-job-id-2",
-              state: "completed",
-              // messages: [
-              //   {
-              //     role: "assistant",
-              //     parts: [
-              //       {
-              //         type: "text",
-              //         text: " alright.",
-              //       },
-              //     ],
-              //   },
-              // ],
-            },
-            {
-              id: "mock-job-id-3",
               state: "submitted",
-              parent: ["mock-job-id-2"],
-              instruction: "Say goodbye",
+              parent: ["mock-job-id-1-a"],
+              instruction: "创建环境",
             },
           ],
           __delay: 1000,
         },
         {
+          state: "input-required",
           jobs: [
             {
-              id: "mock-job-id-3",
+              id: "mock-job-id-2",
+              state: "input-required",
+              toolCall: {
+                name: "ask_user_confirm",
+                arguments: {
+                  question:
+                    "将创建测试环境，ID 为 env-test，别名开发测试，是否继续？",
+                },
+              },
+            },
+          ],
+          __delay: 1000,
+        }
+      );
+    }
+
+    if (this.#input2) {
+      stream.splice(
+        stream.length - 1,
+        1,
+        {
+          state: "working",
+          jobs: [
+            {
+              id: "mock-job-id-2",
+              state: "completed",
+              messages: [
+                {
+                  role: "user",
+                  parts: [
+                    {
+                      type: "text",
+                      text: this.#input2,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          __delay: 200,
+        },
+        {
+          jobs: [
+            {
+              id: "mock-job-id-4",
+              parent: ["mock-job-id-2"],
+              state: "submitted",
+              instruction: "关联主机到环境中",
+            },
+          ],
+          __delay: 200,
+        },
+        {
+          state: "input-required",
+          jobs: [
+            {
+              id: "mock-job-id-4",
+              state: "input-required",
+              toolCall: {
+                name: "ask_user_more",
+                arguments: {
+                  question: "请提供要关联的主机 IP 列表。",
+                },
+              },
+            },
+          ],
+          __delay: 200,
+        },
+      );
+    }
+
+    if (this.#input3) {
+      stream.splice(
+        stream.length - 1,
+        1,
+        {
+          state: "working",
+          jobs: [
+            {
+              id: "mock-job-id-4",
+              state: "completed",
+              messages: [
+                {
+                  role: "user",
+                  parts: [
+                    {
+                      type: "text",
+                      text: this.#input3,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          __delay: 200,
+        },
+        {
+          jobs: [
+            {
+              id: "mock-job-id-5",
+              parent: ["mock-job-id-4"],
+              state: "submitted",
+              instruction: "创建基于Agent扫描的节点发现任务",
+            },
+          ],
+          __delay: 200,
+        },
+        {
+          jobs: [
+            {
+              id: "mock-job-id-5",
               state: "working",
               messages: [
                 {
@@ -332,23 +287,67 @@ class MockTask {
                   parts: [
                     {
                       type: "text",
-                      text: "Goodbye",
+                      text: "正在创建基于Agent扫描的节点发现任务。",
                     },
                   ],
                 }
               ],
-            }
+            },
           ],
-          __delay: 1000,
+          __delay: 2000,
+        },
+        {
+          jobs: [
+            {
+              id: "mock-job-id-5",
+              state: "working",
+              messages: [
+                {
+                  role: "assistant",
+                  parts: [
+                    {
+                      type: "text",
+                      text: "\n\n已完成Agent扫描的节点发现任务。",
+                    },
+                  ],
+                }
+              ],
+            },
+          ],
+          __delay: 200,
+        },
+        {
+          jobs: [
+            {
+              id: "mock-job-id-6",
+              parent: ["mock-job-id-5"],
+              state: "submitted",
+              instruction: "智能节点聚类",
+            },
+          ],
+          __delay: 2000,
         },
         {
           state: "completed",
           jobs: [
             {
-              id: "mock-job-id-3",
+              id: "mock-job-id-6",
               state: "completed",
-            }
-          ]
+              instruction: "智能节点聚类",
+              messages: [
+                {
+                  role: "assistant",
+                  parts: [
+                    {
+                      type: "text",
+                      text: "对系统的指定环境，根据环境中主机关联的部署实例进行智能聚类，帮助用户自动创建应用、服务，并关联好系统-应用-服务-部署实例的关联、服务与环境的关联。",
+                    },
+                  ],
+                }
+              ],
+            },
+          ],
+          __delay: 200,
         },
       );
     }
@@ -357,6 +356,8 @@ class MockTask {
   }
   #baseDetail;
   #input;
+  #input2;
+  #input3;
   #subscribers = new Set();
 
   #next = () => {
@@ -386,7 +387,7 @@ class MockTask {
         this.#subscribers.clear();
       }
     } else {
-      setTimeout(this.#next, (event.__delay ?? 2000));
+      setTimeout(this.#next, event.__delay ?? 2000);
     }
   };
 
@@ -403,7 +404,7 @@ class MockTask {
     }
   }
 
-  humanInput(jobId, input/* , callback */) {
+  humanInput(jobId, input /* , callback */) {
     const { value: task } = this.#mergeTask();
     const job = task.jobs?.find((job) => job.id === jobId);
 
@@ -416,7 +417,13 @@ class MockTask {
     }
 
     // this.#subscribers.add(callback);
-    this.#input = input;
+    if (this.#input2) {
+      this.#input3 = input;
+    } else if (this.#input) {
+      this.#input2 = input;
+    } else {
+      this.#input = input;
+    }
     this.#cursor--;
     setTimeout(this.#next, 500);
   }
