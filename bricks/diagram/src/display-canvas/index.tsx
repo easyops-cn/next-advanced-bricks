@@ -372,13 +372,13 @@ function EoDisplayCanvasComponent({
   const [unrelatedCells, setUnrelatedCells] = useState<Cell[]>([]);
   useEffect(() => {
     const nextUnrelated = fadeUnrelatedCells
-      ? getUnrelatedCells(cells, null, hoverCell)
+      ? getUnrelatedCells(cells, null, hoverCell || activeTarget)
       : [];
     // Do not update the state when prev and next are both empty.
     setUnrelatedCells((prev) =>
       prev.length === 0 && nextUnrelated.length === 0 ? prev : nextUnrelated
     );
-  }, [cells, fadeUnrelatedCells, hoverCell]);
+  }, [cells, fadeUnrelatedCells, hoverCell, activeTarget]);
 
   const handleZoomSlide = useCallback(
     (value: number) => {
