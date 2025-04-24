@@ -1,24 +1,13 @@
-import React, {
-  memo,
-  Suspense,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import { createDecorators } from "@next-core/element";
-import { ReactNextElement, wrapBrick } from "@next-core/react-element";
+import { ReactNextElement } from "@next-core/react-element";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import classNames from "classnames";
 import ResizeObserver from "resize-observer-polyfill";
-import { TextareaAutoResize } from "@next-shared/form";
-import { MarkdownComponent } from "@next-shared/markdown";
 import { maxBy } from "lodash";
 import { select } from "d3-selection";
-import { CmdbObjectApi_getObjectRef } from "@next-api-sdk/cmdb-sdk";
-import type { Button, ButtonProps } from "@next-bricks/basic/button";
-import { K, NS, locales, t } from "./i18n.js";
+import { NS, locales } from "./i18n.js";
 import styles from "./styles.module.css";
 import { useZoom } from "./useZoom.js";
 import type {
@@ -34,18 +23,18 @@ import { useAutoCenter } from "./useAutoCenter.js";
 import { useLayout } from "./useLayout.js";
 import { useTaskDetail } from "./useTaskDetail.js";
 import { useTaskGraph } from "./useTaskGraph.js";
-import { AsyncWrappedCMDB } from "./cmdb.js";
 import { PlanProgress } from "./PlanProgress/PlanProgress.js";
 import { ZoomBar } from "./ZoomBar/ZoomBar.js";
 import { NodeStart } from "./NodeStart/NodeStart.js";
+import { NodeRequirement } from "./NodeRequirement/NodeRequirement.js";
+import { NodeInstruction } from "./NodeInstruction/NodeInstruction.js";
+import { NodeJob } from "./NodeJob/NodeJob.js";
 
 initializeI18n(NS, locales);
 
 const { defineElement, property } = createDecorators();
 
 const MemoizedNodeComponent = memo(NodeComponent);
-
-const WrappedButton = wrapBrick<Button, ButtonProps>("eo-button");
 
 export interface CruiseCanvasProps {
   taskId: string | undefined;
@@ -82,6 +71,7 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface CruiseCanvasComponentProps extends CruiseCanvasProps {
   // Define react event handlers here.
 }
@@ -93,7 +83,12 @@ export function CruiseCanvasComponent({
 }: CruiseCanvasComponentProps) {
   const rootRef = useRef<HTMLDivElement>(null);
 
-  const { task: _task, jobs: _jobs, plan, humanInputRef } = useTaskDetail(taskId);
+  const {
+    task: _task,
+    jobs: _jobs,
+    plan,
+    humanInputRef,
+  } = useTaskDetail(taskId);
   const task = taskId ? _task : propTask;
   const jobs = taskId ? _jobs : (propJobs ?? []);
   const graph = useTaskGraph(task, jobs);
@@ -168,57 +163,64 @@ export function CruiseCanvasComponent({
     }
   }, [nodes, sizeReady, zoomer]);
 
-  const handleScaleChange = useCallback((scale: number) => {
-    zoomer.scaleTo(select(rootRef.current!), scale);
-  }, [zoomer]);
+  const handleScaleChange = useCallback(
+    (scale: number) => {
+      zoomer.scaleTo(select(rootRef.current!), scale);
+    },
+    [zoomer]
+  );
 
   return (
-  <>
-    <div
-      className={styles.root}
-      ref={rootRef}
-      style={{
-        cursor: grabbing ? "grabbing" : "grab",
-      }}
-    >
+    <>
       <div
-        className={classNames(styles.canvas, { [styles.ready]: sizeReady && centered })}
+        className={styles.root}
+        ref={rootRef}
         style={{
-          transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.k})`,
+          cursor: grabbing ? "grabbing" : "grab",
         }}
       >
-        <svg className={styles.edges}>
-          {edges.map((edge) => (
-            <path
-              className={styles.edge}
-              key={`${edge.source}-${edge.target}`}
-              d={edge
-                .points!.map(({ x, y }, i) => `${i === 0 ? "M" : "L"}${x},${y}`)
-                .join(" ")}
+        <div
+          className={classNames(styles.canvas, {
+            [styles.ready]: sizeReady && centered,
+          })}
+          style={{
+            transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.k})`,
+          }}
+        >
+          <svg className={styles.edges}>
+            {edges.map((edge) => (
+              <path
+                className={styles.edge}
+                key={`${edge.source}-${edge.target}`}
+                d={edge
+                  .points!.map(
+                    ({ x, y }, i) => `${i === 0 ? "M" : "L"}${x},${y}`
+                  )
+                  .join(" ")}
+              />
+            ))}
+          </svg>
+          {nodes.map((node) => (
+            <MemoizedNodeComponent
+              key={node.id}
+              id={node.id}
+              type={node.type}
+              content={(node as RequirementGraphNode).content}
+              job={(node as JobGraphNode).job}
+              state={node.state}
+              x={node.view?.x}
+              y={node.view?.y}
+              onResize={handleNodeResize}
+              humanInput={humanInput}
             />
           ))}
-        </svg>
-        {nodes.map((node) => (
-          <MemoizedNodeComponent
-            key={node.id}
-            id={node.id}
-            type={node.type}
-            content={(node as RequirementGraphNode).content}
-            job={(node as JobGraphNode).job}
-            state={node.state}
-            x={node.view?.x}
-            y={node.view?.y}
-            onResize={handleNodeResize}
-            humanInput={humanInput}
-          />
-        ))}
+        </div>
       </div>
-    </div>
-    <div className={styles.widgets}>
-      <PlanProgress plan={plan} />
-      <ZoomBar scale={transform.k} onScaleChange={handleScaleChange} />
-    </div>
-  </>
+      <div className={styles.widgets}>
+        <PlanProgress plan={plan} />
+        <ZoomBar scale={transform.k} onScaleChange={handleScaleChange} />
+      </div>
+    </>
   );
 }
 
@@ -278,13 +280,17 @@ function NodeComponent({
 
   return (
     <div
-      className={classNames(styles.node, state === "submitted"
-        ? styles["state-submitted"]
-        : state === "working"
-        ? styles["state-working"]
-        : null, {
-        [styles.ready]: x != null && y != null,
-      })}
+      className={classNames(
+        styles.node,
+        state === "submitted"
+          ? styles["state-submitted"]
+          : state === "working"
+            ? styles["state-working"]
+            : null,
+        {
+          [styles.ready]: x != null && y != null,
+        }
+      )}
       ref={nodeRef}
       style={{
         left: x,
@@ -292,176 +298,20 @@ function NodeComponent({
       }}
     >
       {type === "start" ? (
-        // <div className={styles["node-start"]} />
         <NodeStart />
       ) : type === "end" ? (
         <div className={styles["node-end"]} />
       ) : type === "requirement" ? (
-        <div className={`${styles["node-requirement"]} ${styles["size-medium"]}`}>{content}</div>
+        <NodeRequirement content={content} />
       ) : type === "instruction" ? (
-        <div className={styles["node-instruction"]}>{job!.instruction}</div>
+        <NodeInstruction content={job!.instruction} />
       ) : type === "job" ? (
-        <div className={`${styles["node-default"]} ${styles["size-medium"]}`}>
-          {[
-            "ask_user_more",
-            "ask_user_confirm",
-            "ask_user_select_from_cmdb",
-          ].includes(job!.toolCall?.name as string) ? (
-            <>
-              <div className={`${styles.message} ${styles["role-assistant"]}`}>
-                <MarkdownComponent
-                  content={job!.toolCall!.arguments?.question as string}
-                />
-              </div>
-              {state === "input-required" &&
-                (job!.toolCall!.name === "ask_user_more" ? (
-                  <HumanInputComponent
-                    jobId={job!.id}
-                    humanInput={humanInput}
-                  />
-                ) : job!.toolCall!.name === "ask_user_confirm" ? (
-                  <HumanConfirmComponent
-                    jobId={job!.id}
-                    humanInput={humanInput}
-                  />
-                ) : job!.toolCall!.name === "ask_user_select_from_cmdb" ? (
-                  <HumanSelectFromCmdb
-                    jobId={job!.id}
-                    humanInput={humanInput}
-                  />
-                ) : null)}
-            </>
-          ) : null}
-          {job!.messages?.map((message, index) => (
-            <div key={index} className={`${styles.message} ${styles[`role-${message.role}`]}`}>
-              {message.parts?.map((part, partIndex) => (
-                <React.Fragment key={partIndex}>
-                  {part.type === "text" ? (
-                    <MarkdownComponent content={part.text} />
-                  ) : part.type === "file" ? (
-                    <div>{part.file.name}</div>
-                  ) : (
-                    <div>{JSON.stringify(part.data)}</div>
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
-          ))}
-        </div>
+        <NodeJob state={state} job={job!} humanInput={humanInput} />
       ) : (
         <div className={`${styles["node-default"]} ${styles["size-medium"]}`}>
           {`Unknown job type: "${type}"`}
         </div>
       )}
-    </div>
-  );
-}
-
-function HumanInputComponent({
-  jobId,
-  humanInput,
-}: {
-  jobId: string;
-  humanInput?: (jobId: string, input: string) => void;
-}): JSX.Element {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  return (
-    <div /* className="node-ask-user-more size-medium" */ ref={containerRef}>
-      {/* <div className="message">
-        <MarkdownComponent content={node.content} />
-      </div> */}
-      <TextareaAutoResize
-        className={styles["human-input"]}
-        containerRef={containerRef}
-        autoResize
-        minRows={2}
-        placeholder="Type your message here..."
-        submitWhen="enter-without-shift"
-        onSubmit={(e) => {
-          const input = e.currentTarget.value;
-          if (input) {
-            humanInput?.(jobId, input);
-          }
-        }}
-      />
-    </div>
-  );
-}
-
-function HumanConfirmComponent({
-  jobId,
-  humanInput,
-}: {
-  jobId: string;
-  humanInput?: (jobId: string, input: string) => void;
-}): JSX.Element {
-  return (
-    <div style={{ marginTop: "1em" }}>
-      <WrappedButton
-        type="primary"
-        onClick={() => {
-          humanInput?.(jobId, t(K.CONFIRM));
-        }}
-      >
-        {t(K.CONFIRM)}
-      </WrappedButton>
-      <WrappedButton
-        onClick={() => {
-          humanInput?.(jobId, t(K.CANCEL));
-        }}
-        style={{ marginLeft: "0.5em" }}
-      >
-        {t(K.CANCEL)}
-      </WrappedButton>
-    </div>
-  );
-}
-
-function HumanSelectFromCmdb({
-  jobId,
-  humanInput,
-}: {
-  jobId: string;
-  humanInput?: (jobId: string, input: string) => void;
-}): JSX.Element {
-  const objectId = "HOST";
-  const attrId = "ip";
-
-  const [objectList, setObjectList] = useState<any[] | null>(null);
-
-  useEffect(() => {
-    let ignore = false;
-    (async () => {
-      try {
-        const objects = (
-          await CmdbObjectApi_getObjectRef({ ref_object: objectId })
-        ).data;
-        if (!ignore) {
-          setObjectList(objects);
-        }
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error("fetch object list failed:", e);
-      }
-    })();
-    return () => {
-      ignore = true;
-    };
-  }, [objectId]);
-
-  return (
-    <div style={{ marginTop: "1em" }}>
-      <Suspense>
-        <AsyncWrappedCMDB
-          objectList={objectList}
-          objectId={objectId}
-          fieldId={attrId}
-          onChangeV2={(e) => {
-            humanInput?.(jobId, e.detail.map((i) => i[attrId]).join("\n"));
-          }}
-        />
-      </Suspense>
     </div>
   );
 }

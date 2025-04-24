@@ -12,11 +12,16 @@ export interface TransformLiteral {
   y: number;
 }
 
-export type GraphNode = RequirementGraphNode | InstructionGraphNode | JobGraphNode | StartGraphNode | EndGraphNode;
+export type GraphNode =
+  | RequirementGraphNode
+  | InstructionGraphNode
+  | JobGraphNode
+  | StartGraphNode
+  | EndGraphNode;
 
 export interface RequirementGraphNode extends BaseGraphNode {
   type: "requirement";
-  content: string,
+  content: string;
 }
 
 export interface InstructionGraphNode extends BaseGraphNode {
@@ -99,8 +104,11 @@ export interface Job {
   // Job ID
   id: string;
 
+  // Upstream job IDs
+  upstream?: string[];
+
   // Parent job ID
-  parent?: string[];
+  parent?: string;
 
   // Instruction from plan
   instruction?: string;

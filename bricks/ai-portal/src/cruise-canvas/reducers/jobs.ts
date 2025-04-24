@@ -15,7 +15,10 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
 
       for (const jobPatch of jobsPatch) {
         // TODO(): remove temp work around.
-        if (!jobPatch.parent?.length) {
+        if (!jobPatch.upstream?.length) {
+          delete jobPatch.upstream;
+        }
+        if (!jobPatch.parent) {
           delete jobPatch.parent;
         }
         if (!jobPatch.state) {
@@ -41,16 +44,20 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
               } as Job,
             ];
           } else {
-            jobs = [...jobs, {
-              ...jobPatch as Job,
-              _instruction_timestamp: timestamp,
-              _timestamp: timestamp,
-            }];
+            jobs = [
+              ...jobs,
+              {
+                ...(jobPatch as Job),
+                _instruction_timestamp: timestamp,
+                _timestamp: timestamp,
+              },
+            ];
           }
         } else {
           const previousJob = jobs[previousJobIndex];
           const restMessagesPatch: JobPatch = pick(jobPatch, [
             "id",
+            "upstream",
             "parent",
             "state",
             "instruction",

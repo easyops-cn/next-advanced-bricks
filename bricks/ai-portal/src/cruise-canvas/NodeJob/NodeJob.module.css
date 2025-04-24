@@ -1,0 +1,76 @@
+.node-job {
+  width: 330px;
+  background: #fff;
+  box-shadow:
+    inset 0px 3px 0px 0px rgba(37, 64, 255, 0.4),
+    0px 4px 10px 0px rgba(0, 0, 0, 0.1),
+    0px 2px 4px 0px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e0e5f0;
+  border-radius: 12px;
+  padding: 8px;
+  white-space: pre-wrap;
+}
+
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f2f2f6;
+  padding: 0 5px 5px;
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.body {
+  padding: 8px 4px;
+}
+
+.message {
+  /* padding: 0 1em; */
+  /* border: var(--cruise-canvas-node-border);
+  border-radius: 6px;
+  white-space: pre-line;
+  overflow-wrap: break-word; */
+}
+
+.message p {
+  margin: 1em 0;
+}
+
+/* .message.role-assistant,
+.message.role-tool {
+  background-color: lightgray;
+} */
+
+.message:not(:first-child) {
+  margin-top: 1em;
+}
+
+.human-input {
+  margin-top: 1em;
+  display: block;
+  width: 100%;
+  padding: 0.5em 1em;
+  color: var(--antd-input-color);
+  background: var(--antd-input-bg);
+  box-sizing: border-box;
+  border: 1px solid var(--antd-input-border-color);
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 22px;
+  height: 32px;
+}
+
+.human-input:not(:disabled):hover {
+  border: 1px solid var(--antd-input-hover-border-color);
+}
+
+.human-input:not(:disabled):focus {
+  border: 1px solid var(--antd-input-focus-border-color);
+  outline: 0;
+  box-shadow: 0 0 0 2px rgb(0 113 235 / 20%);
+}
+
+.human-input::placeholder {
+  color: var(--antd-input-placeholder-color);
+}

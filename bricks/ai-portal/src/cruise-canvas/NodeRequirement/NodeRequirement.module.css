@@ -1,0 +1,29 @@
+.node-requirement {
+  width: 453px;
+  background: #e0e5fd;
+  border: 2px solid rgba(95, 160, 247, 1);
+  border-radius: 12px;
+  padding: 5px;
+  white-space: pre-wrap;
+}
+
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 11px;
+  font-size: 12px;
+}
+
+.user {
+}
+
+.time {
+  color: #8c8c8c;
+}
+
+.body {
+  background: #fff;
+  border-radius: 9px;
+  padding: 15px 10px;
+}
