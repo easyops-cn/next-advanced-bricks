@@ -165,12 +165,13 @@ export function useLayout({
       const sourcePosition = getPositionWithOffsets(source, offsets);
       const target = graph.node(edge.target);
       const targetPosition = getPositionWithOffsets(target, offsets);
-      const turnY =
-        (sourcePosition.y +
-          source.height / 2 +
-          targetPosition.y -
-          target.height / 2) /
-        2;
+      // const turnY =
+      //   (sourcePosition.y +
+      //     source.height / 2 +
+      //     targetPosition.y -
+      //     target.height / 2) /
+      //   2;
+      const turnY = targetPosition.y - target.height / 2 - 25;
       const points: NodePosition[] = [
         { x: sourcePosition.x, y: sourcePosition.y + source.height / 2 },
         { x: sourcePosition.x, y: turnY },

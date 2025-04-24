@@ -128,11 +128,6 @@ svg.edges {
   overflow-y: auto;
 } */
 
-.node-online-search p,
-.node-summarize p {
-  white-space: pre-line;
-}
-
 .node-title {
   font-size: 16px;
   font-weight: bold;
@@ -156,6 +151,8 @@ svg.edges {
   padding: 0 1em;
   border: var(--cruise-canvas-node-border);
   border-radius: 6px;
+  white-space: pre-line;
+  overflow-wrap: break-word;
 }
 
 .message p {
