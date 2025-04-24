@@ -10,14 +10,18 @@
   box-sizing: border-box;
 }
 
+.container {
+  position: relative;
+}
+
 textarea {
   display: block;
   width: 100%;
-  padding: 12px 24px;
+  padding: 12px 18px;
   color: var(--antd-input-color);
   background: var(--antd-input-bg);
   box-sizing: border-box;
-  border-radius: 9999px;
+  border-radius: 1em;
   border: 1px solid var(--antd-input-border-color);
   font-size: 14px;
   line-height: 22px;
@@ -36,4 +40,10 @@ textarea:not(:disabled):focus {
 
 textarea::placeholder {
   color: var(--antd-input-placeholder-color);
+}
+
+.btn-send {
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
 }

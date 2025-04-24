@@ -69,6 +69,10 @@ function LegacyTextareaAutoResize(
           valueLength && textarea.setSelectionRange(valueLength, valueLength);
         }
       },
+
+      get value() {
+        return textareaRef.current?.value ?? "";
+      },
     }),
     []
   );

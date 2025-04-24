@@ -1,5 +1,6 @@
-:host {
+ai-portal\.cruise-canvas {
   display: block;
+  position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -9,18 +10,30 @@
   --cruise-canvas-node-width-large: 764px;
 }
 
-:host([hidden]) {
+/* :host([hidden]) {
   display: none;
 }
 
 * {
   box-sizing: border-box;
-}
+} */
 
 .root {
   width: 100%;
   height: 100%;
   position: relative;
+}
+
+.widgets {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.widgets > * {
+  pointer-events: auto;
+  user-select: text;
 }
 
 .canvas,
@@ -43,7 +56,7 @@
   visibility: hidden;
 }
 
-.edges {
+svg.edges {
   pointer-events: none;
   overflow: visible;
 }
@@ -145,14 +158,19 @@
   border-radius: 6px;
 }
 
-.message.role-assistant {
+.message p {
+  margin: 1em 0;
+}
+
+.message.role-assistant,
+.message.role-tool {
   background-color: lightgray;
 }
 .message:not(:first-child) {
   margin-top: 1em;
 }
 
-textarea {
+.human-input {
   margin-top: 1em;
   display: block;
   width: 100%;
@@ -167,17 +185,17 @@ textarea {
   height: 32px;
 }
 
-textarea:not(:disabled):hover {
+.human-input:not(:disabled):hover {
   border: 1px solid var(--antd-input-hover-border-color);
 }
 
-textarea:not(:disabled):focus {
+.human-input:not(:disabled):focus {
   border: 1px solid var(--antd-input-focus-border-color);
   outline: 0;
   box-shadow: 0 0 0 2px rgb(0 113 235 / 20%);
 }
 
-textarea::placeholder {
+.human-input::placeholder {
   color: var(--antd-input-placeholder-color);
 }
 

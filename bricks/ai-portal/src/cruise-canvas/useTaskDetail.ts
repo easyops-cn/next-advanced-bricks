@@ -6,9 +6,10 @@ import { rootReducer } from "./reducers";
 import type { TaskPatch } from "./interfaces";
 
 export function useTaskDetail(taskId: string | undefined) {
-  const [{ task, jobs }, dispatch] = useReducer(rootReducer, null, () => ({
+  const [{ task, jobs, plan }, dispatch] = useReducer(rootReducer, null, () => ({
     task: null,
     jobs: [],
+    plan: [],
   }));
 
   const humanInputRef = useRef<(jobId: string, input: string) => void>();
@@ -42,6 +43,7 @@ export function useTaskDetail(taskId: string | undefined) {
             requesting = false;
             return;
           }
+
           dispatch({ type: "sse", payload: value, isInitial });
           isInitial = false;
         }
@@ -88,5 +90,5 @@ export function useTaskDetail(taskId: string | undefined) {
     };
   }, [taskId]);
 
-  return { task, jobs, humanInputRef };
+  return { task, jobs, plan, humanInputRef };
 }

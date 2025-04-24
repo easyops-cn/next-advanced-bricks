@@ -6,8 +6,8 @@ import type { GraphNode } from "./interfaces";
 export interface UseAutoCenterOptions {
   nodes: GraphNode[];
   sizeReady: boolean;
-  zoomer: ZoomBehavior<HTMLElement, unknown>;
-  rootRef: RefObject<HTMLElement>;
+  zoomer: ZoomBehavior<HTMLDivElement, unknown>;
+  rootRef: RefObject<HTMLDivElement>;
 }
 
 export function useAutoCenter({
@@ -39,7 +39,7 @@ export function useAutoCenter({
       const width = right - left;
 
       zoomer.transform(
-        select(root as HTMLElement),
+        select(root),
         new ZoomTransform(1, (root.clientWidth - width) / 2, 30)
       );
       setCentered(true);

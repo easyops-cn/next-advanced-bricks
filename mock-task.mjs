@@ -11,7 +11,9 @@ export function startTask(requirement) {
   };
   pool.set(id, new MockTask(task));
 
-  return task;
+  return {
+    taskId: id,
+  };
 }
 
 /**
@@ -29,13 +31,13 @@ class MockTask {
       {
         state: "submitted",
         jobs: [],
-        plans: [],
+        plan: [],
         __delay: 2000,
       },
       {
         state: "working",
         jobs: [],
-        plans: [
+        plan: [
           {
             id: "mock-job-id-1",
             instruction: "创建系统",
@@ -94,6 +96,36 @@ class MockTask {
         __delay: 100,
       },
       {
+        plan: [
+          {
+            id: "mock-job-id-1",
+            instruction: "创建系统",
+          },
+          {
+            id: "mock-job-id-1-a",
+            instruction: "要求用户补充完整的系统信息",
+          },
+          {
+            id: "mock-job-id-2",
+            instruction: "创建环境",
+          },
+          // {
+          //   id: "mock-job-id-3",
+          //   instruction: "安装Agent",
+          // },
+          {
+            id: "mock-job-id-4",
+            instruction: "关联主机到环境中",
+          },
+          {
+            id: "mock-job-id-5",
+            instruction: "创建基于Agent扫描的节点发现任务",
+          },
+          {
+            id: "mock-job-id-6",
+            instruction: "智能节点聚类",
+          },
+        ],
         jobs: [
           {
             id: "mock-job-id-1",
@@ -154,7 +186,7 @@ class MockTask {
           __delay: 1000,
         },
         {
-          // plans: [],
+          // plan: [],
           jobs: [
             {
               id: "mock-job-id-2",
@@ -228,9 +260,11 @@ class MockTask {
               id: "mock-job-id-4",
               state: "input-required",
               toolCall: {
-                name: "ask_user_more",
+                name: "ask_user_select_from_cmdb",
                 arguments: {
                   question: "请提供要关联的主机 IP 列表。",
+                  objectId: "HOST",
+                  attrId: "ip",
                 },
               },
             },
@@ -300,7 +334,7 @@ class MockTask {
           jobs: [
             {
               id: "mock-job-id-5",
-              state: "working",
+              state: "completed",
               messages: [
                 {
                   role: "assistant",

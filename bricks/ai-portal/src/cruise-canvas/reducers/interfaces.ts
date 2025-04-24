@@ -1,8 +1,9 @@
-import type { Job, TaskBaseDetail, TaskPatch } from "../interfaces";
+import type { Job, StepWithState, TaskBaseDetail, TaskPatch } from "../interfaces";
 
 export interface CruiseCanvasState {
   task: TaskBaseDetail | null;
   jobs: Job[];
+  plan: StepWithState[];
 }
 
 export type CruiseCanvasAction = TaskSSEAction | TaskResetAction;

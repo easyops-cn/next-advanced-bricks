@@ -65,6 +65,9 @@ export interface Task {
   // Task ID
   id: string;
 
+  // 根据用户需求自动生成的任务标题
+  title: string;
+
   // User requirement
   requirement: string;
 
@@ -75,6 +78,9 @@ export interface Task {
   plan: Step[];
 
   jobs: Job[];
+
+  startTime?: number;
+  endTime?: number;
 }
 
 export interface Step {
@@ -83,6 +89,10 @@ export interface Step {
 
   // The instruction for this step
   instruction: string;
+}
+
+export interface StepWithState extends Step {
+  state?: JobState;
 }
 
 export interface Job {
@@ -100,6 +110,9 @@ export interface Job {
   toolCall?: ToolCall;
 
   messages?: Message[];
+
+  startTime?: number;
+  endTime?: number;
 
   _instruction_timestamp: number;
   _timestamp: number;

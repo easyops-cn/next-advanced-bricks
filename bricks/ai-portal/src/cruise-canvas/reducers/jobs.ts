@@ -1,7 +1,7 @@
 import type { Reducer } from "react";
+import { isMatch, pick } from "lodash";
 import type { Job, JobPatch, Message, Part, TextPart } from "../interfaces";
 import type { CruiseCanvasAction } from "./interfaces";
-import { isMatch, pick } from "lodash";
 
 export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
   switch (action.type) {
@@ -14,6 +14,17 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
       }
 
       for (const jobPatch of jobsPatch) {
+        // TODO(): remove temp work around.
+        if (!jobPatch.parent?.length) {
+          delete jobPatch.parent;
+        }
+        if (!jobPatch.state) {
+          delete jobPatch.state;
+        }
+        if (!jobPatch.instruction) {
+          delete jobPatch.instruction;
+        }
+
         const previousJobIndex =
           jobs?.findIndex((job) => job.id === jobPatch.id) ?? -1;
         const { messages: messagesPatch } = jobPatch;

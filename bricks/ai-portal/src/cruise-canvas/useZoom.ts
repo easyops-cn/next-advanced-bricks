@@ -9,7 +9,7 @@ import {
 // import type { ActiveTarget } from "./interfaces";
 
 export interface UseZoomOptions {
-  rootRef: React.RefObject<HTMLElement>;
+  rootRef: React.RefObject<HTMLDivElement>;
   zoomable?: boolean;
   scrollable?: boolean;
   pannable?: boolean;
@@ -22,7 +22,7 @@ export interface UseZoomResult {
   grabbing: boolean;
   transform: TransformLiteral;
   scaleRange: RangeTuple;
-  zoomer: ZoomBehavior<HTMLElement, unknown>;
+  zoomer: ZoomBehavior<HTMLDivElement, unknown>;
 }
 
 // istanbul ignore next
@@ -74,7 +74,7 @@ export function useZoom({
   );
 
   const zoomer = useMemo(
-    () => zoom<HTMLElement, unknown>().wheelDelta(wheelData),
+    () => zoom<HTMLDivElement, unknown>().wheelDelta(wheelData),
     []
   );
 

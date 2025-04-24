@@ -1,7 +1,7 @@
 import type { Reducer } from "react";
+import { isMatch, pick } from "lodash";
 import type { TaskBaseDetail } from "../interfaces";
 import type { CruiseCanvasAction } from "./interfaces";
-import { isMatch, pick } from "lodash";
 
 export const task: Reducer<TaskBaseDetail | null, CruiseCanvasAction> = (
   state,
@@ -13,8 +13,15 @@ export const task: Reducer<TaskBaseDetail | null, CruiseCanvasAction> = (
         "id",
         "requirement",
         "state",
-        "plan",
       ]);
+
+      // TODO(): remove temp work around.
+      if (!taskPatch.requirement) {
+        delete taskPatch.requirement;
+      }
+      if (!taskPatch.state) {
+        delete taskPatch.state;
+      }
 
       return (
         action.isInitial
