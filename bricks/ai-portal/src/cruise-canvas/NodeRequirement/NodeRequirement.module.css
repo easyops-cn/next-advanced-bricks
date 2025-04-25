@@ -1,7 +1,7 @@
 .node-requirement {
   width: 453px;
   background: #e0e5fd;
-  border: 2px solid rgba(95, 160, 247, 1);
+  border: 2px solid var(--cruise-canvas-primary-color);
   border-radius: 12px;
   padding: 5px;
   white-space: pre-wrap;

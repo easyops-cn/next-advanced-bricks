@@ -8,12 +8,10 @@
   border: 1px solid #e0e5f0;
   border-radius: 12px;
   padding: 8px;
-  white-space: pre-wrap;
 }
 
 .heading {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #f2f2f6;
   padding: 0 5px 5px;
@@ -21,29 +19,28 @@
   color: #8c8c8c;
 }
 
-.body {
-  padding: 8px 4px;
+.icon {
+  margin-right: 6px;
 }
 
-.message {
-  /* padding: 0 1em; */
-  /* border: var(--cruise-canvas-node-border);
-  border-radius: 6px;
-  white-space: pre-line;
-  overflow-wrap: break-word; */
+.time {
+  margin-left: auto;
+}
+
+.body {
+  padding: 8px 4px;
 }
 
 .message p {
   margin: 1em 0;
 }
 
-/* .message.role-assistant,
-.message.role-tool {
-  background-color: lightgray;
-} */
-
 .message:not(:first-child) {
   margin-top: 1em;
+}
+
+.role-user {
+  white-space: pre-wrap;
 }
 
 .human-input {

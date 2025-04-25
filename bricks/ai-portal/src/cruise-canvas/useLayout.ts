@@ -6,30 +6,32 @@ import type {
   GraphEdge,
   GraphNode,
   SizeTuple,
+  TaskState,
 } from "./interfaces";
 import { END_NODE_ID, START_NODE_ID } from "./constants";
 
 export interface UseLayoutOptions {
   rawNodes: GraphNode[] | undefined;
   rawEdges: GraphEdge[] | undefined;
-  completed?: boolean;
   sizeMap: Map<string, SizeTuple> | null;
+  state?: TaskState;
 }
 
 export function useLayout({
   rawNodes: _rawNodes,
   rawEdges: _rawEdges,
-  completed,
   sizeMap,
+  state,
 }: UseLayoutOptions) {
   const memoizedPositionsRef = useRef<Map<string, NodePosition> | null>(null);
+  const completed = state === "completed";
 
   const { initialNodes, initialEdges } = useMemo(() => {
     const initialNodes: GraphNode[] = [
       {
         type: "start",
         id: START_NODE_ID,
-        _timestamp: 0,
+        startTime: 0,
       },
     ];
     const initialEdges: GraphEdge[] = [];
@@ -62,7 +64,7 @@ export function useLayout({
       initialNodes.push({
         id: END_NODE_ID,
         type: "end",
-        _timestamp: performance.now(),
+        startTime: Infinity,
       });
       initialEdges.push(
         ...finishedNodeIds.map((id) => ({

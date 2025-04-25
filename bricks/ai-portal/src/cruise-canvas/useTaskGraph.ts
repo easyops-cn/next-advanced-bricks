@@ -19,7 +19,7 @@ export function useTaskGraph(
       id: requirementNodeId,
       content: task.requirement,
       state: jobs.length === 0 ? "working" : "completed",
-      _timestamp: 0,
+      startTime: task.startTime,
     });
 
     const jobMap = new Map<string, Job>();
@@ -27,6 +27,7 @@ export function useTaskGraph(
     const downstreamMap = new Map<string, string[]>();
     const upstreamMap = new Map<string, string[]>();
     const rootDownstream: string[] = [];
+    const rootChildren: string[] = [];
 
     for (const job of jobs) {
       if (job.parent) {
@@ -42,39 +43,54 @@ export function useTaskGraph(
     // Setup jobMap and downstreamMap
     for (const job of jobs) {
       jobMap.set(job.id, job);
-      if (job.parent) {
-        continue;
-      }
 
-      const children = childrenMap.get(job.id);
-      if (children) {
-        let downstream = downstreamMap.get(job.id);
+      for (const up of job.upstream ?? []) {
+        let downstream = downstreamMap.get(up);
         if (!downstream) {
           downstream = [];
-          downstreamMap.set(job.id, downstream);
+          downstreamMap.set(up, downstream);
         }
-        for (const child of children) {
-          downstream.push(child);
-        }
+        downstream.push(job.id);
       }
 
-      if (job.upstream?.length) {
-        for (const up of job.upstream) {
-          const upChildren = childrenMap.get(up);
-          const upstream = upChildren ?? [up];
-          for (const u of upstream) {
-            let downstream = downstreamMap.get(u);
-            if (!downstream) {
-              downstream = [];
-              downstreamMap.set(u, downstream);
-            }
-            downstream.push(job.id);
-          }
+      if (!job.parent) {
+        rootChildren.push(job.id);
+
+        if (!job.upstream?.length) {
+          rootDownstream.push(job.id);
         }
-      } else {
-        rootDownstream.push(job.id);
       }
     }
+
+    const alignDownstreamMap = (children: string[]) => {
+      for (const rootJobId of children) {
+        const subChildren = childrenMap.get(rootJobId);
+        const downstream = downstreamMap.get(rootJobId);
+
+        if (subChildren) {
+          const firstLevelChildren = subChildren.filter((child) => {
+            const childJob = jobMap.get(child)!;
+            return !childJob.upstream?.length;
+          });
+
+          const lastLevelChildren = downstream
+            ? subChildren.filter((child) => {
+                return !downstreamMap.has(child);
+              })
+            : [];
+
+          downstreamMap.set(rootJobId, firstLevelChildren);
+
+          for (const child of lastLevelChildren) {
+            downstreamMap.set(child, [...downstream!]);
+          }
+
+          alignDownstreamMap(subChildren);
+        }
+      }
+    };
+
+    alignDownstreamMap(rootChildren);
 
     // Setup upstreamMap
     for (const [upstream, downstream] of downstreamMap) {
@@ -125,7 +141,7 @@ export function useTaskGraph(
           job,
           state:
             job.state === "working" && hasMessages ? "completed" : job.state,
-          _timestamp: job._instruction_timestamp,
+          startTime: job.startTime,
         });
 
         nodeIds.push(instructionNodeId);
@@ -138,7 +154,7 @@ export function useTaskGraph(
           id: jobNodeId,
           job,
           state: job.state,
-          _timestamp: job._timestamp,
+          startTime: job.startTime,
         });
         nodeIds.push(jobNodeId);
       }
@@ -147,7 +163,6 @@ export function useTaskGraph(
     }
 
     for (const jobId of list) {
-      // const job = jobMap.get(jobId)!;
       const nodeIds = jobNodesMap.get(jobId)!;
 
       const upstreams = upstreamMap.get(jobId);

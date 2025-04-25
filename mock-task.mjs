@@ -34,6 +34,7 @@ class MockTask {
         state: "submitted",
         jobs: [],
         plan: [],
+        startTime: 1745570717,
         __delay: 2000,
       },
       {
@@ -72,6 +73,7 @@ class MockTask {
           {
             id: "mock-job-id-1",
             state: "submitted",
+            startTime: 1745572717,
             instruction: "创建系统",
           },
         ],
@@ -82,6 +84,9 @@ class MockTask {
           {
             id: "mock-job-id-1",
             state: "working",
+            toolCall: {
+              name: "cmdb_create_app_system",
+            },
             messages: [
               {
                 role: "assistant",
@@ -136,6 +141,7 @@ class MockTask {
           {
             id: "mock-job-id-1-a",
             upstream: ["mock-job-id-1"],
+            startTime: 1745574717,
             instruction: "要求用户补充完整的系统信息",
             state: "working",
           },
@@ -150,11 +156,12 @@ class MockTask {
             instruction: "要求用户补充完整的系统信息",
             state: "input-required",
             toolCall: {
-              name: "ask_user_more",
-              arguments: {
+              name: "ask_human",
+              arguments: JSON.stringify({
+                command: "ask_user_more",
                 question:
                   "请补充完整的系统信息，包括系统编码、运维负责人（默认为当前用户）。",
-              },
+              }),
             },
           },
         ],
@@ -172,6 +179,14 @@ class MockTask {
             {
               id: "mock-job-id-1-a",
               state: "completed",
+              toolCall: {
+                name: "ask_human",
+                arguments: JSON.stringify({
+                  command: "ask_user_more",
+                  question:
+                    "请补充完整的系统信息，包括系统编码、运维负责人（默认为当前用户）。",
+                }),
+              },
               messages: [
                 {
                   role: "user",
@@ -193,6 +208,7 @@ class MockTask {
             {
               id: "mock-job-id-2",
               state: "submitted",
+              startTime: 1745576717,
               upstream: ["mock-job-id-1-a"],
               instruction: "创建环境",
             },
@@ -206,11 +222,12 @@ class MockTask {
               id: "mock-job-id-2",
               state: "input-required",
               toolCall: {
-                name: "ask_user_confirm",
-                arguments: {
+                name: "ask_human",
+                arguments: JSON.stringify({
+                  command: "ask_user_confirm",
                   question:
                     "将创建测试环境，ID 为 env-test，别名开发测试，是否继续？",
-                },
+                }),
               },
             },
           ],
@@ -229,6 +246,14 @@ class MockTask {
             {
               id: "mock-job-id-2",
               state: "completed",
+              toolCall: {
+                name: "ask_human",
+                arguments: JSON.stringify({
+                  command: "ask_user_confirm",
+                  question:
+                    "将创建测试环境，ID 为 env-test，别名开发测试，是否继续？",
+                }),
+              },
               messages: [
                 {
                   role: "user",
@@ -248,6 +273,7 @@ class MockTask {
           jobs: [
             {
               id: "mock-job-id-4",
+              startTime: 1745578717,
               upstream: ["mock-job-id-2"],
               state: "submitted",
               instruction: "关联主机到环境中",
@@ -262,12 +288,13 @@ class MockTask {
               id: "mock-job-id-4",
               state: "input-required",
               toolCall: {
-                name: "ask_user_select_from_cmdb",
-                arguments: {
+                name: "ask_human",
+                arguments: JSON.stringify({
+                  command: "ask_user_select_from_cmdb",
                   question: "请提供要关联的主机 IP 列表。",
                   objectId: "HOST",
                   attrId: "ip",
-                },
+                }),
               },
             },
           ],
@@ -286,6 +313,15 @@ class MockTask {
             {
               id: "mock-job-id-4",
               state: "completed",
+              toolCall: {
+                name: "ask_human",
+                arguments: JSON.stringify({
+                  command: "ask_user_select_from_cmdb",
+                  question: "请提供要关联的主机 IP 列表。",
+                  objectId: "HOST",
+                  attrId: "ip",
+                }),
+              },
               messages: [
                 {
                   role: "user",
@@ -305,6 +341,7 @@ class MockTask {
           jobs: [
             {
               id: "mock-job-id-5",
+              startTime: 1745580717,
               upstream: ["mock-job-id-4"],
               state: "submitted",
               instruction: "创建基于Agent扫描的节点发现任务",
@@ -317,6 +354,9 @@ class MockTask {
             {
               id: "mock-job-id-5",
               state: "working",
+              toolCall: {
+                name: "cmdb_create_agent_scan_job",
+              },
               messages: [
                 {
                   role: "assistant",
@@ -356,6 +396,7 @@ class MockTask {
           jobs: [
             {
               id: "mock-job-id-6",
+              startTime: 1745580717,
               upstream: ["mock-job-id-5"],
               state: "submitted",
               instruction: "智能节点聚类",
@@ -367,11 +408,13 @@ class MockTask {
           jobs: [
             {
               id: "mock-job-id-6-a",
+              startTime: 1745582717,
               parent: "mock-job-id-6",
               state: "working",
             },
             {
               id: "mock-job-id-6-b",
+              startTime: 1745582717,
               parent: "mock-job-id-6",
               upstream: ["mock-job-id-6-a"],
               state: "working",

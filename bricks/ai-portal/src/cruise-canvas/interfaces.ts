@@ -45,7 +45,7 @@ export interface EndGraphNode extends BaseGraphNode {
 export interface BaseGraphNode {
   id: string;
   type: string;
-  _timestamp: number;
+  startTime: number;
   state?: string;
   view?: NodeView;
 }
@@ -84,7 +84,7 @@ export interface Task {
 
   jobs: Job[];
 
-  startTime?: number;
+  startTime: number;
   endTime?: number;
 }
 
@@ -119,11 +119,8 @@ export interface Job {
 
   messages?: Message[];
 
-  startTime?: number;
+  startTime: number;
   endTime?: number;
-
-  _instruction_timestamp: number;
-  _timestamp: number;
 }
 
 export interface TaskPatch extends Omit<Partial<Task>, "jobs"> {
@@ -178,4 +175,6 @@ export interface DataPart {
 export interface ToolCall {
   name: string;
   arguments?: Record<string, unknown>;
+  argumentsParseFailed?: boolean;
+  argumentsParseError?: unknown;
 }

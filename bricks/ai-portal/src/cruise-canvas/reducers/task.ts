@@ -13,14 +13,20 @@ export const task: Reducer<TaskBaseDetail | null, CruiseCanvasAction> = (
         "id",
         "requirement",
         "state",
+        "startTime",
+        "endTime",
       ]);
 
       // TODO(): remove temp work around.
-      if (!taskPatch.requirement) {
-        delete taskPatch.requirement;
-      }
-      if (!taskPatch.state) {
-        delete taskPatch.state;
+      // if (!taskPatch.requirement) {
+      //   delete taskPatch.requirement;
+      // }
+      // if (!taskPatch.state) {
+      //   delete taskPatch.state;
+      // }
+
+      if ((taskPatch as any).state === "blocked") {
+        taskPatch.state = "working";
       }
 
       return (

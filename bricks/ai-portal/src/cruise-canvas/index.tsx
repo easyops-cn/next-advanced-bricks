@@ -5,7 +5,6 @@ import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import classNames from "classnames";
 import ResizeObserver from "resize-observer-polyfill";
-import { maxBy } from "lodash";
 import { select } from "d3-selection";
 import { NS, locales } from "./i18n.js";
 import styles from "./styles.module.css";
@@ -18,12 +17,12 @@ import type {
   JobGraphNode,
   TaskBaseDetail,
 } from "./interfaces.js";
-// import Summarization from "./summarization.md";
 import { useAutoCenter } from "./useAutoCenter.js";
 import { useLayout } from "./useLayout.js";
 import { useTaskDetail } from "./useTaskDetail.js";
 import { useTaskGraph } from "./useTaskGraph.js";
 import { PlanProgress } from "./PlanProgress/PlanProgress.js";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ZoomBar } from "./ZoomBar/ZoomBar.js";
 import { NodeStart } from "./NodeStart/NodeStart.js";
 import { NodeRequirement } from "./NodeRequirement/NodeRequirement.js";
@@ -94,7 +93,6 @@ export function CruiseCanvasComponent({
   const graph = useTaskGraph(task, jobs);
   const rawNodes = graph?.nodes;
   const rawEdges = graph?.edges;
-  const completed = task?.state === "completed";
 
   const humanInput = useCallback(
     (jobId: string, input: string) => {
@@ -122,7 +120,7 @@ export function CruiseCanvasComponent({
   const { sizeReady, nodes, edges } = useLayout({
     rawNodes,
     rawEdges,
-    completed,
+    state: task?.state,
     sizeMap,
   });
 
@@ -149,12 +147,26 @@ export function CruiseCanvasComponent({
       return;
     }
     const { offsetHeight } = root;
-    const latestNode = maxBy(nodes, (node) => node._timestamp);
-    if (latestNode) {
+    let maxStartTime = -Infinity;
+    const latestNodes: GraphNode[] = [];
+
+    for (const node of nodes) {
+      if (node.startTime > maxStartTime) {
+        maxStartTime = node.startTime;
+        latestNodes.length = 0;
+        latestNodes.push(node);
+      } else if (node.startTime === maxStartTime) {
+        latestNodes.push(node);
+      }
+    }
+
+    if (latestNodes.length > 0) {
       const transform = transformRef.current;
-      const y1 = latestNode.view!.y + latestNode.view!.height;
+      const y1 = Math.max(
+        ...latestNodes.map((node) => node.view!.y + node.view!.height)
+      );
       const transformedY1 = y1 * transform.k + transform.y;
-      const padding = 60;
+      const padding = 72;
       const diffY = offsetHeight - padding - transformedY1;
       if (diffY < 0) {
         // Make the latest node visible
@@ -163,6 +175,7 @@ export function CruiseCanvasComponent({
     }
   }, [nodes, sizeReady, zoomer]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleScaleChange = useCallback(
     (scale: number) => {
       zoomer.scaleTo(select(rootRef.current!), scale);
@@ -217,8 +230,8 @@ export function CruiseCanvasComponent({
         </div>
       </div>
       <div className={styles.widgets}>
-        <PlanProgress plan={plan} />
-        <ZoomBar scale={transform.k} onScaleChange={handleScaleChange} />
+        <PlanProgress plan={plan} state={task?.state} />
+        {/* <ZoomBar scale={transform.k} onScaleChange={handleScaleChange} /> */}
       </div>
     </>
   );

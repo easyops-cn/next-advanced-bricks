@@ -1,15 +1,14 @@
 import React, { Suspense, useEffect, useRef, useState } from "react";
 import { MarkdownComponent } from "@next-shared/markdown";
-import { wrapBrick } from "@next-core/react-element";
-import type { Button, ButtonProps } from "@next-bricks/basic/button";
 import { TextareaAutoResize } from "@next-shared/form";
 import { CmdbObjectApi_getObjectRef } from "@next-api-sdk/cmdb-sdk";
+import classNames from "classnames";
 import styles from "./NodeJob.module.css";
 import type { Job } from "../interfaces";
 import { K, t } from "../i18n.js";
 import { AsyncWrappedCMDB } from "../cmdb.js";
-
-const WrappedButton = wrapBrick<Button, ButtonProps>("eo-button");
+import { WrappedButton, WrappedIcon } from "../bricks.js";
+import moment from "moment";
 
 export interface NodeJobProps {
   job: Job;
@@ -18,18 +17,48 @@ export interface NodeJobProps {
 }
 
 export function NodeJob({ job, state, humanInput }: NodeJobProps): JSX.Element {
+  const askUser = job.toolCall?.name === "ask_human";
+  const knownAskUser =
+    askUser &&
+    ["ask_user_more", "ask_user_confirm", "ask_user_select_from_cmdb"].includes(
+      job.toolCall!.arguments?.command as string
+    );
+
   return (
     <div className={styles["node-job"]}>
       <div className={styles.heading}>
-        <div className={styles.tool}>{job.toolCall?.name}</div>
-        <div className={styles.time}>03-24 15:23</div>
+        {job.toolCall ? (
+          <>
+            {askUser ? (
+              <WrappedIcon
+                className={styles.icon}
+                lib="fa"
+                prefix="fas"
+                icon="person-circle-question"
+              />
+            ) : (
+              <WrappedIcon
+                className={styles.icon}
+                lib="fa"
+                prefix="fas"
+                icon="globe"
+              />
+            )}
+            <div className={styles.tool}>{job.toolCall?.name}</div>
+          </>
+        ) : (
+          <>
+            <WrappedIcon className={styles.icon} lib="easyops" icon="robot" />
+          </>
+        )}
+        {job.startTime && (
+          <div className={styles.time}>
+            {moment(job.startTime * 1000).format("MM-DD HH:mm")}
+          </div>
+        )}
       </div>
       <div className={styles.body}>
-        {[
-          "ask_user_more",
-          "ask_user_confirm",
-          "ask_user_select_from_cmdb",
-        ].includes(job.toolCall?.name as string) ? (
+        {knownAskUser ? (
           <>
             <div className={`${styles.message} ${styles["role-assistant"]}`}>
               <MarkdownComponent
@@ -37,24 +66,36 @@ export function NodeJob({ job, state, humanInput }: NodeJobProps): JSX.Element {
               />
             </div>
             {state === "input-required" &&
-              (job.toolCall!.name === "ask_user_more" ? (
+              (job.toolCall!.arguments!.command === "ask_user_more" ? (
                 <HumanInputComponent jobId={job.id} humanInput={humanInput} />
-              ) : job.toolCall!.name === "ask_user_confirm" ? (
+              ) : job.toolCall!.arguments!.command === "ask_user_confirm" ? (
                 <HumanConfirmComponent jobId={job.id} humanInput={humanInput} />
-              ) : job.toolCall!.name === "ask_user_select_from_cmdb" ? (
+              ) : job.toolCall!.arguments!.command ===
+                "ask_user_select_from_cmdb" ? (
                 <HumanSelectFromCmdb jobId={job.id} humanInput={humanInput} />
               ) : null)}
           </>
+        ) : askUser ? (
+          <div className={styles.message}>
+            Unexpected ask_human command:{" "}
+            {JSON.stringify(job.toolCall!.arguments?.command ?? null)}
+          </div>
         ) : null}
         {job.messages?.map((message, index) => (
           <div
             key={index}
-            className={`${styles.message} ${styles[`role-${message.role}`]}`}
+            className={classNames(styles.message, {
+              [styles["role-user"]]: message.role === "tool" && knownAskUser,
+            })}
           >
             {message.parts?.map((part, partIndex) => (
               <React.Fragment key={partIndex}>
                 {part.type === "text" ? (
-                  <MarkdownComponent content={part.text} />
+                  message.role === "user" ? (
+                    part.text
+                  ) : (
+                    <MarkdownComponent content={part.text} />
+                  )
                 ) : part.type === "file" ? (
                   <div>{part.file.name}</div>
                 ) : (

@@ -15,23 +15,39 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
 
       for (const jobPatch of jobsPatch) {
         // TODO(): remove temp work around.
-        if (!jobPatch.upstream?.length) {
-          delete jobPatch.upstream;
-        }
-        if (!jobPatch.parent) {
-          delete jobPatch.parent;
-        }
-        if (!jobPatch.state) {
-          delete jobPatch.state;
-        }
-        if (!jobPatch.instruction) {
-          delete jobPatch.instruction;
+        // if (!jobPatch.upstream?.length) {
+        //   delete jobPatch.upstream;
+        // }
+        // if (!jobPatch.parent) {
+        //   delete jobPatch.parent;
+        // }
+        // if (!jobPatch.state) {
+        //   delete jobPatch.state;
+        // }
+        // if (!jobPatch.instruction) {
+        //   delete jobPatch.instruction;
+        // }
+
+        if ((jobPatch as any).state === "blocked") {
+          jobPatch.state = "working";
         }
 
         const previousJobIndex =
           jobs?.findIndex((job) => job.id === jobPatch.id) ?? -1;
-        const { messages: messagesPatch } = jobPatch;
-        const timestamp = performance.now();
+        const { messages: messagesPatch, toolCall } = jobPatch;
+
+        if (typeof toolCall?.arguments === "string") {
+          try {
+            jobPatch.toolCall!.arguments = JSON.parse(toolCall.arguments);
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error("Failed to parse toolCall arguments", e);
+            jobPatch.toolCall!.arguments = {};
+            jobPatch.toolCall!.argumentsParseFailed = true;
+            jobPatch.toolCall!.argumentsParseError = e;
+          }
+        }
+
         if (previousJobIndex === -1) {
           if (Array.isArray(messagesPatch) && messagesPatch.length > 1) {
             jobs = [
@@ -39,19 +55,10 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
               {
                 ...jobPatch,
                 messages: mergeMessages(messagesPatch),
-                _instruction_timestamp: timestamp,
-                _timestamp: timestamp,
               } as Job,
             ];
           } else {
-            jobs = [
-              ...jobs,
-              {
-                ...(jobPatch as Job),
-                _instruction_timestamp: timestamp,
-                _timestamp: timestamp,
-              },
-            ];
+            jobs = [...jobs, jobPatch as Job];
           }
         } else {
           const previousJob = jobs[previousJobIndex];
@@ -62,6 +69,8 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
             "state",
             "instruction",
             "toolCall",
+            "startTime",
+            "endTime",
           ]);
           if (Array.isArray(messagesPatch) && messagesPatch.length > 0) {
             restMessagesPatch.messages = mergeMessages([
@@ -75,7 +84,6 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
               {
                 ...previousJob,
                 ...restMessagesPatch,
-                _timestamp: timestamp,
               },
               ...jobs.slice(previousJobIndex + 1),
             ];
