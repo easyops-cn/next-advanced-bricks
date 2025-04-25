@@ -1,19 +1,18 @@
 .node-job {
   width: 330px;
-  background: #fff;
+  background: linear-gradient(180deg, #f5f8ff 0%, #edf0f9 100%);
   box-shadow:
-    inset 0px 3px 0px 0px rgba(37, 64, 255, 0.4),
-    0px 4px 10px 0px rgba(0, 0, 0, 0.1),
+    0px 4px 10px 0px rgba(177, 149, 207, 0.4),
     0px 2px 4px 0px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e0e5f0;
   border-radius: 12px;
+  border: 1px solid #ffffff;
   padding: 8px;
 }
 
 .heading {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #f2f2f6;
+  border-bottom: 1px solid #e2e2ec;
   padding: 0 5px 5px;
   font-size: 12px;
   color: #8c8c8c;
