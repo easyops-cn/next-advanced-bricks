@@ -11,8 +11,8 @@ import { ReactUseMultipleBricks } from "@next-core/react-runtime";
 import type { UseSingleBrickConf } from "@next-core/types";
 import { wrapBrick } from "@next-core/react-element";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
-import { K, NS, locales } from "./i18n.js";
-import { useTranslation, initializeReactI18n } from "@next-core/i18n/react";
+import { NS, locales } from "./i18n.js";
+import { initializeReactI18n } from "@next-core/i18n/react";
 
 import { i18n } from "@next-core/i18n";
 
@@ -167,8 +167,6 @@ const getCustomComp = (
 };
 
 export function BrickTable(props: BrickTableProps): React.ReactElement {
-  const { t } = useTranslation(NS);
-
   const locale = (i18n.language.split("-")[0] === "zh"
     ? zhCN
     : enUS) as unknown as Locale;
@@ -187,7 +185,6 @@ export function BrickTable(props: BrickTableProps): React.ReactElement {
     expandIconColumnIndex,
     childrenColumnName,
     scroll,
-    optimizedColumns,
     onDelete, // 用于 brick form 中，will be deprecated
     ellipsisInfo,
     showHeader,
@@ -508,7 +505,11 @@ export function BrickTable(props: BrickTableProps): React.ReactElement {
   );
 
   if (props.tableDraggable) {
-    table = <DndProvider backend={HTML5Backend}>{table}</DndProvider>;
+    table = (
+      <DndProvider backend={HTML5Backend} context={window}>
+        {table}
+      </DndProvider>
+    );
   }
 
   const cahce = useMemo(() => {
