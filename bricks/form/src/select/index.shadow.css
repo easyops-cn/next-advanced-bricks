@@ -280,13 +280,25 @@
 .select-option-selected .option:not(:last-child) {
   margin-right: 22px;
 }
-
-.dropdown-list .option .label {
+.select-item-option-content .text-container {
+  display: flex;
+  flex-direction: column;
+}
+.dropdown-list .option .text-container .label {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
+.dropdown-list .option .text-container .caption {
+  font-size: var(--auxiliary-font-size-small);
+  color: var(--color-secondary-text);
+  font-weight: var(--font-weight-400);
+  line-height: 20px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 .dropdown-list .option .label:not(:last-child) {
   margin-right: 8px;
 }

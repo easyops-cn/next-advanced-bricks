@@ -215,6 +215,27 @@
         tag: 粤
 ```
 
+### caption 展示下拉候选项说明文案
+
+```yaml preview minHeight="300px"
+- brick: eo-select
+  properties:
+    placeholder: This is placeholder...
+    options:
+      - caption: 如nginx、api_gateway等
+        label: 接入层
+        value: 接入层
+      - caption: 如DB等
+        label: 数据层
+        value: 数据层
+      - caption: 如业务逻辑组件
+        label: 业务层
+        value: 业务层
+      - caption: 如平台通用组件
+        label: 中台层
+        value: 中台层
+```
+
 ### Fields
 
 ```yaml preview minHeight="300px"
