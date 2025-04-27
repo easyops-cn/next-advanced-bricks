@@ -4,9 +4,19 @@ import { describe, test, expect, jest } from "@jest/globals";
 import { act } from "react-dom/test-utils";
 import * as utilsGeneral from "@next-core/utils/general";
 import { Layout, ResponsiveProps, WidthProvider } from "react-grid-layout";
-import { last } from "lodash";
+import { DropTargetHookSpec, DropTargetMonitor, useDrop } from "react-dnd";
+
 import "./";
 import type { EoWorkbenchLayoutV2 } from "./index.js";
+import {
+  DroppableComponentLayoutItem,
+  DroppableComponentLayoutItemProps,
+} from "./DroppableComponentLayoutItem";
+import {
+  DraggableComponentMenuItem,
+  DraggableComponentMenuItemProps,
+} from "./DraggableComponentMenuItem";
+import { WorkbenchComponent } from "../interfaces";
 
 jest.mock("@next-core/theme", () => ({}));
 jest.mock("@next-core/utils/general", () => {
@@ -22,12 +32,36 @@ jest.mock("@next-core/utils/general", () => {
   };
 });
 jest.mock("react-grid-layout");
+jest.mock("react-dnd", () => ({
+  DndProvider: jest.fn(({ children }) => <div>{children}</div>),
+  useDrag: jest.fn(() => [{}]),
+  useDrop: jest.fn(() => []),
+}));
+jest.mock("react-dnd-html5-backend", () => ({
+  HTML5Backend: jest.fn(),
+}));
+jest.mock("./DroppableComponentLayoutItem", () => ({
+  DroppableComponentLayoutItem: jest.fn(() => (
+    <div>Mocked DroppableComponentLayoutItem</div>
+  )),
+}));
+jest.mock("./DraggableComponentMenuItem", () => ({
+  DraggableComponentMenuItem: jest.fn(({ component: { title } }) => (
+    <div data-testid="draggable-component-menu-item">{title}</div>
+  )),
+}));
 
+const mockedUseDrop = useDrop as jest.Mock;
 const MockedReactGridLayoutComponent = jest.fn(
   ({ className, children }: ResponsiveProps) => (
     <div className={className}>{children}</div>
   )
 );
+const MockedDroppableComponentLayoutItem =
+  DroppableComponentLayoutItem as jest.Mock;
+const MockedDraggableComponentMenuItem =
+  DraggableComponentMenuItem as jest.Mock;
+
 (WidthProvider as jest.Mock).mockReturnValue(MockedReactGridLayoutComponent);
 
 describe("eo-workbench-layout-v2", () => {
@@ -35,44 +69,7 @@ describe("eo-workbench-layout-v2", () => {
     const element = document.createElement(
       "eo-workbench-layout-v2"
     ) as EoWorkbenchLayoutV2;
-
-    element.isEdit = true;
-    element.layouts = [
-      {
-        i: "card-1",
-        x: 0,
-        y: 0,
-        w: 2,
-        h: 1,
-      },
-      {
-        i: "card-2",
-        x: 0,
-        y: 1,
-        w: 1,
-        h: 1,
-      },
-    ];
-
-    element.toolbarBricks = {
-      useBrick: [
-        {
-          brick: "div",
-          properties: {
-            textContent: "tool-1",
-            className: "tool-brick",
-          },
-        },
-        {
-          brick: "div",
-          properties: {
-            textContent: "tool-2",
-            className: "tool-brick",
-          },
-        },
-      ],
-    };
-    element.componentList = [
+    const componentList = [
       {
         title: "card-1",
         useBrick: {
@@ -124,7 +121,79 @@ describe("eo-workbench-layout-v2", () => {
         },
         key: "card-3",
       },
+      {
+        title: "card-4",
+        useBrick: {
+          brick: "div",
+          properties: {
+            textContent: "card-4",
+          },
+        },
+        position: {
+          i: "card-4",
+          x: 0,
+          y: 0,
+          w: 2,
+          h: 1,
+        },
+        key: "card-4",
+      },
+      {
+        title: "card-5",
+        useBrick: {
+          brick: "div",
+          properties: {
+            textContent: "card-5",
+          },
+        },
+        position: {
+          i: "card-5",
+          x: 0,
+          y: 0,
+          w: 3,
+          h: 1,
+        },
+        key: "card-5",
+      },
     ];
+
+    element.isEdit = true;
+    element.layouts = [
+      {
+        i: "card-1",
+        x: 0,
+        y: 0,
+        w: 2,
+        h: 1,
+      },
+      {
+        i: "card-2",
+        x: 0,
+        y: 1,
+        w: 1,
+        h: 1,
+      },
+    ];
+
+    element.toolbarBricks = {
+      useBrick: [
+        {
+          brick: "div",
+          properties: {
+            textContent: "tool-1",
+            className: "tool-brick",
+          },
+        },
+        {
+          brick: "div",
+          properties: {
+            textContent: "tool-2",
+            className: "tool-brick",
+          },
+        },
+      ],
+    };
+    element.componentList = componentList;
     element.showSettingButton = true;
 
     expect(element.childElementCount).toBe(0);
@@ -148,7 +217,7 @@ describe("eo-workbench-layout-v2", () => {
 
     const triggerLayoutChange = (layout: Layout[]) => {
       act(() => {
-        last(MockedReactGridLayoutComponent.mock.calls)?.[0].onLayoutChange?.(
+        MockedReactGridLayoutComponent.mock.lastCall?.[0].onLayoutChange?.(
           layout,
           { lg: layout }
         );
@@ -161,13 +230,7 @@ describe("eo-workbench-layout-v2", () => {
 
     triggerLayoutChange(newLayout1);
 
-    expect(
-      (element.querySelector("eo-checkbox") as HTMLElement).getAttribute(
-        "value"
-      )
-    ).toBe("card-1,card-2");
     expect(element.querySelector(".layout")?.childNodes.length).toBe(2);
-    expect(element.querySelectorAll("eo-icon[icon='delete']").length).toBe(2);
 
     const clickSaveBtn = () => {
       (
@@ -195,88 +258,98 @@ describe("eo-workbench-layout-v2", () => {
     expect(mockSettingEVent).toHaveBeenCalled();
 
     // insert element
+    // click
     await act(async () => {
-      await element.querySelector("eo-checkbox")?.dispatchEvent(
-        new CustomEvent("change", {
-          detail: [
-            {
-              label: "card-1",
-              value: "card-1",
-              key: "card-1",
-            },
-            {
-              label: "card-2",
-              value: "card-2",
-              key: "card-2",
-            },
-            {
-              label: "card-3",
-              value: "card-3",
-              key: "card-3",
-              position: {
-                i: "card-3",
-                x: 0,
-                y: 0,
-                w: 1,
-                h: 2,
-              },
-            },
-          ],
-        })
-      );
+      (
+        MockedDraggableComponentMenuItem.mock
+          .calls[2][0] as DraggableComponentMenuItemProps
+      ).onClick?.();
     });
 
-    const newLayout2 = [
-      { w: 2, h: 1, x: 0, y: 0, i: "card-1", moved: false, static: false },
+    const component3 = componentList[2];
+    const newLayout2_1 = [
+      expect.anything(),
+      expect.anything(),
       {
-        w: 1,
-        h: 2,
-        x: 0,
-        y: 1,
-        i: "card-2",
-        minH: 1,
-        moved: false,
-        static: false,
-      },
-      {
-        w: 1,
-        h: 2,
+        ...component3.position,
         x: 1,
-        y: 1,
-        i: "card-3",
-        minH: 2,
-        moved: false,
-        static: false,
+        y: Infinity,
       },
     ];
-
-    triggerLayoutChange(newLayout2);
 
     expect(element.querySelector(".layout")?.childNodes.length).toBe(3);
     expect(mockChangeEvent).toBeCalledWith(
       expect.objectContaining({
-        detail: newLayout2,
+        detail: newLayout2_1,
       })
     );
 
-    act(() => {
-      clickSaveBtn();
+    // drop on layout
+    const component4 = componentList[3];
+
+    await act(async () => {
+      (
+        mockedUseDrop.mock.lastCall?.[0] as DropTargetHookSpec<
+          WorkbenchComponent,
+          void,
+          unknown
+        >
+      ).drop?.(component4, {} as DropTargetMonitor<WorkbenchComponent, void>);
     });
 
-    expect(mockSaveEvent).nthCalledWith(
-      2,
+    const newLayout2_2 = [
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      {
+        ...component4.position,
+        x: 0,
+        y: Infinity,
+      },
+    ];
+
+    expect(element.querySelector(".layout")?.childNodes.length).toBe(4);
+    expect(mockChangeEvent).toBeCalledWith(
       expect.objectContaining({
-        detail: newLayout2,
+        detail: newLayout2_2,
       })
     );
 
-    expect(element.querySelector(".layout")?.childNodes.length).toBe(3);
+    // drop on layout item
+    const component5 = componentList[4];
+
+    await act(async () => {
+      (
+        MockedDroppableComponentLayoutItem.mock
+          .lastCall?.[0] as DroppableComponentLayoutItemProps
+      ).onDrop?.(component5);
+    });
+
+    const newLayout2_3 = [
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
+      {
+        ...component5.position,
+        x: 0,
+        y: Infinity,
+      },
+      expect.anything(),
+    ];
+
+    expect(element.querySelector(".layout")?.childNodes.length).toBe(5);
+    expect(mockChangeEvent).toBeCalledWith(
+      expect.objectContaining({
+        detail: newLayout2_3,
+      })
+    );
 
     // delete element
     await act(async () => {
       (
-        element.querySelectorAll("eo-icon[icon='delete']")[1] as HTMLElement
-      ).click();
+        MockedDroppableComponentLayoutItem.mock
+          .lastCall?.[0] as DroppableComponentLayoutItemProps
+      ).onDelete?.();
     });
 
     const newLayout3 = [
@@ -343,11 +416,6 @@ describe("eo-workbench-layout-v2", () => {
     });
 
     expect(element.querySelector(".layout")?.childNodes.length).toBe(0);
-    expect(
-      (element.querySelector("eo-checkbox") as HTMLElement).getAttribute(
-        "value"
-      )
-    ).toBe("");
     expect(mockChangeEvent).toBeCalledWith(
       expect.objectContaining({ detail: [] })
     );

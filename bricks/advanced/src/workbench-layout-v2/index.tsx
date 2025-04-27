@@ -12,10 +12,7 @@ import { EventEmitter, createDecorators } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import { unwrapProvider } from "@next-core/utils/general";
 import { UseSingleBrickConf } from "@next-core/types";
-import {
-  ReactUseBrick,
-  ReactUseMultipleBricks,
-} from "@next-core/react-runtime";
+import { ReactUseMultipleBricks } from "@next-core/react-runtime";
 import { auth } from "@next-core/easyops-runtime";
 import {
   ItemCallback,
@@ -24,10 +21,10 @@ import {
   WidthProvider,
 } from "react-grid-layout";
 import "@next-core/theme";
-import type {
-  GeneralIcon,
-  GeneralIconProps,
-} from "@next-bricks/icons/general-icon";
+import {
+  EoSidebarMenu,
+  EoSidebarMenuProps,
+} from "@next-bricks/nav/sidebar/sidebar-menu";
 import type { Button, ButtonProps } from "@next-bricks/basic/button";
 import {
   DropdownButton,
@@ -35,61 +32,40 @@ import {
   DropdownButtonEventsMap,
   DropdownButtonProps,
 } from "@next-bricks/basic/dropdown-button";
-import type {
-  Checkbox,
-  CheckboxOptionType,
-  CheckboxProps,
-} from "@next-bricks/form/checkbox";
 import type { showDialog as _showDialog } from "@next-bricks/basic/data-providers/show-dialog/show-dialog";
 import { SimpleAction } from "@next-bricks/basic/actions";
+import { DndProvider, useDrop } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import update from "immutability-helper";
+import { pick } from "lodash";
+
+import { WorkbenchComponent } from "../interfaces";
+import { DroppableComponentLayoutItem } from "./DroppableComponentLayoutItem";
+import { DraggableComponentMenuItem } from "./DraggableComponentMenuItem";
+
 import styles from "./styles.module.css";
+import layoutItemStyles from "./DroppableComponentLayoutItem.module.css";
 import "./styles.css";
 
 const { defineElement, property, event, method } = createDecorators();
 
-type Item = {
-  position: Layout;
-  key: string;
-  title: string;
-  style?: React.CSSProperties;
-  useBrick: UseSingleBrickConf;
-};
-
-interface CheckboxEvents {
-  change: CustomEvent<CheckboxOptionType[]>;
-}
-
-interface CheckboxEventsMap {
-  onChange: "change";
-}
-
+const WrappedSidebarMenu = wrapBrick<EoSidebarMenu, EoSidebarMenuProps>(
+  "eo-sidebar-menu"
+);
 const WrappedButton = wrapBrick<Button, ButtonProps>("eo-button");
 const WrappedDropdownButton = wrapBrick<
   DropdownButton,
   DropdownButtonProps,
   DropdownButtonEvents,
   DropdownButtonEventsMap
->("eo-dropdown-button", {
-  onActionClick: "action.click",
-});
-const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
-const WrappedCheckbox = wrapBrick<
-  Checkbox,
-  CheckboxProps,
-  CheckboxEvents,
-  CheckboxEventsMap
->("eo-checkbox", {
-  onChange: "change",
-});
+>("eo-dropdown-button", { onActionClick: "action.click" });
 const showDialog = unwrapProvider<typeof _showDialog>("basic.show-dialog");
 
 export interface EoWorkbenchLayoutV2Props {
   cardTitle?: string;
   layouts?: Layout[];
-  toolbarBricks?: {
-    useBrick: UseSingleBrickConf[];
-  };
-  componentList?: Item[];
+  toolbarBricks?: { useBrick: UseSingleBrickConf[] };
+  componentList?: WorkbenchComponent[];
   isEdit?: boolean;
   showSettingButton?: boolean;
 }
@@ -148,9 +124,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     _setLayouts(layouts);
   }, []);
 
-  useImperativeHandle(ref, () => ({
-    setLayouts,
-  }));
+  useImperativeHandle(ref, () => ({ setLayouts }));
 
   const handleChange = useCallback(
     (layouts: Layout[]) => {
@@ -160,7 +134,6 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     [onChange, setLayouts]
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleDragCallback: ItemCallback = (layout, oldItem, newItem) => {
     const placeholderDOM = gridLayoutRef.current?.querySelector(
       ".react-grid-placeholder"
@@ -217,11 +190,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
                 x = 0;
               }
 
-              return {
-                ...item,
-                x,
-                i: key,
-              };
+              return { ...item, x, i: key };
             })
           : currentLayout
       );
@@ -233,38 +202,31 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     setCols(newCols);
   };
 
-  const handleCheckBoxChange = useCallback(
-    (event: CustomEvent<CheckboxOptionType[]>): void => {
-      const checkedKeys = event.detail.map((item) => item.value);
-      const layoutsKeys = layouts.map((item) => getRealKey(item.i));
-      const addItems = event.detail
-        .filter((item) => !layoutsKeys.includes(item.key))
-        .map((item) => ({
-          ...item.position,
-          x: item.w > 1 ? 0 : (layouts.length * 2) % cols,
-          y: Infinity,
-        }));
+  const addComponent = (component: WorkbenchComponent): void => {
+    handleChange(
+      layouts.concat({
+        ...component.position,
+        x: component.position.w > 1 ? 0 : (layouts.length * 2) % cols,
+        y: Infinity,
+      })
+    );
+  };
 
-      handleChange(
-        layouts
-          .filter((layout) => checkedKeys.includes(getRealKey(layout.i)))
-          .concat(addItems)
-      );
+  /* istanbul ignore next */
+  const [, drop] = useDrop({
+    accept: "component",
+    canDrop: (item, monitor) => monitor.isOver({ shallow: true }),
+    drop: (component: WorkbenchComponent) => {
+      addComponent?.(component);
     },
-    [layouts, handleChange, cols]
-  );
+  });
 
   const handleClearLayout = () => {
     handleChange([]);
   };
 
   const handleSave = useCallback(() => {
-    onSave?.(
-      layouts.map((item) => ({
-        ...item,
-        i: getRealKey(item.i),
-      }))
-    );
+    onSave?.(layouts.map((item) => ({ ...item, i: getRealKey(item.i) })));
   }, [layouts, onSave]);
 
   const handleSetting = () => {
@@ -289,17 +251,33 @@ export const EoWorkbenchLayoutComponent = forwardRef<
       default:
         onActionClick?.(
           action,
-          (layouts ?? []).map((item) => ({
-            ...item,
-            i: getRealKey(item.i),
-          }))
+          (layouts ?? []).map((item) => ({ ...item, i: getRealKey(item.i) }))
         );
     }
   };
 
+  const handleLayoutItemDrop = useCallback(
+    (component: WorkbenchComponent, layout: Layout, index: number): void => {
+      handleChange(
+        update(layouts, {
+          $splice: [
+            [
+              index,
+              0,
+              {
+                ...component.position,
+                ...pick(layout, ["x", "y"]),
+              },
+            ],
+          ],
+        })
+      );
+    },
+    [handleChange, layouts]
+  );
+
   const handleDeleteItem = useCallback(
-    (e: React.MouseEvent, deletedItem: Item) => {
-      e.stopPropagation();
+    (deletedItem: WorkbenchComponent) => {
       handleChange(
         layouts.filter((item) => getRealKey(item.i) !== deletedItem.key) ?? []
       );
@@ -307,14 +285,10 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     [handleChange, layouts]
   );
 
-  const handleEditMaskClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-  };
-
   const renderChild = useMemo(
     () =>
       layouts
-        .map((layout) => {
+        .map((layout, index) => {
           const component = componentList.find(
             (item) => item.key === getRealKey(layout.i)
           );
@@ -323,49 +297,23 @@ export const EoWorkbenchLayoutComponent = forwardRef<
           }
           return (
             <div
-              key={layout.i}
-              data-grid={{
-                ...(component.position ?? {}),
-                ...layout,
-              }}
-              style={component.style}
               className="drag-box"
+              data-grid={{ ...(component.position ?? {}), ...layout }}
+              key={layout.i}
             >
-              {isEdit && (
-                <div
-                  className={styles.editMask}
-                  onMouseDown={handleEditMaskClick}
-                />
-              )}
-              <ReactUseBrick useBrick={component.useBrick} />
-              {isEdit && (
-                <WrappedIcon
-                  icon="delete"
-                  lib="antd"
-                  className={styles.deleteIcon}
-                  onClick={(e) => handleDeleteItem(e, component)}
-                />
-              )}
+              <DroppableComponentLayoutItem
+                component={component}
+                isEdit={isEdit}
+                onDrop={(component) =>
+                  handleLayoutItemDrop(component, layout, index)
+                }
+                onDelete={() => handleDeleteItem(component)}
+              />
             </div>
           );
         })
         .filter(Boolean),
-    [componentList, handleDeleteItem, layouts, isEdit]
-  );
-
-  const computedOptions = useMemo(
-    () =>
-      componentList.map((item) => ({
-        ...item,
-        label: item.title,
-        value: item.key,
-      })),
-    [componentList]
-  );
-
-  const computedSelectedComponentKeys = useMemo(
-    () => layouts.map((layout) => getRealKey(layout.i)),
-    [layouts]
+    [layouts, componentList, isEdit, handleLayoutItemDrop, handleDeleteItem]
   );
 
   const handleWatchLayoutSizeChange = useCallback(() => {
@@ -375,7 +323,6 @@ export const EoWorkbenchLayoutComponent = forwardRef<
       top !== undefined &&
         setLayoutWrapperStyle({
           height: document.body.clientHeight - top,
-          overflow: "scroll",
         });
     }
   }, [isEdit]);
@@ -395,14 +342,20 @@ export const EoWorkbenchLayoutComponent = forwardRef<
   return (
     <div className={styles.gridLayoutWrapper} ref={gridLayoutRef}>
       {isEdit && (
-        <div className={styles.componentWrapper}>
+        <div className={styles.componentWrapper} style={layoutWrapperStyle}>
           <div className={styles.componentTitle}>{cardTitle}</div>
           <div className={styles.componentList}>
-            <WrappedCheckbox
-              options={computedOptions}
-              value={computedSelectedComponentKeys}
-              onChange={handleCheckBoxChange as any}
-            />
+            <WrappedSidebarMenu>
+              {componentList?.map((component, index) => (
+                <DraggableComponentMenuItem
+                  component={component}
+                  onClick={() => {
+                    addComponent(component);
+                  }}
+                  key={component.key || index}
+                />
+              ))}
+            </WrappedSidebarMenu>
             {toolbarBricks?.useBrick && (
               <ReactUseMultipleBricks useBrick={toolbarBricks.useBrick} />
             )}
@@ -430,10 +383,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
             )}
             <WrappedDropdownButton
               btnText="更多"
-              icon={{
-                lib: "antd",
-                icon: "down",
-              }}
+              icon={{ lib: "antd", icon: "down" }}
               actions={[
                 ...(isAdmin
                   ? [{ text: "另存为模板", event: "saveAsTemplate" }]
@@ -450,7 +400,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
         )}
         <ResponsiveReactGridLayout
           className={styles.layout}
-          draggableCancel={`.${styles.deleteIcon},.edit-actions,.ignore-item`}
+          draggableCancel={`.${layoutItemStyles.deleteIcon},.edit-actions,.ignore-item`}
           breakpoints={{ lg: 1300, md: 1024, sm: 768 }}
           rowHeight={1}
           cols={{ lg: 3, md: 3, sm: isEdit ? 3 : 1 }}
@@ -459,6 +409,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
           onDrag={handleDragCallback}
           onLayoutChange={handleLayoutChange}
           onBreakpointChange={handleBreakpointChange}
+          innerRef={drop}
         >
           {renderChild}
         </ResponsiveReactGridLayout>
@@ -471,76 +422,52 @@ export const EoWorkbenchLayoutComponent = forwardRef<
  * 工作台布局V2,未使用shadow dom
  */
 export
-@defineElement("eo-workbench-layout-v2", {
-  shadowOptions: false,
-})
+@defineElement("eo-workbench-layout-v2", { shadowOptions: false })
 class EoWorkbenchLayoutV2 extends ReactNextElement {
   #componentRef = createRef<EoWorkbenchLayoutV2ComponentRef>();
 
   @property()
   accessor cardTitle: string | undefined;
 
-  @property({
-    type: Boolean,
-  })
+  @property({ type: Boolean })
   accessor isEdit: boolean | undefined;
 
-  @property({
-    attribute: false,
-  })
+  @property({ attribute: false })
   accessor layouts: Layout[] | undefined;
 
-  @property({
-    attribute: false,
-  })
-  accessor toolbarBricks:
-    | {
-        useBrick: UseSingleBrickConf[];
-      }
-    | undefined;
+  @property({ attribute: false })
+  accessor toolbarBricks: { useBrick: UseSingleBrickConf[] } | undefined;
 
-  @property({
-    attribute: false,
-  })
-  accessor componentList: Item[] | undefined;
+  @property({ attribute: false })
+  accessor componentList: WorkbenchComponent[] | undefined;
   /**
    * description: 用于设置页面样式和布局的按钮
    */
-  @property({
-    type: Boolean,
-  })
+  @property({ type: Boolean })
   accessor showSettingButton: boolean | undefined;
 
-  @event({
-    type: "change",
-  })
+  @event({ type: "change" })
   accessor #changeEvent!: EventEmitter<Layout[]>;
 
   #handleChange = (layouts: Layout[]) => {
     this.#changeEvent.emit(layouts);
   };
 
-  @event({
-    type: "save",
-  })
+  @event({ type: "save" })
   accessor #saveEvent!: EventEmitter<Layout[]>;
 
   #handleSave = (layouts: Layout[]) => {
     this.#saveEvent.emit(layouts);
   };
 
-  @event({
-    type: "cancel",
-  })
+  @event({ type: "cancel" })
   accessor #cancelEvent!: EventEmitter<void>;
 
   #handleCancel = () => {
     this.#cancelEvent.emit();
   };
 
-  @event({
-    type: "setting",
-  })
+  @event({ type: "setting" })
   accessor #settingEvent!: EventEmitter<void>;
   #handleSetting = () => {
     this.#settingEvent.emit();
@@ -553,9 +480,7 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
         layouts: Layout[];
       }
    */
-  @event({
-    type: "action.click",
-  })
+  @event({ type: "action.click" })
   accessor #actionClickEvent!: EventEmitter<{
     action: SimpleAction;
     layouts: Layout[];
@@ -583,20 +508,22 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
 
   render() {
     return (
-      <EoWorkbenchLayoutComponent
-        cardTitle={this.cardTitle}
-        layouts={this.layouts}
-        toolbarBricks={this.toolbarBricks}
-        componentList={this.componentList}
-        showSettingButton={this.showSettingButton}
-        isEdit={this.isEdit}
-        onChange={this.#handleChange}
-        onSave={this.#handleSave}
-        onCancel={this.#handleCancel}
-        onActionClick={this.#handleActionClick}
-        onSetting={this.#handleSetting}
-        ref={this.#componentRef}
-      />
+      <DndProvider backend={HTML5Backend} context={window}>
+        <EoWorkbenchLayoutComponent
+          cardTitle={this.cardTitle}
+          layouts={this.layouts}
+          toolbarBricks={this.toolbarBricks}
+          componentList={this.componentList}
+          showSettingButton={this.showSettingButton}
+          isEdit={this.isEdit}
+          onChange={this.#handleChange}
+          onSave={this.#handleSave}
+          onCancel={this.#handleCancel}
+          onActionClick={this.#handleActionClick}
+          onSetting={this.#handleSetting}
+          ref={this.#componentRef}
+        />
+      </DndProvider>
     );
   }
 }
