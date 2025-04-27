@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.43.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.42.9...@next-bricks/advanced@0.43.0) (2025-04-27)
+
+
+### Features
+
+* **workbench-layout-v2:** Change the method of adding components from checking to dragging and clicking ([558ebbf](https://github.com/easyops-cn/next-advanced-bricks/commit/558ebbfaec28250811ff098771a41711d621ff90))
+
+
+
+
+
 ## [0.42.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.42.8...@next-bricks/advanced@0.42.9) (2025-04-21)
 
 
