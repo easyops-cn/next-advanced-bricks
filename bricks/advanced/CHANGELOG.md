@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.43.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.43.0...@next-bricks/advanced@0.43.1) (2025-04-27)
+
+
+### Bug Fixes
+
+* fix style compatibility ([01e790e](https://github.com/easyops-cn/next-advanced-bricks/commit/01e790ea610e4ff239a8412b8ccb4e1243ca1571))
+
+
+
+
+
 # [0.43.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.42.9...@next-bricks/advanced@0.43.0) (2025-04-27)
 
 
