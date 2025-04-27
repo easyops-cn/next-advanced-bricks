@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.16.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.15.21...@next-bricks/form@1.16.0) (2025-04-27)
+
+
+### Features
+
+* eo-select 支持下来候选项支持展示caption ([1c778e6](https://github.com/easyops-cn/next-advanced-bricks/commit/1c778e6c0394c3cf40cda3cfd02a555f21a4e412))
+
+
+
+
+
 ## [1.15.21](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.15.20...@next-bricks/form@1.15.21) (2025-04-17)
 
 **Note:** Version bump only for package @next-bricks/form
