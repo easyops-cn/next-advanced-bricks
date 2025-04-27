@@ -330,7 +330,7 @@ describe("eo-select", () => {
     expect(
       element.shadowRoot?.querySelector(".dropdown-list")?.innerHTML
     ).toMatchInlineSnapshot(
-      `"<div class="dropdown-inner"><div class="select-group-wrapper"><div class="select-group-label">group 1</div><div class="select-item select-item-option select-option-hover"><div class="select-item-option-content"><div class="option"><span class="label">a</span></div></div></div></div><div class="select-group-wrapper"><div class="select-group-label">group 2</div><div class="select-item select-item-option"><div class="select-item-option-content"><div class="option"><span class="label">b</span></div></div></div></div><div class="select-item select-item-option"><div class="select-item-option-content"><div class="option"><span class="label">c</span></div></div></div></div>"`
+      `"<div class="dropdown-inner"><div class="select-group-wrapper"><div class="select-group-label">group 1</div><div class="select-item select-item-option select-option-hover"><div class="select-item-option-content"><div class="option"><div class="text-container"><span class="label">a</span></div></div></div></div></div><div class="select-group-wrapper"><div class="select-group-label">group 2</div><div class="select-item select-item-option"><div class="select-item-option-content"><div class="option"><div class="text-container"><span class="label">b</span></div></div></div></div></div><div class="select-item select-item-option"><div class="select-item-option-content"><div class="option"><div class="text-container"><span class="label">c</span></div></div></div></div></div>"`
     );
 
     act(() => {
@@ -405,5 +405,41 @@ describe("eo-select", () => {
         "select-dropdown-popup"
       ) as SlPopupElement
     ).toHaveAttribute("strategy", "fixed");
+  });
+
+  test("caption", () => {
+    const element = document.createElement("eo-select") as Select;
+    element.options = [
+      {
+        label: "a",
+        value: "a",
+        caption: "caption 1",
+      },
+      {
+        label: "b",
+        value: "b",
+        tag: "caption 2",
+      },
+      {
+        label: "c",
+        value: "c",
+      },
+    ];
+    act(() => {
+      document.body.appendChild(element);
+    });
+    expect(element.shadowRoot).toBeTruthy();
+    expect(element.shadowRoot?.childNodes.length).toBe(2);
+
+    expect(
+      element.shadowRoot?.querySelector(".dropdown-list")?.innerHTML
+    ).toMatchInlineSnapshot(
+      `"<div class="dropdown-inner"><div class="select-item select-item-option select-option-hover"><div class="select-item-option-content"><div class="option"><div class="text-container"><span class="label">a</span><span class="caption">caption 1</span></div></div></div></div><div class="select-item select-item-option"><div class="select-item-option-content"><div class="option"><div class="text-container"><span class="label">b</span></div></div></div></div><div class="select-item select-item-option"><div class="select-item-option-content"><div class="option"><div class="text-container"><span class="label">c</span></div></div></div></div></div>"`
+    );
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+    expect(element.shadowRoot?.childNodes.length).toBe(0);
   });
 });

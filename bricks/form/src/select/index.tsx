@@ -845,7 +845,10 @@ export function SelectComponent(props: SelectProps) {
       >
         <div className="select-item-option-content">
           <div className="option">
-            <span className="label">{item.label}</span>
+            <div className="text-container">
+              <span className="label">{item.label}</span>
+              {item.caption && <span className="caption">{item.caption}</span>}
+            </div>
             {suffix?.useBrick && (
               <ReactUseBrick useBrick={suffix.useBrick} data={item} />
             )}

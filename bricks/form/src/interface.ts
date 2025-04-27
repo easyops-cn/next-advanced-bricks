@@ -68,6 +68,7 @@ export type RadioType =
 export interface GeneralComplexOption<T = string | number | boolean> {
   label: string;
   value: T;
+  caption?: string;
   [key: string]: any;
 }
 
