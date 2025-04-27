@@ -115,6 +115,7 @@ export interface SelectProps extends FormItemProps {
   clearable?: boolean;
   disabled?: boolean;
   inputStyle?: React.CSSProperties;
+  dropdownStyle?: React.CSSProperties;
   dropdownHoist?: boolean;
   validateState?: string;
   onChange?: (value: any, options: GeneralComplexOption[]) => void;
@@ -258,6 +259,14 @@ class Select extends FormItemElementBase {
   accessor inputStyle: React.CSSProperties | undefined;
 
   /**
+   * 下拉框样式
+   */
+  @property({
+    attribute: false,
+  })
+  accessor dropdownStyle: React.CSSProperties | undefined;
+
+  /**
    * 下拉框是否使用固定定位防止内容被裁切
    */
   @property({ type: Boolean })
@@ -354,6 +363,7 @@ class Select extends FormItemElementBase {
         clearable={this.clearable}
         trigger="handleChange"
         inputStyle={this.inputStyle}
+        dropdownStyle={this.dropdownStyle}
         dropdownHoist={this.dropdownHoist}
         validateState={this.validateState}
         notRender={this.notRender}
@@ -383,6 +393,7 @@ export function SelectComponent(props: SelectProps) {
     debounceSearchDelay,
     clearable = true,
     inputStyle,
+    dropdownStyle,
     dropdownHoist,
     placeholder,
     validateState,
@@ -987,7 +998,7 @@ export function SelectComponent(props: SelectProps) {
               )}
             </span>
           </div>
-          <div className="select-dropdown dropdown-list">
+          <div className="select-dropdown dropdown-list" style={dropdownStyle}>
             {requestStatus === "loading" ? (
               <div className="dropdown-list-loading-container">
                 <WrappedIcon
