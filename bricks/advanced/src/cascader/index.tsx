@@ -247,7 +247,12 @@ function CascaderElement(props: CascaderProps): React.ReactElement {
             : theme.defaultAlgorithm,
       }}
     >
-      <StyleProvider container={shadowRoot as ShadowRoot} cache={cache}>
+      <StyleProvider
+        container={shadowRoot as ShadowRoot}
+        cache={cache}
+        // Set hashPriority to "high" to disable `:where()` usage for compatibility
+        hashPriority="high"
+      >
         <Cascader
           getPopupContainer={(trigger) => trigger.parentElement}
           allowClear={allowClear}
