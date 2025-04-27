@@ -37,9 +37,9 @@ import { SimpleAction } from "@next-bricks/basic/actions";
 import { DndProvider, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import update from "immutability-helper";
-import { pick } from "lodash";
+import _, { pick } from "lodash";
 
-import { WorkbenchComponent } from "../interfaces";
+import { WorkbenchComponent, ExtraLayout, CardStyleConfig } from "../interfaces";
 import { DroppableComponentLayoutItem } from "./DroppableComponentLayoutItem";
 import { DraggableComponentMenuItem } from "./DraggableComponentMenuItem";
 
@@ -61,9 +61,21 @@ const WrappedDropdownButton = wrapBrick<
 >("eo-dropdown-button", { onActionClick: "action.click" });
 const showDialog = unwrapProvider<typeof _showDialog>("basic.show-dialog");
 
+/* istanbul ignore next */
+export const defaultCardConfig: CardStyleConfig = {
+  cardWidth: 2,
+  showMoreIcon: false,
+  cardBorderStyle: "solid",
+  cardTitleFontSize: 16,
+  cardBorderWidth: 1,
+  cardBorderRadius: 6,
+  cardTitleColor: "#262626",
+  cardBorderColor: "#e8e8e8",
+};
+
 export interface EoWorkbenchLayoutV2Props {
   cardTitle?: string;
-  layouts?: Layout[];
+  layouts?: ExtraLayout[];
   toolbarBricks?: { useBrick: UseSingleBrickConf[] };
   componentList?: WorkbenchComponent[];
   isEdit?: boolean;
@@ -71,15 +83,15 @@ export interface EoWorkbenchLayoutV2Props {
 }
 
 export interface EoWorkbenchLayoutV2ComponentRef {
-  setLayouts(layouts: Layout[]): void;
+  setLayouts(layouts: ExtraLayout[]): void;
 }
 
 export interface EoWorkbenchLayoutV2ComponentProps
   extends EoWorkbenchLayoutV2Props {
-  onChange?: (layout: Layout[]) => void;
-  onSave?: (layout: Layout[]) => void;
+  onChange?: (layout: ExtraLayout[]) => void;
+  onSave?: (layout: ExtraLayout[]) => void;
   onCancel?: () => void;
-  onActionClick?: (action: SimpleAction, layouts: Layout[]) => void;
+  onActionClick?: (action: SimpleAction, layouts: ExtraLayout[]) => void;
   onSetting?: () => void;
 }
 
@@ -112,14 +124,14 @@ export const EoWorkbenchLayoutComponent = forwardRef<
   );
   const gridLayoutRef = useRef<HTMLDivElement>(null);
   const layoutWrapperRef = useRef<HTMLDivElement>(null);
-  const layoutCacheRef = useRef<Layout[]>(layoutsProps ?? []);
+  const layoutCacheRef = useRef<ExtraLayout[]>(layoutsProps ?? []);
 
-  const [layouts, _setLayouts] = useState<Layout[]>(layoutCacheRef.current);
+  const [layouts, _setLayouts] = useState<ExtraLayout[]>(layoutCacheRef.current);
   const [cols, setCols] = useState<number>(3);
   const [layoutWrapperStyle, setLayoutWrapperStyle] =
     useState<React.CSSProperties>();
 
-  const setLayouts = useCallback((layouts: Layout[]) => {
+  const setLayouts = useCallback((layouts: ExtraLayout[]) => {
     layoutCacheRef.current = layouts;
     _setLayouts(layouts);
   }, []);
@@ -127,7 +139,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
   useImperativeHandle(ref, () => ({ setLayouts }));
 
   const handleChange = useCallback(
-    (layouts: Layout[]) => {
+    (layouts: ExtraLayout[]) => {
       setLayouts(layouts);
       onChange?.(layouts);
     },
@@ -149,14 +161,16 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     }
   };
 
+  /* istanbul ignore next */
   const handleLayoutChange = useCallback(
-    (currentLayout: Layout[]) => {
+    (currentLayout: ExtraLayout[]) => {
       if (!isEdit) {
         return;
       }
 
+      const currentLayoutMap = _.keyBy(currentLayout,"i");
+      
       let isAllowAction = true;
-
       for (let t = 0; t < currentLayout.length; t++) {
         const { x, w, y, h, i, minH } = currentLayout[t];
         if (w > 1 && x > 0) {
@@ -181,9 +195,9 @@ export const EoWorkbenchLayoutComponent = forwardRef<
         !isAllowAction
           ? // revert to previous layouts
             layoutCacheRef.current.map((item) => {
-              const { w, i } = item;
+              const { w, type, i } = item;
               // should update key to refresh layout
-              const key = `${getRealKey(i)}:${Math.random()}`;
+              const key = i ?? `${getRealKey(type as string)}:${Math.random()}`;
               let x = item.x;
 
               if (w > 1 && x > 0) {
@@ -192,10 +206,13 @@ export const EoWorkbenchLayoutComponent = forwardRef<
 
               return { ...item, x, i: key };
             })
-          : currentLayout
+          : currentLayout.map((v) => {
+              const layoutItem = currentLayoutMap?.[v.i];
+              return { ...layoutItem, ...v, type: getRealKey(v.i) };
+            })
       );
     },
-    [handleChange, isEdit]
+    [handleChange, isEdit, layouts]
   );
 
   const handleBreakpointChange = (_newBreakpoint: string, newCols: number) => {
@@ -205,7 +222,9 @@ export const EoWorkbenchLayoutComponent = forwardRef<
   const addComponent = (component: WorkbenchComponent): void => {
     handleChange(
       layouts.concat({
+        ...defaultCardConfig,
         ...component.position,
+        type: component.key,
         x: component.position.w > 1 ? 0 : (layouts.length * 2) % cols,
         y: Infinity,
       })
@@ -226,7 +245,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
   };
 
   const handleSave = useCallback(() => {
-    onSave?.(layouts.map((item) => ({ ...item, i: getRealKey(item.i) })));
+    onSave?.(layouts);
   }, [layouts, onSave]);
 
   const handleSetting = () => {
@@ -256,8 +275,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     }
   };
 
-  const handleLayoutItemDrop = useCallback(
-    (component: WorkbenchComponent, layout: Layout, index: number): void => {
+  const handleLayoutItemDrop = useCallback((component: WorkbenchComponent,layout: ExtraLayout,index: number): void => {
       handleChange(
         update(layouts, {
           $splice: [
@@ -265,7 +283,9 @@ export const EoWorkbenchLayoutComponent = forwardRef<
               index,
               0,
               {
+                ...defaultCardConfig,
                 ...component.position,
+                type: component.key,
                 ...pick(layout, ["x", "y"]),
               },
             ],
@@ -290,7 +310,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
       layouts
         .map((layout, index) => {
           const component = componentList.find(
-            (item) => item.key === getRealKey(layout.i)
+            (item) => item.key === getRealKey(layout.type as string)
           );
           if (!component) {
             return null;
@@ -298,12 +318,13 @@ export const EoWorkbenchLayoutComponent = forwardRef<
           return (
             <div
               className="drag-box"
-              data-grid={{ ...(component.position ?? {}), ...layout }}
+              data-grid={{...(component.position ?? {}),...layout, w: layout.cardWidth || layout.w }}
               key={layout.i}
             >
               <DroppableComponentLayoutItem
                 component={component}
                 isEdit={isEdit}
+                layout={layout}
                 onDrop={(component) =>
                   handleLayoutItemDrop(component, layout, index)
                 }
@@ -433,7 +454,7 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
   accessor isEdit: boolean | undefined;
 
   @property({ attribute: false })
-  accessor layouts: Layout[] | undefined;
+  accessor layouts: ExtraLayout[] | undefined;
 
   @property({ attribute: false })
   accessor toolbarBricks: { useBrick: UseSingleBrickConf[] } | undefined;
@@ -447,16 +468,16 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
   accessor showSettingButton: boolean | undefined;
 
   @event({ type: "change" })
-  accessor #changeEvent!: EventEmitter<Layout[]>;
+  accessor #changeEvent!: EventEmitter<ExtraLayout[]>;
 
-  #handleChange = (layouts: Layout[]) => {
+  #handleChange = (layouts: ExtraLayout[]) => {
     this.#changeEvent.emit(layouts);
   };
 
   @event({ type: "save" })
-  accessor #saveEvent!: EventEmitter<Layout[]>;
+  accessor #saveEvent!: EventEmitter<ExtraLayout[]>;
 
-  #handleSave = (layouts: Layout[]) => {
+  #handleSave = (layouts: ExtraLayout[]) => {
     this.#saveEvent.emit(layouts);
   };
 
