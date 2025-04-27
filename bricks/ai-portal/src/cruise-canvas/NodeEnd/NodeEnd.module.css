@@ -1,0 +1,56 @@
+.node-end {
+  width: 330px;
+  background-color: #fff;
+  background-image: url("../images/end@2x.png");
+  background-size: 330px 271px;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: 1px solid #e0e5f0;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 41px 24px 28px;
+}
+
+.icon {
+  width: 64px;
+  height: 64px;
+  background-image: url("../images/completed@2x.png");
+  background-size: 59px 49px;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-bottom: 16px;
+}
+
+.title {
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.description {
+  margin-bottom: 36px;
+  font-size: 13px;
+  color: #8c8c8c;
+  line-height: 24px;
+}
+
+.button {
+  width: 120px;
+  height: 30px;
+  background: rgba(0, 0, 0, 0.04);
+  border: none;
+  border-radius: 15px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.button:active {
+  background: rgba(0, 0, 0, 0.15);
+}

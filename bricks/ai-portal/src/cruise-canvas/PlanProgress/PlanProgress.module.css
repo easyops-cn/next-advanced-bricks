@@ -1,0 +1,127 @@
+.progress {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 453px;
+  max-width: 80%;
+  background: #ffffff;
+  box-shadow:
+    0px 6px 16px 0px rgba(0, 0, 0, 0.08),
+    0px 3px 6px -4px rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  padding: 12px;
+  line-height: 24px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  margin-right: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(222deg, #abaab7 25%, #fff 75%);
+  color: #4e4d56;
+  font-size: 12px;
+  text-shadow: 0px 1px 1px #fff;
+}
+
+.progress.completed .icon {
+  background: linear-gradient(222deg, #16c661 25%, #fff 75%);
+  color: #055527;
+}
+
+.progress.failed .icon {
+  background: linear-gradient(222deg, #f24c25 25%, #fff 75%);
+  color: #5b1504;
+}
+
+.progress.working .icon {
+  background: linear-gradient(222deg, #3e56ff 25%, #fff 75%);
+  color: #0c165d;
+}
+
+.progress.input-required .icon {
+  background: linear-gradient(222deg, #12aacc 25%, #fff 75%);
+  color: #0c353e;
+}
+
+.progress.canceled .icon {
+  background: linear-gradient(222deg, #fcaa07 25%, #fff 75%);
+  color: #302206;
+}
+
+.text,
+.instruction {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
+}
+
+.stat {
+  margin-left: auto;
+  color: #8c8c8c;
+}
+
+.expand {
+  margin-left: 6px;
+  color: #8c8c8c;
+}
+
+.details {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4em;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow:
+    0px 6px 16px 0px rgba(0, 0, 0, 0.08),
+    0px 3px 6px -4px rgba(0, 0, 0, 0.12);
+  list-style: none;
+  margin: 0;
+  padding: 12px;
+  cursor: auto;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+}
+
+.step:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+.state {
+  margin-right: 6px;
+  color: var(--text-color-secondary);
+}
+
+.state.completed {
+  color: var(--color-success);
+}
+
+.state.failed {
+  color: var(--color-error);
+}
+
+.state.working {
+  color: var(--color-info);
+}
+
+.state.input-required {
+  color: var(--palette-cyan-7);
+}
+
+.state.canceled {
+  color: #fcaa07;
+}
