@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.1.1...@next-bricks/ai-portal@0.1.2) (2025-04-28)
+
+
+### Bug Fixes
+
+* fix auto scroll, collapse tool output ([bd97fd9](https://github.com/easyops-cn/next-advanced-bricks/commit/bd97fd909fd6cf54142ff7108053149b07147e7e))
+
+
+
+
+
 ## [0.1.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.1.0...@next-bricks/ai-portal@0.1.1) (2025-04-28)
 
 
