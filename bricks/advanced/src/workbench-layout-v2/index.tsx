@@ -37,7 +37,7 @@ import { SimpleAction } from "@next-bricks/basic/actions";
 import { DndProvider, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import update from "immutability-helper";
-import _, { pick } from "lodash";
+import { keyBy, pick } from "lodash";
 
 import { WorkbenchComponent, ExtraLayout, CardStyleConfig } from "../interfaces";
 import { DroppableComponentLayoutItem } from "./DroppableComponentLayoutItem";
@@ -71,6 +71,7 @@ export const defaultCardConfig: CardStyleConfig = {
   cardBorderRadius: 6,
   cardTitleColor: "#262626",
   cardBorderColor: "#e8e8e8",
+  cardBgType: "none",
 };
 
 export interface EoWorkbenchLayoutV2Props {
@@ -168,7 +169,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
         return;
       }
 
-      const currentLayoutMap = _.keyBy(currentLayout,"i");
+      const currentLayoutsMap = keyBy(layouts,"i");
       
       let isAllowAction = true;
       for (let t = 0; t < currentLayout.length; t++) {
@@ -207,7 +208,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
               return { ...item, x, i: key };
             })
           : currentLayout.map((v) => {
-              const layoutItem = currentLayoutMap?.[v.i];
+              const layoutItem = currentLayoutsMap?.[v.i];
               return { ...layoutItem, ...v, type: getRealKey(v.i) };
             })
       );
