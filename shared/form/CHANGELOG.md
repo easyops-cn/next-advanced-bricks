@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.8.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/form@0.7.10...@next-shared/form@0.8.0) (2025-04-28)
+
+
+### Features
+
+* new shared component: TextareaAutoResize ([104829d](https://github.com/easyops-cn/next-advanced-bricks/commit/104829df65d24e0e822c5b12cbf456fd0c13f0cb))
+
+
+
+
+
 ## [0.7.10](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/form@0.7.9...@next-shared/form@0.7.10) (2025-03-17)
 
 **Note:** Version bump only for package @next-shared/form

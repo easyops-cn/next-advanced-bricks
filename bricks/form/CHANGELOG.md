@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.16.1...@next-bricks/form@1.16.2) (2025-04-28)
+
+
+### Bug Fixes
+
+* use shared TextareaAutoResize ([f3f7086](https://github.com/easyops-cn/next-advanced-bricks/commit/f3f70865509b5c0fffa08e3526c25ed61ccd934b))
+
+
+
+
+
 ## [1.16.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.16.0...@next-bricks/form@1.16.1) (2025-04-27)
 
 **Note:** Version bump only for package @next-bricks/form
