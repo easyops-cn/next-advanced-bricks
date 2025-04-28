@@ -5,7 +5,7 @@ ai-portal\.cruise-canvas {
   height: 100%;
   overflow: hidden;
   background-color: rgb(205, 206, 207);
-  background-image: url("./images/background@2x.png");
+  background-image: url("./images/background.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

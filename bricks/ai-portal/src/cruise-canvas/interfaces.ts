@@ -45,7 +45,7 @@ export interface EndGraphNode extends BaseGraphNode {
 export interface BaseGraphNode {
   id: string;
   type: string;
-  state?: string;
+  state?: JobState;
   view?: NodeView;
 }
 

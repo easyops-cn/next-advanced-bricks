@@ -8,7 +8,13 @@ import type {
   SizeTuple,
   TaskState,
 } from "./interfaces";
-import { END_NODE_ID, START_NODE_ID } from "./constants";
+import {
+  EDGE_SEP,
+  END_NODE_ID,
+  NODE_SEP,
+  RANK_SEP,
+  START_NODE_ID,
+} from "./constants";
 
 export interface UseLayoutOptions {
   rawNodes: GraphNode[] | undefined;
@@ -97,9 +103,9 @@ export function useLayout({
     const graph = new dagre.graphlib.Graph();
     graph.setGraph({
       rankdir: "TB",
-      nodesep: 50,
-      edgesep: 10,
-      ranksep: 50,
+      nodesep: NODE_SEP,
+      edgesep: EDGE_SEP,
+      ranksep: RANK_SEP,
     });
     // Default to assigning a new object as a label for each new edge.
     graph.setDefaultEdgeLabel(function () {
@@ -171,7 +177,7 @@ export function useLayout({
       //     targetPosition.y -
       //     target.height / 2) /
       //   2;
-      const turnY = targetPosition.y - target.height / 2 - 25;
+      const turnY = targetPosition.y - (target.height + RANK_SEP) / 2;
       const points: NodePosition[] = [
         { x: sourcePosition.x, y: sourcePosition.y + source.height / 2 },
         { x: sourcePosition.x, y: turnY },

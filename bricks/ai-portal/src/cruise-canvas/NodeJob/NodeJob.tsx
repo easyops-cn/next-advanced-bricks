@@ -29,6 +29,11 @@ export function NodeJob({ job, state, humanInput }: NodeJobProps): JSX.Element {
       "ask_user_select_from_cmdb",
     ].includes(job.toolCall!.arguments?.command as string);
 
+  const [expanded, setExpanded] = useState(false);
+  const toggle = () => {
+    setExpanded((prev) => !prev);
+  };
+
   return (
     <div
       className={classNames(styles["node-job"], {
@@ -105,35 +110,94 @@ export function NodeJob({ job, state, humanInput }: NodeJobProps): JSX.Element {
             {JSON.stringify(job.toolCall!.arguments?.command ?? null)}
           </div>
         ) : null}
-        {job.messages?.map((message, index) => (
-          <div
-            key={index}
-            className={classNames(styles.message, {
-              [styles["role-user"]]: message.role === "tool" && askUser,
-            })}
-          >
-            {message.parts?.map((part, partIndex) => (
-              <React.Fragment key={partIndex}>
-                {part.type === "text" ? (
-                  message.role === "tool" && askUser ? (
-                    part.text
+        {!askUser && job.toolCall && !expanded ? (
+          <>
+            <div className={styles["tool-call"]}>
+              {job.isError || state === "failed" ? (
+                <WrappedIcon
+                  className={`${styles["tool-icon"]} ${styles.failed}`}
+                  lib="fa"
+                  prefix="fas"
+                  icon="xmark"
+                />
+              ) : state === "completed" ? (
+                <WrappedIcon
+                  className={styles["tool-icon"]}
+                  lib="fa"
+                  prefix="fas"
+                  icon="check"
+                />
+              ) : state === "working" || state === "completed" ? (
+                <WrappedIcon
+                  className={styles["tool-icon"]}
+                  lib="antd"
+                  theme="outlined"
+                  icon="loading-3-quarters"
+                />
+              ) : state === "input-required" ? (
+                <WrappedIcon
+                  className={styles["tool-icon"]}
+                  lib="fa"
+                  prefix="far"
+                  icon="circle-pause"
+                />
+              ) : state === "canceled" ? (
+                <WrappedIcon
+                  className={styles["tool-icon"]}
+                  lib="fa"
+                  prefix="far"
+                  icon="circle-stop"
+                />
+              ) : (
+                <WrappedIcon
+                  className={styles["tool-icon"]}
+                  lib="fa"
+                  prefix="far"
+                  icon="clock"
+                />
+              )}
+            </div>
+          </>
+        ) : (
+          job.messages?.map((message, index) => (
+            <div
+              key={index}
+              className={classNames(styles.message, {
+                [styles["role-user"]]: message.role === "tool" && askUser,
+              })}
+            >
+              {message.parts?.map((part, partIndex) => (
+                <React.Fragment key={partIndex}>
+                  {part.type === "text" ? (
+                    message.role === "tool" && askUser ? (
+                      part.text
+                    ) : (
+                      <RefineMarkdownComponent
+                        content={part.text}
+                        isToolOutput={
+                          message.role === "tool" && !!job.toolCall && !askUser
+                        }
+                      />
+                    )
+                  ) : part.type === "file" ? (
+                    <div>{part.file.name}</div>
                   ) : (
-                    <RefineMarkdownComponent
-                      content={part.text}
-                      isToolOutput={
-                        message.role === "tool" && !!job.toolCall && !askUser
-                      }
-                    />
-                  )
-                ) : part.type === "file" ? (
-                  <div>{part.file.name}</div>
-                ) : (
-                  <div>{JSON.stringify(part.data)}</div>
-                )}
-              </React.Fragment>
-            ))}
-          </div>
-        ))}
+                    <div>{JSON.stringify(part.data)}</div>
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          ))
+        )}
+        {!askUser && job.toolCall ? (
+          <WrappedIcon
+            className={styles.expand}
+            lib="fa"
+            prefix="fas"
+            icon={expanded ? "chevron-up" : "chevron-down"}
+            onClick={toggle}
+          />
+        ) : null}
       </div>
     </div>
   );
