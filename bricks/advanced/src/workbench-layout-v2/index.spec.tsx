@@ -12,6 +12,7 @@ import {
   DroppableComponentLayoutItem,
   DroppableComponentLayoutItemProps,
 } from "./DroppableComponentLayoutItem";
+import { defaultCardConfig } from "./";
 import {
   DraggableComponentMenuItem,
   DraggableComponentMenuItemProps,
@@ -165,6 +166,7 @@ describe("eo-workbench-layout-v2", () => {
         y: 0,
         w: 2,
         h: 1,
+        type: "card-1",
       },
       {
         i: "card-2",
@@ -172,6 +174,7 @@ describe("eo-workbench-layout-v2", () => {
         y: 1,
         w: 1,
         h: 1,
+        type: "card-2",
       },
     ];
 
@@ -224,8 +227,26 @@ describe("eo-workbench-layout-v2", () => {
       });
     };
     const newLayout1 = [
-      { w: 2, h: 1, x: 0, y: 0, i: "card-1", moved: false, static: false },
-      { w: 1, h: 1, x: 0, y: 1, i: "card-2", moved: false, static: false },
+      {
+        w: 2,
+        h: 1,
+        x: 0,
+        y: 0,
+        i: "card-1",
+        moved: false,
+        static: false,
+        type: "card-1",
+      },
+      {
+        w: 1,
+        h: 1,
+        x: 0,
+        y: 1,
+        i: "card-2",
+        moved: false,
+        static: false,
+        type: "card-2",
+      },
     ];
 
     triggerLayoutChange(newLayout1);
@@ -271,9 +292,11 @@ describe("eo-workbench-layout-v2", () => {
       expect.anything(),
       expect.anything(),
       {
+        ...defaultCardConfig,
         ...component3.position,
         x: 1,
         y: Infinity,
+        type: component3.key,
       },
     ];
 
@@ -302,9 +325,11 @@ describe("eo-workbench-layout-v2", () => {
       expect.anything(),
       expect.anything(),
       {
+        ...defaultCardConfig,
         ...component4.position,
         x: 0,
         y: Infinity,
+        type: component4.key,
       },
     ];
 
@@ -330,9 +355,11 @@ describe("eo-workbench-layout-v2", () => {
       expect.anything(),
       expect.anything(),
       {
+        ...defaultCardConfig,
         ...component5.position,
         x: 0,
         y: Infinity,
+        type: component5.key,
       },
       expect.anything(),
     ];
@@ -353,16 +380,27 @@ describe("eo-workbench-layout-v2", () => {
     });
 
     const newLayout3 = [
-      { w: 2, h: 1, x: 0, y: 0, i: "card-1", moved: false, static: false },
       {
+        w: 2,
+        h: 1,
+        x: 0,
+        y: 0,
+        i: "card-1",
+        moved: false,
+        static: false,
+        type: "card-1",
+      },
+      {
+        ...defaultCardConfig,
         w: 1,
         h: 2,
         x: 1,
         y: 1,
         i: "card-3",
-        minH: 2,
+        // minH: 2,
         moved: false,
         static: false,
+        type: "card-3",
       },
     ];
 
@@ -448,7 +486,16 @@ describe("eo-workbench-layout-v2", () => {
 
     // onLayoutChange called with w > 1 and x > 0 layout
     const newLayout4 = [
-      { w: 2, h: 1, x: 1, y: 0, i: "card-1", moved: false, static: false },
+      {
+        w: 2,
+        h: 1,
+        x: 1,
+        y: 0,
+        i: "card-1",
+        moved: false,
+        static: false,
+        type: "card-1",
+      },
       {
         w: 1,
         h: 2,
@@ -458,6 +505,7 @@ describe("eo-workbench-layout-v2", () => {
         minH: 2,
         moved: false,
         static: false,
+        type: "card-3",
       },
     ];
 

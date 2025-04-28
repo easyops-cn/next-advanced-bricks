@@ -8,3 +8,27 @@ export type WorkbenchComponent = {
   style?: React.CSSProperties;
   useBrick: UseSingleBrickConf;
 };
+
+/**
+ * 卡片相关配置
+ */
+export type CardStyleConfig = {
+  cardWidth?: number;
+  showMoreIcon?: boolean;
+  cardBorderStyle?: string;
+  cardTitleFontSize?: number;
+  cardBorderWidth?: number;
+  cardBorderRadius?: number;
+  cardTitleColor?: string;
+  cardBorderColor?: string;
+  cardData?: any;
+  cardTitle?: string;
+  moreIconLink?: string;
+  cardBackground?: string;
+  cardBgType?: string;
+  timeRange?: Record<string, any>;
+  isCreatedBySystemAdmin?: boolean;
+  type?: string;
+};
+
+export type ExtraLayout = Layout & CardStyleConfig;
