@@ -193,9 +193,17 @@ export function CruiseCanvasComponent({
     return null;
   }, [nodes, nonLeafNodes, sizeReady]);
 
+  const bottomRef = useRef<number | null>(null);
+  useEffect(() => {
+    bottomRef.current = bottom;
+  }, [bottom]);
+
+  // Disable auto scroll when the user manually scrolled up
+  const manualScrolledUpRef = useRef(false);
+
   useEffect(() => {
     const root = rootRef.current;
-    if (!root || bottom === null) {
+    if (!root || bottom === null || manualScrolledUpRef.current) {
       return;
     }
     const { offsetHeight } = root;
@@ -207,6 +215,20 @@ export function CruiseCanvasComponent({
       zoomer.translateBy(select(rootRef.current!), 0, diffY);
     }
   }, [bottom, transformRef, zoomer]);
+
+  // Detect if the user scrolled up manually
+  useEffect(() => {
+    const bottom = bottomRef.current;
+    const root = rootRef.current;
+    if (!root || bottom === null) {
+      return;
+    }
+    const { offsetHeight } = root;
+    const transformedBottom = bottom * transform.k + transform.y;
+
+    const diffY = offsetHeight - CANVAS_PADDING_BOTTOM - transformedBottom;
+    manualScrolledUpRef.current = diffY < 0;
+  }, [transform, zoomer]);
 
   const handleReCenter = useCallback(() => {
     reCenterRef.current = true;
@@ -261,7 +283,9 @@ export function CruiseCanvasComponent({
               startTime={task?.startTime}
               taskLoading={taskLoading}
               instructionLoading={
-                node.type === "instruction" && !nonLeafNodes.has(node.id)
+                node.type === "instruction" &&
+                !nonLeafNodes.has(node.id) &&
+                !DONE_STATES.includes(node.state ?? "working")
               }
               edges={edges}
               x={node.view?.x}
