@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.44.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.43.1...@next-bricks/advanced@0.44.0) (2025-04-28)
+
+
+### Features
+
+* 调整layouts数据结构 ([42d9447](https://github.com/easyops-cn/next-advanced-bricks/commit/42d94471d0d4b4ac1021ee85e3190b0e2e195164))
+
+
+
+
+
 ## [0.43.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.43.0...@next-bricks/advanced@0.43.1) (2025-04-27)
 
 
