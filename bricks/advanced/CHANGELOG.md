@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.44.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.0...@next-bricks/advanced@0.44.1) (2025-04-28)
+
+
+### Bug Fixes
+
+* 修复点击保存 layouts 数据丢失的问题 ([f1ea196](https://github.com/easyops-cn/next-advanced-bricks/commit/f1ea196f16b6525897888dc5e13865bae5efa562))
+
+
+
+
+
 # [0.44.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.43.1...@next-bricks/advanced@0.44.0) (2025-04-28)
 
 
