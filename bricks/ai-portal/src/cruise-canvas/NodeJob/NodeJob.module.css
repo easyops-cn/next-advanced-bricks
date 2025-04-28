@@ -1,0 +1,372 @@
+.node-job {
+  width: 330px;
+  background: linear-gradient(180deg, #f5f8ff 0%, #edf0f9 100%);
+  box-shadow:
+    0px 4px 10px 0px rgba(177, 149, 207, 0.4),
+    0px 2px 4px 0px rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  border: 1px solid #ffffff;
+  padding: 8px;
+}
+
+.error {
+  outline-offset: 4px;
+  outline: 2px solid var(--color-error);
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e2e2ec;
+  padding: 0 5px 5px;
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.icon {
+  margin-right: 6px;
+}
+
+.time {
+  margin-left: auto;
+}
+
+.body {
+  padding: 16px 4px 8px;
+  max-height: 392px;
+  overflow-y: auto;
+}
+
+.message {
+  overflow-wrap: break-word;
+}
+
+.message + .message {
+  margin-top: 1em;
+}
+
+.message p {
+  margin: 1em 0;
+}
+
+.message > :first-child {
+  margin-top: 0;
+}
+
+.message > :last-child {
+  margin-bottom: 0;
+}
+
+.ask-user .heading {
+  border-bottom: none;
+}
+
+.ask-user .body {
+  padding-top: 8px;
+}
+
+.role-assistant,
+.role-user {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 9px;
+  border: 1px solid #ccd1de;
+  padding: 6px 16px;
+}
+
+.role-user {
+  white-space: pre-wrap;
+}
+
+.human-input {
+  margin-top: 1em;
+  display: block;
+  width: 100%;
+  padding: 0.5em 1em;
+  color: var(--antd-input-color);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0px 1px 0px 0px #ffffff,
+    inset 0px 2px 4px 0px #b3bcf9;
+  box-sizing: border-box;
+  border: 1px solid var(--antd-input-border-color);
+  border-radius: 9px;
+  font-size: 14px;
+  line-height: 22px;
+  height: 32px;
+}
+
+.human-input:not(:disabled):hover {
+  border: 1px solid var(--antd-input-hover-border-color);
+}
+
+.human-input:not(:disabled):focus {
+  border: 1px solid var(--antd-input-focus-border-color);
+  outline: 0;
+  box-shadow: 0 0 0 2px rgb(0 113 235 / 20%);
+}
+
+.human-input::placeholder {
+  color: var(--antd-input-placeholder-color);
+}
+
+/* Copied from https://github.com/PrismJS/prism-themes/blob/447479fc7b2be2051fe27e561aceed7cc87a589f/themes/prism-one-light.css */
+.message {
+  /**
+  * One Light theme for prism.js
+  * Based on Atom's One Light theme: https://github.com/atom/atom/tree/master/packages/one-light-syntax
+  */
+
+  /**
+  * One Light colours (accurate as of commit eb064bf on 19 Feb 2021)
+  * From colors.less
+  * --mono-1: hsl(230, 8%, 24%);
+  * --mono-2: hsl(230, 6%, 44%);
+  * --mono-3: hsl(230, 4%, 64%)
+  * --hue-1: hsl(198, 99%, 37%);
+  * --hue-2: hsl(221, 87%, 60%);
+  * --hue-3: hsl(301, 63%, 40%);
+  * --hue-4: hsl(119, 34%, 47%);
+  * --hue-5: hsl(5, 74%, 59%);
+  * --hue-5-2: hsl(344, 84%, 43%);
+  * --hue-6: hsl(35, 99%, 36%);
+  * --hue-6-2: hsl(35, 99%, 40%);
+  * --syntax-fg: hsl(230, 8%, 24%);
+  * --syntax-bg: hsl(230, 1%, 98%);
+  * --syntax-gutter: hsl(230, 1%, 62%);
+  * --syntax-guide: hsla(230, 8%, 24%, 0.2);
+  * --syntax-accent: hsl(230, 100%, 66%);
+  * From syntax-variables.less
+  * --syntax-selection-color: hsl(230, 1%, 90%);
+  * --syntax-gutter-background-color-selected: hsl(230, 1%, 90%);
+  * --syntax-cursor-line: hsla(230, 8%, 24%, 0.05);
+  */
+
+  code[class*="language-"],
+  pre[class*="language-"] {
+    background: hsl(230, 1%, 98%);
+    color: hsl(230, 8%, 24%);
+    font-family:
+      "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+    direction: ltr;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    line-height: 1.5;
+    tab-size: 2;
+    hyphens: none;
+    font-size: 13px;
+  }
+
+  /* Selection */
+  code[class*="language-"]::-moz-selection,
+  code[class*="language-"] *::-moz-selection,
+  pre[class*="language-"] *::-moz-selection {
+    background: hsl(230, 1%, 90%);
+    color: inherit;
+  }
+
+  code[class*="language-"]::selection,
+  code[class*="language-"] *::selection,
+  pre[class*="language-"] *::selection {
+    background: hsl(230, 1%, 90%);
+    color: inherit;
+  }
+
+  /* Code blocks */
+  pre[class*="language-"] {
+    padding: 1em;
+    margin: 0.5em 0;
+    overflow: auto;
+    border-radius: 9px;
+  }
+
+  /* Inline code */
+  :not(pre) > code[class*="language-"] {
+    padding: 0.2em 0.3em;
+    border-radius: 9px;
+    white-space: normal;
+  }
+
+  :global(.token.comment),
+  :global(.token.prolog),
+  :global(.token.cdata) {
+    color: hsl(230, 4%, 64%);
+  }
+
+  :global(.token.doctype),
+  :global(.token.punctuation),
+  :global(.token.entity) {
+    color: hsl(230, 8%, 24%);
+  }
+
+  :global(.token.attr-name),
+  :global(.token.class-name),
+  :global(.token.boolean),
+  :global(.token.constant),
+  :global(.token.number),
+  :global(.token.atrule) {
+    color: hsl(35, 99%, 36%);
+  }
+
+  :global(.token.keyword) {
+    color: hsl(301, 63%, 40%);
+  }
+
+  :global(.token.property),
+  :global(.token.tag),
+  :global(.token.symbol),
+  :global(.token.deleted),
+  :global(.token.important) {
+    color: hsl(5, 74%, 59%);
+  }
+
+  :global(.token.selector),
+  :global(.token.string),
+  :global(.token.char),
+  :global(.token.builtin),
+  :global(.token.inserted),
+  :global(.token.regex),
+  :global(.token.attr-value),
+  :global(.token.attr-value > .token.punctuation) {
+    color: hsl(119, 34%, 47%);
+  }
+
+  :global(.token.variable),
+  :global(.token.operator),
+  :global(.token.function) {
+    color: hsl(221, 87%, 60%);
+  }
+
+  :global(.token.url) {
+    color: hsl(198, 99%, 37%);
+  }
+
+  /* HTML overrides */
+  :global(.token.attr-value > .token.punctuation.attr-equals),
+  :global(.token.special-attr > .token.attr-value > .token.value.css) {
+    color: hsl(230, 8%, 24%);
+  }
+
+  /* CSS overrides */
+  :global(.language-css .token.selector) {
+    color: hsl(5, 74%, 59%);
+  }
+
+  :global(.language-css .token.property) {
+    color: hsl(230, 8%, 24%);
+  }
+
+  :global(.language-css .token.function),
+  :global(.language-css .token.url > .token.function) {
+    color: hsl(198, 99%, 37%);
+  }
+
+  :global(.language-css .token.url > .token.string.url) {
+    color: hsl(119, 34%, 47%);
+  }
+
+  :global(.language-css .token.important),
+  :global(.language-css .token.atrule .token.rule) {
+    color: hsl(301, 63%, 40%);
+  }
+
+  /* JS overrides */
+  :global(.language-javascript .token.operator) {
+    color: hsl(301, 63%, 40%);
+  }
+
+  :global(
+    .language-javascript
+      .token.template-string
+      > .token.interpolation
+      > .token.interpolation-punctuation.punctuation
+  ) {
+    color: hsl(344, 84%, 43%);
+  }
+
+  /* JSON overrides */
+  :global(.language-json .token.operator) {
+    color: hsl(230, 8%, 24%);
+  }
+
+  :global(.language-json .token.null.keyword) {
+    color: hsl(35, 99%, 36%);
+  }
+
+  /* MD overrides */
+  :global(.language-markdown .token.url),
+  :global(.language-markdown .token.url > .token.operator),
+  :global(.language-markdown .token.url-reference.url > .token.string) {
+    color: hsl(230, 8%, 24%);
+  }
+
+  :global(.language-markdown .token.url > .token.content) {
+    color: hsl(221, 87%, 60%);
+  }
+
+  :global(.language-markdown .token.url > .token.url),
+  :global(.language-markdown .token.url-reference.url) {
+    color: hsl(198, 99%, 37%);
+  }
+
+  :global(.language-markdown .token.blockquote.punctuation),
+  :global(.language-markdown .token.hr.punctuation) {
+    color: hsl(230, 4%, 64%);
+    font-style: italic;
+  }
+
+  :global(.language-markdown .token.code-snippet) {
+    color: hsl(119, 34%, 47%);
+  }
+
+  :global(.language-markdown .token.bold .token.content) {
+    color: hsl(35, 99%, 36%);
+  }
+
+  :global(.language-markdown .token.italic .token.content) {
+    color: hsl(301, 63%, 40%);
+  }
+
+  :global(.language-markdown .token.strike .token.content),
+  :global(.language-markdown .token.strike .token.punctuation),
+  :global(.language-markdown .token.list.punctuation),
+  :global(.language-markdown .token.title.important > .token.punctuation) {
+    color: hsl(5, 74%, 59%);
+  }
+
+  /* General */
+  :global(.token.bold) {
+    font-weight: bold;
+  }
+
+  :global(.token.comment),
+  :global(.token.italic) {
+    font-style: italic;
+  }
+
+  :global(.token.entity) {
+    cursor: help;
+  }
+
+  :global(.token.namespace) {
+    opacity: 0.8;
+  }
+}
+
+.node-job {
+  *::-webkit-scrollbar {
+    width: 5px; /* 垂直滚动条宽度 */
+    height: 5px; /* 水平滚动条高度 */
+    background: transparent; /* 背景透明 */
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #d8d8d8; /* 滑块颜色 */
+    border-radius: 3px; /* 圆角 */
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent; /* 轨道背景透明 */
+  }
+}

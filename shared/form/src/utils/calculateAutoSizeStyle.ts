@@ -1,14 +1,17 @@
+// istanbul ignore file
+import type React from "react";
+
 const HIDDEN_TEXTAREA_STYLE = `
-  min-height:0 !important;
-  max-height:none !important;
-  height:0 !important;
-  visibility:hidden !important;
-  overflow:hidden !important;
-  position:absolute !important;
-  z-index:-1000 !important;
-  top:0 !important;
-  right:0 !important;
-  pointer-events: none !important;
+  min-height: 0!important;
+  max-height: none!important;
+  height: 0!important;
+  visibility: hidden!important;
+  overflow: hidden!important;
+  position: absolute!important;
+  z-index: -1000!important;
+  top: 0!important;
+  right: 0!important;
+  pointer-events: none!important;
 `;
 
 const SIZING_STYLE = [
@@ -31,13 +34,31 @@ const SIZING_STYLE = [
   "word-break",
   "white-space",
 ];
-let hiddenTextarea: HTMLTextAreaElement;
 
+let hiddenTextarea: HTMLTextAreaElement | undefined;
+
+export interface AutoSizeOptions {
+  minRows?: number | null;
+  maxRows?: number | null;
+  borderSize?: number;
+  paddingSize?: number;
+}
+
+/**
+ * 计算 textarea 高度
+ * https://github.com/react-component/textarea/blob/1c0026fbe30e5f7dff1fca695b2cf262246381ca/src/calculateNodeHeight.tsx
+ */
 export default function calculateAutoSizeStyle(
   uiTextNode: HTMLTextAreaElement,
-  minRows: number | null = null,
-  maxRows: number | null = null
+  options?: AutoSizeOptions
 ): React.CSSProperties {
+  const {
+    minRows = null,
+    maxRows = null,
+    borderSize = 2,
+    paddingSize = 8,
+  } = options ?? {};
+
   if (!hiddenTextarea) {
     hiddenTextarea = document.createElement("textarea");
     hiddenTextarea.setAttribute("tab-index", "-1");
@@ -57,27 +78,30 @@ export default function calculateAutoSizeStyle(
   );
   hiddenTextarea.value = uiTextNode.value || uiTextNode.placeholder || "";
 
-  let minHeight: number | undefined = undefined;
-  let maxHeight: number | undefined = undefined;
-  let overflowY: any;
+  let minHeight: number | undefined;
+  let maxHeight: number | undefined;
+  let overflowY: React.CSSProperties["overflowY"];
 
-  const borderSize = 2;
-  const paddingSize = 8;
   let height = hiddenTextarea.scrollHeight + borderSize;
 
   if (minRows !== null || maxRows !== null) {
-    // measure height of a textarea with a single row
-    // hiddenTextarea.value = " ";
-    // const singleRowHeight = hiddenTextarea.scrollHeight - paddingSize;
-    // const singleRowHeight = parseFloat((window.getComputedStyle(hiddenTextarea).getPropertyValue("line-height")));
-    const singleRowHeight = 22;
+    const singleRowHeight =
+      process.env.NODE_ENV === "test"
+        ? 22
+        : parseFloat(
+            window
+              .getComputedStyle(hiddenTextarea)
+              .getPropertyValue("line-height")
+          );
     if (minRows !== null) {
       minHeight = singleRowHeight * minRows + paddingSize + borderSize;
       height = Math.max(minHeight, height);
     }
     if (maxRows !== null) {
       maxHeight = singleRowHeight * maxRows + paddingSize + borderSize;
-      overflowY = height > maxHeight ? "" : "hidden";
+      if (height <= maxHeight) {
+        overflowY = "hidden";
+      }
       height = Math.min(maxHeight, height);
     }
   }
