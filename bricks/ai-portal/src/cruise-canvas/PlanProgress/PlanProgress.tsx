@@ -28,7 +28,10 @@ export function PlanProgress({ plan }: PlanProgressProps): JSX.Element | null {
             state: step.state,
             doneCount: acc.doneCount + 1,
           };
-        } else if (!acc.instruction) {
+        } else if (
+          !acc.instruction ||
+          (step.state && step.state !== "unknown")
+        ) {
           return {
             ...acc,
             state: step.state,

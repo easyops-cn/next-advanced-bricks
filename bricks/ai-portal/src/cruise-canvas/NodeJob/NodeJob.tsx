@@ -77,7 +77,12 @@ export function NodeJob({ job, state, humanInput }: NodeJobProps): JSX.Element {
               (job.toolCall!.arguments!.command === "ask_user_more" ? (
                 <HumanInputComponent jobId={job.id} humanInput={humanInput} />
               ) : job.toolCall!.arguments!.command === "ask_user_confirm" ? (
-                <HumanConfirmComponent jobId={job.id} humanInput={humanInput} />
+                <HumanConfirmComponent
+                  jobId={job.id}
+                  humanInput={humanInput}
+                  confirmText={job.toolCall!.arguments!.confirm_text as string}
+                  cancelText={job.toolCall!.arguments!.cancel_text as string}
+                />
               ) : job.toolCall!.arguments!.command === "ask_user_choose" ? (
                 <HumanChooseComponent
                   jobId={job.id}
@@ -170,8 +175,12 @@ function HumanInputComponent({
 function HumanConfirmComponent({
   jobId,
   humanInput,
+  confirmText,
+  cancelText,
 }: {
   jobId: string;
+  confirmText?: string;
+  cancelText?: string;
   humanInput?: (jobId: string, input: string) => void;
 }): JSX.Element {
   return (
@@ -179,18 +188,18 @@ function HumanConfirmComponent({
       <WrappedButton
         type="primary"
         onClick={() => {
-          humanInput?.(jobId, t(K.YES));
+          humanInput?.(jobId, confirmText || t(K.YES));
         }}
       >
-        {t(K.YES)}
+        {confirmText || t(K.YES)}
       </WrappedButton>
       <WrappedButton
         onClick={() => {
-          humanInput?.(jobId, t(K.NO));
+          humanInput?.(jobId, cancelText || t(K.NO));
         }}
         style={{ marginLeft: "0.5em" }}
       >
-        {t(K.NO)}
+        {cancelText || t(K.NO)}
       </WrappedButton>
     </div>
   );
