@@ -4,10 +4,6 @@ import "@testing-library/jest-dom";
 
 import { DraggableComponentMenuItem } from "./DraggableComponentMenuItem";
 
-jest.mock("react-dnd", () => ({
-  useDrag: jest.fn(() => [{}]),
-}));
-
 describe("DraggableComponentMenuItem", () => {
   it("should work", () => {
     const component = {

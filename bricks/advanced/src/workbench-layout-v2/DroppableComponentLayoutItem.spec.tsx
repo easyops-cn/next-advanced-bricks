@@ -1,15 +1,9 @@
 import React from "react";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { DropTargetHookSpec, DropTargetMonitor, useDrop } from "react-dnd";
 
 import { DroppableComponentLayoutItem } from "./DroppableComponentLayoutItem";
-import { WorkbenchComponent } from "../interfaces";
 
-jest.mock("react-dnd", () => ({
-  useDrag: jest.fn(() => [{}]),
-  useDrop: jest.fn(() => []),
-}));
 jest.mock("@next-core/react-runtime", () => ({
   ReactUseBrick: jest.fn(({ useBrick }) => (
     <div
@@ -20,8 +14,6 @@ jest.mock("@next-core/react-runtime", () => ({
     </div>
   )),
 }));
-
-const mockedUseDrop = useDrop as jest.Mock;
 
 describe("DroppableComponentLayoutItem", () => {
   it("should work", () => {
@@ -42,34 +34,18 @@ describe("DroppableComponentLayoutItem", () => {
       },
       key: "card-1",
     };
-    const handleDrop = jest.fn();
     const handleDelete = jest.fn();
 
     render(
       <DroppableComponentLayoutItem
         component={component}
         isEdit
-        onDrop={handleDrop}
         onDelete={handleDelete}
       />
     );
     expect(screen.getByTestId("react-use-brick").dataset["useBrick"]).toBe(
       JSON.stringify(component.useBrick)
     );
-
-    // drop
-    act(() => {
-      (
-        mockedUseDrop.mock.lastCall?.[0] as DropTargetHookSpec<
-          WorkbenchComponent,
-          void,
-          {
-            isOver: boolean;
-          }
-        >
-      ).drop?.(component, {} as DropTargetMonitor<WorkbenchComponent, void>);
-    });
-    expect(handleDrop).toHaveBeenCalledWith(component);
 
     // edit mask click
     act(() => {
