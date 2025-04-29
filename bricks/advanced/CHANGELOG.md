@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.44.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.2...@next-bricks/advanced@0.44.3) (2025-04-29)
+
+
+### Bug Fixes
+
+* **workbench-layout-v2:** Change the method of adding components by dragging to using react-grid-layout for implementation ([92f8c9f](https://github.com/easyops-cn/next-advanced-bricks/commit/92f8c9fafd22a72776ba7782171034221cd550ca))
+
+
+
+
+
 ## [0.44.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.1...@next-bricks/advanced@0.44.2) (2025-04-29)
 
 **Note:** Version bump only for package @next-bricks/advanced
