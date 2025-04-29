@@ -4,7 +4,6 @@ import type {
   EoSidebarMenuItem,
   EoSidebarMenuItemProps,
 } from "@next-bricks/nav/sidebar/sidebar-menu-item";
-import { useDrag } from "react-dnd";
 
 import { WorkbenchComponent } from "../interfaces";
 
@@ -16,19 +15,15 @@ const WrappedSidebarMenuItem = wrapBrick<
 export interface DraggableComponentMenuItemProps {
   component: WorkbenchComponent;
   onClick?(): void;
+  onDragStart?(): void;
+  onDragEnd?(): void;
 }
 
 export function DraggableComponentMenuItem(
   props: DraggableComponentMenuItemProps
 ): React.ReactElement {
-  const { component, onClick } = props;
-  const { title } = component;
-  /* istanbul ignore next */
-  const [{ isDragging }, drag] = useDrag({
-    type: "component",
-    item: component,
-    collect: (monitor) => ({ isDragging: monitor.isDragging() }),
-  });
+  const { component, onClick, onDragStart, onDragEnd } = props;
+  const { key, title } = component;
 
   return (
     <WrappedSidebarMenuItem
@@ -37,10 +32,14 @@ export function DraggableComponentMenuItem(
         icon: "menu",
       }}
       title={title}
-      style={{ opacity: isDragging ? 0.4 : 1 }}
+      draggable
+      onDragStart={(e) => {
+        e.dataTransfer.setData("text/plain", key);
+        onDragStart?.();
+      }}
+      onDragEnd={onDragEnd}
       onClick={onClick}
       data-testid="draggable-component-menu-item"
-      ref={drag}
     >
       {title}
     </WrappedSidebarMenuItem>

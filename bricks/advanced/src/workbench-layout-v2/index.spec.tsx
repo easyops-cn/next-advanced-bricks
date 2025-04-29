@@ -4,20 +4,12 @@ import { describe, test, expect, jest } from "@jest/globals";
 import { act } from "react-dom/test-utils";
 import * as utilsGeneral from "@next-core/utils/general";
 import { Layout, ResponsiveProps, WidthProvider } from "react-grid-layout";
-import { DropTargetHookSpec, DropTargetMonitor, useDrop } from "react-dnd";
 
 import "./";
 import type { EoWorkbenchLayoutV2 } from "./index.js";
-import {
-  DroppableComponentLayoutItem,
-  DroppableComponentLayoutItemProps,
-} from "./DroppableComponentLayoutItem";
+import { DroppableComponentLayoutItem } from "./DroppableComponentLayoutItem";
 import { defaultCardConfig } from "./";
-import {
-  DraggableComponentMenuItem,
-  DraggableComponentMenuItemProps,
-} from "./DraggableComponentMenuItem";
-import { WorkbenchComponent } from "../interfaces";
+import { DraggableComponentMenuItem } from "./DraggableComponentMenuItem";
 
 jest.mock("@next-core/theme", () => ({}));
 jest.mock("@next-core/utils/general", () => {
@@ -33,14 +25,6 @@ jest.mock("@next-core/utils/general", () => {
   };
 });
 jest.mock("react-grid-layout");
-jest.mock("react-dnd", () => ({
-  DndProvider: jest.fn(({ children }) => <div>{children}</div>),
-  useDrag: jest.fn(() => [{}]),
-  useDrop: jest.fn(() => []),
-}));
-jest.mock("react-dnd-html5-backend", () => ({
-  HTML5Backend: jest.fn(),
-}));
 jest.mock("./DroppableComponentLayoutItem", () => ({
   DroppableComponentLayoutItem: jest.fn(() => (
     <div>Mocked DroppableComponentLayoutItem</div>
@@ -52,16 +36,17 @@ jest.mock("./DraggableComponentMenuItem", () => ({
   )),
 }));
 
-const mockedUseDrop = useDrop as jest.Mock;
 const MockedReactGridLayoutComponent = jest.fn(
   ({ className, children }: ResponsiveProps) => (
     <div className={className}>{children}</div>
   )
 );
 const MockedDroppableComponentLayoutItem =
-  DroppableComponentLayoutItem as jest.Mock;
+  DroppableComponentLayoutItem as jest.Mock<
+    typeof DroppableComponentLayoutItem
+  >;
 const MockedDraggableComponentMenuItem =
-  DraggableComponentMenuItem as jest.Mock;
+  DraggableComponentMenuItem as jest.Mock<typeof DraggableComponentMenuItem>;
 
 (WidthProvider as jest.Mock).mockReturnValue(MockedReactGridLayoutComponent);
 
@@ -138,23 +123,6 @@ describe("eo-workbench-layout-v2", () => {
           h: 1,
         },
         key: "card-4",
-      },
-      {
-        title: "card-5",
-        useBrick: {
-          brick: "div",
-          properties: {
-            textContent: "card-5",
-          },
-        },
-        position: {
-          i: "card-5",
-          x: 0,
-          y: 0,
-          w: 3,
-          h: 1,
-        },
-        key: "card-5",
       },
     ];
 
@@ -280,11 +248,8 @@ describe("eo-workbench-layout-v2", () => {
 
     // insert element
     // click
-    await act(async () => {
-      (
-        MockedDraggableComponentMenuItem.mock
-          .calls[2][0] as DraggableComponentMenuItemProps
-      ).onClick?.();
+    act(() => {
+      MockedDraggableComponentMenuItem.mock.calls[2][0].onClick?.();
     });
 
     const component3 = componentList[2];
@@ -310,14 +275,14 @@ describe("eo-workbench-layout-v2", () => {
     // drop on layout
     const component4 = componentList[3];
 
-    await act(async () => {
-      (
-        mockedUseDrop.mock.lastCall?.[0] as DropTargetHookSpec<
-          WorkbenchComponent,
-          void,
-          unknown
-        >
-      ).drop?.(component4, {} as DropTargetMonitor<WorkbenchComponent, void>);
+    act(() => {
+      MockedDraggableComponentMenuItem.mock.lastCall?.[0].onDragStart?.();
+      MockedReactGridLayoutComponent.mock.lastCall?.[0].onDrop?.(
+        {} as Layout[],
+        { i: "__dropping-elem__", x: 1, y: 1, w: 1, h: 1 },
+        {} as Event
+      );
+      MockedDraggableComponentMenuItem.mock.lastCall?.[0].onDragEnd?.();
     });
 
     const newLayout2_2 = [
@@ -327,8 +292,8 @@ describe("eo-workbench-layout-v2", () => {
       {
         ...defaultCardConfig,
         ...component4.position,
-        x: 0,
-        y: Infinity,
+        x: 1,
+        y: 1,
         type: component4.key,
       },
     ];
@@ -340,43 +305,9 @@ describe("eo-workbench-layout-v2", () => {
       })
     );
 
-    // drop on layout item
-    const component5 = componentList[4];
-
-    await act(async () => {
-      (
-        MockedDroppableComponentLayoutItem.mock
-          .lastCall?.[0] as DroppableComponentLayoutItemProps
-      ).onDrop?.(component5);
-    });
-
-    const newLayout2_3 = [
-      expect.anything(),
-      expect.anything(),
-      expect.anything(),
-      {
-        ...defaultCardConfig,
-        ...component5.position,
-        x: 0,
-        y: Infinity,
-        type: component5.key,
-      },
-      expect.anything(),
-    ];
-
-    expect(element.querySelector(".layout")?.childNodes.length).toBe(5);
-    expect(mockChangeEvent).toBeCalledWith(
-      expect.objectContaining({
-        detail: newLayout2_3,
-      })
-    );
-
     // delete element
-    await act(async () => {
-      (
-        MockedDroppableComponentLayoutItem.mock
-          .lastCall?.[0] as DroppableComponentLayoutItemProps
-      ).onDelete?.();
+    act(() => {
+      MockedDroppableComponentLayoutItem.mock.lastCall?.[0].onDelete?.();
     });
 
     const newLayout3 = [

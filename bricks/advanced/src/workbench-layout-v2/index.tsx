@@ -34,12 +34,13 @@ import {
 } from "@next-bricks/basic/dropdown-button";
 import type { showDialog as _showDialog } from "@next-bricks/basic/data-providers/show-dialog/show-dialog";
 import { SimpleAction } from "@next-bricks/basic/actions";
-import { DndProvider, useDrop } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import update from "immutability-helper";
 import { keyBy, pick } from "lodash";
 
-import { WorkbenchComponent, ExtraLayout, CardStyleConfig } from "../interfaces";
+import {
+  WorkbenchComponent,
+  ExtraLayout,
+  CardStyleConfig,
+} from "../interfaces";
 import { DroppableComponentLayoutItem } from "./DroppableComponentLayoutItem";
 import { DraggableComponentMenuItem } from "./DraggableComponentMenuItem";
 
@@ -126,11 +127,17 @@ export const EoWorkbenchLayoutComponent = forwardRef<
   const gridLayoutRef = useRef<HTMLDivElement>(null);
   const layoutWrapperRef = useRef<HTMLDivElement>(null);
   const layoutCacheRef = useRef<ExtraLayout[]>(layoutsProps ?? []);
-
-  const [layouts, _setLayouts] = useState<ExtraLayout[]>(layoutCacheRef.current);
+  const [layouts, _setLayouts] = useState<ExtraLayout[]>(
+    layoutCacheRef.current
+  );
+  const keyComponentMap = useMemo(
+    () => keyBy(componentList, "key"),
+    [componentList]
+  );
   const [cols, setCols] = useState<number>(3);
   const [layoutWrapperStyle, setLayoutWrapperStyle] =
     useState<React.CSSProperties>();
+  const draggingComponentRef = useRef<WorkbenchComponent>();
 
   const setLayouts = useCallback((layouts: ExtraLayout[]) => {
     layoutCacheRef.current = layouts;
@@ -169,8 +176,8 @@ export const EoWorkbenchLayoutComponent = forwardRef<
         return;
       }
 
-      const currentLayoutsMap = keyBy(layouts,"i");
-      
+      const currentLayoutsMap = keyBy(layouts, "i");
+
       let isAllowAction = true;
       for (let t = 0; t < currentLayout.length; t++) {
         const { x, w, y, h, i, minH } = currentLayout[t];
@@ -220,27 +227,6 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     setCols(newCols);
   };
 
-  const addComponent = (component: WorkbenchComponent): void => {
-    handleChange(
-      layouts.concat({
-        ...defaultCardConfig,
-        ...component.position,
-        type: component.key,
-        x: component.position.w > 1 ? 0 : (layouts.length * 2) % cols,
-        y: Infinity,
-      })
-    );
-  };
-
-  /* istanbul ignore next */
-  const [, drop] = useDrop({
-    accept: "component",
-    canDrop: (item, monitor) => monitor.isOver({ shallow: true }),
-    drop: (component: WorkbenchComponent) => {
-      addComponent?.(component);
-    },
-  });
-
   const handleClearLayout = () => {
     handleChange([]);
   };
@@ -276,26 +262,24 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     }
   };
 
-  const handleLayoutItemDrop = useCallback((component: WorkbenchComponent,layout: ExtraLayout,index: number): void => {
-      handleChange(
-        update(layouts, {
-          $splice: [
-            [
-              index,
-              0,
-              {
-                ...defaultCardConfig,
-                ...component.position,
-                type: component.key,
-                ...pick(layout, ["x", "y"]),
-              },
-            ],
-          ],
-        })
-      );
-    },
-    [handleChange, layouts]
-  );
+  const addComponent = (
+    component: WorkbenchComponent,
+    layout?: Layout
+  ): void => {
+    handleChange(
+      layouts.concat({
+        ...defaultCardConfig,
+        ...component.position,
+        type: component.key,
+        ...(layout
+          ? pick(layout, ["x", "y"])
+          : {
+              x: component.position.w > 1 ? 0 : (layouts.length * 2) % cols,
+              y: Infinity,
+            }),
+      })
+    );
+  };
 
   const handleDeleteItem = useCallback(
     (deletedItem: WorkbenchComponent) => {
@@ -306,37 +290,34 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     [handleChange, layouts]
   );
 
-  const renderChild = useMemo(
-    () =>
-      layouts
-        .map((layout, index) => {
-          const component = componentList.find(
-            (item) => item.key === getRealKey(layout.type as string)
-          );
-          if (!component) {
-            return null;
-          }
-          return (
-            <div
-              className="drag-box"
-              data-grid={{...(component.position ?? {}),...layout, w: layout.cardWidth || layout.w }}
-              key={layout.i}
-            >
-              <DroppableComponentLayoutItem
-                component={component}
-                isEdit={isEdit}
-                layout={layout}
-                onDrop={(component) =>
-                  handleLayoutItemDrop(component, layout, index)
-                }
-                onDelete={() => handleDeleteItem(component)}
-              />
-            </div>
-          );
-        })
-        .filter(Boolean),
-    [layouts, componentList, isEdit, handleLayoutItemDrop, handleDeleteItem]
-  );
+  const renderChild = useMemo(() => {
+    return layouts
+      .map((layout) => {
+        const component = keyComponentMap[getRealKey(layout.type as string)];
+        if (!component) {
+          return null;
+        }
+        return (
+          <div
+            className="drag-box"
+            data-grid={{
+              ...(component.position ?? {}),
+              ...layout,
+              w: layout.cardWidth || layout.w,
+            }}
+            key={layout.i}
+          >
+            <DroppableComponentLayoutItem
+              component={component}
+              isEdit={isEdit}
+              layout={layout}
+              onDelete={() => handleDeleteItem(component)}
+            />
+          </div>
+        );
+      })
+      .filter(Boolean);
+  }, [layouts, keyComponentMap, isEdit, handleDeleteItem]);
 
   const handleWatchLayoutSizeChange = useCallback(() => {
     if (layoutWrapperRef && isEdit) {
@@ -373,6 +354,12 @@ export const EoWorkbenchLayoutComponent = forwardRef<
                   component={component}
                   onClick={() => {
                     addComponent(component);
+                  }}
+                  onDragStart={() => {
+                    draggingComponentRef.current = component;
+                  }}
+                  onDragEnd={() => {
+                    draggingComponentRef.current = undefined;
                   }}
                   key={component.key || index}
                 />
@@ -428,10 +415,20 @@ export const EoWorkbenchLayoutComponent = forwardRef<
           cols={{ lg: 3, md: 3, sm: isEdit ? 3 : 1 }}
           isResizable={false}
           isDraggable={isEdit}
+          isDroppable={isEdit}
           onDrag={handleDragCallback}
+          onDropDragOver={() => {
+            if (draggingComponentRef.current) {
+              return pick(draggingComponentRef.current.position, ["w", "h"]);
+            }
+          }}
+          onDrop={(layout, item) => {
+            if (draggingComponentRef.current) {
+              addComponent(draggingComponentRef.current, item);
+            }
+          }}
           onLayoutChange={handleLayoutChange}
           onBreakpointChange={handleBreakpointChange}
-          innerRef={drop}
         >
           {renderChild}
         </ResponsiveReactGridLayout>
@@ -530,22 +527,20 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
 
   render() {
     return (
-      <DndProvider backend={HTML5Backend} context={window}>
-        <EoWorkbenchLayoutComponent
-          cardTitle={this.cardTitle}
-          layouts={this.layouts}
-          toolbarBricks={this.toolbarBricks}
-          componentList={this.componentList}
-          showSettingButton={this.showSettingButton}
-          isEdit={this.isEdit}
-          onChange={this.#handleChange}
-          onSave={this.#handleSave}
-          onCancel={this.#handleCancel}
-          onActionClick={this.#handleActionClick}
-          onSetting={this.#handleSetting}
-          ref={this.#componentRef}
-        />
-      </DndProvider>
+      <EoWorkbenchLayoutComponent
+        cardTitle={this.cardTitle}
+        layouts={this.layouts}
+        toolbarBricks={this.toolbarBricks}
+        componentList={this.componentList}
+        showSettingButton={this.showSettingButton}
+        isEdit={this.isEdit}
+        onChange={this.#handleChange}
+        onSave={this.#handleSave}
+        onCancel={this.#handleCancel}
+        onActionClick={this.#handleActionClick}
+        onSetting={this.#handleSetting}
+        ref={this.#componentRef}
+      />
     );
   }
 }
