@@ -9,7 +9,9 @@ const sendTask = (req, res) => {
   res.send(task);
 };
 
-const getTaskDetail = (req, res, taskId) => {
+const getTaskDetail = async (req, res, taskId) => {
+  // await new Promise((resolve) => setTimeout(resolve, 1000));
+
   const task = getTask(taskId);
 
   if (!task) {

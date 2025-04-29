@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
-import { handleHttpError } from "@next-core/runtime";
+import { getRuntime, handleHttpError } from "@next-core/runtime";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import classNames from "classnames";
@@ -39,6 +39,7 @@ import { NodeInstruction } from "./NodeInstruction/NodeInstruction.js";
 import { NodeJob } from "./NodeJob/NodeJob.js";
 import { NodeEnd } from "./NodeEnd/NodeEnd.js";
 import { CANVAS_PADDING_BOTTOM, DONE_STATES } from "./constants.js";
+import { WrappedIcon, WrappedLink } from "./bricks.js";
 
 initializeI18n(NS, locales);
 
@@ -47,9 +48,10 @@ const { defineElement, property, event } = createDecorators();
 const MemoizedNodeComponent = memo(NodeComponent);
 
 export interface CruiseCanvasProps {
-  taskId: string | undefined;
-  task: TaskBaseDetail | undefined;
-  jobs: Job[] | undefined;
+  taskId?: string;
+  task?: TaskBaseDetail;
+  jobs?: Job[];
+  goBackUrl?: string;
 }
 
 /**
@@ -70,6 +72,9 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
   @property({ attribute: false })
   accessor jobs: Job[] | undefined;
 
+  @property()
+  accessor goBackUrl: string | undefined;
+
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
 
@@ -83,6 +88,7 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         taskId={this.taskId}
         jobs={this.jobs}
         task={this.task}
+        goBackUrl={this.goBackUrl}
         onShare={this.#onShare}
       />
     );
@@ -97,6 +103,7 @@ export function CruiseCanvasComponent({
   taskId,
   task: propTask,
   jobs: propJobs,
+  goBackUrl,
   onShare,
 }: CruiseCanvasComponentProps) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -113,6 +120,12 @@ export function CruiseCanvasComponent({
   const graph = useTaskGraph(task, jobs);
   const rawNodes = graph?.nodes;
   const rawEdges = graph?.edges;
+
+  const pageTitle = task?.title ?? "";
+
+  useEffect(() => {
+    getRuntime().applyPageTitle(pageTitle);
+  }, [pageTitle]);
 
   useEffect(() => {
     if (error) {
@@ -245,12 +258,22 @@ export function CruiseCanvasComponent({
   return (
     <>
       <div
-        className={styles.root}
+        className={classNames(styles.root, { [styles.loading]: !task })}
         ref={rootRef}
         style={{
           cursor: grabbing ? "grabbing" : "grab",
         }}
       >
+        {!task && (
+          <div className={styles["loading-icon"]}>
+            <WrappedIcon
+              lib="antd"
+              theme="outlined"
+              icon="loading-3-quarters"
+              spinning
+            />
+          </div>
+        )}
         <div
           className={classNames(styles.canvas, {
             [styles.ready]: sizeReady && centered,
@@ -298,6 +321,11 @@ export function CruiseCanvasComponent({
         </div>
       </div>
       <div className={styles.widgets}>
+        {goBackUrl && (
+          <WrappedLink className={styles["go-back"]} url={goBackUrl}>
+            <WrappedIcon lib="fa" prefix="fas" icon="arrow-left-long" />
+          </WrappedLink>
+        )}
         <PlanProgress plan={plan} />
         <ZoomBar
           scale={transform.k}

@@ -97,32 +97,25 @@
   margin-top: 1em;
   display: block;
   width: 100%;
-  padding: 0.5em 1em;
-  color: var(--antd-input-color);
+  padding: 10px 16px;
+  color: inherit;
   background: rgba(255, 255, 255, 0.8);
   box-shadow:
     0px 1px 0px 0px #ffffff,
     inset 0px 2px 4px 0px #b3bcf9;
-  box-sizing: border-box;
-  border: 1px solid var(--antd-input-border-color);
+  border: none;
   border-radius: 9px;
   font-size: 14px;
   line-height: 22px;
-  height: 32px;
+  height: 64px;
 }
 
-.human-input:not(:disabled):hover {
-  border: 1px solid var(--antd-input-hover-border-color);
-}
-
-.human-input:not(:disabled):focus {
-  border: 1px solid var(--antd-input-focus-border-color);
-  outline: 0;
-  box-shadow: 0 0 0 2px rgb(0 113 235 / 20%);
+.human-input:focus-visible {
+  outline: none;
 }
 
 .human-input::placeholder {
-  color: var(--antd-input-placeholder-color);
+  color: #bfbfbf;
 }
 
 .tool-call {

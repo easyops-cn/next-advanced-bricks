@@ -1,7 +1,7 @@
 // istanbul ignore file
 import { useEffect, useReducer, useRef, useState } from "react";
 import { isEqual } from "lodash";
-import { HttpResponseError } from "@next-core/http";
+import { http } from "@next-core/http";
 import { createSSEStream } from "@next-core/utils/general";
 import { getBasePath, handleHttpError } from "@next-core/runtime";
 import { rootReducer } from "./reducers";
@@ -69,41 +69,19 @@ export function useTaskDetail(taskId: string | undefined) {
     };
 
     humanInputRef.current = async (jobId: string, input: string) => {
-      const response = await fetch(
-        `${getBasePath()}api/gateway/logic.llm.aiops_service/api/v1/llm/agent/flow/${taskId}/job/${jobId}`,
-        // `/api/mocks/task/input`,
-        // `http://localhost:8888/.netlify/functions/task-input`,
-        // `https://serverless-mocks.netlify.app/.netlify/functions/task-input`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: taskId,
-            jobId: jobId,
-            input,
-          }),
-        }
-      );
-      if (response.ok) {
-        makeRequest();
-      } else {
-        // eslint-disable-next-line no-console
-        console.error(
-          "human input failed",
-          response.status,
-          response.statusText
+      try {
+        await http.post(
+          `${getBasePath()}api/gateway/logic.llm.aiops_service/api/v1/llm/agent/flow/${taskId}/job/${jobId}`,
+          { input }
         );
-
-        let responseJson;
-        try {
-          responseJson = await response.json();
-        } catch {
-          // Do nothing.
-        }
-        handleHttpError(new HttpResponseError(response, responseJson));
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error("human input failed", e);
+        handleHttpError(e);
+        return;
       }
+
+      makeRequest();
     };
 
     makeRequest();

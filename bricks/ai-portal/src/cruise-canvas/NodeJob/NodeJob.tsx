@@ -214,17 +214,15 @@ function HumanInputComponent({
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div /* className="node-ask-user-more size-medium" */ ref={containerRef}>
-      {/* <div className="message">
-        <MarkdownComponent content={node.content} />
-      </div> */}
+    <div ref={containerRef}>
       <TextareaAutoResize
         className={styles["human-input"]}
         containerRef={containerRef}
         autoResize
         minRows={2}
-        paddingSize={14}
-        placeholder="Type your message here..."
+        borderSize={0}
+        paddingSize={20}
+        placeholder={t(K.TYPE_YOUR_MESSAGE_HERE)}
         submitWhen="enter-without-shift"
         onSubmit={(e) => {
           const input = e.currentTarget.value;
