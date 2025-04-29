@@ -8,7 +8,7 @@ import { Layout, ResponsiveProps, WidthProvider } from "react-grid-layout";
 import "./";
 import type { EoWorkbenchLayoutV2 } from "./index.js";
 import { DroppableComponentLayoutItem } from "./DroppableComponentLayoutItem";
-import { defaultCardConfig } from "./";
+import { defaultCardConfig } from "./utils";
 import { DraggableComponentMenuItem } from "./DraggableComponentMenuItem";
 
 jest.mock("@next-core/theme", () => ({}));
@@ -259,6 +259,7 @@ describe("eo-workbench-layout-v2", () => {
       {
         ...defaultCardConfig,
         ...component3.position,
+        cardWidth: component3.position.w,
         x: 1,
         y: Infinity,
         type: component3.key,
@@ -286,16 +287,17 @@ describe("eo-workbench-layout-v2", () => {
     });
 
     const newLayout2_2 = [
-      expect.anything(),
-      expect.anything(),
-      expect.anything(),
       {
         ...defaultCardConfig,
         ...component4.position,
+        cardWidth: component4.position.w,
         x: 1,
         y: 1,
         type: component4.key,
       },
+      expect.anything(),
+      expect.anything(),
+      expect.anything(),
     ];
 
     expect(element.querySelector(".layout")?.childNodes.length).toBe(4);

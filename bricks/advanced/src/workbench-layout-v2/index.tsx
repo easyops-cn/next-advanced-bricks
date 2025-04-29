@@ -36,13 +36,10 @@ import type { showDialog as _showDialog } from "@next-bricks/basic/data-provider
 import { SimpleAction } from "@next-bricks/basic/actions";
 import { keyBy, pick } from "lodash";
 
-import {
-  WorkbenchComponent,
-  ExtraLayout,
-  CardStyleConfig,
-} from "../interfaces";
+import { WorkbenchComponent, ExtraLayout } from "../interfaces";
 import { DroppableComponentLayoutItem } from "./DroppableComponentLayoutItem";
 import { DraggableComponentMenuItem } from "./DraggableComponentMenuItem";
+import { getLayoutDefaultCardConfig } from "./utils";
 
 import styles from "./styles.module.css";
 import layoutItemStyles from "./DroppableComponentLayoutItem.module.css";
@@ -61,19 +58,6 @@ const WrappedDropdownButton = wrapBrick<
   DropdownButtonEventsMap
 >("eo-dropdown-button", { onActionClick: "action.click" });
 const showDialog = unwrapProvider<typeof _showDialog>("basic.show-dialog");
-
-/* istanbul ignore next */
-export const defaultCardConfig: CardStyleConfig = {
-  cardWidth: 2,
-  showMoreIcon: false,
-  cardBorderStyle: "solid",
-  cardTitleFontSize: 16,
-  cardBorderWidth: 1,
-  cardBorderRadius: 6,
-  cardTitleColor: "#262626",
-  cardBorderColor: "#e8e8e8",
-  cardBgType: "none",
-};
 
 export interface EoWorkbenchLayoutV2Props {
   cardTitle?: string;
@@ -176,6 +160,11 @@ export const EoWorkbenchLayoutComponent = forwardRef<
         return;
       }
 
+      // 占位拖拽不触发 setLayouts
+      if (currentLayout.some((v) => v.isDraggable)) {
+        return;
+      }
+
       const currentLayoutsMap = keyBy(layouts, "i");
 
       let isAllowAction = true;
@@ -266,25 +255,27 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     component: WorkbenchComponent,
     layout?: Layout
   ): void => {
-    handleChange(
-      layouts.concat({
-        ...defaultCardConfig,
-        ...component.position,
-        type: component.key,
-        ...(layout
-          ? pick(layout, ["x", "y"])
-          : {
-              x: component.position.w > 1 ? 0 : (layouts.length * 2) % cols,
-              y: Infinity,
-            }),
-      })
-    );
+    const defaultCardConfig = getLayoutDefaultCardConfig(component.key);
+    const newLayout = {
+      ...defaultCardConfig,
+      ...component.position,
+      cardWidth: component.position.w,
+      type: component.key,
+      ...(layout
+        ? pick(layout, ["x", "y"])
+        : {
+            x: component.position.w > 1 ? 0 : (layouts.length * 2) % cols,
+            y: Infinity,
+          }),
+    };
+
+    handleChange(layout ? [newLayout, ...layouts] : layouts.concat(newLayout));
   };
 
   const handleDeleteItem = useCallback(
     (deletedItem: WorkbenchComponent) => {
       handleChange(
-        layouts.filter((item) => getRealKey(item.i) !== deletedItem.key) ?? []
+        layouts.filter((item) => item.i !== deletedItem.position.i) ?? []
       );
     },
     [handleChange, layouts]
