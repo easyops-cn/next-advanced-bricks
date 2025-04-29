@@ -46,3 +46,12 @@
 .zoom-bar > :not(:last-child) {
   margin-right: 6px;
 }
+
+@media (max-width: 719px) {
+  .zoom-bar {
+    left: auto;
+    bottom: auto;
+    top: 20px;
+    right: 20px;
+  }
+}
