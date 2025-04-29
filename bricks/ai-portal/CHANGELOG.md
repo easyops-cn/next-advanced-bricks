@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.1.2...@next-bricks/ai-portal@0.2.0) (2025-04-29)
+
+
+### Features
+
+* new brick: home-container ([0ba8c5f](https://github.com/easyops-cn/next-advanced-bricks/commit/0ba8c5fe511692df50bcad81ee76087c1a46c9fb))
+
+
+
+
+
 ## [0.1.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.1.1...@next-bricks/ai-portal@0.1.2) (2025-04-28)
 
 
