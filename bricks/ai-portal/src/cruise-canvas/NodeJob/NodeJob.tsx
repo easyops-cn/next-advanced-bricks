@@ -133,6 +133,7 @@ export function NodeJob({ job, state, humanInput }: NodeJobProps): JSX.Element {
                   lib="antd"
                   theme="outlined"
                   icon="loading-3-quarters"
+                  spinning
                 />
               ) : state === "input-required" ? (
                 <WrappedIcon
@@ -189,7 +190,7 @@ export function NodeJob({ job, state, humanInput }: NodeJobProps): JSX.Element {
             </div>
           ))
         )}
-        {!askUser && job.toolCall ? (
+        {!askUser && job.toolCall && job.messages?.length ? (
           <WrappedIcon
             className={styles.expand}
             lib="fa"
@@ -360,6 +361,9 @@ function HumanSelectFromCmdb({
           objectId={objectId}
           fieldId={fieldId}
           onChangeV2={(e) => {
+            if (!e.detail.length) {
+              return;
+            }
             humanInput?.(
               jobId,
               e.detail.map((i) => i[fieldId /* ?? "instanceId" */]).join("\n")

@@ -1,12 +1,20 @@
 .node-job {
   width: 330px;
+  max-width: 90vw;
   background: linear-gradient(180deg, #f5f8ff 0%, #edf0f9 100%);
   box-shadow:
     0px 4px 10px 0px rgba(177, 149, 207, 0.4),
     0px 2px 4px 0px rgba(0, 0, 0, 0.06);
   border-radius: 12px;
-  border: 1px solid #ffffff;
+  border: 1px solid #fff;
   padding: 8px;
+}
+
+.ask-user {
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0px 4px 10px 0px rgba(54, 64, 80, 0.18);
+  border-color: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(28px);
 }
 
 .error {

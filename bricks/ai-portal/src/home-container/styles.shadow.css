@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  background-color: #fff;
+  background-image: url("./images/background.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+:host([hidden]) {
+  display: none;
+}

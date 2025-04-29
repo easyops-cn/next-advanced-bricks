@@ -1,15 +1,15 @@
 import { i18n } from "@next-core/i18n";
 
 export enum K {
-  HOW_CAN_I_HELP = "HOW_CAN_I_HELP",
+  ASK_ANY_THING = "ASK_ANYTHING",
 }
 
 const en: Locale = {
-  [K.HOW_CAN_I_HELP]: "How can I help?",
+  [K.ASK_ANY_THING]: "Ask anything",
 };
 
 const zh: Locale = {
-  [K.HOW_CAN_I_HELP]: "有什么可以帮您的？",
+  [K.ASK_ANY_THING]: "询问任何问题",
 };
 
 export const NS = "bricks/ai-portal/chat-box";

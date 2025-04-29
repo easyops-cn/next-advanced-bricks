@@ -1,5 +1,6 @@
 :host {
   display: block;
+  color: #262626;
 }
 
 :host([hidden]) {
@@ -12,38 +13,58 @@
 
 .container {
   position: relative;
+  background-color: #e1e3ec;
+  background-image: url("./images/background@2x.png");
+  background-size: 694px 144px;
+  background-position: top left;
+  background-repeat: no-repeat;
+  box-shadow: inset 0px 2px 5px 1px rgba(42, 46, 59, 0.1);
+  border-radius: 20px;
+  padding: 12px;
 }
 
 textarea {
   display: block;
   width: 100%;
-  padding: 12px 18px;
+  padding: 10px 16px;
   color: var(--antd-input-color);
-  background: var(--antd-input-bg);
-  box-sizing: border-box;
-  border-radius: 1em;
-  border: 1px solid var(--antd-input-border-color);
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   font-size: 14px;
   line-height: 22px;
-  height: 32px;
-}
-
-textarea:not(:disabled):hover {
-  border: 1px solid var(--antd-input-hover-border-color);
-}
-
-textarea:not(:disabled):focus {
-  border: 1px solid var(--antd-input-focus-border-color);
-  outline: 0;
-  box-shadow: 0 0 0 2px rgb(0 113 235 / 20%);
+  height: 132px;
 }
 
 textarea::placeholder {
-  color: var(--antd-input-placeholder-color);
+  color: rgba(0, 0, 0, 0.4);
+}
+
+textarea:focus-visible {
+  outline: none;
 }
 
 .btn-send {
   position: absolute;
-  bottom: 1em;
-  right: 1em;
+  bottom: 26px;
+  right: 26px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.06);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: inherit;
+}
+
+.btn-send:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.btn-send:active {
+  background: rgba(0, 0, 0, 0.15);
 }

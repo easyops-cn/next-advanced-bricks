@@ -1,5 +1,6 @@
 .node-requirement {
   width: 453px;
+  max-width: 90vw;
   background-color: rgba(255, 255, 255, 0.4);
   background-image: url("../images/requirement@2x.png");
   background-position: center bottom;

@@ -1,5 +1,6 @@
 .node-instruction {
   max-width: 437px;
+  max-width: min(437px, 90vw);
   background: rgba(255, 255, 255, 0.2);
   box-shadow: 0px 4px 10px 0px rgba(54, 64, 80, 0.08);
   border-radius: 9999px;
