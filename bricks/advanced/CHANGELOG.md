@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.44.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.3...@next-bricks/advanced@0.44.4) (2025-04-29)
+
+
+### Bug Fixes
+
+* 修复删除卡片失败和适配默认布局数据 ([0db744a](https://github.com/easyops-cn/next-advanced-bricks/commit/0db744afd2d0d10f302e90d78929e2f61a4e5575))
+
+
+
+
+
 ## [0.44.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.2...@next-bricks/advanced@0.44.3) (2025-04-29)
 
 
