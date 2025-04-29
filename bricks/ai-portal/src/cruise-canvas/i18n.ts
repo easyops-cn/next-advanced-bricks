@@ -6,6 +6,7 @@ export enum K {
   PLAN_COMPLETED = "PLAN_COMPLETED",
   TASK_COMPLETED = "TASK_COMPLETED",
   SHARE = "SHARE",
+  TYPE_YOUR_MESSAGE_HERE = "TYPE_YOUR_MESSAGE_HERE",
 }
 
 const en: Locale = {
@@ -14,6 +15,7 @@ const en: Locale = {
   PLAN_COMPLETED: "All jobs done",
   TASK_COMPLETED: "Task completed",
   SHARE: "Share",
+  TYPE_YOUR_MESSAGE_HERE: "Type your message here",
 };
 
 const zh: Locale = {
@@ -22,6 +24,7 @@ const zh: Locale = {
   PLAN_COMPLETED: "所有任务已全部完成",
   TASK_COMPLETED: "任务完成",
   SHARE: "分享",
+  TYPE_YOUR_MESSAGE_HERE: "在这里输入信息",
 };
 
 export const NS = "bricks/ai-portal/cruise-canvas";

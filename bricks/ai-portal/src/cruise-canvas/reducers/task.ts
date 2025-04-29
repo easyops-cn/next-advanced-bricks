@@ -13,6 +13,7 @@ export const task: Reducer<TaskBaseDetail | null, CruiseCanvasAction> = (
         "id",
         "requirement",
         "state",
+        "title",
         "startTime",
         "endTime",
         "plan",
