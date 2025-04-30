@@ -1,0 +1,24 @@
+.shine-text {
+  color: transparent;
+  background: linear-gradient(
+    to right,
+    var(--shine-text-color) 0%,
+    var(--shine-text-color) 40%,
+    var(--shine-text-highlight-color) 50%,
+    var(--shine-text-color) 60%,
+    var(--shine-text-color) 100%
+  );
+
+  background-size: 200% 100%;
+  background-clip: text;
+  animation: shineText 2s infinite linear;
+}
+
+@keyframes shineText {
+  0% {
+    background-position: -50% 50%;
+  }
+  100% {
+    background-position: -250% 50%;
+  }
+}
