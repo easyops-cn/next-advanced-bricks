@@ -180,4 +180,5 @@ export interface ToolCall {
   arguments?: Record<string, unknown>;
   argumentsParseFailed?: boolean;
   argumentsParseError?: unknown;
+  originalArguments?: string;
 }

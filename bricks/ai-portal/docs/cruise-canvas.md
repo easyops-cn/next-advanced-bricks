@@ -50,8 +50,15 @@ children:
           upstream: ["2"]
           toolCall:
             name: online_search
+            originalArguments: |-
+              {"keywords":"手机银行系统"}
           state: completed
           messages:
+            - role: tool
+              parts:
+                - type: text
+                  text: |-
+                    {"content":"手机银行系统的逻辑组件包含用户认证，交易接入和理财中心三个模块组成。"}
             - role: assistant
               parts:
                 - type: text
@@ -64,6 +71,8 @@ children:
           state: completed
           toolCall:
             name: online_search
+            originalArguments: |-
+              {"keywords":"XX公司运维管理文件"}
           messages:
             - role: assistant
               parts:

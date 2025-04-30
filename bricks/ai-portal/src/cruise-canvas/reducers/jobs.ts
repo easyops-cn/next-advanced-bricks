@@ -37,14 +37,15 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
         const { messages: messagesPatch, toolCall } = jobPatch;
 
         if (typeof toolCall?.arguments === "string") {
+          toolCall.originalArguments = toolCall.arguments;
           try {
-            jobPatch.toolCall!.arguments = JSON.parse(toolCall.arguments);
+            toolCall.arguments = JSON.parse(toolCall.arguments);
           } catch (e) {
             // eslint-disable-next-line no-console
             console.error("Failed to parse toolCall arguments:", e);
-            jobPatch.toolCall!.arguments = {};
-            jobPatch.toolCall!.argumentsParseFailed = true;
-            jobPatch.toolCall!.argumentsParseError = e;
+            toolCall.arguments = {};
+            toolCall.argumentsParseFailed = true;
+            toolCall.argumentsParseError = e;
           }
         }
 
