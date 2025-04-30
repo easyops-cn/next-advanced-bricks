@@ -421,6 +421,27 @@
 }
 
 .node-job {
+  table {
+    display: block;
+    width: 100%;
+    width: max-content;
+    max-width: 100%;
+    overflow: auto;
+    border-collapse: collapse;
+  }
+
+  tr {
+    border-top: 1px solid #ccd1de;
+  }
+
+  td,
+  th {
+    border: 1px solid #ccd1de;
+    padding: 6px 13px;
+  }
+}
+
+.node-job {
   *::-webkit-scrollbar {
     width: 5px; /* 垂直滚动条宽度 */
     height: 5px; /* 水平滚动条高度 */
