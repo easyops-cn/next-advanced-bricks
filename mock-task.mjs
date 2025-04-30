@@ -84,9 +84,6 @@ class MockTask {
           {
             id: "mock-job-id-1",
             state: "working",
-            toolCall: {
-              name: "cmdb_create_app_system",
-            },
             messages: [
               {
                 role: "assistant",
@@ -356,21 +353,31 @@ class MockTask {
               state: "working",
               toolCall: {
                 name: "cmdb_create_agent_scan_job",
+                arguments: '{"ips":["1.2.3.4","1.2.3.5"]}',
               },
+            },
+          ],
+          __delay: 2000,
+        },
+        {
+          jobs: [
+            {
+              id: "mock-job-id-5",
+              state: "working",
               messages: [
                 {
-                  role: "assistant",
+                  role: "tool",
                   parts: [
                     {
                       type: "text",
-                      text: "正在创建基于Agent扫描的节点发现任务。",
+                      text: '{"jobId":"agent-scan-job-1"}',
                     },
                   ],
                 }
               ],
             },
           ],
-          __delay: 2000,
+          __delay: 1000,
         },
         {
           jobs: [
@@ -418,9 +425,33 @@ class MockTask {
               parent: "mock-job-id-6",
               state: "working",
             },
+          ],
+        },
+        {
+          jobs: [
+            {
+              id: "mock-job-id-6-a",
+              state: "completed",
+              messages: [{
+                role: "assistant",
+                parts: [{ type: "text", text: "Sub task A done." }]
+              }],
+            },
+            {
+              id: "mock-job-id-6-b",
+              state: "completed",
+              messages: [{
+                role: "assistant",
+                parts: [{ type: "text", text: "Sub task B done, too." }]
+              }],
+            },
+          ],
+        },
+        {
+          jobs: [
             {
               id: "mock-job-id-6-c",
-              startTime: 1745582717,
+              startTime: 1745584717,
               parent: "mock-job-id-6",
               upstream: ["mock-job-id-6-a", "mock-job-id-6-b"],
               state: "working",
@@ -430,26 +461,10 @@ class MockTask {
         {
           jobs: [
             {
-              id: "mock-job-id-6-a",
-              state: "completed",
-              messages: [{
-                role: "tool",
-                parts: [{ type: "text", text: "Sub task A done." }]
-              }],
-            },
-            {
-              id: "mock-job-id-6-b",
-              state: "completed",
-              messages: [{
-                role: "tool",
-                parts: [{ type: "text", text: "Sub task B done, too." }]
-              }],
-            },
-            {
               id: "mock-job-id-6-c",
               state: "completed",
               messages: [{
-                role: "tool",
+                role: "assistant",
                 parts: [{ type: "text", text: "Sub task C done, finally." }]
               }],
             },

@@ -41,7 +41,8 @@ textarea::placeholder {
   color: rgba(0, 0, 0, 0.4);
 }
 
-textarea:focus-visible {
+.btn-send:focus,
+textarea:focus {
   outline: none;
 }
 

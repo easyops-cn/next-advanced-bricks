@@ -115,7 +115,7 @@
   height: 64px;
 }
 
-.human-input:focus-visible {
+.human-input:focus {
   outline: none;
 }
 
