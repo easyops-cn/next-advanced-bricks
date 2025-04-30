@@ -1,16 +1,14 @@
 import React from "react";
 import { wrapBrick } from "@next-core/react-element";
 import type {
-  EoSidebarMenuItem,
-  EoSidebarMenuItemProps,
-} from "@next-bricks/nav/sidebar/sidebar-menu-item";
-
+  GeneralIcon,
+  GeneralIconProps,
+} from "@next-bricks/icons/general-icon";
 import { WorkbenchComponent } from "../interfaces";
 
-const WrappedSidebarMenuItem = wrapBrick<
-  EoSidebarMenuItem,
-  EoSidebarMenuItemProps
->("eo-sidebar-menu-item");
+import styles from "./DraggableComponentMenuItem.module.css";
+
+const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
 export interface DraggableComponentMenuItemProps {
   component: WorkbenchComponent;
@@ -26,12 +24,8 @@ export function DraggableComponentMenuItem(
   const { key, title } = component;
 
   return (
-    <WrappedSidebarMenuItem
-      icon={{
-        lib: "antd",
-        icon: "menu",
-      }}
-      title={title}
+    <div
+      className={styles.componentItemWrapper}
       draggable
       onDragStart={(e) => {
         e.dataTransfer.setData("text/plain", key);
@@ -41,7 +35,12 @@ export function DraggableComponentMenuItem(
       onClick={onClick}
       data-testid="draggable-component-menu-item"
     >
-      {title}
-    </WrappedSidebarMenuItem>
+      <WrappedIcon
+        lib="antd"
+        icon={"menu"}
+        className={styles.componentItemIcon}
+      />
+      <span className={styles.componentItemTitle}>{title}</span>
+    </div>
   );
 }

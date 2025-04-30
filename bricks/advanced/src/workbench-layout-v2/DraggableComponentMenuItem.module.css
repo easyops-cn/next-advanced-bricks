@@ -1,0 +1,26 @@
+.componentItemIcon {
+  font-size: 16px;
+  color: #262626;
+  margin-top: 2px;
+}
+.componentItemWrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+}
+.componentItemTitle {
+  font-weight: 400;
+  font-size: 14px;
+  color: #262626;
+  line-height: 20px;
+  text-align: left;
+}
+
+.componentItemWrapper:hover {
+  cursor: move;
+  .componentItemIcon,
+  .componentItemTitle {
+    color: #1a7aff;
+  }
+}
