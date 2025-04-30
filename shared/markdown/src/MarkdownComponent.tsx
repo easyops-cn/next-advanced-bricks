@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
+import remarkGfm from "remark-gfm";
 import remarkToRehype from "remark-rehype";
 import rehypeReact, { Options as RehypeReactOptions } from "rehype-react";
 import { rehypePrism } from "./rehypePrism.js";
@@ -20,6 +21,7 @@ export function MarkdownComponent({ content }: MarkdownComponentProps) {
     let ignore = false;
     unified()
       .use(remarkParse)
+      .use(remarkGfm)
       .use(remarkToRehype)
       .use([rehypePrism])
       .use(rehypeReact, production as RehypeReactOptions)

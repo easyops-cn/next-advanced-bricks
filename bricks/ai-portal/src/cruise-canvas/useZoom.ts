@@ -222,6 +222,9 @@ export function useZoom({
 
 // 检查元素是否还能滚动
 function checkScrollableY(element: Element, delta: number) {
+  if (!delta) {
+    return false;
+  }
   const isScrollingDown = delta > 0;
   // 还能向下滚动 或 还能向上滚动
   if (isScrollingDown) {
@@ -233,6 +236,9 @@ function checkScrollableY(element: Element, delta: number) {
 
 // 检查元素是否还能滚动
 function checkScrollableX(element: Element, delta: number) {
+  if (!delta) {
+    return false;
+  }
   const isScrollingRight = delta > 0; // Updated variable name for clarity
   // 还能向右滚动 或 还能向左滚动
   if (isScrollingRight) {

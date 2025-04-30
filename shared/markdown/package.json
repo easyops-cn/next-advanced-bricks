@@ -39,6 +39,7 @@
     "react": "0.0.0-experimental-ee8509801-20230117",
     "refractor": "^4.8.1",
     "rehype-react": "^8.0.0",
+    "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.0",
     "unified": "^11.0.4",

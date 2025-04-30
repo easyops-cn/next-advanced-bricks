@@ -37,6 +37,10 @@
   background: rgba(0, 0, 0, 0.08);
 }
 
+.zoom-bar button:focus {
+  outline: none;
+}
+
 .divider {
   background: rgba(0, 0, 0, 0.15);
   width: 1px;
