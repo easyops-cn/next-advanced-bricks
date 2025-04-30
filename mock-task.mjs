@@ -90,7 +90,7 @@ class MockTask {
                 parts: [
                   {
                     type: "text",
-                    text: "准备创建 XX 系统",
+                    text: "准备创建 XX 系统\n\n| Name | Age | Profile |\n| - | - | - |\n| Tom | 23 | Playing basketball, hiking, etc,.  |\n| Lucy | 21 | Reading, music, movies, ... |",
                   },
                 ],
               },
