@@ -21,10 +21,6 @@ import {
   WidthProvider,
 } from "react-grid-layout";
 import "@next-core/theme";
-import {
-  EoSidebarMenu,
-  EoSidebarMenuProps,
-} from "@next-bricks/nav/sidebar/sidebar-menu";
 import type { Button, ButtonProps } from "@next-bricks/basic/button";
 import {
   DropdownButton,
@@ -47,9 +43,6 @@ import "./styles.css";
 
 const { defineElement, property, event, method } = createDecorators();
 
-const WrappedSidebarMenu = wrapBrick<EoSidebarMenu, EoSidebarMenuProps>(
-  "eo-sidebar-menu"
-);
 const WrappedButton = wrapBrick<Button, ButtonProps>("eo-button");
 const WrappedDropdownButton = wrapBrick<
   DropdownButton,
@@ -244,10 +237,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
         }).then(handleClearLayout);
         break;
       default:
-        onActionClick?.(
-          action,
-          (layouts ?? []).map((item) => ({ ...item, i: getRealKey(item.i) }))
-        );
+        onActionClick?.(action, layouts ?? []);
     }
   };
 
@@ -259,6 +249,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     const newLayout = {
       ...defaultCardConfig,
       ...component.position,
+      i: `${component.key}:${Math.random()}`,
       cardWidth: component.position.w,
       type: component.key,
       ...(layout
@@ -273,10 +264,8 @@ export const EoWorkbenchLayoutComponent = forwardRef<
   };
 
   const handleDeleteItem = useCallback(
-    (deletedItem: WorkbenchComponent) => {
-      handleChange(
-        layouts.filter((item) => item.i !== deletedItem.position.i) ?? []
-      );
+    (i: string) => {
+      handleChange(layouts.filter((item) => item.i !== i) ?? []);
     },
     [handleChange, layouts]
   );
@@ -297,12 +286,13 @@ export const EoWorkbenchLayoutComponent = forwardRef<
               w: layout.cardWidth || layout.w,
             }}
             key={layout.i}
+            style={component.style}
           >
             <DroppableComponentLayoutItem
               component={component}
               isEdit={isEdit}
               layout={layout}
-              onDelete={() => handleDeleteItem(component)}
+              onDelete={handleDeleteItem}
             />
           </div>
         );
@@ -339,23 +329,21 @@ export const EoWorkbenchLayoutComponent = forwardRef<
         <div className={styles.componentWrapper} style={layoutWrapperStyle}>
           <div className={styles.componentTitle}>{cardTitle}</div>
           <div className={styles.componentList}>
-            <WrappedSidebarMenu>
-              {componentList?.map((component, index) => (
-                <DraggableComponentMenuItem
-                  component={component}
-                  onClick={() => {
-                    addComponent(component);
-                  }}
-                  onDragStart={() => {
-                    draggingComponentRef.current = component;
-                  }}
-                  onDragEnd={() => {
-                    draggingComponentRef.current = undefined;
-                  }}
-                  key={component.key || index}
-                />
-              ))}
-            </WrappedSidebarMenu>
+            {componentList?.map((component, index) => (
+              <DraggableComponentMenuItem
+                component={component}
+                onClick={() => {
+                  addComponent(component);
+                }}
+                onDragStart={() => {
+                  draggingComponentRef.current = component;
+                }}
+                onDragEnd={() => {
+                  draggingComponentRef.current = undefined;
+                }}
+                key={component.key || index}
+              />
+            ))}
             {toolbarBricks?.useBrick && (
               <ReactUseMultipleBricks useBrick={toolbarBricks.useBrick} />
             )}

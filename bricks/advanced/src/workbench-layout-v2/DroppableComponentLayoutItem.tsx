@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { ReactUseBrick } from "@next-core/react-runtime";
 import { wrapBrick } from "@next-core/react-element";
 import type {
@@ -15,12 +15,12 @@ const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
 export interface DroppableComponentLayoutItemProps {
   component: WorkbenchComponent;
-  layout?: ExtraLayout;
+  layout: ExtraLayout;
   isEdit?: boolean;
-  onDelete?(): void;
+  onDelete?(i: string): void;
 }
 
-export function DroppableComponentLayoutItem(
+export function DroppableComponentLayoutItemElement(
   props: DroppableComponentLayoutItemProps
 ): React.ReactElement {
   const { component, isEdit, onDelete, layout } = props;
@@ -31,11 +31,11 @@ export function DroppableComponentLayoutItem(
 
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    onDelete?.();
+    onDelete?.(layout.i);
   };
 
   return (
-    <div className={styles.component} style={component.style}>
+    <>
       {isEdit && (
         <div
           className={styles.editMask}
@@ -53,6 +53,10 @@ export function DroppableComponentLayoutItem(
           data-testid="droppable-component-layout-item-delete"
         />
       )}
-    </div>
+    </>
   );
 }
+
+export const DroppableComponentLayoutItem = memo(
+  DroppableComponentLayoutItemElement
+);

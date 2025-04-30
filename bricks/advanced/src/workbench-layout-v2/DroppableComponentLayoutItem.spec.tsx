@@ -34,6 +34,14 @@ describe("DroppableComponentLayoutItem", () => {
       },
       key: "card-1",
     };
+    const layout = {
+      i: "card-1",
+      x: 0,
+      y: 0,
+      w: 2,
+      h: 1,
+      type: "card-1",
+    };
     const handleDelete = jest.fn();
 
     render(
@@ -41,6 +49,7 @@ describe("DroppableComponentLayoutItem", () => {
         component={component}
         isEdit
         onDelete={handleDelete}
+        layout={layout}
       />
     );
     expect(screen.getByTestId("react-use-brick").dataset["useBrick"]).toBe(

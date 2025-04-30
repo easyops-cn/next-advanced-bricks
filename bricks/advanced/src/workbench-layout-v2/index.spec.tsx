@@ -25,6 +25,7 @@ jest.mock("@next-core/utils/general", () => {
   };
 });
 jest.mock("react-grid-layout");
+jest.spyOn(Math, "random").mockReturnValue(0.5);
 jest.mock("./DroppableComponentLayoutItem", () => ({
   DroppableComponentLayoutItem: jest.fn(() => (
     <div>Mocked DroppableComponentLayoutItem</div>
@@ -42,7 +43,7 @@ const MockedReactGridLayoutComponent = jest.fn(
   )
 );
 const MockedDroppableComponentLayoutItem =
-  DroppableComponentLayoutItem as jest.Mock<
+  DroppableComponentLayoutItem as unknown as jest.Mock<
     typeof DroppableComponentLayoutItem
   >;
 const MockedDraggableComponentMenuItem =
@@ -263,6 +264,7 @@ describe("eo-workbench-layout-v2", () => {
         x: 1,
         y: Infinity,
         type: component3.key,
+        i: `${component3.key}:0.5`,
       },
     ];
 
@@ -294,6 +296,7 @@ describe("eo-workbench-layout-v2", () => {
         x: 1,
         y: 1,
         type: component4.key,
+        i: `${component4.key}:0.5`,
       },
       expect.anything(),
       expect.anything(),
@@ -309,7 +312,9 @@ describe("eo-workbench-layout-v2", () => {
 
     // delete element
     act(() => {
-      MockedDroppableComponentLayoutItem.mock.lastCall?.[0].onDelete?.();
+      MockedDroppableComponentLayoutItem.mock.lastCall?.[0]?.onDelete?.(
+        `${component4.key}:0.5`
+      );
     });
 
     const newLayout3 = [
