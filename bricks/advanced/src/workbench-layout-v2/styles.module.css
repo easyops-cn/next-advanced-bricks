@@ -4,15 +4,10 @@
   position: relative;
   width: 100%;
 
-  .componentWrapper,
-  .layoutWrapper {
-    overflow: auto;
-  }
-
   .componentWrapper {
     width: 200px;
     padding: 6px 12px;
-    overflow-y: scroll;
+    overflow-y: auto;
     box-shadow: 1px 0 0 0 var(--palette-gray-5);
     background: var(--color-fill-bg-container-1);
     z-index: 999;
@@ -56,6 +51,10 @@
     .layout {
       flex-grow: 1;
       width: 100%;
+    }
+
+    .layoutEdit {
+      overflow-y: auto;
     }
 
     .actionsWrapper {

@@ -8,6 +8,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import classNames from "classnames";
 import { EventEmitter, createDecorators } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import { unwrapProvider } from "@next-core/utils/general";
@@ -387,7 +388,9 @@ export const EoWorkbenchLayoutComponent = forwardRef<
           </div>
         )}
         <ResponsiveReactGridLayout
-          className={styles.layout}
+          className={classNames(styles.layout, {
+            [`${styles.layoutEdit}`]: isEdit,
+          })}
           draggableCancel={`.${layoutItemStyles.deleteIcon},.edit-actions,.ignore-item`}
           breakpoints={{ lg: 1300, md: 1024, sm: 768 }}
           rowHeight={1}
