@@ -19,6 +19,8 @@
 
 .componentItemWrapper:hover {
   cursor: move;
+  background: #f7f8fa;
+  border-radius: 3px;
   .componentItemIcon,
   .componentItemTitle {
     color: #1a7aff;
