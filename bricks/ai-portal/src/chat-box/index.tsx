@@ -108,8 +108,8 @@ export function ChatBoxComponent({
       <TextareaAutoResize
         containerRef={containerRef}
         ref={textareaRef}
-        minRows={5}
-        paddingSize={20}
+        minRows={3}
+        paddingSize={62}
         autoResize
         disabled={disabled}
         placeholder={placeholder ?? t(K.ASK_ANY_THING)}
