@@ -217,15 +217,21 @@ function ToolCallComponent({ job }: { job: Job }): JSX.Element {
         />
       </div>
       {expanded && (
-        <dl className={styles["tool-call-body"]}>
-          <dt>{t(K.ARGUMENTS)}:</dt>
-          <dd>
-            <PreComponent content={toolCall.originalArguments} maybeJson />
-          </dd>
+        <>
+          <div className={styles["tool-call-detail"]}>
+            <div className={styles["tool-call-detail-heading"]}>
+              {t(K.ARGUMENTS)}:
+            </div>
+            <div className={styles["tool-call-detail-body"]}>
+              <PreComponent content={toolCall.originalArguments} maybeJson />
+            </div>
+          </div>
           {!!toolCallMessages?.length && (
-            <>
-              <dt>{t(K.RESPONSE)}:</dt>
-              <dd>
+            <div className={styles["tool-call-detail"]}>
+              <div className={styles["tool-call-detail-heading"]}>
+                {t(K.RESPONSE)}:
+              </div>
+              <div className={styles["tool-call-detail-body"]}>
                 {toolCallMessages?.map((message, index) => (
                   <div key={index}>
                     {message.parts?.map((part, partIndex) => (
@@ -243,10 +249,10 @@ function ToolCallComponent({ job }: { job: Job }): JSX.Element {
                     ))}
                   </div>
                 ))}
-              </dd>
-            </>
+              </div>
+            </div>
           )}
-        </dl>
+        </>
       )}
     </div>
   );
