@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.44.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.6...@next-bricks/advanced@0.44.7) (2025-05-07)
+
+
+### Bug Fixes
+
+* Drag and drop cards to snap ([6db4277](https://github.com/easyops-cn/next-advanced-bricks/commit/6db4277312afbfd822c5fd1c89c815f78bf75bda))
+
+
+
+
+
 ## [0.44.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.5...@next-bricks/advanced@0.44.6) (2025-05-06)
 
 **Note:** Version bump only for package @next-bricks/advanced
