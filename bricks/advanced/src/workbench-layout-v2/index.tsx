@@ -292,7 +292,10 @@ export const EoWorkbenchLayoutComponent = forwardRef<
             <DroppableComponentLayoutItem
               component={component}
               isEdit={isEdit}
-              layout={layout}
+              layout={{
+                ...layout,
+                cardWidth: layout.cardWidth || component.position.w,
+              }}
               onDelete={handleDeleteItem}
             />
           </div>
