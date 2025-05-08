@@ -1,0 +1,75 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.group + .group {
+  margin-top: 15px;
+}
+
+.group-title {
+  font-weight: 500;
+  font-size: 12px;
+  color: #000;
+  padding: 8px;
+  height: 36px;
+  line-height: 20px;
+}
+
+.item {
+  display: block;
+}
+
+.item::part(link) {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  height: 36px;
+  border-radius: 8px;
+  color: #000;
+}
+
+.item::part(link):hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.item-title {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.actions {
+  cursor: auto;
+}
+
+.item:not(:hover):not(.active) .actions {
+  display: none;
+}
+
+.working {
+  width: 8px;
+  height: 8px;
+  border-radius: 8px;
+  background: #2540ff;
+  margin: 0 7px;
+}
+
+.item:hover .working,
+.item.active .working {
+  display: none;
+}
