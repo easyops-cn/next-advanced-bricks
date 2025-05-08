@@ -30,6 +30,7 @@ const WrappedMiniActions = wrapBrick<
   EoMiniActionsEventsMapping
 >("eo-mini-actions", {
   onActionClick: "action.click",
+  onVisibleChange: "visible.change",
 });
 
 const ALLOWED_SHOW_ACTIONS = ["always", "hover"] as const;
