@@ -55,7 +55,7 @@ export function DroppableComponentLayoutItemElement(
   }, [layout, cardConfigs]);
 
   return (
-    <>
+    <div>
       {isEdit && (
         <div
           className={styles.editMask}
@@ -73,7 +73,7 @@ export function DroppableComponentLayoutItemElement(
           data-testid="droppable-component-layout-item-delete"
         />
       )}
-    </>
+    </div>
   );
 }
 
