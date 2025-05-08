@@ -50,6 +50,7 @@ export const WrappedMiniActions = wrapBrick<
   EoMiniActionsEventsMapping
 >("eo-mini-actions", {
   onActionClick: "action.click",
+  onVisibleChange: "visible.change",
 });
 export const WrappedSearch = wrapBrick<
   GeneralSearch,
