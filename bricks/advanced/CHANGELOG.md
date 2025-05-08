@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.44.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.7...@next-bricks/advanced@0.44.8) (2025-05-08)
+
+
+### Bug Fixes
+
+* support card height adapt ([aeeca22](https://github.com/easyops-cn/next-advanced-bricks/commit/aeeca22c12662622c705da6f3803a49ae7c58caa))
+
+
+
+
+
 ## [0.44.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.6...@next-bricks/advanced@0.44.7) (2025-05-07)
 
 
