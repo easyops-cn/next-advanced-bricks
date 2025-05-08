@@ -9,14 +9,17 @@ brick: ai-portal.chat-history
 properties:
   list:
     - id: task_x
+      url: /task_x
       title: 纳管 X 系统
       startTime: <% (+moment()) / 1000 %>
       state: working
     - id: task_y
+      url: /task_y
       title: 纳管 Y 系统
       startTime: <% (+moment().subtract(2, "hours")) / 1000 %>
       state: completed
     - id: task_z
+      url: /task_z
       title: 纳管 Z 系统
       startTime: <% (+moment().subtract(1, "days")) / 1000 %>
       state: completed

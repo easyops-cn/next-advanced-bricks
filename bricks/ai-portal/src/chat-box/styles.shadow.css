@@ -1,6 +1,5 @@
 :host {
   display: block;
-  color: #262626;
 }
 
 :host([hidden]) {
@@ -11,8 +10,8 @@
   box-sizing: border-box;
 }
 
-.container {
-  position: relative;
+.root {
+  color: #262626;
   background-color: #e1e3ec;
   background-image: url("./images/background@2x.png");
   background-size: 694px 144px;
@@ -21,6 +20,10 @@
   box-shadow: inset 0px 2px 5px 1px rgba(42, 46, 59, 0.1);
   border-radius: 20px;
   padding: 12px;
+}
+
+.container {
+  position: relative;
 }
 
 textarea {
@@ -48,8 +51,8 @@ textarea:focus {
 
 .btn-send {
   position: absolute;
-  bottom: 26px;
-  right: 26px;
+  bottom: 14px;
+  right: 14px;
   width: 28px;
   height: 28px;
   display: flex;
@@ -68,4 +71,69 @@ textarea:focus {
 
 .btn-send:active {
   background: rgba(0, 0, 0, 0.15);
+}
+
+.suggestions {
+  margin-top: 19px;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+  margin-bottom: 8px;
+}
+
+.icon {
+  margin-right: 5px;
+}
+
+.carousel {
+  overflow: hidden;
+}
+
+.carousel + .carousel {
+  margin-top: 7px;
+}
+
+.list {
+  display: flex;
+  width: max-content;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+}
+
+.item {
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  border: 1px solid #dcdee6;
+  padding: 12px;
+  max-width: 330px;
+  cursor: pointer;
+}
+
+.item:hover {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(37, 64, 255, 0.3);
+}
+
+.list > li + li {
+  margin-left: 7px;
+}
+
+.title {
+  margin-bottom: 4px;
+}
+
+.content {
+  color: rgba(0, 0, 0, 0.45);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tooltip {
+  display: block;
 }

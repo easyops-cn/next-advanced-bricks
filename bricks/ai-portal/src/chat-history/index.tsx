@@ -42,6 +42,7 @@ export interface ChatHistoryProps {
 
 export interface HistoryItem {
   id: string;
+  url: string;
   title: string;
   startTime: number;
   state?: TaskState;
@@ -160,7 +161,7 @@ export function ChatHistoryComponent({
                   className={classNames("item", {
                     active: actionsVisible === item.id,
                   })}
-                  url={`/${item.id}`}
+                  url={item.url}
                 >
                   <div className="item-title">{item.title}</div>
                   <WrappedMiniActions
