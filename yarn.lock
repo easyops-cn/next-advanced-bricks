@@ -2953,10 +2953,10 @@
   dependencies:
     "@next-core/http" "^1.0.0"
 
-"@next-bricks/basic@^1.49.6":
-  version "1.49.6"
-  resolved "https://registry.yarnpkg.com/@next-bricks/basic/-/basic-1.49.6.tgz#b457c7509281da98437c03c1d7272921c557a31f"
-  integrity sha512-iiZHZCDWg+Sak+AsWMHPBZaBKNShz2KUy30xs4pgeYut0bp7jhyp6hiDGEboLrKdL9aJd9pitq+hdLb/XAzXfg==
+"@next-bricks/basic@^1.53.0":
+  version "1.53.0"
+  resolved "https://registry.yarnpkg.com/@next-bricks/basic/-/basic-1.53.0.tgz#f3ef79643d6504f4ca84b5bb170f78d5f4e71c87"
+  integrity sha512-BWrnl6wxWaM2t/aOw/XCuA0c5r2eWfr+KT46ec+2ug/t0G9JDEAUjbN7tZ6NO1goBUG92ndpkaRsn8G81P2yew==
 
 "@next-bricks/containers@^1.14.4":
   version "1.14.4"
