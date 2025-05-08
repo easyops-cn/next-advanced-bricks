@@ -32,6 +32,7 @@ import {
 import type { showDialog as _showDialog } from "@next-bricks/basic/data-providers/show-dialog/show-dialog";
 import { SimpleAction } from "@next-bricks/basic/actions";
 import { keyBy, pick } from "lodash";
+import { SizeMe } from "react-sizeme";
 
 import { WorkbenchComponent, ExtraLayout } from "../interfaces";
 import { DroppableComponentLayoutItem } from "./DroppableComponentLayoutItem";
@@ -52,6 +53,10 @@ const WrappedDropdownButton = wrapBrick<
   DropdownButtonEventsMap
 >("eo-dropdown-button", { onActionClick: "action.click" });
 const showDialog = unwrapProvider<typeof _showDialog>("basic.show-dialog");
+
+const ROW_HEIGHT = 1;
+const MARGIN_HEIGHT = 10;
+const PRECISION_RATIO = 100;
 
 export interface EoWorkbenchLayoutV2Props {
   cardTitle?: string;
@@ -271,6 +276,33 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     [handleChange, layouts]
   );
 
+  /* istanbul ignore next */
+  const handleResize = useCallback(
+    (i: string, contentHeight: number) => {
+      const newH =
+        Math.round(
+          ((contentHeight + MARGIN_HEIGHT) / (MARGIN_HEIGHT + ROW_HEIGHT)) *
+            PRECISION_RATIO
+        ) / PRECISION_RATIO;
+      const oldLayout = layouts.find((layout: ExtraLayout) => layout.i === i);
+
+      if (!oldLayout) return;
+
+      const currentH =
+        Math.round(oldLayout.h * PRECISION_RATIO) / PRECISION_RATIO;
+      if (currentH !== newH) {
+        _setLayouts((prevLayouts: ExtraLayout[]) => {
+          const newLayouts = prevLayouts.map((item) =>
+            item.i === i ? { ...item, h: newH } : item
+          );
+          layoutCacheRef.current = newLayouts;
+          return newLayouts;
+        });
+      }
+    },
+    [layouts]
+  );
+
   const renderChild = useMemo(() => {
     return layouts
       .map((layout) => {
@@ -289,20 +321,29 @@ export const EoWorkbenchLayoutComponent = forwardRef<
             key={layout.i}
             style={component.style}
           >
-            <DroppableComponentLayoutItem
-              component={component}
-              isEdit={isEdit}
-              layout={{
-                ...layout,
-                cardWidth: layout.cardWidth || component.position.w,
+            <SizeMe monitorHeight>
+              {({ size }) => {
+                if (size.height) {
+                  handleResize(layout.i, size.height);
+                }
+                return (
+                  <DroppableComponentLayoutItem
+                    component={component}
+                    isEdit={isEdit}
+                    layout={{
+                      ...layout,
+                      cardWidth: layout.cardWidth || component.position.w,
+                    }}
+                    onDelete={handleDeleteItem}
+                  />
+                );
               }}
-              onDelete={handleDeleteItem}
-            />
+            </SizeMe>
           </div>
         );
       })
       .filter(Boolean);
-  }, [layouts, keyComponentMap, isEdit, handleDeleteItem]);
+  }, [layouts, keyComponentMap, isEdit, handleDeleteItem, handleResize]);
 
   const handleWatchLayoutSizeChange = useCallback(() => {
     if (layoutWrapperRef && isEdit) {
@@ -396,7 +437,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
           })}
           draggableCancel={`.${layoutItemStyles.deleteIcon},.edit-actions,.ignore-item`}
           breakpoints={{ lg: 1300, md: 1024, sm: 768 }}
-          rowHeight={1}
+          rowHeight={ROW_HEIGHT}
           cols={{ lg: 3, md: 3, sm: isEdit ? 3 : 1 }}
           isResizable={false}
           isDraggable={isEdit}
