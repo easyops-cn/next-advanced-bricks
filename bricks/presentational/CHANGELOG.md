@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.13.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.13.1...@next-bricks/presentational@1.13.2) (2025-05-08)
+
+
+### Bug Fixes
+
+* fix updated mini-actions events mapping ([48f8f43](https://github.com/easyops-cn/next-advanced-bricks/commit/48f8f430584693d9bdb1f0d90efb6a9d258360d1))
+
+
+
+
+
 ## [1.13.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.13.0...@next-bricks/presentational@1.13.1) (2025-04-17)
 
 **Note:** Version bump only for package @next-bricks/presentational

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.2.6...@next-bricks/ai-portal@0.3.0) (2025-05-08)
+
+
+### Features
+
+* new brick: chat-history ([fcd0955](https://github.com/easyops-cn/next-advanced-bricks/commit/fcd0955c75f2771a66b6fb12f7a56620a4eb1761))
+
+
+
+
+
 ## [0.2.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.2.5...@next-bricks/ai-portal@0.2.6) (2025-05-06)
 
 
