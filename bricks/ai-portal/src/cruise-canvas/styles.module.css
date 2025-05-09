@@ -9,6 +9,7 @@ ai-portal\.cruise-canvas {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+  background-attachment: fixed;
   color: #262626;
 
   --cruise-canvas-node-border: 1px solid gray;
