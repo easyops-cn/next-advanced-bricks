@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.16.2...@next-bricks/vs@1.16.3) (2025-05-09)
+
+
+### Bug Fixes
+
+* warn when forgot to quote expression which contains a colon ([529f5e1](https://github.com/easyops-cn/next-advanced-bricks/commit/529f5e1cce3595231efce0cbc5b51225903caaaf))
+
+
+
+
+
 ## [1.16.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.16.1...@next-bricks/vs@1.16.2) (2025-04-28)
 
 **Note:** Version bump only for package @next-bricks/vs
