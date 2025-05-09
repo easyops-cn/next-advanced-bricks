@@ -261,4 +261,26 @@ describe("lintYaml", () => {
       lintDecorations: [],
     });
   });
+
+  test("syntax error", async () => {
+    const result = await lintYaml({
+      source: "abc:\n  def: <% a ? b : c %>",
+    });
+    expect(result).toEqual({
+      lintMarkers: [
+        {
+          start: 12,
+          end: 13,
+          message: `Nested mappings are not allowed in compact mappings at line 2, column 8:
+
+  def: <% a ? b : c %>
+       ^
+`,
+          severity: "Error",
+          code: "BLOCK_AS_IMPLICIT_KEY",
+        },
+      ],
+      lintDecorations: [],
+    });
+  });
 });

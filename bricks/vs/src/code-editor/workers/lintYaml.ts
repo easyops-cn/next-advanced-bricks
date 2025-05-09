@@ -143,6 +143,16 @@ export async function lintYaml({
       });
     }
 
+    for (const error of doc.errors) {
+      lintMarkers.push({
+        start: error.pos[0],
+        end: error.pos[1],
+        message: error.message,
+        severity: "Error",
+        code: error.code,
+      });
+    }
+
     visit(doc, {
       Scalar(key, node) {
         if (key !== "key" && typeof node.value === "string") {
