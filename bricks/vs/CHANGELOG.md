@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.16.3...@next-bricks/vs@1.16.4) (2025-05-09)
+
+
+### Bug Fixes
+
+* show yaml syntax error ([322ecc8](https://github.com/easyops-cn/next-advanced-bricks/commit/322ecc8af787634300a8c5ad3422a8cda1131899))
+
+
+
+
+
 ## [1.16.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.16.2...@next-bricks/vs@1.16.3) (2025-05-09)
 
 
