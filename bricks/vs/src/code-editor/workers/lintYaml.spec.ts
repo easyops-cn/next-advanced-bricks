@@ -197,4 +197,68 @@ describe("lintYaml", () => {
       lintDecorations: [],
     });
   });
+
+  test("forgot to quote expression which contains a colon", async () => {
+    const result = await lintYaml({
+      source: " <%= a ? b : c %>\n\n",
+    });
+    expect(result).toEqual({
+      lintMarkers: [
+        {
+          start: 1,
+          end: 4,
+          message:
+            "You need to quote the expression when it contains a colon ':'",
+          severity: "Warning",
+        },
+        {
+          start: 11,
+          end: 12,
+          message:
+            "You need to quote the expression when it contains a colon ':'",
+          severity: "Warning",
+        },
+        {
+          start: 15,
+          end: 17,
+          message:
+            "You need to quote the expression when it contains a colon ':'",
+          severity: "Warning",
+        },
+      ],
+      lintDecorations: [],
+    });
+  });
+
+  test("forgot to quote expression which contains a colon and line breaks", async () => {
+    const result = await lintYaml({
+      source: " <%= a ? b :\n  c %>\n\n",
+    });
+    expect(result).toEqual({
+      lintMarkers: [
+        {
+          start: 1,
+          end: 4,
+          message:
+            "You need to quote the expression when it contains a colon ':'",
+          severity: "Warning",
+        },
+        {
+          start: 11,
+          end: 12,
+          message:
+            "You need to quote the expression when it contains a colon ':'",
+          severity: "Warning",
+        },
+        {
+          start: 17,
+          end: 19,
+          message:
+            "You need to quote the expression when it contains a colon ':'",
+          severity: "Warning",
+        },
+      ],
+      lintDecorations: [],
+    });
+  });
 });

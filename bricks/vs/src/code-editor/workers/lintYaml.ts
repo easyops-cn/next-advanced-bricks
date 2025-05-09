@@ -54,12 +54,16 @@ const LEVEL_TO_SEVERITY_NAME = {
   error: "Error",
 } as const;
 
+function matchExpression(source: string) {
+  return source.match(/^\s*<%[~=]?\s|\s%>\s*$/g)!;
+}
+
 export async function lintYaml({
   source,
   links,
   markers,
 }: LintRequest): Promise<LintResponse> {
-  const [{ parseDocument, visit }, { preevaluate, isEvaluable }] =
+  const [{ parseDocument, isMap, visit }, { preevaluate, isEvaluable }] =
     await Promise.all([import("yaml"), import("@next-core/cook")]);
 
   const lintMarkers: LintMarker[] = [];
@@ -107,6 +111,38 @@ export async function lintYaml({
       version: "1.2",
     });
 
+    // If the whole source is an expression, but been parsed as a map,
+    // it indicates a mistake that forgot to quote the expression.
+    if (isEvaluable(source) && isMap(doc.contents)) {
+      const [, prefix, start] = source.match(/^(\s*)(<%[~=]?)\s/)!;
+      const [, end, suffix] = source.match(/\s(%>)(\s*)$/)!;
+      const markerDefaults = {
+        message:
+          "You need to quote the expression when it contains a colon ':'",
+        severity: "Warning",
+      } as const;
+      lintMarkers.push({
+        start: prefix.length,
+        end: prefix.length + start.length,
+        ...markerDefaults,
+      });
+      const colon = source.indexOf(":");
+      // istanbul ignore else: defensive check
+      if (colon >= 0) {
+        lintMarkers.push({
+          start: colon,
+          end: colon + 1,
+          ...markerDefaults,
+        });
+      }
+      const suffixStart = source.length - suffix.length;
+      lintMarkers.push({
+        start: suffixStart - end.length,
+        end: suffixStart,
+        ...markerDefaults,
+      });
+    }
+
     visit(doc, {
       Scalar(key, node) {
         if (key !== "key" && typeof node.value === "string") {
@@ -124,9 +160,7 @@ export async function lintYaml({
                 | CST.FlowScalar;
               // 此 source 非 yaml 解析 后的值，而是原始内容
               if (isEvaluable(srcToken.source)) {
-                const fixes: string[] = srcToken.source.match(
-                  /^\s*<%[~=]?\s|\s%>\s*$/g
-                )!;
+                const fixes = matchExpression(srcToken.source);
                 let offset: number;
                 if (srcToken.type === "block-scalar") {
                   const lastProp = srcToken.props[srcToken.props.length - 1];
@@ -188,9 +222,7 @@ export async function lintYaml({
             case "QUOTE_SINGLE":
             case "QUOTE_DOUBLE": {
               if (isEvaluable(node.value)) {
-                const fixes: string[] = node.value.match(
-                  /^\s*<%[~=]?\s|\s%>\s*$/g
-                )!;
+                const fixes = matchExpression(node.value);
                 const srcToken = node.srcToken as CST.FlowScalar;
                 const escapedIndexes = escapedIndexesWithQuote(
                   srcToken.source.slice(1, -1),
