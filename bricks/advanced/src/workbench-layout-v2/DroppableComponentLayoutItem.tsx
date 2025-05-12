@@ -42,17 +42,31 @@ export function DroppableComponentLayoutItemElement(
     () => cloneDeep(component.useBrick),
     [component.useBrick]
   );
-  const [cardConfigs, setCardConfigs] = useState(() => omit(layout, position));
+  const [cardConfigs, setCardConfigs] = useState(() =>
+    omit(
+      {
+        ...layout,
+        cardWidth: layout.cardWidth || component.position.w,
+      },
+      position
+    )
+  );
 
   // todo 用于处理 layout 重新渲染导致页面卡顿
   /* istanbul ignore next */
   useEffect(() => {
-    const newCardConfigs = omit(layout, position);
+    const newCardConfigs = omit(
+      {
+        ...layout,
+        cardWidth: layout.cardWidth || component.position.w,
+      },
+      position
+    );
 
     if (!isEqual(newCardConfigs, cardConfigs)) {
       setCardConfigs(newCardConfigs);
     }
-  }, [layout, cardConfigs]);
+  }, [layout, cardConfigs, component.position.w]);
 
   return (
     <div>

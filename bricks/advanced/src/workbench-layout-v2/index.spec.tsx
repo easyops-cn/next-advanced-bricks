@@ -281,7 +281,7 @@ describe("eo-workbench-layout-v2", () => {
     act(() => {
       MockedDraggableComponentMenuItem.mock.lastCall?.[0].onDragStart?.();
       MockedReactGridLayoutComponent.mock.lastCall?.[0].onDrop?.(
-        {} as Layout[],
+        [{ i: "__dropping-elem__", x: 1, y: 1, w: 1, h: 1 }] as Layout[],
         { i: "__dropping-elem__", x: 1, y: 1, w: 1, h: 1 },
         {} as Event
       );
@@ -449,7 +449,7 @@ describe("eo-workbench-layout-v2", () => {
 
     triggerLayoutChange(newLayout4);
 
-    expect(mockChangeEvent).not.toBeCalledWith(
+    expect(mockChangeEvent).toBeCalledWith(
       expect.objectContaining({
         detail: newLayout4,
       })
