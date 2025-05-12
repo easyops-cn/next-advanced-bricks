@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.44.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.8...@next-bricks/advanced@0.44.9) (2025-05-12)
+
+
+### Bug Fixes
+
+* 修复抖动问题,去除拖拽限制 ([ec8c564](https://github.com/easyops-cn/next-advanced-bricks/commit/ec8c564f39c5c1b44463373129c395202e003807))
+
+
+
+
+
 ## [0.44.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.7...@next-bricks/advanced@0.44.8) (2025-05-08)
 
 
