@@ -15,12 +15,7 @@ import { unwrapProvider } from "@next-core/utils/general";
 import { UseSingleBrickConf } from "@next-core/types";
 import { ReactUseMultipleBricks } from "@next-core/react-runtime";
 import { auth } from "@next-core/easyops-runtime";
-import {
-  ItemCallback,
-  Layout,
-  Responsive,
-  WidthProvider,
-} from "react-grid-layout";
+import { Layout, Responsive, WidthProvider } from "react-grid-layout";
 import "@next-core/theme";
 import type { Button, ButtonProps } from "@next-bricks/basic/button";
 import {
@@ -137,20 +132,20 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     [onChange, setLayouts]
   );
 
-  const handleDragCallback: ItemCallback = (layout, oldItem, newItem) => {
-    const placeholderDOM = gridLayoutRef.current?.querySelector(
-      ".react-grid-placeholder"
-    );
-    if (placeholderDOM) {
-      if (newItem.w > 1 && newItem.x > 0) {
-        !placeholderDOM.classList.contains("forbidden") &&
-          placeholderDOM.classList.add("forbidden");
-      } else {
-        placeholderDOM.classList.contains("forbidden") &&
-          placeholderDOM.classList.remove("forbidden");
-      }
-    }
-  };
+  // const handleDragCallback: ItemCallback = (layout, oldItem, newItem) => {
+  //   const placeholderDOM = gridLayoutRef.current?.querySelector(
+  //     ".react-grid-placeholder"
+  //   );
+  //   if (placeholderDOM) {
+  //     if (newItem.w > 1 && newItem.x > 0) {
+  //       !placeholderDOM.classList.contains("forbidden") &&
+  //         placeholderDOM.classList.add("forbidden");
+  //     } else {
+  //       placeholderDOM.classList.contains("forbidden") &&
+  //         placeholderDOM.classList.remove("forbidden");
+  //     }
+  //   }
+  // };
 
   /* istanbul ignore next */
   const handleLayoutChange = useCallback(
@@ -165,21 +160,14 @@ export const EoWorkbenchLayoutComponent = forwardRef<
       }
 
       const currentLayoutsMap = keyBy(layouts, "i");
-
-      let isAllowAction = true;
       for (let t = 0; t < currentLayout.length; t++) {
         const { x, w, y, h, i, minH } = currentLayout[t];
-        if (w > 1 && x > 0) {
-          isAllowAction = false;
-          break;
-        }
         if (w === 1 && x < 2) {
           const matchItem = currentLayout.find(
             (item) => item.i !== i && item.w === 1 && item.y === y && x < 2
           );
           if (matchItem) {
             currentLayout[t].minH = currentLayout[t].minH ?? h;
-            currentLayout[t].h = Math.max(matchItem.h, h);
           }
         } else {
           currentLayout[t].h = minH ?? h;
@@ -188,24 +176,10 @@ export const EoWorkbenchLayoutComponent = forwardRef<
       }
 
       handleChange(
-        !isAllowAction
-          ? // revert to previous layouts
-            layoutCacheRef.current.map((item) => {
-              const { w, type, i } = item;
-              // should update key to refresh layout
-              const key = i ?? `${getRealKey(type as string)}:${Math.random()}`;
-              let x = item.x;
-
-              if (w > 1 && x > 0) {
-                x = 0;
-              }
-
-              return { ...item, x, i: key };
-            })
-          : currentLayout.map((v) => {
-              const layoutItem = currentLayoutsMap?.[v.i];
-              return { ...layoutItem, ...v, type: getRealKey(v.i) };
-            })
+        currentLayout.map((v) => {
+          const layoutItem = currentLayoutsMap?.[v.i];
+          return { ...layoutItem, ...v, type: getRealKey(v.i) };
+        })
       );
     },
     [handleChange, isEdit, layouts]
@@ -249,24 +223,35 @@ export const EoWorkbenchLayoutComponent = forwardRef<
 
   const addComponent = (
     component: WorkbenchComponent,
-    layout?: Layout
+    currentLayouts?: Layout[]
   ): void => {
     const defaultCardConfig = getLayoutDefaultCardConfig(component.key);
-    const newLayout = {
+    const currentLayoutsMap = keyBy(currentLayouts, "i");
+    const newLayouts = layouts.map((layout) => {
+      return {
+        ...layout,
+        ...pick(currentLayoutsMap?.[layout.i], ["x", "y"]),
+      };
+    });
+    let newLayout = {
       ...defaultCardConfig,
       ...component.position,
       i: `${component.key}:${Math.random()}`,
       cardWidth: component.position.w,
       type: component.key,
-      ...(layout
-        ? pick(layout, ["x", "y"])
-        : {
-            x: component.position.w > 1 ? 0 : (layouts.length * 2) % cols,
-            y: Infinity,
-          }),
+      x: component.position.w > 1 ? 0 : (layouts.length * 2) % cols,
+      y: Infinity,
     };
-
-    handleChange(layout ? [newLayout, ...layouts] : layouts.concat(newLayout));
+    if (currentLayouts) {
+      const dropItem = currentLayouts.find((v) => v.i === "__dropping-elem__");
+      newLayout = {
+        ...newLayout,
+        ...pick(dropItem, "x", "y"),
+      };
+      handleChange([newLayout, ...newLayouts]);
+      return;
+    }
+    handleChange(layouts.concat(newLayout));
   };
 
   const handleDeleteItem = useCallback(
@@ -330,10 +315,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
                   <DroppableComponentLayoutItem
                     component={component}
                     isEdit={isEdit}
-                    layout={{
-                      ...layout,
-                      cardWidth: layout.cardWidth || component.position.w,
-                    }}
+                    layout={layout}
                     onDelete={handleDeleteItem}
                   />
                 );
@@ -421,7 +403,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
                 ...(isAdmin
                   ? [{ text: "另存为模板", event: "saveAsTemplate" }]
                   : []),
-                { text: "从模版加载", event: "loadFromTemplate" },
+                { text: "从模板加载", event: "loadFromTemplate" },
                 { text: "清空所有", danger: true, event: "clear" },
               ]}
               onActionClick={(e) => {
@@ -442,15 +424,15 @@ export const EoWorkbenchLayoutComponent = forwardRef<
           isResizable={false}
           isDraggable={isEdit}
           isDroppable={isEdit}
-          onDrag={handleDragCallback}
+          // onDrag={handleDragCallback}
           onDropDragOver={() => {
             if (draggingComponentRef.current) {
               return pick(draggingComponentRef.current.position, ["w", "h"]);
             }
           }}
-          onDrop={(layout, item) => {
+          onDrop={(layout) => {
             if (draggingComponentRef.current) {
-              addComponent(draggingComponentRef.current, item);
+              addComponent(draggingComponentRef.current, layout);
             }
           }}
           onLayoutChange={handleLayoutChange}
