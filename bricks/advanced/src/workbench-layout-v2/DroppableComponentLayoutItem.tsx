@@ -68,11 +68,32 @@ export function DroppableComponentLayoutItemElement(
     }
   }, [layout, cardConfigs, component.position.w]);
 
+  const cardBorderWidth = useMemo(() => {
+    return cardConfigs?.cardBorderWidth !== 1
+      ? (cardConfigs?.cardBorderWidth as any) - 1
+      : 0;
+  }, [cardConfigs]);
+
+  const editMaskTop = useMemo(() => {
+    return 45 + cardBorderWidth;
+  }, [cardBorderWidth]);
+
+  const deleteIconPosition = useMemo(() => {
+    const top = 15 + cardBorderWidth;
+    return {
+      top,
+      right: top,
+    };
+  }, [cardBorderWidth]);
+
   return (
-    <div>
+    <div className={styles.itemWrapper}>
       {isEdit && (
         <div
           className={styles.editMask}
+          style={{
+            top: editMaskTop,
+          }}
           onMouseDown={handleEditMaskClick}
           data-testid="droppable-component-layout-item-edit-mask"
         />
@@ -82,6 +103,7 @@ export function DroppableComponentLayoutItemElement(
         <WrappedIcon
           icon="delete"
           lib="antd"
+          style={deleteIconPosition}
           className={styles.deleteIcon}
           onClick={handleDeleteClick}
           data-testid="droppable-component-layout-item-delete"

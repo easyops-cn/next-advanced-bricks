@@ -33,3 +33,7 @@
 .deleteIcon:active {
   color: var(--color-error-active);
 }
+
+.itemWrapper {
+  position: relative;
+}
