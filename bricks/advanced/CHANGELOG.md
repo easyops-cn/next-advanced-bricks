@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.44.10](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.9...@next-bricks/advanced@0.44.10) (2025-05-13)
+
+
+### Bug Fixes
+
+* 修复编辑边框宽度,编辑和删除图标位置移位的问题 ([02d928b](https://github.com/easyops-cn/next-advanced-bricks/commit/02d928bf707cc55620af5e7a45efd4badd443c6e))
+
+
+
+
+
 ## [0.44.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.8...@next-bricks/advanced@0.44.9) (2025-05-12)
 
 
