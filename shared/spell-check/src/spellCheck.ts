@@ -121,6 +121,24 @@ const WELL_KNOWN_WORDS: string[] = [
   "nowrap",
   "webkit",
   "minmax",
+
+  "microapp",
+  "ctrl",
+  "dagre",
+  "rankdir",
+  "ranksep",
+  "nodesep",
+  "topo",
+  "plaintext",
+  "debuggable",
+  "async",
+  "searchable",
+  "fullscreen",
+  "debounce",
+  "online",
+  "offline",
+  "dropdown",
+  "elevo",
 ];
 
 export interface SpellCheckRequest {
