@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.44.12](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.11...@next-bricks/advanced@0.44.12) (2025-05-14)
+
+
+### Bug Fixes
+
+* 修复默认模板渲染宽度变化导致按照 layouts 顺序计算每个卡片的x和 y 坐标导致,有卡片互换 ([4adac35](https://github.com/easyops-cn/next-advanced-bricks/commit/4adac35b65f75cb8a0b09fa051012bdc91577677))
+
+
+
+
+
 ## [0.44.11](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.10...@next-bricks/advanced@0.44.11) (2025-05-14)
 
 
