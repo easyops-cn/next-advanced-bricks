@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.44.11](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.10...@next-bricks/advanced@0.44.11) (2025-05-14)
+
+
+### Bug Fixes
+
+* 修复点击第二行卡片会发生布局变化的情况 ([417fce5](https://github.com/easyops-cn/next-advanced-bricks/commit/417fce56c6440ea5aba4b9c7d9cadb6a8f0c799d))
+
+
+
+
+
 ## [0.44.10](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.9...@next-bricks/advanced@0.44.10) (2025-05-13)
 
 
