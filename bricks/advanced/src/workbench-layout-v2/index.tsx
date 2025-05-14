@@ -51,7 +51,6 @@ const showDialog = unwrapProvider<typeof _showDialog>("basic.show-dialog");
 
 const ROW_HEIGHT = 1;
 const MARGIN_HEIGHT = 10;
-const PRECISION_RATIO = 100;
 
 export interface EoWorkbenchLayoutV2Props {
   cardTitle?: string;
@@ -264,17 +263,14 @@ export const EoWorkbenchLayoutComponent = forwardRef<
   /* istanbul ignore next */
   const handleResize = useCallback(
     (i: string, contentHeight: number) => {
-      const newH =
-        Math.round(
-          ((contentHeight + MARGIN_HEIGHT) / (MARGIN_HEIGHT + ROW_HEIGHT)) *
-            PRECISION_RATIO
-        ) / PRECISION_RATIO;
+      const newH = Math.round(
+        (contentHeight + MARGIN_HEIGHT) / (MARGIN_HEIGHT + ROW_HEIGHT)
+      );
       const oldLayout = layouts.find((layout: ExtraLayout) => layout.i === i);
 
       if (!oldLayout) return;
 
-      const currentH =
-        Math.round(oldLayout.h * PRECISION_RATIO) / PRECISION_RATIO;
+      const currentH = Math.round(oldLayout.h);
       if (currentH !== newH) {
         _setLayouts((prevLayouts: ExtraLayout[]) => {
           const newLayouts = prevLayouts.map((item) =>
