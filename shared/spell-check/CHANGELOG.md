@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/spell-check@0.1.1...@next-shared/spell-check@0.1.2) (2025-05-14)
+
+
+### Bug Fixes
+
+* add some well known words ([3899dac](https://github.com/easyops-cn/next-advanced-bricks/commit/3899dac59f7dc8d7ef3ebdd55dbdb3b733281f5f))
+
+
+
+
+
 ## [0.1.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/spell-check@0.1.0...@next-shared/spell-check@0.1.1) (2025-03-19)
 
 
