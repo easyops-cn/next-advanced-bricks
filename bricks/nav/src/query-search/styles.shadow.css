@@ -1,0 +1,195 @@
+:host {
+  display: inline-block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.container {
+  position: relative;
+  width: 32px;
+  height: 32px;
+}
+
+.containerShowInput {
+  width: 500px;
+}
+
+.inputContent {
+  background: rgba(204, 209, 219, 0.3);
+  border-radius: 3px;
+  height: 30px;
+  position: absolute;
+  right: 0;
+}
+
+.inputContentSlidein {
+  animation: slidein 3s forwards;
+}
+
+.inputContentSlideout {
+  animation: slideout 3s forwards;
+}
+
+input {
+  flex: 1;
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  line-height: 20px;
+  color: inherit;
+  background-color: transparent;
+  cursor: inherit;
+  width: 100%;
+}
+
+select {
+  border: none;
+  outline: none;
+  width: 150px;
+  background: transparent;
+}
+
+input:focus {
+  border: none !important;
+}
+
+.button {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+@keyframes slidein {
+  from {
+    width: 0px;
+  }
+
+  to {
+    width: 500px;
+  }
+}
+
+@keyframes slideout {
+  from {
+    width: 500px;
+  }
+
+  to {
+    width: 0px;
+  }
+}
+
+.input-addon-wrapper {
+  display: table;
+  width: 100%;
+  line-height: 22px;
+}
+
+.input-affix-wrapper {
+  display: inline-flex;
+  position: relative;
+  padding-bottom: 4px;
+
+  width: 100%;
+
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
+  overflow: visible;
+}
+
+.input-suffix,
+.input-before-addon {
+  display: flex;
+  flex: none;
+  align-items: center;
+  margin-left: 4px;
+  margin-right: 4px;
+  width: 16px;
+}
+
+.input-before-addon {
+  width: 100px;
+}
+
+.input-clear-icon {
+  margin-left: 4px;
+  font-size: 12px;
+  color: var(--text-color-disabled);
+  cursor: pointer;
+}
+
+.input-clear-icon:hover {
+  color: var(--antd-text-color-secondary);
+}
+
+.historySearchContainer {
+  width: 500px;
+  height: 152px;
+  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
+  background-color: var(--antd-dropdown-menu-bg);
+  top: 35px;
+  position: absolute;
+}
+
+.quickSearchTip {
+  width: 140px;
+  height: 17px;
+  font-family:
+    PingFangSC,
+    PingFang SC;
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--local-card-description-color);
+  line-height: 17px;
+  text-align: left;
+  font-style: normal;
+  padding: 8px;
+  width: 484px;
+  border-top: 1px solid #e8e8e8;
+}
+
+.historySearchContent {
+  height: 103px;
+  padding: 8px;
+}
+
+.latestSearchText {
+  width: 56px;
+  height: 20px;
+  font-family:
+    PingFangSC,
+    PingFang SC;
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--local-card-description-color);
+  line-height: 20px;
+  text-align: left;
+  font-style: normal;
+  margin-bottom: 10px;
+}
+
+.latestSearchTagText {
+  height: 17px;
+  font-family:
+    PingFangSC,
+    PingFang SC;
+  font-weight: 400;
+  font-size: 14px;
+  color: #262626;
+  line-height: 17px;
+  text-align: center;
+  font-style: normal;
+}
+.latestSearchTagContent {
+  height: 20px;
+  background: #f5f5f5;
+  border-radius: 3px;
+  padding: 1.5px 8px;
+  margin-right: 10px;
+  cursor: pointer;
+}

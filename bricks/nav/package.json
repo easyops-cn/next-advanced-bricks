@@ -55,7 +55,9 @@
     "react": "0.0.0-experimental-ee8509801-20230117",
     "react-dom": "0.0.0-experimental-ee8509801-20230117",
     "react-i18next": "^12.3.1",
-    "react-transition-group": "^4.4.5"
+    "react-transition-group": "^4.4.5",
+    "antd": "^5.23.2",
+    "@ant-design/cssinjs": "^1.22.1"
   },
   "devDependencies": {
     "@next-core/build-next-bricks": "^1.23.12",
