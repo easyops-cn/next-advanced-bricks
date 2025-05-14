@@ -22,3 +22,4 @@ import "./nav-logo/index.js";
 import "./poll-announce/index.js";
 import "./data-providers/get-menu-config-tree.js";
 import "./data-providers/get-menu-config-options.js";
+import "./query-search/index.js";
