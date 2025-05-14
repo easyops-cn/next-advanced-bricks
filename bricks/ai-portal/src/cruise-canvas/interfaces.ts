@@ -134,7 +134,7 @@ export interface JobPatch extends Partial<Job> {
   id: string;
 }
 
-export type TaskState =
+export type JobState =
   | "submitted"
   | "working"
   | "input-required"
@@ -143,7 +143,7 @@ export type TaskState =
   | "failed"
   | "unknown";
 
-export type JobState = TaskState;
+export type TaskState = JobState | "confirming-plan";
 
 export interface Message {
   role: string;

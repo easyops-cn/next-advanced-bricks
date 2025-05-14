@@ -9,13 +9,17 @@ ai-portal\.cruise-canvas {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+  background-attachment: fixed;
   color: #262626;
 
   --cruise-canvas-node-border: 1px solid gray;
-  --cruise-canvas-node-width-medium: 380px;
-  --cruise-canvas-node-width-large: 764px;
+  --cruise-canvas-node-width-small: 330px;
+  --cruise-canvas-node-width-medium: 453px;
 
   --cruise-canvas-primary-color: #2540ff;
+  --cruise-canvas-input-background: rgba(255, 255, 255, 0.8);
+  --cruise-canvas-input-box-shadow:
+    0px 1px 0px 0px #ffffff, inset 0px 2px 4px 0px #b3bcf9;
 }
 
 .root {
@@ -80,33 +84,6 @@ svg.edges {
   stroke-width: 2px;
   stroke: rgba(255, 255, 255, 0.6);
   stroke-dasharray: 5, 5;
-}
-
-.size-medium,
-.size-large {
-  border: var(--cruise-canvas-node-border);
-  border-radius: 6px;
-  padding: 6px;
-}
-
-.size-medium {
-  width: var(--cruise-canvas-node-width-medium);
-}
-
-.size-large {
-  width: var(--cruise-canvas-node-width-large);
-}
-
-.node-default {
-  border: var(--cruise-canvas-node-border);
-}
-
-.node-default > :first-child {
-  margin-top: 0;
-}
-
-.node-default > :last-child {
-  margin-bottom: 0;
 }
 
 .go-back {

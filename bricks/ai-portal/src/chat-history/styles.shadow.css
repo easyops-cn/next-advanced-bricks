@@ -16,6 +16,12 @@ ul {
   padding: 0;
 }
 
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+}
+
 .group + .group {
   margin-top: 15px;
 }

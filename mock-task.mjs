@@ -35,138 +35,205 @@ class MockTask {
         jobs: [],
         plan: [],
         startTime: 1745570717,
-        __delay: 2000,
+        __delay: 1000,
       },
       {
-        state: "working",
-        jobs: [],
-        plan: [
-          {
-            id: "mock-job-id-1",
-            instruction: "创建系统",
-          },
-          {
-            id: "mock-job-id-2",
-            instruction: "创建环境",
-          },
-          // {
-          //   id: "mock-job-id-3",
-          //   instruction: "安装Agent",
-          // },
-          {
-            id: "mock-job-id-4",
-            instruction: "关联主机到环境中",
-          },
-          {
-            id: "mock-job-id-5",
-            instruction: "创建基于Agent扫描的节点发现任务",
-          },
-          {
-            id: "mock-job-id-6",
-            instruction: "智能节点聚类",
-          },
-        ],
-        __delay: 200,
-      },
-      {
+        state: "confirming-plan",
         jobs: [
           {
-            id: "mock-job-id-1",
-            state: "submitted",
+            id: "mock-job-id-0",
             startTime: 1745572717,
-            instruction: "创建系统",
-          },
-        ],
-        __delay: 4000,
-      },
-      {
-        jobs: [
-          {
-            id: "mock-job-id-1",
-            state: "working",
-            messages: [
-              {
-                role: "assistant",
-                parts: [
-                  {
-                    type: "text",
-                    text: "准备创建 XX 系统\n\n| Name | Age | Profile |\n| - | - | - |\n| Tom | 23 | Playing basketball, hiking, etc,.  |\n| Lucy | 21 | Reading, music, movies, ... |",
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-        __delay: 100,
-      },
-      {
-        plan: [
-          {
-            id: "mock-job-id-1",
-            instruction: "创建系统",
-          },
-          {
-            id: "mock-job-id-1-a",
-            instruction: "要求用户补充完整的系统信息",
-          },
-          {
-            id: "mock-job-id-2",
-            instruction: "创建环境",
-          },
-          // {
-          //   id: "mock-job-id-3",
-          //   instruction: "安装Agent",
-          // },
-          {
-            id: "mock-job-id-4",
-            instruction: "关联主机到环境中",
-          },
-          {
-            id: "mock-job-id-5",
-            instruction: "创建基于Agent扫描的节点发现任务",
-          },
-          {
-            id: "mock-job-id-6",
-            instruction: "智能节点聚类",
-          },
-        ],
-        jobs: [
-          {
-            id: "mock-job-id-1",
-            state: "completed",
-          },
-          {
-            id: "mock-job-id-1-a",
-            upstream: ["mock-job-id-1"],
-            startTime: 1745574717,
-            instruction: "要求用户补充完整的系统信息",
-            state: "working",
-          },
-        ],
-        __delay: 500,
-      },
-      {
-        state: "input-required",
-        jobs: [
-          {
-            id: "mock-job-id-1-a",
-            instruction: "要求用户补充完整的系统信息",
             state: "input-required",
+            instruction: "确定计划",
             toolCall: {
-              name: "ask_human",
+              name: "ask_human_confirming_plan",
               arguments: JSON.stringify({
-                command: "ask_user_more",
                 question:
                   "请补充完整的系统信息，包括系统编码、运维负责人（默认为当前用户）。",
+                steps: [
+                  "创建系统",
+                  "创建环境",
+                  "关联主机到环境中",
+                  "创建基于Agent扫描的节点发现任务",
+                  "智能节点聚类",
+                ],
               }),
             },
           },
         ],
-        __delay: 500,
       },
     ];
 
     if (this.#input) {
+      stream.splice(
+        stream.length - 1,
+        1,
+        {
+          state: "working",
+        jobs: [
+          {
+            id: "mock-job-id-0",
+            startTime: 1745572717,
+            state: "completed",
+            instruction: "确定计划",
+            toolCall: {
+              name: "ask_human_confirming_plan",
+              arguments: JSON.stringify({
+                question:
+                  "请补充完整的系统信息，包括系统编码、运维负责人（默认为当前用户）。",
+                steps: [
+                  "创建系统",
+                  "创建环境",
+                  "关联主机到环境中",
+                  "创建基于Agent扫描的节点发现任务",
+                  "智能节点聚类",
+                ],
+              }),
+            },
+            messages: [
+              {
+                role: "tool",
+                parts: [{
+                  type: "text",
+                  text: this.#input,
+                }]
+              }
+            ]
+          },
+        ],
+      },
+        {
+          state: "working",
+          jobs: [],
+          plan: [
+            {
+              id: "mock-job-id-1",
+              instruction: "创建系统",
+            },
+            {
+              id: "mock-job-id-2",
+              instruction: "创建环境",
+            },
+            // {
+            //   id: "mock-job-id-3",
+            //   instruction: "安装Agent",
+            // },
+            {
+              id: "mock-job-id-4",
+              instruction: "关联主机到环境中",
+            },
+            {
+              id: "mock-job-id-5",
+              instruction: "创建基于Agent扫描的节点发现任务",
+            },
+            {
+              id: "mock-job-id-6",
+              instruction: "智能节点聚类",
+            },
+          ],
+          __delay: 200,
+        },
+        {
+          jobs: [
+            {
+              id: "mock-job-id-1",
+              upstream: ["mock-job-id-0"],
+              state: "submitted",
+              startTime: 1745572717,
+              instruction: "创建系统",
+            },
+          ],
+          __delay: 4000,
+        },
+        {
+          jobs: [
+            {
+              id: "mock-job-id-1",
+              state: "working",
+              messages: [
+                {
+                  role: "assistant",
+                  parts: [
+                    {
+                      type: "text",
+                      text: "准备创建 XX 系统\n\n| Name | Age | Profile |\n| - | - | - |\n| Tom | 23 | Playing basketball, hiking, etc,.  |\n| Lucy | 21 | Reading, music, movies, ... |",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          __delay: 100,
+        },
+        {
+          plan: [
+            {
+              id: "mock-job-id-1",
+              instruction: "创建系统",
+            },
+            {
+              id: "mock-job-id-1-a",
+              instruction: "要求用户补充完整的系统信息",
+            },
+            {
+              id: "mock-job-id-2",
+              instruction: "创建环境",
+            },
+            // {
+            //   id: "mock-job-id-3",
+            //   instruction: "安装Agent",
+            // },
+            {
+              id: "mock-job-id-4",
+              instruction: "关联主机到环境中",
+            },
+            {
+              id: "mock-job-id-5",
+              instruction: "创建基于Agent扫描的节点发现任务",
+            },
+            {
+              id: "mock-job-id-6",
+              instruction: "智能节点聚类",
+            },
+          ],
+          jobs: [
+            {
+              id: "mock-job-id-1",
+              state: "completed",
+            },
+            {
+              id: "mock-job-id-1-a",
+              upstream: ["mock-job-id-1"],
+              startTime: 1745574717,
+              instruction: "要求用户补充完整的系统信息",
+              state: "working",
+            },
+          ],
+          __delay: 500,
+        },
+        {
+          state: "input-required",
+          jobs: [
+            {
+              id: "mock-job-id-1-a",
+              instruction: "要求用户补充完整的系统信息",
+              state: "input-required",
+              toolCall: {
+                name: "ask_human",
+                arguments: JSON.stringify({
+                  command: "ask_user_more",
+                  question:
+                    "请补充完整的系统信息，包括系统编码、运维负责人（默认为当前用户）。",
+                }),
+              },
+            },
+          ],
+          __delay: 500,
+        },
+      );
+    }
+
+    if (this.#input2) {
       stream.splice(
         stream.length - 1,
         1,
@@ -190,7 +257,7 @@ class MockTask {
                   parts: [
                     {
                       type: "text",
-                      text: this.#input,
+                      text: this.#input2,
                     },
                   ],
                 },
@@ -233,7 +300,7 @@ class MockTask {
       );
     }
 
-    if (this.#input2) {
+    if (this.#input3) {
       stream.splice(
         stream.length - 1,
         1,
@@ -257,7 +324,7 @@ class MockTask {
                   parts: [
                     {
                       type: "text",
-                      text: this.#input2,
+                      text: this.#input3,
                     },
                   ],
                 },
@@ -300,7 +367,7 @@ class MockTask {
       );
     }
 
-    if (this.#input3) {
+    if (this.#input4) {
       stream.splice(
         stream.length - 1,
         1,
@@ -325,7 +392,7 @@ class MockTask {
                   parts: [
                     {
                       type: "text",
-                      text: this.#input3,
+                      text: this.#input4,
                     },
                   ],
                 },
@@ -501,6 +568,7 @@ class MockTask {
   #input;
   #input2;
   #input3;
+  #input4;
   #subscribers = new Set();
 
   #next = () => {
@@ -560,7 +628,9 @@ class MockTask {
     }
 
     // this.#subscribers.add(callback);
-    if (this.#input2) {
+    if (this.#input3) {
+      this.#input4 = input;
+    } if (this.#input2) {
       this.#input3 = input;
     } else if (this.#input) {
       this.#input2 = input;

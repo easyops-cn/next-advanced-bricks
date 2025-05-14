@@ -1,0 +1,148 @@
+.plan {
+  padding: 8px;
+  background: rgba(62, 67, 102, 0.05);
+  box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.5);
+  border-radius: 9px;
+}
+
+.plan:not(:first-child) {
+  margin-top: 6px;
+}
+
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.step {
+  background: #fff;
+  border-radius: 8px;
+  padding-right: 12px;
+  display: flex;
+}
+
+.step + .step {
+  margin-top: 4px;
+}
+
+.step.editing {
+  background: var(--cruise-canvas-input-background);
+  box-shadow: var(--cruise-canvas-input-box-shadow);
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  padding: 0 10px 0 5px;
+  margin: 10px 0;
+}
+
+.step:not(.editing) .content {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; /* 限制最多两行 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.content:focus {
+  outline: none;
+}
+
+.dragging {
+  cursor: grabbing;
+}
+
+.toolbar {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.handle,
+.delete {
+  color: #8c8c8c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.handle {
+  cursor: grab;
+  width: 24px;
+  border-radius: 8px 0px 0px 8px;
+  touch-action: none;
+}
+
+.handle:hover,
+.dragging .handle {
+  background: rgba(62, 67, 102, 0.05);
+}
+
+.dragging,
+.dragging .handle {
+  cursor: grabbing;
+}
+
+.dragging {
+  position: relative;
+  z-index: 1;
+}
+
+.delete {
+  cursor: pointer;
+}
+
+.step:not(:hover) .delete {
+  visibility: hidden;
+}
+
+.delete > *:hover {
+  color: #595959;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.button-add,
+.button-reset {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.button-icon {
+  border-radius: 9px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.04);
+  color: rgba(0, 0, 0, 0.45);
+  margin-right: 8px;
+}
+
+.button-reset {
+  color: #8c8c8c;
+}
+
+.button-reset:hover,
+.button-add {
+  color: #595959;
+}
+
+.button-add:hover .button-icon {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.button-add {
+  display: flex;
+  align-items: center;
+}

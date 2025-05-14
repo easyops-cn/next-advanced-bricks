@@ -1,5 +1,5 @@
 .node-job {
-  width: 330px;
+  width: var(--cruise-canvas-node-width-small);
   max-width: 90vw;
   background: linear-gradient(180deg, #f5f8ff 0%, #edf0f9 100%);
   box-shadow:
@@ -11,6 +11,7 @@
 }
 
 .ask-user {
+  width: var(--cruise-canvas-node-width-medium);
   background: rgba(255, 255, 255, 0.4);
   box-shadow: 0px 4px 10px 0px rgba(54, 64, 80, 0.18);
   border-color: rgba(255, 255, 255, 0.5);
@@ -52,8 +53,11 @@
 }
 
 .body {
-  padding: 16px 4px 8px;
-  max-height: 392px;
+  padding: 16px 4px 4px;
+}
+
+.scrollable {
+  max-height: 462px;
   overflow-y: auto;
 }
 
@@ -89,7 +93,7 @@
 
 .role-assistant,
 .role-user {
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--cruise-canvas-input-background);
   border-radius: 9px;
   border: 1px solid #ccd1de;
   padding: 6px 16px;
@@ -105,12 +109,10 @@
   width: 100%;
   padding: 10px 16px;
   color: inherit;
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow:
-    0px 1px 0px 0px #ffffff,
-    inset 0px 2px 4px 0px #b3bcf9;
-  border: none;
+  background: var(--cruise-canvas-input-background);
+  box-shadow: var(--cruise-canvas-input-box-shadow);
   border-radius: 9px;
+  border: none;
   font-size: 14px;
   line-height: 22px;
   height: 64px;

@@ -426,12 +426,8 @@ function NodeComponent({
           content={job!.instruction}
           loading={instructionLoading}
         />
-      ) : type === "job" ? (
-        <NodeJob state={state} job={job!} humanInput={humanInput} />
       ) : (
-        <div className={`${styles["node-default"]} ${styles["size-medium"]}`}>
-          {`Unknown job type: "${type}"`}
-        </div>
+        <NodeJob state={state} job={job!} humanInput={humanInput} />
       )}
     </div>
   );

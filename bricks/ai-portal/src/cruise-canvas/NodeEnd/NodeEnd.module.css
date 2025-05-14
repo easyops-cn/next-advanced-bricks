@@ -1,8 +1,8 @@
 .node-end {
-  width: 330px;
+  width: var(--cruise-canvas-node-width-small);
   background-color: #fff;
   background-image: url("../images/end@2x.png");
-  background-size: 330px 271px;
+  background-size: var(--cruise-canvas-node-width-small) 271px;
   background-repeat: no-repeat;
   background-position: center;
   border: 1px solid #e0e5f0;

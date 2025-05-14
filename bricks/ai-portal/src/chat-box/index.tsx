@@ -275,7 +275,11 @@ function SuggestionCarousel({
       >
         {[...suggestions, ...suggestions].map((item, index) => (
           <li key={index}>
-            <div className="item" onClick={() => onSelect(item)}>
+            <div
+              className="item"
+              onClick={() => onSelect(item)}
+              title={item.content}
+            >
               <div className="title">{item.title}</div>
               <div className="content">{item.content}</div>
             </div>

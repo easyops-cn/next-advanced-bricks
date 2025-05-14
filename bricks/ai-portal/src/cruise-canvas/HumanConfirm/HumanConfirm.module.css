@@ -1,0 +1,17 @@
+.human-confirm {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 12px;
+  background: rgba(62, 67, 102, 0.05);
+  box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.5);
+  border-radius: 9px;
+}
+
+.human-confirm:not(:first-child) {
+  margin-top: 6px;
+}
+
+.human-confirm > * + * {
+  margin-left: 8px;
+}

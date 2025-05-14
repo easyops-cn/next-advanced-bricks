@@ -1,10 +1,10 @@
 .node-requirement {
-  width: 453px;
+  width: var(--cruise-canvas-node-width-medium);
   max-width: 90vw;
   background-color: rgba(255, 255, 255, 0.4);
   background-image: url("../images/requirement@2x.png");
   background-position: center bottom;
-  background-size: 453px 128px;
+  background-size: var(--cruise-canvas-node-width-medium) 128px;
   background-repeat: no-repeat;
   box-shadow: 0px 4px 10px 0px rgba(54, 64, 80, 0.18);
   border-radius: 12px;
@@ -17,13 +17,18 @@
 
 .heading {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   margin-bottom: 11px;
   font-size: 13px;
 }
 
-.user {
+.avatar {
+  flex: 1;
+  min-width: 0;
+}
+
+.avatar::part(avatar) {
+  border: 1px solid #fff;
 }
 
 .time {

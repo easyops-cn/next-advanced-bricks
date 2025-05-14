@@ -31,13 +31,12 @@ export function NodeRequirement({
   return (
     <div className={styles["node-requirement"]}>
       <div className={styles.heading}>
-        <div className={styles.user}>
-          <WrappedEasyOpsAvatar
-            nameOrInstanceId={username}
-            showName
-            size="xs"
-          />
-        </div>
+        <WrappedEasyOpsAvatar
+          className={styles.avatar}
+          nameOrInstanceId={username}
+          showName
+          size="xs"
+        />
         <div className={styles.time}>
           {startTime && moment(startTime * 1000).format("MM-DD HH:mm")}
         </div>
