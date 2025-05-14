@@ -420,6 +420,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
           isResizable={false}
           isDraggable={isEdit}
           isDroppable={isEdit}
+          compactType="vertical"
           // onDrag={handleDragCallback}
           onDropDragOver={() => {
             if (draggingComponentRef.current) {
