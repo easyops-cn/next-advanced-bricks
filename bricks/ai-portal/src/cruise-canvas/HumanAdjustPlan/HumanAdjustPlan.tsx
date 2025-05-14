@@ -1,6 +1,7 @@
 // istanbul ignore file: experimental
 import React, {
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -32,6 +33,7 @@ import sharedStyles from "../shared.module.css";
 import { WrappedButton, WrappedIcon } from "../bricks";
 import { K, t } from "../i18n.js";
 import { getContentEditable } from "../getContentEditable";
+import { CanvasContext } from "../CanvasContext";
 
 interface DraggableStep {
   id: string;
@@ -39,16 +41,17 @@ interface DraggableStep {
   newlyAdded?: boolean;
 }
 
+export interface HumanAdjustPlanProps {
+  jobId: string;
+  steps?: string[];
+}
+
 export function HumanAdjustPlan({
   jobId,
   steps,
-  humanInput,
-}: {
-  jobId: string;
-  steps?: string[];
-  humanInput?: (jobId: string, input: string) => void;
-}): JSX.Element {
+}: HumanAdjustPlanProps): JSX.Element {
   const [list, setList] = useState<DraggableStep[]>([]);
+  const { humanInput } = useContext(CanvasContext);
 
   useEffect(() => {
     setList(
@@ -87,7 +90,7 @@ export function HumanAdjustPlan({
   }, []);
 
   const handleConfirm = useCallback(() => {
-    humanInput?.(
+    humanInput(
       jobId,
       JSON.stringify({
         type: "plan",

@@ -2,6 +2,7 @@
 import React, {
   memo,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -40,6 +41,8 @@ import { NodeJob } from "./NodeJob/NodeJob.js";
 import { NodeEnd } from "./NodeEnd/NodeEnd.js";
 import { CANVAS_PADDING_BOTTOM, DONE_STATES } from "./constants.js";
 import { WrappedIcon, WrappedLink } from "./bricks.js";
+import { CanvasContext } from "./CanvasContext.js";
+import { ToolCallDetail } from "./ToolCallDetail/ToolCallDetail.js";
 
 initializeI18n(NS, locales);
 
@@ -96,7 +99,7 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
 }
 
 export interface CruiseCanvasComponentProps extends CruiseCanvasProps {
-  onShare?: () => void;
+  onShare: () => void;
 }
 
 export function CruiseCanvasComponent({
@@ -141,7 +144,7 @@ export function CruiseCanvasComponent({
   );
 
   const [sizeMap, setSizeMap] = useState<Map<string, SizeTuple> | null>(null);
-  const handleNodeResize = useCallback((id: string, size: SizeTuple | null) => {
+  const onNodeResize = useCallback((id: string, size: SizeTuple | null) => {
     // Handle resize logic here
     setSizeMap((prev) => {
       if (!size) {
@@ -255,8 +258,30 @@ export function CruiseCanvasComponent({
     [zoomer]
   );
 
+  const [activeToolCallJobId, setActiveToolCallJobId] = useState<string | null>(
+    null
+  );
+
+  const canvasContextValue = useMemo(
+    () => ({
+      humanInput,
+      onShare,
+      onNodeResize,
+      activeToolCallJobId,
+      setActiveToolCallJobId,
+    }),
+    [activeToolCallJobId, onNodeResize, humanInput, onShare]
+  );
+
+  const activeToolCallJob = useMemo(() => {
+    if (!activeToolCallJobId) {
+      return null;
+    }
+    return jobs.find((job) => job.id === activeToolCallJobId);
+  }, [activeToolCallJobId, jobs]);
+
   return (
-    <>
+    <CanvasContext.Provider value={canvasContextValue}>
       <div
         className={classNames(styles.root, { [styles.loading]: !task })}
         ref={rootRef}
@@ -313,9 +338,6 @@ export function CruiseCanvasComponent({
               edges={edges}
               x={node.view?.x}
               y={node.view?.y}
-              onResize={handleNodeResize}
-              humanInput={humanInput}
-              onShare={onShare}
             />
           ))}
         </div>
@@ -333,7 +355,8 @@ export function CruiseCanvasComponent({
           onReCenter={handleReCenter}
         />
       </div>
-    </>
+      {activeToolCallJob && <ToolCallDetail job={activeToolCallJob} />}
+    </CanvasContext.Provider>
   );
 }
 
@@ -349,9 +372,6 @@ interface NodeComponentProps {
   instructionLoading?: boolean;
   x?: number;
   y?: number;
-  onResize: (id: string, size: SizeTuple | null) => void;
-  humanInput?: (jobId: string, input: string) => void;
-  onShare?: () => void;
 }
 
 function NodeComponent({
@@ -365,11 +385,9 @@ function NodeComponent({
   instructionLoading,
   x,
   y,
-  onResize,
-  humanInput,
-  onShare,
 }: NodeComponentProps) {
   const nodeRef = useRef<HTMLDivElement>(null);
+  const { onNodeResize } = useContext(CanvasContext);
 
   useEffect(() => {
     const element = nodeRef.current;
@@ -377,14 +395,14 @@ function NodeComponent({
       return;
     }
     const observer = new ResizeObserver(() => {
-      onResize(id, [element.offsetWidth, element.offsetHeight]);
+      onNodeResize(id, [element.offsetWidth, element.offsetHeight]);
     });
     observer.observe(element);
     return () => {
       observer.disconnect();
-      onResize(id, null);
+      onNodeResize(id, null);
     };
-  }, [id, onResize]);
+  }, [id, onNodeResize]);
 
   useEffect(() => {
     const element = nodeRef.current;
@@ -414,7 +432,7 @@ function NodeComponent({
       {type === "start" ? (
         <NodeStart />
       ) : type === "end" ? (
-        <NodeEnd onShare={onShare} />
+        <NodeEnd />
       ) : type === "requirement" ? (
         <NodeRequirement
           content={content}
@@ -427,7 +445,7 @@ function NodeComponent({
           loading={instructionLoading}
         />
       ) : (
-        <NodeJob state={state} job={job!} humanInput={humanInput} />
+        <NodeJob state={state} job={job!} />
       )}
     </div>
   );

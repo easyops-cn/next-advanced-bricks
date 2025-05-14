@@ -1,5 +1,11 @@
 // istanbul ignore file: experimental
-import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  Suspense,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { MarkdownComponent } from "@next-shared/markdown";
 import { TextareaAutoResize } from "@next-shared/form";
 import { CmdbObjectApi_getObjectRef } from "@next-api-sdk/cmdb-sdk";
@@ -12,16 +18,18 @@ import type { Job } from "../interfaces";
 import { K, t } from "../i18n.js";
 import { AsyncWrappedCMDB } from "../cmdb.js";
 import { WrappedButton, WrappedIcon } from "../bricks.js";
-import { HumanConfirm } from "../HumanConfirm/HumanConfirm";
+import { HumanConfirm } from "../HumanConfirm/HumanConfirm.js";
 import { HumanAdjustPlan } from "../HumanAdjustPlan/HumanAdjustPlan.js";
+import { CanvasContext } from "../CanvasContext.js";
+import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus.js";
+import { HumanAdjustPlanResult } from "../HumanAdjustPlanResult/HumanAdjustPlanResult.js";
 
 export interface NodeJobProps {
   job: Job;
   state?: string;
-  humanInput?: (jobId: string, input: string) => void;
 }
 
-export function NodeJob({ job, state, humanInput }: NodeJobProps): JSX.Element {
+export function NodeJob({ job, state }: NodeJobProps): JSX.Element {
   const askUser = job.toolCall?.name === "ask_human";
   const askUserPlan = job.toolCall?.name === "ask_human_confirming_plan";
   const generalAskUser = askUser || askUserPlan;
@@ -83,7 +91,9 @@ export function NodeJob({ job, state, humanInput }: NodeJobProps): JSX.Element {
         {knownAskUser ? (
           <>
             {(askUserPlan || !!job.toolCall!.arguments?.question) && (
-              <div className={`${styles.message} ${styles["role-assistant"]}`}>
+              <div
+                className={`${styles.message} ${sharedStyles.markdown} ${styles["role-assistant"]}`}
+              >
                 <MarkdownComponent
                   content={
                     askUserPlan
@@ -95,32 +105,28 @@ export function NodeJob({ job, state, humanInput }: NodeJobProps): JSX.Element {
             )}
             {state === "input-required" &&
               (job.toolCall!.arguments!.command === "ask_user_more" ? (
-                <HumanInputComponent jobId={job.id} humanInput={humanInput} />
+                <HumanInputComponent jobId={job.id} />
               ) : job.toolCall!.arguments!.command === "ask_user_confirm" ? (
                 <HumanConfirm
                   jobId={job.id}
-                  humanInput={humanInput}
                   confirmText={job.toolCall!.arguments!.confirm_text as string}
                   cancelText={job.toolCall!.arguments!.cancel_text as string}
                 />
               ) : job.toolCall!.arguments!.command === "ask_user_choose" ? (
                 <HumanChooseComponent
                   jobId={job.id}
-                  humanInput={humanInput}
                   options={job.toolCall!.arguments!.options as string[]}
                 />
               ) : job.toolCall!.arguments!.command ===
                 "ask_user_select_from_cmdb" ? (
                 <HumanSelectFromCmdb
                   jobId={job.id}
-                  humanInput={humanInput}
                   objectId={job.toolCall!.arguments!.objectId as string}
                   attrId={job.toolCall!.arguments!.attrId as string}
                 />
               ) : askUserPlan ? (
                 <HumanAdjustPlan
                   jobId={job.id}
-                  humanInput={humanInput}
                   steps={job.toolCall!.arguments!.steps as string[]}
                 />
               ) : null)}
@@ -131,31 +137,31 @@ export function NodeJob({ job, state, humanInput }: NodeJobProps): JSX.Element {
             {JSON.stringify(job.toolCall!.arguments?.command ?? null)}
           </div>
         ) : null}
-        {!generalAskUser && job.toolCall && <ToolCallComponent job={job} />}
-        {job.messages?.map((message, index) =>
-          message.role === "tool" && !generalAskUser ? null : (
-            <div
-              key={index}
-              className={classNames(styles.message, {
-                [styles["role-user"]]: message.role === "tool",
-              })}
-            >
-              {message.parts?.map((part, partIndex) => (
-                <React.Fragment key={partIndex}>
-                  {part.type === "text" ? (
-                    <MarkdownComponent content={part.text} />
-                  ) : part.type === "file" ? (
-                    <pre className="language-plaintext">
-                      File: {part.file.name}
-                    </pre>
-                  ) : (
-                    <pre className="language-plaintext">
-                      Data: {JSON.stringify(part.data, null, 2)}
-                    </pre>
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
+        {!generalAskUser && job.toolCall && <ToolCallStatus job={job} />}
+        {askUserPlan && state !== "input-required" ? (
+          <HumanAdjustPlanResult job={job} />
+        ) : (
+          job.messages?.map((message, index) =>
+            message.role === "tool" && !generalAskUser ? null : (
+              <div
+                key={index}
+                className={classNames(styles.message, sharedStyles.markdown, {
+                  [styles["role-user"]]: message.role === "tool",
+                })}
+              >
+                {message.parts?.map((part, partIndex) => (
+                  <React.Fragment key={partIndex}>
+                    {part.type === "text" ? (
+                      <MarkdownComponent content={part.text} />
+                    ) : (
+                      <pre className="language-plaintext">
+                        {JSON.stringify(part, null, 2)}
+                      </pre>
+                    )}
+                  </React.Fragment>
+                ))}
+              </div>
+            )
           )
         )}
       </div>
@@ -163,131 +169,9 @@ export function NodeJob({ job, state, humanInput }: NodeJobProps): JSX.Element {
   );
 }
 
-function ToolCallComponent({ job }: { job: Job }): JSX.Element {
-  const toolCall = job.toolCall!;
-  const toolCallMessages = job.messages?.filter((msg) => msg.role === "tool");
-
-  const [expanded, setExpanded] = useState(false);
-  const toggle = () => {
-    setExpanded((prev) => !prev);
-  };
-
-  const toolState =
-    (job.state === "working" || job.state === "input-required") &&
-    toolCallMessages?.length
-      ? "completed"
-      : job.state;
-
-  return (
-    <div
-      className={classNames(styles["tool-call"], {
-        [styles.expanded]: expanded,
-      })}
-    >
-      <div className={styles["tool-call-heading"]} onClick={toggle}>
-        {/* <WrappedIcon lib="antd" theme="outlined" icon="code" /> */}
-        {job.isError || toolState === "failed" ? (
-          <WrappedIcon
-            className={`${styles["tool-icon"]} ${styles.failed}`}
-            lib="fa"
-            prefix="fas"
-            icon="xmark"
-          />
-        ) : toolState === "completed" ? (
-          <WrappedIcon
-            className={styles["tool-icon"]}
-            lib="fa"
-            prefix="fas"
-            icon="check"
-          />
-        ) : toolState === "working" ? (
-          <WrappedIcon
-            className={styles["tool-icon"]}
-            lib="antd"
-            theme="outlined"
-            icon="loading-3-quarters"
-            spinning
-          />
-        ) : toolState === "input-required" ? (
-          <WrappedIcon
-            className={styles["tool-icon"]}
-            lib="fa"
-            prefix="far"
-            icon="circle-pause"
-          />
-        ) : toolState === "canceled" ? (
-          <WrappedIcon
-            className={styles["tool-icon"]}
-            lib="fa"
-            prefix="far"
-            icon="circle-stop"
-          />
-        ) : (
-          <WrappedIcon
-            className={styles["tool-icon"]}
-            lib="fa"
-            prefix="far"
-            icon="clock"
-          />
-        )}
-        <span className={styles["tool-call-name"]}>{toolCall.name}</span>
-        <WrappedIcon
-          className={styles.expand}
-          lib="fa"
-          prefix="fas"
-          icon={expanded ? "chevron-up" : "chevron-down"}
-        />
-      </div>
-      {expanded && (
-        <>
-          <div className={styles["tool-call-detail"]}>
-            <div className={styles["tool-call-detail-heading"]}>
-              {t(K.ARGUMENTS)}:
-            </div>
-            <div className={styles["tool-call-detail-body"]}>
-              <PreComponent content={toolCall.originalArguments} maybeJson />
-            </div>
-          </div>
-          {!!toolCallMessages?.length && (
-            <div className={styles["tool-call-detail"]}>
-              <div className={styles["tool-call-detail-heading"]}>
-                {t(K.RESPONSE)}:
-              </div>
-              <div className={styles["tool-call-detail-body"]}>
-                {toolCallMessages?.map((message, index) => (
-                  <div key={index}>
-                    {message.parts?.map((part, partIndex) => (
-                      <PreComponent
-                        key={partIndex}
-                        content={
-                          part.type === "text"
-                            ? part.text
-                            : part.type === "file"
-                              ? `File: ${part.file.name}`
-                              : `Data: ${JSON.stringify(part.data, null, 2)}`
-                        }
-                        maybeJson={part.type === "text"}
-                      />
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  );
-}
-
-function HumanInputComponent({
-  jobId,
-  humanInput,
-}: {
-  jobId: string;
-  humanInput?: (jobId: string, input: string) => void;
-}): JSX.Element {
+function HumanInputComponent({ jobId }: { jobId: string }): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { humanInput } = useContext(CanvasContext);
 
   return (
     <div ref={containerRef}>
@@ -303,7 +187,7 @@ function HumanInputComponent({
         onSubmit={(e) => {
           const input = e.currentTarget.value;
           if (input) {
-            humanInput?.(jobId, input);
+            humanInput(jobId, input);
           }
         }}
       />
@@ -314,12 +198,12 @@ function HumanInputComponent({
 function HumanChooseComponent({
   jobId,
   options,
-  humanInput,
 }: {
   jobId: string;
   options?: string[];
-  humanInput?: (jobId: string, input: string) => void;
 }): JSX.Element {
+  const { humanInput } = useContext(CanvasContext);
+
   return (
     <div
       style={{
@@ -333,7 +217,7 @@ function HumanChooseComponent({
         <WrappedButton
           key={index}
           onClick={() => {
-            humanInput?.(jobId, option);
+            humanInput(jobId, option);
           }}
         >
           {option}
@@ -347,13 +231,12 @@ function HumanSelectFromCmdb({
   jobId,
   objectId,
   attrId,
-  humanInput,
 }: {
   jobId: string;
   objectId?: string;
   attrId?: string;
-  humanInput?: (jobId: string, input: string) => void;
 }): JSX.Element {
+  const { humanInput } = useContext(CanvasContext);
   const [objectList, setObjectList] = useState<any[] | null>(null);
 
   useEffect(() => {
@@ -405,7 +288,7 @@ function HumanSelectFromCmdb({
             if (!e.detail.length) {
               return;
             }
-            humanInput?.(
+            humanInput(
               jobId,
               e.detail.map((i) => i[fieldId /* ?? "instanceId" */]).join("\n")
             );
@@ -413,31 +296,5 @@ function HumanSelectFromCmdb({
         />
       </Suspense>
     </div>
-  );
-}
-
-function PreComponent({
-  content,
-  maybeJson,
-}: {
-  content?: string;
-  maybeJson?: boolean;
-}): JSX.Element {
-  const [refinedContent, fallback] = useMemo(() => {
-    if (maybeJson) {
-      try {
-        const json = JSON.parse(content ?? "");
-        return [`${"```json\n"}${JSON.stringify(json, null, 2)}${"\n```"}`];
-      } catch {
-        // Fallback to original content
-      }
-    }
-    return [content, true];
-  }, [content, maybeJson]);
-
-  return fallback ? (
-    <pre className="language-plaintext">{refinedContent}</pre>
-  ) : (
-    <MarkdownComponent content={refinedContent} />
   );
 }

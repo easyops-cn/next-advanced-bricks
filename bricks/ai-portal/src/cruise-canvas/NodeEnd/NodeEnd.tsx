@@ -1,13 +1,12 @@
 // istanbul ignore file: experimental
-import React from "react";
+import React, { useContext } from "react";
 import styles from "./NodeEnd.module.css";
 import { K, t } from "../i18n";
+import { CanvasContext } from "../CanvasContext";
 
-export interface NodeEndProps {
-  onShare?: () => void;
-}
+export function NodeEnd(): JSX.Element {
+  const { onShare } = useContext(CanvasContext);
 
-export function NodeEnd({ onShare }: NodeEndProps): JSX.Element {
   return (
     <div className={styles["node-end"]}>
       <div className={styles.icon} />
