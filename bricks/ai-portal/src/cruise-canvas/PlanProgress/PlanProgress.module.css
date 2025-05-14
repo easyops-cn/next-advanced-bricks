@@ -3,7 +3,7 @@
   bottom: 20px;
   left: 50%;
   transform: translate(-50%, 0);
-  width: 453px;
+  width: var(--cruise-canvas-node-width-medium);
   max-width: 80%;
   background: #24203d;
   box-shadow:

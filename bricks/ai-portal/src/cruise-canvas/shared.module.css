@@ -22,3 +22,9 @@
     background-position: -250% 50%;
   }
 }
+
+.rounded-button::part(button) {
+  border-radius: 9999px;
+  padding-left: 17px;
+  padding-right: 17px;
+}

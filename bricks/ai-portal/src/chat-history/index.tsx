@@ -3,6 +3,10 @@ import React, { useMemo, useState } from "react";
 import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import moment from "moment";
+import type {
+  GeneralIcon,
+  GeneralIconProps,
+} from "@next-bricks/icons/general-icon";
 import type { Link, LinkProps } from "@next-bricks/basic/link";
 import type {
   ActionType,
@@ -22,6 +26,7 @@ import { DONE_STATES } from "../cruise-canvas/constants.js";
 
 initializeI18n(NS, locales);
 
+const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
 const WrappedMiniActions = wrapBrick<
   EoMiniActions,
@@ -148,6 +153,19 @@ export function ChatHistoryComponent({
   }, [list]);
 
   const [actionsVisible, setActionsVisible] = useState<string | null>(null);
+
+  if (!list) {
+    return (
+      <div className="loading">
+        <WrappedIcon
+          lib="antd"
+          theme="outlined"
+          icon="loading-3-quarters"
+          spinning
+        />
+      </div>
+    );
+  }
 
   return (
     <ul>

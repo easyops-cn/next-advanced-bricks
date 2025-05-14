@@ -12,6 +12,8 @@ import type { Job } from "../interfaces";
 import { K, t } from "../i18n.js";
 import { AsyncWrappedCMDB } from "../cmdb.js";
 import { WrappedButton, WrappedIcon } from "../bricks.js";
+import { HumanConfirm } from "../HumanConfirm/HumanConfirm";
+import { HumanAdjustPlan } from "../HumanAdjustPlan/HumanAdjustPlan.js";
 
 export interface NodeJobProps {
   job: Job;
@@ -21,25 +23,29 @@ export interface NodeJobProps {
 
 export function NodeJob({ job, state, humanInput }: NodeJobProps): JSX.Element {
   const askUser = job.toolCall?.name === "ask_human";
+  const askUserPlan = job.toolCall?.name === "ask_human_confirming_plan";
+  const generalAskUser = askUser || askUserPlan;
   const knownAskUser =
-    askUser &&
-    [
-      "ask_user_more",
-      "ask_user_confirm",
-      "ask_user_choose",
-      "ask_user_select_from_cmdb",
-    ].includes(job.toolCall!.arguments?.command as string);
+    (askUser &&
+      [
+        "ask_user_more",
+        "ask_user_confirm",
+        "ask_user_choose",
+        "ask_user_select_from_cmdb",
+        "ask_user_adjust_plan",
+      ].includes(job.toolCall!.arguments?.command as string)) ||
+    askUserPlan;
   const loading = state === "working" || state === "submitted";
 
   return (
     <div
       className={classNames(styles["node-job"], {
         [styles.error]: job.isError,
-        [styles["ask-user"]]: knownAskUser,
+        [styles["ask-user"]]: generalAskUser,
       })}
     >
       <div className={styles.heading}>
-        {askUser ? (
+        {generalAskUser ? (
           <WrappedIcon
             className={styles.icon}
             lib="fa"
@@ -69,19 +75,29 @@ export function NodeJob({ job, state, humanInput }: NodeJobProps): JSX.Element {
           {job.startTime && moment(job.startTime * 1000).format("MM-DD HH:mm")}
         </div>
       </div>
-      <div className={styles.body}>
+      <div
+        className={classNames(styles.body, {
+          [styles.scrollable]: !generalAskUser,
+        })}
+      >
         {knownAskUser ? (
           <>
-            <div className={`${styles.message} ${styles["role-assistant"]}`}>
-              <MarkdownComponent
-                content={job.toolCall!.arguments?.question as string}
-              />
-            </div>
+            {(askUserPlan || !!job.toolCall!.arguments?.question) && (
+              <div className={`${styles.message} ${styles["role-assistant"]}`}>
+                <MarkdownComponent
+                  content={
+                    askUserPlan
+                      ? t(K.CONFIRMING_PLAN_TIPS)
+                      : (job.toolCall!.arguments?.question as string)
+                  }
+                />
+              </div>
+            )}
             {state === "input-required" &&
               (job.toolCall!.arguments!.command === "ask_user_more" ? (
                 <HumanInputComponent jobId={job.id} humanInput={humanInput} />
               ) : job.toolCall!.arguments!.command === "ask_user_confirm" ? (
-                <HumanConfirmComponent
+                <HumanConfirm
                   jobId={job.id}
                   humanInput={humanInput}
                   confirmText={job.toolCall!.arguments!.confirm_text as string}
@@ -101,6 +117,12 @@ export function NodeJob({ job, state, humanInput }: NodeJobProps): JSX.Element {
                   objectId={job.toolCall!.arguments!.objectId as string}
                   attrId={job.toolCall!.arguments!.attrId as string}
                 />
+              ) : askUserPlan ? (
+                <HumanAdjustPlan
+                  jobId={job.id}
+                  humanInput={humanInput}
+                  steps={job.toolCall!.arguments!.steps as string[]}
+                />
               ) : null)}
           </>
         ) : askUser ? (
@@ -109,9 +131,9 @@ export function NodeJob({ job, state, humanInput }: NodeJobProps): JSX.Element {
             {JSON.stringify(job.toolCall!.arguments?.command ?? null)}
           </div>
         ) : null}
-        {!askUser && job.toolCall && <ToolCallComponent job={job} />}
+        {!generalAskUser && job.toolCall && <ToolCallComponent job={job} />}
         {job.messages?.map((message, index) =>
-          message.role === "tool" && !askUser ? null : (
+          message.role === "tool" && !generalAskUser ? null : (
             <div
               key={index}
               className={classNames(styles.message, {
@@ -285,39 +307,6 @@ function HumanInputComponent({
           }
         }}
       />
-    </div>
-  );
-}
-
-function HumanConfirmComponent({
-  jobId,
-  humanInput,
-  confirmText,
-  cancelText,
-}: {
-  jobId: string;
-  confirmText?: string;
-  cancelText?: string;
-  humanInput?: (jobId: string, input: string) => void;
-}): JSX.Element {
-  return (
-    <div style={{ marginTop: "1em" }}>
-      <WrappedButton
-        type="primary"
-        onClick={() => {
-          humanInput?.(jobId, confirmText || t(K.YES));
-        }}
-      >
-        {confirmText || t(K.YES)}
-      </WrappedButton>
-      <WrappedButton
-        onClick={() => {
-          humanInput?.(jobId, cancelText || t(K.NO));
-        }}
-        style={{ marginLeft: "0.5em" }}
-      >
-        {cancelText || t(K.NO)}
-      </WrappedButton>
     </div>
   );
 }
