@@ -60,6 +60,9 @@ select {
 input:focus {
   border: none !important;
 }
+input::placeholder {
+  color: var(--color-disabled-text);
+}
 
 .button {
   position: absolute;
@@ -194,7 +197,7 @@ input:focus {
     PingFang SC;
   font-weight: 400;
   font-size: 12px;
-  color: var(--local-card-description-color);
+  color: var(--color-normal-text);
   line-height: 17px;
   text-align: left;
   font-style: normal;
