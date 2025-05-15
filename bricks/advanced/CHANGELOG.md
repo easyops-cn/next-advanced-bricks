@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.44.13](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.12...@next-bricks/advanced@0.44.13) (2025-05-15)
+
+
+### Bug Fixes
+
+* 点击设置按钮，点击自定义，点击我的账号，账号数据被保存、取消按钮遮挡了 ([1ea8f1f](https://github.com/easyops-cn/next-advanced-bricks/commit/1ea8f1fb123c674abfb7a05ba560e6aad810331a))
+
+
+
+
+
 ## [0.44.12](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.11...@next-bricks/advanced@0.44.12) (2025-05-14)
 
 
