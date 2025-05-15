@@ -143,7 +143,7 @@ export type JobState =
   | "failed"
   | "unknown";
 
-export type TaskState = JobState | "confirming-plan";
+export type TaskState = JobState | "paused" | "confirming-plan";
 
 export interface Message {
   role: string;

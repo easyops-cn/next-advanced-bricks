@@ -58,19 +58,26 @@ textarea:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.06);
+  background: #2540ff;
   border: none;
   border-radius: 8px;
-  cursor: pointer;
-  color: inherit;
+  color: #fff;
 }
 
-.btn-send:hover {
-  background: rgba(0, 0, 0, 0.08);
-}
-
-.btn-send:active {
+.btn-send[disabled] {
   background: rgba(0, 0, 0, 0.15);
+}
+
+.btn-send:not([disabled]) {
+  cursor: pointer;
+}
+
+.btn-send:not([disabled]):hover {
+  background: #5166ff;
+}
+
+.btn-send:not([disabled]):active {
+  background: #1e33cc;
 }
 
 .suggestions {

@@ -1,0 +1,22 @@
+.detail {
+  margin-top: 20px;
+  color: #595959;
+  margin-bottom: 7px;
+}
+
+.detail .body {
+  code[class*="language-"],
+  pre[class*="language-"] {
+    background: #ffffff;
+  }
+
+  pre[class*="language-"] {
+    border-radius: 9px;
+    border: 1px solid #ccd1de;
+  }
+}
+
+.detail .body pre.fallback {
+  white-space: pre-wrap;
+  background: #fef5f3;
+}

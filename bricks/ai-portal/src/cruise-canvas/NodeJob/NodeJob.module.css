@@ -1,5 +1,5 @@
 .node-job {
-  width: var(--cruise-canvas-node-width-small);
+  width: var(--cruise-canvas-node-width-medium);
   max-width: 90vw;
   background: linear-gradient(180deg, #f5f8ff 0%, #edf0f9 100%);
   box-shadow:
@@ -11,7 +11,6 @@
 }
 
 .ask-user {
-  width: var(--cruise-canvas-node-width-medium);
   background: rgba(255, 255, 255, 0.4);
   box-shadow: 0px 4px 10px 0px rgba(54, 64, 80, 0.18);
   border-color: rgba(255, 255, 255, 0.5);
@@ -53,7 +52,7 @@
 }
 
 .body {
-  padding: 16px 4px 4px;
+  padding: 9px 4px 4px;
 }
 
 .scrollable {
@@ -61,14 +60,12 @@
   overflow-y: auto;
 }
 
-.tool-call,
 .message {
   overflow-wrap: break-word;
 }
 
-.tool-call + .message,
-.message + .message {
-  margin-top: 1em;
+.message:not(:first-child) {
+  margin-top: 6px;
 }
 
 .message p {
@@ -85,10 +82,6 @@
 
 .ask-user .heading {
   border-bottom: none;
-}
-
-.ask-user .body {
-  padding-top: 8px;
 }
 
 .role-assistant,
@@ -126,319 +119,6 @@
   color: #bfbfbf;
 }
 
-.tool-call-heading {
-  display: flex;
-  align-items: center;
-  border-radius: inherit;
-  cursor: pointer;
-  color: #8c8c8c;
-  font-size: 13px;
-  height: 24px;
-  padding: 0 1px;
-}
-
-.tool-call-name {
-  min-width: 0;
-  flex: 1;
-  margin-left: 10px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.expand {
-  color: #bfbfbf;
-  font-size: 11px;
-  margin-left: 6px;
-}
-
-.tool-call:not(:hover) .expand {
-  display: none;
-}
-
-.tool-call-detail {
-  margin: 6px -4px;
-  background: #ffffff;
-  border-radius: 9px;
-  border: 1px solid #ccd1de;
-}
-
-.tool-call-detail-heading {
-  background: rgba(204, 209, 222, 0.4);
-  color: #595959;
-  padding: 3px 8px;
-}
-
-.failed {
-  color: var(--color-error);
-}
-
-/* Copied from https://github.com/PrismJS/prism-themes/blob/447479fc7b2be2051fe27e561aceed7cc87a589f/themes/prism-one-light.css */
-.node-job {
-  /**
-  * One Light theme for prism.js
-  * Based on Atom's One Light theme: https://github.com/atom/atom/tree/master/packages/one-light-syntax
-  */
-
-  /**
-  * One Light colours (accurate as of commit eb064bf on 19 Feb 2021)
-  * From colors.less
-  * --mono-1: hsl(230, 8%, 24%);
-  * --mono-2: hsl(230, 6%, 44%);
-  * --mono-3: hsl(230, 4%, 64%)
-  * --hue-1: hsl(198, 99%, 37%);
-  * --hue-2: hsl(221, 87%, 60%);
-  * --hue-3: hsl(301, 63%, 40%);
-  * --hue-4: hsl(119, 34%, 47%);
-  * --hue-5: hsl(5, 74%, 59%);
-  * --hue-5-2: hsl(344, 84%, 43%);
-  * --hue-6: hsl(35, 99%, 36%);
-  * --hue-6-2: hsl(35, 99%, 40%);
-  * --syntax-fg: hsl(230, 8%, 24%);
-  * --syntax-bg: hsl(230, 1%, 98%);
-  * --syntax-gutter: hsl(230, 1%, 62%);
-  * --syntax-guide: hsla(230, 8%, 24%, 0.2);
-  * --syntax-accent: hsl(230, 100%, 66%);
-  * From syntax-variables.less
-  * --syntax-selection-color: hsl(230, 1%, 90%);
-  * --syntax-gutter-background-color-selected: hsl(230, 1%, 90%);
-  * --syntax-cursor-line: hsla(230, 8%, 24%, 0.05);
-  */
-
-  code[class*="language-"],
-  pre[class*="language-"] {
-    background: hsl(230, 1%, 98%);
-    color: hsl(230, 8%, 24%);
-    font-family:
-      "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
-    direction: ltr;
-    text-align: left;
-    white-space: pre;
-    word-spacing: normal;
-    word-break: normal;
-    line-height: 1.5;
-    tab-size: 2;
-    hyphens: none;
-    font-size: 13px;
-  }
-
-  /* Selection */
-  code[class*="language-"]::-moz-selection,
-  code[class*="language-"] *::-moz-selection,
-  pre[class*="language-"] *::-moz-selection {
-    background: hsl(230, 1%, 90%);
-    color: inherit;
-  }
-
-  code[class*="language-"]::selection,
-  code[class*="language-"] *::selection,
-  pre[class*="language-"] *::selection {
-    background: hsl(230, 1%, 90%);
-    color: inherit;
-  }
-
-  /* Code blocks */
-  pre[class*="language-"] {
-    padding: 1em;
-    margin: 0.5em 0;
-    overflow: auto;
-    border-radius: 9px;
-  }
-
-  /* Inline code */
-  :not(pre) > code[class*="language-"] {
-    padding: 0.2em 0.3em;
-    border-radius: 9px;
-    white-space: normal;
-  }
-
-  :global(.token.comment),
-  :global(.token.prolog),
-  :global(.token.cdata) {
-    color: hsl(230, 4%, 64%);
-  }
-
-  :global(.token.doctype),
-  :global(.token.punctuation),
-  :global(.token.entity) {
-    color: hsl(230, 8%, 24%);
-  }
-
-  :global(.token.attr-name),
-  :global(.token.class-name),
-  :global(.token.boolean),
-  :global(.token.constant),
-  :global(.token.number),
-  :global(.token.atrule) {
-    color: hsl(35, 99%, 36%);
-  }
-
-  :global(.token.keyword) {
-    color: hsl(301, 63%, 40%);
-  }
-
-  :global(.token.property),
-  :global(.token.tag),
-  :global(.token.symbol),
-  :global(.token.deleted),
-  :global(.token.important) {
-    color: hsl(5, 74%, 59%);
-  }
-
-  :global(.token.selector),
-  :global(.token.string),
-  :global(.token.char),
-  :global(.token.builtin),
-  :global(.token.inserted),
-  :global(.token.regex),
-  :global(.token.attr-value),
-  :global(.token.attr-value > .token.punctuation) {
-    color: hsl(119, 34%, 47%);
-  }
-
-  :global(.token.variable),
-  :global(.token.operator),
-  :global(.token.function) {
-    color: hsl(221, 87%, 60%);
-  }
-
-  :global(.token.url) {
-    color: hsl(198, 99%, 37%);
-  }
-
-  /* HTML overrides */
-  :global(.token.attr-value > .token.punctuation.attr-equals),
-  :global(.token.special-attr > .token.attr-value > .token.value.css) {
-    color: hsl(230, 8%, 24%);
-  }
-
-  /* CSS overrides */
-  :global(.language-css .token.selector) {
-    color: hsl(5, 74%, 59%);
-  }
-
-  :global(.language-css .token.property) {
-    color: hsl(230, 8%, 24%);
-  }
-
-  :global(.language-css .token.function),
-  :global(.language-css .token.url > .token.function) {
-    color: hsl(198, 99%, 37%);
-  }
-
-  :global(.language-css .token.url > .token.string.url) {
-    color: hsl(119, 34%, 47%);
-  }
-
-  :global(.language-css .token.important),
-  :global(.language-css .token.atrule .token.rule) {
-    color: hsl(301, 63%, 40%);
-  }
-
-  /* JS overrides */
-  :global(.language-javascript .token.operator) {
-    color: hsl(301, 63%, 40%);
-  }
-
-  :global(
-    .language-javascript
-      .token.template-string
-      > .token.interpolation
-      > .token.interpolation-punctuation.punctuation
-  ) {
-    color: hsl(344, 84%, 43%);
-  }
-
-  /* JSON overrides */
-  :global(.language-json .token.operator) {
-    color: hsl(230, 8%, 24%);
-  }
-
-  :global(.language-json .token.null.keyword) {
-    color: hsl(35, 99%, 36%);
-  }
-
-  /* MD overrides */
-  :global(.language-markdown .token.url),
-  :global(.language-markdown .token.url > .token.operator),
-  :global(.language-markdown .token.url-reference.url > .token.string) {
-    color: hsl(230, 8%, 24%);
-  }
-
-  :global(.language-markdown .token.url > .token.content) {
-    color: hsl(221, 87%, 60%);
-  }
-
-  :global(.language-markdown .token.url > .token.url),
-  :global(.language-markdown .token.url-reference.url) {
-    color: hsl(198, 99%, 37%);
-  }
-
-  :global(.language-markdown .token.blockquote.punctuation),
-  :global(.language-markdown .token.hr.punctuation) {
-    color: hsl(230, 4%, 64%);
-    font-style: italic;
-  }
-
-  :global(.language-markdown .token.code-snippet) {
-    color: hsl(119, 34%, 47%);
-  }
-
-  :global(.language-markdown .token.bold .token.content) {
-    color: hsl(35, 99%, 36%);
-  }
-
-  :global(.language-markdown .token.italic .token.content) {
-    color: hsl(301, 63%, 40%);
-  }
-
-  :global(.language-markdown .token.strike .token.content),
-  :global(.language-markdown .token.strike .token.punctuation),
-  :global(.language-markdown .token.list.punctuation),
-  :global(.language-markdown .token.title.important > .token.punctuation) {
-    color: hsl(5, 74%, 59%);
-  }
-
-  /* General */
-  :global(.token.bold) {
-    font-weight: bold;
-  }
-
-  :global(.token.comment),
-  :global(.token.italic) {
-    font-style: italic;
-  }
-
-  :global(.token.entity) {
-    cursor: help;
-  }
-
-  :global(.token.namespace) {
-    opacity: 0.8;
-  }
-}
-
-.node-job {
-  table {
-    display: block;
-    width: 100%;
-    width: max-content;
-    max-width: 100%;
-    overflow: auto;
-    border-collapse: collapse;
-  }
-
-  tr {
-    border-top: 1px solid #ccd1de;
-  }
-
-  td,
-  th {
-    border: 1px solid #ccd1de;
-    padding: 6px 13px;
-  }
-}
-
 .node-job {
   *::-webkit-scrollbar {
     width: 5px; /* 垂直滚动条宽度 */
@@ -453,16 +133,5 @@
 
   *::-webkit-scrollbar-track {
     background: transparent; /* 轨道背景透明 */
-  }
-}
-
-.tool-call-detail-body {
-  code[class*="language-"],
-  pre[class*="language-"] {
-    background-color: transparent;
-  }
-
-  pre[class*="language-"] {
-    margin: 0;
   }
 }

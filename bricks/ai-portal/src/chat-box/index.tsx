@@ -105,7 +105,9 @@ export function ChatBoxComponent({
 
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLTextAreaElement>) => {
-      onSubmit?.(e.currentTarget.value);
+      if (e.currentTarget.value) {
+        onSubmit?.(e.currentTarget.value);
+      }
     },
     [onSubmit]
   );
@@ -122,13 +124,18 @@ export function ChatBoxComponent({
     onSubmit?.(valueRef.current);
   }, [onSubmit]);
 
-  useEffect(() => {
-    if (autoFocus) {
-      Promise.resolve().then(() => {
-        textareaRef.current?.focus();
-      });
-    }
-  }, []);
+  useEffect(
+    () => {
+      if (autoFocus) {
+        Promise.resolve().then(() => {
+          textareaRef.current?.focus();
+        });
+      }
+    },
+    // One-time focus
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   // istanbul ignore next: experimental
   const groupedSuggestions = useMemo(() => {
@@ -163,7 +170,11 @@ export function ChatBoxComponent({
           onSubmit={handleSubmit}
           onChange={handleChange}
         />
-        <button className="btn-send" onClick={handleSubmitClick}>
+        <button
+          className="btn-send"
+          disabled={!value}
+          onClick={handleSubmitClick}
+        >
           <WrappedIcon lib="fa" prefix="fas" icon="arrow-up" />
         </button>
       </div>

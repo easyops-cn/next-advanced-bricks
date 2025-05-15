@@ -1,13 +1,22 @@
 // istanbul ignore file: experimental
-import React, { useCallback, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import classNames from "classnames";
 import styles from "./PlanProgress.module.css";
-import type { JobState, StepWithState } from "../interfaces";
-import { WrappedIcon } from "../bricks";
+import type { JobState, StepWithState, TaskState } from "../interfaces";
+import { WrappedIcon, WrappedTooltip, showDialog } from "../bricks";
 import { K, t } from "../i18n";
+import { DONE_STATES } from "../constants";
+import { CanvasContext } from "../CanvasContext";
 
 export interface PlanProgressProps {
   plan?: StepWithState[];
+  state?: TaskState;
 }
 
 interface PlanProgressStat {
@@ -16,10 +25,26 @@ interface PlanProgressStat {
   state: JobState | undefined;
 }
 
-export function PlanProgress({ plan }: PlanProgressProps): JSX.Element | null {
+export function PlanProgress({
+  plan,
+  state: taskState,
+}: PlanProgressProps): JSX.Element | null {
+  const { flagShowTaskActions, onPause, onResume, onStop } =
+    useContext(CanvasContext);
   const [expanded, setExpanded] = useState(false);
+  const [actionBeingTaken, setActionBeingTaken] = useState<
+    "toggle" | "stop" | null
+  >(null);
 
-  const { doneCount, state, instruction } = useMemo(() => {
+  useEffect(() => {
+    setActionBeingTaken(null);
+  }, [taskState]);
+
+  const {
+    doneCount,
+    state: jobState,
+    instruction,
+  } = useMemo(() => {
     return (plan ?? []).reduce<PlanProgressStat>(
       (acc, step) => {
         if (step.state === "completed") {
@@ -49,39 +74,112 @@ export function PlanProgress({ plan }: PlanProgressProps): JSX.Element | null {
   }, [plan]);
 
   const { className, icon } = useMemo(() => {
-    return getClassNameAndIconProps(state);
-  }, [state]);
+    return getClassNameAndIconProps(jobState);
+  }, [jobState]);
 
   const toggle = useCallback(() => {
     setExpanded((prev) => !prev);
   }, []);
 
+  const handleResume = useCallback(() => {
+    onResume();
+    setActionBeingTaken("toggle");
+  }, [onResume]);
+
+  const handlePause = useCallback(() => {
+    onPause();
+    setActionBeingTaken("toggle");
+  }, [onPause]);
+
+  const handleStop = useCallback(async () => {
+    try {
+      await showDialog({
+        type: "confirm",
+        title: t(K.CONFIRM_TO_STOP_THE_TASK_TITLE),
+        content: t(K.CONFIRM_TO_STOP_THE_TASK_CONTENT),
+      });
+    } catch {
+      return;
+    }
+    onStop();
+    setActionBeingTaken("stop");
+  }, [onStop]);
+
   if (!plan?.length) {
     return null;
   }
 
+  const taskDone = DONE_STATES.includes(taskState!);
+
   return (
-    <div className={classNames(styles.progress, className)} onClick={toggle}>
-      <div className={styles.icon}>
-        <WrappedIcon {...icon} />
+    <div className={classNames(styles.progress, className)}>
+      <div className={styles.bar} onClick={toggle}>
+        <div className={styles.icon}>
+          <WrappedIcon {...icon} />
+        </div>
+        <span
+          className={styles.text}
+          title={jobState === "completed" ? "" : instruction}
+        >
+          {jobState === "completed" ? t(K.PLAN_COMPLETED) : instruction}
+        </span>
+        <span className={styles.stat}>
+          {doneCount}/{plan.length}
+        </span>
+        <WrappedIcon
+          className={styles.expand}
+          lib="antd"
+          theme="outlined"
+          icon={expanded ? "down" : "up"}
+        />
       </div>
-      <span
-        className={styles.text}
-        title={state === "completed" ? "" : instruction}
-      >
-        {state === "completed" ? t(K.PLAN_COMPLETED) : instruction}
-      </span>
-      <span className={styles.stat}>
-        {doneCount}/{plan.length}
-      </span>
-      <WrappedIcon
-        className={styles.expand}
-        lib="antd"
-        theme="outlined"
-        icon={expanded ? "down" : "up"}
-      />
+      {!taskDone && flagShowTaskActions && (
+        <div className={styles.actions}>
+          {actionBeingTaken === "toggle" ? (
+            <WrappedTooltip>
+              <button disabled className={styles.action}>
+                <WrappedIcon lib="antd" icon="loading-3-quarters" spinning />
+              </button>
+            </WrappedTooltip>
+          ) : taskState === "paused" ? (
+            <WrappedTooltip
+              content={actionBeingTaken ? undefined : t(K.RESUME_THE_TASK)}
+              onClick={handleResume}
+            >
+              <button disabled={!!actionBeingTaken} className={styles.action}>
+                <WrappedIcon lib="fa" prefix="far" icon="circle-play" />
+              </button>
+            </WrappedTooltip>
+          ) : (
+            <WrappedTooltip
+              content={actionBeingTaken ? undefined : t(K.PAUSE_THE_TASK)}
+              onClick={handlePause}
+            >
+              <button disabled={!!actionBeingTaken} className={styles.action}>
+                <WrappedIcon lib="fa" prefix="far" icon="circle-pause" />
+              </button>
+            </WrappedTooltip>
+          )}
+          {actionBeingTaken === "stop" ? (
+            <WrappedTooltip>
+              <button disabled className={styles.action}>
+                <WrappedIcon lib="antd" icon="loading-3-quarters" spinning />
+              </button>
+            </WrappedTooltip>
+          ) : (
+            <WrappedTooltip
+              content={actionBeingTaken ? undefined : t(K.STOP_THE_TASK)}
+              onClick={handleStop}
+            >
+              <button disabled={!!actionBeingTaken} className={styles.action}>
+                <WrappedIcon lib="fa" prefix="far" icon="circle-stop" />
+              </button>
+            </WrappedTooltip>
+          )}
+        </div>
+      )}
       {expanded && (
-        <ul className={styles.details} onClick={(e) => e.stopPropagation()}>
+        <ul className={styles.details}>
           {plan.map((step, index) => (
             <PlanStep
               key={index}
@@ -143,7 +241,7 @@ function getClassNameAndIconProps(state: JobState | undefined) {
         icon: {
           lib: "fa",
           prefix: "far",
-          icon: "circle-pause",
+          icon: "circle-user",
         },
       };
     case "failed":
