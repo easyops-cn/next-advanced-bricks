@@ -280,6 +280,7 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
                         ></Select>
                       </span>
                       <input
+                        autoFocus
                         placeholder={
                           selectedQuerier?.config?.searchPlaceholder ||
                           "输入IP查询主机关联的应用、系统等资源"
