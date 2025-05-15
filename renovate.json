@@ -53,6 +53,12 @@
       "matchPackageNames": ["/^@fortawesome//"]
     },
     {
+      "enabled": true,
+      "groupName": "dnd-kit packages",
+      "assignees": ["weareoutman"],
+      "matchPackageNames": ["/^@dnd-kit//"]
+    },
+    {
       "matchPackageNames": [
         "antd",
         "@easyops-cn/rc-trigger",
