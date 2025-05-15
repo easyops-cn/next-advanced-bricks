@@ -283,7 +283,11 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
                         autoFocus
                         placeholder={
                           selectedQuerier?.config?.searchPlaceholder ||
-                          "输入IP查询主机关联的应用、系统等资源"
+                          (selectedQuerier?.type === QuerierTypes.ipSearch
+                            ? "输入IP查询主机关联的应用、系统等资源"
+                            : selectedQuerier?.type === QuerierTypes.fullText
+                              ? '搜索应用、主机等信息，支持""精确搜索'
+                              : "")
                         }
                         value={searchKey}
                         onChange={handleChange}
