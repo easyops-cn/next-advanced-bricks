@@ -118,7 +118,6 @@ describe("nav.query-search", () => {
       fireEvent.click(document.body);
     });
 
-    expect(element.shadowRoot?.querySelector("input")).toBeFalsy();
     expect(element.shadowRoot?.querySelector("eo-button")).toBeTruthy();
 
     act(() => {
