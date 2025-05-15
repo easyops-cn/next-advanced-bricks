@@ -248,83 +248,94 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
       }}
     >
       <StyleProvider container={shadowRoot as ShadowRoot} cache={cache}>
-        <div
-          className={classNames("container", { containerShowInput: showInput })}
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        >
+        <div style={{ position: "relative" }}>
           <div
-            className={classNames("inputContent", {
-              inputContentSlidein: showInput,
+            className={classNames("container", {
+              containerShowInput: showInput,
               inputContentSlideout: showInput === false,
             })}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
           >
-            {
-              <div className={classNames("input-addon-wrapper")}>
-                {showInput && (
-                  <span className="input-affix-wrapper">
-                    <span className="input-before-addon">
-                      <Select
-                        value={selectedQuerier?.value}
-                        getPopupContainer={(trigger) => trigger.parentElement}
-                        showSearch
-                        variant="borderless"
-                        style={{ width: "150px" }}
-                        options={querierOptions}
-                        onChange={handleQuerierSelect}
-                      ></Select>
-                    </span>
-                    <input
-                      placeholder={
-                        selectedQuerier?.config?.searchPlaceholder ||
-                        "输入IP查询主机关联的应用、系统等资源"
-                      }
-                      value={searchKey}
-                      onChange={handleChange}
-                      onKeyDown={haneleInputKeyDown}
-                    />
-                    {!!searchKey && (
-                      <span className="input-suffix">
-                        <WrappedIcon
-                          className="input-clear-icon"
-                          lib="antd"
-                          icon="close-circle"
-                          theme="filled"
-                          onClick={handleClear}
-                        />
+            <div
+              className={classNames("inputContent", {
+                inputContentSlidein: showInput,
+                inputContentSlideout: showInput === false,
+              })}
+            >
+              {
+                <div className={classNames("input-addon-wrapper")}>
+                  {
+                    <span className="input-affix-wrapper">
+                      <span className="input-before-addon">
+                        <Select
+                          value={selectedQuerier?.value}
+                          getPopupContainer={(trigger) => trigger.parentElement}
+                          showSearch
+                          variant="borderless"
+                          style={{ width: "150px" }}
+                          options={querierOptions}
+                          onChange={handleQuerierSelect}
+                        ></Select>
                       </span>
-                    )}
-                  </span>
-                )}
-              </div>
-            }
-          </div>
-          {!showInput && (
-            <WrappedToolTip content="IP搜索">
-              <WrappedButton
-                onClick={() => {
-                  if (checkIsDirectJump()) {
-                    handleHistoryPush();
-                  } else {
-                    setShowInput(true);
+                      <input
+                        placeholder={
+                          selectedQuerier?.config?.searchPlaceholder ||
+                          "输入IP查询主机关联的应用、系统等资源"
+                        }
+                        value={searchKey}
+                        onChange={handleChange}
+                        onKeyDown={haneleInputKeyDown}
+                      />
+                      {!!searchKey && (
+                        <span className="input-suffix">
+                          <WrappedIcon
+                            className="input-clear-icon"
+                            lib="antd"
+                            icon="close-circle"
+                            theme="filled"
+                            onClick={handleClear}
+                          />
+                        </span>
+                      )}
+                    </span>
                   }
-                }}
-                className="button"
-                shape="circle"
-                type="ghost"
-                buttonStyle={{
-                  border: "none",
-                  background: "none",
-                  fontSize: "16px",
-                }}
-                icon={{ icon: "search", theme: "outlined", lib: "antd" }}
-              ></WrappedButton>
-            </WrappedToolTip>
-          )}
-
-          {showInput && (
-            <div className="historySearchContainer">
+                </div>
+              }
+            </div>
+            {!showInput && (
+              <WrappedToolTip content="IP搜索">
+                <WrappedButton
+                  onClick={() => {
+                    if (checkIsDirectJump()) {
+                      handleHistoryPush();
+                    } else {
+                      setShowInput(true);
+                    }
+                  }}
+                  className={classNames("button", {
+                    buttonSildeint: showInput === false,
+                  })}
+                  shape="circle"
+                  type="ghost"
+                  buttonStyle={{
+                    border: "none",
+                    background: "none",
+                    fontSize: "16px",
+                  }}
+                  icon={{ icon: "search", theme: "outlined", lib: "antd" }}
+                ></WrappedButton>
+              </WrappedToolTip>
+            )}
+          </div>
+          {
+            <div
+              className={classNames("historySearchContainer", {
+                historySearchContainerSlidein: showInput,
+                historySearchContainerSlideout: showInput === false,
+              })}
+            >
               <div className="historySearchContent">
                 <div className="latestSearchText">最近搜索</div>
 
@@ -342,7 +353,7 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
               </div>
               <div className="quickSearchTip">快捷搜索（Cmd/Ctrl+K）</div>
             </div>
-          )}
+          }
         </div>
       </StyleProvider>
     </ConfigProvider>

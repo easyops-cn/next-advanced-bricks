@@ -22,14 +22,18 @@
   height: 30px;
   position: absolute;
   right: 0;
+  width: 0px;
+  overflow: hidden;
 }
 
 .inputContentSlidein {
-  animation: slidein 3s forwards;
+  overflow: visible;
+  animation: slidein 0.4s ease-in-out forwards;
 }
 
 .inputContentSlideout {
-  animation: slideout 3s forwards;
+  width: 500px;
+  animation: slideout 0.4s 0.2s ease-in-out forwards;
 }
 
 input {
@@ -61,6 +65,22 @@ input:focus {
   position: absolute;
   right: 0;
   top: 0;
+}
+
+.buttonSildeint {
+  opacity: 0;
+
+  animation: btnSlidein 0.1ms 0.6s ease-in-out forwards;
+}
+
+@keyframes btnSlidein {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slidein {
@@ -134,6 +154,36 @@ input:focus {
   background-color: var(--antd-dropdown-menu-bg);
   top: 35px;
   position: absolute;
+  height: 0px;
+  right: 0;
+  overflow: hidden;
+  border-radius: 6px;
+  z-index: 1000;
+}
+.historySearchContainerSlidein {
+  top: 35px;
+  animation: historySlidein 0.4s 0.2s ease-in-out forwards;
+}
+.historySearchContainerSlideout {
+  animation: historySlideout 0.4s ease-in-out forwards;
+}
+
+@keyframes historySlidein {
+  from {
+    height: 0px;
+  }
+  to {
+    height: 152px;
+  }
+}
+
+@keyframes historySlideout {
+  from {
+    height: 152px;
+  }
+  to {
+    height: 0px;
+  }
 }
 
 .quickSearchTip {
