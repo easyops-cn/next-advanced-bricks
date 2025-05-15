@@ -67,7 +67,7 @@ export function ToolCallStatus({
           className={styles.icon}
           lib="fa"
           prefix="far"
-          icon="circle-pause"
+          icon="circle-user"
         />
       ) : toolState === "canceled" ? (
         <WrappedIcon

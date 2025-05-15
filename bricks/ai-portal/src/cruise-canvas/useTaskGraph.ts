@@ -4,13 +4,14 @@ import type { Job, GraphEdge, GraphNode, TaskBaseDetail } from "./interfaces";
 
 export function useTaskGraph(
   task: TaskBaseDetail | null | undefined,
-  jobs: Job[]
+  jobs: Job[] | null | undefined
 ) {
   return useMemo(() => {
     if (!task) {
       return null;
     }
 
+    const fixedJobs = jobs ?? [];
     const nodes: GraphNode[] = [];
     const edges: GraphEdge[] = [];
 
@@ -19,7 +20,7 @@ export function useTaskGraph(
       type: "requirement",
       id: requirementNodeId,
       content: task.requirement,
-      state: jobs.length === 0 ? "working" : "completed",
+      state: fixedJobs.length === 0 ? "working" : "completed",
     });
 
     const jobMap = new Map<string, Job>();
@@ -29,7 +30,7 @@ export function useTaskGraph(
     const rootDownstream: string[] = [];
     const rootChildren: string[] = [];
 
-    for (const job of jobs) {
+    for (const job of fixedJobs) {
       if (job.parent) {
         let children = childrenMap.get(job.parent);
         if (!children) {
@@ -41,7 +42,7 @@ export function useTaskGraph(
     }
 
     // Setup jobMap and downstreamMap
-    for (const job of jobs) {
+    for (const job of fixedJobs) {
       jobMap.set(job.id, job);
 
       for (const up of job.upstream ?? []) {

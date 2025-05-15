@@ -58,7 +58,8 @@ export function NodeJob({ job, state }: NodeJobProps): JSX.Element {
             className={styles.icon}
             lib="fa"
             prefix="fas"
-            icon="person-circle-question"
+            // icon="person-circle-question"
+            icon="user-check"
           />
         ) : job.toolCall ? (
           <WrappedIcon

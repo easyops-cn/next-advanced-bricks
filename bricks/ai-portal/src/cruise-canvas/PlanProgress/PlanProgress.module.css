@@ -5,6 +5,9 @@
   transform: translate(-50%, 0);
   width: var(--cruise-canvas-node-width-medium);
   max-width: 80%;
+}
+
+.bar {
   background: #24203d;
   box-shadow:
     0px 6px 16px 0px rgba(0, 0, 0, 0.08),
@@ -131,4 +134,41 @@
 
 .state.canceled {
   color: #fcaa07;
+}
+
+.actions {
+  position: absolute;
+  left: 0;
+  top: -34px;
+  display: flex;
+}
+
+.action {
+  width: 26px;
+  height: 26px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #262626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action:not([disabled]) {
+  cursor: pointer;
+}
+
+.action:not([disabled]):active,
+.action:not([disabled]):hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.action:focus {
+  outline: none;
+}
+
+.actions > * + * {
+  margin-left: 8px;
 }

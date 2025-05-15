@@ -55,6 +55,7 @@ export interface CruiseCanvasProps {
   task?: TaskBaseDetail;
   jobs?: Job[];
   goBackUrl?: string;
+  flagShowTaskActions?: boolean;
 }
 
 /**
@@ -78,11 +79,35 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
   @property()
   accessor goBackUrl: string | undefined;
 
+  @property({ type: Boolean })
+  accessor flagShowTaskActions: boolean | undefined;
+
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
 
   #onShare = () => {
     this.#shareEvent.emit();
+  };
+
+  @event({ type: "pause" })
+  accessor #pauseEvent!: EventEmitter<void>;
+
+  #onPause = () => {
+    this.#pauseEvent.emit();
+  };
+
+  @event({ type: "resume" })
+  accessor #resumeEvent!: EventEmitter<void>;
+
+  #onResume = () => {
+    this.#resumeEvent.emit();
+  };
+
+  @event({ type: "stop" })
+  accessor #stopEvent!: EventEmitter<void>;
+
+  #onStop = () => {
+    this.#stopEvent.emit();
   };
 
   render() {
@@ -92,7 +117,11 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         jobs={this.jobs}
         task={this.task}
         goBackUrl={this.goBackUrl}
+        flagShowTaskActions={this.flagShowTaskActions}
         onShare={this.#onShare}
+        onPause={this.#onPause}
+        onResume={this.#onResume}
+        onStop={this.#onStop}
       />
     );
   }
@@ -100,6 +129,9 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
 
 export interface CruiseCanvasComponentProps extends CruiseCanvasProps {
   onShare: () => void;
+  onPause: () => void;
+  onResume: () => void;
+  onStop: () => void;
 }
 
 export function CruiseCanvasComponent({
@@ -107,7 +139,11 @@ export function CruiseCanvasComponent({
   task: propTask,
   jobs: propJobs,
   goBackUrl,
+  flagShowTaskActions,
   onShare,
+  onPause,
+  onResume,
+  onStop,
 }: CruiseCanvasComponentProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const {
@@ -118,7 +154,7 @@ export function CruiseCanvasComponent({
     humanInputRef,
   } = useTaskDetail(taskId);
   const task = taskId ? _task : propTask;
-  const jobs = taskId ? _jobs : (propJobs ?? []);
+  const jobs = taskId ? _jobs : propJobs;
   const plan = taskId ? _plan : propTask?.plan;
   const graph = useTaskGraph(task, jobs);
   const rawNodes = graph?.nodes;
@@ -264,20 +300,33 @@ export function CruiseCanvasComponent({
 
   const canvasContextValue = useMemo(
     () => ({
+      flagShowTaskActions,
       humanInput,
       onShare,
+      onPause,
+      onResume,
+      onStop,
       onNodeResize,
       activeToolCallJobId,
       setActiveToolCallJobId,
     }),
-    [activeToolCallJobId, onNodeResize, humanInput, onShare]
+    [
+      activeToolCallJobId,
+      onNodeResize,
+      humanInput,
+      onShare,
+      onPause,
+      onResume,
+      onStop,
+      flagShowTaskActions,
+    ]
   );
 
   const activeToolCallJob = useMemo(() => {
     if (!activeToolCallJobId) {
       return null;
     }
-    return jobs.find((job) => job.id === activeToolCallJobId);
+    return jobs?.find((job) => job.id === activeToolCallJobId);
   }, [activeToolCallJobId, jobs]);
 
   return (
@@ -348,7 +397,7 @@ export function CruiseCanvasComponent({
             <WrappedIcon lib="fa" prefix="fas" icon="arrow-left-long" />
           </WrappedLink>
         )}
-        <PlanProgress plan={plan} />
+        <PlanProgress plan={plan} state={task?.state} />
         <ZoomBar
           scale={transform.k}
           onScaleChange={handleScaleChange}
