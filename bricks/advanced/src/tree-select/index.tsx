@@ -251,6 +251,7 @@ function TreeSelectElement(props: TreeSelectProps): React.ReactElement {
     onSearch,
     onSelect,
     onTreeExpand,
+    showSearch,
   } = props;
 
   const currentTheme = useCurrentTheme();
@@ -293,6 +294,7 @@ function TreeSelectElement(props: TreeSelectProps): React.ReactElement {
           onSearch={onSearch}
           onTreeExpand={onTreeExpand}
           virtual={false}
+          showSearch={showSearch}
         />
       </StyleProvider>
     </ConfigProvider>
