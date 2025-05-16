@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { createDecorators } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
@@ -94,6 +94,7 @@ interface QuerierOption extends Querier {
 }
 export function QuerySearchComponent(props: QuerySearchComponentProps) {
   const { shadowRoot } = props;
+  const inputRef = useRef<HTMLInputElement>(null);
   const appId = getRuntime().getCurrentApp()?.id || "";
   const visits: string[] = storage.getItem(storageKey) ?? [];
   const currentTheme = useCurrentTheme();
@@ -134,6 +135,9 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
     setSearchKey("");
   };
   useEffect(() => {
+    if (showInput) {
+      inputRef.current?.focus();
+    }
     const handleClick = () => {
       if (showInput) {
         setShowInput(false);
@@ -280,7 +284,6 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
                         ></Select>
                       </span>
                       <input
-                        autoFocus
                         placeholder={
                           selectedQuerier?.config?.searchPlaceholder ||
                           (selectedQuerier?.type === QuerierTypes.ipSearch
@@ -289,6 +292,7 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
                               ? '搜索应用、主机等信息，支持""精确搜索'
                               : "")
                         }
+                        ref={inputRef}
                         value={searchKey}
                         onChange={handleChange}
                         onKeyDown={haneleInputKeyDown}
