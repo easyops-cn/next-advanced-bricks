@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.44.14](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.13...@next-bricks/advanced@0.44.14) (2025-05-16)
+
+
+### Bug Fixes
+
+* eo-tree-select 暴露showSearch属性 ref CUSTOMIZE-1141 ([be38d6b](https://github.com/easyops-cn/next-advanced-bricks/commit/be38d6be48baf1136ee8ec1596682ab2ad85e7e5))
+
+
+
+
+
 ## [0.44.13](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.12...@next-bricks/advanced@0.44.13) (2025-05-15)
 
 
