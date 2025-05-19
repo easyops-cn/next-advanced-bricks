@@ -204,8 +204,10 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
                 config.url = ipSearchUrl;
               }
               return { ...i, config };
-            }) || defaultQueriers;
-          setQuerierList(queriers as Querier[]);
+            }) || [];
+          setQuerierList(
+            (queriers?.length > 0 ? queriers : defaultQueriers) as Querier[]
+          );
         } catch {
           setQuerierList(defaultQueriers as Querier[]);
         }
