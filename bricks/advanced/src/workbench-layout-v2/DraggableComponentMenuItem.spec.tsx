@@ -14,6 +14,8 @@ describe("DraggableComponentMenuItem", () => {
           textContent: "card-1",
         },
       },
+      thumbnail:
+        "/next/sa-static/portal/versions/0.0.0/webroot/-/micro-apps/portal/images/alert-level1747736998873129815.png",
       position: {
         i: "card-1",
         x: 0,
@@ -35,7 +37,9 @@ describe("DraggableComponentMenuItem", () => {
     // click
     expect(handleClick).not.toHaveBeenCalled();
     act(() => {
-      fireEvent.click(screen.getByTestId("draggable-component-menu-item"));
+      fireEvent.click(
+        screen.getByTestId("draggable-component-menu-item-thumbnail")
+      );
     });
     expect(handleClick).toHaveBeenCalled();
   });

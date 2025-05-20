@@ -65,6 +65,8 @@ describe("eo-workbench-layout-v2", () => {
             textContent: "card-1",
           },
         },
+        thumbnail:
+          "/next/sa-static/portal/versions/0.0.0/webroot/-/micro-apps/portal/images/alert-level1747736998873129815.png",
         position: {
           i: "card-1",
           x: 0,
@@ -82,6 +84,8 @@ describe("eo-workbench-layout-v2", () => {
             textContent: "card-2",
           },
         },
+        thumbnail:
+          "/next/sa-static/portal/versions/0.0.0/webroot/-/micro-apps/portal/images/alert-level1747736998873129815.png",
         position: {
           i: "card-2",
           x: 0,
@@ -99,6 +103,8 @@ describe("eo-workbench-layout-v2", () => {
             textContent: "card-3",
           },
         },
+        thumbnail:
+          "/next/sa-static/portal/versions/0.0.0/webroot/-/micro-apps/portal/images/alert-level1747736998873129815.png",
         position: {
           i: "card-3",
           x: 0,
@@ -116,6 +122,8 @@ describe("eo-workbench-layout-v2", () => {
             textContent: "card-4",
           },
         },
+        thumbnail:
+          "/next/sa-static/portal/versions/0.0.0/webroot/-/micro-apps/portal/images/alert-level1747736998873129815.png",
         position: {
           i: "card-4",
           x: 0,
@@ -362,6 +370,8 @@ describe("eo-workbench-layout-v2", () => {
               textContent: "card-1",
             },
           },
+          thumbnail:
+            "/next/sa-static/portal/versions/0.0.0/webroot/-/micro-apps/portal/images/alert-level1747736998873129815.png",
           position: {
             i: "card-1",
             x: 0,
