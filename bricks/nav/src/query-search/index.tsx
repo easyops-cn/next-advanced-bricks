@@ -144,17 +144,20 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
       }
     };
 
+    // istanbul ignore next
     const handleKeyDown = (e: KeyboardEvent) => {
       const modKey = /Mac|iPod|iPhone|iPad/.test(navigator.platform)
         ? "metaKey"
         : "ctrlKey";
-      if (!showInput) {
-        // istanbul ignore else
+      if (!showInput && e[modKey] && e.key === "k") {
+        e.preventDefault();
         if (checkIsDirectJump()) {
           handleHistoryPush();
-        } else if (e[modKey] && e.key === "k") {
+        } else {
           setShowInput(true);
         }
+      } else if ((e.key === "Escape" || e.key === "Esc") && showInput) {
+        setShowInput(false);
       }
     };
 
