@@ -272,16 +272,13 @@ export const EoWorkbenchLayoutComponent = forwardRef<
 
       const currentH = Math.round(oldLayout.h);
       if (currentH !== newH) {
-        _setLayouts((prevLayouts: ExtraLayout[]) => {
-          const newLayouts = prevLayouts.map((item) =>
-            item.i === i ? { ...item, h: newH } : item
-          );
-          layoutCacheRef.current = newLayouts;
-          return newLayouts;
-        });
+        const newLayouts = layouts.map((item) =>
+          item.i === i ? { ...item, h: newH } : item
+        );
+        handleChange(newLayouts);
       }
     },
-    [layouts]
+    [layouts, handleChange]
   );
 
   const renderChild = useMemo(() => {
@@ -422,6 +419,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
           isDroppable={isEdit}
           compactType="vertical"
           // onDrag={handleDragCallback}
+          useCSSTransforms={false}
           onDropDragOver={() => {
             if (draggingComponentRef.current) {
               return pick(draggingComponentRef.current.position, ["w", "h"]);

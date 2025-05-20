@@ -25,6 +25,8 @@ describe("DroppableComponentLayoutItem", () => {
           textContent: "card-1",
         },
       },
+      thumbnail:
+        "/next/sa-static/portal/versions/0.0.0/webroot/-/micro-apps/portal/images/alert-level1747736998873129815.png",
       position: {
         i: "card-1",
         x: 0,

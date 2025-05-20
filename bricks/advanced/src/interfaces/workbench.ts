@@ -5,6 +5,7 @@ export type WorkbenchComponent = {
   position: Layout;
   key: string;
   title: string;
+  thumbnail: string;
   style?: React.CSSProperties;
   useBrick: UseSingleBrickConf;
 };
