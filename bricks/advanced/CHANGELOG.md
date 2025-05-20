@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.45.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.15...@next-bricks/advanced@0.45.0) (2025-05-20)
+
+
+### Features
+
+* 工作台卡片类型支持缩略图 ([5c7fcc8](https://github.com/easyops-cn/next-advanced-bricks/commit/5c7fcc844698aca1bc6c80a27523b8ceee790996))
+
+
+
+
+
 ## [0.44.15](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.44.14...@next-bricks/advanced@0.44.15) (2025-05-19)
 
 **Note:** Version bump only for package @next-bricks/advanced
