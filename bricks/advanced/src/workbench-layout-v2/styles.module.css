@@ -5,7 +5,7 @@
   width: 100%;
 
   .componentWrapper {
-    width: 128px;
+    width: 132px;
     padding: 6px 12px 6px 16px;
     overflow-y: auto;
     box-shadow: 1px 0 0 0 var(--palette-gray-4);
