@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.62](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.0.61...@next-bricks/ui-test@1.0.62) (2025-05-22)
+
+
+### Bug Fixes
+
+* support array and change relation direction ([9ac6679](https://github.com/easyops-cn/next-advanced-bricks/commit/9ac66790fc8ba18b751a6deba111a0314ef37efc))
+
+
+
+
+
 ## [1.0.61](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.0.60...@next-bricks/ui-test@1.0.61) (2025-04-17)
 
 **Note:** Version bump only for package @next-bricks/ui-test
