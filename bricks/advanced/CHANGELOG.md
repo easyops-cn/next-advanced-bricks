@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.45.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.45.2...@next-bricks/advanced@0.45.3) (2025-05-22)
+
+
+### Bug Fixes
+
+* 工作台-自定义排行卡片没有自适应高度 ([01aa734](https://github.com/easyops-cn/next-advanced-bricks/commit/01aa734634ca5abdbc01630751002f8016eccf3c))
+
+
+
+
+
 ## [0.45.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.45.1...@next-bricks/advanced@0.45.2) (2025-05-21)
 
 **Note:** Version bump only for package @next-bricks/advanced
