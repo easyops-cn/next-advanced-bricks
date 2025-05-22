@@ -25,6 +25,7 @@ export type CardStyleConfig = {
   cardData?: any;
   cardTitle?: string;
   moreIconLink?: string;
+  moreIconText?: string;
   cardBackground?: string;
   cardBgType?: string;
   timeRange?: Record<string, any>;

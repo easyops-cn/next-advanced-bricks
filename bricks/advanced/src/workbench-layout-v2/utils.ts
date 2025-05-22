@@ -19,14 +19,17 @@ export const getLayoutDefaultCardConfig = (
     "notice-card": {
       moreIconLink: "/announcement-management",
       showMoreIcon: true,
+      moreIconText: "更多",
     },
     "cmdb-object-collect-card": {
       moreIconLink: "/cmdb-model-management",
       showMoreIcon: true,
+      moreIconText: "更多",
     },
     "itsm-todos": {
       moreIconLink: "/itsc-workbench/workbench?activeKey=run",
       showMoreIcon: true,
+      moreIconText: "更多",
     },
   };
   return {

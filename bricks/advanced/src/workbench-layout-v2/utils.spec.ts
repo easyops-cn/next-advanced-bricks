@@ -8,6 +8,7 @@ describe("getLayoutDefaultCardConfig", () => {
       ...defaultCardConfig,
       moreIconLink: "/announcement-management",
       showMoreIcon: true,
+      moreIconText: "更多",
     });
   });
 });
