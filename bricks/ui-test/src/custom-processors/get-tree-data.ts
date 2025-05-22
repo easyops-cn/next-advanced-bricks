@@ -123,12 +123,8 @@ function getLiteralParams(params: unknown[]): unknown[] {
 export function getTreeData(
   GraphData: GraphData,
   commandDocList: CommandDoc[]
-): TestTreeData {
-  const {
-    topic_vertices: [rootData],
-    vertices,
-    edges,
-  } = GraphData;
+): TestTreeData[] {
+  const { topic_vertices, vertices, edges } = GraphData;
 
   const getChildVertices = (children: TestTreeData[]) => {
     return sortBy(
@@ -140,10 +136,10 @@ export function getTreeData(
   };
 
   const getChildren = (node: NodeGraphData): TestTreeData[] => {
-    const relations = edges.filter((item) => item.in === node.instanceId);
+    const relations = edges.filter((item) => item.out === node.instanceId);
 
     const nodes = relations
-      .map((relation) => vertices.find((v) => relation.out === v.instanceId))
+      .map((relation) => vertices.find((v) => relation.in === v.instanceId))
       .filter(Boolean) as NodeGraphData[];
 
     return sortBy(nodes, "sort").map((child) => getNode(child, node));
@@ -178,7 +174,7 @@ export function getTreeData(
     };
   }
 
-  return getNode(rootData);
+  return topic_vertices?.map((rootData) => getNode(rootData));
 }
 
 customProcessors.define("uiTest.getTreeData", getTreeData);

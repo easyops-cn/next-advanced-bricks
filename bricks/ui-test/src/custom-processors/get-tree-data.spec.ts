@@ -75,43 +75,43 @@ describe("getTreeData", () => {
       ],
       edges: [
         {
-          out: "603a85ccfb595",
-          in: "603a85a03c2c6",
-          out_name: "children",
-        },
-        {
-          out: "603ab42f8eae9",
-          in: "603a85a03c2c6",
-          out_name: "children",
-        },
-        {
-          out: "603a8bb21c8e6",
           in: "603a85ccfb595",
+          out: "603a85a03c2c6",
           out_name: "children",
         },
         {
-          out: "603aabdd6d6cd",
-          in: "603a85ccfb595",
-          out_name: "children",
-        },
-        {
-          out: "603ab463e5d3e",
           in: "603ab42f8eae9",
+          out: "603a85a03c2c6",
           out_name: "children",
         },
         {
-          out: "603aac31912bd",
+          in: "603a8bb21c8e6",
+          out: "603a85ccfb595",
+          out_name: "children",
+        },
+        {
           in: "603aabdd6d6cd",
+          out: "603a85ccfb595",
           out_name: "children",
         },
         {
-          out: "603aac508c916",
-          in: "603aabdd6d6cd",
+          in: "603ab463e5d3e",
+          out: "603ab42f8eae9",
           out_name: "children",
         },
         {
-          out: "603aac508c917",
+          in: "603aac31912bd",
+          out: "603aabdd6d6cd",
+          out_name: "children",
+        },
+        {
           in: "603aac508c916",
+          out: "603aabdd6d6cd",
+          out_name: "children",
+        },
+        {
+          in: "603aac508c917",
+          out: "603aac508c916",
           out_name: "children",
         },
       ],
