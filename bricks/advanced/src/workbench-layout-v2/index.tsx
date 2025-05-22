@@ -263,14 +263,14 @@ export const EoWorkbenchLayoutComponent = forwardRef<
   /* istanbul ignore next */
   const handleResize = useCallback(
     (i: string, contentHeight: number) => {
-      const newH = Math.round(
+      const newH = Math.ceil(
         (contentHeight + MARGIN_HEIGHT) / (MARGIN_HEIGHT + ROW_HEIGHT)
       );
       const oldLayout = layouts.find((layout: ExtraLayout) => layout.i === i);
 
       if (!oldLayout) return;
 
-      const currentH = Math.round(oldLayout.h);
+      const currentH = Math.ceil(oldLayout.h);
       if (currentH !== newH) {
         const newLayouts = layouts.map((item) =>
           item.i === i ? { ...item, h: newH } : item
