@@ -25,3 +25,7 @@
 .ant-select-multiple .ant-select-selector:after {
   line-height: 22px;
 }
+
+.notPopupMatchSelectWidth .ant-select-tree-title {
+  white-space: nowrap;
+}
