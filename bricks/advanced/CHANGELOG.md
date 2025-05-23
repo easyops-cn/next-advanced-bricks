@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.45.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.45.3...@next-bricks/advanced@0.45.4) (2025-05-23)
+
+
+### Bug Fixes
+
+* eo-tree-select支持设置popupMatchSelectWidth属性 ref CUSTOMIZE-1128 ([bf26d6a](https://github.com/easyops-cn/next-advanced-bricks/commit/bf26d6a73cd2b6f79268a55895940a1ff141b63b))
+
+
+
+
+
 ## [0.45.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.45.2...@next-bricks/advanced@0.45.3) (2025-05-22)
 
 
