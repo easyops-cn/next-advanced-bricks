@@ -1,0 +1,100 @@
+.progress-line {
+  --breathing-color: rgba(205, 205, 217, 0.7);
+  --breathing-color-2: rgba(205, 205, 217, 0);
+  display: flex;
+  flex-direction: column;
+
+  .step {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 10px 4px 10px 16px;
+    color: rgba(0, 0, 0, 0.5);
+
+    .axis {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 14px;
+      width: 1px;
+
+      .line {
+        width: 1px;
+        height: 100%;
+        background: linear-gradient(
+          172deg,
+          rgba(205, 205, 217, 0) 0%,
+          #cdcdd9 46%,
+          rgba(205, 205, 217, 0) 100%
+        );
+      }
+
+      .dot {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 5px;
+        height: 5px;
+        background: rgba(205, 205, 217, 1);
+        border-radius: 50%;
+      }
+    }
+
+    .progress {
+      padding: 3px;
+      margin: 0 8px 0 12px;
+      border-radius: 10px;
+      line-height: 1;
+      background: #ffffff;
+
+      .count {
+        font-weight: 400;
+      }
+
+      .total {
+        opacity: 0.6;
+      }
+    }
+
+    .description {
+      flex: 1;
+      color: #999;
+    }
+  }
+
+  .step:last-child {
+    .progress {
+      .count {
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+.failed {
+  .step:last-child {
+    .axis {
+      .line {
+        background: linear-gradient(
+          172deg,
+          rgba(242, 76, 37, 0) 0%,
+          rgba(242, 76, 37, 0.3) 47%,
+          rgba(242, 76, 37, 0) 100%
+        );
+      }
+
+      .dot {
+        background: rgba(255, 154, 120, 1);
+      }
+    }
+
+    .progress {
+      background: #ffd6d6;
+
+      .count {
+        color: #f44336;
+      }
+    }
+  }
+}

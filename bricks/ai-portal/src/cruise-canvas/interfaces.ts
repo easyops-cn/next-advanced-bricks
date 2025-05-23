@@ -172,7 +172,7 @@ export interface FilePart {
 // 自定义结构化信息，用于个性化 UI 显示
 export interface DataPart {
   type: "data";
-  data: Record<string, unknown>;
+  data: Record<string, any>;
 }
 
 export interface ToolCall {
