@@ -13,6 +13,7 @@ import type { FormItem, FormItemProps } from "@next-bricks/form/form-item";
 import { FormItemElementBase } from "@next-shared/form";
 import { useCurrentTheme } from "@next-core/react-runtime";
 import styleText from "./styles.shadow.css";
+import classNames from "classnames";
 
 const { defineElement, property, event } = createDecorators();
 
@@ -48,6 +49,7 @@ export interface TreeSelectProps
   popupPlacement?: AntdTreeSelectProps["placement"];
   dropdownStyle?: CSSProperties;
   maxTagCount?: number | "responsive";
+  popupMatchSelectWidth?: boolean;
   onChange?: (value: AntdTreeSelectProps["value"]) => void;
 }
 
@@ -152,6 +154,11 @@ class TreeSelectBrick extends FormItemElementBase implements TreeSelectProps {
   })
   accessor dropdownStyle: CSSProperties | undefined;
 
+  @property({
+    type: Boolean,
+  })
+  accessor popupMatchSelectWidth: boolean | undefined = true;
+
   /**
    * @detail { value: AntdTreeSelectProps["value"], selectedOptions: DefaultOptionType[] | DefaultOptionType[][] }
    */
@@ -222,6 +229,7 @@ class TreeSelectBrick extends FormItemElementBase implements TreeSelectProps {
           onSearch={this.#handleSearch}
           onSelect={this.#handleSelect}
           onTreeExpand={this.#handleExpand}
+          popupMatchSelectWidth={this.popupMatchSelectWidth}
         />
       </WrappedFormItem>
     );
@@ -252,6 +260,7 @@ function TreeSelectElement(props: TreeSelectProps): React.ReactElement {
     onSelect,
     onTreeExpand,
     showSearch,
+    popupMatchSelectWidth,
   } = props;
 
   const currentTheme = useCurrentTheme();
@@ -295,6 +304,10 @@ function TreeSelectElement(props: TreeSelectProps): React.ReactElement {
           onTreeExpand={onTreeExpand}
           virtual={false}
           showSearch={showSearch}
+          popupMatchSelectWidth={popupMatchSelectWidth}
+          className={classNames({
+            notPopupMatchSelectWidth: !popupMatchSelectWidth,
+          })}
         />
       </StyleProvider>
     </ConfigProvider>
