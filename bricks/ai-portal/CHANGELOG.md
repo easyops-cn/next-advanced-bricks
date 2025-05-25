@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.7.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.6.0...@next-bricks/ai-portal@0.7.0) (2025-05-25)
+
+
+### Features
+
+* 智能门户巡航页 - 支持显示任务进度信息 ([bfc4f0f](https://github.com/easyops-cn/next-advanced-bricks/commit/bfc4f0ffd7f200fa9ed634956d81c5facaaa37ca))
+
+
+
+
+
 # [0.6.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.5.0...@next-bricks/ai-portal@0.6.0) (2025-05-15)
 
 
