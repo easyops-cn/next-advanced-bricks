@@ -16,6 +16,8 @@ import sharedStyles from "../shared.module.css";
 import { K, t } from "../i18n";
 import { CanvasContext } from "../CanvasContext";
 import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus";
+import { getlastProgress, getToolDataProgress } from "../utils";
+import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
 
 export interface ToolCallDetailProps {
   job: Job;
@@ -61,6 +63,14 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
     };
   }, []);
 
+  const toolState =
+    ["working", "input-required"].includes(job.state) &&
+    toolCallMessages?.length
+      ? "completed"
+      : job.state;
+
+  const failed = job.isError || toolState === "failed";
+
   return (
     <WrappedDrawer
       ref={ref}
@@ -82,19 +92,41 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
         <div className={styles.detail}>
           <div className={styles.heading}>{t(K.RESPONSE)}:</div>
           <div className={`${styles.body} ${sharedStyles.markdown}`}>
-            {toolCallMessages?.map((message, index) => (
-              <div key={index}>
-                {message.parts?.map((part, partIndex) => (
-                  <PreComponent
-                    key={partIndex}
-                    content={
-                      part.type === "text" ? part.text : JSON.stringify(part)
-                    }
-                    maybeJson={part.type === "text"}
-                  />
-                ))}
-              </div>
-            ))}
+            {toolCallMessages?.map((message, index) => {
+              const lastProgress = getlastProgress(
+                getToolDataProgress([message])
+              )?.data?.progress;
+              return (
+                <div key={index}>
+                  {message.parts?.map((part, partIndex) =>
+                    part.type === "data" ? (
+                      part?.data?.progress === lastProgress ? (
+                        <pre
+                          className={classNames("language-plaintext", {
+                            [styles["fallback"]]: failed,
+                          })}
+                        >
+                          <ToolProgressLine
+                            toolDataProgress={[part]}
+                            failed={failed}
+                          />
+                        </pre>
+                      ) : null
+                    ) : (
+                      <PreComponent
+                        key={partIndex}
+                        content={
+                          part.type === "text"
+                            ? part.text
+                            : JSON.stringify(part)
+                        }
+                        maybeJson={part.type === "text"}
+                      />
+                    )
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

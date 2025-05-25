@@ -1,21 +1,28 @@
-.status {
-  height: 24px;
-  background: #e6e9f3;
-  border-radius: 99px;
-  border: 1px solid #e2e2ec;
-  display: flex;
-  align-items: center;
-  padding: 0 12px;
+.tool-call {
+  --failed-color: #f24c25;
+  --border-color: #e2e2ec;
+  --status-border-color: rgba(226, 226, 236, 0.8);
   font-size: 13px;
   color: #595959;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: #e6e9f3;
 }
 
-.status:not(:last-child) {
+.tool-call:not(.read-only):hover {
+  background: #e4e9fb;
+  border: 1px solid #b8c1ff;
+}
+
+.tool-call:not(:last-child) {
   margin-bottom: 10px;
 }
 
-.status:not(.read-only) {
+.tool-call:not(.read-only) {
   cursor: pointer;
+}
+.tool-call .status:not(:last-child) {
+  border-bottom: 1px solid var(--status-border-color);
 }
 
 .read-only {
@@ -28,14 +35,21 @@
   background: #fef5f3;
 }
 
-.status:not(.read-only):hover {
-  background: #e4e9fb;
-  border: 1px solid #b8c1ff;
-}
-
 .failed:not(.read-only):hover {
   background: #fee7e1;
   border: 1px solid #ffc3b5;
+}
+
+.failed .status:not(:last-child) {
+  border-bottom: 1px solid rgba(253, 225, 218, 0.8);
+}
+
+.status {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  padding: 0 1px 0 12px;
+  color: #262626;
 }
 
 .icon {
@@ -44,7 +58,7 @@
 }
 
 .failed .icon {
-  color: #f24c25;
+  color: var(--failed-color);
 }
 
 .name {
