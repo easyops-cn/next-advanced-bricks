@@ -1,8 +1,12 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as t from "@babel/types";
 import { isEmpty } from "lodash";
 import { parse } from "@babel/parser";
-import { NodeItem, NodeType } from "../interface.js";
+import { Options as FormatOptions } from "prettier";
+import { format } from "prettier/standalone";
+import * as parserBabel from "prettier/plugins/babel";
+import * as pluginEstree from "prettier/plugins/estree";
+import { transformFromAst } from "@babel/standalone";
+import { NodeItem, NodeType, TransformOptions } from "../interface.js";
 
 function processCodeItem(item: NodeItem): t.Statement[] {
   const source = item.params?.[0];
@@ -197,6 +201,7 @@ function processSuiteChildren(children: NodeItem[]): t.Statement[] {
   return children.map((item) => createBlockNode(item));
 }
 
+// eslint-disable-next-line
 function crateSuiteNode(item: NodeItem): t.ExpressionStatement {
   return t.expressionStatement(
     t.callExpression(t.identifier(item.name), [
@@ -214,4 +219,30 @@ function crateSuiteNode(item: NodeItem): t.ExpressionStatement {
 export function parseSuiteAst(suiteData: NodeItem): t.Statement[] {
   if (isEmpty(suiteData.children)) return [];
   return processSuiteChildren(suiteData.children as NodeItem[]);
+}
+
+export function parseSourceCode(
+  suiteData: NodeItem,
+  options?: TransformOptions
+): string {
+  const program = t.program(parseSuiteAst(suiteData), undefined, "module");
+
+  return transformFromAst(program, undefined, {
+    generatorOpts: {
+      jsescOption: {
+        minimal: true,
+      },
+    },
+    ...options,
+  }).code as string;
+}
+
+export async function formatCode(sourceCode: string, options?: FormatOptions) {
+  // https://prettier.io/blog/2023/07/05/3.0.0.html#api-1
+  return format(sourceCode as string, {
+    parser: "babel-ts",
+    plugins: [parserBabel, pluginEstree as any],
+    printWidth: 50,
+    ...options,
+  });
 }

@@ -1,15 +1,8 @@
 // istanbul ignore file
 import { createProviderClass } from "@next-core/utils/general";
-import { transformFromAst } from "@babel/standalone";
-import * as t from "@babel/types";
-import { get, set } from "idb-keyval";
-import { parseSuiteAst } from "../utils/parseSuiteAst.js";
+import { parseSourceCode, formatCode } from "../utils/parseSuiteAst.js";
 import { getCaseFileHandle, getTestDirHandle } from "./shared/fileAccess.js";
 import { NodeItem } from "../interface.js";
-import { dirHandleStorageKey } from "../constants.js";
-import { format } from "prettier/standalone";
-import * as parserBabel from "prettier/plugins/babel";
-import * as pluginEstree from "prettier/plugins/estree";
 
 export async function exportAsFile(
   suiteData: NodeItem,
@@ -42,22 +35,9 @@ export async function exportAsFile(
 
   const writable = await fileHandle?.createWritable?.();
 
-  const program = t.program(parseSuiteAst(suiteData), undefined, "module");
+  const generatedCode = parseSourceCode(suiteData);
 
-  const generatedCode = transformFromAst(program, undefined, {
-    generatorOpts: {
-      jsescOption: {
-        minimal: true,
-      },
-    },
-  }).code;
-
-  // https://prettier.io/blog/2023/07/05/3.0.0.html#api-1
-  const prettyCode = await format(generatedCode as string, {
-    parser: "babel-ts",
-    plugins: [parserBabel, pluginEstree as any],
-    printWidth: 50,
-  });
+  const prettyCode = await formatCode(generatedCode);
 
   await writable.write(prettyCode);
 

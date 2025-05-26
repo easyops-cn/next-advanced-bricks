@@ -13,3 +13,5 @@ import "./data-providers/delete-file.js";
 import "./data-providers/rename-file.js";
 import "./data-providers/insert-node.js";
 import "./data-providers/get-brick-custom-commands.js";
+import "./data-providers/get-source-code-by-suites.js";
+import "./data-providers/prettier-code.js";

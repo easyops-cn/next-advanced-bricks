@@ -19,6 +19,11 @@ export interface GraphData {
   vertices: NodeGraphData[];
 }
 
+interface Options {
+  // 通过 instanceId 还是 uuid 来标识唯一 key 和关系指向字段
+  useUniqKey?: "instanceId" | "uuid";
+}
+
 function getIcon(
   nodeData: NodeGraphData,
   commandDocList: CommandDoc[]
@@ -122,24 +127,26 @@ function getLiteralParams(params: unknown[]): unknown[] {
 
 export function getTreeData(
   GraphData: GraphData,
-  commandDocList: CommandDoc[]
+  commandDocList: CommandDoc[],
+  options: Options = {}
 ): TestTreeData[] {
   const { topic_vertices, vertices, edges } = GraphData;
+  const { useUniqKey = "instanceId" } = options;
 
   const getChildVertices = (children: TestTreeData[]) => {
     return sortBy(
       vertices.filter((v) =>
-        children.find((c) => c.data.instanceId === v.instanceId)
+        children.find((c) => c.data[useUniqKey] === v[useUniqKey])
       ),
       "sort"
     );
   };
 
   const getChildren = (node: NodeGraphData): TestTreeData[] => {
-    const relations = edges.filter((item) => item.out === node.instanceId);
+    const relations = edges.filter((item) => item.out === node[useUniqKey]);
 
     const nodes = relations
-      .map((relation) => vertices.find((v) => relation.in === v.instanceId))
+      .map((relation) => vertices.find((v) => relation.in === v[useUniqKey]))
       .filter(Boolean) as NodeGraphData[];
 
     return sortBy(nodes, "sort").map((child) => getNode(child, node));
@@ -160,7 +167,7 @@ export function getTreeData(
     const displayLabel = getDisplayLabel(node);
     return {
       name: displayLabel,
-      key: node.instanceId,
+      key: node[useUniqKey] as string,
       icon: getIcon(node, commandDocList),
       data: {
         ...node,

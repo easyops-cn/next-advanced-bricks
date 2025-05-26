@@ -69,6 +69,7 @@ export interface NodeGraphData {
   name: string;
   label?: string;
   instanceId: string;
+  uuid?: string;
   params?: any;
   type: NodeType;
   sort?: number;
@@ -93,4 +94,9 @@ export interface TestTreeData {
   data: TreeNodeItemData;
   children: TestTreeData[];
   labelColor?: string;
+}
+
+export interface TransformOptions {
+  compact?: boolean;
+  minified?: boolean;
 }

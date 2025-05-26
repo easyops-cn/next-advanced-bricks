@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getSourceCodeBySuites should work 1`] = `
+[
+  {
+    "name": "new",
+    "source": "describe("new", () => {
+  beforeEach(() => {
+    cy.setLanguage("en");
+    cy.login();
+  });
+  it("test", () => {
+    cy.get("test").should("be.empty").contains("test");
+    cy.get("test");
+  });
+});",
+  },
+]
+`;
