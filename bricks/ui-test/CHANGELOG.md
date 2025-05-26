@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.63](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.0.62...@next-bricks/ui-test@1.0.63) (2025-05-26)
+
+
+### Bug Fixes
+
+* Optimize the logic of parsing the source code ([81d025c](https://github.com/easyops-cn/next-advanced-bricks/commit/81d025cb5ff78b418c2fe2aa28ccacb7c2d7f23c))
+
+
+
+
+
 ## [1.0.62](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.0.61...@next-bricks/ui-test@1.0.62) (2025-05-22)
 
 
