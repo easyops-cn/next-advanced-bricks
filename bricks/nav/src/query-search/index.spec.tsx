@@ -4,6 +4,8 @@ import { act } from "react-dom/test-utils";
 import "./";
 import type { QuerySearch } from "./index.js";
 import { InstanceApi_postSearchV3 } from "@next-api-sdk/cmdb-sdk";
+import { JsonStorage } from "@next-shared/general/JsonStorage";
+import { auth } from "@next-core/easyops-runtime";
 
 jest.mock("@next-core/theme", () => ({}));
 jest.mock("@next-api-sdk/cmdb-sdk");
@@ -12,6 +14,11 @@ jest.mock("@next-core/react-runtime", () => ({
 }));
 
 const postSearchV3 = InstanceApi_postSearchV3 as jest.Mock<any>;
+const storageKey = `querier-search-recent-visits:${
+  (auth.getAuth() as Record<string, string>)?.org
+}`;
+const storage = new JsonStorage(localStorage);
+storage.setItem(storageKey, ["abc"]);
 jest.mock("@next-core/runtime", () => ({
   getRuntime() {
     return {

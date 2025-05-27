@@ -152,7 +152,7 @@ input::placeholder {
 
 .historySearchContainer {
   width: 500px;
-  height: 152px;
+  height: 232px;
   box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
   background-color: var(--antd-dropdown-menu-bg);
   top: 35px;
@@ -176,13 +176,13 @@ input::placeholder {
     height: 0px;
   }
   to {
-    height: 152px;
+    height: 232px;
   }
 }
 
 @keyframes historySlideout {
   from {
-    height: 152px;
+    height: 232px;
   }
   to {
     height: 0px;
@@ -197,17 +197,17 @@ input::placeholder {
     PingFang SC;
   font-weight: 400;
   font-size: 12px;
-  color: var(--color-normal-text);
+  color: var(--color-auxiliary-text);
   line-height: 17px;
   text-align: left;
   font-style: normal;
   padding: 8px;
   width: 484px;
-  border-top: 1px solid #e8e8e8;
+  border-top: 1px solid var(--color-border-divider-line);
 }
 
 .historySearchContent {
-  height: 103px;
+  height: 183px;
   padding: 8px;
 }
 
@@ -233,16 +233,25 @@ input::placeholder {
     PingFang SC;
   font-weight: 400;
   font-size: 14px;
-  color: #262626;
+  color: var(--color-strong-text);
   line-height: 17px;
   text-align: center;
   font-style: normal;
+  white-space: nowrap;
+}
+.latestSearchTagContainer {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 8px;
+  column-gap: 10px;
 }
 .latestSearchTagContent {
   height: 20px;
-  background: #f5f5f5;
+  background: var(--color-fill-bg-base-1);
   border-radius: 3px;
   padding: 1.5px 8px;
-  margin-right: 10px;
   cursor: pointer;
+  max-width: 480px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
