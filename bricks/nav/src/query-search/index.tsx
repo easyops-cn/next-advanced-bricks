@@ -85,6 +85,7 @@ interface Querier {
   type: QuerierTypes;
   disabled: boolean;
   showInApps: string[];
+  instanceId?: string;
 
   config: QuerierConfig;
 }
@@ -95,6 +96,7 @@ interface QuerierOption extends Querier {
 export function QuerySearchComponent(props: QuerySearchComponentProps) {
   const { shadowRoot } = props;
   const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const appId = getRuntime().getCurrentApp()?.id || "";
   const visits: string[] = storage.getItem(storageKey) ?? [];
   const currentTheme = useCurrentTheme();
@@ -138,8 +140,12 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
     if (showInput) {
       inputRef.current?.focus();
     }
-    const handleClick = () => {
-      if (showInput) {
+    const handleClick = (e: MouseEvent) => {
+      if (
+        showInput &&
+        containerRef.current &&
+        !e.composedPath().includes(containerRef.current)
+      ) {
         setShowInput(false);
       }
     };
@@ -161,7 +167,7 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
       }
     };
 
-    window.addEventListener("click", handleClick);
+    window.addEventListener("click", handleClick, true);
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("click", handleClick);
@@ -226,7 +232,7 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
           (!i.showInApps?.length ||
             (i.showInApps?.length && i.showInApps.includes(appId)))
       )
-      .map((i) => ({ ...i, label: i.name, value: i.type }));
+      .map((i) => ({ ...i, label: i.name, value: i.instanceId || i.type }));
     setQuerierOptions(options);
     setSelectedQuerier(
       options.find((i) => i.type === QuerierTypes.ipSearch) || options[0]
@@ -235,7 +241,9 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
 
   // istanbul ignore next
   const handleQuerierSelect = (e: string) => {
-    setSelectedQuerier(querierOptions.find((i) => i.type === e));
+    setSelectedQuerier(
+      querierOptions.find((i) => i.type === e || i.instanceId === e)
+    );
   };
 
   // istanbul ignore next
@@ -257,7 +265,7 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
       }}
     >
       <StyleProvider container={shadowRoot as ShadowRoot} cache={cache}>
-        <div style={{ position: "relative" }}>
+        <div style={{ position: "relative" }} ref={containerRef}>
           <div
             className={classNames("container", {
               containerShowInput: showInput,
@@ -319,7 +327,7 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
               }
             </div>
             {!showInput && (
-              <WrappedToolTip content="IP搜索">
+              <WrappedToolTip content="IP搜索" placement="left">
                 <WrappedButton
                   onClick={() => {
                     if (checkIsDirectJump()) {
@@ -353,17 +361,24 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
               <div className="historySearchContent">
                 <div className="latestSearchText">最近搜索</div>
 
-                {visits.map((i) => (
-                  <span
-                    key={i}
-                    className="latestSearchTagContent"
-                    onClick={() => {
-                      handleHistoryPush(i);
-                    }}
-                  >
-                    <span className="latestSearchTagText">{i}</span>
-                  </span>
-                ))}
+                <div className="latestSearchTagContainer">
+                  {visits.map((i) => (
+                    <span
+                      key={i}
+                      className="latestSearchTagContent"
+                      onClick={
+                        // istanbul ignore next
+                        () => {
+                          handleHistoryPush(i);
+                        }
+                      }
+                    >
+                      <span className="latestSearchTagText" title={i}>
+                        {i}
+                      </span>
+                    </span>
+                  ))}
+                </div>
               </div>
               <div className="quickSearchTip">快捷搜索（Cmd/Ctrl+K）</div>
             </div>
