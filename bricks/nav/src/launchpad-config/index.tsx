@@ -9,11 +9,12 @@ import type {
   ConfigMenuItemApp,
   ConfigMenuItemCustom,
   ConfigMenuItemDir,
+  ConfigMenuItemNormal,
   ConfigVariant,
   MenuAction,
   MenuActionEventDetail,
 } from "./interfaces";
-import { MenuGroup } from "./MenuGroup";
+import { MenuGroup, MenuGroupProps } from "./MenuGroup";
 import styleText from "./styles.shadow.css";
 
 const { defineElement, property, event } = createDecorators();
@@ -70,8 +71,15 @@ class LaunchpadConfig extends ReactNextElement implements LaunchpadConfigProps {
   @property({ attribute: false })
   accessor blacklist: string[] | undefined;
 
+  @event({ type: "menu-item.click" })
+  accessor #menuItemClickEvent!: EventEmitter<ConfigMenuItemNormal>;
+
   @event({ type: "action.click" })
   accessor #actionClickEvent!: EventEmitter<MenuActionEventDetail>;
+
+  #handleMenuItemClick = (item: ConfigMenuItemNormal) => {
+    this.#menuItemClickEvent.emit(item);
+  };
 
   #onActionClick = (detail: MenuActionEventDetail) => {
     this.#actionClickEvent.emit(detail);
@@ -86,25 +94,25 @@ class LaunchpadConfig extends ReactNextElement implements LaunchpadConfigProps {
         urlTemplate={this.urlTemplate}
         customUrlTemplate={this.customUrlTemplate}
         blacklist={this.blacklist}
+        onMenuItemClick={this.#handleMenuItemClick}
         onActionClick={this.#onActionClick}
       />
     );
   }
 }
 
-export interface LaunchpadConfigProps {
+export interface LaunchpadConfigProps
+  extends Pick<
+    MenuGroupProps,
+    "actions" | "variant" | "urlTemplate" | "customUrlTemplate"
+  > {
   menuGroups?: ConfigMenuGroup[];
-  actions?: MenuAction[];
-  variant?: ConfigVariant;
-  urlTemplate?: string;
-  customUrlTemplate?: string;
   blacklist?: string[];
 }
 
-export interface LaunchpadConfigComponentProps extends LaunchpadConfigProps {
-  variant: ConfigVariant;
-  onActionClick?: (detail: MenuActionEventDetail) => void;
-}
+export interface LaunchpadConfigComponentProps
+  extends LaunchpadConfigProps,
+    Pick<MenuGroupProps, "onMenuItemClick" | "onActionClick"> {}
 
 export function LaunchpadConfigComponent({
   menuGroups,
@@ -113,6 +121,7 @@ export function LaunchpadConfigComponent({
   urlTemplate,
   customUrlTemplate,
   blacklist,
+  onMenuItemClick,
   onActionClick,
 }: LaunchpadConfigComponentProps) {
   const processedMenuGroup = useMemo<ConfigMenuGroup[] | undefined>(() => {
@@ -162,6 +171,7 @@ export function LaunchpadConfigComponent({
           variant={variant}
           urlTemplate={urlTemplate}
           customUrlTemplate={customUrlTemplate}
+          onMenuItemClick={onMenuItemClick}
           onActionClick={onActionClick}
         />
       ))}

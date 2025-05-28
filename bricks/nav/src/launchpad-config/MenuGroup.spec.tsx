@@ -2,7 +2,7 @@ import React from "react";
 import { describe, test, expect, jest } from "@jest/globals";
 import { render, fireEvent } from "@testing-library/react";
 import { MenuGroup } from "./MenuGroup";
-import { ConfigMenuGroup } from "./interfaces";
+import { ConfigMenuGroup, ConfigMenuItemDir } from "./interfaces";
 
 class WithShadowElement extends HTMLElement {
   connectedCallback() {
@@ -96,13 +96,20 @@ describe("MenuGroup", () => {
         text: "Add Menu Item",
       },
     ];
+    const onMenuItemClick = jest.fn();
     const onActionClick = jest.fn();
 
     const getComponent = () => (
-      <MenuGroup data={group} actions={actions} onActionClick={onActionClick} />
+      <MenuGroup
+        data={group}
+        actions={actions}
+        onActionClick={onActionClick}
+        onMenuItemClick={onMenuItemClick}
+      />
     );
 
-    const { container, getByText, rerender } = render(getComponent());
+    const { container, getByText, getByTestId, rerender } =
+      render(getComponent());
 
     // 文件夹展开/折叠
     expect(getByText("扩展").nextElementSibling).toHaveProperty("icon", "down");
@@ -110,6 +117,25 @@ describe("MenuGroup", () => {
     rerender(getComponent());
     expect(getByText("扩展").nextElementSibling).toHaveProperty("icon", "up");
 
+    // item
+    const item1 = group.items[0];
+    expect(
+      getByTestId(`menu-item-actions-${item1.id}`)
+        .querySelector(".menu-config")
+        ?.classList.contains("active")
+    ).toBe(false);
+    fireEvent(
+      getByTestId(`menu-item-actions-${item1.id}`),
+      new CustomEvent("visible.change", { detail: true })
+    );
+    rerender(getComponent());
+    expect(
+      getByTestId(`menu-item-actions-${item1.id}`)
+        .querySelector(".menu-config")
+        ?.classList.contains("active")
+    ).toBe(true);
+
+    // dir
     expect(
       container
         .querySelector(".folder .menu-config")
@@ -132,5 +158,15 @@ describe("MenuGroup", () => {
       new CustomEvent("action.click")
     );
     expect(onActionClick).toBeCalledTimes(1);
+
+    const item2 = (group.items[2] as ConfigMenuItemDir).items[0];
+
+    fireEvent.click(getByTestId(`menu-item-actions-${item1.id}`));
+    expect(onMenuItemClick).toBeCalledTimes(0);
+    fireEvent.click(getByText(item1.name));
+    expect(onMenuItemClick).toBeCalledWith(item1);
+    expect(onMenuItemClick).toBeCalledTimes(1);
+    fireEvent.click(getByText(item2.name));
+    expect(onMenuItemClick).toBeCalledWith(item2);
   });
 });
