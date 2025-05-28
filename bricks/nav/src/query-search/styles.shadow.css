@@ -201,7 +201,7 @@ input::placeholder {
   line-height: 17px;
   text-align: left;
   font-style: normal;
-  padding: 8px;
+  padding: 8px 16px 8px 16px;
   width: 484px;
   border-top: 1px solid var(--color-border-divider-line);
 }

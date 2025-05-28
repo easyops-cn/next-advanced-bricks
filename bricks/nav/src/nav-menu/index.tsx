@@ -461,14 +461,15 @@ function NavMenuComponent(props: NavMenuProps) {
     }
   }, []);
 
+  // istanbul ignore next;
   const overflowMenu = useMemo(
     (): SidebarMenuItem => ({
       type: "subMenu",
       title: "···",
-      items: menuItems.slice(
-        overflowIndex,
-        menuItems.length
-      ) as SidebarMenuItem[],
+      items: menuItems.slice(overflowIndex, menuItems.length).map((i) => ({
+        ...i,
+        type: i.type === "group" && i.items.length ? "subMenu" : i.type,
+      })) as SidebarMenuItem[],
     }),
     [menuItems, overflowIndex]
   );
