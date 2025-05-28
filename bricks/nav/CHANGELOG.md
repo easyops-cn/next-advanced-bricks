@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.22.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.21.10...@next-bricks/nav@1.22.0) (2025-05-28)
+
+
+### Features
+
+* **launchpad-config:** add menu-item.click event ([5ab42c6](https://github.com/easyops-cn/next-advanced-bricks/commit/5ab42c6ccc7c292df1b959413df79ed9e0344d08))
+
+
+
+
+
 ## [1.21.10](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.21.9...@next-bricks/nav@1.21.10) (2025-05-28)
 
 
