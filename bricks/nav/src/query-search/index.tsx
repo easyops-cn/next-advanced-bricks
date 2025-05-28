@@ -98,7 +98,7 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const appId = getRuntime().getCurrentApp()?.id || "";
-  const visits: string[] = storage.getItem(storageKey) ?? [];
+  const [visits, setVisits] = useState<string[]>([]);
   const currentTheme = useCurrentTheme();
   const [showInput, setShowInput] = useState<boolean>();
   const [searchKey, setSearchKey] = useState<string>();
@@ -239,6 +239,10 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
     );
   }, [querierList]);
 
+  useEffect(() => {
+    setVisits(storage.getItem(`${storageKey}-${selectedQuerier?.name}`) ?? []);
+  }, [selectedQuerier]);
+
   // istanbul ignore next
   const handleQuerierSelect = (e: string) => {
     setSelectedQuerier(
@@ -249,7 +253,10 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
   // istanbul ignore next
   const haneleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && searchKey) {
-      storage.setItem(storageKey, uniq([searchKey, ...visits].slice(0, 5)));
+      storage.setItem(
+        `${storageKey}-${selectedQuerier?.name}`,
+        uniq([searchKey, ...visits].slice(0, 5))
+      );
       handleHistoryPush();
     }
   };
@@ -378,6 +385,9 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
                       </span>
                     </span>
                   ))}
+                  {!visits.length && (
+                    <div className="emptyText">暂无搜索记录</div>
+                  )}
                 </div>
               </div>
               <div className="quickSearchTip">快捷搜索（Cmd/Ctrl+K）</div>
