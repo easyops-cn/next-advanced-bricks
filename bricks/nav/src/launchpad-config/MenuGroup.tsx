@@ -18,12 +18,17 @@ import type {
 } from "./interfaces";
 import { getAppLocaleName } from "../shared/getLocaleName";
 
+export type ProcessedConfigMenuItemNormal = ConfigMenuItemNormal & {
+  __pathname?: string;
+};
+
 export interface MenuGroupProps {
   data: ConfigMenuGroup;
   actions?: MenuAction[];
   variant?: ConfigVariant;
   urlTemplate?: string;
   customUrlTemplate?: string;
+  onMenuItemClick?(item: ProcessedConfigMenuItemNormal): void;
   onActionClick?: (detail: MenuActionEventDetail) => void;
 }
 
@@ -33,6 +38,7 @@ export function MenuGroup({
   variant,
   urlTemplate,
   customUrlTemplate,
+  onMenuItemClick,
   onActionClick,
 }: MenuGroupProps) {
   // Make it compatible
@@ -94,6 +100,7 @@ export function MenuGroup({
               variant={variant}
               urlTemplate={urlTemplate}
               customUrlTemplate={customUrlTemplate}
+              onMenuItemClick={onMenuItemClick}
               onActionClick={onActionClick}
             />
           ) : (
@@ -104,6 +111,9 @@ export function MenuGroup({
               variant={variant}
               urlTemplate={urlTemplate}
               customUrlTemplate={customUrlTemplate}
+              onClick={(data) => {
+                onMenuItemClick?.({ ...item, ...data });
+              }}
               onActionClick={onActionClick}
             />
           )
@@ -119,6 +129,7 @@ export interface MenuItemProps {
   variant?: ConfigVariant;
   urlTemplate?: string;
   customUrlTemplate?: string;
+  onClick?(data: { __pathname?: string }): void;
   onActionClick?: (detail: MenuActionEventDetail) => void;
 }
 
@@ -128,6 +139,7 @@ export function MenuItem({
   variant,
   urlTemplate,
   customUrlTemplate,
+  onClick,
   onActionClick,
 }: MenuItemProps) {
   const name = useMemo(
@@ -159,15 +171,17 @@ export function MenuItem({
     [data, onActionClick]
   );
 
+  let __pathname: string;
   let disabled = false;
   let linkUrl = "";
 
-  if (variant === "menu-config") {
+  if (variant === "launchpad-config" || variant === "menu-config") {
     if (data.type === "app") {
       linkUrl = parseUrlTemplate(urlTemplate, data, "")!;
     } else {
       // 禁用外链菜单项
       const urlObject = new URL(data.url, location.origin);
+      __pathname = urlObject.pathname;
       disabled = urlObject.origin !== location.origin;
       linkUrl = disabled
         ? ""
@@ -175,7 +189,7 @@ export function MenuItem({
             customUrlTemplate,
             {
               ...data,
-              __pathname: urlObject.pathname,
+              __pathname,
             },
             ""
           )!;
@@ -187,6 +201,9 @@ export function MenuItem({
       className={classNames("menu-item", {
         disabled: disabled || data.allBlocked,
       })}
+      onClick={() => {
+        onClick?.({ __pathname });
+      }}
     >
       <WrappedLink
         tooltip={disabled ? "该菜单项为外链，不支持配置" : ""}
@@ -214,7 +231,11 @@ export function MenuItem({
           onVisibleChange={(event) => {
             setDropdownActive(event.detail);
           }}
+          onClick={(event) => {
+            event.stopPropagation();
+          }}
           onActionClick={handleActionClick}
+          data-testid={`menu-item-actions-${data.id}`}
         >
           <WrappedIcon
             lib="fa"
@@ -233,6 +254,7 @@ export interface MenuItemFolderProps {
   variant?: ConfigVariant;
   urlTemplate?: string;
   customUrlTemplate?: string;
+  onMenuItemClick?(item: ProcessedConfigMenuItemNormal): void;
   onActionClick?: (detail: MenuActionEventDetail) => void;
 }
 
@@ -242,6 +264,7 @@ function MenuItemFolder({
   variant,
   urlTemplate,
   customUrlTemplate,
+  onMenuItemClick,
   onActionClick,
 }: MenuItemFolderProps) {
   const { name, items } = data;
@@ -320,6 +343,9 @@ function MenuItemFolder({
             variant={variant}
             urlTemplate={urlTemplate}
             customUrlTemplate={customUrlTemplate}
+            onClick={(data) => {
+              onMenuItemClick?.({ ...item, ...data });
+            }}
             onActionClick={onActionClick}
           />
         ))}
