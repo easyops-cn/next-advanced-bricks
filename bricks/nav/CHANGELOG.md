@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.21.8...@next-bricks/nav@1.21.9) (2025-05-28)
+
+
+### Bug Fixes
+
+* ALERT_EVENT-1867 eo-nav-menu构件，如果菜单项里面有分组，构件收缩的状态下，hover展开菜单项时，ui展示异常 ref ALERT_EVENT-1867 ([db8bc24](https://github.com/easyops-cn/next-advanced-bricks/commit/db8bc24963010b5946a8c343668cf21d2951b0c9))
+
+
+
+
+
 ## [1.21.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.21.7...@next-bricks/nav@1.21.8) (2025-05-28)
 
 
