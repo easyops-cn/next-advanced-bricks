@@ -298,7 +298,7 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
                           getPopupContainer={(trigger) => trigger.parentElement}
                           showSearch
                           variant="borderless"
-                          style={{ width: "150px" }}
+                          style={{ width: "100px" }}
                           options={querierOptions}
                           onChange={handleQuerierSelect}
                         ></Select>
