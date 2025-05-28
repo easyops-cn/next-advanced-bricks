@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.21.7...@next-bricks/nav@1.21.8) (2025-05-28)
+
+
+### Bug Fixes
+
+* eo-query-search ref CMDB_INSTANCE-2770 ([f1995cd](https://github.com/easyops-cn/next-advanced-bricks/commit/f1995cd5cd2722352d32308aff243999d6d3d575))
+* eo-query-search ref CMDB_INSTANCE-2770 ([f755bed](https://github.com/easyops-cn/next-advanced-bricks/commit/f755bed8cb034edc2577eb8e7e387d09e8d455de))
+
+
+
+
+
 ## [1.21.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.21.6...@next-bricks/nav@1.21.7) (2025-05-27)
 
 
