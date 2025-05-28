@@ -152,7 +152,7 @@ input::placeholder {
 
 .historySearchContainer {
   width: 500px;
-  height: 232px;
+  height: 160px;
   box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.15);
   background-color: var(--antd-dropdown-menu-bg);
   top: 35px;
@@ -176,13 +176,13 @@ input::placeholder {
     height: 0px;
   }
   to {
-    height: 232px;
+    height: 160px;
   }
 }
 
 @keyframes historySlideout {
   from {
-    height: 232px;
+    height: 160px;
   }
   to {
     height: 0px;
@@ -207,8 +207,10 @@ input::placeholder {
 }
 
 .historySearchContent {
-  height: 183px;
-  padding: 8px;
+  height: 103px;
+  padding: 16px 16px 8px 16px;
+
+  overflow: scroll;
 }
 
 .latestSearchText {
@@ -254,4 +256,9 @@ input::placeholder {
   max-width: 480px;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.emptyText {
+  color: var(--text-color-secondary);
+  text-align: center;
+  width: 100%;
 }

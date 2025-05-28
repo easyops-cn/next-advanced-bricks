@@ -18,7 +18,7 @@ const storageKey = `querier-search-recent-visits:${
   (auth.getAuth() as Record<string, string>)?.org
 }`;
 const storage = new JsonStorage(localStorage);
-storage.setItem(storageKey, ["abc"]);
+storage.setItem(storageKey + "-ip搜索", ["abc"]);
 jest.mock("@next-core/runtime", () => ({
   getRuntime() {
     return {
