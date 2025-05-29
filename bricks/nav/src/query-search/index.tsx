@@ -376,6 +376,10 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
                       onClick={
                         // istanbul ignore next
                         () => {
+                          storage.setItem(
+                            `${storageKey}-${selectedQuerier?.name}`,
+                            uniq([i, ...visits].slice(0, 5))
+                          );
                           handleHistoryPush(i);
                         }
                       }
