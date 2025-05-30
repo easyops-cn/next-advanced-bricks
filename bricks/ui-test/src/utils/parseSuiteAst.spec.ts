@@ -1,4 +1,4 @@
-import { describe, test, expect } from "@jest/globals";
+import { describe, expect } from "@jest/globals";
 import { parseSuiteAst } from "./parseSuiteAst.js";
 import { transformFromAst } from "@babel/standalone";
 import * as t from "@babel/types";
@@ -139,6 +139,36 @@ describe("parseSuiteAst", () => {
             },
           ],
         },
+        {
+          type: "block",
+          name: "describe",
+          label: "includes tags",
+          tags: ["@smokenull", "@cmdb"],
+          children: [
+            {
+              type: "block",
+              name: "it",
+              label: "should work",
+              params: null,
+              children: [
+                {
+                  type: "command",
+                  name: "get",
+                  label: null,
+                  params: ["#username"],
+                  children: [
+                    {
+                      type: "command",
+                      name: "click",
+                      label: null,
+                      children: [],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
       ],
     } as any as NodeItem;
 
@@ -163,6 +193,13 @@ describe("parseSuiteAst", () => {
     cy.findByTestId("card-item").find('.wrapper').find('.search').then(() => {
       console.log('test code');
     }).type("easyops").as('@input').click();
+  });
+});
+describe("includes tags", {
+  tags: ["@smokenull", "@cmdb"]
+}, () => {
+  it("should work", () => {
+    cy.get("#username").click();
   });
 });"
 `);

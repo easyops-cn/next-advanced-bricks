@@ -182,11 +182,23 @@ function createBlockNode(item: NodeItem): t.ExpressionStatement {
       )
     : t.identifier(item.name);
 
+  const extraArgs = [];
+  if (item.tags?.length) {
+    extraArgs.push(
+      t.objectExpression([
+        t.objectProperty(
+          t.identifier("tags"),
+          t.arrayExpression(item.tags.map((tag) => t.stringLiteral(tag)))
+        ),
+      ])
+    );
+  }
+
   return t.expressionStatement(
     t.callExpression(callee, [
       ...(["before", "beforeEach", "after", "afterEach"].includes(item.name)
         ? []
-        : [t.stringLiteral(item.label || "")]),
+        : [t.stringLiteral(item.label || ""), ...extraArgs]),
       t.arrowFunctionExpression([], t.blockStatement(processBlockItem(item))),
     ])
   );

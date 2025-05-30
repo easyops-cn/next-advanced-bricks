@@ -15,6 +15,7 @@ export interface NodeItem {
   name: string;
   params?: any[];
   flag?: NodeFlag;
+  tags?: string[];
 }
 
 export interface CommandParam {
@@ -74,6 +75,7 @@ export interface NodeGraphData {
   type: NodeType;
   sort?: number;
   flag?: string;
+  tags?: string[];
 }
 
 export interface TreeNodeItemData extends NodeGraphData {
