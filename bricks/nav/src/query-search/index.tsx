@@ -34,6 +34,9 @@ const { defineElement } = createDecorators();
 const storageKey = `querier-search-recent-visits:${
   (auth.getAuth() as Record<string, string>)?.org
 }`;
+const selectedQuerierStorageKey = `querier-search-querier:${
+  (auth.getAuth() as Record<string, string>)?.org
+}`;
 const storage = new JsonStorage(localStorage);
 const fullTextUrl = "search/result?q=%{q}%";
 const ipSearchUrl = "search/new/ipSearch?q=%{q}%";
@@ -232,10 +235,14 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
           (!i.showInApps?.length ||
             (i.showInApps?.length && i.showInApps.includes(appId)))
       )
-      .map((i) => ({ ...i, label: i.name, value: i.instanceId || i.type }));
+      .map((i) => ({ ...i, label: i.name, value: i.name }));
     setQuerierOptions(options);
     setSelectedQuerier(
-      options.find((i) => i.type === QuerierTypes.ipSearch) || options[0]
+      options.find(
+        (i) => i.name === storage.getItem(selectedQuerierStorageKey)
+      ) ||
+        options.find((i) => i.type === QuerierTypes.ipSearch) ||
+        options[0]
     );
   }, [querierList]);
 
@@ -245,9 +252,8 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
 
   // istanbul ignore next
   const handleQuerierSelect = (e: string) => {
-    setSelectedQuerier(
-      querierOptions.find((i) => i.type === e || i.instanceId === e)
-    );
+    storage.setItem(selectedQuerierStorageKey, e);
+    setSelectedQuerier(querierOptions.find((i) => i.name === e));
   };
 
   // istanbul ignore next
