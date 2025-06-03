@@ -1,13 +1,14 @@
-import { DataPart, Message } from "../interfaces";
+import type { DataPart, Message } from "../interfaces";
 
-export const getToolDataProgress = (toolCallMessages: Message[]) => {
-  return toolCallMessages?.[0]?.parts
-    ? (toolCallMessages?.[0]?.parts?.filter(
-        (part) => part.type === "data" && part.data?.type === "progress"
-      ) as DataPart[])
-    : [];
-};
-
-export const getlastProgress = (toolDataProgress: DataPart[]) => {
-  return toolDataProgress?.at(-1);
+export const getToolDataProgress = (
+  toolCallMessages: Message[] | undefined
+): DataPart | undefined => {
+  let progressPart: DataPart | undefined;
+  toolCallMessages?.findLast((message) => {
+    progressPart = message.parts?.findLast((part) => {
+      return part.type === "data" && part.data?.type === "progress";
+    }) as DataPart | undefined;
+    return !!progressPart;
+  });
+  return progressPart;
 };

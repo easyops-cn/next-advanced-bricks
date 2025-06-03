@@ -26,9 +26,8 @@
 }
 
 .read-only {
-  height: 32px;
   font-size: 14px;
-  padding: 0 16px;
+  padding: 4px;
 }
 
 .failed {
@@ -48,7 +47,7 @@
   height: 24px;
   display: flex;
   align-items: center;
-  padding: 0 1px 0 12px;
+  padding: 0 12px;
   color: #262626;
 }
 
