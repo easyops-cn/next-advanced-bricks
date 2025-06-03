@@ -7,21 +7,11 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import {
-  Column,
-  RecordType,
-  DataSource,
-  PaginationType,
-  RowSelectionType,
-  ExpandableType,
-  Sort,
-  CellConfig,
-} from "./interface.js";
+import type { RecordType, Sort, NextTableProps } from "./interface.js";
 import { Table, ConfigProvider, theme } from "antd";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
 import { useCurrentTheme } from "@next-core/react-runtime";
 import { RowSelectMethod, type SortOrder } from "antd/es/table/interface.js";
-import type { TableProps } from "antd/es/table";
 import { DownOutlined, RightOutlined } from "@ant-design/icons";
 import type { RenderExpandIconProps } from "rc-table/lib/interface.js";
 import { i18n } from "@next-core/i18n";
@@ -72,30 +62,10 @@ initializeReactI18n(NS, locales);
 
 const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
 
-export interface NextTableComponentProps {
+export interface NextTableComponentProps extends NextTableProps {
   shadowRoot: ShadowRoot | null;
   rowKey: string;
-  columns?: Column[];
-  cell?: CellConfig;
-  dataSource?: DataSource;
-  frontSearch?: boolean;
-  pagination?: PaginationType;
-  loading?: boolean;
-  multiSort?: boolean;
-  sort?: Sort | Sort[];
-  rowSelection?: RowSelectionType;
-  selectedRowKeys?: (string | number)[];
-  hiddenColumns?: (string | number)[];
-  expandable?: ExpandableType;
-  expandedRowKeys?: (string | number)[];
   childrenColumnName: string;
-  rowDraggable?: boolean;
-  searchFields?: (string | string[])[];
-  size?: TableProps<RecordType>["size"];
-  showHeader?: boolean;
-  bordered?: boolean;
-  scrollConfig?: TableProps<RecordType>["scroll"];
-  optimizedColumns?: (string | number)[];
   onPageChange?: (detail: { page: number; pageSize: number }) => void;
   onPageSizeChange?: (detail: { page: number; pageSize: number }) => void;
   onSort?: (detail?: Sort | Sort[]) => void;
@@ -471,7 +441,7 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
               size={size}
               showHeader={showHeader}
               bordered={bordered}
-              scroll={scrollConfig}
+              scroll={scrollConfig === false ? undefined : scrollConfig}
               pagination={
                 paginationConfig === false
                   ? false
