@@ -183,15 +183,20 @@ function createBlockNode(item: NodeItem): t.ExpressionStatement {
     : t.identifier(item.name);
 
   const extraArgs = [];
-  if (item.tags?.length) {
-    extraArgs.push(
-      t.objectExpression([
-        t.objectProperty(
+  const optionsProperties = [
+    item.tags?.length
+      ? t.objectProperty(
           t.identifier("tags"),
           t.arrayExpression(item.tags.map((tag) => t.stringLiteral(tag)))
-        ),
-      ])
-    );
+        )
+      : null,
+    item.creator
+      ? t.objectProperty(t.identifier("author"), t.stringLiteral(item.creator))
+      : null,
+  ].filter(Boolean) as t.ObjectProperty[];
+
+  if (optionsProperties?.length) {
+    extraArgs.push(t.objectExpression(optionsProperties));
   }
 
   return t.expressionStatement(
