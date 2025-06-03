@@ -144,6 +144,7 @@ describe("parseSuiteAst", () => {
           name: "describe",
           label: "includes tags",
           tags: ["@smokenull", "@cmdb"],
+          creator: "easyops",
           children: [
             {
               type: "block",
@@ -196,7 +197,8 @@ describe("parseSuiteAst", () => {
   });
 });
 describe("includes tags", {
-  tags: ["@smokenull", "@cmdb"]
+  tags: ["@smokenull", "@cmdb"],
+  author: "easyops"
 }, () => {
   it("should work", () => {
     cy.get("#username").click();
