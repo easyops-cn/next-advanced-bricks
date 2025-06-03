@@ -16,7 +16,7 @@ import sharedStyles from "../shared.module.css";
 import { K, t } from "../i18n";
 import { CanvasContext } from "../CanvasContext";
 import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus";
-import { getlastProgress, getToolDataProgress } from "../utils";
+import { getToolDataProgress } from "../utils";
 import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
 
 export interface ToolCallDetailProps {
@@ -36,6 +36,10 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
   const { setActiveToolCallJobId } = useContext(CanvasContext);
   const toolCall = job.toolCall!;
   const toolCallMessages = job.messages?.filter((msg) => msg.role === "tool");
+  const progress = useMemo(
+    () => getToolDataProgress(toolCallMessages),
+    [toolCallMessages]
+  );
 
   const handleClose = useCallback(() => {
     setTimeout(() => {
@@ -92,27 +96,21 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
         <div className={styles.detail}>
           <div className={styles.heading}>{t(K.RESPONSE)}:</div>
           <div className={`${styles.body} ${sharedStyles.markdown}`}>
+            {!!progress && (
+              <pre
+                className={classNames("language-plaintext", {
+                  [styles.fallback]: failed,
+                })}
+              >
+                <ToolProgressLine progress={progress} failed={failed} />
+              </pre>
+            )}
             {toolCallMessages?.map((message, index) => {
-              const lastProgress = getlastProgress(
-                getToolDataProgress([message])
-              )?.data?.progress;
               return (
                 <div key={index}>
                   {message.parts?.map((part, partIndex) =>
-                    part.type === "data" ? (
-                      part?.data?.progress === lastProgress ? (
-                        <pre
-                          className={classNames("language-plaintext", {
-                            [styles["fallback"]]: failed,
-                          })}
-                        >
-                          <ToolProgressLine
-                            toolDataProgress={[part]}
-                            failed={failed}
-                          />
-                        </pre>
-                      ) : null
-                    ) : (
+                    part.type === "data" &&
+                    part.data?.type === "progress" ? null : (
                       <PreComponent
                         key={partIndex}
                         content={
