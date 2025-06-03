@@ -15,6 +15,15 @@ import type {
 } from "@next-bricks/containers/drawer";
 import type { showDialog as _showDialog } from "@next-bricks/basic/data-providers/show-dialog/show-dialog";
 import { PopoverProps, Popover } from "@next-bricks/basic/popover";
+import {
+  EoNextTable,
+  NextTableComponentProps,
+} from "@next-bricks/advanced/next-table";
+
+type FilteredNextTableComponentProps = Omit<
+  NextTableComponentProps,
+  "ref" | "shadowRoot" | "childrenColumnName"
+>;
 
 export const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
@@ -25,6 +34,11 @@ export const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
 export const WrappedTooltip = wrapBrick<EoTooltip, ToolTipProps>("eo-tooltip");
 
 export const WrappedPopover = wrapBrick<Popover, PopoverProps>("eo-popover");
+
+export const WrappedTable = wrapBrick<
+  EoNextTable,
+  FilteredNextTableComponentProps
+>("eo-next-table");
 
 export const WrappedDrawer = wrapBrick<
   Drawer,

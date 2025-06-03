@@ -65,6 +65,7 @@
     "@next-core/test-next": "^1.1.9"
   },
   "peerDependencies": {
-    "@next-bricks/basic": "*"
+    "@next-bricks/basic": "*",
+    "@next-bricks/advanced": "*"
   }
 }
