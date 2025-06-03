@@ -9,14 +9,15 @@ import type {
   Column,
   DataSource,
   ExpandableType,
+  NextTableProps,
   PaginationType,
   RecordType,
   RowSelectionType,
   Sort,
+  TableScroll,
 } from "./interface.js";
 import { RowSelectMethod } from "antd/es/table/interface.js";
 import type { TableProps } from "antd/es/table";
-import type { NextTableComponentProps } from "./Table.js";
 import "./host-context.css";
 import chartStyleText from "./chart-v2.shadow.css";
 
@@ -31,7 +32,7 @@ export
 @defineElement("eo-next-table", {
   styleTexts: [styleText],
 })
-class EoNextTable extends ReactNextElement {
+class EoNextTable extends ReactNextElement implements NextTableProps {
   #tableRef = createRef<NextTableComponentRef>();
 
   /**
@@ -192,7 +193,7 @@ class EoNextTable extends ReactNextElement {
   @property({
     attribute: false,
   })
-  accessor scrollConfig: TableProps<RecordType>["scroll"] = { x: true };
+  accessor scrollConfig: TableScroll = { x: true };
 
   /**
    * 优化渲染的列（输入对应的 column.key）
@@ -360,4 +361,4 @@ class EoNextTable extends ReactNextElement {
   }
 }
 
-export { NextTableComponentProps };
+export { NextTableProps };
