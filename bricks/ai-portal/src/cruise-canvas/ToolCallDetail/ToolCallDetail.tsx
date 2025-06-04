@@ -97,13 +97,13 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
           <div className={styles.heading}>{t(K.RESPONSE)}:</div>
           <div className={`${styles.body} ${sharedStyles.markdown}`}>
             {!!progress && (
-              <pre
-                className={classNames("language-plaintext", {
+              <div
+                className={classNames(styles["progress-container"], {
                   [styles.fallback]: failed,
                 })}
               >
                 <ToolProgressLine progress={progress} failed={failed} />
-              </pre>
+              </div>
             )}
             {toolCallMessages?.map((message, index) => {
               return (

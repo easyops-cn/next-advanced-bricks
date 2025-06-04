@@ -14,20 +14,6 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
       }
 
       for (const jobPatch of jobsPatch) {
-        // TODO(): remove temp work around.
-        // if (!jobPatch.upstream?.length) {
-        //   delete jobPatch.upstream;
-        // }
-        // if (!jobPatch.parent) {
-        //   delete jobPatch.parent;
-        // }
-        // if (!jobPatch.state) {
-        //   delete jobPatch.state;
-        // }
-        // if (!jobPatch.instruction) {
-        //   delete jobPatch.instruction;
-        // }
-
         if ((jobPatch as any).state === "blocked") {
           jobPatch.state = "working";
         }
