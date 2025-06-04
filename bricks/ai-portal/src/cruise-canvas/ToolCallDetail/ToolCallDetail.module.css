@@ -20,3 +20,10 @@
   white-space: pre-wrap;
   background: #fef5f3;
 }
+
+.progress-container {
+  border-radius: 9px;
+  border: 1px solid #ccd1de;
+  background: #ffffff;
+  padding: 6px 2px;
+}

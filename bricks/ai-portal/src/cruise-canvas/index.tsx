@@ -1,9 +1,12 @@
 // istanbul ignore file: experimental
 import React, {
+  createRef,
+  forwardRef,
   memo,
   useCallback,
   useContext,
   useEffect,
+  useImperativeHandle,
   useMemo,
   useRef,
   useState,
@@ -46,7 +49,7 @@ import { ToolCallDetail } from "./ToolCallDetail/ToolCallDetail.js";
 
 initializeI18n(NS, locales);
 
-const { defineElement, property, event } = createDecorators();
+const { defineElement, property, event, method } = createDecorators();
 
 const MemoizedNodeComponent = memo(NodeComponent);
 
@@ -55,8 +58,9 @@ export interface CruiseCanvasProps {
   task?: TaskBaseDetail;
   jobs?: Job[];
   goBackUrl?: string;
-  flagShowTaskActions?: boolean;
 }
+
+const CruiseCanvasComponent = forwardRef(LegacyCruiseCanvasComponent);
 
 /**
  * 构件 `ai-portal.cruise-canvas`
@@ -79,9 +83,6 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
   @property()
   accessor goBackUrl: string | undefined;
 
-  @property({ type: Boolean })
-  accessor flagShowTaskActions: boolean | undefined;
-
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
 
@@ -103,12 +104,19 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
     this.#resumeEvent.emit();
   };
 
-  @event({ type: "stop" })
-  accessor #stopEvent!: EventEmitter<void>;
+  @event({ type: "cancel" })
+  accessor #cancelEvent!: EventEmitter<void>;
 
-  #onStop = () => {
-    this.#stopEvent.emit();
+  #onCancel = () => {
+    this.#cancelEvent.emit();
   };
+
+  #ref = createRef<CruiseCanvasRef>();
+
+  @method()
+  resumed() {
+    this.#ref.current?.resumed();
+  }
 
   render() {
     return (
@@ -117,34 +125,40 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         jobs={this.jobs}
         task={this.task}
         goBackUrl={this.goBackUrl}
-        flagShowTaskActions={this.flagShowTaskActions}
         onShare={this.#onShare}
         onPause={this.#onPause}
         onResume={this.#onResume}
-        onStop={this.#onStop}
+        onCancel={this.#onCancel}
+        ref={this.#ref}
       />
     );
   }
 }
 
-export interface CruiseCanvasComponentProps extends CruiseCanvasProps {
+interface CruiseCanvasComponentProps extends CruiseCanvasProps {
   onShare: () => void;
   onPause: () => void;
   onResume: () => void;
-  onStop: () => void;
+  onCancel: () => void;
 }
 
-export function CruiseCanvasComponent({
-  taskId,
-  task: propTask,
-  jobs: propJobs,
-  goBackUrl,
-  flagShowTaskActions,
-  onShare,
-  onPause,
-  onResume,
-  onStop,
-}: CruiseCanvasComponentProps) {
+interface CruiseCanvasRef {
+  resumed: () => void;
+}
+
+function LegacyCruiseCanvasComponent(
+  {
+    taskId,
+    task: propTask,
+    jobs: propJobs,
+    goBackUrl,
+    onShare,
+    onPause,
+    onResume,
+    onCancel,
+  }: CruiseCanvasComponentProps,
+  ref: React.Ref<CruiseCanvasRef>
+) {
   const rootRef = useRef<HTMLDivElement>(null);
   const {
     task: _task,
@@ -152,6 +166,7 @@ export function CruiseCanvasComponent({
     plan: _plan,
     error,
     humanInputRef,
+    resumedRef,
   } = useTaskDetail(taskId);
   const task = taskId ? _task : propTask;
   const jobs = taskId ? _jobs : propJobs;
@@ -159,8 +174,15 @@ export function CruiseCanvasComponent({
   const graph = useTaskGraph(task, jobs);
   const rawNodes = graph?.nodes;
   const rawEdges = graph?.edges;
-
   const pageTitle = task?.title ?? "";
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      resumed: () => resumedRef.current?.(),
+    }),
+    [resumedRef]
+  );
 
   useEffect(() => {
     getRuntime().applyPageTitle(pageTitle);
@@ -300,12 +322,11 @@ export function CruiseCanvasComponent({
 
   const canvasContextValue = useMemo(
     () => ({
-      flagShowTaskActions,
       humanInput,
       onShare,
       onPause,
       onResume,
-      onStop,
+      onCancel,
       onNodeResize,
       activeToolCallJobId,
       setActiveToolCallJobId,
@@ -317,8 +338,7 @@ export function CruiseCanvasComponent({
       onShare,
       onPause,
       onResume,
-      onStop,
-      flagShowTaskActions,
+      onCancel,
     ]
   );
 

@@ -23,9 +23,10 @@ import { HumanAdjustPlan } from "../HumanAdjustPlan/HumanAdjustPlan.js";
 import { CanvasContext } from "../CanvasContext.js";
 import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus.js";
 import { HumanAdjustPlanResult } from "../HumanAdjustPlanResult/HumanAdjustPlanResult.js";
-import { TraceList } from "../TraceList/TraceList";
-import { AlertEvents } from "../AlertEvents/AlertEvents";
-import { DeploymentChanges } from "../DeploymentChanges/DeploymentChanges";
+// import { TraceList } from "../TraceList/TraceList";
+// import { AlertEvents } from "../AlertEvents/AlertEvents";
+// import { DeploymentChanges } from "../DeploymentChanges/DeploymentChanges";
+import { Topology } from "../Topology/Topology";
 
 export interface NodeJobProps {
   job: Job;
@@ -50,7 +51,7 @@ export function NodeJob({ job, state }: NodeJobProps): JSX.Element {
 
   const experimental_showTables =
     // eslint-disable-next-line no-constant-binary-expression
-    false && job.toolCall?.name === "cmdb_create_app_system";
+    /* false && */ job.toolCall?.name === "cmdb_create_app_system";
 
   return (
     <div
@@ -94,7 +95,7 @@ export function NodeJob({ job, state }: NodeJobProps): JSX.Element {
       </div>
       <div
         className={classNames(styles.body, {
-          [styles.scrollable]: !generalAskUser,
+          // [styles.scrollable]: !generalAskUser && !experimental_showTables,
         })}
       >
         {knownAskUser ? (
@@ -175,9 +176,10 @@ export function NodeJob({ job, state }: NodeJobProps): JSX.Element {
         )}
         {experimental_showTables && (
           <>
-            <AlertEvents />
+            {/* <AlertEvents />
             <DeploymentChanges />
-            <TraceList />
+            <TraceList /> */}
+            <Topology />
           </>
         )}
       </div>
