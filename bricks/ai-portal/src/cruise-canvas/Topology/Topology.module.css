@@ -1,0 +1,9 @@
+.topology {
+  color: #666;
+  position: relative;
+}
+
+.toolbar {
+  right: 20px;
+  bottom: 20px;
+}
