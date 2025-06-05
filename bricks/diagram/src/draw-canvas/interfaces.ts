@@ -1,6 +1,6 @@
 import type { UseSingleBrickConf } from "@next-core/react-runtime";
 import type { SimulationLinkDatum, SimulationNodeDatum } from "d3-force";
-import type { CSSProperties } from "react";
+import type { CSSProperties, FunctionComponent } from "react";
 import type { ResizeCellPayload } from "./reducers/interfaces";
 import type {
   CurveType,
@@ -22,14 +22,26 @@ export type Cell = NodeCell | EdgeCell | DecoratorCell;
 
 export type BrickCell = NodeBrickCell /*  | EdgeBrickCell */;
 
-export type NodeCell = NodeBrickCell /* | NodeShapeCell */;
+export type NodeCell = NodeBrickCell | NodeComponentCell;
 
 export type NodeBrickCell = BaseBrickCell & BaseNodeCell;
+
+export interface NodeComponentCell extends BaseNodeCell {
+  component?: NodeComponent;
+}
+
+export type NodeComponent = FunctionComponent<{
+  node: {
+    id: NodeId;
+    data?: unknown;
+    locked?: boolean;
+  };
+  refCallback?: (element: HTMLElement | null) => void;
+}>;
 
 export type NodeId = string /* | number */;
 
 export interface BaseBrickCell extends BaseCell {
-  tag?: "brick";
   useBrick?: UseSingleBrickConf;
 }
 
@@ -112,7 +124,8 @@ export type InitialNodeCell = Omit<NodeCell, "view"> & {
 export type InitialCell = InitialNodeCell | EdgeCell | DecoratorCell;
 
 export interface NodeBrickConf {
-  useBrick: UseSingleBrickConf;
+  useBrick?: UseSingleBrickConf;
+  component?: NodeComponent;
   if?: string | boolean | null;
 }
 
@@ -358,9 +371,13 @@ export type SnapToObjectPosition =
   | "left";
 
 export interface LayoutOptionsDagre extends BaseLayoutOptions {
+  /** @default "TB" */
   rankdir?: "TB" | "BT" | "LR" | "RL";
+  /** @default 50 */
   ranksep?: number;
+  /** @default 10 */
   edgesep?: number;
+  /** @default 50 */
   nodesep?: number;
   align?: "UL" | "UR" | "DL" | "DR";
 }
@@ -508,4 +525,23 @@ export interface LineSegmentJumps {
   index: number;
   /** 交叉跨线圆弧的半径 */
   radius: number;
+}
+
+export interface AutoSize {
+  width?: "fit-content";
+  minWidth?: number;
+  maxWidth?: number;
+  height?: "fit-content";
+  minHeight?: number;
+  maxHeight?: number;
+  /** @default 12 */
+  padding?: PartialRectTuple;
+}
+
+export interface CellsRect {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  empty: boolean;
 }
