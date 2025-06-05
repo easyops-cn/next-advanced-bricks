@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.22.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.22.2...@next-bricks/nav@1.22.3) (2025-06-05)
+
+
+### Bug Fixes
+
+* nav-menu增加navMenuRightContent slot ([bea5d0e](https://github.com/easyops-cn/next-advanced-bricks/commit/bea5d0e096287048d072fbd0e8d877928617710d))
+
+
+
+
+
 ## [1.22.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.22.1...@next-bricks/nav@1.22.2) (2025-05-30)
 
 
