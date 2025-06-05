@@ -27,3 +27,7 @@
   background: #ffffff;
   padding: 6px 2px;
 }
+
+.fallback {
+  background: #fef5f3;
+}
