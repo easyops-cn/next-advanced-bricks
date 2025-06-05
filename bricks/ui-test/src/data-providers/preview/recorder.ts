@@ -10,6 +10,7 @@ let isRecording = false;
 let currentKeydownTargets: InspectTarget[] | null = null;
 let currentKeydownTexts: string[];
 let steps: RecordStep[];
+let isComposing = false;
 
 export function toggleRecording(recording: boolean, inspecting: boolean): void {
   if (isRecording === recording) {
@@ -33,12 +34,26 @@ export function toggleRecording(recording: boolean, inspecting: boolean): void {
       capture: true,
       passive: true,
     });
+    window.addEventListener("compositionstart", onCompositionStart, {
+      capture: true,
+      passive: true,
+    });
+    window.addEventListener("compositionend", onCompositionEnd, {
+      capture: true,
+      passive: true,
+    });
   } else {
     completeKeyDown();
     currentKeydownTargets = null;
     window.removeEventListener("click", onMouseEvent, { capture: true });
     window.removeEventListener("dblclick", onMouseEvent, { capture: true });
     window.removeEventListener("keydown", onKeyDown, { capture: true });
+    window.removeEventListener("compositionstart", onCompositionStart, {
+      capture: true,
+    });
+    window.removeEventListener("compositionend", onCompositionEnd, {
+      capture: true,
+    });
 
     if (steps.length > 0) {
       window.parent.postMessage(
@@ -69,6 +84,11 @@ function onMouseEvent(event: MouseEvent): void {
 }
 
 function onKeyDown(event: KeyboardEvent): void {
+  // Ignore keydown events during composition
+  if (isComposing) {
+    return;
+  }
+
   // If the target of keydown is not changed,
   // consider these events as a sequential typing.
   const targets = getPossibleTargets(event.composedPath());
@@ -100,6 +120,31 @@ function onKeyDown(event: KeyboardEvent): void {
         currentKeydownTexts.push(event.key);
       }
   }
+}
+
+function onCompositionStart() {
+  isComposing = true;
+}
+
+function onCompositionEnd(event: CompositionEvent) {
+  isComposing = false;
+
+  // If the target of keydown is not changed,
+  // consider these events as a sequential typing.
+  const targets = getPossibleTargets(event.composedPath());
+  const firstTarget = targets[0];
+  if (targets.length === 0) {
+    currentKeydownTargets = null;
+    return;
+  }
+  if (firstTarget.element !== currentKeydownTargets?.[0]?.element) {
+    completeKeyDown();
+    currentKeydownTargets = targets;
+    currentKeydownTexts = [];
+  }
+
+  // Add the composed text to the current keydown texts
+  currentKeydownTexts.push(event.data);
 }
 
 function completeKeyDown(): void {
