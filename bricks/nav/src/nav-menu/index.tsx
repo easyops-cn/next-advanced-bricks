@@ -525,7 +525,7 @@ function NavMenuComponent(props: NavMenuProps) {
         topData={true}
         mainMenuTitleStyle={props.mainMenuTitleStyle}
       />
-      <slot name="navMenuRightContent" />
+      <slot name="afterMenu" />
     </div>
   );
 }
