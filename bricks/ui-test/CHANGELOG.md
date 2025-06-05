@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.66](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.0.65...@next-bricks/ui-test@1.0.66) (2025-06-05)
+
+
+### Bug Fixes
+
+* fix recording functionality with composition events ([4abf040](https://github.com/easyops-cn/next-advanced-bricks/commit/4abf04030ef42506fa585ac8e30e069b3f7a23ed))
+
+
+
+
+
 ## [1.0.65](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.0.64...@next-bricks/ui-test@1.0.65) (2025-06-03)
 
 
