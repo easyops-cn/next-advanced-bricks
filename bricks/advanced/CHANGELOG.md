@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.45.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.45.6...@next-bricks/advanced@0.45.7) (2025-06-06)
+
+
+### Bug Fixes
+
+* 「资源巡检异常结果」支持more设置 ([b2b833a](https://github.com/easyops-cn/next-advanced-bricks/commit/b2b833a70b917c89c7c2fea8b028890d9e03bfd9))
+
+
+
+
+
 ## [0.45.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.45.5...@next-bricks/advanced@0.45.6) (2025-06-06)
 
 
