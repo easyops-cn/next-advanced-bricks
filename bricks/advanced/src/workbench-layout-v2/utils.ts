@@ -31,6 +31,16 @@ export const getLayoutDefaultCardConfig = (
       showMoreIcon: true,
       moreIconText: "更多",
     },
+    "abnormalResourceInspectionResults":{
+      moreIconLink: "/automatic-inspection/suites",
+      showMoreIcon: true,
+      moreIconText: "更多",
+    },
+    "abnormalSystemInspectionResults":{
+      moreIconLink: "/automatic-inspection/system/list",
+      showMoreIcon: true,
+      moreIconText: "更多",
+    }
   };
   return {
     ...defaultCardConfig,
