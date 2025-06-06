@@ -73,8 +73,8 @@ export function PlanProgress({
   }, [plan]);
 
   const { className, icon } = useMemo(() => {
-    return getClassNameAndIconProps(jobState);
-  }, [jobState]);
+    return getClassNameAndIconProps(jobState, taskState);
+  }, [jobState, taskState]);
 
   const toggle = useCallback(() => {
     setExpanded((prev) => !prev);
@@ -184,6 +184,7 @@ export function PlanProgress({
             <PlanStep
               key={index}
               state={step.state}
+              taskState={taskState}
               instruction={step.instruction}
             />
           ))}
@@ -195,13 +196,14 @@ export function PlanProgress({
 
 interface PlanStepProps {
   state?: JobState;
+  taskState?: TaskState;
   instruction: string;
 }
 
-function PlanStep({ state, instruction }: PlanStepProps) {
+function PlanStep({ state, taskState, instruction }: PlanStepProps) {
   const { className, icon } = useMemo(() => {
-    return getClassNameAndIconProps(state);
-  }, [state]);
+    return getClassNameAndIconProps(state, taskState);
+  }, [state, taskState]);
 
   return (
     <li className={styles.step}>
@@ -213,7 +215,10 @@ function PlanStep({ state, instruction }: PlanStepProps) {
   );
 }
 
-function getClassNameAndIconProps(state: JobState | undefined) {
+function getClassNameAndIconProps(
+  state: JobState | undefined,
+  taskState?: TaskState
+) {
   switch (state) {
     case "completed":
       return {
@@ -226,6 +231,16 @@ function getClassNameAndIconProps(state: JobState | undefined) {
       };
     case "submitted":
     case "working":
+      if (taskState === "paused" || taskState === "canceled") {
+        return {
+          className: undefined,
+          icon: {
+            lib: "fa",
+            prefix: "far",
+            icon: taskState === "paused" ? "circle-pause" : "circle-stop",
+          },
+        };
+      }
       return {
         className: styles.working,
         icon: {

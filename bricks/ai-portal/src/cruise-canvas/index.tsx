@@ -42,7 +42,11 @@ import { NodeRequirement } from "./NodeRequirement/NodeRequirement.js";
 import { NodeInstruction } from "./NodeInstruction/NodeInstruction.js";
 import { NodeJob } from "./NodeJob/NodeJob.js";
 import { NodeEnd } from "./NodeEnd/NodeEnd.js";
-import { CANVAS_PADDING_BOTTOM, DONE_STATES } from "./constants.js";
+import {
+  CANVAS_PADDING_BOTTOM,
+  DONE_STATES,
+  GENERAL_DONE_STATES,
+} from "./constants.js";
 import { WrappedIcon, WrappedLink } from "./bricks.js";
 import { CanvasContext } from "./CanvasContext.js";
 import { ToolCallDetail } from "./ToolCallDetail/ToolCallDetail.js";
@@ -175,6 +179,7 @@ function LegacyCruiseCanvasComponent(
   const rawNodes = graph?.nodes;
   const rawEdges = graph?.edges;
   const pageTitle = task?.title ?? "";
+  const taskState = task?.state;
 
   useImperativeHandle(
     ref,
@@ -220,7 +225,7 @@ function LegacyCruiseCanvasComponent(
   const { sizeReady, nodes, edges } = useLayout({
     rawNodes,
     rawEdges,
-    state: task?.state,
+    state: taskState,
     sizeMap,
   });
 
@@ -239,7 +244,7 @@ function LegacyCruiseCanvasComponent(
     rootRef,
   });
 
-  const taskDone = DONE_STATES.includes(task?.state ?? "working");
+  const taskDone = DONE_STATES.includes(taskState ?? "working");
   const taskLoading = !taskDone && nodes.length === 2;
 
   const nonLeafNodes = useMemo(() => {
@@ -402,7 +407,8 @@ function LegacyCruiseCanvasComponent(
               instructionLoading={
                 node.type === "instruction" &&
                 !nonLeafNodes.has(node.id) &&
-                !DONE_STATES.includes(node.state ?? "working")
+                !DONE_STATES.includes(node.state ?? "working") &&
+                !GENERAL_DONE_STATES.includes(taskState ?? "working")
               }
               edges={edges}
               x={node.view?.x}
@@ -417,7 +423,7 @@ function LegacyCruiseCanvasComponent(
             <WrappedIcon lib="fa" prefix="fas" icon="arrow-left-long" />
           </WrappedLink>
         )}
-        <PlanProgress plan={plan} state={task?.state} />
+        <PlanProgress plan={plan} state={taskState} />
         <ZoomBar
           scale={transform.k}
           onScaleChange={handleScaleChange}

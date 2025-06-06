@@ -12,7 +12,7 @@
 
 .fit-content {
   min-width: var(--cruise-canvas-node-width-medium);
-  width: fit-content;
+  width: min-content;
 }
 
 .ask-user {
