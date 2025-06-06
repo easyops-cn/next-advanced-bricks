@@ -15,7 +15,11 @@ import "@next-core/theme";
 import { uniqueId } from "lodash";
 import classNames from "classnames";
 import { select } from "d3-selection";
-import type { RangeTuple, SizeTuple } from "../diagram/interfaces";
+import type {
+  PartialRectTuple,
+  RangeTuple,
+  SizeTuple,
+} from "../diagram/interfaces";
 import type {
   ActiveTarget,
   InitialCell,
@@ -56,6 +60,7 @@ export interface EoDisplayCanvasProps {
   layout: LayoutType;
   layoutOptions?: LayoutOptions;
   autoSize?: AutoSize;
+  padding?: PartialRectTuple;
   defaultNodeSize: SizeTuple;
   defaultNodeBricks?: NodeBrickConf[];
   defaultEdgeLines?: EdgeLineConf[];
@@ -71,6 +76,7 @@ export interface EoDisplayCanvasProps {
   autoCenterWhenCellsChange?: boolean;
   doNotResetActiveTargetForSelector?: string;
   doNotResetActiveTargetOutsideCanvas?: boolean;
+  extraStyleTexts?: string[];
 }
 
 const EoDisplayCanvasComponent = forwardRef(LegacyEoDisplayCanvasComponent);
@@ -97,6 +103,14 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
 
   @property({ attribute: false })
   accessor autoSize: AutoSize | undefined;
+
+  /**
+   * 画布内间距，自动居中时将预留此间距。
+   *
+   * @default 12
+   */
+  @property({ attribute: false })
+  accessor padding: PartialRectTuple | undefined;
 
   @property({ attribute: false })
   accessor defaultNodeSize: SizeTuple = [DEFAULT_NODE_SIZE, DEFAULT_NODE_SIZE];
@@ -180,6 +194,9 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
   @property({ type: Boolean })
   accessor doNotResetActiveTargetOutsideCanvas: boolean | undefined;
 
+  @property({ attribute: false })
+  accessor extraStyleTexts: string[] | undefined;
+
   @event({ type: "activeTarget.change" })
   accessor #activeTargetChangeEvent!: EventEmitter<ActiveTarget | null>;
 
@@ -222,6 +239,7 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
         layout={this.layout}
         layoutOptions={this.layoutOptions}
         autoSize={this.autoSize}
+        padding={this.padding}
         defaultNodeSize={this.defaultNodeSize}
         defaultNodeBricks={this.defaultNodeBricks}
         defaultEdgeLines={this.defaultEdgeLines}
@@ -241,6 +259,7 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
           this.doNotResetActiveTargetOutsideCanvas
         }
         autoCenterWhenCellsChange={this.autoCenterWhenCellsChange}
+        extraStyleTexts={this.extraStyleTexts}
         onActiveTargetChange={this.#handleActiveTargetChange}
         onSwitchActiveTarget={this.#handleSwitchActiveTarget}
         onCellContextMenu={this.#handleCellContextMenu}
@@ -270,6 +289,7 @@ function LegacyEoDisplayCanvasComponent(
     layout,
     layoutOptions,
     autoSize,
+    padding,
     defaultNodeSize,
     defaultNodeBricks,
     defaultEdgeLines,
@@ -285,6 +305,7 @@ function LegacyEoDisplayCanvasComponent(
     autoCenterWhenCellsChange,
     doNotResetActiveTargetForSelector,
     doNotResetActiveTargetOutsideCanvas,
+    extraStyleTexts,
     onActiveTargetChange,
     onSwitchActiveTarget,
     onCellContextMenu,
@@ -326,6 +347,7 @@ function LegacyEoDisplayCanvasComponent(
     layout,
     layoutOptions,
     autoSize,
+    padding,
     rootRef,
     cells,
     zoomable,
@@ -437,6 +459,7 @@ function LegacyEoDisplayCanvasComponent(
 
   return (
     <>
+      {extraStyleTexts?.map((text, index) => <style key={index}>{text}</style>)}
       <svg
         width="100%"
         height="100%"

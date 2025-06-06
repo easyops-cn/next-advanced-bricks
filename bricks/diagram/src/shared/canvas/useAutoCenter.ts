@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { select } from "d3-selection";
 import { ZoomTransform, type ZoomBehavior } from "d3-zoom";
-import type { RangeTuple } from "../../diagram/interfaces";
+import type { PartialRectTuple, RangeTuple } from "../../diagram/interfaces";
 import {
   DEFAULT_CANVAS_PADDING,
   SYMBOL_FOR_SIZE_INITIALIZED,
@@ -24,6 +24,7 @@ export interface UseAutoCenterOptions {
   scaleRange: RangeTuple;
   autoCenterWhenCellsChange?: boolean;
   autoSize?: AutoSize;
+  padding?: PartialRectTuple;
 }
 
 export type UseAutoCenterResult = [
@@ -40,6 +41,7 @@ export function useAutoCenter({
   scaleRange,
   autoCenterWhenCellsChange,
   autoSize,
+  padding,
 }: UseAutoCenterOptions): UseAutoCenterResult {
   const [centered, setCentered] = useState(false);
 
@@ -73,37 +75,36 @@ export function useAutoCenter({
     let height = root.clientHeight;
     const fitWidth = !!autoSize?.width;
     const fitHeight = !!autoSize?.height;
-    const padding =
-      fitWidth || fitHeight
-        ? extractPartialRectTuple(autoSize!.padding ?? DEFAULT_CANVAS_PADDING)
-        : null;
+    const fullPadding = extractPartialRectTuple(
+      padding ?? DEFAULT_CANVAS_PADDING
+    );
 
     // Todo: handle ratio
     if (fitWidth) {
       width = Math.min(
         Math.max(
-          rect.width + padding![1] + padding![3],
+          rect.width + fullPadding![1] + fullPadding![3],
           autoSize.minWidth ?? 0
         ),
         autoSize.maxWidth ?? Infinity
       );
-      root.style.width = `${width}px`;
+      root.style.minWidth = `${width}px`;
     }
     if (fitHeight) {
       height = Math.min(
         Math.max(
-          rect.height + padding![0] + padding![2],
+          rect.height + fullPadding![0] + fullPadding![2],
           autoSize.minHeight ?? 0
         ),
         autoSize.maxHeight ?? Infinity
       );
-      root.style.height = `${height}px`;
+      root.style.minHeight = `${height}px`;
     }
 
     const { k, x, y } = getTransformToCenter(rect, {
       canvasWidth: width,
       canvasHeight: height,
-      canvasPadding: padding,
+      canvasPadding: fullPadding,
       scaleRange: zoomable ? scaleRange : undefined,
     });
     // istanbul ignore next
@@ -122,6 +123,7 @@ export function useAutoCenter({
     zoomable,
     zoomer,
     autoSize,
+    padding,
   ]);
 
   return [centered, setCentered];

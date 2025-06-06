@@ -10,7 +10,11 @@ import type {
   NodeView,
   AutoSize,
 } from "../../draw-canvas/interfaces";
-import type { FullRectTuple, RangeTuple } from "../../diagram/interfaces";
+import type {
+  FullRectTuple,
+  PartialRectTuple,
+  RangeTuple,
+} from "../../diagram/interfaces";
 import { useAutoCenter } from "./useAutoCenter";
 import {
   isNodeCell,
@@ -30,6 +34,7 @@ export interface UseLayoutOptions {
   layout: LayoutType;
   layoutOptions?: LayoutOptions;
   autoSize?: AutoSize;
+  padding?: PartialRectTuple;
   rootRef: React.RefObject<SVGSVGElement>;
   cells: Cell[];
   zoomable?: boolean;
@@ -45,6 +50,7 @@ export function useLayout({
   layout,
   layoutOptions,
   autoSize,
+  padding,
   rootRef,
   cells,
   zoomable,
@@ -74,6 +80,7 @@ export function useLayout({
     scaleRange,
     autoCenterWhenCellsChange,
     autoSize,
+    padding,
   });
 
   const previousLayoutRef = useRef<Cell[] | null>(null);

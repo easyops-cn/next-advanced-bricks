@@ -33,7 +33,7 @@ export interface NodeComponentCell extends BaseNodeCell {
 export type NodeComponent = FunctionComponent<{
   node: {
     id: NodeId;
-    data?: unknown;
+    data: any;
     locked?: boolean;
   };
   refCallback?: (element: HTMLElement | null) => void;
@@ -534,8 +534,6 @@ export interface AutoSize {
   height?: "fit-content";
   minHeight?: number;
   maxHeight?: number;
-  /** @default 12 */
-  padding?: PartialRectTuple;
 }
 
 export interface CellsRect {
