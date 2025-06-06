@@ -447,12 +447,14 @@ export function SelectComponent(props: SelectProps) {
   }, [props.options, fields, props.value, mode]);
 
   const handleSelectorClick = useCallback(() => {
+    if (disabled) return;
+
     if (!value) {
       setIsDropHidden(false);
       setIsFocused(true);
       inputRef.current && inputRef.current.focus();
       onSelectFocus?.();
-    } else if (!disabled) {
+    } else {
       setIsDropHidden(!isDropHidden);
       setIsFocused(true);
       inputRef.current && inputRef.current.focus();

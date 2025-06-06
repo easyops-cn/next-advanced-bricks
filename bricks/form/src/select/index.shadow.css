@@ -148,8 +148,11 @@
   background: var(--antd-input-disabled-bg);
   cursor: not-allowed;
 }
-.select-disabled .select-selection-search-input {
-  cursor: not-allowed;
+.select-disabled {
+  .select-selection-search-input,
+  .select-arrow {
+    cursor: not-allowed;
+  }
 }
 
 .select-selector.is-error {
