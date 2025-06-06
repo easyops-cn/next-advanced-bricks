@@ -13,7 +13,7 @@ export function getLabelMaskAndOffset(
     return [null, null];
   }
   const padding = 3;
-  const [x, y, direction, angle, gap] = labelPosition;
+  const [x, y, direction, angle, offset] = labelPosition;
   const [width, height] = labelSize;
 
   const left = x - width / 2 - padding;
@@ -24,20 +24,20 @@ export function getLabelMaskAndOffset(
   const halfHeight = height / 2 + padding;
   switch (direction) {
     case "top":
-      offsetX = gap * Math.cos(angle) - halfHeight / Math.tan(angle);
-      offsetY = gap * Math.sin(angle) - halfHeight;
+      offsetX = offset * Math.cos(angle) - halfHeight / Math.tan(angle);
+      offsetY = offset * Math.sin(angle) - halfHeight;
       break;
     case "bottom":
-      offsetX = gap * Math.cos(angle) + halfHeight / Math.tan(angle);
-      offsetY = gap * Math.sin(angle) + halfHeight;
+      offsetX = offset * Math.cos(angle) + halfHeight / Math.tan(angle);
+      offsetY = offset * Math.sin(angle) + halfHeight;
       break;
     case "left":
-      offsetX = gap * Math.cos(angle) - halfWidth;
-      offsetY = gap * Math.sin(angle) - halfWidth * Math.tan(angle);
+      offsetX = offset * Math.cos(angle) - halfWidth;
+      offsetY = offset * Math.sin(angle) - halfWidth * Math.tan(angle);
       break;
     case "right":
-      offsetX = gap * Math.cos(angle) + halfWidth;
-      offsetY = gap * Math.sin(angle) + halfWidth * Math.tan(angle);
+      offsetX = offset * Math.cos(angle) + halfWidth;
+      offsetY = offset * Math.sin(angle) + halfWidth * Math.tan(angle);
       break;
   }
 

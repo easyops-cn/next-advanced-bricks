@@ -158,21 +158,27 @@ export interface LineConfOverridable {
   interactStrokeWidth?: number;
 }
 
-export interface LineLabelConf {
+export interface LineLabelConf extends LabelOrTextBaseOptions {
   if?: string | boolean | null;
   useBrick: UseSingleBrickConf;
-  placement?: LineLabelPlacement;
-  /**
-   * 当 placement 设置为 start 或 end 时，默认情况下，文本中心点与连线起点或终点重合。
-   * 设置 offset 表示文本中心点距离起点或终点在连线上的偏移量。
-   */
-  offset?: number;
 }
 
-export interface TextOptions {
+export interface TextOptions extends LabelOrTextBaseOptions {
   content: string;
   style?: CSSProperties;
+}
+
+export interface LabelOrTextBaseOptions {
+  /**
+   * @default "center"
+   */
   placement?: LineLabelPlacement;
+
+  /**
+   * 根据 placement 的不同，设置 offset 分别表示文本中心点距离连线的起点、中心点或终点的偏移量。
+   *
+   * @default 0
+   */
   offset?: number;
 }
 
