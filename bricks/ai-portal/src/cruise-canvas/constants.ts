@@ -11,3 +11,5 @@ export const NODE_SEP = 42;
 export const EDGE_SEP = 10;
 
 export const DONE_STATES = ["completed", "failed", "canceled"] as TaskState[];
+
+export const GENERAL_DONE_STATES = [...DONE_STATES, "paused"] as TaskState[];

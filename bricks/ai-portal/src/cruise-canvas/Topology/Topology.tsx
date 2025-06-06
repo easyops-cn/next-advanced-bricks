@@ -3,38 +3,53 @@ import type {
   EoDisplayCanvasProps,
   EoDisplayCanvas,
 } from "@next-bricks/diagram/display-canvas";
+import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import sharedStyles from "../shared.module.css";
 import toolbarStyles from "../toolbar.module.css";
 import styles from "./Topology.module.css";
+import nodeStyleText from "./node.shadow.css";
 import { AsyncWrappedDisplayCanvas } from "../diagram";
 import { WrappedIcon } from "../bricks";
-import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 
-const DEFAULT_NODE_SIZE: [number, number] = [100, 100];
+const DEFAULT_NODE_SIZE: EoDisplayCanvasProps["defaultNodeSize"] = [100, 100];
+const CANVAS_PADDING: EoDisplayCanvasProps["padding"] = [12, 54, 34];
+const extraStyleTexts = [nodeStyleText];
 
 export function Topology(): JSX.Element {
   const cells = useMemo<EoDisplayCanvasProps["cells"]>(() => {
     return [
       {
         type: "edge",
+        source: "permission_service",
+        target: "cmdb_service",
+      },
+      {
+        type: "edge",
+        source: "sys_service",
+        target: "cmdb_service",
+      },
+      {
+        type: "edge",
+        source: "cmdb_extend",
+        target: "cmdb_service",
+      },
+      {
+        type: "edge",
         source: "user_service",
         target: "cmdb_service",
-        // view: {
-        //   type: "curve"
-        // }
       },
       {
         type: "edge",
         source: "cmdb_service",
         target: "easy_core",
         view: {
-          // strokeColor: "var(--color-warning)",
+          strokeColor: "var(--color-error)",
           text: {
-            content: "Blocked",
-            // placement: "end",
-            offset: 12,
+            content: "×",
+            offset: 7,
             style: {
               color: "var(--color-error)",
+              lineHeight: "14px",
             },
           },
         },
@@ -43,17 +58,47 @@ export function Topology(): JSX.Element {
         type: "edge",
         source: "cmdb_service",
         target: "ens_client",
-        // view: {
-        //   type: "curve"
-        // }
       },
       {
         type: "edge",
         source: "user_service",
         target: "ens_client",
-        // view: {
-        //   type: "curve"
-        // }
+      },
+      {
+        type: "node",
+        id: "permission_service",
+        data: {
+          name: "permission_service",
+          icon: {
+            lib: "easyops",
+            category: "app",
+            icon: "permission-center-app",
+          },
+        },
+      },
+      {
+        type: "node",
+        id: "sys_service",
+        data: {
+          name: "sys_service",
+          icon: {
+            lib: "easyops",
+            category: "customer",
+            icon: "system-setting",
+          },
+        },
+      },
+      {
+        type: "node",
+        id: "cmdb_extend",
+        data: {
+          name: "cmdb_extend",
+          icon: {
+            lib: "easyops",
+            category: "itsc-form",
+            icon: "extends",
+          },
+        },
       },
       {
         type: "node",
@@ -103,7 +148,7 @@ export function Topology(): JSX.Element {
           },
         },
       },
-    ];
+    ] as EoDisplayCanvasProps["cells"];
   }, []);
 
   const layoutOptions = useMemo<EoDisplayCanvasProps["layoutOptions"]>(() => {
@@ -137,7 +182,6 @@ export function Topology(): JSX.Element {
     () => ({
       width: "fit-content",
       height: "fit-content",
-      padding: [12, 12, 34],
       // 453 - 18 - 8 - 18 = 409
       minWidth: 409,
       // Todo: listen on resize
@@ -160,11 +204,13 @@ export function Topology(): JSX.Element {
         cells={cells}
         layout="dagre"
         layoutOptions={layoutOptions}
+        padding={CANVAS_PADDING}
         autoSize={autoSize}
         defaultNodeSize={DEFAULT_NODE_SIZE}
         defaultNodeBricks={defaultNodeBricks}
         defaultEdgeLines={defaultEdgeLines}
         hideZoomBar
+        extraStyleTexts={extraStyleTexts}
       />
       <div className={`${toolbarStyles.toolbar} ${styles.toolbar}`}>
         <button onClick={onReCenter}>
@@ -189,30 +235,14 @@ interface TopologyNodeProps {
 function TopologyNode({ node, refCallback }: TopologyNodeProps): JSX.Element {
   return (
     <div
+      className="topology-node"
       style={{
-        padding: 5,
-        fontSize: 24,
         color: node.id === "easy_core" ? "var(--color-warning)" : undefined,
       }}
       ref={refCallback}
     >
       <WrappedIcon {...node.data.icon} style={{ display: "block" }} />
-      <div
-        style={{
-          position: "absolute",
-          bottom: -20,
-          left: "50%",
-          transform: "translate(-50%, 0)",
-          fontSize: 14,
-          background: "#fff",
-          padding: "0 2px 2px",
-          maxWidth: "124px",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
-      >
-        {node.data.name}
-      </div>
+      <div className="topology-node-label">{node.data.name}</div>
     </div>
   );
 }
