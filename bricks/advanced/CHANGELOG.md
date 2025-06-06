@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.45.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.45.5...@next-bricks/advanced@0.45.6) (2025-06-06)
+
+
+### Bug Fixes
+
+* 工作台卡片更多按钮支持文案配置 ([dede958](https://github.com/easyops-cn/next-advanced-bricks/commit/dede9585fc70605f43fa905522d2fcd512b8309e))
+
+
+
+
+
 ## [0.45.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.45.4...@next-bricks/advanced@0.45.5) (2025-06-05)
 
 **Note:** Version bump only for package @next-bricks/advanced
