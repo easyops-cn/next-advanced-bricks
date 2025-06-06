@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.16.2...@next-bricks/form@1.16.3) (2025-06-06)
+
+
+### Bug Fixes
+
+* **select:** Fixed dropdown list still appears when clicked after being disabled ([606d8b7](https://github.com/easyops-cn/next-advanced-bricks/commit/606d8b7c254c55dcec7dd2f4159e3bc8831999c5))
+
+
+
+
+
 ## [1.16.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.16.1...@next-bricks/form@1.16.2) (2025-04-28)
 
 
