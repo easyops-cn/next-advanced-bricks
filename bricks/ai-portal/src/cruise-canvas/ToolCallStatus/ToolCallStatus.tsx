@@ -5,7 +5,7 @@ import type { Job } from "../interfaces";
 import { WrappedIcon } from "../bricks";
 import { CanvasContext } from "../CanvasContext";
 import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
-import { getlastProgress, getToolDataProgress } from "../utils";
+import { getToolDataProgress } from "../utils";
 
 export interface NodeJobToolCallProps {
   job: Job;
@@ -19,8 +19,10 @@ export function ToolCallStatus({
   const { setActiveToolCallJobId } = useContext(CanvasContext);
   const toolCall = job.toolCall!;
   const toolCallMessages = job.messages?.filter((msg) => msg.role === "tool");
-  const toolDataProgress = getToolDataProgress(toolCallMessages!);
-  const lastProgress = getlastProgress(toolDataProgress);
+  const progress = useMemo(
+    () => getToolDataProgress(toolCallMessages),
+    [toolCallMessages]
+  );
 
   const readOnly = useMemo(() => {
     return variant === "read-only";
@@ -94,10 +96,16 @@ export function ToolCallStatus({
             icon="clock"
           />
         )}
-        <span className={styles.name}>{toolCall.name}</span>
+        <span className={styles.name}>
+          {toolCall.name === "alert_exec_remote_shell" &&
+          toolCall.arguments?.ip &&
+          toolCall.arguments?.shell
+            ? `${toolCall.arguments.ip} $ ${toolCall.arguments.shell}`
+            : toolCall.name}
+        </span>
       </div>
-      {!!lastProgress && !readOnly && (
-        <ToolProgressLine toolDataProgress={[lastProgress]} failed={failed} />
+      {!!progress && !readOnly && (
+        <ToolProgressLine progress={progress} failed={failed} />
       )}
     </div>
   );

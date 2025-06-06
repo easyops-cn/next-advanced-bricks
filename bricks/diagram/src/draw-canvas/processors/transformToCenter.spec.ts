@@ -64,4 +64,13 @@ describe("transformToCenter", () => {
     });
     expect(transform).toEqual({ x: 0, y: 0, k: 1 });
   });
+
+  test("with padding", () => {
+    const transform = transformToCenter(cells, {
+      canvasWidth: 600,
+      canvasHeight: 400,
+      canvasPadding: [10, 20, 30, 40],
+    });
+    expect(transform).toEqual({ x: 210, y: 90, k: 1 });
+  });
 });

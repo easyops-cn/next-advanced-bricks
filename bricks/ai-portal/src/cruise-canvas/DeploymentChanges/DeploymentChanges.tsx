@@ -1,7 +1,6 @@
-import React, { useMemo } from "react";
-import classNames from "classnames";
-import styles from "./DeploymentChanges.module.css";
-import { WrappedTable } from "../bricks";
+import React, { Suspense, useMemo } from "react";
+import sharedStyles from "../shared.module.css";
+import { AsyncWrappedTable } from "../table";
 
 export interface DeploymentChangesProps {
   dataSource?: {
@@ -36,13 +35,13 @@ export function DeploymentChanges({
         dataIndex: "originContent",
         key: "originContent",
         title: "事件信息",
-        minWidth: 400,
+        // minWidth: 400,
       },
       {
         dataIndex: "level",
         key: "level",
         title: "等级",
-        minWidth: 100,
+        // minWidth: 100,
         useBrick: {
           brick: "eo-tag",
           properties: {
@@ -55,28 +54,27 @@ export function DeploymentChanges({
         dataIndex: "time",
         key: "time",
         title: "事件发生时间",
-        minWidth: 180,
+        // minWidth: 180,
       },
       {
         dataIndex: "resource",
         key: "resource",
         title: "事件对象",
-        minWidth: 250,
+        // minWidth: 250,
       },
     ];
     return (
-      <WrappedTable
-        size="small"
-        rowKey="key"
-        columns={columns}
-        dataSource={data}
-        pagination={false}
-      />
+      <Suspense>
+        <AsyncWrappedTable
+          size="small"
+          rowKey="key"
+          columns={columns}
+          dataSource={data}
+          pagination={false}
+          scrollConfig={false}
+        />
+      </Suspense>
     );
   }, [dataSource]);
-  return (
-    <div className={classNames(styles["deployment-changes"])}>
-      {EventsTable}
-    </div>
-  );
+  return <div className={sharedStyles["table-container"]}>{EventsTable}</div>;
 }

@@ -1,7 +1,6 @@
-import React, { useMemo } from "react";
-import classNames from "classnames";
-import styles from "./TraceList.module.css";
-import { WrappedTable } from "../bricks";
+import React, { Suspense, useMemo } from "react";
+import sharedStyles from "../shared.module.css";
+import { AsyncWrappedTable } from "../table";
 
 export interface ToolProgressLineProps {
   datSource?: {
@@ -36,20 +35,20 @@ export function TraceList({ datSource }: ToolProgressLineProps): JSX.Element {
         dataIndex: "spanName",
         key: "spanName",
         title: "接口",
-        minWidth: 200,
+        // minWidth: 200,
       },
       {
         dataIndex: "duration",
         key: "duration",
         title: "耗时（ms）",
-        minWidth: 120,
+        // minWidth: 120,
       },
 
       {
         dataIndex: "code",
         key: "code",
         title: "状态",
-        minWidth: 100,
+        // minWidth: 100,
         useBrick: {
           brick: "eo-tag",
           properties: {
@@ -62,24 +61,27 @@ export function TraceList({ datSource }: ToolProgressLineProps): JSX.Element {
         dataIndex: "service",
         key: "service",
         title: "服务",
-        minWidth: 200,
+        // minWidth: 200,
       },
       {
         dataIndex: "traceId",
         key: "traceId",
         title: "trace ID",
-        minWidth: 250,
+        // minWidth: 250,
       },
     ];
     return (
-      <WrappedTable
-        size="small"
-        rowKey="key"
-        columns={columns}
-        dataSource={data}
-        pagination={false}
-      />
+      <Suspense>
+        <AsyncWrappedTable
+          size="small"
+          rowKey="key"
+          columns={columns}
+          dataSource={data}
+          pagination={false}
+          scrollConfig={false}
+        />
+      </Suspense>
     );
   }, [datSource]);
-  return <div className={classNames(styles["trace-list"])}>{EventsTable}</div>;
+  return <div className={sharedStyles["table-container"]}>{EventsTable}</div>;
 }

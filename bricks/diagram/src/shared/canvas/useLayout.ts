@@ -8,8 +8,13 @@ import type {
   LayoutType,
   NodeId,
   NodeView,
+  AutoSize,
 } from "../../draw-canvas/interfaces";
-import type { FullRectTuple, RangeTuple } from "../../diagram/interfaces";
+import type {
+  FullRectTuple,
+  PartialRectTuple,
+  RangeTuple,
+} from "../../diagram/interfaces";
 import { useAutoCenter } from "./useAutoCenter";
 import {
   isNodeCell,
@@ -28,6 +33,8 @@ import { normalizeAlignOrigin } from "../../draw-canvas/processors/normalizeAlig
 export interface UseLayoutOptions {
   layout: LayoutType;
   layoutOptions?: LayoutOptions;
+  autoSize?: AutoSize;
+  padding?: PartialRectTuple;
   rootRef: React.RefObject<SVGSVGElement>;
   cells: Cell[];
   zoomable?: boolean;
@@ -42,6 +49,8 @@ export interface UseLayoutOptions {
 export function useLayout({
   layout,
   layoutOptions,
+  autoSize,
+  padding,
   rootRef,
   cells,
   zoomable,
@@ -70,6 +79,8 @@ export function useLayout({
     zoomer,
     scaleRange,
     autoCenterWhenCellsChange,
+    autoSize,
+    padding,
   });
 
   const previousLayoutRef = useRef<Cell[] | null>(null);
@@ -148,7 +159,14 @@ export function useLayout({
     dispatch({ type: "update-cells", payload: newCells });
     // setCentered(false);
     setLayoutInitialized(true);
-  }, [cells, dispatch, layout, layoutKey, layoutOptions /* , setCentered */]);
+  }, [
+    cells,
+    dispatch,
+    layout,
+    layoutKey,
+    layoutOptions,
+    allowEdgeToArea /* , setCentered */,
+  ]);
 
   return { centered, setCentered, getNextLayoutKey };
 }

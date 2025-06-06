@@ -1,6 +1,7 @@
 // istanbul ignore file: experimental
 import React, { useCallback } from "react";
 import styles from "./ZoomBar.module.css";
+import toolbarStyles from "../toolbar.module.css";
 import { WrappedIcon } from "../bricks";
 
 export interface ZoomBarProps {
@@ -23,7 +24,7 @@ export function ZoomBar({
   }, [onScaleChange, scale]);
 
   return (
-    <div className={styles["zoom-bar"]}>
+    <div className={`${toolbarStyles.toolbar} ${styles["zoom-bar"]}`}>
       <button onClick={onReCenter}>
         <WrappedIcon lib="fa" prefix="fas" icon="expand" />
       </button>

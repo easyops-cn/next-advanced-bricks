@@ -1,0 +1,19 @@
+.topology-node {
+  padding: 5px;
+  font-size: 24px;
+}
+
+.topology-node-label {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  font-size: 14px;
+  line-height: 16px;
+  background: #fff;
+  padding: 0 2px 2px;
+  border-radius: 4px;
+  max-width: 124px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

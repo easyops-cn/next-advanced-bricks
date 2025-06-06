@@ -19,6 +19,7 @@ import { select } from "d3-selection";
 import type { lockBodyScroll as _lockBodyScroll } from "@next-bricks/basic/data-providers/lock-body-scroll/lock-body-scroll";
 import type {
   NodePosition,
+  PartialRectTuple,
   PositionTuple,
   RangeTuple,
   SizeTuple,
@@ -115,6 +116,7 @@ export interface EoDrawCanvasProps {
   cells: InitialCell[] | undefined;
   layout: LayoutType;
   layoutOptions?: LayoutOptions;
+  padding?: PartialRectTuple;
   defaultNodeSize: SizeTuple;
   defaultNodeBricks?: NodeBrickConf[];
   defaultEdgeLines?: EdgeLineConf[];
@@ -221,6 +223,14 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
 
   @property({ attribute: false })
   accessor layoutOptions: LayoutOptions | undefined;
+
+  /**
+   * 画布内间距，自动居中时将预留此间距。
+   *
+   * @default 12
+   */
+  @property({ attribute: false })
+  accessor padding: PartialRectTuple | undefined;
 
   /**
    * @default [100,20]
@@ -696,6 +706,7 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
         ref={this.#canvasRef}
         layout={this.layout}
         layoutOptions={this.layoutOptions}
+        padding={this.padding}
         cells={this.cells}
         defaultNodeSize={this.defaultNodeSize}
         defaultNodeBricks={this.defaultNodeBricks}
@@ -792,6 +803,7 @@ function LegacyEoDrawCanvasComponent(
     host,
     layout,
     layoutOptions,
+    padding,
     cells: initialCells,
     defaultNodeSize,
     defaultNodeBricks,
@@ -880,6 +892,7 @@ function LegacyEoDrawCanvasComponent(
   const { centered, setCentered, getNextLayoutKey } = useLayout({
     layout,
     layoutOptions,
+    padding,
     rootRef,
     cells,
     zoomable,
