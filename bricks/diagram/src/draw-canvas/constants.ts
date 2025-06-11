@@ -22,7 +22,7 @@ export const DEFAULT_SNAP_OBJECT_POSITIONS = "all";
 export const DEFAULT_NODE_PADDING_FOR_LINES = 5;
 /** Padding left + padding right, as well as top + bottom */
 export const DEFAULT_NODE_PADDING_FOR_SMART_LINES = 0;
-export const DEFAULT_CANVAS_PADDING = 12;
+export const DEFAULT_CANVAS_PADDING = 0;
 
 export const POINT_HELPER_RADIUS = 5;
 export const DEFAULT_MOTION_SPEED = 50;

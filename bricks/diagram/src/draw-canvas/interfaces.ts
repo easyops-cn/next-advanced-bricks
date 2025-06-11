@@ -331,11 +331,14 @@ export type LayoutOptions =
   | LayoutOptionsForce;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface LayoutOptionsManual extends LayoutSnapOptions {}
+export interface LayoutOptionsManual extends BaseLayoutOptions {}
 
-export interface LayoutSnapOptions {
+export interface BaseLayoutOptions {
   /** Snap options. Setting to true means enable all snap options */
   snap?: boolean | SnapOptions;
+
+  /** 画布内间距，自动居中时将预留此间距。 */
+  padding?: PartialRectTuple;
 }
 
 export interface SnapOptions {
@@ -370,7 +373,7 @@ export type SnapToObjectPosition =
   | "bottom"
   | "left";
 
-export interface LayoutOptionsDagre extends BaseLayoutOptions {
+export interface LayoutOptionsDagre extends BaseAutoLayoutOptions {
   /** @default "TB" */
   rankdir?: "TB" | "BT" | "LR" | "RL";
   /** @default 50 */
@@ -382,7 +385,7 @@ export interface LayoutOptionsDagre extends BaseLayoutOptions {
   align?: "UL" | "UR" | "DL" | "DR";
 }
 
-export interface LayoutOptionsForce extends BaseLayoutOptions {
+export interface LayoutOptionsForce extends BaseAutoLayoutOptions {
   /** 设置碰撞参数 */
   collide?: boolean | ForceCollideOptions;
 }
@@ -410,7 +413,7 @@ export interface ForceCollideOptions {
   iterations?: number;
 }
 
-export interface BaseLayoutOptions extends LayoutSnapOptions {
+export interface BaseAutoLayoutOptions extends BaseLayoutOptions {
   nodePadding?: PartialRectTuple;
 
   /**

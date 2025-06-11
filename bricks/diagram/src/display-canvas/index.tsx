@@ -15,11 +15,7 @@ import "@next-core/theme";
 import { uniqueId } from "lodash";
 import classNames from "classnames";
 import { select } from "d3-selection";
-import type {
-  PartialRectTuple,
-  RangeTuple,
-  SizeTuple,
-} from "../diagram/interfaces";
+import type { RangeTuple, SizeTuple } from "../diagram/interfaces";
 import type {
   ActiveTarget,
   InitialCell,
@@ -60,7 +56,6 @@ export interface EoDisplayCanvasProps {
   layout: LayoutType;
   layoutOptions?: LayoutOptions;
   autoSize?: AutoSize;
-  padding?: PartialRectTuple;
   defaultNodeSize: SizeTuple;
   defaultNodeBricks?: NodeBrickConf[];
   defaultEdgeLines?: EdgeLineConf[];
@@ -103,14 +98,6 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
 
   @property({ attribute: false })
   accessor autoSize: AutoSize | undefined;
-
-  /**
-   * 画布内间距，自动居中时将预留此间距。
-   *
-   * @default 12
-   */
-  @property({ attribute: false })
-  accessor padding: PartialRectTuple | undefined;
 
   @property({ attribute: false })
   accessor defaultNodeSize: SizeTuple = [DEFAULT_NODE_SIZE, DEFAULT_NODE_SIZE];
@@ -239,7 +226,6 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
         layout={this.layout}
         layoutOptions={this.layoutOptions}
         autoSize={this.autoSize}
-        padding={this.padding}
         defaultNodeSize={this.defaultNodeSize}
         defaultNodeBricks={this.defaultNodeBricks}
         defaultEdgeLines={this.defaultEdgeLines}
@@ -289,7 +275,6 @@ function LegacyEoDisplayCanvasComponent(
     layout,
     layoutOptions,
     autoSize,
-    padding,
     defaultNodeSize,
     defaultNodeBricks,
     defaultEdgeLines,
@@ -347,7 +332,6 @@ function LegacyEoDisplayCanvasComponent(
     layout,
     layoutOptions,
     autoSize,
-    padding,
     rootRef,
     cells,
     zoomable,
