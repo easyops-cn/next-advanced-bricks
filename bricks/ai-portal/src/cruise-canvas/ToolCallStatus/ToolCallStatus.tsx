@@ -96,13 +96,7 @@ export function ToolCallStatus({
             icon="clock"
           />
         )}
-        <span className={styles.name}>
-          {toolCall.name === "alert_exec_remote_shell" &&
-          toolCall.arguments?.ip &&
-          toolCall.arguments?.shell
-            ? `${toolCall.arguments.ip} $ ${toolCall.arguments.shell}`
-            : toolCall.name}
-        </span>
+        <span className={styles.name}>{toolCall.name}</span>
       </div>
       {!!progress && !readOnly && (
         <ToolProgressLine progress={progress} failed={failed} />
