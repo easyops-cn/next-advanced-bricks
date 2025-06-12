@@ -51,7 +51,7 @@ export function NodeJob({ job, state }: NodeJobProps): JSX.Element {
 
   const experimental_showTables =
     // eslint-disable-next-line no-constant-binary-expression
-    /* false && */ job.toolCall?.name === "cmdb_create_app_system";
+    false && job.toolCall?.name === "cmdb_create_app_system";
 
   return (
     <div

@@ -18,11 +18,10 @@ export function ToolCallStatus({
 }: NodeJobToolCallProps): JSX.Element {
   const { setActiveToolCallJobId } = useContext(CanvasContext);
   const toolCall = job.toolCall!;
-  const toolCallMessages = job.messages?.filter((msg) => msg.role === "tool");
-  const progress = useMemo(
-    () => getToolDataProgress(toolCallMessages),
-    [toolCallMessages]
-  );
+  const [progress, hasToolCallMessages] = useMemo(() => {
+    const toolCallMessages = job.messages?.filter((msg) => msg.role === "tool");
+    return [getToolDataProgress(toolCallMessages), !!toolCallMessages?.length];
+  }, [job.messages]);
 
   const readOnly = useMemo(() => {
     return variant === "read-only";
@@ -36,8 +35,7 @@ export function ToolCallStatus({
   }, [job.id, variant, setActiveToolCallJobId]);
 
   const toolState =
-    ["working", "input-required"].includes(job.state) &&
-    toolCallMessages?.length
+    ["working", "input-required"].includes(job.state) && hasToolCallMessages
       ? "completed"
       : job.state;
 

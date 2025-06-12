@@ -12,7 +12,8 @@ import { AsyncWrappedDisplayCanvas } from "../diagram";
 import { WrappedIcon } from "../bricks";
 
 const DEFAULT_NODE_SIZE: EoDisplayCanvasProps["defaultNodeSize"] = [100, 100];
-const CANVAS_PADDING: EoDisplayCanvasProps["padding"] = [12, 54, 34];
+const CANVAS_PADDING: Required<EoDisplayCanvasProps>["layoutOptions"]["padding"] =
+  [12, 54, 34];
 const extraStyleTexts = [nodeStyleText];
 
 export function Topology(): JSX.Element {
@@ -153,6 +154,7 @@ export function Topology(): JSX.Element {
 
   const layoutOptions = useMemo<EoDisplayCanvasProps["layoutOptions"]>(() => {
     return {
+      padding: CANVAS_PADDING,
       nodesep: 90,
       ranksep: 70,
     };
@@ -204,7 +206,6 @@ export function Topology(): JSX.Element {
         cells={cells}
         layout="dagre"
         layoutOptions={layoutOptions}
-        padding={CANVAS_PADDING}
         autoSize={autoSize}
         defaultNodeSize={DEFAULT_NODE_SIZE}
         defaultNodeBricks={defaultNodeBricks}

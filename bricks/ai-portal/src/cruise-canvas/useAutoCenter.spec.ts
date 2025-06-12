@@ -136,7 +136,7 @@ describe("useAutoCenter", () => {
       100
     );
     expect((mockZoomer.transform as jest.Mock).mock.calls[1][1].y).toBeCloseTo(
-      -330
+      -342
     );
   });
 

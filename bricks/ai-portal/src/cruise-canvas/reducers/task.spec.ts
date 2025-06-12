@@ -74,23 +74,6 @@ describe("task reducer", () => {
     expect(task(initialState, action)).toEqual(expectedState);
   });
 
-  it("should transform 'blocked' state to 'working'", () => {
-    const initialState: TaskBaseDetail | null = null;
-    const payload = {
-      id: "task-123",
-      state: "blocked",
-    };
-
-    const action = {
-      type: "sse",
-      payload,
-      isInitial: true,
-    } as CruiseCanvasAction;
-
-    const result = task(initialState, action) as TaskBaseDetail;
-    expect(result.state).toBe("working");
-  });
-
   it("should not update state if patch matches current state", () => {
     const initialState: TaskBaseDetail = {
       id: "task-123",

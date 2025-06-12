@@ -11,6 +11,7 @@ export enum K {
   SHARE = "SHARE",
   TYPE_YOUR_MESSAGE_HERE = "TYPE_YOUR_MESSAGE_HERE",
   ARGUMENTS = "ARGUMENTS",
+  PROCESS = "PROCESS",
   RESPONSE = "RESPONSE",
   CONFIRMING_PLAN_TIPS = "CONFIRMING_PLAN_TIPS",
   PAUSE_THE_TASK = "PAUSE_THE_TASK",
@@ -38,6 +39,7 @@ const en: Locale = {
   SHARE: "Share",
   TYPE_YOUR_MESSAGE_HERE: "Type your message here",
   ARGUMENTS: "Arguments",
+  PROCESS: "Process",
   RESPONSE: "Response",
   CONFIRMING_PLAN_TIPS:
     "According to your request, I have made the following plan:",
@@ -67,6 +69,7 @@ const zh: Locale = {
   SHARE: "分享",
   TYPE_YOUR_MESSAGE_HERE: "在这里输入信息",
   ARGUMENTS: "参数",
+  PROCESS: "过程",
   RESPONSE: "响应",
   CONFIRMING_PLAN_TIPS: "根据你的需求，我已制定如下计划：",
   PAUSE_THE_TASK: "暂停任务",

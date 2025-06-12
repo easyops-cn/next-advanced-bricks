@@ -65,7 +65,7 @@
   overflow-y: auto;
 }
 
-.message {
+/* .message {
   overflow-wrap: break-word;
 }
 
@@ -83,7 +83,7 @@
 
 .message > :last-child {
   margin-bottom: 0;
-}
+} */
 
 .ask-user .heading {
   border-bottom: none;

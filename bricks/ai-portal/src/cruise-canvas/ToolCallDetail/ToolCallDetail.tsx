@@ -9,14 +9,13 @@ import React, {
 import { MarkdownComponent } from "@next-shared/markdown";
 import type { Drawer } from "@next-bricks/containers/drawer";
 import classNames from "classnames";
-import type { Job } from "../interfaces";
+import type { DataPart, Job, Part } from "../interfaces";
 import { WrappedDrawer } from "../bricks";
 import styles from "./ToolCallDetail.module.css";
 import sharedStyles from "../shared.module.css";
 import { K, t } from "../i18n";
 import { CanvasContext } from "../CanvasContext";
 import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus";
-import { getToolDataProgress } from "../utils";
 import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
 
 export interface ToolCallDetailProps {
@@ -35,11 +34,30 @@ function getDrawerWidth() {
 export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
   const { setActiveToolCallJobId } = useContext(CanvasContext);
   const toolCall = job.toolCall!;
-  const toolCallMessages = job.messages?.filter((msg) => msg.role === "tool");
-  const progress = useMemo(
-    () => getToolDataProgress(toolCallMessages),
-    [toolCallMessages]
-  );
+
+  const [progress, intermediateParts, responseParts] = useMemo(() => {
+    const toolCallMessages = job.messages?.filter((msg) => msg.role === "tool");
+    const intermediateParts: DataPart[] = [];
+    const responseParts: Part[] = [];
+    let progress: DataPart | undefined;
+    for (const message of toolCallMessages ?? []) {
+      for (const part of message.parts ?? []) {
+        if (part.type === "data") {
+          switch (part.data?.type) {
+            case "progress":
+              // Take the last progress part
+              progress = part;
+              continue;
+            default:
+              intermediateParts.push(part);
+              continue;
+          }
+        }
+        responseParts.push(part);
+      }
+    }
+    return [progress, intermediateParts, responseParts];
+  }, [job.messages]);
 
   const handleClose = useCallback(() => {
     setTimeout(() => {
@@ -67,9 +85,11 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
     };
   }, []);
 
+  const hasProcessParts = intermediateParts.length > 0 || !!progress;
+  const hasResponseParts = responseParts.length > 0;
   const toolState =
-    ["working", "input-required"].includes(job.state) &&
-    toolCallMessages?.length
+    (["working", "input-required"].includes(job.state) && hasProcessParts) ||
+    hasResponseParts
       ? "completed"
       : job.state;
 
@@ -92,10 +112,20 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
           <PreComponent content={toolCall.originalArguments} maybeJson />
         </div>
       </div>
-      {!!toolCallMessages?.length && (
+      {hasProcessParts && (
         <div className={styles.detail}>
-          <div className={styles.heading}>{t(K.RESPONSE)}:</div>
+          <div className={styles.heading}>{t(K.PROCESS)}:</div>
           <div className={`${styles.body} ${sharedStyles.markdown}`}>
+            {intermediateParts.map((part, partIndex) =>
+              part.data?.type === "stream" ? (
+                <ProcessMessageComponent
+                  key={partIndex}
+                  content={part.data.message}
+                />
+              ) : (
+                <PreComponent key={partIndex} content={JSON.stringify(part)} />
+              )
+            )}
             {!!progress && (
               <div
                 className={classNames(styles["progress-container"], {
@@ -105,26 +135,24 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
                 <ToolProgressLine progress={progress} failed={failed} />
               </div>
             )}
-            {toolCallMessages?.map((message, index) => {
-              return (
-                <div key={index}>
-                  {message.parts?.map((part, partIndex) =>
-                    part.type === "data" &&
-                    part.data?.type === "progress" ? null : (
-                      <PreComponent
-                        key={partIndex}
-                        content={
-                          part.type === "text"
-                            ? part.text
-                            : JSON.stringify(part)
-                        }
-                        maybeJson={part.type === "text"}
-                      />
-                    )
-                  )}
-                </div>
-              );
-            })}
+          </div>
+        </div>
+      )}
+      {hasResponseParts && (
+        <div className={styles.detail}>
+          <div className={styles.heading}>{t(K.RESPONSE)}:</div>
+          <div className={`${styles.body} ${sharedStyles.markdown}`}>
+            {responseParts.map((part, partIndex) =>
+              part.type === "data" && part.data?.type === "progress" ? null : (
+                <PreComponent
+                  key={partIndex}
+                  content={
+                    part.type === "text" ? part.text : JSON.stringify(part)
+                  }
+                  maybeJson={part.type === "text"}
+                />
+              )
+            )}
           </div>
         </div>
       )}
@@ -157,5 +185,19 @@ function PreComponent({
     </pre>
   ) : (
     <MarkdownComponent content={refinedContent} />
+  );
+}
+
+function ProcessMessageComponent({
+  content,
+}: {
+  content: string;
+}): JSX.Element {
+  return (
+    <div
+      className={classNames(styles["stream-message"], sharedStyles.markdown)}
+    >
+      <MarkdownComponent content={content} />
+    </div>
   );
 }
