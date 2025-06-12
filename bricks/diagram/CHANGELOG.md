@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.63.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.63.0...@next-bricks/diagram@0.63.1) (2025-06-12)
+
+
+### Bug Fixes
+
+* fix parallel edge check ([3100f72](https://github.com/easyops-cn/next-advanced-bricks/commit/3100f7241d34987846e62aee21f905cdb4a68544))
+
+
+
+
+
 # [0.63.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.62.2...@next-bricks/diagram@0.63.0) (2025-06-12)
 
 
