@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.45.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.45.7...@next-bricks/advanced@0.45.8) (2025-06-12)
+
+
+### Bug Fixes
+
+* refine table types ([fbfd102](https://github.com/easyops-cn/next-advanced-bricks/commit/fbfd1022707cdcfde50034ab0e22e47cb3832c55))
+
+
+
+
+
 ## [0.45.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.45.6...@next-bricks/advanced@0.45.7) (2025-06-06)
 
 

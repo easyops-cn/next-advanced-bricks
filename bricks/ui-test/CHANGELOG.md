@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.67](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.0.66...@next-bricks/ui-test@1.0.67) (2025-06-12)
+
+**Note:** Version bump only for package @next-bricks/ui-test
+
+
+
+
+
 ## [1.0.66](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.0.65...@next-bricks/ui-test@1.0.66) (2025-06-05)
 
 

@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.63.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.62.2...@next-bricks/diagram@0.63.0) (2025-06-12)
+
+
+### Bug Fixes
+
+* support canvas padding ([1fee408](https://github.com/easyops-cn/next-advanced-bricks/commit/1fee40835a31d9a33ad526c5b0625e55251b45b1))
+
+
+### Features
+
+* **display-canvas:** support auto size by fit content, and center method ([1b67620](https://github.com/easyops-cn/next-advanced-bricks/commit/1b6762051f1352159ba01d241ed9f1459b27a26b))
+* support canvas padding when auto center ([5c753a0](https://github.com/easyops-cn/next-advanced-bricks/commit/5c753a026902ba798c71a4f24f9b5359b58b1f4b))
+
+
+
+
+
 ## [0.62.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.62.1...@next-bricks/diagram@0.62.2) (2025-04-23)
 
 **Note:** Version bump only for package @next-bricks/diagram

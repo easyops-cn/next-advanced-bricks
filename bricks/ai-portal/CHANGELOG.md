@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.8.1...@next-bricks/ai-portal@0.9.0) (2025-06-12)
+
+
+### Bug Fixes
+
+* no shell tool ([8f062e4](https://github.com/easyops-cn/next-advanced-bricks/commit/8f062e4ef9309df3732b0354e585a730562ba0db))
+* refine tables in canvas node ([a3be734](https://github.com/easyops-cn/next-advanced-bricks/commit/a3be734b427b51f480db1ba012d3fc0db0d35a6b))
+* refine topology ([48958f8](https://github.com/easyops-cn/next-advanced-bricks/commit/48958f8071ef1a41b7cc6fdc8175e50986db993f))
+* refine topology ([ad1010d](https://github.com/easyops-cn/next-advanced-bricks/commit/ad1010d9a4311a31eafb5d857ec8088579045f86))
+* support stream messages in tool call ([9829582](https://github.com/easyops-cn/next-advanced-bricks/commit/9829582b9a21cedadd1a2ea22efe5b1f17767ace))
+
+
+### Features
+
+* support topology diagram ([0aaac73](https://github.com/easyops-cn/next-advanced-bricks/commit/0aaac731bb84222b88fa5493d6549be2c4eddb4e))
+
+
+
+
+
 ## [0.8.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.8.0...@next-bricks/ai-portal@0.8.1) (2025-06-05)
 
 **Note:** Version bump only for package @next-bricks/ai-portal
