@@ -17,6 +17,7 @@ import { K, t } from "../i18n";
 import { CanvasContext } from "../CanvasContext";
 import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus";
 import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
+import { Topology } from "../Topology/Topology";
 
 export interface ToolCallDetailProps {
   job: Job;
@@ -41,7 +42,7 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
     const responseParts: Part[] = [];
     let progress: DataPart | undefined;
     for (const message of toolCallMessages ?? []) {
-      for (const part of message.parts ?? []) {
+      for (const part of message.parts) {
         if (part.type === "data") {
           switch (part.data?.type) {
             case "progress":
@@ -122,6 +123,20 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
                   key={partIndex}
                   content={part.data.message}
                 />
+              ) : part.data?.type === "graph" &&
+                ["component_graph", "component_graph_node"].includes(
+                  part.data.message?.type
+                ) ? (
+                job.componentGraph ? (
+                  <Topology
+                    componentGraph={job.componentGraph}
+                    filter={
+                      part.data.message.type === "component_graph_node"
+                        ? "related"
+                        : "all"
+                    }
+                  />
+                ) : null
               ) : (
                 <PreComponent key={partIndex} content={JSON.stringify(part)} />
               )

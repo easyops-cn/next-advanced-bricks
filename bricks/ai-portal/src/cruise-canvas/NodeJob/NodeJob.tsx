@@ -23,9 +23,6 @@ import { HumanAdjustPlan } from "../HumanAdjustPlan/HumanAdjustPlan.js";
 import { CanvasContext } from "../CanvasContext.js";
 import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus.js";
 import { HumanAdjustPlanResult } from "../HumanAdjustPlanResult/HumanAdjustPlanResult.js";
-// import { TraceList } from "../TraceList/TraceList";
-// import { AlertEvents } from "../AlertEvents/AlertEvents";
-// import { DeploymentChanges } from "../DeploymentChanges/DeploymentChanges";
 import { Topology } from "../Topology/Topology";
 
 export interface NodeJobProps {
@@ -48,17 +45,14 @@ export function NodeJob({ job, state }: NodeJobProps): JSX.Element {
       ].includes(job.toolCall!.arguments?.command as string)) ||
     askUserPlan;
   const loading = state === "working" || state === "submitted";
-
-  const experimental_showTables =
-    // eslint-disable-next-line no-constant-binary-expression
-    false && job.toolCall?.name === "cmdb_create_app_system";
+  const hasGraph = !!job.componentGraph;
 
   return (
     <div
       className={classNames(styles["node-job"], {
         [styles.error]: job.isError,
         [styles["ask-user"]]: generalAskUser,
-        [styles["fit-content"]]: experimental_showTables,
+        [styles["fit-content"]]: hasGraph,
       })}
     >
       <div className={styles.heading}>
@@ -174,13 +168,12 @@ export function NodeJob({ job, state }: NodeJobProps): JSX.Element {
             )
           )
         )}
-        {experimental_showTables && (
-          <>
-            {/* <AlertEvents />
-            <DeploymentChanges />
-            <TraceList /> */}
-            <Topology />
-          </>
+        {hasGraph && !job.componentGraph!.initial && (
+          <Topology
+            componentGraph={job.componentGraph!}
+            filter="minimal"
+            autoSize
+          />
         )}
       </div>
     </div>
