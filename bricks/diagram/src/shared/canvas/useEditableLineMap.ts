@@ -44,8 +44,8 @@ export function useEditableLineMap({
           cells.some(
             (c) =>
               isEdgeCell(c) &&
-              c.source === c.target &&
-              c.target === c.source &&
+              cell.source === c.target &&
+              cell.target === c.source &&
               isStraightType(c.view?.type)
           );
         const parallelGap = hasOppositeEdge ? lineConf.parallelGap : 0;
