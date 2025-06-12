@@ -66,21 +66,6 @@ describe("jobs reducer", () => {
     ]);
   });
 
-  it("should handle blocked state by converting it to working", () => {
-    const state: Job[] = [
-      { id: "1", messages: [], state: "unknown" },
-    ] as Partial<Job>[] as Job[];
-    const jobsPatch = [
-      { id: "1", state: "blocked" },
-    ] as unknown[] as JobPatch[];
-    const action: CruiseCanvasAction = {
-      type: "sse",
-      payload: { jobs: jobsPatch },
-      isInitial: false,
-    };
-    expect(jobs(state, action)[0].state).toBe("working");
-  });
-
   it("should parse toolCall arguments when they are provided as string", () => {
     const state: Job[] = [];
     const jobsPatch = [

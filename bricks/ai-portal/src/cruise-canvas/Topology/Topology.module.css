@@ -3,6 +3,10 @@
   position: relative;
 }
 
+.topology:not(.auto-size) eo-display-canvas {
+  height: 500px;
+}
+
 .toolbar {
   right: 20px;
   bottom: 20px;

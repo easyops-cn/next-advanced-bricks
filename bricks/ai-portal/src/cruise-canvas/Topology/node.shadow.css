@@ -1,6 +1,20 @@
 .topology-node {
   padding: 5px;
   font-size: 24px;
+  width: 34px;
+  height: 34px;
+
+  eo-icon {
+    display: block;
+  }
+}
+
+.topology-node-trouble {
+  color: var(--color-warning);
+}
+
+.topology-node-ok {
+  color: var(--color-success);
 }
 
 .topology-node-label {
@@ -16,4 +30,5 @@
   max-width: 124px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }

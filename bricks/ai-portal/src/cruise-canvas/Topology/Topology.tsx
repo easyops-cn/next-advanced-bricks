@@ -3,22 +3,57 @@ import type {
   EoDisplayCanvasProps,
   EoDisplayCanvas,
 } from "@next-bricks/diagram/display-canvas";
-import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
+import classNames from "classnames";
 import sharedStyles from "../shared.module.css";
 import toolbarStyles from "../toolbar.module.css";
 import styles from "./Topology.module.css";
 import nodeStyleText from "./node.shadow.css";
 import { AsyncWrappedDisplayCanvas } from "../diagram";
 import { WrappedIcon } from "../bricks";
+import type { ComponentGraph, RawComponentGraphNode } from "../interfaces";
 
-const DEFAULT_NODE_SIZE: EoDisplayCanvasProps["defaultNodeSize"] = [100, 100];
+const DEFAULT_NODE_SIZE: EoDisplayCanvasProps["defaultNodeSize"] = [34, 34];
 const CANVAS_PADDING: Required<EoDisplayCanvasProps>["layoutOptions"]["padding"] =
   [12, 54, 34];
 const extraStyleTexts = [nodeStyleText];
 
-export function Topology(): JSX.Element {
+export interface TopologyProps {
+  componentGraph: ComponentGraph;
+  filter?: "all" | "related" | "minimal";
+  autoSize?: boolean;
+}
+
+export function Topology({
+  componentGraph,
+  filter,
+  autoSize: _autoSize,
+}: TopologyProps): JSX.Element {
   const cells = useMemo<EoDisplayCanvasProps["cells"]>(() => {
-    return [
+    if (filter !== "all") {
+      const nodesWithStatus = componentGraph.nodes.filter(
+        (node) => !!node.data.status
+      );
+      const nodeIdsWithStatus = new Set(nodesWithStatus.map((node) => node.id));
+      const relatedEdges = componentGraph.edges.filter(
+        (edge) =>
+          nodeIdsWithStatus.has(edge.source) &&
+          (filter === "related" || nodeIdsWithStatus.has(edge.target))
+      );
+      const relatedNodeIds =
+        filter === "minimal"
+          ? nodeIdsWithStatus
+          : new Set([
+              ...nodeIdsWithStatus,
+              ...new Set(relatedEdges.map((edge) => edge.target)),
+            ]);
+      return [
+        ...relatedEdges,
+        ...componentGraph.nodes.filter((node) => relatedNodeIds.has(node.id)),
+      ];
+    }
+
+    return [...componentGraph.edges, ...componentGraph.nodes];
+    /* return [
       {
         type: "edge",
         source: "permission_service",
@@ -149,8 +184,8 @@ export function Topology(): JSX.Element {
           },
         },
       },
-    ] as EoDisplayCanvasProps["cells"];
-  }, []);
+    ] as EoDisplayCanvasProps["cells"]; */
+  }, [componentGraph, filter]);
 
   const layoutOptions = useMemo<EoDisplayCanvasProps["layoutOptions"]>(() => {
     return {
@@ -181,16 +216,19 @@ export function Topology(): JSX.Element {
   }, []);
 
   const autoSize = useMemo<EoDisplayCanvasProps["autoSize"]>(
-    () => ({
-      width: "fit-content",
-      height: "fit-content",
-      // 453 - 18 - 8 - 18 = 409
-      minWidth: 409,
-      // Todo: listen on resize
-      maxWidth: window.innerWidth * 0.9,
-      minHeight: 150,
-    }),
-    []
+    () =>
+      _autoSize
+        ? {
+            width: "fit-content",
+            height: "fit-content",
+            // 453 - 18 - 8 - 18 = 409
+            minWidth: 409,
+            // Todo: listen on resize
+            maxWidth: window.innerWidth * 0.9,
+            minHeight: 150,
+          }
+        : undefined,
+    [_autoSize]
   );
 
   const ref = useRef<EoDisplayCanvas>(null);
@@ -200,7 +238,11 @@ export function Topology(): JSX.Element {
   }, []);
 
   return (
-    <div className={`${sharedStyles["table-container"]} ${styles.topology}`}>
+    <div
+      className={classNames(sharedStyles["table-container"], styles.topology, {
+        [styles["auto-size"]]: _autoSize,
+      })}
+    >
       <AsyncWrappedDisplayCanvas
         ref={ref}
         cells={cells}
@@ -225,10 +267,7 @@ export function Topology(): JSX.Element {
 interface TopologyNodeProps {
   node: {
     id: string;
-    data: {
-      name: string;
-      icon: GeneralIconProps;
-    };
+    data: RawComponentGraphNode;
   };
   refCallback?: (element: HTMLElement | null) => void;
 }
@@ -236,13 +275,13 @@ interface TopologyNodeProps {
 function TopologyNode({ node, refCallback }: TopologyNodeProps): JSX.Element {
   return (
     <div
-      className="topology-node"
-      style={{
-        color: node.id === "easy_core" ? "var(--color-warning)" : undefined,
-      }}
+      className={classNames("topology-node", {
+        "topology-node-trouble": node.data.status === "trouble",
+        "topology-node-ok": node.data.status === "ok",
+      })}
       ref={refCallback}
     >
-      <WrappedIcon {...node.data.icon} style={{ display: "block" }} />
+      <WrappedIcon lib="fa" prefix="fas" icon="cube" />
       <div className="topology-node-label">{node.data.name}</div>
     </div>
   );

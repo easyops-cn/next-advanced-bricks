@@ -122,6 +122,8 @@ export interface Job {
 
   startTime: number;
   endTime?: number;
+
+  componentGraph?: ComponentGraph;
 }
 
 export interface TaskPatch extends Omit<Partial<Task>, "jobs"> {
@@ -181,4 +183,28 @@ export interface ToolCall {
   argumentsParseFailed?: boolean;
   argumentsParseError?: unknown;
   originalArguments?: string;
+}
+
+export interface RawComponentGraphNode {
+  id: string;
+  name: string;
+  description?: string;
+  status?: "trouble" | "ok";
+  children?: string[];
+}
+
+export interface ComponentGraph {
+  initial: boolean;
+  nodes: ComponentGraphNode[];
+  edges: ComponentGraphEdge[];
+}
+
+export interface ComponentGraphNode {
+  type: "node";
+  id: string;
+  data: RawComponentGraphNode;
+}
+
+export interface ComponentGraphEdge extends GraphEdge {
+  type: "edge";
 }
