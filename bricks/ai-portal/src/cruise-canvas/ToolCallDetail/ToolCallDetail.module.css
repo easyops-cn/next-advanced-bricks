@@ -20,3 +20,23 @@
   white-space: pre-wrap;
   background: #fef5f3;
 }
+
+.progress-container,
+.stream-message {
+  border-radius: 9px;
+  border: 1px solid #ccd1de;
+  background: #ffffff;
+}
+
+.progress-container {
+  padding: 6px 2px;
+}
+
+.fallback {
+  background: #fef5f3;
+}
+
+.stream-message {
+  padding: 1em;
+  margin: 0.5em 0;
+}

@@ -29,11 +29,10 @@ export function PlanProgress({
   plan,
   state: taskState,
 }: PlanProgressProps): JSX.Element | null {
-  const { flagShowTaskActions, onPause, onResume, onStop } =
-    useContext(CanvasContext);
+  const { onPause, onResume, onCancel } = useContext(CanvasContext);
   const [expanded, setExpanded] = useState(false);
   const [actionBeingTaken, setActionBeingTaken] = useState<
-    "toggle" | "stop" | null
+    "toggle" | "cancel" | null
   >(null);
 
   useEffect(() => {
@@ -74,8 +73,8 @@ export function PlanProgress({
   }, [plan]);
 
   const { className, icon } = useMemo(() => {
-    return getClassNameAndIconProps(jobState);
-  }, [jobState]);
+    return getClassNameAndIconProps(jobState, taskState);
+  }, [jobState, taskState]);
 
   const toggle = useCallback(() => {
     setExpanded((prev) => !prev);
@@ -95,21 +94,22 @@ export function PlanProgress({
     try {
       await showDialog({
         type: "confirm",
-        title: t(K.CONFIRM_TO_STOP_THE_TASK_TITLE),
-        content: t(K.CONFIRM_TO_STOP_THE_TASK_CONTENT),
+        title: t(K.CONFIRM_TO_CANCEL_THE_TASK_TITLE),
+        content: t(K.CONFIRM_TO_CANCEL_THE_TASK_CONTENT),
       });
     } catch {
       return;
     }
-    onStop();
-    setActionBeingTaken("stop");
-  }, [onStop]);
+    onCancel();
+    setActionBeingTaken("cancel");
+  }, [onCancel]);
 
   if (!plan?.length) {
     return null;
   }
 
   const taskDone = DONE_STATES.includes(taskState!);
+  const canIntercept = !taskDone && jobState !== "input-required";
 
   return (
     <div className={classNames(styles.progress, className)}>
@@ -133,7 +133,7 @@ export function PlanProgress({
           icon={expanded ? "down" : "up"}
         />
       </div>
-      {!taskDone && flagShowTaskActions && (
+      {canIntercept && (
         <div className={styles.actions}>
           {actionBeingTaken === "toggle" ? (
             <WrappedTooltip>
@@ -160,7 +160,7 @@ export function PlanProgress({
               </button>
             </WrappedTooltip>
           )}
-          {actionBeingTaken === "stop" ? (
+          {actionBeingTaken === "cancel" ? (
             <WrappedTooltip>
               <button disabled className={styles.action}>
                 <WrappedIcon lib="antd" icon="loading-3-quarters" spinning />
@@ -168,7 +168,7 @@ export function PlanProgress({
             </WrappedTooltip>
           ) : (
             <WrappedTooltip
-              content={actionBeingTaken ? undefined : t(K.STOP_THE_TASK)}
+              content={actionBeingTaken ? undefined : t(K.CANCEL_THE_TASK)}
               onClick={handleStop}
             >
               <button disabled={!!actionBeingTaken} className={styles.action}>
@@ -184,6 +184,7 @@ export function PlanProgress({
             <PlanStep
               key={index}
               state={step.state}
+              taskState={taskState}
               instruction={step.instruction}
             />
           ))}
@@ -195,13 +196,14 @@ export function PlanProgress({
 
 interface PlanStepProps {
   state?: JobState;
+  taskState?: TaskState;
   instruction: string;
 }
 
-function PlanStep({ state, instruction }: PlanStepProps) {
+function PlanStep({ state, taskState, instruction }: PlanStepProps) {
   const { className, icon } = useMemo(() => {
-    return getClassNameAndIconProps(state);
-  }, [state]);
+    return getClassNameAndIconProps(state, taskState);
+  }, [state, taskState]);
 
   return (
     <li className={styles.step}>
@@ -213,7 +215,10 @@ function PlanStep({ state, instruction }: PlanStepProps) {
   );
 }
 
-function getClassNameAndIconProps(state: JobState | undefined) {
+function getClassNameAndIconProps(
+  state: JobState | undefined,
+  taskState?: TaskState
+) {
   switch (state) {
     case "completed":
       return {
@@ -226,6 +231,16 @@ function getClassNameAndIconProps(state: JobState | undefined) {
       };
     case "submitted":
     case "working":
+      if (taskState === "paused" || taskState === "canceled") {
+        return {
+          className: undefined,
+          icon: {
+            lib: "fa",
+            prefix: "far",
+            icon: taskState === "paused" ? "circle-pause" : "circle-stop",
+          },
+        };
+      }
       return {
         className: styles.working,
         icon: {

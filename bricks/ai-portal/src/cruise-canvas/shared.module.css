@@ -294,3 +294,34 @@
     padding: 6px 13px;
   }
 }
+
+.markdown {
+  overflow-wrap: break-word;
+}
+
+.markdown:not(:first-child) {
+  margin-top: 6px;
+}
+
+.markdown p {
+  margin: 1em 0;
+}
+
+.markdown > :first-child {
+  margin-top: 0;
+}
+
+.markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.table-container {
+  padding: 8px 8px 10px;
+  border-radius: 12px;
+  border: 1px solid #e2e2ec;
+  background: #ffffff;
+}
+
+.table-container:not(:first-child) {
+  margin-top: 6px;
+}

@@ -6,6 +6,34 @@ import type {
 } from "antd/es/table/interface.js";
 import type { UseBrickConf } from "@next-core/types";
 import { CSSProperties } from "react";
+import type { TableProps } from "antd/es/table";
+
+export interface NextTableProps {
+  rowKey?: string;
+  columns?: Column[];
+  cell?: CellConfig;
+  dataSource?: DataSource;
+  frontSearch?: boolean;
+  pagination?: PaginationType;
+  loading?: boolean;
+  multiSort?: boolean;
+  sort?: Sort | Sort[];
+  rowSelection?: RowSelectionType;
+  selectedRowKeys?: (string | number)[];
+  hiddenColumns?: (string | number)[];
+  expandable?: ExpandableType;
+  expandedRowKeys?: (string | number)[];
+  childrenColumnName?: string;
+  rowDraggable?: boolean;
+  searchFields?: (string | string[])[];
+  size?: TableProps<RecordType>["size"];
+  showHeader?: boolean;
+  bordered?: boolean;
+  scrollConfig?: TableScroll;
+  optimizedColumns?: (string | number)[];
+}
+
+export type TableScroll = TableProps<RecordType>["scroll"] | false;
 
 export type RecordType = Record<string, any>;
 

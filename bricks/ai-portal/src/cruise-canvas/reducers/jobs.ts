@@ -1,6 +1,13 @@
 import type { Reducer } from "react";
 import { isEqual, isMatchWith, pick } from "lodash";
-import type { Job, JobPatch, Message, Part, TextPart } from "../interfaces";
+import type {
+  DataPart,
+  Job,
+  JobPatch,
+  Message,
+  Part,
+  TextPart,
+} from "../interfaces";
 import type { CruiseCanvasAction } from "./interfaces";
 
 export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
@@ -14,20 +21,6 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
       }
 
       for (const jobPatch of jobsPatch) {
-        // TODO(): remove temp work around.
-        // if (!jobPatch.upstream?.length) {
-        //   delete jobPatch.upstream;
-        // }
-        // if (!jobPatch.parent) {
-        //   delete jobPatch.parent;
-        // }
-        // if (!jobPatch.state) {
-        //   delete jobPatch.state;
-        // }
-        // if (!jobPatch.instruction) {
-        //   delete jobPatch.instruction;
-        // }
-
         if ((jobPatch as any).state === "blocked") {
           jobPatch.state = "working";
         }
@@ -127,14 +120,25 @@ function mergeMessages(messages: Message[]): Message[] {
 function mergeMessageParts(parts: Part[]): Part[] {
   const merged: Part[] = [];
   let previousType: Part["type"] | undefined;
+  let previousDataType: string | undefined;
   for (const part of parts) {
-    if (!previousType || previousType !== part.type || part.type !== "text") {
-      merged.push({ ...part });
-    } else {
+    if (previousType === "text" && part.type === "text") {
       const lastPart = merged[merged.length - 1] as TextPart;
       lastPart.text += part.text;
+    } else if (
+      // Assert: previousType is data when previousDataType is defined
+      previousDataType === "stream" &&
+      part.type === "data" &&
+      part.data?.type === "stream"
+    ) {
+      const lastPart = merged[merged.length - 1] as DataPart;
+      lastPart.data.message += part.data.message;
+    } else {
+      merged.push({ ...part });
     }
+
     previousType = part.type;
+    previousDataType = part.type === "data" ? part.data?.type : undefined;
   }
   return merged;
 }

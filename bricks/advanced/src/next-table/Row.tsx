@@ -2,7 +2,7 @@ import React, { Ref, forwardRef } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
 
-interface RowProps extends React.HTMLAttributes<HTMLTableRowElement> {}
+type RowProps = React.HTMLAttributes<HTMLTableRowElement>;
 
 export const Row = forwardRef(function LegacyRow(
   props: RowProps,

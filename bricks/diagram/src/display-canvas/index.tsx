@@ -1,6 +1,9 @@
 import React, {
+  createRef,
+  forwardRef,
   useCallback,
   useEffect,
+  useImperativeHandle,
   useMemo,
   useReducer,
   useRef,
@@ -22,6 +25,7 @@ import type {
   Cell,
   LayoutType,
   LayoutOptions,
+  AutoSize,
 } from "../draw-canvas/interfaces";
 import { MarkerComponent } from "../diagram/MarkerComponent";
 import { sameTarget } from "../draw-canvas/processors/sameTarget";
@@ -45,12 +49,13 @@ import styleText from "../shared/canvas/styles.shadow.css";
 import zoomBarStyleText from "../shared/canvas/ZoomBarComponent.shadow.css";
 import { useEditableLineMap } from "../shared/canvas/useEditableLineMap";
 
-const { defineElement, property, event } = createDecorators();
+const { defineElement, property, event, method } = createDecorators();
 
 export interface EoDisplayCanvasProps {
   cells: InitialCell[] | undefined;
   layout: LayoutType;
   layoutOptions?: LayoutOptions;
+  autoSize?: AutoSize;
   defaultNodeSize: SizeTuple;
   defaultNodeBricks?: NodeBrickConf[];
   defaultEdgeLines?: EdgeLineConf[];
@@ -66,7 +71,10 @@ export interface EoDisplayCanvasProps {
   autoCenterWhenCellsChange?: boolean;
   doNotResetActiveTargetForSelector?: string;
   doNotResetActiveTargetOutsideCanvas?: boolean;
+  extraStyleTexts?: string[];
 }
+
+const EoDisplayCanvasComponent = forwardRef(LegacyEoDisplayCanvasComponent);
 
 /**
  * 用于展示查看的画布。
@@ -87,6 +95,9 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
 
   @property({ attribute: false })
   accessor layoutOptions: LayoutOptions | undefined;
+
+  @property({ attribute: false })
+  accessor autoSize: AutoSize | undefined;
 
   @property({ attribute: false })
   accessor defaultNodeSize: SizeTuple = [DEFAULT_NODE_SIZE, DEFAULT_NODE_SIZE];
@@ -170,6 +181,9 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
   @property({ type: Boolean })
   accessor doNotResetActiveTargetOutsideCanvas: boolean | undefined;
 
+  @property({ attribute: false })
+  accessor extraStyleTexts: string[] | undefined;
+
   @event({ type: "activeTarget.change" })
   accessor #activeTargetChangeEvent!: EventEmitter<ActiveTarget | null>;
 
@@ -197,6 +211,13 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
     this.#cellClick.emit(detail);
   };
 
+  #ref = createRef<DisplayCanvasRef>();
+
+  @method()
+  center() {
+    this.#ref.current?.center();
+  }
+
   render() {
     return (
       <EoDisplayCanvasComponent
@@ -204,6 +225,7 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
         cells={this.cells}
         layout={this.layout}
         layoutOptions={this.layoutOptions}
+        autoSize={this.autoSize}
         defaultNodeSize={this.defaultNodeSize}
         defaultNodeBricks={this.defaultNodeBricks}
         defaultEdgeLines={this.defaultEdgeLines}
@@ -223,16 +245,18 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
           this.doNotResetActiveTargetOutsideCanvas
         }
         autoCenterWhenCellsChange={this.autoCenterWhenCellsChange}
+        extraStyleTexts={this.extraStyleTexts}
         onActiveTargetChange={this.#handleActiveTargetChange}
         onSwitchActiveTarget={this.#handleSwitchActiveTarget}
         onCellContextMenu={this.#handleCellContextMenu}
         onCellClick={this.#handleCellClick}
+        ref={this.#ref}
       />
     );
   }
 }
 
-export interface EoDisplayCanvasComponentProps extends EoDisplayCanvasProps {
+interface EoDisplayCanvasComponentProps extends EoDisplayCanvasProps {
   shadowRoot: ShadowRoot;
   onActiveTargetChange(target: ActiveTarget | null): void;
   onSwitchActiveTarget(target: ActiveTarget | null): void;
@@ -240,31 +264,40 @@ export interface EoDisplayCanvasComponentProps extends EoDisplayCanvasProps {
   onCellClick(detail: CellContextMenuDetail): void;
 }
 
-function EoDisplayCanvasComponent({
-  shadowRoot,
-  cells: initialCells,
-  layout,
-  layoutOptions,
-  defaultNodeSize,
-  defaultNodeBricks,
-  defaultEdgeLines,
-  degradedThreshold,
-  degradedNodeLabel,
-  activeTarget: _activeTarget,
-  fadeUnrelatedCells,
-  zoomable,
-  scrollable,
-  pannable,
-  scaleRange: _scaleRange,
-  hideZoomBar,
-  autoCenterWhenCellsChange,
-  doNotResetActiveTargetForSelector,
-  doNotResetActiveTargetOutsideCanvas,
-  onActiveTargetChange,
-  onSwitchActiveTarget,
-  onCellContextMenu,
-  onCellClick,
-}: EoDisplayCanvasComponentProps) {
+interface DisplayCanvasRef {
+  center: () => void;
+}
+
+function LegacyEoDisplayCanvasComponent(
+  {
+    shadowRoot,
+    cells: initialCells,
+    layout,
+    layoutOptions,
+    autoSize,
+    defaultNodeSize,
+    defaultNodeBricks,
+    defaultEdgeLines,
+    degradedThreshold,
+    degradedNodeLabel,
+    activeTarget: _activeTarget,
+    fadeUnrelatedCells,
+    zoomable,
+    scrollable,
+    pannable,
+    scaleRange: _scaleRange,
+    hideZoomBar,
+    autoCenterWhenCellsChange,
+    doNotResetActiveTargetForSelector,
+    doNotResetActiveTargetOutsideCanvas,
+    extraStyleTexts,
+    onActiveTargetChange,
+    onSwitchActiveTarget,
+    onCellContextMenu,
+    onCellClick,
+  }: EoDisplayCanvasComponentProps,
+  ref: React.Ref<DisplayCanvasRef>
+) {
   const [{ cells, layoutKey }, dispatch] = useReducer(
     rootReducer,
     initialCells,
@@ -298,6 +331,7 @@ function EoDisplayCanvasComponent({
   const { centered, setCentered, getNextLayoutKey } = useLayout({
     layout,
     layoutOptions,
+    autoSize,
     rootRef,
     cells,
     zoomable,
@@ -311,6 +345,14 @@ function EoDisplayCanvasComponent({
   const reCenter = useCallback(() => {
     setCentered(false);
   }, [setCentered]);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      center: reCenter,
+    }),
+    [reCenter]
+  );
 
   const previousCellsRef = useRef(initialCells);
 
@@ -401,6 +443,7 @@ function EoDisplayCanvasComponent({
 
   return (
     <>
+      {extraStyleTexts?.map((text, index) => <style key={index}>{text}</style>)}
       <svg
         width="100%"
         height="100%"

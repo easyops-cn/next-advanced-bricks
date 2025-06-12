@@ -9,7 +9,12 @@ import { ReactUseBrick } from "@next-core/react-runtime";
 import { __secret_internals, checkIfByTransform } from "@next-core/runtime";
 import { isEqual } from "lodash";
 import ResizeObserver from "resize-observer-polyfill";
-import type { NodeBrickCell, NodeBrickConf, NodeCell } from "./interfaces";
+import type {
+  NodeBrickCell,
+  NodeBrickConf,
+  NodeCell,
+  NodeComponentCell,
+} from "./interfaces";
 import type { SizeTuple } from "../diagram/interfaces";
 import { LockIcon } from "./LockIcon";
 
@@ -40,16 +45,33 @@ export function NodeComponent({
     node: { id: node.id, data: node.data, locked: !!locked },
   });
   const specifiedUseBrick = (node as NodeBrickCell).useBrick;
+  const specifiedComponent = (node as NodeComponentCell).component;
   const observerRef = useRef<ResizeObserver | null>(null);
 
-  const useBrick = useMemo(() => {
-    return degraded
-      ? null
-      : (specifiedUseBrick ??
-          defaultNodeBricks?.find((item) =>
-            checkIfByTransform(item, memoizedData)
-          )?.useBrick);
-  }, [degraded, specifiedUseBrick, defaultNodeBricks, memoizedData]);
+  const { useBrick, component: Component } =
+    useMemo<
+      Pick<NodeBrickConf, "useBrick" | "component"> | null | undefined
+    >(() => {
+      return degraded
+        ? null
+        : specifiedUseBrick
+          ? {
+              useBrick: specifiedUseBrick,
+            }
+          : specifiedComponent
+            ? {
+                component: specifiedComponent,
+              }
+            : defaultNodeBricks?.find((item) =>
+                checkIfByTransform(item, memoizedData)
+              );
+    }, [
+      defaultNodeBricks,
+      degraded,
+      memoizedData,
+      specifiedComponent,
+      specifiedUseBrick,
+    ]) ?? {};
 
   const label = useMemo<string>(
     () =>
@@ -146,7 +168,7 @@ export function NodeComponent({
 
   return (
     <>
-      {useBrick ? (
+      {useBrick || Component ? (
         <foreignObject
           // Make a large size to avoid the brick inside to be clipped by the foreignObject.
           width={9999}
@@ -154,9 +176,11 @@ export function NodeComponent({
           className="node"
           ref={foreignObjectRef}
         >
-          {useBrick && (
+          {Component ? (
+            <Component {...memoizedData} refCallback={refCallback} />
+          ) : (
             <ReactUseBrick
-              useBrick={useBrick}
+              useBrick={useBrick!}
               data={memoizedData}
               refCallback={refCallback}
             />

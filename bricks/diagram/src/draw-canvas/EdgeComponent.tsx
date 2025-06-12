@@ -88,14 +88,15 @@ export function EdgeComponent({
         return;
       }
       const placement = (label ? label.placement : text.placement) ?? "center";
+      const offset = (label ? label.offset : text.offset) ?? 0;
       const pathLength = path.getTotalLength();
       const halfPathLength = pathLength / 2;
       const pathPoint = path.getPointAtLength(
         placement === "start"
-          ? Math.min(0, halfPathLength)
+          ? 0
           : placement === "end"
-            ? Math.max(pathLength - 0, halfPathLength)
-            : halfPathLength
+            ? pathLength
+            : halfPathLength + offset
       );
 
       let direction: Direction | "center" = "center";
@@ -121,7 +122,6 @@ export function EdgeComponent({
               : "bottom";
       }
 
-      const offset = (label ? label.offset : text.offset) ?? 0;
       setLabelPosition([pathPoint.x, pathPoint.y, direction, angle, offset]);
       const rect = path.getBBox();
       setLineRect({

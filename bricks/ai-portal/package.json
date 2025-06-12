@@ -66,6 +66,7 @@
   },
   "peerDependencies": {
     "@next-bricks/advanced": "*",
-    "@next-bricks/basic": "*"
+    "@next-bricks/basic": "*",
+    "@next-bricks/diagram": "*"
   }
 }

@@ -19,6 +19,7 @@ export function useTaskDetail(taskId: string | undefined) {
   );
 
   const humanInputRef = useRef<(jobId: string, input: string) => void>();
+  const resumedRef = useRef<() => void>();
 
   useEffect(() => {
     dispatch({ type: "reset" });
@@ -67,6 +68,8 @@ export function useTaskDetail(taskId: string | undefined) {
         requesting = false;
       }
     };
+
+    resumedRef.current = makeRequest;
 
     humanInputRef.current = async (jobId: string, input: string) => {
       try {
@@ -138,5 +141,5 @@ export function useTaskDetail(taskId: string | undefined) {
     });
   }, [jobs, task?.plan]);
 
-  return { task, jobs, plan, error, humanInputRef };
+  return { task, jobs, plan, error, humanInputRef, resumedRef };
 }

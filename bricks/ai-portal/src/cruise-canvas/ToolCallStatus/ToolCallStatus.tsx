@@ -5,7 +5,7 @@ import type { Job } from "../interfaces";
 import { WrappedIcon } from "../bricks";
 import { CanvasContext } from "../CanvasContext";
 import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
-import { getlastProgress, getToolDataProgress } from "../utils";
+import { getToolDataProgress } from "../utils";
 
 export interface NodeJobToolCallProps {
   job: Job;
@@ -18,9 +18,10 @@ export function ToolCallStatus({
 }: NodeJobToolCallProps): JSX.Element {
   const { setActiveToolCallJobId } = useContext(CanvasContext);
   const toolCall = job.toolCall!;
-  const toolCallMessages = job.messages?.filter((msg) => msg.role === "tool");
-  const toolDataProgress = getToolDataProgress(toolCallMessages!);
-  const lastProgress = getlastProgress(toolDataProgress);
+  const [progress, hasToolCallMessages] = useMemo(() => {
+    const toolCallMessages = job.messages?.filter((msg) => msg.role === "tool");
+    return [getToolDataProgress(toolCallMessages), !!toolCallMessages?.length];
+  }, [job.messages]);
 
   const readOnly = useMemo(() => {
     return variant === "read-only";
@@ -34,8 +35,7 @@ export function ToolCallStatus({
   }, [job.id, variant, setActiveToolCallJobId]);
 
   const toolState =
-    ["working", "input-required"].includes(job.state) &&
-    toolCallMessages?.length
+    ["working", "input-required"].includes(job.state) && hasToolCallMessages
       ? "completed"
       : job.state;
 
@@ -96,8 +96,8 @@ export function ToolCallStatus({
         )}
         <span className={styles.name}>{toolCall.name}</span>
       </div>
-      {!!lastProgress && !readOnly && (
-        <ToolProgressLine toolDataProgress={[lastProgress]} failed={failed} />
+      {!!progress && !readOnly && (
+        <ToolProgressLine progress={progress} failed={failed} />
       )}
     </div>
   );

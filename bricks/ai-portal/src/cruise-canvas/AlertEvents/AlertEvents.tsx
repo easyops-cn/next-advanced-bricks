@@ -1,7 +1,6 @@
-import React, { useMemo } from "react";
-import classNames from "classnames";
-import styles from "./AlertEvents.module.css";
-import { WrappedTable } from "../bricks";
+import React, { Suspense, useMemo } from "react";
+import sharedStyles from "../shared.module.css";
+import { AsyncWrappedTable } from "../table";
 
 export interface AlertEventsProps {
   dataSource?: {
@@ -35,19 +34,19 @@ export function AlertEvents({ dataSource }: AlertEventsProps): JSX.Element {
         dataIndex: "target",
         key: "target",
         title: "告警资源",
-        minWidth: 200,
+        // minWidth: 200,
       },
       {
         dataIndex: "time",
         key: "time",
         title: "告警时间",
-        minWidth: 180,
+        // minWidth: 180,
       },
       {
         dataIndex: "level",
         key: "level",
         title: "告警等级",
-        minWidth: 120,
+        // minWidth: 120,
         useBrick: {
           brick: "eo-tag",
           properties: {
@@ -60,24 +59,27 @@ export function AlertEvents({ dataSource }: AlertEventsProps): JSX.Element {
         dataIndex: "source",
         key: "source",
         title: "告警来源",
-        minWidth: 200,
+        // minWidth: 200,
       },
       {
         dataIndex: "originContent",
         key: "originContent",
         title: "告警信息",
-        minWidth: 320,
+        // minWidth: 320,
       },
     ];
     return (
-      <WrappedTable
-        size="small"
-        rowKey="key"
-        columns={columns}
-        dataSource={data}
-        pagination={false}
-      />
+      <Suspense>
+        <AsyncWrappedTable
+          size="small"
+          rowKey="key"
+          columns={columns}
+          dataSource={data}
+          pagination={false}
+          scrollConfig={false}
+        />
+      </Suspense>
     );
   }, [dataSource]);
-  return <div className={classNames(styles["events-list"])}>{EventsTable}</div>;
+  return <div className={sharedStyles["table-container"]}>{EventsTable}</div>;
 }
