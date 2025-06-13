@@ -104,9 +104,13 @@ export function useZoom({
       })
       .filter(
         (event) =>
-          (event.type === "wheel" ||
-            (pannableWithCtrl ? pannable || event.ctrlKey : !event.ctrlKey)) &&
-          !event.button
+          // For wheel event, ignore d3 default behavior, because we control it manually.
+          // Except for the trackpad pinch event on Mac OS (with ctrlKey).
+          (event.type === "wheel"
+            ? event.ctrlKey
+            : pannableWithCtrl
+              ? pannable || event.ctrlKey
+              : !event.ctrlKey) && !event.button
       );
   }, [
     onSwitchActiveTarget,
@@ -159,36 +163,32 @@ export function useZoom({
         "wheel.zoom.custom",
         (e: WheelEvent & { wheelDeltaX: number; wheelDeltaY: number }) => {
           // Mac OS trackpad pinch event is emitted as a wheel.zoom and d3.event.ctrlKey set to true
-          if (!e.ctrlKey) {
-            // Stop immediate propagation for default d3 zoom handler
-            e.stopImmediatePropagation();
-            if (scrollable) {
-              const pre = (e.target as HTMLElement)!.closest(
-                'pre[class*="language-"]'
-              );
-              if (pre) {
-                if (checkScrollableX(pre, e.deltaX)) {
-                  return;
-                }
+          if (!e.ctrlKey && scrollable) {
+            const pre = (e.target as HTMLElement)!.closest(
+              'pre[class*="language-"]'
+            );
+            if (pre) {
+              if (checkScrollableX(pre, e.deltaX)) {
+                return;
               }
+            }
 
-              const node = (e.target as HTMLElement)!.closest(
-                `.${jobStyles.body}`
-              );
-              if (node) {
-                if (checkScrollableY(node, e.deltaY)) {
-                  return;
-                }
+            const node = (e.target as HTMLElement)!.closest(
+              `.${jobStyles.body}`
+            );
+            if (node) {
+              if (checkScrollableY(node, e.deltaY)) {
+                return;
               }
+            }
 
-              if (e.cancelable) {
-                e.preventDefault();
-                zoomer.translateBy(
-                  rootSelection,
-                  e.wheelDeltaX / 5,
-                  e.wheelDeltaY / 5
-                );
-              }
+            if (e.cancelable) {
+              e.preventDefault();
+              zoomer.translateBy(
+                rootSelection,
+                e.wheelDeltaX / 5,
+                e.wheelDeltaY / 5
+              );
             }
           }
           // zoomer.scaleBy(rootSelection, Math.pow(2, defaultWheelDelta(e)))
@@ -199,7 +199,9 @@ export function useZoom({
     rootSelection
       .call(zoomer)
       .on("wheel", (e: WheelEvent) => {
-        e.preventDefault();
+        if (scrollable || (zoomable && e.ctrlKey)) {
+          e.preventDefault();
+        }
       })
       .on("dblclick.zoom", null);
 
