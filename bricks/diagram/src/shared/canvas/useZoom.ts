@@ -101,9 +101,13 @@ export function useZoom({
       })
       .filter(
         (event) =>
-          (event.type === "wheel" ||
-            (ctrlDraggable ? draggable || event.ctrlKey : !event.ctrlKey)) &&
-          !event.button
+          // For wheel event, ignore d3 default behavior, because we control it manually.
+          // Except for the trackpad pinch event on Mac OS (with ctrlKey).
+          (event.type === "wheel"
+            ? event.ctrlKey
+            : ctrlDraggable
+              ? draggable || event.ctrlKey
+              : !event.ctrlKey) && !event.button
       );
   }, [
     onSwitchActiveTarget,
@@ -156,17 +160,13 @@ export function useZoom({
         "wheel.zoom.custom",
         (e: WheelEvent & { wheelDeltaX: number; wheelDeltaY: number }) => {
           // Mac OS trackpad pinch event is emitted as a wheel.zoom and d3.event.ctrlKey set to true
-          if (!e.ctrlKey) {
-            // Stop immediate propagation for default d3 zoom handler
-            e.stopImmediatePropagation();
-            if (scrollable) {
-              e.preventDefault();
-              zoomer.translateBy(
-                rootSelection,
-                e.wheelDeltaX / 5,
-                e.wheelDeltaY / 5
-              );
-            }
+          if (!e.ctrlKey && scrollable) {
+            e.preventDefault();
+            zoomer.translateBy(
+              rootSelection,
+              e.wheelDeltaX / 5,
+              e.wheelDeltaY / 5
+            );
           }
           // zoomer.scaleBy(rootSelection, Math.pow(2, defaultWheelDelta(e)))
         }
@@ -176,7 +176,9 @@ export function useZoom({
     rootSelection
       .call(zoomer)
       .on("wheel", (e: WheelEvent) => {
-        e.preventDefault();
+        if (scrollable || (zoomable && e.ctrlKey)) {
+          e.preventDefault();
+        }
       })
       .on("dblclick.zoom", null);
 
