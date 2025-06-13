@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.63.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.63.1...@next-bricks/diagram@0.63.2) (2025-06-13)
+
+
+### Bug Fixes
+
+* **canvas:** fix when set scrollable to false ([fc55f2c](https://github.com/easyops-cn/next-advanced-bricks/commit/fc55f2c96c4584b808aca1a2f7df9160247f8b93))
+
+
+
+
+
 ## [0.63.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.63.0...@next-bricks/diagram@0.63.1) (2025-06-12)
 
 
