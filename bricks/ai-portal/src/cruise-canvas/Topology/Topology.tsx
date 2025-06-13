@@ -253,6 +253,7 @@ export function Topology({
         defaultNodeBricks={defaultNodeBricks}
         defaultEdgeLines={defaultEdgeLines}
         hideZoomBar
+        scrollable={false}
         extraStyleTexts={extraStyleTexts}
       />
       <div className={`${toolbarStyles.toolbar} ${styles.toolbar}`}>

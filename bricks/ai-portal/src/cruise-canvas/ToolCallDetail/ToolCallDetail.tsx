@@ -129,6 +129,7 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
                 ) ? (
                 job.componentGraph ? (
                   <Topology
+                    key={partIndex}
                     componentGraph={job.componentGraph}
                     filter={
                       part.data.message.type === "component_graph_node"
