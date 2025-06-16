@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.13.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.13.3...@next-bricks/presentational@1.13.4) (2025-06-16)
+
+
+### Bug Fixes
+
+* eo-card-item支持设置标题样式 ref CMDB_INSTANCE-2850 ([35a7204](https://github.com/easyops-cn/next-advanced-bricks/commit/35a7204fa5d36eeb9c8182785efe040f57787f52))
+
+
+
+
+
 ## [1.13.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.13.2...@next-bricks/presentational@1.13.3) (2025-06-12)
 
 **Note:** Version bump only for package @next-bricks/presentational
