@@ -95,6 +95,7 @@ export interface EoCardItemProps {
   avatarPosition?: "content" | "cover";
   coverImageSize?: React.CSSProperties["backgroundSize"];
   cardStyle?: React.CSSProperties;
+  cardTitleStyle?: React.CSSProperties;
 }
 
 /**
@@ -240,6 +241,14 @@ class EoCardItem extends ReactNextElement implements EoCardItemProps {
   accessor cardStyle: React.CSSProperties;
 
   /**
+   * 卡片标题样式
+   */
+  @property({
+    attribute: false,
+  })
+  accessor cardTitleStyle: React.CSSProperties;
+
+  /**
    * 是否有扩展区域 1
    * @internal
    */
@@ -315,6 +324,7 @@ class EoCardItem extends ReactNextElement implements EoCardItemProps {
         coverImageSize={this.coverImageSize}
         styleType={this.styleType}
         cardStyle={this.cardStyle}
+        cardTitleStyle={this.cardTitleStyle}
       />
     );
   }
@@ -355,6 +365,7 @@ export function EoCardItemComponent(props: EoCardItemComponentProps) {
     onTagClick,
     coverImageSize,
     cardStyle,
+    cardTitleStyle,
   } = props;
 
   const theme = useCurrentTheme();
@@ -491,7 +502,11 @@ export function EoCardItemComponent(props: EoCardItemComponentProps) {
           {avatarPosition !== "cover" && Avatar}
           <div className="card-content-container">
             <div className="card-title-wrapper">
-              <div className="card-title" title={cardTitle}>
+              <div
+                className="card-title"
+                title={cardTitle}
+                style={cardTitleStyle}
+              >
                 {cardTitle}
               </div>
               <div className="title-suffix">
