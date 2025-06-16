@@ -1,6 +1,6 @@
 // istanbul ignore file: working in progress
 // https://github.com/facebook/react/blob/cae635054e17a6f107a39d328649137b83f25972/packages/react-devtools-shared/src/backend/views/Highlighter/index.js
-import { cloneDeep, curry, isEmpty, isEqual, throttle } from "lodash";
+import { cloneDeep, isEqual, throttle } from "lodash";
 import { brickCommandsConf } from "@next-shared/ui-test";
 import { blacklistBricksOfQueries } from "../../constants.js";
 import type {
@@ -173,7 +173,7 @@ export function matchBrickElements(
 
               if (conf.element) {
                 const hostElement = conf.element as HTMLElement;
-                const tag = hostElement.tagName.toLowerCase();
+                const tag = getTagName(hostElement);
                 if (hostElement.dataset.testid) {
                   hostBrickData = {
                     type: "testid",
@@ -198,7 +198,7 @@ export function matchBrickElements(
                   ...target.selectors.map((s) => ({
                     type: s.type,
                     value: s.value,
-                    tag: (s.element as HTMLElement).tagName.toLowerCase(),
+                    tag: getTagName(s.element as HTMLElement),
                     isolate: target.isolate,
                     eq: s.eq,
                   })),
@@ -216,13 +216,13 @@ export function matchBrickElements(
 
 export function getBrickTargets(eventTargets: EventTarget[]) {
   const matchedBrickCommands = [] as RuntimeBrickCommandConf[];
-  eventTargets.forEach((item: any) => {
+  eventTargets.forEach((item: EventTarget) => {
     if (
       (item as Node).nodeType === Node.ELEMENT_NODE &&
       item instanceof HTMLElement &&
       item.hasAttribute("data-iid")
     ) {
-      const brick = item.tagName.toLowerCase();
+      const brick = getTagName(item);
 
       const find = brickCommandsConf.find((conf) => conf.brick === brick);
 
@@ -259,10 +259,10 @@ export function getPossibleBrickTargets(eventTargets: EventTarget[]) {
   const targets: InspectTarget[] = [];
 
   const matched = [getBrickTargets, getBrickIsolateTargets].reduce(
-    (arr, fn: (e: EventTarget[]) => any) => {
+    (arr, fn: (e: EventTarget[]) => InspectTarget[]) => {
       return arr.length === 0 ? fn(eventTargets) : arr;
     },
-    []
+    [] as InspectTarget[]
   );
 
   if (matched.length > 0) {
@@ -287,7 +287,7 @@ export function getPossibleElementTargets(eventTargets: EventTarget[]) {
       ) {
         break;
       }
-      const tag = item.tagName.toLowerCase();
+      const tag = getTagName(item);
       // Ignore all `slot`s
       if (tag === "slot") {
         continue;
@@ -458,7 +458,7 @@ function getTargetOutlinesByRelatedCommands(relatedCommands: RelatedCommand[]) {
           selectors: [
             {
               ...selector,
-              tag: element.tagName.toLowerCase(),
+              tag: getTagName(element),
             },
           ],
         });
@@ -501,4 +501,14 @@ function getTargetOutline(target: InspectTarget): InspectOutline {
     top: top + window.scrollY,
     selectors,
   };
+}
+
+export function getTagName(target: Element): string;
+export function getTagName(target: null): null;
+export function getTagName(target: EventTarget | null): string | null;
+export function getTagName(target: EventTarget | null): string | null {
+  if ((target as Node | null)?.nodeType === Node.ELEMENT_NODE) {
+    return (target as Element).tagName.toLowerCase();
+  }
+  return null;
 }

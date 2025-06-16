@@ -70,9 +70,9 @@ export function transformRecordedCommands(
 function transformRecordedAction(step: SelectedRecordStep): NodeItem {
   return {
     type: NodeType.Command,
-    ...(step.event === "type"
+    ...(step.event === "type" || step.event === "code"
       ? {
-          name: "type",
+          name: step.event,
           params: [step.text],
         }
       : {
