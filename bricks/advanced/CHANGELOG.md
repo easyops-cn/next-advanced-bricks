@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.46.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.45.8...@next-bricks/advanced@0.46.0) (2025-06-17)
+
+
+### Features
+
+* **eo-next-table:** support new event "row.select.v2" which emits selected rows only ([fc1c422](https://github.com/easyops-cn/next-advanced-bricks/commit/fc1c4223102753583b05445894cadaf0ded98f77))
+
+
+
+
+
 ## [0.45.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.45.7...@next-bricks/advanced@0.45.8) (2025-06-12)
 
 
