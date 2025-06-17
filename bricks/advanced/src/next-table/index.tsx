@@ -266,12 +266,22 @@ class EoNextTable extends ReactNextElement implements NextTableProps {
     rows: RecordType[];
     info: { type: RowSelectMethod };
   }>;
+
+  /**
+   * 行选中项发生变化时的回调（v2 版本）
+   *
+   * @detail 改变后的行数据
+   */
+  @event({ type: "row.select.v2" })
+  accessor #rowSelectV2Event!: EventEmitter<RecordType[]>;
+
   #handleRowSelect = (detail: {
     keys: (string | number)[];
     rows: RecordType[];
     info: { type: RowSelectMethod };
   }): void => {
     this.#rowSelectEvent.emit(detail);
+    this.#rowSelectV2Event.emit(detail.rows);
   };
 
   /**
