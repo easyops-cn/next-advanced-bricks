@@ -20,49 +20,33 @@
           [
             {
               type: "decorator",
-              id: "area-1",
-              decorator: "area",
-              view: {
-                x: 10,
-                y: 20,
-                width: 400,
-                height: 300,
-                style: {
-                  backgroundColor: "var(--palette-green-3)",
-                }
-              },
-            },
-            {
-              type: "decorator",
-              id: "rect-1",
-              decorator: "rect",
-              view: {
-                x: 10,
-                y: 20,
-                width: 400,
-                height: 300,
-                style: {
-                  borderColor: "var(--palette-purple-3)",
-                }
-              },
-            },
-            {
-              type: "decorator",
               id: "container-1",
               decorator: "container",
               view: {
-               x: 50,
-                y: 400,
-                width: 280,
-                height: 120,
-                direction: "top",
-                text: " 上层服务"
+                direction: "left",
+                text: "上层服务" ,
+                level: 1
               },
             },
             {
-              type: "edge",
+              type: "decorator",
+              id: "container-2",
+              decorator: "container",
+              view: {
+                direction: "left",
+                text: "应用" ,
+                level: 2
+              },
+            },
+            {
+              type: "edge", 
               source: "X",
               target: "Y",
+            },
+            {
+              type: "edge",
+              source: "Z", 
+              target: "W",
             },
             {
               type: "edge",
@@ -73,22 +57,22 @@
               }
             },
           ].concat(
-            ["X", "Y", "Z", "W"].map((id) => ({
+            ["A","B","X", "Y", "Z", "W",].map((id) => ({
               type: "node",
               id,
-              containerId: id==="W"?"container-1":undefined,
+              containerId: ["W","Z","X","Y"].includes(id)?"container-1":"container-2",
               data: {
                 name: `Node ${id}`,
-              },
+              }, 
               view: {
-                x: Math.round(
+                x: ["A","B","Z","X","Y"].includes(id)?null:Math.round(
                   id === "X"
                     ? 200 + Math.random() * 200
                     : id === "Y"
                     ? Math.random() * 300
                     : 300 + Math.random() * 300
                 ),
-                y: (id === "X" ? 0 : 300) + Math.round((Math.random() * 200)),
+                y: ["A","B","Z","X","Y"].includes(id)?null:(id === "X" ? 0 : 300) + Math.round((Math.random() * 200)),
                 width: 60,
                 height: 60,
               }
@@ -97,9 +81,9 @@
             {
               type: "decorator",
               id: "text-1",
-              decorator: "text",
+              decorator: "text", 
               view: {
-                x: 100,
+                x: 300,
                 y: 120,
                 width: 100,
                 height: 20,
@@ -121,7 +105,7 @@
     - brick: div
       properties:
         style:
-          width: 180px
+          width: 200px
           display: flex
           flexDirection: column
           gap: 1em
@@ -140,6 +124,34 @@
                   <%
                     ((...seeds) => seeds.map((seed) => ({
                       id: seed,
+                      data: {
+                        name: String(seed),
+                      },
+                    })))(
+                      Math.round(Math.random() * 1e6),
+                      Math.round(Math.random() * 1e6),
+                      Math.round(Math.random() * 1e6),
+                    )
+                  %>
+              callback:
+                success:
+                  action: console.log
+                  args:
+                    - Added nodes
+                    - <% EVENT.detail %>
+        - brick: eo-button
+          properties:
+            textContent: Add nodes to container-1
+          events:
+            click:
+              target: eo-draw-canvas
+              method: addNodes
+              args:
+                - |
+                  <%
+                    ((...seeds) => seeds.map((seed) => ({
+                      id: seed,
+                      containerId: "container-1",
                       data: {
                         name: String(seed),
                       },
@@ -339,6 +351,7 @@
             allowEdgeToArea: true
             dragBehavior: lasso
             layoutOptions:
+              initialLayout: layered-architecture
               snap:
                 # grid: true
                 object: true

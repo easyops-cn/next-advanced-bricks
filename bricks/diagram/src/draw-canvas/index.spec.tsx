@@ -1264,13 +1264,41 @@ describe("eo-draw-canvas", () => {
         decorator: "container",
         id: "container-1",
         view: {
-          x: 50,
-          y: 400,
-          width: 280,
-          height: 120,
           text: "上层服务",
         },
       } as Cell,
+      {
+        type: "node",
+        id: "A",
+        containerId: "container-1",
+        view: {
+          width: 60,
+          height: 60,
+        },
+      } as Cell,
+      {
+        type: "node",
+        id: "B",
+        containerId: "container-1",
+        view: {
+          width: 60,
+          height: 60,
+        },
+      } as Cell,
+      {
+        type: "node",
+        id: "C",
+        containerId: "container-2",
+        view: {
+          width: 60,
+          height: 60,
+        },
+      } as Cell,
+      {
+        type: "edge",
+        source: "A",
+        target: "B",
+      },
       {
         type: "decorator",
         decorator: "container",
@@ -1311,7 +1339,7 @@ describe("eo-draw-canvas", () => {
         },
       } as Cell,
     ];
-
+    element.layoutOptions = { initialLayout: "layered-architecture" };
     const onDecoratorTextChange = jest.fn();
     element.addEventListener("decorator.text.change", (e) =>
       onDecoratorTextChange((e as CustomEvent).detail)
@@ -1347,14 +1375,53 @@ describe("eo-draw-canvas", () => {
     expect(onDecoratorTextChange).toHaveBeenCalledWith({
       id: "container-1",
       view: {
-        x: 50,
-        y: 400,
-        width: 280,
-        height: 120,
+        x: 10,
+        y: 50,
+        width: 100,
+        height: 210,
         text: "Updated",
       },
     });
-
+    await act(async () => {
+      const result = await element.addNodes([
+        {
+          id: "add-1-to-container1",
+          containerId: "container-1",
+          data: {},
+        },
+        {
+          id: "add-2-to-container1",
+          containerId: "container-1",
+          data: {},
+        },
+      ]);
+      expect(result).toEqual([
+        {
+          data: {},
+          id: "add-1-to-container1",
+          type: "node",
+          containerId: "container-1",
+          view: {
+            height: 20,
+            width: 20,
+            x: 60,
+            y: 70,
+          },
+        },
+        {
+          data: {},
+          id: "add-2-to-container1",
+          type: "node",
+          containerId: "container-1",
+          view: {
+            height: 20,
+            width: 20,
+            x: 30,
+            y: 100,
+          },
+        },
+      ]);
+    });
     act(() => {
       document.body.removeChild(element);
     });
@@ -1597,6 +1664,58 @@ describe("eo-draw-canvas", () => {
       },
     ]);
     expect(element.shadowRoot?.querySelector(".lock-icon")).not.toBe(null);
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
+
+  test("copy and paste ", async () => {
+    const element = document.createElement("eo-draw-canvas") as EoDrawCanvas;
+    element.defaultNodeBricks = [{ useBrick: { brick: "div" } }];
+    element.cells = [
+      {
+        type: "node",
+        id: "a",
+        view: {
+          x: 20,
+          y: 20,
+        },
+      },
+      {
+        type: "node",
+        id: "b",
+        view: {
+          x: 20,
+          y: 320,
+        },
+      },
+    ] as NodeBrickCell[];
+
+    const onCanvasCopy = jest.fn();
+    const onCanvasPaste = jest.fn();
+    element.addEventListener("canvas.copy", () => onCanvasCopy());
+
+    element.addEventListener("canvas.paste", () => onCanvasPaste());
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    await act(() => new Promise((resolve) => setTimeout(resolve, 1)));
+
+    fireEvent.keyDown(element.shadowRoot!.querySelector("svg")!, {
+      key: "c",
+      ctrlKey: true,
+    });
+
+    expect(onCanvasCopy).toBeCalledTimes(1);
+
+    fireEvent.keyDown(element.shadowRoot!.querySelector("svg")!, {
+      key: "v",
+      ctrlKey: true,
+    });
+    expect(onCanvasPaste).toBeCalledTimes(1);
 
     act(() => {
       document.body.removeChild(element);

@@ -95,6 +95,8 @@ export interface DecoratorView extends NodeView {
   titleStyle?: CSSProperties;
   /** 设置容器装饰器的文本位置 */
   direction?: Direction;
+  /** 设置容器层级（数字越大布局越靠前） */
+  level?: number;
   vertices?: NodePosition[] | null;
 }
 
@@ -324,6 +326,10 @@ export interface DecoratorTextChangeDetail {
 }
 
 export type LayoutType = "manual" | "force" | "dagre" | undefined;
+/**
+ * layered-architecture: 分层架构
+ */
+export type InitialLayout = "default" | "layered-architecture";
 
 export type LayoutOptions =
   | LayoutOptionsManual
@@ -331,7 +337,9 @@ export type LayoutOptions =
   | LayoutOptionsForce;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface LayoutOptionsManual extends BaseLayoutOptions {}
+export interface LayoutOptionsManual extends BaseLayoutOptions {
+  initialLayout?: InitialLayout;
+}
 
 export interface BaseLayoutOptions {
   /** Snap options. Setting to true means enable all snap options */
