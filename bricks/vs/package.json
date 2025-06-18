@@ -81,10 +81,5 @@
     "@next-core/build-next-bricks": "^1.23.12",
     "@next-core/test-next": "^1.1.9",
     "resize-observer-polyfill": "^1.5.1"
-  },
-  "peerDependencies": {
-    "@next-bricks/basic": "*",
-    "@next-bricks/form": "*",
-    "@next-bricks/icons": "*"
   }
 }

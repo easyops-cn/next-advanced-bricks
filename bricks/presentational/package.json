@@ -55,10 +55,5 @@
     "@next-core/build-next-bricks": "^1.23.12",
     "@next-core/test-next": "^1.1.9",
     "babel-plugin-prismjs": "^2.1.0"
-  },
-  "peerDependencies": {
-    "@next-bricks/basic": "*",
-    "@next-bricks/containers": "*",
-    "@next-bricks/icons": "*"
   }
 }
