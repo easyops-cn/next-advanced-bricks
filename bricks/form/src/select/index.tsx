@@ -281,6 +281,15 @@ class Select extends FormItemElementBase {
   }>;
 
   /**
+   * 下拉选择事件 v2（仅传递选中的值）
+   *
+   * @detail 选中的值
+   */
+  @event({ type: "change.v2" }) accessor #changeV2Event!: EventEmitter<
+    string | string[]
+  >;
+
+  /**
    * 下拉框search事件
    */
   @event({ type: "search" }) accessor #searchEvent!: EventEmitter<{
@@ -316,6 +325,8 @@ class Select extends FormItemElementBase {
       value,
       options,
     });
+
+    this.#changeV2Event.emit(value);
   };
 
   #handleOptionsChange = (
