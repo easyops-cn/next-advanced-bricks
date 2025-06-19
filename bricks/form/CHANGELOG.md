@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.17.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.16.4...@next-bricks/form@1.17.0) (2025-06-19)
+
+
+### Features
+
+* **select:** add v2 change event to emit selected values only ([5a21a38](https://github.com/easyops-cn/next-advanced-bricks/commit/5a21a3848a221e337f14114963e016669ed93ef8))
+
+
+
+
+
 ## [1.16.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.16.3...@next-bricks/form@1.16.4) (2025-06-12)
 
 **Note:** Version bump only for package @next-bricks/form

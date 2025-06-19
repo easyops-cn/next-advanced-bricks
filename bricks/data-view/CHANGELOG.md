@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.11.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/data-view@1.10.13...@next-bricks/data-view@1.11.0) (2025-06-19)
+
+
+### Features
+
+* **china-map:** add support for specific coordinates in data source ([cb81e5a](https://github.com/easyops-cn/next-advanced-bricks/commit/cb81e5a3c344f366f17a143cbad8774b0548c40e))
+
+
+
+
+
 ## [1.10.13](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/data-view@1.10.12...@next-bricks/data-view@1.10.13) (2025-06-12)
 
 **Note:** Version bump only for package @next-bricks/data-view
