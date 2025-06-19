@@ -7,52 +7,18 @@ import {
   previewFromOrigin,
   toggleInspecting,
 } from "./inspector.js";
-import type { InspectTarget, RecordStep } from "./interfaces.js";
+import type { InspectTarget } from "./interfaces.js";
+import {
+  customRecorders,
+  customRecorderBricks,
+  extraCustomRecorderSelectors,
+} from "./brick-recorder/index.js";
+import { recordContext } from "./RecordContext.js";
 
 let isRecording = false;
 let currentKeydownTargets: InspectTarget[] | null = null;
 let currentKeydownTexts: string[];
-let steps: RecordStep[];
 let isComposing = false;
-
-const customRecorders: Record<string, (event: CustomEvent<any>) => void> = {
-  "general.select.change": (event: CustomEvent<string | null>) => {
-    // Ensure the event target is a `forms.general-select` element
-    const tagName = getTagName(event.target);
-    if (tagName !== "forms.general-select") {
-      return;
-    }
-
-    // When using custom recorders, always append the event target as the last target.
-    const targets = getPossibleTargets(event.composedPath());
-    appendTarget(targets, event.target as HTMLElement, tagName);
-
-    // Generate the code to replay user behavior.
-    // Use Babel to generate the code from AST, instead of construct the code manually.
-
-    // The expr below is equal to:
-    // - Case null: `brick_clear()`
-    // - Case string: `brick_clickItem(${JSON.stringify(event.detail)})`
-    const expr =
-      event.detail === null
-        ? t.callExpression(t.identifier("brick_clear"), [])
-        : t.callExpression(t.identifier("brick_clickItem"), [
-            t.stringLiteral(event.detail),
-          ]);
-    const text = generateCodeText(expr);
-
-    steps.push({
-      event: "code",
-      targets: targets.map((t) => t.selectors),
-      text,
-    });
-  },
-  // TODO: add more custom recorders as needed
-};
-
-// TODO: add more custom recorder bricks and extra selectors as needed
-const customRecorderBricks: string[] = ["forms.general-select"];
-const extraCustomRecorderSelectors: string[] = [".ant-select-dropdown"];
 
 /**
  * Do not record any events inside custom recorder bricks or extra selectors.
@@ -72,7 +38,7 @@ function shouldIgnoreRecording(targets: EventTarget[]): boolean {
 /**
  * Use Babel to generate the code from AST, instead of construct the code manually.
  */
-function generateCodeText(expr: t.Expression): string {
+export function generateCodeText(expr: t.Expression): string {
   const program = t.program([t.expressionStatement(expr)], undefined, "module");
   const result = transformFromAst(program, undefined, {
     generatorOpts: {
@@ -88,7 +54,7 @@ function generateCodeText(expr: t.Expression): string {
 /**
  * When using custom recorders, always append the event target as the last target.
  */
-function appendTarget(
+export function appendTarget(
   targets: InspectTarget[],
   element: HTMLElement,
   tag: string
@@ -119,7 +85,8 @@ export function toggleRecording(recording: boolean, inspecting: boolean): void {
     toggleInspecting(!recording);
   }
   if (recording) {
-    steps = [];
+    recordContext.clearSteps();
+    recordContext.brickEvtStepCache.clear();
     window.addEventListener("click", onMouseEvent, {
       capture: true,
       passive: true,
@@ -163,7 +130,7 @@ export function toggleRecording(recording: boolean, inspecting: boolean): void {
         capture: true,
       });
     }
-
+    const steps = recordContext.getSteps();
     if (steps.length > 0) {
       window.parent.postMessage(
         {
@@ -192,7 +159,7 @@ function onMouseEvent(event: MouseEvent): void {
     return;
   }
 
-  steps.push({
+  recordContext.addStep({
     event: event.type,
     targets: targets.map((t) => t.selectors),
   });
@@ -217,15 +184,12 @@ function onKeyDown(event: KeyboardEvent): void {
     firstTarget.element !== currentKeydownTargets?.[0]?.element;
   if (targetChanged) {
     completeKeyDown();
+    currentKeydownTargets = targets;
+    currentKeydownTexts = [];
   }
 
   if (shouldIgnoreRecording(eventTargets)) {
     return;
-  }
-
-  if (!targetChanged) {
-    currentKeydownTargets = targets;
-    currentKeydownTexts = [];
   }
 
   // Todo: handle modifiers
@@ -256,12 +220,18 @@ function onCompositionEnd(event: CompositionEvent) {
 
   // If the target of keydown is not changed,
   // consider these events as a sequential typing.
-  const targets = getPossibleTargets(event.composedPath());
+  const eventTargets = event.composedPath();
+  const targets = getPossibleTargets(eventTargets);
   const firstTarget = targets[0];
   if (targets.length === 0) {
     currentKeydownTargets = null;
     return;
   }
+
+  if (shouldIgnoreRecording(eventTargets)) {
+    return;
+  }
+
   if (firstTarget.element !== currentKeydownTargets?.[0]?.element) {
     completeKeyDown();
     currentKeydownTargets = targets;
@@ -274,7 +244,7 @@ function onCompositionEnd(event: CompositionEvent) {
 
 function completeKeyDown(): void {
   if (currentKeydownTargets && currentKeydownTexts.length > 0) {
-    steps.push({
+    recordContext.addStep({
       event: "type",
       targets: currentKeydownTargets.map((t) => t.selectors),
       text: currentKeydownTexts.join(""),

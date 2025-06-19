@@ -59,3 +59,13 @@ export interface RuntimeBrickCommandConf
   element?: HTMLElement;
   targets: RuntimeBrickTarget[];
 }
+
+export type BrickEvtMapField = Record<
+  string,
+  Record<string, (evt: CustomEvent<any>) => void>
+>;
+
+export interface EventHandlerOptions {
+  brickEvtName: string;
+  brickEvtMap: BrickEvtMapField;
+}
