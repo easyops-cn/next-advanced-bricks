@@ -56,3 +56,31 @@ children:
         args:
           - dark-v2
 ```
+
+### Specific coordinates
+
+```yaml preview height="600px"
+brick: div
+properties:
+  style:
+    height: calc(100vh - 4em)
+    position: relative
+children:
+  - brick: data-view.china-map
+    properties:
+      dataSource:
+        - text: "山东济南 21348"
+          coordinate:
+            - 117.1201
+            - 36.6512
+        - text: "山东青岛 4242"
+          coordinate:
+            - 119
+            - 35.5
+    # Currently this brick only looks well within dark theme
+    lifeCycle:
+      onPageLoad:
+        action: theme.setTheme
+        args:
+          - dark-v2
+```
