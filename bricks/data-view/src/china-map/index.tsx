@@ -60,6 +60,8 @@ export interface ChinaMapProps {
 export interface DataItem {
   province?: string;
   city?: string;
+  /** 手动设置经纬度信息，优先级高于 province 和 city */
+  coordinate?: [longitude: number, latitude: number];
   text: string;
 }
 
@@ -322,7 +324,9 @@ export function ChinaMapComponent({
         dataSource?.flatMap<Label>((label) => {
           let lng: number;
           let lat: number;
-          if (matchedProvince) {
+          if (label.coordinate) {
+            [lng, lat] = label.coordinate;
+          } else if (matchedProvince) {
             const area = AreaList.find(
               (a) =>
                 a.level === "city" &&

@@ -131,4 +131,36 @@ describe("data-view.china-map", () => {
       document.body.removeChild(element);
     });
   });
+
+  test("specific coordinates", async () => {
+    const element = document.createElement("data-view.china-map") as ChinaMap;
+    element.dataSource = [
+      {
+        text: "山东济南",
+        coordinate: [117.1201, 36.6512],
+      },
+    ];
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    await act(async () => {
+      await (global as any).flushPromises();
+    });
+
+    expect(element.shadowRoot.querySelector(".message")).toBe(null);
+
+    const labels = element.shadowRoot.querySelectorAll(
+      ".label"
+    ) as NodeListOf<HTMLElement>;
+    expect(labels.length).toBe(1);
+    const label = labels[0];
+    expect(parseFloat(label.style.left)).toBeCloseTo(678.87, 2);
+    expect(parseFloat(label.style.top)).toBeCloseTo(392.36, 2);
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
 });
