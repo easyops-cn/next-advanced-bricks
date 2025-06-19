@@ -1,16 +1,24 @@
+import { get } from "lodash";
 import type { SizeTuple } from "../../diagram/interfaces";
-import type { Cell, InitialCell, NodeCell } from "../interfaces";
+import type { Cell, InitialCell, LayoutOptions, NodeCell } from "../interfaces";
 import { isInitialNodeCell } from "./asserts";
+import { initaliContainerLayout } from "./initaliContainerLayout";
+
+interface initializeConfig {
+  defaultNodeSize: SizeTuple;
+  layoutOptions?: LayoutOptions;
+  isInitialize?: boolean;
+}
 
 export function initializeCells(
   initialCells: InitialCell[] | undefined,
-  {
-    defaultNodeSize,
-  }: {
-    defaultNodeSize: SizeTuple;
-  }
+  { defaultNodeSize, layoutOptions, isInitialize }: initializeConfig
 ): Cell[] {
   const originalCells = initialCells ?? [];
+  if (isInitialize) {
+    if (get(layoutOptions, "initialLayout") === "layered-architecture")
+      initaliContainerLayout(originalCells);
+  }
   const finalCells: Cell[] = originalCells.map<Cell>((cell) => {
     if (
       !isInitialNodeCell(cell) ||

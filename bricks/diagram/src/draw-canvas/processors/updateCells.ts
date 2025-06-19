@@ -12,17 +12,19 @@ import {
 import type {
   Cell,
   InitialCell,
+  LayoutOptions,
   LayoutType,
   NodeCell,
   NodeId,
   NodeView,
 } from "../interfaces";
-import { isDecoratorCell, isEdgeCell, isNodeCell } from "./asserts";
+import { isDecoratorCell, isEdgeCell, isNodeCell, isNoPoint } from "./asserts";
 import { initializeCells } from "./initializeCells";
 import { transformToCenter } from "./transformToCenter";
 import { forceLayout } from "../../shared/canvas/forceLayout";
 import { dagreLayout } from "../../shared/canvas/dagreLayout";
 import { sameTarget } from "./sameTarget";
+import { generateNewPointsWithLayout } from "./generateNewPointsWithLayout";
 
 export function updateCells({
   cells,
@@ -36,6 +38,7 @@ export function updateCells({
   reason,
   parent,
   allowEdgeToArea,
+  layoutOptions,
 }: {
   cells: InitialCell[] | undefined;
   layout?: LayoutType;
@@ -48,13 +51,18 @@ export function updateCells({
   reason?: "add-related-nodes";
   parent?: NodeId;
   allowEdgeToArea?: boolean;
+  layoutOptions?: LayoutOptions;
 }): {
   cells: Cell[];
   updated: Cell[];
   shouldReCenter: boolean;
 } {
   const isManualLayout = layout !== "force" && layout !== "dagre";
-  const newCells = initializeCells(cells, { defaultNodeSize });
+  const newCells = initializeCells(cells, {
+    defaultNodeSize,
+    layoutOptions,
+    isInitialize: false,
+  });
   const updateCandidates: NodeCell[] = [];
   let shouldReCenter = false;
 
@@ -169,7 +177,7 @@ export function updateCells({
     let hasDecorators = false;
     for (const cell of newCells) {
       if (isNodeCell(cell)) {
-        if (cell.view.x === undefined || cell.view.y === undefined) {
+        if (isNoPoint(cell.view)) {
           updateCandidates.push(cell);
         } else {
           positionedNodes.push(cell);
@@ -222,9 +230,10 @@ export function updateCells({
           ],
         }));
       }
+      generateNewPointsWithLayout(newCells, { defaultNodeSize });
 
       for (const cell of newCells) {
-        if (isNodeCell(cell)) {
+        if (isNodeCell(cell) && isNoPoint(cell.view)) {
           const view = getNodeView(cell.id);
           cell.view.x = view.x;
           cell.view.y = view.y;

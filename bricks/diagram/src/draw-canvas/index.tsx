@@ -168,6 +168,7 @@ export interface AddNodeInfo {
   useBrick?: UseSingleBrickConf;
   data?: unknown;
   size?: SizeTuple;
+  containerId?: string;
 }
 
 export interface AddEdgeInfo {
@@ -574,16 +575,19 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     if (nodes.length === 0) {
       return [];
     }
-    const newNodes = nodes.map<NodeCell>(({ size, useBrick, id, data }) => ({
-      type: "node",
-      id,
-      data,
-      view: {
-        width: size?.[0] ?? this.defaultNodeSize[0],
-        height: size?.[1] ?? this.defaultNodeSize[0],
-      } as NodeView,
-      useBrick,
-    }));
+    const newNodes = nodes.map<NodeCell>(
+      ({ size, useBrick, id, data, containerId }) => ({
+        type: "node",
+        id,
+        data,
+        containerId,
+        view: {
+          width: size?.[0] ?? this.defaultNodeSize[0],
+          height: size?.[1] ?? this.defaultNodeSize[0],
+        } as NodeView,
+        useBrick,
+      })
+    );
     return this.#canvasRef.current!.addNodes(newNodes, {
       defaultNodeSize: this.defaultNodeSize,
       canvasWidth: this.clientWidth,
@@ -834,10 +838,16 @@ function LegacyEoDrawCanvasComponent(
   const [{ cells, layoutKey }, dispatch] = useReducer(
     rootReducer,
     initialCells,
-    (initialCells) => ({
-      cells: initializeCells(initialCells, { defaultNodeSize }),
-      layoutKey: 0,
-    })
+    (initialCells) => {
+      return {
+        cells: initializeCells(initialCells, {
+          defaultNodeSize,
+          layoutOptions,
+          isInitialize: true,
+        }),
+        layoutKey: 0,
+      };
+    }
   );
 
   // When nodes are greater or equal to threshold, the diagram will be degraded.
@@ -943,6 +953,7 @@ function LegacyEoDrawCanvasComponent(
           scaleRange,
           transform,
           allowEdgeToArea,
+          layoutOptions,
         });
         if (shouldReCenter) {
           setCentered(false);
@@ -964,6 +975,7 @@ function LegacyEoDrawCanvasComponent(
           scaleRange,
           transform,
           allowEdgeToArea,
+          layoutOptions,
         });
         if (shouldReCenter) {
           setCentered(false);

@@ -1,3 +1,4 @@
+import { isNil } from "lodash";
 import type {
   Cell,
   DecoratorCell,
@@ -6,6 +7,7 @@ import type {
   EditableLine,
   InitialCell,
   InitialNodeCell,
+  InitialNodeView,
   LayoutType,
   LineDecoratorCell,
   LineType,
@@ -25,7 +27,7 @@ export function isInitialNodeCell(cell: InitialCell): cell is InitialNodeCell {
   return cell.type === "node";
 }
 
-export function isEdgeCell(cell: Cell): cell is EdgeCell {
+export function isEdgeCell(cell: InitialCell): cell is EdgeCell {
   return cell.type === "edge";
 }
 
@@ -67,16 +69,16 @@ export function isTextDecoratorCell(cell: Cell): cell is DecoratorCell {
   return cell.type === "decorator" && cell.decorator === "text";
 }
 export function isContainerDecoratorCell(
-  cell: Cell | MoveCellPayload
+  cell: InitialCell | MoveCellPayload
 ): cell is DecoratorCell {
   return cell.type === "decorator" && cell.decorator === "container";
 }
 
-export function isRectDecoratorCell(
-  cell: Cell | MoveCellPayload
-): cell is DecoratorCell {
-  return cell.type === "decorator" && cell.decorator === "rect";
-}
+// export function isRectDecoratorCell(
+//   cell: Cell | MoveCellPayload
+// ): cell is DecoratorCell {
+//   return cell.type === "decorator" && cell.decorator === "rect";
+// }
 
 export function isLineDecoratorCell(
   cell: Cell | LineDecoratorCell | MoveCellPayload
@@ -86,6 +88,14 @@ export function isLineDecoratorCell(
 
 export function isNoManualLayout(layout: LayoutType) {
   return !["manual", undefined].includes(layout!);
+}
+
+export function isNoSize(view: InitialNodeView) {
+  return !(view.width && view.height);
+}
+
+export function isNoPoint(view: InitialNodeView) {
+  return isNil(view.x) || isNil(view.y);
 }
 
 export function isStraightType(type: LineType | undefined) {
