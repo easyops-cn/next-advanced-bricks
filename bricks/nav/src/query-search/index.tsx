@@ -40,6 +40,7 @@ const selectedQuerierStorageKey = `querier-search-querier:${
 const storage = new JsonStorage(localStorage);
 const fullTextUrl = "search/result?q=%{q}%";
 const ipSearchUrl = "search/new/ipSearch?q=%{q}%";
+const itsmSearchUrl = "/itsc-ticket-center/ticket-list?q=%{q}%";
 
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
@@ -194,6 +195,14 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
             name: "ip搜索",
             config: {
               url: ipSearchUrl,
+            },
+          },
+          {
+            type: QuerierTypes.link,
+            name: "工单搜索",
+            config: {
+              url: itsmSearchUrl,
+              searchPlaceholde: "输入工单编号/标题等关键字",
             },
           },
         ];
