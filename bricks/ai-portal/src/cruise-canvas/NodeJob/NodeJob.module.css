@@ -65,25 +65,9 @@
   overflow-y: auto;
 }
 
-/* .message {
-  overflow-wrap: break-word;
-}
-
 .message:not(:first-child) {
   margin-top: 6px;
 }
-
-.message p {
-  margin: 1em 0;
-}
-
-.message > :first-child {
-  margin-top: 0;
-}
-
-.message > :last-child {
-  margin-bottom: 0;
-} */
 
 .ask-user .heading {
   border-bottom: none;

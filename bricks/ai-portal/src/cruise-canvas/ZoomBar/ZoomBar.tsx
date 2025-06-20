@@ -28,7 +28,7 @@ export function ZoomBar({
       <button onClick={onReCenter}>
         <WrappedIcon lib="fa" prefix="fas" icon="expand" />
       </button>
-      <div className={styles.divider}></div>
+      <div className={toolbarStyles.divider}></div>
       <button onClick={handleZoomOut}>
         <WrappedIcon lib="antd" theme="outlined" icon="minus-circle" />
       </button>
