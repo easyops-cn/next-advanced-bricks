@@ -24,6 +24,13 @@
   transform: scale(var(--scale));
 
   --scale: 1;
+  --text-scale: 1;
+
+  --text-height: calc(22px * var(--text-scale));
+  --text-font-size: calc(12px * var(--text-scale));
+  --text-indent: calc(10px * var(--text-scale));
+  --text-background-size: calc(119px * var(--text-scale))
+    calc(22px * var(--text-scale));
 }
 
 canvas,
@@ -51,12 +58,13 @@ canvas,
 }
 
 .text {
-  height: 22px;
-  line-height: 22px;
-  font-size: 12px;
+  height: var(--text-height);
+  line-height: var(--text-height);
+  font-size: var(--text-font-size);
   background: url(../china-map-chart/assets/label.svg) no-repeat center left;
+  background-size: var(--text-background-size);
   backdrop-filter: blur(2px);
-  text-indent: 10px;
+  text-indent: var(--text-indent);
   transform: translate(0, -18px);
   white-space: nowrap;
   color: #fffcef;

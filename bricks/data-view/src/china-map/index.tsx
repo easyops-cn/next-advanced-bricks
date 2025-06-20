@@ -55,6 +55,7 @@ export interface ChinaMapProps {
   province?: string;
   dataSource?: DataItem[];
   maxScale?: number;
+  textScale?: number;
 }
 
 export interface DataItem {
@@ -93,6 +94,14 @@ class ChinaMap extends ReactNextElement implements ChinaMapProps {
   @property({ type: Number })
   accessor maxScale: number | undefined;
 
+  /**
+   * 标签文本缩放比例
+   *
+   * @default 1
+   */
+  @property({ type: Number })
+  accessor textScale: number | undefined;
+
   render() {
     return (
       <ChinaMapComponent
@@ -100,6 +109,7 @@ class ChinaMap extends ReactNextElement implements ChinaMapProps {
         province={this.province}
         dataSource={this.dataSource}
         maxScale={this.maxScale}
+        textScale={this.textScale}
       />
     );
   }
@@ -130,6 +140,7 @@ export function ChinaMapComponent({
   province,
   dataSource,
   maxScale,
+  textScale,
 }: ChinaMapComponentProps) {
   const scale = useContainerScale({
     width: BASE_WIDTH,
@@ -378,8 +389,10 @@ export function ChinaMapComponent({
           height: BASE_HEIGHT,
           visibility: scale === null ? "hidden" : "visible",
           "--scale": scale,
+          "--text-scale": textScale,
         } as React.CSSProperties & {
           "--scale": number;
+          "--text-scale": number;
         }
       }
     >
