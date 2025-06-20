@@ -68,11 +68,12 @@ properties:
 children:
   - brick: data-view.china-map
     properties:
+      textScale: 2
       dataSource:
-        - text: "山东济南 21348"
+        - text: "北京昌平 21348"
           coordinate:
-            - 117.1201
-            - 36.6512
+            - 116
+            - 40
         - text: "山东青岛 4242"
           coordinate:
             - 119
