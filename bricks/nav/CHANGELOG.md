@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.22.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.22.4...@next-bricks/nav@1.22.5) (2025-06-20)
+
+
+### Bug Fixes
+
+* 全局搜索器默认选项增加工单搜索 ref CMDB_VIEW-466 ([55471b1](https://github.com/easyops-cn/next-advanced-bricks/commit/55471b12c5cc0595c6e2d365dedfdc6ea8a23201))
+
+
+
+
+
 ## [1.22.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.22.3...@next-bricks/nav@1.22.4) (2025-06-12)
 
 **Note:** Version bump only for package @next-bricks/nav
