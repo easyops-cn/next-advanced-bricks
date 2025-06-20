@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/data-view@1.11.0...@next-bricks/data-view@1.12.0) (2025-06-20)
+
+
+### Features
+
+* **china-map:** support setting text scale ([79ee722](https://github.com/easyops-cn/next-advanced-bricks/commit/79ee7228b28880477c56403d5496b11c98e2270b))
+
+
+
+
+
 # [1.11.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/data-view@1.10.13...@next-bricks/data-view@1.11.0) (2025-06-19)
 
 
