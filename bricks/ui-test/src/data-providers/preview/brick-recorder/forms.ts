@@ -1,6 +1,6 @@
 // istanbul ignore file
 import * as t from "@babel/types";
-import { generateCodeText } from "../recorder";
+import { generateCodeText } from "../utils";
 import { BrickEvtMapField } from "../interfaces";
 import {
   generateBaseStep,
@@ -114,18 +114,31 @@ const formBricksMap: BrickEvtMapField = {
     "time.range.change": (
       event: CustomEvent<{ startTime: string; endTime: string }>
     ) => {
-      [event.detail.startTime, event.detail.endTime].forEach((time, index) => {
-        const typeLiteral = t.stringLiteral(index === 0 ? "start" : "end");
-        const expr = time
-          ? t.callExpression(t.identifier("brick_type"), [
-              typeLiteral,
-              t.stringLiteral(time),
-            ])
-          : t.callExpression(t.identifier("brick_clear"), [typeLiteral]);
+      const { startTime, endTime } = event.detail;
 
-        const text = generateCodeText(expr);
+      const baseExpr = startTime
+        ? t.callExpression(t.identifier("brick_type"), [
+            t.stringLiteral("start"),
+            t.stringLiteral(startTime),
+          ])
+        : t.callExpression(t.identifier("brick_clear"), [
+            t.stringLiteral("start"),
+          ]);
 
-        generateBaseStep(event, text);
+      const expr = t.callExpression(
+        t.memberExpression(
+          baseExpr,
+          t.identifier(endTime ? "brick_type" : "brick_clear")
+        ),
+        endTime
+          ? [t.stringLiteral("end"), t.stringLiteral(endTime)]
+          : [t.stringLiteral("end")]
+      );
+
+      const text = generateCodeText(expr);
+
+      generateBrickInputStep(event, text, {
+        brickEvtName: "time.range.change",
       });
     },
   },
@@ -146,12 +159,45 @@ const formBricksMap: BrickEvtMapField = {
   },
   "forms.general-checkbox": {
     "general.checkbox.change.v2": (event: CustomEvent<OptionItem[]>) => {
-      event.detail?.forEach((item) => {
-        const expr = t.callExpression(t.identifier("brick_clickItem"), [
-          t.stringLiteral(item.label),
-        ]);
+      let expr: t.Expression | undefined;
+      event.detail.forEach((item, index) => {
+        if (index === 0) {
+          expr = t.callExpression(t.identifier("brick_clickItem"), [
+            t.stringLiteral(item.label),
+          ]);
+        } else {
+          expr = t.callExpression(
+            t.memberExpression(expr!, t.identifier("brick_clickItem")),
+            [t.stringLiteral(item.label)]
+          );
+        }
+      });
+
+      if (expr) {
         const text = generateCodeText(expr);
-        generateBaseStep(event, text);
+
+        generateBrickInputStep(event, text, {
+          brickEvtName: "general.checkbox.change.v2",
+        });
+      }
+    },
+  },
+  "forms.dynamic-form-item-v2": {
+    "item.change": (event: CustomEvent<unknown[]>) => {
+      const expr = t.callExpression(t.identifier("brick_type"), [
+        t.objectExpression([
+          t.objectProperty(t.identifier("type"), t.stringLiteral("jsonStr")),
+          t.objectProperty(
+            t.identifier("value"),
+            t.stringLiteral(JSON.stringify(event.detail))
+          ),
+        ]),
+      ]);
+
+      const text = generateCodeText(expr);
+
+      generateBrickInputStep(event, text, {
+        brickEvtName: "item.change",
       });
     },
   },

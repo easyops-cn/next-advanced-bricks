@@ -1,7 +1,10 @@
 // istanbul ignore file
 import * as t from "@babel/types";
-import { generateCodeText } from "../recorder";
-import { generateBaseStep, createBrickEvtHandler } from "../utils";
+import {
+  generateBaseStep,
+  createBrickEvtHandler,
+  generateCodeText,
+} from "../utils";
 
 const basicBricksMap = {
   "basic-bricks.general-button": {
