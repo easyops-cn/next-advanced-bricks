@@ -1,6 +1,4 @@
 // istanbul ignore file: working in progress
-import * as t from "@babel/types";
-import { transformFromAst } from "@babel/standalone";
 import {
   getPossibleTargets,
   getTagName,
@@ -33,22 +31,6 @@ function shouldIgnoreRecording(targets: EventTarget[]): boolean {
       return target instanceof HTMLElement && target.matches(selector);
     });
   });
-}
-
-/**
- * Use Babel to generate the code from AST, instead of construct the code manually.
- */
-export function generateCodeText(expr: t.Expression): string {
-  const program = t.program([t.expressionStatement(expr)], undefined, "module");
-  const result = transformFromAst(program, undefined, {
-    generatorOpts: {
-      jsescOption: {
-        minimal: true,
-      },
-    },
-    cloneInputAst: false,
-  });
-  return result.code as string;
 }
 
 /**

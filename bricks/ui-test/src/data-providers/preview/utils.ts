@@ -3,6 +3,8 @@ import { getTagName, getPossibleTargets } from "./inspector";
 import { hasOwnProperty } from "@next-core/utils/general";
 import { appendTarget } from "./recorder";
 import { recordContext } from "./RecordContext";
+import * as t from "@babel/types";
+import { transformFromAst } from "@babel/standalone";
 
 export function brickEvtHandler(
   event: CustomEvent<string | null>,
@@ -91,4 +93,20 @@ export function generateBrickInputStep(
       });
     }
   }
+}
+
+/**
+ * Use Babel to generate the code from AST, instead of construct the code manually.
+ */
+export function generateCodeText(expr: t.Expression): string {
+  const program = t.program([t.expressionStatement(expr)], undefined, "module");
+  const result = transformFromAst(program, undefined, {
+    generatorOpts: {
+      jsescOption: {
+        minimal: true,
+      },
+    },
+    cloneInputAst: false,
+  });
+  return result.code as string;
 }
