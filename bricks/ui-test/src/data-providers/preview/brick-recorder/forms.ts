@@ -2,6 +2,7 @@
 import * as t from "@babel/types";
 import { generateCodeText } from "../utils";
 import { BrickEvtMapField } from "../interfaces";
+import type { MenuIcon } from "@next-shared/general/types";
 import {
   generateBaseStep,
   generateBrickInputStep,
@@ -60,12 +61,11 @@ const formBricksMap: BrickEvtMapField = {
   },
   "forms.general-auto-complete": {
     "general.auto-complete.change": (event: CustomEvent<string>) => {
-      const expr =
-        event.detail === null
-          ? t.callExpression(t.identifier("brick_clear"), [])
-          : t.callExpression(t.identifier("brick_type"), [
-              t.stringLiteral(event.detail),
-            ]);
+      const expr = !event.detail
+        ? t.callExpression(t.identifier("brick_clear"), [])
+        : t.callExpression(t.identifier("brick_type"), [
+            t.stringLiteral(event.detail),
+          ]);
       const text = generateCodeText(expr);
 
       generateBrickInputStep(event, text, {
@@ -97,12 +97,11 @@ const formBricksMap: BrickEvtMapField = {
   },
   "forms.general-date-picker": {
     "general.date.change": (event: CustomEvent<string>) => {
-      const expr =
-        event.detail === null
-          ? t.callExpression(t.identifier("brick_clear"), [])
-          : t.callExpression(t.identifier("brick_type"), [
-              t.stringLiteral(event.detail),
-            ]);
+      const expr = !event.detail
+        ? t.callExpression(t.identifier("brick_clear"), [])
+        : t.callExpression(t.identifier("brick_type"), [
+            t.stringLiteral(event.detail),
+          ]);
       const text = generateCodeText(expr);
 
       generateBrickInputStep(event, text, {
@@ -144,12 +143,11 @@ const formBricksMap: BrickEvtMapField = {
   },
   "forms.input-with-unit": {
     "general.input-with-unit.change": (event: CustomEvent<number>) => {
-      const expr =
-        event.detail === null
-          ? t.callExpression(t.identifier("brick_clear"), [])
-          : t.callExpression(t.identifier("brick_type"), [
-              t.numericLiteral(event.detail),
-            ]);
+      const expr = !event.detail
+        ? t.callExpression(t.identifier("brick_clear"), [])
+        : t.callExpression(t.identifier("brick_type"), [
+            t.numericLiteral(event.detail),
+          ]);
       const text = generateCodeText(expr);
 
       generateBrickInputStep(event, text, {
@@ -198,6 +196,52 @@ const formBricksMap: BrickEvtMapField = {
 
       generateBrickInputStep(event, text, {
         brickEvtName: "item.change",
+      });
+    },
+  },
+  "forms.general-buttons": {
+    "submit.button.click": (event: CustomEvent<null>) => {
+      const expr = t.callExpression(t.identifier("brick_click"), [
+        t.stringLiteral("submit"),
+      ]);
+      const text = generateCodeText(expr);
+      generateBaseStep(event, text);
+    },
+    "cancel.button.click": (event: CustomEvent<null>) => {
+      const expr = t.callExpression(t.identifier("brick_click"), [
+        t.stringLiteral("cancel"),
+      ]);
+      const text = generateCodeText(expr);
+      generateBaseStep(event, text);
+    },
+  },
+  "forms.general-time-picker": {
+    "general.time.change": (event: CustomEvent<string>) => {
+      const expr = !event.detail
+        ? t.callExpression(t.identifier("brick_clear"), [])
+        : t.callExpression(t.identifier("brick_type"), [
+            t.stringLiteral(event.detail),
+          ]);
+      const text = generateCodeText(expr);
+      generateBrickInputStep(event, text, {
+        brickEvtName: "general.time.change",
+      });
+    },
+  },
+  "forms.icon-select": {
+    "icon.change": (event: CustomEvent<MenuIcon>) => {
+      const expr = t.callExpression(t.identifier("brick_fill"), [
+        t.objectExpression(
+          Object.entries(event.detail)
+            .filter(([, v]) => !!v)
+            .map(([key, v]) =>
+              t.objectProperty(t.identifier(key), t.stringLiteral(v as string))
+            )
+        ),
+      ]);
+      const text = generateCodeText(expr);
+      generateBrickInputStep(event, text, {
+        brickEvtName: "icon.change",
       });
     },
   },
