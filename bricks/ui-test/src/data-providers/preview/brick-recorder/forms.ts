@@ -118,7 +118,13 @@ const formBricksMap: BrickEvtMapField = {
       const baseExpr = startTime
         ? t.callExpression(t.identifier("brick_type"), [
             t.stringLiteral("start"),
-            t.stringLiteral(startTime),
+            t.stringLiteral(`${startTime}{enter}`),
+            t.objectExpression([
+              t.objectProperty(
+                t.identifier("clearBeforeInput"),
+                t.booleanLiteral(true)
+              ),
+            ]),
           ])
         : t.callExpression(t.identifier("brick_clear"), [
             t.stringLiteral("start"),
@@ -130,7 +136,16 @@ const formBricksMap: BrickEvtMapField = {
           t.identifier(endTime ? "brick_type" : "brick_clear")
         ),
         endTime
-          ? [t.stringLiteral("end"), t.stringLiteral(endTime)]
+          ? [
+              t.stringLiteral("end"),
+              t.stringLiteral(`${endTime}{enter}`),
+              t.objectExpression([
+                t.objectProperty(
+                  t.identifier("clearBeforeInput"),
+                  t.booleanLiteral(true)
+                ),
+              ]),
+            ]
           : [t.stringLiteral("end")]
       );
 
@@ -260,6 +275,12 @@ const formBricksMap: BrickEvtMapField = {
             expr = t.callExpression(t.identifier("brick_type"), [
               t.stringLiteral(fields[index]),
               t.stringLiteral(v),
+              t.objectExpression([
+                t.objectProperty(
+                  t.identifier("clearBeforeInput"),
+                  t.booleanLiteral(true)
+                ),
+              ]),
             ]);
           }
         } else {
@@ -271,7 +292,16 @@ const formBricksMap: BrickEvtMapField = {
           } else {
             expr = t.callExpression(
               t.memberExpression(expr!, t.identifier("brick_type")),
-              [t.stringLiteral(fields[index]), t.stringLiteral(v)]
+              [
+                t.stringLiteral(fields[index]),
+                t.stringLiteral(v),
+                t.objectExpression([
+                  t.objectProperty(
+                    t.identifier("clearBeforeInput"),
+                    t.booleanLiteral(true)
+                  ),
+                ]),
+              ]
             );
           }
         }
