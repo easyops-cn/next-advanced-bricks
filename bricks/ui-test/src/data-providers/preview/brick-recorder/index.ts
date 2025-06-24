@@ -8,15 +8,26 @@ import {
   formsBricks,
   extraFormsRecorderSelectors,
 } from "./forms";
+import {
+  containerBricks,
+  containerBricksRecordersHandler,
+  extraContainerBricksRecorderSelectors,
+} from "./container";
 
 export const customRecorders = {
   ...formsRecordersHandler,
   ...basicBricksRecordersHandler,
+  ...containerBricksRecordersHandler,
 };
 
-export const customRecorderBricks = [...formsBricks, ...basicBricks];
+export const customRecorderBricks = [
+  ...formsBricks,
+  ...basicBricks,
+  ...containerBricks,
+];
 
 export const extraCustomRecorderSelectors = [
   ...extraFormsRecorderSelectors,
   ...extraBasicBricksRecorderSelectors,
+  ...extraContainerBricksRecorderSelectors,
 ];

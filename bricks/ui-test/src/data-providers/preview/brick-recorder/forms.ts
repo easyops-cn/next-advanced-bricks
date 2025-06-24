@@ -245,6 +245,114 @@ const formBricksMap: BrickEvtMapField = {
       });
     },
   },
+  "forms.crontab-input": {
+    "crontab.change": (event: CustomEvent<string>) => {
+      const fieldValues = event.detail.split(" ");
+      const fields = ["minute", "hour", "date", "month", "dow"];
+      let expr: t.Expression | undefined;
+      fieldValues?.forEach((v, index) => {
+        if (index === 0) {
+          if (!v) {
+            expr = t.callExpression(t.identifier("brick_clear"), [
+              t.stringLiteral(fields[index]),
+            ]);
+          } else {
+            expr = t.callExpression(t.identifier("brick_type"), [
+              t.stringLiteral(fields[index]),
+              t.stringLiteral(v),
+            ]);
+          }
+        } else {
+          if (!v) {
+            expr = t.callExpression(
+              t.memberExpression(expr!, t.identifier("brick_clear")),
+              [t.stringLiteral(fields[index])]
+            );
+          } else {
+            expr = t.callExpression(
+              t.memberExpression(expr!, t.identifier("brick_type")),
+              [t.stringLiteral(fields[index]), t.stringLiteral(v)]
+            );
+          }
+        }
+      });
+
+      if (expr) {
+        const text = generateCodeText(expr);
+        generateBrickInputStep(event, text, {
+          brickEvtName: "crontab.change",
+        });
+      }
+    },
+  },
+  "forms.user-or-user-group-select": {
+    "user.group.change.v2": (
+      event: CustomEvent<
+        Array<{
+          label: string;
+          value: string;
+        }>
+      >
+    ) => {
+      let expr: t.Expression;
+      if (!event.detail?.length) {
+        expr = t.callExpression(t.identifier("brick_clear"), []);
+      } else {
+        expr = t.callExpression(t.identifier("brick_fill"), [
+          t.arrayExpression(
+            event.detail.map((userInfo) => t.stringLiteral(userInfo.label))
+          ),
+        ]);
+      }
+
+      const text = generateCodeText(expr);
+      generateBrickInputStep(event, text, {
+        brickEvtName: "user.group.change.v2",
+      });
+    },
+  },
+  "forms.tree-select": {
+    "treeSelect.change": (
+      event: CustomEvent<{ label: string[]; value: string[] }>
+    ) => {
+      const { label } = event.detail;
+      let expr: t.Expression;
+      if (!label?.length) {
+        expr = t.callExpression(t.identifier("brick_clear"), []);
+      } else {
+        expr = t.callExpression(t.identifier("brick_fill"), [
+          t.arrayExpression(label.map((l) => t.stringLiteral(l))),
+        ]);
+      }
+
+      const text = generateCodeText(expr);
+      generateBrickInputStep(event, text, {
+        brickEvtName: "treeSelect.change",
+      });
+    },
+  },
+  "forms.general-cascader": {
+    "cascader.change": (
+      event: CustomEvent<{
+        value: string[];
+        selectedOptions: Record<string, unknown>[];
+      }>
+    ) => {
+      const { selectedOptions } = event.detail;
+      const labelField = (event.target as any)?.fieldNames?.label || "label";
+
+      const expr = t.callExpression(t.identifier("brick_fill"), [
+        t.arrayExpression(
+          selectedOptions.map((v) => t.stringLiteral(v[labelField] as string))
+        ),
+      ]);
+
+      const text = generateCodeText(expr);
+      generateBrickInputStep(event, text, {
+        brickEvtName: "cascader.change",
+      });
+    },
+  },
 };
 
 export const formsBricks = Object.keys(formBricksMap);
