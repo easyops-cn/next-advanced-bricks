@@ -35,8 +35,8 @@
     "test:ci": "cross-env NODE_ENV='test' CI=true test-next"
   },
   "dependencies": {
-    "@next-core/element": "^1.2.17",
-    "@next-core/react-element": "^1.0.36",
+    "@next-core/element": "^1.2.18",
+    "@next-core/react-element": "^1.0.37",
     "@next-core/types": "^1.15.0",
     "lodash": "^4.17.21",
     "react": "0.0.0-experimental-ee8509801-20230117",
@@ -44,7 +44,7 @@
     "resize-observer-polyfill": "^1.5.1"
   },
   "devDependencies": {
-    "@next-core/build-next-libs": "^1.0.24",
+    "@next-core/build-next-libs": "^1.0.25",
     "@next-core/test-next": "^1.1.9",
     "concurrently": "^9.1.0"
   }

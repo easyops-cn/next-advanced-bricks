@@ -35,9 +35,9 @@
     "postpublish": "mv package.json.bak package.json"
   },
   "dependencies": {
-    "@next-core/element": "^1.2.17",
-    "@next-core/i18n": "^1.0.77",
-    "@next-core/react-element": "^1.0.36",
+    "@next-core/element": "^1.2.18",
+    "@next-core/i18n": "^1.0.78",
+    "@next-core/react-element": "^1.0.37",
     "@next-core/theme": "^1.5.4",
     "comlink": "^4.4.2",
     "d3-shape": "^3.2.0",
@@ -46,7 +46,7 @@
     "resize-observer-polyfill": "^1.5.1"
   },
   "devDependencies": {
-    "@next-core/build-next-bricks": "^1.23.12",
+    "@next-core/build-next-bricks": "^1.23.13",
     "@next-core/test-next": "^1.1.9"
   }
 }
