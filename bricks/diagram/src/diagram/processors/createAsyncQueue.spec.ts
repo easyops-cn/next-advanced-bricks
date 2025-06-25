@@ -50,19 +50,19 @@ describe("createAsyncQueue", () => {
     queue(task3);
 
     // Assertions.
-    expect(fn).toBeCalledTimes(1);
+    expect(fn).toHaveBeenCalledTimes(1);
     expect(fn).toHaveBeenNthCalledWith(1, 1);
 
     deferred1.resolve();
     await (global as any).flushPromises();
-    expect(fn).toBeCalledTimes(2);
+    expect(fn).toHaveBeenCalledTimes(2);
     expect(fn).toHaveBeenNthCalledWith(2, 2);
 
     const error = new Error("oops");
     deferred2.reject(error);
     await (global as any).flushPromises();
-    expect(fn).toBeCalledTimes(3);
+    expect(fn).toHaveBeenCalledTimes(3);
     expect(fn).toHaveBeenNthCalledWith(3, 3);
-    expect(consoleError).toBeCalledWith(error);
+    expect(consoleError).toHaveBeenCalledWith(error);
   });
 });

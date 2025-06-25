@@ -48,7 +48,7 @@ describe("eo-upload-file", () => {
       );
     });
     await waitFor(() => {
-      expect(onChange).toBeCalledWith(
+      expect(onChange).toHaveBeenCalledWith(
         expect.objectContaining({
           detail: expect.arrayContaining([
             expect.objectContaining({ status: "done", file: files[0] }),
@@ -149,7 +149,7 @@ describe("eo-upload-file", () => {
       fireEvent.drop(uploadDragButton, { dataTransfer: { files } });
     });
     await waitFor(() => {
-      expect(onChange).toBeCalledWith(
+      expect(onChange).toHaveBeenCalledWith(
         expect.objectContaining({
           detail: expect.arrayContaining([
             expect.objectContaining({ status: "done", file: files[0] }),

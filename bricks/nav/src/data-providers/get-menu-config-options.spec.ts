@@ -122,8 +122,8 @@ describe("getMenuConfigOptions", () => {
         value: "menu-b",
       },
     ]);
-    expect(mockError).toBeCalledTimes(1);
-    expect(mockError).toBeCalledWith(
+    expect(mockError).toHaveBeenCalledTimes(1);
+    expect(mockError).toHaveBeenCalledWith(
       "Parse menu title expression \"<% I18N('MENU_B' %>\" failed:",
       expect.any(SyntaxError)
     );
@@ -147,8 +147,8 @@ describe("getMenuConfigOptions", () => {
         value: "menu-b",
       },
     ]);
-    expect(mockError).toBeCalledTimes(1);
-    expect(mockError).toBeCalledWith(
+    expect(mockError).toHaveBeenCalledTimes(1);
+    expect(mockError).toHaveBeenCalledWith(
       'Evaluate menu title expression "<% I18N[0][0] %>" failed:',
       expect.any(TypeError)
     );
@@ -172,8 +172,8 @@ describe("getMenuConfigOptions", () => {
         value: "menu-b",
       },
     ]);
-    expect(mockError).toBeCalledTimes(1);
-    expect(mockError).toBeCalledWith(
+    expect(mockError).toHaveBeenCalledTimes(1);
+    expect(mockError).toHaveBeenCalledWith(
       'The result of menu title expression "<% {} %>" is not a string:',
       {}
     );

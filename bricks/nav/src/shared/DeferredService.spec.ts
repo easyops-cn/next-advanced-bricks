@@ -29,9 +29,9 @@ describe("DeferredService", () => {
     deferred.schedulePrefetch();
     // Schedule twice
     deferred.schedulePrefetch();
-    expect(task).not.toBeCalled();
+    expect(task).not.toHaveBeenCalled();
     jest.advanceTimersByTime(1);
-    expect(task).toBeCalledTimes(1);
+    expect(task).toHaveBeenCalledTimes(1);
 
     const promise = deferred.fetch() as Promise<number>;
     let resolved = -1;
@@ -41,7 +41,7 @@ describe("DeferredService", () => {
 
     jest.advanceTimersByTime(10);
     await (global as any).flushPromises();
-    expect(task).toBeCalledTimes(1);
+    expect(task).toHaveBeenCalledTimes(1);
     expect(resolved).toBe(1);
   });
 
@@ -57,7 +57,7 @@ describe("DeferredService", () => {
     );
     const deferred = new DeferredService(task);
     deferred.schedulePrefetch();
-    expect(task).not.toBeCalled();
+    expect(task).not.toHaveBeenCalled();
 
     const promise = deferred.fetch() as Promise<number>;
     let resolved = -1;
@@ -67,7 +67,7 @@ describe("DeferredService", () => {
 
     jest.advanceTimersByTime(10);
     await (global as any).flushPromises();
-    expect(task).toBeCalledTimes(1);
+    expect(task).toHaveBeenCalledTimes(1);
     expect(resolved).toBe(1);
   });
 
@@ -83,9 +83,9 @@ describe("DeferredService", () => {
     );
     const deferred = new DeferredService(task);
     deferred.schedulePrefetch();
-    expect(task).not.toBeCalled();
+    expect(task).not.toHaveBeenCalled();
     jest.advanceTimersByTime(1);
-    expect(task).toBeCalledTimes(1);
+    expect(task).toHaveBeenCalledTimes(1);
 
     const promise = deferred.fetch(true) as Promise<number>;
     let resolved = -1;
@@ -95,7 +95,7 @@ describe("DeferredService", () => {
 
     jest.advanceTimersByTime(10);
     await (global as any).flushPromises();
-    expect(task).toBeCalledTimes(2);
+    expect(task).toHaveBeenCalledTimes(2);
     expect(resolved).toBe(2);
   });
 
@@ -120,15 +120,15 @@ describe("DeferredService", () => {
     );
     const deferred = new DeferredService(task);
     deferred.schedulePrefetch();
-    expect(task).not.toBeCalled();
+    expect(task).not.toHaveBeenCalled();
     jest.advanceTimersByTime(1);
-    expect(task).toBeCalledTimes(1);
+    expect(task).toHaveBeenCalledTimes(1);
 
     expect(() => deferred.fetch()).rejects.toBe(error);
 
     jest.advanceTimersByTime(10);
     await (global as any).flushPromises();
-    expect(task).toBeCalledTimes(1);
-    expect(consoleError).toBeCalledTimes(1);
+    expect(task).toHaveBeenCalledTimes(1);
+    expect(consoleError).toHaveBeenCalledTimes(1);
   });
 });

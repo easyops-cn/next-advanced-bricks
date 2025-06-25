@@ -65,14 +65,14 @@ describe("eo-input", () => {
     });
 
     expect(inputElement.value).toBe("你好");
-    expect(mockChangeEvent).toBeCalledWith(
+    expect(mockChangeEvent).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: "你好",
       })
     );
 
-    expect(mockFocusEvent).not.toBeCalled();
-    expect(mockBlurEvent).not.toBeCalled();
+    expect(mockFocusEvent).not.toHaveBeenCalled();
+    expect(mockBlurEvent).not.toHaveBeenCalled();
 
     // focusInput
     const mockedFocus = jest.spyOn(inputElement, "focus");
@@ -86,9 +86,9 @@ describe("eo-input", () => {
       element.focusInput();
     });
 
-    expect(mockFocusEvent).toBeCalled();
-    expect(mockedFocus).toBeCalledTimes(1);
-    expect(mockedSetSelectionRange).not.toBeCalled();
+    expect(mockFocusEvent).toHaveBeenCalled();
+    expect(mockedFocus).toHaveBeenCalledTimes(1);
+    expect(mockedSetSelectionRange).not.toHaveBeenCalled();
 
     const value = "a";
     const valueLength = value.length;
@@ -101,14 +101,14 @@ describe("eo-input", () => {
       element.focusInput();
     });
 
-    expect(mockedFocus).toBeCalledTimes(2);
-    expect(mockedSetSelectionRange).toBeCalledWith(valueLength, valueLength);
+    expect(mockedFocus).toHaveBeenCalledTimes(2);
+    expect(mockedSetSelectionRange).toHaveBeenCalledWith(valueLength, valueLength);
 
     act(() => {
       element.blurInput();
     });
 
-    expect(mockBlurEvent).toBeCalled();
+    expect(mockBlurEvent).toHaveBeenCalled();
 
     await act(async () => {
       await (element.value = "change");
@@ -122,7 +122,7 @@ describe("eo-input", () => {
       );
     });
     expect(inputElement.value).toBe("");
-    expect(mockChangeEvent).toBeCalledWith(
+    expect(mockChangeEvent).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: "",
       })

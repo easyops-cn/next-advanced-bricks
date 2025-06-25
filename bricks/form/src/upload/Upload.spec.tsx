@@ -58,7 +58,7 @@ describe("Upload", () => {
     });
 
     await waitFor(() => {
-      expect(onChange).toBeCalledWith(
+      expect(onChange).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({ status: "done", file: files[0] }),
           expect.objectContaining({ status: "done", file: files[2] }),
@@ -73,7 +73,7 @@ describe("Upload", () => {
     });
 
     await waitFor(() => {
-      expect(onChange).toBeCalledWith(
+      expect(onChange).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({ status: "done", file: files[2] }),
         ])
@@ -120,7 +120,7 @@ describe("Upload", () => {
     });
 
     await waitFor(() => {
-      expect(onChange).toBeCalledWith(
+      expect(onChange).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({ status: "done", file: files[0] }),
           expect.objectContaining({ status: "error", file: files[2] }),
@@ -168,7 +168,7 @@ describe("Upload", () => {
       });
     });
     await waitFor(() => {
-      expect(onChange).toBeCalledWith(
+      expect(onChange).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({ status: "done", file: files[0] }),
         ])
@@ -180,7 +180,7 @@ describe("Upload", () => {
       });
     });
     await waitFor(() => {
-      expect(onChange).toBeCalledWith(
+      expect(onChange).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({ status: "done", file: files[0] }),
           expect.objectContaining({ status: "done", file: files[1] }),
@@ -206,7 +206,7 @@ describe("Upload", () => {
       });
     });
     await waitFor(() => {
-      expect(onChange).toBeCalledWith(
+      expect(onChange).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({ status: "done", file: files[0] }),
         ])
@@ -218,7 +218,7 @@ describe("Upload", () => {
       });
     });
     await waitFor(() => {
-      expect(onChange).toBeCalledWith(
+      expect(onChange).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({ status: "done", file: files[1] }),
           expect.objectContaining({ status: "done", file: files[2] }),
@@ -250,7 +250,7 @@ describe("Upload", () => {
       });
     });
     await waitFor(() => {
-      expect(onChange).toBeCalledWith(
+      expect(onChange).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({ status: "done", file: files[0] }),
           expect.objectContaining({ status: "done", file: files[1] }),

@@ -36,7 +36,7 @@ describe("eo-pagination", () => {
     act(() => {
       fireEvent.click(element.shadowRoot.querySelectorAll(".jump")[0]);
     });
-    expect(onChange).lastCalledWith(
+    expect(onChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         type: "change",
         detail: {
@@ -51,7 +51,7 @@ describe("eo-pagination", () => {
     act(() => {
       fireEvent.click(element.shadowRoot.querySelectorAll(".jump")[1]);
     });
-    expect(onChange).lastCalledWith(
+    expect(onChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         type: "change",
         detail: {
@@ -66,7 +66,7 @@ describe("eo-pagination", () => {
     act(() => {
       fireEvent.click(element.shadowRoot.querySelectorAll(".arrow")[0]);
     });
-    expect(onChange).lastCalledWith(
+    expect(onChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         type: "change",
         detail: {
@@ -81,7 +81,7 @@ describe("eo-pagination", () => {
     act(() => {
       fireEvent.click(element.shadowRoot.querySelectorAll(".arrow")[1]);
     });
-    expect(onChange).lastCalledWith(
+    expect(onChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         type: "change",
         detail: {
@@ -96,7 +96,7 @@ describe("eo-pagination", () => {
     act(() => {
       fireEvent.click(last(element.shadowRoot.querySelectorAll(".number")));
     });
-    expect(onChange).lastCalledWith(
+    expect(onChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         type: "change",
         detail: {
@@ -116,7 +116,7 @@ describe("eo-pagination", () => {
         })
       );
     });
-    expect(onChange).lastCalledWith(
+    expect(onChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         type: "change",
         detail: {
@@ -169,13 +169,13 @@ describe("eo-pagination", () => {
 
     // Go to previous page but it's disabled
     fireEvent.click(element.shadowRoot.querySelectorAll(".arrow")[0]);
-    expect(onChange).toBeCalledTimes(0);
+    expect(onChange).toHaveBeenCalledTimes(0);
 
     // Go to next page
     act(() => {
       fireEvent.click(element.shadowRoot.querySelectorAll(".arrow")[1]);
     });
-    expect(onChange).lastCalledWith(
+    expect(onChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         type: "change",
         detail: {
@@ -196,13 +196,13 @@ describe("eo-pagination", () => {
 
     // Go to next page but it's disabled
     fireEvent.click(element.shadowRoot.querySelectorAll(".arrow")[1]);
-    expect(onChange).toBeCalledTimes(1);
+    expect(onChange).toHaveBeenCalledTimes(1);
 
     // Go to previous page
     act(() => {
       fireEvent.click(element.shadowRoot.querySelectorAll(".arrow")[0]);
     });
-    expect(onChange).lastCalledWith(
+    expect(onChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         type: "change",
         detail: {
@@ -224,7 +224,7 @@ describe("eo-pagination", () => {
         })
       );
     });
-    expect(onChange).lastCalledWith(
+    expect(onChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         type: "change",
         detail: {

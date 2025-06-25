@@ -81,12 +81,6 @@ jest.spyOn(runtime.__secret_internals, "setRealTimeDataInspectRoot");
 
 const mockCapture = capture as jest.Mock;
 
-delete (window as any).location;
-(window as any).location = {
-  origin: "http://localhost",
-  reload: jest.fn(),
-} as unknown as Location;
-
 const parentPostMessage = jest.fn();
 // Must delete it first in Jest.
 delete (window as any).parent;
@@ -122,6 +116,7 @@ customElements.define(
 
 describe("connect", () => {
   let connect: typeof _connect;
+  const realLocation = window.location;
 
   beforeEach(() => {
     jest.isolateModules(() => {
@@ -130,6 +125,19 @@ describe("connect", () => {
       connect = m.default;
     });
     document.body.replaceChildren();
+  });
+
+  beforeAll(() => {
+    delete (window as any).location;
+    (window as any).location = {
+      href: "http://localhost/",
+      origin: "http://localhost",
+      reload: jest.fn(),
+    } as unknown as Location;
+  });
+
+  afterAll(() => {
+    (window as any).location = realLocation;
   });
 
   it("should work", async () => {
@@ -152,9 +160,9 @@ describe("connect", () => {
       appId: "my-app",
       templateId: "my-tpl",
     });
-    expect(history.reload).toBeCalledTimes(1);
-    expect(setPreviewFromOrigin).toBeCalledWith("http://localhost:8081");
-    expect(parentPostMessage).toBeCalledTimes(4);
+    expect(history.reload).toHaveBeenCalledTimes(1);
+    expect(setPreviewFromOrigin).toHaveBeenCalledWith("http://localhost:8081");
+    expect(parentPostMessage).toHaveBeenCalledTimes(4);
     expect(parentPostMessage).toHaveBeenNthCalledWith(
       1,
       {
@@ -183,7 +191,7 @@ describe("connect", () => {
     );
 
     history.push("/b");
-    expect(parentPostMessage).toBeCalledTimes(6);
+    expect(parentPostMessage).toHaveBeenCalledTimes(6);
 
     expect(parentPostMessage).toHaveBeenNthCalledWith(
       4,
@@ -220,7 +228,7 @@ describe("connect", () => {
 
     // Ignore re-start.
     connect("http://localhost:8081", { appId: "test" });
-    expect(parentPostMessage).toBeCalledTimes(6);
+    expect(parentPostMessage).toHaveBeenCalledTimes(6);
 
     const listener = addEventListener.mock.calls[0][1] as EventListener;
     listener({
@@ -261,8 +269,8 @@ describe("connect", () => {
         type: "toggle-inspecting",
       },
     } as any);
-    expect(startInspecting).not.toBeCalled();
-    expect(stopInspecting).not.toBeCalled();
+    expect(startInspecting).not.toHaveBeenCalled();
+    expect(stopInspecting).not.toHaveBeenCalled();
 
     // Hover on brick.
     listener({
@@ -274,7 +282,7 @@ describe("connect", () => {
         iid: "i-01",
       },
     } as any);
-    expect(parentPostMessage).toBeCalledTimes(7);
+    expect(parentPostMessage).toHaveBeenCalledTimes(7);
     expect(parentPostMessage).toHaveBeenNthCalledWith(
       7,
       {
@@ -297,7 +305,7 @@ describe("connect", () => {
         iid: "i-01",
       },
     } as any);
-    expect(parentPostMessage).toBeCalledTimes(8);
+    expect(parentPostMessage).toHaveBeenCalledTimes(8);
     expect(parentPostMessage).toHaveBeenNthCalledWith(
       8,
       {
@@ -320,7 +328,7 @@ describe("connect", () => {
         iid: null,
       },
     } as any);
-    expect(parentPostMessage).toBeCalledTimes(9);
+    expect(parentPostMessage).toHaveBeenCalledTimes(9);
     expect(parentPostMessage).toHaveBeenNthCalledWith(
       9,
       {
@@ -341,7 +349,7 @@ describe("connect", () => {
         enabled: true,
       },
     } as any);
-    expect(startInspecting).toBeCalledTimes(1);
+    expect(startInspecting).toHaveBeenCalledTimes(1);
 
     listener({
       origin: "http://localhost:8081",
@@ -351,7 +359,7 @@ describe("connect", () => {
         enabled: false,
       },
     } as any);
-    expect(stopInspecting).toBeCalledTimes(1);
+    expect(stopInspecting).toHaveBeenCalledTimes(1);
 
     listener({
       origin: "http://localhost:8081",
@@ -360,7 +368,7 @@ describe("connect", () => {
         type: "reload",
       },
     } as any);
-    expect(window.location.reload).toBeCalledTimes(1);
+    expect(window.location.reload).toHaveBeenCalledTimes(1);
 
     listener({
       origin: "http://localhost:8081",
@@ -370,13 +378,13 @@ describe("connect", () => {
         storyboardPatch: { routes: [] },
       },
     } as any);
-    expect(runtime.__secret_internals.updateStoryboard).toBeCalledWith(
+    expect(runtime.__secret_internals.updateStoryboard).toHaveBeenCalledWith(
       "my-app",
       {
         routes: [],
       }
     );
-    expect(history.reload).toBeCalledTimes(2);
+    expect(history.reload).toHaveBeenCalledTimes(2);
 
     listener({
       origin: "http://localhost:8081",
@@ -391,10 +399,10 @@ describe("connect", () => {
     } as any);
     expect(
       runtime.__secret_internals.updateTemplatePreviewSettings
-    ).toBeCalledWith("my-app", "my-tpl", {
+    ).toHaveBeenCalledWith("my-app", "my-tpl", {
       properties: { dataTest: "good" },
     });
-    expect(history.reload).toBeCalledTimes(3);
+    expect(history.reload).toHaveBeenCalledTimes(3);
 
     mockCapture.mockResolvedValueOnce("data:image/png;base64");
     listener({
@@ -407,9 +415,9 @@ describe("connect", () => {
       },
     } as any);
     expect(capture).toHaveBeenNthCalledWith(1, 200, 150);
-    expect(parentPostMessage).toBeCalledTimes(9);
+    expect(parentPostMessage).toHaveBeenCalledTimes(9);
     await (global as any).flushPromises();
-    expect(parentPostMessage).toBeCalledTimes(10);
+    expect(parentPostMessage).toHaveBeenCalledTimes(10);
     expect(parentPostMessage).toHaveBeenNthCalledWith(
       10,
       {
@@ -431,9 +439,9 @@ describe("connect", () => {
       },
     } as any);
     expect(capture).toHaveBeenNthCalledWith(2, 400, 300);
-    expect(parentPostMessage).toBeCalledTimes(10);
+    expect(parentPostMessage).toHaveBeenCalledTimes(10);
     await (global as any).flushPromises();
-    expect(parentPostMessage).toBeCalledTimes(11);
+    expect(parentPostMessage).toHaveBeenCalledTimes(11);
     expect(parentPostMessage).toHaveBeenNthCalledWith(
       11,
       {
@@ -457,7 +465,7 @@ describe("connect", () => {
         ],
       },
     } as any);
-    expect(parentPostMessage).toBeCalledTimes(12);
+    expect(parentPostMessage).toHaveBeenCalledTimes(12);
     expect(parentPostMessage).toHaveBeenNthCalledWith(
       12,
       {
@@ -480,7 +488,7 @@ describe("connect", () => {
       },
     } as any);
 
-    expect(runtime.__secret_internals.updateStoryboardByRoute).toBeCalledWith(
+    expect(runtime.__secret_internals.updateStoryboardByRoute).toHaveBeenCalledWith(
       "my-app",
       {
         routes: [],
@@ -506,7 +514,7 @@ describe("connect", () => {
 
     expect(
       runtime.__secret_internals.updateStoryboardByTemplate
-    ).toBeCalledWith(
+    ).toHaveBeenCalledWith(
       "my-app",
       {
         routes: [],
@@ -530,7 +538,7 @@ describe("connect", () => {
       },
     } as any);
 
-    expect(runtime.__secret_internals.updateStoryboardBySnippet).toBeCalledWith(
+    expect(runtime.__secret_internals.updateStoryboardBySnippet).toHaveBeenCalledWith(
       "my-app",
       {
         snippetId: "test-snippet",
@@ -550,7 +558,7 @@ describe("connect", () => {
       },
     } as any);
 
-    // expect(runtime.__secret_internals.updateFormPreviewSettings).toBeCalledWith(
+    // expect(runtime.__secret_internals.updateFormPreviewSettings).toHaveBeenCalledWith(
     //   "my-app",
     //   undefined,
     //   { formSchema: {}, fieldList: [] }
@@ -564,7 +572,7 @@ describe("connect", () => {
     //   },
     // } as any);
 
-    // expect(history.goBack).toBeCalledTimes(1);
+    // expect(history.goBack).toHaveBeenCalledTimes(1);
 
     listener({
       origin: "http://localhost:8081",
@@ -574,7 +582,7 @@ describe("connect", () => {
       },
     } as any);
 
-    expect(history.goForward).toBeCalledTimes(1);
+    expect(history.goForward).toHaveBeenCalledTimes(1);
 
     listener({
       origin: "http://localhost:8081",
@@ -853,7 +861,7 @@ describe("connect", () => {
       appId: "my-app",
     });
 
-    expect(parentPostMessage).toBeCalledTimes(4);
+    expect(parentPostMessage).toHaveBeenCalledTimes(4);
 
     const listener = addEventListener.mock.calls[0][1] as EventListener;
 
@@ -867,7 +875,7 @@ describe("connect", () => {
         iid: "i-02",
       },
     } as any);
-    expect(parentPostMessage).toBeCalledTimes(5);
+    expect(parentPostMessage).toHaveBeenCalledTimes(5);
     expect(parentPostMessage).toHaveBeenNthCalledWith(
       5,
       {
@@ -896,7 +904,7 @@ describe("connect", () => {
       templateId: "my-tpl",
     });
 
-    expect(parentPostMessage).toBeCalledTimes(4);
+    expect(parentPostMessage).toHaveBeenCalledTimes(4);
 
     const listener = addEventListener.mock.calls[0][1] as EventListener;
 
@@ -910,7 +918,7 @@ describe("connect", () => {
         iid: "i-01",
       },
     } as any);
-    expect(parentPostMessage).toBeCalledTimes(5);
+    expect(parentPostMessage).toHaveBeenCalledTimes(5);
     expect(parentPostMessage).toHaveBeenNthCalledWith(
       5,
       {
@@ -928,7 +936,7 @@ describe("connect", () => {
     pageView.shadowRoot
       ?.querySelector(".content")
       ?.dispatchEvent(new Event("scroll"));
-    expect(parentPostMessage).toBeCalledTimes(6);
+    expect(parentPostMessage).toHaveBeenCalledTimes(6);
     expect(parentPostMessage).toHaveBeenNthCalledWith(
       6,
       {

@@ -68,7 +68,7 @@ describe("eo-info-card-item", () => {
       element.shadowRoot?.querySelector(".card-wrapper") as HTMLElement
     );
 
-    expect(mockHistoryPush).toBeCalledWith("/test");
+    expect(mockHistoryPush).toHaveBeenCalledWith("/test");
 
     expect(element.hasIcon).toBeTruthy();
 
@@ -104,7 +104,7 @@ describe("eo-info-card-item", () => {
 
     fireEvent(action as HTMLElement, mockEvent);
 
-    expect(stopImmediatePropagation).toBeCalled();
+    expect(stopImmediatePropagation).toHaveBeenCalled();
 
     act(() => {
       element.removeChild(div);

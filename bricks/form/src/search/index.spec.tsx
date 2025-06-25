@@ -35,12 +35,12 @@ describe("eo-search", () => {
     act(() => {
       fireEvent.blur(input);
     });
-    expect(onBlur).toBeCalled();
+    expect(onBlur).toHaveBeenCalled();
 
     act(() => {
       fireEvent(input, new CustomEvent("change", { detail: "query" }));
     });
-    expect(onChange).toBeCalledWith(
+    expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: "query",
       })
@@ -49,7 +49,7 @@ describe("eo-search", () => {
     act(() => {
       fireEvent.keyDown(input, { key: "Enter" });
     });
-    expect(onSearch).toBeCalledWith(
+    expect(onSearch).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: "query",
       })
@@ -60,7 +60,7 @@ describe("eo-search", () => {
         element.shadowRoot?.querySelector(".search-button") as HTMLElement
       );
     });
-    expect(onSearch).toBeCalledWith(
+    expect(onSearch).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: "query",
       })
@@ -92,10 +92,10 @@ describe("eo-search", () => {
         new CustomEvent("change", { detail: "   query   " })
       );
     });
-    expect(onChange).not.toBeCalled();
+    expect(onChange).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(1000);
-    expect(onChange).toBeCalledWith(
+    expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: "query",
       })
@@ -107,7 +107,7 @@ describe("eo-search", () => {
         { key: "Enter" }
       );
     });
-    expect(onSearch).toBeCalledWith(
+    expect(onSearch).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: "query",
       })

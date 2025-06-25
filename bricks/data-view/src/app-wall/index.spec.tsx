@@ -36,7 +36,7 @@ const table = Array.from({
       type: j % 2 ? "host" : "k8s",
       data: Array.from({
         length: 100,
-      }).map((p) => ({
+      }).map((_p) => ({
         type: "physical-machine",
         nodeTitle: "255.255.255",
       })),
@@ -77,7 +77,7 @@ describe("data-view.app-wall", () => {
     const rightBtnOnClick = jest.fn();
     const leftBtnOnClick = jest.fn();
     const index = 0;
-    const { container, asFragment } = render(
+    const { container, asFragment, unmount } = render(
       <AppWallElement
         dataSource={table}
         relations={[
@@ -160,7 +160,12 @@ describe("data-view.app-wall", () => {
       jest.advanceTimersByTime(20000);
       fireEvent.click(container.querySelector(".closeBtn"));
     });
+
+    act(() => {
+      unmount();
+    });
   });
+
   test("disabledDefaultClickEvent is  true", async () => {
     const element = document.createElement("data-view.app-wall") as AppWall;
     const containerEle = document.createElement("div");

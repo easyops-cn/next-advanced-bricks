@@ -28,7 +28,7 @@ describe("visual-builder.workbench-sidebar", () => {
     });
     expect(element.shadowRoot).toBeTruthy();
 
-    expect(span1.style.flex).toEqual("1");
+    expect(span1.style.flex).toEqual("1 1 0%");
     expect(span2.style.flex).toEqual("0 1 auto");
 
     act(() => {

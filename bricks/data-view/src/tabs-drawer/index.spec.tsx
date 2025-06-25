@@ -76,8 +76,8 @@ describe("data-view.tabs-drawer", () => {
     expect(asFragment()).toBeTruthy();
     const closeBtn = container.querySelector(".closeIconBtn");
     fireEvent.click(closeBtn);
-    expect(openMockFn).toBeCalledTimes(1);
-    expect(changeMockFn).toBeCalledTimes(0);
+    expect(openMockFn).toHaveBeenCalledTimes(1);
+    expect(changeMockFn).toHaveBeenCalledTimes(0);
     expect(
       container.querySelector(".drawerWrapper").classList.contains("open")
     );
@@ -87,10 +87,10 @@ describe("data-view.tabs-drawer", () => {
     const noActiveElement = menuItems.lastElementChild;
     fireEvent.click(noActiveElement);
     expect(activeElement.classList.contains("active")).toBeFalsy();
-    expect(changeMockFn).toBeCalledTimes(1);
+    expect(changeMockFn).toHaveBeenCalledTimes(1);
     rerender(<TabsDrawerComponent tabList={tabList} visible={true} />);
     fireEvent.click(closeBtn);
-    expect(changeMockFn).toBeCalledTimes(1);
+    expect(changeMockFn).toHaveBeenCalledTimes(1);
     expect(
       container.querySelector(".drawerWrapper").classList.contains("close")
     );

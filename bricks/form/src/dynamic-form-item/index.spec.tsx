@@ -67,7 +67,7 @@ describe("eo-dynamic-form-item", () => {
     act(() => {
       (element.shadowRoot?.querySelector(".add-btn") as HTMLElement).click();
     });
-    expect(mockRowAddEvent).toBeCalledTimes(1);
+    expect(mockRowAddEvent).toHaveBeenCalledTimes(1);
     expect(
       element.shadowRoot?.querySelectorAll(".dynamic-form-item").length
     ).toBe(3);
@@ -78,7 +78,7 @@ describe("eo-dynamic-form-item", () => {
       ).click();
     });
 
-    expect(mockRowAddEvent).toBeCalledTimes(1);
+    expect(mockRowAddEvent).toHaveBeenCalledTimes(1);
     expect(
       element.shadowRoot?.querySelectorAll(".dynamic-form-item").length
     ).toBe(2);
@@ -89,7 +89,7 @@ describe("eo-dynamic-form-item", () => {
       },
       {},
     ]);
-    expect(mockValueChangeEvent).toBeCalledTimes(1);
+    expect(mockValueChangeEvent).toHaveBeenCalledTimes(1);
 
     expect(
       element.shadowRoot?.querySelectorAll(".dynamic-form-item").length

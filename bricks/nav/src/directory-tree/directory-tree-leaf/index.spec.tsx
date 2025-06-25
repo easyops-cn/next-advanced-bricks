@@ -38,7 +38,7 @@ describe("eo-directory-tree-leaf", () => {
         element.shadowRoot?.querySelector(".tree-item") as HTMLDivElement
       );
     });
-    expect(onSelect).toBeCalled();
+    expect(onSelect).toHaveBeenCalled();
 
     act(() => {
       document.body.removeChild(element);

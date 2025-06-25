@@ -57,7 +57,7 @@ describe("PlatformCategory", () => {
     ).toBe(true);
 
     fireEvent.click(container.querySelector("eo-link") as HTMLElement);
-    expect(onClick).toBeCalled();
+    expect(onClick).toHaveBeenCalled();
   });
 
   test("PlatformItem", async () => {

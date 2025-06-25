@@ -34,14 +34,14 @@ describe("utils", () => {
     await expect(getImage("test-url")).resolves.toBeInstanceOf(Image);
     await expect(
       getImage("test-url" + LOAD_FAILURE_FLAG)
-    ).rejects.toThrowError();
+    ).rejects.toThrow();
 
     await expect(
       getImage(new File([""], "success.png", { type: "image/png" }), true)
     ).resolves.toBeInstanceOf(Image);
     await expect(
       getImage(new File([""], "success.txt", { type: "text/plain" }))
-    ).rejects.toThrowError();
+    ).rejects.toThrow();
   });
 
   test("imageValidator", async () => {
@@ -65,6 +65,6 @@ describe("utils", () => {
         width: 10,
         height: 20,
       })
-    ).rejects.toThrowError();
+    ).rejects.toThrow();
   });
 });

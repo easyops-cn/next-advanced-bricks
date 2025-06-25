@@ -163,7 +163,7 @@ describe("eo-workbench-layout", () => {
       clickSaveBtn();
     });
 
-    expect(mockSaveEvent).nthCalledWith(
+    expect(mockSaveEvent).toHaveBeenNthCalledWith(
       1,
       expect.objectContaining({
         detail: newLayout1,
@@ -231,7 +231,7 @@ describe("eo-workbench-layout", () => {
     expect(
       element.shadowRoot?.querySelector(".layout")?.childNodes.length
     ).toBe(3);
-    expect(mockChangeEvent).toBeCalledWith(
+    expect(mockChangeEvent).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: newLayout2,
       })
@@ -241,7 +241,7 @@ describe("eo-workbench-layout", () => {
       clickSaveBtn();
     });
 
-    expect(mockSaveEvent).nthCalledWith(
+    expect(mockSaveEvent).toHaveBeenNthCalledWith(
       2,
       expect.objectContaining({
         detail: newLayout2,
@@ -279,7 +279,7 @@ describe("eo-workbench-layout", () => {
     expect(
       element.shadowRoot?.querySelector(".layout")?.childNodes.length
     ).toBe(2);
-    expect(mockChangeEvent).toBeCalledWith(
+    expect(mockChangeEvent).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: newLayout3,
       })
@@ -338,7 +338,7 @@ describe("eo-workbench-layout", () => {
         element.shadowRoot?.querySelector("eo-checkbox") as HTMLElement
       ).getAttribute("value")
     ).toBe("");
-    expect(mockChangeEvent).toBeCalledWith(
+    expect(mockChangeEvent).toHaveBeenCalledWith(
       expect.objectContaining({ detail: [] })
     );
 
@@ -349,7 +349,7 @@ describe("eo-workbench-layout", () => {
       ).click();
     });
 
-    expect(mockCancelEvent).toBeCalledTimes(1);
+    expect(mockCancelEvent).toHaveBeenCalledTimes(1);
 
     // action.click
     const actionEvent = "saveAsTemplate";
@@ -362,7 +362,7 @@ describe("eo-workbench-layout", () => {
         new CustomEvent("action.click", { detail: { event: actionEvent } })
       );
     });
-    expect(mockActionClickEventHandler).toBeCalledWith(
+    expect(mockActionClickEventHandler).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: expect.objectContaining({
           action: expect.objectContaining({ event: actionEvent }),
@@ -387,7 +387,7 @@ describe("eo-workbench-layout", () => {
 
     triggerLayoutChange(newLayout4);
 
-    expect(mockChangeEvent).not.toBeCalledWith(
+    expect(mockChangeEvent).not.toHaveBeenCalledWith(
       expect.objectContaining({
         detail: newLayout4,
       })
@@ -400,7 +400,7 @@ describe("eo-workbench-layout", () => {
     });
     triggerLayoutChange(newLayout3);
 
-    expect(mockChangeEvent).not.toBeCalledWith(
+    expect(mockChangeEvent).not.toHaveBeenCalledWith(
       expect.objectContaining({
         detail: newLayout3,
       })

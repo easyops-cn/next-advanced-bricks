@@ -32,20 +32,20 @@ describe("DesktopCustom", () => {
       fireEvent(container.querySelector("eo-link") as HTMLElement, mockEvent);
     });
 
-    expect(stopPropagation).toBeCalled();
+    expect(stopPropagation).toHaveBeenCalled();
     expect(mockEvent.defaultPrevented).toBeFalsy();
-    expect(handleClick).toBeCalled();
+    expect(handleClick).toHaveBeenCalled();
 
     expect(container.querySelector(".addIcon")).toBeTruthy();
     act(() => {
       fireEvent.click(container.querySelector(".addIcon") as HTMLElement);
     });
-    expect(handleAddClick).toBeCalledTimes(1);
+    expect(handleAddClick).toHaveBeenCalledTimes(1);
 
     act(() => {
       fireEvent(container.querySelector("eo-link") as HTMLElement, mockEvent);
     });
 
-    expect(stopPropagation).toBeCalledTimes(2);
+    expect(stopPropagation).toHaveBeenCalledTimes(2);
   });
 });

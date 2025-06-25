@@ -66,14 +66,14 @@ describe("eo-select", () => {
     ).toHaveAttribute("active");
     expect(element.shadowRoot?.querySelectorAll(".select-item").length).toBe(2);
 
-    expect(mockChangeEvent).toBeCalledTimes(0);
+    expect(mockChangeEvent).toHaveBeenCalledTimes(0);
 
     act(() => {
       (
         element.shadowRoot?.querySelector(".select-item") as HTMLElement
       ).click();
     });
-    expect(mockChangeEvent).toBeCalledWith(
+    expect(mockChangeEvent).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: {
           options: [{ label: "a", value: "a" }],
@@ -95,7 +95,7 @@ describe("eo-select", () => {
       ).classList.contains("select-option-selected")
     ).toBeTruthy();
 
-    expect(mockOptionsChangeEvent).not.toBeCalled();
+    expect(mockOptionsChangeEvent).not.toHaveBeenCalled();
 
     await act(async () => {
       await (element.options = [
@@ -114,7 +114,7 @@ describe("eo-select", () => {
       ]);
     });
 
-    expect(mockOptionsChangeEvent).toBeCalled();
+    expect(mockOptionsChangeEvent).toHaveBeenCalled();
 
     await act(async () => {
       await (element.value = "c");
@@ -146,7 +146,7 @@ describe("eo-select", () => {
       );
     });
 
-    expect(mockSearchEvent).toBeCalledWith(
+    expect(mockSearchEvent).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: {
           value: "test",
@@ -158,7 +158,7 @@ describe("eo-select", () => {
       await (element.value = null);
     });
 
-    expect(consoleError).toBeCalledTimes(0);
+    expect(consoleError).toHaveBeenCalledTimes(0);
 
     expect(
       element.shadowRoot?.querySelectorAll(
@@ -405,6 +405,10 @@ describe("eo-select", () => {
         "select-dropdown-popup"
       ) as SlPopupElement
     ).toHaveAttribute("strategy", "fixed");
+
+    act(() => {
+      document.body.removeChild(element);
+    });
   });
 
   test("caption", () => {

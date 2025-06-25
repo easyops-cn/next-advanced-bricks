@@ -51,7 +51,7 @@ describe("eo-color-picker", () => {
         ) as HTMLElement
       );
     });
-    expect(onChange).toBeCalledTimes(3);
+    expect(onChange).toHaveBeenCalledTimes(3);
     expect(element.shadowRoot?.childNodes.length).toBeGreaterThan(1);
     act(() => {
       document.body.removeChild(element);

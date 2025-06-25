@@ -118,14 +118,14 @@ describe("MenuGroup", () => {
     );
 
     // 最近访问
-    expect(pushRecentVisit).toBeCalledTimes(0);
+    expect(pushRecentVisit).toHaveBeenCalledTimes(0);
     fireEvent.click(
       getByText("Bar").parentElement?.parentElement?.querySelector(
         "eo-link"
       ) as HTMLElement
     );
-    expect(pushRecentVisit).toBeCalledTimes(1);
-    expect(pushRecentVisit).toBeCalledWith({
+    expect(pushRecentVisit).toHaveBeenCalledTimes(1);
+    expect(pushRecentVisit).toHaveBeenCalledWith({
       type: "custom",
       id: "foo",
       name: "Bar",
@@ -227,13 +227,13 @@ describe("SidebarMenuItem", () => {
     fireEvent.click(
       container.querySelector(".menu-item-remove") as HTMLElement
     );
-    expect(toggleStar).toBeCalledWith(item);
+    expect(toggleStar).toHaveBeenCalledWith(item);
 
     fireEvent.click(container.querySelector("eo-link") as HTMLElement);
     if (type === "link") {
-      expect(pushRecentVisit).not.toBeCalled();
+      expect(pushRecentVisit).not.toHaveBeenCalled();
     } else {
-      expect(pushRecentVisit).toBeCalledWith(item);
+      expect(pushRecentVisit).toHaveBeenCalledWith(item);
     }
   });
 });

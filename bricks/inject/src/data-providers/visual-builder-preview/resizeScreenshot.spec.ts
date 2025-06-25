@@ -24,7 +24,7 @@ describe("resizeScreenshot", () => {
       height: 200,
     } as HTMLCanvasElement;
     const screenshot = resizeScreenshot(sourceCanvas, targetCanvas, 200, 150);
-    expect(drawImage).toBeCalledWith(
+    expect(drawImage).toHaveBeenCalledWith(
       sourceCanvas,
       0,
       0,
@@ -44,7 +44,7 @@ describe("resizeScreenshot", () => {
       height: 400,
     } as HTMLCanvasElement;
     const screenshot = resizeScreenshot(sourceCanvas, targetCanvas, 200, 150);
-    expect(drawImage).toBeCalledWith(
+    expect(drawImage).toHaveBeenCalledWith(
       sourceCanvas,
       0,
       0,

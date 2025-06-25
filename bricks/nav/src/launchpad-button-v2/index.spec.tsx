@@ -30,7 +30,7 @@ describe("eo-launchpad-button-v2", () => {
     });
     expect(element.shadowRoot?.childNodes.length).toBeGreaterThan(1);
 
-    expect(lockBodyScroll).toBeCalledWith(element, false);
+    expect(lockBodyScroll).toHaveBeenCalledWith(element, false);
 
     const button = element.shadowRoot?.querySelector("a") as HTMLElement;
     expect(button.classList.contains("active")).toBe(false);
@@ -49,6 +49,6 @@ describe("eo-launchpad-button-v2", () => {
     });
     expect(element.shadowRoot?.childNodes.length).toBe(0);
     expect(lockBodyScroll).toHaveBeenNthCalledWith(4, element, false);
-    expect(lockBodyScroll).toBeCalledTimes(4);
+    expect(lockBodyScroll).toHaveBeenCalledTimes(4);
   });
 });

@@ -49,7 +49,7 @@ describe("visual-builder.generate-snippets-context-menu", () => {
     act(() => {
       document.body.appendChild(element);
     });
-    expect(lockBodyScroll).toBeCalledTimes(1);
+    expect(lockBodyScroll).toHaveBeenCalledTimes(1);
     expect(element.shadowRoot?.childNodes.length).toBeGreaterThan(1);
 
     element.open({ position: [10, 20] });
@@ -153,7 +153,7 @@ describe("visual-builder.generate-snippets-context-menu", () => {
     act(() => {
       fireEvent.dragStart(element.shadowRoot!.querySelector("eo-menu-item"));
     });
-    expect(onItemDragStart).toBeCalledWith({
+    expect(onItemDragStart).toHaveBeenCalledWith({
       text: "item",
       dragConf: { format: "text/plain", data: {} },
     });
@@ -161,7 +161,7 @@ describe("visual-builder.generate-snippets-context-menu", () => {
     act(() => {
       fireEvent.dragEnd(element.shadowRoot!.querySelector("eo-menu-item"));
     });
-    expect(onItemDragEnd).toBeCalledWith({
+    expect(onItemDragEnd).toHaveBeenCalledWith({
       text: "item",
       dragConf: { format: "text/plain", data: {} },
     });

@@ -14,6 +14,8 @@ jest.mock("react-i18next", () => {
   };
 });
 
+(window as any).getComputedStyle = jest.fn(() => ({}));
+
 const columns = [
   {
     dataIndex: "name",
@@ -447,7 +449,7 @@ describe("pagination", () => {
       )[1] as Element;
       fireEvent.click(pageItem);
     });
-    expect(onPageChange).lastCalledWith(
+    expect(onPageChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           page: 2,
@@ -463,7 +465,7 @@ describe("pagination", () => {
       )[2] as Element;
       fireEvent.click(pageSizeOptionItem);
     });
-    expect(onPageChange).lastCalledWith(
+    expect(onPageChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           page: 1,
@@ -471,7 +473,7 @@ describe("pagination", () => {
         },
       })
     );
-    expect(onPageSizeChange).lastCalledWith(
+    expect(onPageSizeChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           page: 1,
@@ -644,7 +646,7 @@ describe("front search", () => {
       fireEvent.click(ageTh);
     });
     expect(ageTh.getAttribute("aria-sort")).toBe("descending");
-    expect(onSort).lastCalledWith(
+    expect(onSort).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           columnKey: "age",
@@ -661,8 +663,8 @@ describe("front search", () => {
     await act(async () => {
       fireEvent.click(ageTh);
     });
-    expect(ageTh.getAttribute("aria-sort")).toBeNull;
-    expect(onSort).lastCalledWith(
+    expect(ageTh.getAttribute("aria-sort")).toBeNull();
+    expect(onSort).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: null,
       })
@@ -782,7 +784,7 @@ describe("sortable", () => {
       fireEvent.click(ageTh);
     });
     expect(ageTh.getAttribute("aria-sort")).toBe("descending");
-    expect(onSort).lastCalledWith(
+    expect(onSort).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           columnKey: "age",
@@ -799,7 +801,7 @@ describe("sortable", () => {
     });
     expect(ageTh.getAttribute("aria-sort")).toBeNull();
     expect(addressTh.getAttribute("aria-sort")).toBe("ascending");
-    expect(onSort).lastCalledWith(
+    expect(onSort).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           columnKey: "address",
@@ -874,7 +876,7 @@ describe("sortable", () => {
     });
     expect(ageTh.getAttribute("aria-sort")).toBe("descending");
     expect(addressTh.getAttribute("aria-sort")).toBe("descending");
-    expect(onSort).lastCalledWith(
+    expect(onSort).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: [
           {
@@ -892,7 +894,7 @@ describe("sortable", () => {
     await act(async () => {
       fireEvent.click(ageTh);
     });
-    expect(onSort).lastCalledWith(
+    expect(onSort).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           columnKey: "address",
@@ -904,7 +906,7 @@ describe("sortable", () => {
     await act(async () => {
       fireEvent.click(addressTh);
     });
-    expect(onSort).lastCalledWith(
+    expect(onSort).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: null,
       })
@@ -953,7 +955,7 @@ describe("rowSelection", () => {
         )[1] as Element
       );
     });
-    expect(onRowSelect).lastCalledWith(
+    expect(onRowSelect).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           keys: [dataSource.list[0].key],
@@ -974,7 +976,7 @@ describe("rowSelection", () => {
         )[0] as Element
       );
     });
-    expect(onRowSelect).lastCalledWith(
+    expect(onRowSelect).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           keys: dataSource.list.slice(0, 5).map((v) => v.key),
@@ -1000,7 +1002,7 @@ describe("rowSelection", () => {
         )[0] as Element
       );
     });
-    expect(onRowSelect).lastCalledWith(
+    expect(onRowSelect).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           keys: dataSource.list.slice(0, 10).map((v) => v.key),
@@ -1018,7 +1020,7 @@ describe("rowSelection", () => {
         element.shadowRoot?.querySelector(".select-info eo-link") as Element
       );
     });
-    expect(onRowSelect).lastCalledWith(
+    expect(onRowSelect).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           keys: [],
@@ -1066,7 +1068,7 @@ describe("rowSelection", () => {
         )[1] as Element
       );
     });
-    expect(onRowSelect).lastCalledWith(
+    expect(onRowSelect).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           keys: [treeDataSource.list[0].key],
@@ -1085,7 +1087,7 @@ describe("rowSelection", () => {
         )[2] as Element
       );
     });
-    expect(onRowSelect).lastCalledWith(
+    expect(onRowSelect).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           keys: [
@@ -1108,7 +1110,7 @@ describe("rowSelection", () => {
         )[0] as Element
       );
     });
-    expect(onRowSelect).lastCalledWith(
+    expect(onRowSelect).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           keys: getAllKeys({
@@ -1160,7 +1162,7 @@ describe("rowSelection", () => {
         )[1] as Element
       );
     });
-    expect(onRowSelect).lastCalledWith(
+    expect(onRowSelect).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           keys: [
@@ -1182,7 +1184,7 @@ describe("rowSelection", () => {
         )[2] as Element
       );
     });
-    expect(onRowSelect).lastCalledWith(
+    expect(onRowSelect).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           // Not including halfChecked
@@ -1208,7 +1210,7 @@ describe("rowSelection", () => {
       );
     });
     // keys order will changed
-    expect(onRowSelect).lastCalledWith(
+    expect(onRowSelect).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           keys: expect.any(Array),
@@ -1291,8 +1293,8 @@ describe("expandable", () => {
         )[1] as Element
       );
     });
-    expect(onRowExpand).not.toBeCalled();
-    expect(onExpandedRowsChange).not.toBeCalled();
+    expect(onRowExpand).not.toHaveBeenCalled();
+    expect(onExpandedRowsChange).not.toHaveBeenCalled();
 
     await act(async () => {
       fireEvent.click(
@@ -1306,7 +1308,7 @@ describe("expandable", () => {
         ".ant-table-expanded-row .expanded-row-brick"
       )
     ).toBeTruthy();
-    expect(onRowExpand).lastCalledWith(
+    expect(onRowExpand).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           expanded: true,
@@ -1314,7 +1316,7 @@ describe("expandable", () => {
         },
       })
     );
-    expect(onExpandedRowsChange).lastCalledWith(
+    expect(onExpandedRowsChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: [dataSource.list[0].key],
       })
@@ -1327,7 +1329,7 @@ describe("expandable", () => {
         )[0] as Element
       );
     });
-    expect(onRowExpand).lastCalledWith(
+    expect(onRowExpand).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           expanded: false,
@@ -1335,7 +1337,7 @@ describe("expandable", () => {
         },
       })
     );
-    expect(onExpandedRowsChange).lastCalledWith(
+    expect(onExpandedRowsChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: [],
       })
@@ -1379,7 +1381,7 @@ describe("expandable", () => {
     expect(
       element.shadowRoot?.querySelectorAll("tbody .ant-table-row").length
     ).toBe(treeDataSource.list.length + treeDataSource.list[1].student.length);
-    expect(onRowExpand).lastCalledWith(
+    expect(onRowExpand).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           expanded: true,
@@ -1387,7 +1389,7 @@ describe("expandable", () => {
         },
       })
     );
-    expect(onExpandedRowsChange).lastCalledWith(
+    expect(onExpandedRowsChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: [treeDataSource.list[1].key],
       })
@@ -1407,7 +1409,7 @@ describe("expandable", () => {
         treeDataSource.list[1].student.length +
         (treeDataSource.list[1].student[2].student?.length as any)
     );
-    expect(onRowExpand).lastCalledWith(
+    expect(onRowExpand).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           expanded: true,
@@ -1415,7 +1417,7 @@ describe("expandable", () => {
         },
       })
     );
-    expect(onExpandedRowsChange).lastCalledWith(
+    expect(onExpandedRowsChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: [
           treeDataSource.list[1].key,
@@ -1465,7 +1467,7 @@ describe("expandable", () => {
     expect(
       element.shadowRoot?.querySelectorAll("tbody .ant-table-row").length
     ).toBe(treeDataSource.list.length + treeDataSource.list[1].student.length);
-    expect(onRowExpand).lastCalledWith(
+    expect(onRowExpand).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: {
           expanded: false,
@@ -1473,7 +1475,7 @@ describe("expandable", () => {
         },
       })
     );
-    expect(onExpandedRowsChange).lastCalledWith(
+    expect(onExpandedRowsChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: getAllKeys({
           list: treeDataSource.list,

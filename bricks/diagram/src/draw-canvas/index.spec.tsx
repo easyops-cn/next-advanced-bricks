@@ -446,7 +446,7 @@ describe("eo-draw-canvas", () => {
         element.shadowRoot!.querySelectorAll(".line-group")[0]
       );
     });
-    expect(mockEnableEditing).not.toBeCalled();
+    expect(mockEnableEditing).not.toHaveBeenCalled();
 
     act(() => {
       fireEvent.dblClick(
@@ -616,7 +616,7 @@ describe("eo-draw-canvas", () => {
     fireEvent.keyDown(element.shadowRoot!.querySelector("svg")!, {
       key: "Backspace",
     });
-    expect(onCellDelete).toBeCalledWith({
+    expect(onCellDelete).toHaveBeenCalledWith({
       type: "node",
       id: "a",
       view: { x: 20, y: 20, width: 20, height: 20 },
@@ -890,7 +890,7 @@ describe("eo-draw-canvas", () => {
       });
     });
 
-    expect(onCanvasContextMenu).toBeCalledWith({
+    expect(onCanvasContextMenu).toHaveBeenCalledWith({
       clientX: 100,
       clientY: 200,
       view: {
@@ -1564,7 +1564,7 @@ describe("eo-draw-canvas", () => {
     const contextMenuEvent1 = new MouseEvent("contextmenu");
     const preventDefault1 = jest.spyOn(contextMenuEvent1, "preventDefault");
     document.dispatchEvent(contextMenuEvent1);
-    expect(preventDefault1).not.toBeCalled();
+    expect(preventDefault1).not.toHaveBeenCalled();
 
     // Ctrl + Right click
     // This should be prevented
@@ -1573,7 +1573,7 @@ describe("eo-draw-canvas", () => {
     });
     const preventDefault2 = jest.spyOn(contextMenuEvent2, "preventDefault");
     document.dispatchEvent(contextMenuEvent2);
-    expect(preventDefault2).toBeCalled();
+    expect(preventDefault2).toHaveBeenCalled();
 
     act(() => {
       document.body.removeChild(element);
@@ -1709,13 +1709,13 @@ describe("eo-draw-canvas", () => {
       ctrlKey: true,
     });
 
-    expect(onCanvasCopy).toBeCalledTimes(1);
+    expect(onCanvasCopy).toHaveBeenCalledTimes(1);
 
     fireEvent.keyDown(element.shadowRoot!.querySelector("svg")!, {
       key: "v",
       ctrlKey: true,
     });
-    expect(onCanvasPaste).toBeCalledTimes(1);
+    expect(onCanvasPaste).toHaveBeenCalledTimes(1);
 
     act(() => {
       document.body.removeChild(element);
@@ -1761,13 +1761,13 @@ describe("eo-draw-canvas", () => {
       ctrlKey: true,
     });
 
-    expect(onCanvasCopy).toBeCalledTimes(1);
+    expect(onCanvasCopy).toHaveBeenCalledTimes(1);
 
     fireEvent.keyDown(element.shadowRoot!.querySelector("svg")!, {
       key: "v",
       ctrlKey: true,
     });
-    expect(onCanvasPaste).toBeCalledTimes(1);
+    expect(onCanvasPaste).toHaveBeenCalledTimes(1);
 
     act(() => {
       document.body.removeChild(element);

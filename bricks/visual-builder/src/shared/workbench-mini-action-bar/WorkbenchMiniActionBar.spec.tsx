@@ -48,14 +48,14 @@ test("WorkbenchMiniActionBar with actions", () => {
 
   expect(screen.getAllByRole("button").length).toBe(2);
 
-  expect(onActionClick).toBeCalledTimes(0);
+  expect(onActionClick).toHaveBeenCalledTimes(0);
   fireEvent.click(screen.getAllByRole("button")[0]);
   expect(onActionClick).toHaveBeenNthCalledWith(1, {
     action: "add",
     data: { type: "production" },
   });
 
-  expect(onActionClick).toBeCalledTimes(1);
+  expect(onActionClick).toHaveBeenCalledTimes(1);
   fireEvent.click(screen.getAllByRole("button")[1]);
   expect(onActionClick).toHaveBeenNthCalledWith(2, {
     action: "move-up",
@@ -102,10 +102,10 @@ test("WorkbenchMiniActionBar with actions for moving first node", () => {
   );
 
   fireEvent.click(screen.getAllByRole("button")[0]);
-  expect(onActionClick).toBeCalledTimes(0);
+  expect(onActionClick).toHaveBeenCalledTimes(0);
 
   fireEvent.click(screen.getAllByRole("button")[1]);
-  expect(onActionClick).toBeCalledTimes(1);
+  expect(onActionClick).toHaveBeenCalledTimes(1);
 });
 
 test("WorkbenchMiniActionBar with actions for moving last node", () => {
@@ -145,10 +145,10 @@ test("WorkbenchMiniActionBar with actions for moving last node", () => {
   );
 
   fireEvent.click(screen.getAllByRole("button")[0]);
-  expect(onActionClick).toBeCalledTimes(1);
+  expect(onActionClick).toHaveBeenCalledTimes(1);
 
   fireEvent.click(screen.getAllByRole("button")[1]);
-  expect(onActionClick).toBeCalledTimes(1);
+  expect(onActionClick).toHaveBeenCalledTimes(1);
 });
 
 test("WorkbenchMiniActionBar with hidden actions", () => {

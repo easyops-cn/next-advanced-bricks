@@ -68,7 +68,7 @@ describe("eo-upload-image", () => {
       );
     });
     await waitFor(() => {
-      expect(onChange).toBeCalledWith(
+      expect(onChange).toHaveBeenCalledWith(
         expect.objectContaining({
           detail: expect.arrayContaining([
             expect.objectContaining({ status: "done", file: files[0] }),
@@ -130,7 +130,7 @@ describe("eo-upload-image", () => {
       );
     });
     await waitFor(() => {
-      expect(onChange).toBeCalledWith(
+      expect(onChange).toHaveBeenCalledWith(
         expect.objectContaining({
           detail: expect.arrayContaining([
             expect.objectContaining({ status: "done", file: files1[0] }),
@@ -146,7 +146,7 @@ describe("eo-upload-image", () => {
       );
     });
     await waitFor(() => {
-      expect(onChange).toBeCalledWith(
+      expect(onChange).toHaveBeenCalledWith(
         expect.objectContaining({
           detail: expect.arrayContaining([
             expect.objectContaining({ status: "done", file: files2[0] }),

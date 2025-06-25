@@ -9,31 +9,6 @@ jest.spyOn(context, "useDesktopDirContext").mockReturnValue({
   setDesktopDir: spyOnSetDesktopDir,
 });
 
-interface MouseEventWithOffsets extends MouseEventInit {
-  pageX?: number;
-  pageY?: number;
-  offsetX?: number;
-  offsetY?: number;
-  x?: number;
-  y?: number;
-}
-
-class FakeMouseEvent extends MouseEvent {
-  constructor(type: string, values: MouseEventWithOffsets) {
-    const { pageX, pageY, offsetX, offsetY, x, y, ...mouseValues } = values;
-    super(type, mouseValues);
-
-    Object.assign(this, {
-      offsetX: offsetX || 0,
-      offsetY: offsetY || 0,
-      pageX: pageX || 0,
-      pageY: pageY || 0,
-      x: x || 0,
-      y: y || 0,
-    });
-  }
-}
-
 describe("DesktopDir", () => {
   it("should work", () => {
     const dir: NormalizedDesktopDir = {
@@ -57,17 +32,17 @@ describe("DesktopDir", () => {
     );
 
     act(() => {
-      fireEvent(
-        container.querySelector("a") as HTMLElement,
-        new FakeMouseEvent("click", {
+      fireEvent.click(
+        container.querySelector("a")!,
+        {
           bubbles: true,
           clientX: 1,
           clientY: 2,
-        })
+        }
       );
     });
 
-    expect(spyOnSetDesktopDir).toBeCalledWith({
+    expect(spyOnSetDesktopDir).toHaveBeenCalledWith({
       dir,
       coordinates: {
         x: 1,

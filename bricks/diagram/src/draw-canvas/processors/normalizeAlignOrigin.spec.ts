@@ -32,7 +32,7 @@ describe("normalizeAlignOrigin", () => {
   test("should throw error when unexpected align origin", () => {
     const consoleError = jest.spyOn(console, "error").mockReturnValue();
     expect(normalizeAlignOrigin(["unknown", false] as any)).toEqual([0.5, 0.5]);
-    expect(consoleError).toBeCalledTimes(2);
+    expect(consoleError).toHaveBeenCalledTimes(2);
     expect(consoleError).toHaveBeenNthCalledWith(
       1,
       "Unexpected align origin %s:",

@@ -1,6 +1,7 @@
 import { describe, test, expect } from "@jest/globals";
 import { saveRecordedCommands } from "./save-recorded-commands.js";
 import { createNodes } from "./shared/createNodes.js";
+import { NodeType } from "../interface.js";
 
 jest.mock("./shared/createNodes.js");
 
@@ -43,30 +44,30 @@ describe("saveRecordedCommands", () => {
       parent: "p_0",
       initialSort: 1,
     });
-    expect(createNodes).toBeCalledWith(
+    expect(createNodes).toHaveBeenCalledWith(
       [
         {
-          type: "command",
+          type: NodeType.Command,
           name: "get",
           params: ["#my-button"],
           children: [
             {
-              type: "command",
+              type: NodeType.Command,
               name: "click",
             },
           ],
         },
         {
-          type: "command",
+          type: NodeType.Command,
           name: "findByTestId",
           params: ["my-input"],
           children: [
             {
-              type: "command",
+              type: NodeType.Command,
               name: "dblclick",
             },
             {
-              type: "command",
+              type: NodeType.Command,
               name: "type",
               params: ["ok{enter}"],
             },
@@ -135,36 +136,36 @@ describe("saveRecordedCommands", () => {
       initialSort: 1,
     });
 
-    expect(createNodes).toBeCalledWith(
+    expect(createNodes).toHaveBeenCalledWith(
       [
         {
           children: [
-            { name: "find", params: ["my-button"], type: "command" },
-            { name: "click", type: "command" },
+            { name: "find", params: ["my-button"], type: NodeType.Command },
+            { name: "click", type: NodeType.Command },
           ],
           name: "get",
           params: [".wrapper"],
-          type: "command",
+          type: NodeType.Command,
         },
         {
           children: [
-            { name: "find", params: [".ant-radio-wrapper"], type: "command" },
-            { name: "eq", params: [1], type: "command" },
-            { name: "click", type: "command" },
+            { name: "find", params: [".ant-radio-wrapper"], type: NodeType.Command },
+            { name: "eq", params: [1], type: NodeType.Command },
+            { name: "click", type: NodeType.Command },
           ],
           name: "findByTestId",
           params: ["my-radio"],
-          type: "command",
+          type: NodeType.Command,
         },
         {
           children: [
-            { name: "find", params: [".ant-select-item"], type: "command" },
-            { name: "eq", params: [2], type: "command" },
-            { name: "click", type: "command" },
+            { name: "find", params: [".ant-select-item"], type: NodeType.Command },
+            { name: "eq", params: [2], type: NodeType.Command },
+            { name: "click", type: NodeType.Command },
           ],
           name: "get",
           params: [".ant-select-dropdown:visible"],
-          type: "command",
+          type: NodeType.Command,
         },
       ],
       "p_0",

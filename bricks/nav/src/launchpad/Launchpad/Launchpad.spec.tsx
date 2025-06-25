@@ -60,7 +60,7 @@ describe("Launchpad", () => {
     const handleWillClose = jest.fn();
     const { container } = render(<Launchpad onWillClose={handleWillClose} />);
     fireEvent.click(container.querySelector(".launchpad") as HTMLElement);
-    expect(handleWillClose).toBeCalled();
+    expect(handleWillClose).toHaveBeenCalled();
   });
 
   it("should handle Escape keydown", () => {
@@ -71,12 +71,12 @@ describe("Launchpad", () => {
         key: "a",
       })
     );
-    expect(handleWillClose).not.toBeCalled();
+    expect(handleWillClose).not.toHaveBeenCalled();
     window.dispatchEvent(
       new KeyboardEvent("keydown", {
         key: "Escape",
       })
     );
-    expect(handleWillClose).toBeCalled();
+    expect(handleWillClose).toHaveBeenCalled();
   });
 });

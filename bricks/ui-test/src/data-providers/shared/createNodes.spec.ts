@@ -44,7 +44,7 @@ describe("createNodes", () => {
       ],
       "p_0"
     );
-    expect(InstanceApi_createInstance).toBeCalledTimes(5);
+    expect(InstanceApi_createInstance).toHaveBeenCalledTimes(5);
 
     expect(InstanceApi_createInstance).toHaveBeenNthCalledWith(
       1,

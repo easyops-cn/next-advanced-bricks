@@ -217,7 +217,7 @@ describe("fetchLaunchpadInfo", () => {
 describe("favorite", () => {
   test("app", async () => {
     await favorite({ type: "app", instanceId: "my-fav-app" } as any);
-    expect(createCollectionV2).toBeCalledWith(
+    expect(createCollectionV2).toHaveBeenCalledWith(
       {
         type: "microApp",
         relatedInstanceId: "my-fav-app",
@@ -230,7 +230,7 @@ describe("favorite", () => {
 
   test("custom", async () => {
     await favorite({ type: "custom", instanceId: "my-fav-custom" } as any);
-    expect(createCollectionV2).toBeCalledWith(
+    expect(createCollectionV2).toHaveBeenCalledWith(
       {
         type: "customItem",
         relatedInstanceId: "my-fav-custom",

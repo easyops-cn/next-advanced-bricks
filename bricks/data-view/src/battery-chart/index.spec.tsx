@@ -27,7 +27,7 @@ describe("data-view.battery-chart",()=>{
         expect(container.querySelector(".content").getAttribute("style")).toBe("width: 50px; height: 80px;");
         expect(container.querySelector(".word").getAttribute("style")).toBe("top: 12px;")
         expect(container.querySelector(".valueWrapper").getAttribute("style")).toBe("height: 48px;");
-        expect(container.querySelector(".value").getAttribute("style")).toBe("box-shadow: 0 8px 10px 0 linear-gradient(180deg, #FF772A 0%, #FFC22A 100%); border-radius: 0 0 4px 4px;");
+        expect(container.querySelector(".value").getAttribute("style")).toBe("background: linear-gradient(180deg, #FF772A 0%, #FFC22A 100%); box-shadow: 0 8px 10px 0 linear-gradient(180deg, #FF772A 0%, #FFC22A 100%); border-radius: 0 0 4px 4px;");
         rerender(<BatteryChartComponent value={100} batteryHeight={80}  thresholdColors={[{
                 color: "red",
                 startValue: 0,

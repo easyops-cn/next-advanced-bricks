@@ -51,7 +51,7 @@ describe("DecoratorRect", () => {
       fireEvent.mouseDown(container.querySelector(".resize-handle")!);
     });
 
-    expect(mockHandleMouseDown).toBeCalled();
+    expect(mockHandleMouseDown).toHaveBeenCalled();
   });
   test("readOnly", () => {
     const { container } = render(

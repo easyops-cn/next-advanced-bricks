@@ -24,7 +24,7 @@ describe("eo-time-picker", () => {
     act(() => {
       (element.shadowRoot?.querySelector("input") as HTMLElement).click();
     });
-    expect(onOpenChangeMock).toBeCalled();
+    expect(onOpenChangeMock).toHaveBeenCalled();
     expect(
       element.shadowRoot?.querySelector(".ant-picker-now-btn")
     ).toBeTruthy();
@@ -34,7 +34,7 @@ describe("eo-time-picker", () => {
       ).click();
     });
 
-    expect(onChangeMock).toBeCalled();
+    expect(onChangeMock).toHaveBeenCalled();
     act(() => {
       document.body.removeChild(element);
     });

@@ -138,7 +138,7 @@ describe("eo-icon-select", () => {
       modal.confirm();
     });
 
-    expect(onChange).toBeCalledWith(
+    expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: {
           lib: "easyops",
@@ -155,7 +155,7 @@ describe("eo-icon-select", () => {
         new CustomEvent("search", { detail: "query" })
       );
     });
-    expect(mockSearchIcons).lastCalledWith({
+    expect(mockSearchIcons).toHaveBeenLastCalledWith({
       lib: "easyops",
       page: 1,
       pageSize: 100,
@@ -168,7 +168,7 @@ describe("eo-icon-select", () => {
         new CustomEvent("change", { detail: { value: "antd" } })
       );
     });
-    expect(mockSearchIcons).lastCalledWith({
+    expect(mockSearchIcons).toHaveBeenLastCalledWith({
       lib: "antd",
       page: 1,
       pageSize: 100,

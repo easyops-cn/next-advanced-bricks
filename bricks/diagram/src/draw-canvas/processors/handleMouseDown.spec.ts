@@ -27,7 +27,7 @@ describe("handleMouseDown", () => {
       action: "move",
       ...methods,
     });
-    expect(onSwitchActiveTarget).toBeCalledWith({
+    expect(onSwitchActiveTarget).toHaveBeenCalledWith({
       type: "edge",
       source: "a",
       target: "b",
@@ -48,10 +48,10 @@ describe("handleMouseDown", () => {
     });
 
     fireEvent.mouseMove(document, { clientX: 11, clientY: 22 });
-    expect(onCellsMoving).not.toBeCalled();
+    expect(onCellsMoving).not.toHaveBeenCalled();
 
     fireEvent.mouseMove(document, { clientX: 25, clientY: 50 });
-    expect(onCellsMoving).toBeCalledWith([
+    expect(onCellsMoving).toHaveBeenCalledWith([
       {
         type: "node",
         id: "b",
@@ -62,7 +62,7 @@ describe("handleMouseDown", () => {
     ]);
 
     fireEvent.mouseUp(document, { clientX: 26, clientY: 51 });
-    expect(onCellsMoved).toBeCalledWith([
+    expect(onCellsMoved).toHaveBeenCalledWith([
       { type: "node", id: "b", x: 20, y: 37 },
     ]);
 
@@ -114,10 +114,10 @@ describe("handleMouseDown", () => {
     });
 
     fireEvent.mouseMove(document, { clientX: 11, clientY: 22 });
-    expect(onCellsMoving).not.toBeCalled();
+    expect(onCellsMoving).not.toHaveBeenCalled();
 
     fireEvent.mouseMove(document, { clientX: 25, clientY: 50 });
-    expect(onCellsMoving).toBeCalledWith([
+    expect(onCellsMoving).toHaveBeenCalledWith([
       {
         decorator: "container",
         height: undefined,
@@ -141,7 +141,7 @@ describe("handleMouseDown", () => {
     ]);
 
     fireEvent.mouseUp(document, { clientX: 26, clientY: 51 });
-    expect(onCellsMoved).toBeCalledWith([
+    expect(onCellsMoved).toHaveBeenCalledWith([
       {
         decorator: "container",
         height: undefined,
@@ -184,7 +184,7 @@ describe("handleMouseDown", () => {
     });
 
     fireEvent.mouseMove(document, { clientX: 25, clientY: 50 });
-    expect(onCellsMoving).toBeCalledWith([
+    expect(onCellsMoving).toHaveBeenCalledWith([
       {
         type: "node",
         id: "b",
@@ -195,7 +195,7 @@ describe("handleMouseDown", () => {
     ]);
 
     fireEvent.mouseUp(document, { clientX: 26, clientY: 51 });
-    expect(onCellsMoved).toBeCalledWith([
+    expect(onCellsMoved).toHaveBeenCalledWith([
       { type: "node", id: "b", x: 20, y: 40 },
     ]);
 
@@ -271,7 +271,7 @@ describe("handleMouseDown", () => {
     ]);
 
     fireEvent.mouseUp(document, { clientX: 26, clientY: 56 });
-    expect(onCellsMoved).toBeCalledWith([
+    expect(onCellsMoved).toHaveBeenCalledWith([
       { type: "node", id: "b", x: 20, y: 46, width: 100, height: 60 },
     ]);
 
@@ -305,10 +305,10 @@ describe("handleMouseDown", () => {
     });
 
     fireEvent.mouseMove(document, { clientX: 11, clientY: 22 });
-    expect(onCellsMoving).not.toBeCalled();
+    expect(onCellsMoving).not.toHaveBeenCalled();
 
     fireEvent.mouseMove(document, { clientX: 25, clientY: 50 });
-    expect(onCellsMoving).toBeCalledWith([
+    expect(onCellsMoving).toHaveBeenCalledWith([
       {
         type: "node",
         id: "b",
@@ -326,7 +326,7 @@ describe("handleMouseDown", () => {
     ]);
 
     fireEvent.mouseUp(document, { clientX: 26, clientY: 51 });
-    expect(onCellsMoved).toBeCalledWith([
+    expect(onCellsMoved).toHaveBeenCalledWith([
       { type: "node", id: "b", x: 20, y: 37 },
       { type: "node", id: "c", x: 160, y: 177 },
     ]);
@@ -362,7 +362,7 @@ describe("handleMouseDown", () => {
     });
 
     fireEvent.mouseMove(document, { clientX: 25, clientY: 50 });
-    expect(onCellsMoving).not.toBeCalled();
+    expect(onCellsMoving).not.toHaveBeenCalled();
     expect(onSwitchActiveTarget).not.toHaveBeenCalled();
   });
 
@@ -384,10 +384,10 @@ describe("handleMouseDown", () => {
     });
 
     fireEvent.mouseMove(document, { clientX: 11, clientY: 22 });
-    expect(onCellResizing).not.toBeCalled();
+    expect(onCellResizing).not.toHaveBeenCalled();
 
     fireEvent.mouseMove(document, { clientX: 25, clientY: 50 });
-    expect(onCellResizing).toBeCalledWith({
+    expect(onCellResizing).toHaveBeenCalledWith({
       type: "decorator",
       id: "b",
       width: 115,
@@ -395,7 +395,7 @@ describe("handleMouseDown", () => {
     });
 
     fireEvent.mouseUp(document, { clientX: 26, clientY: 51 });
-    expect(onCellResized).toBeCalledWith({
+    expect(onCellResized).toHaveBeenCalledWith({
       type: "decorator",
       id: "b",
       width: 116,
@@ -413,7 +413,7 @@ describe("handleMouseDown", () => {
       layout: "force",
       ...methods,
     });
-    expect(onSwitchActiveTarget).toBeCalledWith({
+    expect(onSwitchActiveTarget).toHaveBeenCalledWith({
       type: "node",
       id: "a",
     });
@@ -487,10 +487,10 @@ describe("handleMouseDown", () => {
     });
 
     fireEvent.mouseMove(document, { clientX: 11, clientY: 22 });
-    expect(onCellsMoving).not.toBeCalled();
+    expect(onCellsMoving).not.toHaveBeenCalled();
 
     fireEvent.mouseMove(document, { clientX: 25, clientY: 50 });
-    expect(onCellsMoving).toBeCalledWith([
+    expect(onCellsMoving).toHaveBeenCalledWith([
       {
         decorator: "line",
         id: "decorator-1",
@@ -507,7 +507,7 @@ describe("handleMouseDown", () => {
     ]);
 
     fireEvent.mouseUp(document, { clientX: 26, clientY: 51 });
-    expect(onCellsMoved).toBeCalledWith([
+    expect(onCellsMoved).toHaveBeenCalledWith([
       {
         decorator: "line",
         id: "decorator-1",

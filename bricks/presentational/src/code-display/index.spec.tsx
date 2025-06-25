@@ -65,15 +65,15 @@ describe("eo-code-display", () => {
       fireEvent.click(element.shadowRoot?.querySelector(".copy-icon"));
     });
     await (global as any).flushPromises();
-    expect(copyToClipboard).lastCalledWith("const a = 1;");
-    expect(showNotification).lastCalledWith(
+    expect(copyToClipboard).toHaveBeenLastCalledWith("const a = 1;");
+    expect(showNotification).toHaveBeenLastCalledWith(
       expect.objectContaining({ type: "success" })
     );
 
     act(() => {
       fireEvent.click(element.shadowRoot?.querySelector(".export-icon"));
     });
-    expect(spyOnSaveAs).lastCalledWith(expect.any(Blob), "export.js");
+    expect(spyOnSaveAs).toHaveBeenLastCalledWith(expect.any(Blob), "export.js");
 
     act(() => {
       document.body.removeChild(element);
@@ -99,7 +99,7 @@ describe("eo-code-display", () => {
     await act(async () => {
       element.language = "__unsupported__";
     });
-    expect(consoleError).lastCalledWith(
+    expect(consoleError).toHaveBeenLastCalledWith(
       expect.stringContaining("unsupported language: __unsupported__")
     );
 
@@ -107,7 +107,7 @@ describe("eo-code-display", () => {
     await act(async () => {
       element.language = "markdown";
     });
-    expect(consoleError).lastCalledWith(
+    expect(consoleError).toHaveBeenLastCalledWith(
       expect.stringContaining("load language failed: markdown")
     );
 

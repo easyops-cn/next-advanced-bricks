@@ -40,9 +40,9 @@ describe("eo-form-item", () => {
 
     expect(mockCurElement.$bindFormItem).toBeTruthy();
 
-    expect(mockFormStore.subscribe).toBeCalledTimes(5);
+    expect(mockFormStore.subscribe).toHaveBeenCalledTimes(5);
 
-    expect(mockFormStore.setFieldsValueByInitData).toBeCalledWith("test");
+    expect(mockFormStore.setFieldsValueByInitData).toHaveBeenCalledWith("test");
 
     expect(mockFormStore.setField).toHaveBeenNthCalledWith(1, "test", {
       name: "test",
@@ -66,14 +66,14 @@ describe("eo-form-item", () => {
       },
     });
 
-    expect(mockFormStore.subscribe).toBeCalledTimes(5);
+    expect(mockFormStore.subscribe).toHaveBeenCalledTimes(5);
 
     act(() => {
       document.body.removeChild(element);
     });
 
-    expect(mockFormStore.removeField).toBeCalledTimes(1);
-    expect(mockFormStore.unsubscribe).toBeCalledTimes(5);
+    expect(mockFormStore.removeField).toHaveBeenCalledTimes(1);
+    expect(mockFormStore.unsubscribe).toHaveBeenCalledTimes(5);
     expect(element.shadowRoot?.childNodes.length).toBe(0);
   });
 });

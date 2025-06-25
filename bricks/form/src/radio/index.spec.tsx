@@ -40,14 +40,14 @@ describe("eo-button", () => {
     ).toBe(2);
     expect(element.value).toBe(undefined);
 
-    expect(mockChangeEvent).toBeCalledTimes(0);
+    expect(mockChangeEvent).toHaveBeenCalledTimes(0);
     act(() => {
       (
         element.shadowRoot?.querySelector("input[type='radio']") as HTMLElement
       ).click();
     });
 
-    expect(mockChangeEvent).toBeCalledWith(
+    expect(mockChangeEvent).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: {
           label: "a",
@@ -63,13 +63,13 @@ describe("eo-button", () => {
         )[0] as HTMLInputElement
       ).checked
     ).toBeTruthy();
-    expect(mockOptionsChangeEvent).toBeCalledTimes(0);
+    expect(mockOptionsChangeEvent).toHaveBeenCalledTimes(0);
 
     await act(async () => {
       await (element.options = ["a", "b", "c"]);
     });
 
-    expect(mockOptionsChangeEvent).toBeCalledWith(
+    expect(mockOptionsChangeEvent).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: {
           options: [

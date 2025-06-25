@@ -471,7 +471,7 @@ describe("cloneNodes", () => {
 
     await cloneNodes(clonedData, parentData, treeData);
 
-    expect(createInstanceSdk).toBeCalledTimes(4);
+    expect(createInstanceSdk).toHaveBeenCalledTimes(4);
 
     expect(createInstanceSdk.mock.calls[0][1]).toEqual({
       name: "beforeEach",

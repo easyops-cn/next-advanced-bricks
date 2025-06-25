@@ -132,7 +132,7 @@ describe("data-view.cabinet-graph", () => {
     await act(async () => {
       fireEvent.click(element.shadowRoot.querySelector(".close-button"));
     });
-    expect(onCloseBtnClick).lastCalledWith(
+    expect(onCloseBtnClick).toHaveBeenLastCalledWith(
       expect.objectContaining({
         type: "close.button.click",
         detail: null,

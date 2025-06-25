@@ -94,13 +94,13 @@ describe("visual-builder.page-arch-node", () => {
         ?.querySelector(".node")
         ?.classList.contains("editing-label")
     ).toBe(true);
-    expect(onLabelEditingChange).toBeCalledTimes(1);
-    expect(onLabelEditingChange).toBeCalledWith(true);
+    expect(onLabelEditingChange).toHaveBeenCalledTimes(1);
+    expect(onLabelEditingChange).toHaveBeenCalledWith(true);
 
     act(() => {
       fireEvent.dblClick(element.shadowRoot?.querySelector(".label-input"));
     });
-    expect(onNodeDoubleClick).not.toBeCalled();
+    expect(onNodeDoubleClick).not.toHaveBeenCalled();
 
     // Rename label
     act(() => {
@@ -118,36 +118,36 @@ describe("visual-builder.page-arch-node", () => {
         key: "ArrowRight",
       });
     });
-    expect(onLabelChange).toBeCalledTimes(0);
+    expect(onLabelChange).toHaveBeenCalledTimes(0);
 
     act(() => {
       fireEvent.keyDown(element.shadowRoot?.querySelector(".label-input"), {
         key: "Enter",
       });
     });
-    expect(onLabelChange).toBeCalledTimes(1);
-    expect(onLabelChange).toBeCalledWith("New Name");
+    expect(onLabelChange).toHaveBeenCalledTimes(1);
+    expect(onLabelChange).toHaveBeenCalledWith("New Name");
 
     act(() => {
       fireEvent.click(element.shadowRoot?.querySelector(".add-button"));
     });
-    expect(onChildAppend).toBeCalledTimes(1);
-    expect(onNodeClick).not.toBeCalled();
+    expect(onChildAppend).toHaveBeenCalledTimes(1);
+    expect(onNodeClick).not.toHaveBeenCalled();
 
     act(() => {
       fireEvent.click(element.shadowRoot?.querySelector(".node"));
     });
-    expect(onNodeClick).toBeCalledTimes(1);
+    expect(onNodeClick).toHaveBeenCalledTimes(1);
 
     act(() => {
       fireEvent.dblClick(element.shadowRoot?.querySelector(".node"));
     });
-    expect(onNodeDoubleClick).toBeCalledTimes(1);
+    expect(onNodeDoubleClick).toHaveBeenCalledTimes(1);
 
     act(() => {
       fireEvent.contextMenu(element.shadowRoot?.querySelector(".node"));
     });
-    expect(onNodeContextMenu).toBeCalledTimes(1);
+    expect(onNodeContextMenu).toHaveBeenCalledTimes(1);
 
     act(() => {
       document.body.removeChild(element);
@@ -212,11 +212,11 @@ describe("visual-builder.page-arch-node", () => {
     act(() => {
       fireEvent.click(element.shadowRoot!.querySelector(".external"));
     });
-    expect(onExternalClick).toBeCalledWith({
+    expect(onExternalClick).toHaveBeenCalledWith({
       label: "External X",
       id: "x",
     });
-    expect(onNodeClick).not.toBeCalled();
+    expect(onNodeClick).not.toHaveBeenCalled();
 
     act(() => {
       document.body.removeChild(element);
@@ -266,8 +266,8 @@ describe("visual-builder.page-arch-node", () => {
     act(() => {
       fireEvent.dblClick(element.shadowRoot!.querySelector(".sub-node"));
     });
-    expect(onNodeDoubleClick).not.toBeCalled();
-    expect(onSubNodeDoubleClick).toBeCalledWith({
+    expect(onNodeDoubleClick).not.toHaveBeenCalled();
+    expect(onSubNodeDoubleClick).toHaveBeenCalledWith({
       label: "Sub Node A",
       id: "a",
     });
@@ -278,8 +278,8 @@ describe("visual-builder.page-arch-node", () => {
         clientY: 100,
       });
     });
-    expect(onNodeContextMenu).not.toBeCalled();
-    expect(onSubNodeContextMenu).toBeCalledWith({
+    expect(onNodeContextMenu).not.toHaveBeenCalled();
+    expect(onSubNodeContextMenu).toHaveBeenCalledWith({
       node: {
         label: "Sub Node A",
         id: "a",
