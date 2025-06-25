@@ -36,7 +36,7 @@ describe("eo-switch", () => {
       await btn.click();
     });
     expect(btn?.className).toBe("switch-checked");
-    expect(mockSwitchEvent).toBeCalledWith(
+    expect(mockSwitchEvent).toHaveBeenCalledWith(
       expect.objectContaining({ detail: true })
     );
     act(() => {

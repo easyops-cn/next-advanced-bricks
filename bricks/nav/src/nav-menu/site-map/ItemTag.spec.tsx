@@ -1,6 +1,6 @@
 import React from "react";
 import { describe, expect } from "@jest/globals";
-import { act, render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { DRAG_DIRECTION, DragContext } from "./constants.js";
 import { collectService } from "./CollectService.js";
 import {
@@ -31,7 +31,7 @@ describe("component test", () => {
 
       fireEvent.click(container.querySelector("eo-icon") as Element);
 
-      expect(onFavoriteFn).toBeCalled();
+      expect(onFavoriteFn).toHaveBeenCalled();
     });
   });
 
@@ -72,7 +72,7 @@ describe("component test", () => {
 
       fireEvent.click(container.querySelector("eo-icon") as Element);
 
-      expect(onFavoriteFn).toBeCalled();
+      expect(onFavoriteFn).toHaveBeenCalled();
     });
   });
 
@@ -117,13 +117,13 @@ describe("component test", () => {
 
       fireEvent.dragStart(screen.getByText("cmdb"));
 
-      expect(mockDragStart).toBeCalled();
+      expect(mockDragStart).toHaveBeenCalled();
 
       expect(container.querySelector(".is-drag")).toBeTruthy();
 
       fireEvent.dragEnd(screen.getByText("cmdb"));
 
-      expect(mockDragEnd).toBeCalled();
+      expect(mockDragEnd).toHaveBeenCalled();
     });
   });
 
@@ -167,7 +167,6 @@ describe("component test", () => {
       />
     );
 
-    screen.debug();
     expect(
       container.querySelector("eo-tooltip")?.getAttribute("content")
     ).toEqual("MAX_COLLECT_COUNT_TIPS");

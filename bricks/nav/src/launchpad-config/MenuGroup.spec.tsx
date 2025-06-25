@@ -152,21 +152,21 @@ describe("MenuGroup", () => {
         ?.classList.contains("active")
     ).toBe(true);
 
-    expect(onActionClick).toBeCalledTimes(0);
+    expect(onActionClick).toHaveBeenCalledTimes(0);
     fireEvent(
       container.querySelector(".folder eo-dropdown-actions") as HTMLElement,
       new CustomEvent("action.click")
     );
-    expect(onActionClick).toBeCalledTimes(1);
+    expect(onActionClick).toHaveBeenCalledTimes(1);
 
     const item2 = (group.items[2] as ConfigMenuItemDir).items[0];
 
     fireEvent.click(getByTestId(`menu-item-actions-${item1.id}`));
-    expect(onMenuItemClick).toBeCalledTimes(0);
+    expect(onMenuItemClick).toHaveBeenCalledTimes(0);
     fireEvent.click(getByText(item1.name));
-    expect(onMenuItemClick).toBeCalledWith(item1);
-    expect(onMenuItemClick).toBeCalledTimes(1);
+    expect(onMenuItemClick).toHaveBeenCalledWith(item1);
+    expect(onMenuItemClick).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(item2.name));
-    expect(onMenuItemClick).toBeCalledWith(item2);
+    expect(onMenuItemClick).toHaveBeenCalledWith(item2);
   });
 });

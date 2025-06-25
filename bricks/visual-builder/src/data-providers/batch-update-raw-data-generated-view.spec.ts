@@ -33,7 +33,7 @@ describe("batchUpdateRawDataGeneratedView", () => {
         },
       ]
     `);
-    expect(InstanceApi_createInstance).toBeCalledTimes(2);
+    expect(InstanceApi_createInstance).toHaveBeenCalledTimes(2);
     expect(InstanceApi_createInstance).toHaveBeenNthCalledWith(
       1,
       "RAW_DATA_GENERATED_VIEW@EASYOPS",

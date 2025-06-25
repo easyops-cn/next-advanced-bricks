@@ -35,7 +35,7 @@ describe("data-view.dropdown-menu", () => {
     });
     expect((element.shadowRoot.querySelector(".select-dropdown") as HTMLElement).style.display).toBe("none");
     expect(element.shadowRoot.querySelector(".select-selector-item").textContent).toBe("label-b");
-    expect(onChange).lastCalledWith(expect.objectContaining({
+    expect(onChange).toHaveBeenLastCalledWith(expect.objectContaining({
       type: "value.change",
       detail: "b",
     }));
@@ -44,7 +44,7 @@ describe("data-view.dropdown-menu", () => {
       fireEvent.mouseDown(element.shadowRoot.querySelector(".select-clear"));
     });
     expect(element.shadowRoot.querySelector(".select-selector-item")).toBeFalsy();
-    expect(onChange).lastCalledWith(expect.objectContaining({
+    expect(onChange).toHaveBeenLastCalledWith(expect.objectContaining({
       type: "value.change",
       detail: null,
     }))

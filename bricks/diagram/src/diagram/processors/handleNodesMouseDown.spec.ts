@@ -28,7 +28,7 @@ describe("handleNodesMouseDown", () => {
       scale: 1,
       ...methods,
     });
-    expect(setConnectLineState).not.toBeCalled();
+    expect(setConnectLineState).not.toHaveBeenCalled();
   });
 
   test("no nodesRefRepository", () => {
@@ -40,7 +40,7 @@ describe("handleNodesMouseDown", () => {
       scale: 1,
       ...methods,
     });
-    expect(setConnectLineState).not.toBeCalled();
+    expect(setConnectLineState).not.toHaveBeenCalled();
   });
 
   test("default connectNodes", () => {
@@ -64,21 +64,21 @@ describe("handleNodesMouseDown", () => {
       scale: 1,
       ...methods,
     });
-    expect(setConnectLineState).toBeCalledWith({
+    expect(setConnectLineState).toHaveBeenCalledWith({
       from: [10, 20],
       options: {
         strokeColor: "var(--palette-gray-5)",
         strokeWidth: 1,
       },
     });
-    expect(setConnectLineTo).toBeCalledWith([10, 20]);
-    expect(onSwitchActiveTarget).toBeCalledWith({ type: "node", nodeId: "b" });
+    expect(setConnectLineTo).toHaveBeenCalledWith([10, 20]);
+    expect(onSwitchActiveTarget).toHaveBeenCalledWith({ type: "node", nodeId: "b" });
 
     fireEvent.mouseMove(document, { clientX: 300, clientY: 400 });
-    expect(setConnectLineTo).toBeCalledWith([300, 400]);
+    expect(setConnectLineTo).toHaveBeenCalledWith([300, 400]);
 
     fireEvent.mouseUp(nodeA);
-    expect(onNodesConnect).toBeCalledWith({
+    expect(onNodesConnect).toHaveBeenCalledWith({
       source: { id: "b" },
       target: { id: "a" },
     });
@@ -114,7 +114,7 @@ describe("handleNodesMouseDown", () => {
       enumerable: true,
     });
     handleNodesMouseDown(mousedownA, config);
-    expect(setConnectLineState).not.toBeCalled();
+    expect(setConnectLineState).not.toHaveBeenCalled();
 
     const mousedownB = new MouseEvent("mousedown", {
       clientX: 10,
@@ -125,11 +125,11 @@ describe("handleNodesMouseDown", () => {
       enumerable: true,
     });
     handleNodesMouseDown(mousedownB, config);
-    expect(setConnectLineState).toBeCalledTimes(1);
+    expect(setConnectLineState).toHaveBeenCalledTimes(1);
 
     // It will be ignored if mouseup on the same node.
     fireEvent.mouseUp(nodeB);
-    expect(onNodesConnect).not.toBeCalled();
+    expect(onNodesConnect).not.toHaveBeenCalled();
   });
 
   test("filter by if", () => {
@@ -160,7 +160,7 @@ describe("handleNodesMouseDown", () => {
       enumerable: true,
     });
     handleNodesMouseDown(mousedownB, config);
-    expect(setConnectLineState).not.toBeCalled();
+    expect(setConnectLineState).not.toHaveBeenCalled();
 
     const mousedownA = new MouseEvent("mousedown", {
       clientX: 10,
@@ -171,7 +171,7 @@ describe("handleNodesMouseDown", () => {
       enumerable: true,
     });
     handleNodesMouseDown(mousedownA, config);
-    expect(setConnectLineState).toBeCalledTimes(1);
+    expect(setConnectLineState).toHaveBeenCalledTimes(1);
   });
 
   test("default dragNodes", () => {
@@ -195,18 +195,18 @@ describe("handleNodesMouseDown", () => {
       scale: 0.75,
       ...methods,
     });
-    expect(onSwitchActiveTarget).toBeCalledWith({ type: "node", nodeId: "b" });
+    expect(onSwitchActiveTarget).toHaveBeenCalledWith({ type: "node", nodeId: "b" });
 
     fireEvent.mouseMove(document, { clientX: 11, clientY: 22 });
-    expect(setManualLayoutStatus).not.toBeCalled();
+    expect(setManualLayoutStatus).not.toHaveBeenCalled();
 
     fireEvent.mouseMove(document, { clientX: 25, clientY: 50 });
-    expect(setManualLayoutStatus).toBeCalledWith("started");
-    expect(setNodeMovement).toBeCalledWith({ id: "b", move: [20, 40] });
+    expect(setManualLayoutStatus).toHaveBeenCalledWith("started");
+    expect(setNodeMovement).toHaveBeenCalledWith({ id: "b", move: [20, 40] });
 
     fireEvent.mouseUp(nodeA);
     expect(setNodeMovement).toHaveBeenLastCalledWith(null);
-    expect(setManualLayoutStatus).toBeCalledWith("finished");
+    expect(setManualLayoutStatus).toHaveBeenCalledWith("finished");
 
     document.body.replaceChildren();
   });

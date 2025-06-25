@@ -120,7 +120,7 @@ describe("Shallow FavoriteDesktopCell", () => {
       );
       await jest.advanceTimersByTime(500);
     });
-    expect(stopPropagation).toBeCalled();
+    expect(stopPropagation).toHaveBeenCalled();
 
     expect(container.querySelector(".arrowLeft")?.classList).toContain(
       "available"
@@ -408,7 +408,7 @@ describe("Mount DesktopSlider", () => {
         })
       );
     });
-    expect(launchpadService.pushVisitor).toBeCalled();
+    expect(launchpadService.pushVisitor).toHaveBeenCalled();
   });
 
   it("query custom item should work", () => {

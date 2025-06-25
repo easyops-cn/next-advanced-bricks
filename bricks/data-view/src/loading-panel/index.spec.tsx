@@ -34,8 +34,8 @@ describe("data-view.loading-panel", ()=>{
                 customTitle="hello"
             />));
         expect(container.querySelector(".title").innerHTML).toBe("hello");
-        expect(setInterval).toBeCalledTimes(2);
-        expect(setInterval).lastCalledWith(expect.any(Function), 100);
+        expect(setInterval).toHaveBeenCalledTimes(2);
+        expect(setInterval).toHaveBeenLastCalledWith(expect.any(Function), 100);
         rerender(<LoadingPanelComponent useRealTimeProgress={true} progress={100} intervalTime={300}  onEnd={mockEndFn} />);
         await act(async ()=>{
             jest.runAllTimers();

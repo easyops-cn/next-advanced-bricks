@@ -77,10 +77,10 @@ describe("eo-tree", () => {
       );
     });
 
-    expect(onCheck).toBeCalledTimes(1);
-    expect(onCheckDetail).toBeCalledTimes(1);
-    expect(onCheck).toBeCalledWith(["0-0-0-0"]);
-    expect(onCheckDetail).toBeCalledWith({
+    expect(onCheck).toHaveBeenCalledTimes(1);
+    expect(onCheckDetail).toHaveBeenCalledTimes(1);
+    expect(onCheck).toHaveBeenCalledWith(["0-0-0-0"]);
+    expect(onCheckDetail).toHaveBeenCalledWith({
       checkedKeys: ["0-0-0-0"],
       halfCheckedKeys: ["0-0-0", "0-0"],
     });
@@ -168,8 +168,8 @@ describe("eo-tree", () => {
       fireEvent.click(element.shadowRoot!.querySelector(".ant-tree-switcher")!);
     });
 
-    expect(onExpand).toBeCalledTimes(1);
-    expect(onExpand).toBeCalledWith(["0-0"]);
+    expect(onExpand).toHaveBeenCalledTimes(1);
+    expect(onExpand).toHaveBeenCalledWith(["0-0"]);
 
     expect(
       element.shadowRoot

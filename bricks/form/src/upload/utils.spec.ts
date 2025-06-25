@@ -70,9 +70,9 @@ describe("utils", () => {
     );
     await expect(
       sizeValidator(file, 1, FileSizeUnit.KB)
-    ).rejects.toThrowError();
+    ).rejects.toThrow();
     await expect(
       sizeValidator(file, 0.1, FileSizeUnit.MB)
-    ).rejects.toThrowError();
+    ).rejects.toThrow();
   });
 });

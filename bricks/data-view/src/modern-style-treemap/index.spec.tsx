@@ -104,7 +104,7 @@ describe("data-view.modern-style-treemap", () => {
     expect(leafEle.innerHTML).toBe("<div>a</div>");
     expect((leafEle as HTMLDivElement).style.color).toBe("red");
     fireEvent.click(leafEle);
-    expect(mockClickFn).toBeCalledTimes(1);
+    expect(mockClickFn).toHaveBeenCalledTimes(1);
     expect(tooltipElement.style.color).toBe("green");
     expect(tooltipElement.style.visibility).toBe("");
 

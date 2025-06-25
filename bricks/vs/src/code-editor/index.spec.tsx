@@ -32,8 +32,8 @@ describe("vs.code-editor", () => {
     });
     expect(element.childNodes.length).toBe(1);
 
-    expect(monaco.editor.setTheme).toBeCalledWith("custom-theme");
-    expect(monaco.editor.defineTheme).toBeCalledWith("custom-theme", {
+    expect(monaco.editor.setTheme).toHaveBeenCalledWith("custom-theme");
+    expect(monaco.editor.defineTheme).toHaveBeenCalledWith("custom-theme", {
       base: "vs",
       colors: { "editor.lineHighlightBackground": "#0000000A" },
       inherit: true,
@@ -59,8 +59,8 @@ describe("vs.code-editor", () => {
     });
     expect(element.childNodes.length).toBe(1);
 
-    expect(monaco.editor.setTheme).toBeCalledWith("custom-theme");
-    expect(monaco.editor.defineTheme).toBeCalledWith("custom-theme", {
+    expect(monaco.editor.setTheme).toHaveBeenCalledWith("custom-theme");
+    expect(monaco.editor.defineTheme).toHaveBeenCalledWith("custom-theme", {
       base: "vs-dark",
       colors: { "editor.lineHighlightBackground": "#FFFFFF0F" },
       inherit: true,

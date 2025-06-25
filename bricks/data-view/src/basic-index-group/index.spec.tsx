@@ -68,7 +68,7 @@ describe("data-view.basic-index-group", () => {
     );
     expect(
       element.shadowRoot.querySelector(".iconWrapper").getAttribute("style")
-    ).toEqual("background-image: url(11.png);");
+    ).toEqual("background-image: url(\"11.png\");");
     act(() => {
       document.body.removeChild(element);
     });

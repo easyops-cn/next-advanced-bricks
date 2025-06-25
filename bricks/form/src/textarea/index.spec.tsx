@@ -40,9 +40,9 @@ describe("eo-textarea", () => {
       });
     });
 
-    expect(mockFocusEvent).toBeCalledTimes(1);
-    expect(mockBlurEvent).toBeCalledTimes(1);
-    expect(mockChangeEvent).toBeCalledTimes(1);
+    expect(mockFocusEvent).toHaveBeenCalledTimes(1);
+    expect(mockBlurEvent).toHaveBeenCalledTimes(1);
+    expect(mockChangeEvent).toHaveBeenCalledTimes(1);
 
     expect(textareaElement?.textContent).toBe("a");
 
@@ -63,8 +63,8 @@ describe("eo-textarea", () => {
       element.focusTextarea();
     });
 
-    expect(mockedFocus).toBeCalledTimes(1);
-    expect(mockedSetSelectionRange).not.toBeCalled();
+    expect(mockedFocus).toHaveBeenCalledTimes(1);
+    expect(mockedSetSelectionRange).not.toHaveBeenCalled();
 
     const value = "a";
     const valueLength = value.length;
@@ -77,8 +77,8 @@ describe("eo-textarea", () => {
       element.focusTextarea();
     });
 
-    expect(mockedFocus).toBeCalledTimes(2);
-    expect(mockedSetSelectionRange).toBeCalledWith(valueLength, valueLength);
+    expect(mockedFocus).toHaveBeenCalledTimes(2);
+    expect(mockedSetSelectionRange).toHaveBeenCalledWith(valueLength, valueLength);
 
     act(() => {
       document.body.removeChild(element);

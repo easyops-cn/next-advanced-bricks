@@ -21,14 +21,14 @@ describe("useMergeRefs", () => {
 
     const { unmount } = render(<Component />);
 
-    expect(refAsFunc).toBeCalledTimes(1);
-    expect(refAsFunc).lastCalledWith("refValue");
+    expect(refAsFunc).toHaveBeenCalledTimes(1);
+    expect(refAsFunc).toHaveBeenLastCalledWith("refValue");
     expect(refAsObj.current).toBe("refValue");
 
     unmount();
 
-    expect(refAsFunc).toBeCalledTimes(2);
-    expect(refAsFunc).lastCalledWith(null);
+    expect(refAsFunc).toHaveBeenCalledTimes(2);
+    expect(refAsFunc).toHaveBeenLastCalledWith(null);
     expect(refAsObj.current).toBe(null);
   });
 });

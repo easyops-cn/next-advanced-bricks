@@ -69,7 +69,7 @@ describe("eo-card-item", () => {
         ) as MockEoMiniActions
       ).triggerEvent("download");
     });
-    expect(onActionClick).toBeCalled();
+    expect(onActionClick).toHaveBeenCalled();
 
     await act(async () => {
       element.hasCover = true;
@@ -123,7 +123,7 @@ describe("eo-card-item", () => {
       (element.shadowRoot.querySelector(".card-tag") as HTMLElement).click();
     });
 
-    expect(onTagClick).toBeCalledTimes(1);
+    expect(onTagClick).toHaveBeenCalledTimes(1);
 
     await act(async () => {
       element.tagConfig = {

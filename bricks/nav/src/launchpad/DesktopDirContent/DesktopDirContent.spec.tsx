@@ -70,8 +70,8 @@ describe("Shallow DesktopDirContent", () => {
       );
     });
 
-    expect(stopPropagation).toBeCalled();
-    expect(spyOnSetDesktopDir).toBeCalledWith(undefined);
+    expect(stopPropagation).toHaveBeenCalled();
+    expect(spyOnSetDesktopDir).toHaveBeenCalledWith(undefined);
   });
 });
 
@@ -155,7 +155,7 @@ describe("Mount DesktopDirContent", () => {
     document.dispatchEvent(new KeyboardEvent("keydown", {
       key: "Enter"
     }));
-    expect(spyOnHistoryPush).not.toBeCalled();
+    expect(spyOnHistoryPush).not.toHaveBeenCalled();
   }); */
 
   it("should handle Escape keydown", () => {
@@ -166,8 +166,8 @@ describe("Mount DesktopDirContent", () => {
     const stopPropagation = jest.spyOn(escapeKeyDown, "stopPropagation");
     const preventDefault = jest.spyOn(escapeKeyDown, "preventDefault");
     document.dispatchEvent(escapeKeyDown);
-    expect(stopPropagation).toBeCalled();
-    expect(preventDefault).toBeCalled();
-    expect(spyOnSetDesktopDir).toBeCalledWith(undefined);
+    expect(stopPropagation).toHaveBeenCalled();
+    expect(preventDefault).toHaveBeenCalled();
+    expect(spyOnSetDesktopDir).toHaveBeenCalledWith(undefined);
   });
 });

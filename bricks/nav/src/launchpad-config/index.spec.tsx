@@ -89,12 +89,12 @@ describe("nav.launchpad-config", () => {
       element.shadowRoot?.querySelector("eo-dropdown-actions") as HTMLElement,
       new CustomEvent("visible.change", { detail: true })
     );
-    expect(onActionClick).toBeCalledTimes(0);
+    expect(onActionClick).toHaveBeenCalledTimes(0);
     fireEvent(
       element.shadowRoot?.querySelector("eo-dropdown-actions") as HTMLElement,
       new CustomEvent("action.click")
     );
-    expect(onActionClick).toBeCalledTimes(1);
+    expect(onActionClick).toHaveBeenCalledTimes(1);
 
     act(() => {
       document.body.removeChild(element);

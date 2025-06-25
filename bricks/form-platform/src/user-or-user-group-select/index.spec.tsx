@@ -78,14 +78,14 @@ describe("eo-user-or-user-group-select", () => {
       fireEvent.focus(select as HTMLElement);
     });
 
-    expect(InstanceApi_postSearch).toBeCalled();
+    expect(InstanceApi_postSearch).toHaveBeenCalled();
 
     await act(async () => {
       fireEvent.change(select as HTMLElement, {
         detail: { value: ["easyops", ":59eea4ad40bw2"] },
       });
     });
-    expect(mockValueChangeEvent).toBeCalled();
+    expect(mockValueChangeEvent).toHaveBeenCalled();
 
     act(() => {
       document.body.removeChild(element);
@@ -149,12 +149,12 @@ describe("eo-user-or-user-group-select", () => {
       document.body.appendChild(element);
     });
     const select = element.shadowRoot?.querySelector("eo-select");
-    expect(InstanceApi_postSearch).toBeCalledTimes(1);
+    expect(InstanceApi_postSearch).toHaveBeenCalledTimes(1);
 
     act(() => {
       fireEvent.focus(select as HTMLElement);
     });
-    expect(InstanceApi_postSearch).toBeCalledTimes(3);
+    expect(InstanceApi_postSearch).toHaveBeenCalledTimes(3);
 
     act(() => {
       fireEvent(
@@ -162,7 +162,7 @@ describe("eo-user-or-user-group-select", () => {
         new CustomEvent("search", { detail: { value: "easyops" } })
       );
     });
-    expect(InstanceApi_postSearch).toBeCalledTimes(3);
+    expect(InstanceApi_postSearch).toHaveBeenCalledTimes(3);
 
     act(() => {
       document.body.removeChild(element);
@@ -221,8 +221,8 @@ describe("eo-user-or-user-group-select", () => {
       fireEvent.click(addMeBtn as HTMLElement);
     });
 
-    expect(InstanceApi_postSearch).toBeCalled();
-    expect(mockValueChangeEvent).toBeCalled();
+    expect(InstanceApi_postSearch).toHaveBeenCalled();
+    expect(mockValueChangeEvent).toHaveBeenCalled();
 
     mockValueChangeEvent.mockClear();
 
@@ -230,7 +230,7 @@ describe("eo-user-or-user-group-select", () => {
       fireEvent.click(addMeBtn as HTMLElement);
     });
 
-    // expect(mockValueChangeEvent).not.toBeCalled();
+    // expect(mockValueChangeEvent).not.toHaveBeenCalled();
 
     act(() => {
       document.body.removeChild(element);

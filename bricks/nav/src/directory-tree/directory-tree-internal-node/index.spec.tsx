@@ -42,7 +42,7 @@ describe("eo-directory-tree-internal-node", () => {
         element.shadowRoot?.querySelector(".tree-item") as HTMLDivElement
       );
     });
-    expect(onExpand).toBeCalledWith(
+    expect(onExpand).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: true,
       })
@@ -85,7 +85,7 @@ describe("eo-directory-tree-internal-node", () => {
         element.shadowRoot?.querySelector(".tree-item") as HTMLDivElement
       );
     });
-    expect(onSelect).toBeCalled();
+    expect(onSelect).toHaveBeenCalled();
 
     act(() => {
       fireEvent.click(
@@ -94,7 +94,7 @@ describe("eo-directory-tree-internal-node", () => {
         ) as HTMLDivElement
       );
     });
-    expect(onExpand).toBeCalledWith(
+    expect(onExpand).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: true,
       })

@@ -300,7 +300,7 @@ describe("LaunchpadService", () => {
 
     jest.runAllTimers();
 
-    expect(spyOnGetLaunchpadInfo).toBeCalledTimes(1);
+    expect(spyOnGetLaunchpadInfo).toHaveBeenCalledTimes(1);
   });
 
   it("should not syncValidRecentlyVisitor when window.STANDALONE_MICRO_APPS was true", async () => {

@@ -172,7 +172,7 @@ describe("api-market.apis-directory-tree", () => {
         new CustomEvent("select")
       );
     });
-    expect(onSelect).toBeCalledWith(
+    expect(onSelect).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: expect.objectContaining({
           keys: ["0"],
@@ -188,7 +188,7 @@ describe("api-market.apis-directory-tree", () => {
         new CustomEvent("expand", { detail: true })
       );
     });
-    expect(onExpand).toBeCalledWith(
+    expect(onExpand).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: expect.objectContaining({
           keys: ["1"],

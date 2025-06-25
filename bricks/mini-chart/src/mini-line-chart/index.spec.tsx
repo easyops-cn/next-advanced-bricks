@@ -89,7 +89,7 @@ describe("eo-mini-line-chart", () => {
         height: 40,
         padding: 1,
         smooth: undefined,
-        lineColor: "gray",
+        lineColor: "rgb(128, 128, 128)",
         xField: "x",
         yField: "y",
         data: element.data,
@@ -129,7 +129,7 @@ describe("eo-mini-line-chart", () => {
 
     await Promise.resolve();
 
-    expect(drawMiniLineChart).not.toBeCalled();
+    expect(drawMiniLineChart).not.toHaveBeenCalled();
 
     element.smooth = true;
     await act(async () => {

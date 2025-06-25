@@ -51,7 +51,7 @@ describe("ai-portal.chat-box", () => {
     await act(async () => {
       await Promise.resolve();
     });
-    expect(focus).toBeCalled();
+    expect(focus).toHaveBeenCalled();
 
     act(() => {
       document.body.removeChild(element);
@@ -79,7 +79,7 @@ describe("ai-portal.chat-box", () => {
       fireEvent.change(textarea, { target: { value: "Hello" } });
       fireEvent.click(element.shadowRoot!.querySelector("button")!);
     });
-    expect(onSubmit).toBeCalledWith("Hello");
+    expect(onSubmit).toHaveBeenCalledWith("Hello");
 
     act(() => {
       document.body.removeChild(element);
@@ -107,7 +107,7 @@ describe("ai-portal.chat-box", () => {
       fireEvent.change(textarea, { target: { value: "Hello" } });
       fireEvent.keyDown(textarea, { key: "Enter" });
     });
-    expect(onSubmit).toBeCalledWith("Hello");
+    expect(onSubmit).toHaveBeenCalledWith("Hello");
 
     act(() => {
       document.body.removeChild(element);

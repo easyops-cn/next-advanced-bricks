@@ -57,9 +57,9 @@ describe("resizeObserverUtil", () => {
     expect(elementSet.size).toBe(1);
 
     triggerResize([elementA, elementB]);
-    expect(callbackA1).lastCalledWith({ target: elementA });
-    expect(callbackA2).lastCalledWith({ target: elementA });
-    expect(callbackB).not.toBeCalled();
+    expect(callbackA1).toHaveBeenLastCalledWith({ target: elementA });
+    expect(callbackA2).toHaveBeenLastCalledWith({ target: elementA });
+    expect(callbackB).not.toHaveBeenCalled();
 
     observe(elementB, callbackB);
     expect(elementListeners_only_for_test.size).toBe(2);
@@ -72,7 +72,7 @@ describe("resizeObserverUtil", () => {
     expect(elementSet.size).toBe(2);
 
     triggerResize([elementB]);
-    expect(callbackB).lastCalledWith({ target: elementB });
+    expect(callbackB).toHaveBeenLastCalledWith({ target: elementB });
 
     unobserve(elementB, callbackB);
     expect(elementListeners_only_for_test.size).toBe(1);

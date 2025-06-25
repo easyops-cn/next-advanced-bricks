@@ -60,8 +60,8 @@ describe("useResizeObserve", () => {
     expect(screen.getByTestId("text").textContent).toBe(
       "clientWidth: 50, clientHeight: 100"
     );
-    expect(onResize).lastCalledWith({ target: { clientWidth: 50, clientHeight: 100 } });
-    expect(onResize).toBeCalledTimes(1);
+    expect(onResize).toHaveBeenLastCalledWith({ target: { clientWidth: 50, clientHeight: 100 } });
+    expect(onResize).toHaveBeenCalledTimes(1);
 
     // trigger the same size
     act(() => {
@@ -70,7 +70,7 @@ describe("useResizeObserve", () => {
         clientHeight: 100,
       });
     });
-    expect(onResize).toBeCalledTimes(1);
+    expect(onResize).toHaveBeenCalledTimes(1);
   });
 
   test("targetRef should work", async () => {
@@ -87,7 +87,7 @@ describe("useResizeObserve", () => {
     expect(screen.getByTestId("text").textContent).toBe(
       "clientWidth: 50, clientHeight: 100"
     );
-    expect(onResize).lastCalledWith({ target: { clientWidth: 50, clientHeight: 100 } });
+    expect(onResize).toHaveBeenLastCalledWith({ target: { clientWidth: 50, clientHeight: 100 } });
 
     act(() => {
       triggerResize({
@@ -98,7 +98,7 @@ describe("useResizeObserve", () => {
     expect(screen.getByTestId("text").textContent).toBe(
       "clientWidth: 40, clientHeight: 100"
     );
-    expect(onResize).lastCalledWith({ target: { clientWidth: 40, clientHeight: 100 } });
+    expect(onResize).toHaveBeenLastCalledWith({ target: { clientWidth: 40, clientHeight: 100 } });
   });
 
   test("boundary situation should work", async () => {

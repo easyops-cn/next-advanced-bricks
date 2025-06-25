@@ -116,20 +116,20 @@ test("WorkbenchTree with nodes", async () => {
     (firstLevelLinks[1].querySelector(".nodeLabel") as HTMLElement).classList
   ).toContain("unreachable");
 
-  expect(onMouseEnter).not.toBeCalled();
+  expect(onMouseEnter).not.toHaveBeenCalled();
   fireEvent.mouseEnter(firstLevelLinks[1]);
-  expect(onMouseEnter).toBeCalledWith(2);
+  expect(onMouseEnter).toHaveBeenCalledWith(2);
 
-  expect(onMouseLeave).not.toBeCalled();
+  expect(onMouseLeave).not.toHaveBeenCalled();
   fireEvent.mouseLeave(firstLevelLinks[1]);
-  expect(onMouseLeave).toBeCalledWith(2);
+  expect(onMouseLeave).toHaveBeenCalledWith(2);
 
-  expect(onContextMenu).not.toBeCalled();
+  expect(onContextMenu).not.toHaveBeenCalled();
   fireEvent.contextMenu(
     firstLevelLinks[1],
     new MouseEvent("contextmenu", { clientX: 10, clientY: 20 })
   );
-  expect(onContextMenu).toBeCalledWith(2, expect.anything());
+  expect(onContextMenu).toHaveBeenCalledWith(2, expect.anything());
 
   fireEvent.change(getByPlaceholderText("Search"), { target: { value: "4" } });
   expect(rootTree.children.length).toBe(1);
@@ -353,7 +353,7 @@ test("WorkbenchTree with collapsible nodes", async () => {
   );
   expect(container.querySelector(".collapsed")).toBe(null);
   expect(container.querySelectorAll(".collapseIcon").length).toBe(1);
-  expect(onNodeToggle).not.toBeCalled();
+  expect(onNodeToggle).not.toHaveBeenCalled();
 
   fireEvent.mouseDown(container.querySelector(".collapseIcon"));
   fireEvent.click(container.querySelector(".collapseIcon"));
@@ -362,7 +362,7 @@ test("WorkbenchTree with collapsible nodes", async () => {
   expect(container.querySelector(".collapsed .nodeName")).toHaveTextContent(
     "n-3"
   );
-  expect(onNodeToggle).toBeCalledTimes(1);
+  expect(onNodeToggle).toHaveBeenCalledTimes(1);
   expect(onNodeToggle).toHaveBeenNthCalledWith(1, 3, true);
 
   const rootTree = container.querySelector(".tree");

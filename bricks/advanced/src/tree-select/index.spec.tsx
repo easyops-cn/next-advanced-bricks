@@ -138,7 +138,7 @@ describe("eo-tree-select", () => {
         ?.childNodes.length
     ).toBe(3);
 
-    expect(mockSearchEvent).toBeCalledWith(
+    expect(mockSearchEvent).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: "leaf c",
       })

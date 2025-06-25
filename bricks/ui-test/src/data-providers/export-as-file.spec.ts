@@ -131,6 +131,6 @@ describe("exportAsFile", () => {
   it("should return false with error", async () => {
     consoleError.mockReturnValueOnce();
     expect(await exportAsFile({} as NodeItem, "visual-builder")).toEqual(false);
-    expect(consoleError).toBeCalledTimes(1);
+    expect(consoleError).toHaveBeenCalledTimes(1);
   });
 });

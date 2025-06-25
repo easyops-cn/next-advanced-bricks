@@ -180,7 +180,7 @@ describe("visual-builder.workbench-history-action", () => {
         element.shadowRoot?.querySelectorAll(".item-container .title-left")[0]
       );
     });
-    expect(onHistoryItemClick).lastCalledWith(
+    expect(onHistoryItemClick).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: expect.objectContaining({
           enableRollback: false,
@@ -194,7 +194,7 @@ describe("visual-builder.workbench-history-action", () => {
         element.shadowRoot?.querySelectorAll(".item-container .rollback")[0]
       );
     });
-    expect(onRollback).lastCalledWith(
+    expect(onRollback).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: expect.objectContaining({
           ts: "11",
@@ -205,7 +205,7 @@ describe("visual-builder.workbench-history-action", () => {
     await act(async () => {
       fireEvent.click(element.shadowRoot?.querySelector(".rollback-all"));
     });
-    expect(onRollbackAll).lastCalledWith(
+    expect(onRollbackAll).toHaveBeenLastCalledWith(
       expect.objectContaining({
         detail: null,
       })

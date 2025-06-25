@@ -102,7 +102,7 @@ describe("eo-cascader", () => {
     await act(async () => {
       await (global as any).flushPromises();
     });
-    expect(onChange).lastCalledWith(
+    expect(onChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
         type: "cascader.change",
         detail: {

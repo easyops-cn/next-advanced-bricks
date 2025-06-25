@@ -452,7 +452,10 @@ describe("updateCells", () => {
           },
         },
       ],
-      updated: expect.objectContaining({ length: 2 }),
+      updated: [
+        expect.anything(),
+        expect.anything(),
+      ],
       // dagre layout
       shouldReCenter: true,
     });
@@ -503,7 +506,10 @@ describe("updateCells", () => {
           },
         },
       ],
-      updated: expect.objectContaining({ length: 2 }),
+      updated: [
+        expect.anything(),
+        expect.anything(),
+      ],
       // dagre layout
       shouldReCenter: true,
     });

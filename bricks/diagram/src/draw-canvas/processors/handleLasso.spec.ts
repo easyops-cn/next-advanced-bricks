@@ -20,13 +20,13 @@ describe("handleLasso", () => {
     });
 
     fireEvent.mouseMove(document, { clientX: 11, clientY: 22 });
-    expect(onLassoing).not.toBeCalled();
+    expect(onLassoing).not.toHaveBeenCalled();
 
     fireEvent.mouseMove(document, { clientX: 25, clientY: 50 });
-    expect(onLassoing).toBeCalledWith({ height: 30, width: 15, x: 10, y: 20 });
+    expect(onLassoing).toHaveBeenCalledWith({ height: 30, width: 15, x: 10, y: 20 });
 
     fireEvent.mouseUp(document, { clientX: 26, clientY: 51 });
-    expect(onLassoed).toBeCalledWith({ height: 31, width: 16, x: 10, y: 20 });
+    expect(onLassoed).toHaveBeenCalledWith({ height: 31, width: 16, x: 10, y: 20 });
   });
 
   test("lasso to top-left", () => {
@@ -36,13 +36,13 @@ describe("handleLasso", () => {
     });
 
     fireEvent.mouseMove(document, { clientX: 9, clientY: 18 });
-    expect(onLassoing).not.toBeCalled();
+    expect(onLassoing).not.toHaveBeenCalled();
 
     fireEvent.mouseMove(document, { clientX: 5, clientY: 10 });
-    expect(onLassoing).toBeCalledWith({ height: 10, width: 5, x: 5, y: 10 });
+    expect(onLassoing).toHaveBeenCalledWith({ height: 10, width: 5, x: 5, y: 10 });
 
     fireEvent.mouseUp(document, { clientX: 6, clientY: 11 });
-    expect(onLassoed).toBeCalledWith({ height: 9, width: 4, x: 6, y: 11 });
+    expect(onLassoed).toHaveBeenCalledWith({ height: 9, width: 4, x: 6, y: 11 });
   });
 
   test("lasso ignored", () => {
@@ -56,6 +56,6 @@ describe("handleLasso", () => {
     });
 
     fireEvent.mouseMove(document, { clientX: 5, clientY: 10 });
-    expect(onLassoing).not.toBeCalled();
+    expect(onLassoing).not.toHaveBeenCalled();
   });
 });

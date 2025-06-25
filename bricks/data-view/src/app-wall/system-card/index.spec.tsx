@@ -31,7 +31,7 @@ describe("data-view.app-wall-system-card", () => {
     act(() => {
       fireEvent.click(element.shadowRoot.querySelector(".buttonContent"));
     });
-    expect(mockClickFn).lastCalledWith(expect.objectContaining({
+    expect(mockClickFn).toHaveBeenLastCalledWith(expect.objectContaining({
       type: "button-click",
       detail: null,
     }));

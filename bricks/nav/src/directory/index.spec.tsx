@@ -79,18 +79,18 @@ describe("eo-directory", () => {
         ".menu-item-title-suffix-icon"
       ) as HTMLElement
     );
-    expect(suffixIconClick).toBeCalledTimes(1);
+    expect(suffixIconClick).toHaveBeenCalledTimes(1);
     fireEvent.click(
       element.shadowRoot?.querySelector(".menu-item-title-item") as HTMLElement
     );
-    expect(menuItemClick).toBeCalledTimes(1);
+    expect(menuItemClick).toHaveBeenCalledTimes(1);
 
     fireEvent.click(
       element.shadowRoot?.querySelector(
         ".menu-item-item .menu-item-title-item"
       ) as HTMLElement
     );
-    expect(menuItemClick).toBeCalledTimes(2);
+    expect(menuItemClick).toHaveBeenCalledTimes(2);
     act(() => {
       document.body.removeChild(element);
     });

@@ -24,7 +24,7 @@ describe("SearchBar", () => {
         },
       });
     });
-    expect(onChange).toBeCalledWith("hello");
+    expect(onChange).toHaveBeenCalledWith("hello");
   });
 
   it("should stop propagation when click input", async () => {
@@ -38,7 +38,7 @@ describe("SearchBar", () => {
     await waitFor(async () => {
       fireEvent(await screen.findByRole("inputContainer"), mockEvent);
     });
-    expect(stopPropagation).toBeCalled();
+    expect(stopPropagation).toHaveBeenCalled();
   });
 
   it("should prevent default when certain keydown", async () => {

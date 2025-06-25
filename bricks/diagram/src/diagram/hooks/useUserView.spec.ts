@@ -28,7 +28,7 @@ describe("useUserView", () => {
 
   test("should warn if no namespace and key", () => {
     const { result } = renderHook(() => useUserView({} as UserViewQuery));
-    expect(consoleError).toBeCalled();
+    expect(consoleError).toHaveBeenCalled();
     expect(result.current.userViewReady).toBe(true);
     expect(result.current.userViewNodesMap).toBe(null);
   });
@@ -48,7 +48,7 @@ describe("useUserView", () => {
     rerender(query);
     expect(result.current.userViewReady).toBe(true);
     expect(result.current.userViewNodesMap).toBe(null);
-    expect(handleHttpError).toBeCalledWith({
+    expect(handleHttpError).toHaveBeenCalledWith({
       message: "oops",
     });
   });
@@ -71,7 +71,7 @@ describe("useUserView", () => {
 
     result.current.saveUserView([{ id: "b", x: 3, y: 4 }]);
     await (global as any).flushPromises();
-    expect(spyOnCreateInstance).toBeCalledWith(
+    expect(spyOnCreateInstance).toHaveBeenCalledWith(
       "GRAPH_USER_VIEW@EASYOPS",
       { key: "bar", namespace: "foo", nodes: [{ id: "b", x: 3, y: 4 }] },
       { interceptorParams: { ignoreLoadingBar: true } }
@@ -108,7 +108,7 @@ describe("useUserView", () => {
     );
 
     result.current.saveUserView([{ id: "b", x: 3, y: 4 }]);
-    expect(spyOnUpdateInstance).toBeCalledWith(
+    expect(spyOnUpdateInstance).toHaveBeenCalledWith(
       "GRAPH_USER_VIEW@EASYOPS",
       "m",
       { key: "bar", namespace: "foo", nodes: [{ id: "b", x: 3, y: 4 }] },

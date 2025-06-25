@@ -58,8 +58,8 @@ describe("diagram.editable-label", () => {
     expect(
       element.shadowRoot?.querySelector(".label")?.classList.contains("editing")
     ).toBe(true);
-    expect(onLabelEditingChange).toBeCalledTimes(1);
-    expect(onLabelEditingChange).toBeCalledWith(true);
+    expect(onLabelEditingChange).toHaveBeenCalledTimes(1);
+    expect(onLabelEditingChange).toHaveBeenCalledWith(true);
 
     // Rename label
     act(() => {
@@ -77,21 +77,21 @@ describe("diagram.editable-label", () => {
         key: "ArrowRight",
       });
     });
-    expect(onLabelChange).toBeCalledTimes(0);
+    expect(onLabelChange).toHaveBeenCalledTimes(0);
 
     act(() => {
       fireEvent.keyDown(element.shadowRoot!.querySelector(".label-input")!, {
         key: "Enter",
       });
     });
-    expect(onLabelChange).toBeCalledTimes(1);
-    expect(onLabelChange).toBeCalledWith("New Name");
+    expect(onLabelChange).toHaveBeenCalledTimes(1);
+    expect(onLabelChange).toHaveBeenCalledWith("New Name");
 
     expect(
       element.shadowRoot?.querySelector(".label")?.classList.contains("editing")
     ).toBe(false);
-    expect(onLabelEditingChange).toBeCalledTimes(2);
-    expect(onLabelEditingChange).toBeCalledWith(false);
+    expect(onLabelEditingChange).toHaveBeenCalledTimes(2);
+    expect(onLabelEditingChange).toHaveBeenCalledWith(false);
 
     act(() => {
       element.enableEditing();

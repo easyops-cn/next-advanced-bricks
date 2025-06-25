@@ -43,6 +43,7 @@ describe("DroppableComponentLayoutItem", () => {
       w: 2,
       h: 1,
       type: "card-1",
+      cardBorderWidth: 2,
     };
     const handleDelete = jest.fn();
 

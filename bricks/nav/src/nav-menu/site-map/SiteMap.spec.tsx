@@ -36,7 +36,7 @@ describe("siteMap test", () => {
     } as SidebarMenuGroup;
     render(<SiteMapItem menuGroup={menuGroup} visible={false} />);
 
-    expect(collectService.fetchFavorites).not.toBeCalled();
+    expect(collectService.fetchFavorites).not.toHaveBeenCalled();
   });
   it("should work with no favorites data", () => {
     (collectService.getFavoritesById as jest.Mock).mockReturnValueOnce([]);

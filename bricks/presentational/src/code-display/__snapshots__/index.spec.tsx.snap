@@ -1,9 +1,9 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`eo-code-display basic usage 1`] = `
 <pre
   class="prism-code language-javascript line-numbers"
-  style="color: rgb(204, 204, 204); background: rgb(45, 45, 45); font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; tab-size: 4; hyphens: none; --max-lines: 10; --min-lines: 3;"
+  style="color: rgb(204, 204, 204); background: rgb(45, 45, 45); font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace; tab-size: 4; hyphens: none; --max-lines: 10; --min-lines: 3;"
 >
   <div
     class="token-line"

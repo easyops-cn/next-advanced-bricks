@@ -140,7 +140,7 @@ describe("eo-directory-tree", () => {
         new CustomEvent("select")
       );
     });
-    expect(onSelect).toBeCalledWith(
+    expect(onSelect).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: expect.objectContaining({
           keys: ["0"],
@@ -157,7 +157,7 @@ describe("eo-directory-tree", () => {
         new CustomEvent("expand", { detail: true })
       );
     });
-    expect(onExpand).toBeCalledWith(
+    expect(onExpand).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: expect.objectContaining({
           keys: ["1"],
@@ -174,7 +174,7 @@ describe("eo-directory-tree", () => {
         new CustomEvent("expand", { detail: false })
       );
     });
-    expect(onExpand).toBeCalledWith(
+    expect(onExpand).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: expect.objectContaining({
           keys: [],
@@ -428,7 +428,7 @@ describe("eo-directory-tree", () => {
         new CustomEvent("select")
       );
     });
-    expect(onSelect).toBeCalledWith(
+    expect(onSelect).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: expect.objectContaining({
           keys: ["1"],

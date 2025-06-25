@@ -196,7 +196,7 @@ describe("visual-builder.workbench-action-list", () => {
     });
     rerender(<WorkbenchActionListComponent appId="new-test" menu={menu} />);
 
-    expect(initMenuItemAndMatchCurrentPathKeys).toBeCalledTimes(2);
+    expect(initMenuItemAndMatchCurrentPathKeys).toHaveBeenCalledTimes(2);
     expect(initMenuItemAndMatchCurrentPathKeys).toHaveBeenNthCalledWith(
       2,
       expect.anything(),

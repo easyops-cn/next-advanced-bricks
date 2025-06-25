@@ -36,7 +36,7 @@ describe("eo-button", () => {
     ).toBe(2);
     expect(element.value).toBe(undefined);
 
-    expect(mockChangeEvent).toBeCalledTimes(0);
+    expect(mockChangeEvent).toHaveBeenCalledTimes(0);
     act(() => {
       (
         element.shadowRoot?.querySelector(
@@ -45,7 +45,7 @@ describe("eo-button", () => {
       ).click();
     });
 
-    expect(mockChangeEvent).toBeCalledWith(
+    expect(mockChangeEvent).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: [
           {
@@ -63,7 +63,7 @@ describe("eo-button", () => {
         )[0] as HTMLInputElement
       ).checked
     ).toBeTruthy();
-    expect(mockOptionsChangeEvent).toBeCalledTimes(0);
+    expect(mockOptionsChangeEvent).toHaveBeenCalledTimes(0);
 
     await act(async () => {
       await (element.value = ["b"]);
@@ -150,7 +150,7 @@ describe("eo-button", () => {
         )[0] as HTMLInputElement
       ).click();
     });
-    expect(mockChangeEvent).toBeCalledWith(
+    expect(mockChangeEvent).toHaveBeenCalledWith(
       expect.objectContaining({
         detail: [
           { label: "a", value: "a", checkboxColor: "orange" },
