@@ -50,8 +50,9 @@ const WrappedDropdownButton = wrapBrick<
 const showDialog = unwrapProvider<typeof _showDialog>("basic.show-dialog");
 
 const ROW_HEIGHT = 1;
-const MARGIN_HEIGHT = 10;
-
+const MARGIN_WIDTH = 16;
+const MARGIN_HEIGHT = 16;
+const URl_PREFIX = `${window.location.origin}/next/api/gateway/object_store.object_store.GetObject/api/v1/objectStore/bucket/sys-setting/object/`;
 export interface EoWorkbenchLayoutV2Props {
   cardTitle?: string;
   layouts?: ExtraLayout[];
@@ -288,6 +289,18 @@ export const EoWorkbenchLayoutComponent = forwardRef<
         if (!component) {
           return null;
         }
+        const background =
+          layout?.cardBgType === "picture"
+            ? `url("${URl_PREFIX}${layout?.cardBackground}") no-repeat center / cover`
+            : layout?.cardBgType === "color"
+              ? layout?.cardBackground
+              : "#fff";
+        const border =
+          layout?.cardBorderStyle === "solid"
+            ? `${layout?.cardBorderWidth}px ${layout?.cardBorderStyle} ${layout?.cardBorderColor}`
+            : (layout?.cardBorderStyle ?? "1px solid #e8e8e8");
+        const borderRadius = `${layout?.cardBorderRadius ?? 6}px`;
+
         return (
           <div
             className="drag-box"
@@ -297,7 +310,13 @@ export const EoWorkbenchLayoutComponent = forwardRef<
               w: layout.cardWidth || layout.w,
             }}
             key={layout.i}
-            style={component.style}
+            style={{
+              ...(component.style||{}),
+              background,
+              border,
+              borderRadius,
+              backdropFilter: "blur(10px)"
+            }}
           >
             <SizeMe monitorHeight>
               {({ size }) => {
@@ -418,6 +437,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
           isDraggable={isEdit}
           isDroppable={isEdit}
           compactType="vertical"
+          margin={[MARGIN_WIDTH, MARGIN_HEIGHT]}
           // onDrag={handleDragCallback}
           useCSSTransforms={false}
           onDropDragOver={() => {
