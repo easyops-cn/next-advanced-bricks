@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.46.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.46.0...@next-bricks/advanced@0.46.1) (2025-06-27)
+
+
+### Bug Fixes
+
+* 修改常量URl_PREFIX /next/ 为 getBasePath() ([f693d34](https://github.com/easyops-cn/next-advanced-bricks/commit/f693d34d8e569d86a1ecbfc834b0162e95201a39))
+* 将内层实现的border等css配置改到drag-box上，统一模块间的间距 ([cebc374](https://github.com/easyops-cn/next-advanced-bricks/commit/cebc3745ac0d3948c63760f1f8d2bff7fa90b75b))
+
+
+
+
+
 # [0.46.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.45.8...@next-bricks/advanced@0.46.0) (2025-06-17)
 
 

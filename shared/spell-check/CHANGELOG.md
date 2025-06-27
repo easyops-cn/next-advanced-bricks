@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/spell-check@0.1.2...@next-shared/spell-check@0.1.3) (2025-06-27)
+
+**Note:** Version bump only for package @next-shared/spell-check
+
+
+
+
+
 ## [0.1.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/spell-check@0.1.1...@next-shared/spell-check@0.1.2) (2025-05-14)
 
 
