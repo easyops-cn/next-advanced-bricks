@@ -221,6 +221,12 @@ describe("eo-workbench-layout-v2", () => {
         moved: false,
         static: false,
         type: "card-1",
+        cardBgType: "picture",
+        cardBackground: "78519952-9661-4D47-B44D-FC064BE737AF1745310975468719733.png",
+        cardBorderStyle: "solid",
+        cardBorderWidth: 1,
+        cardTitleColor: "#262626",
+        cardBorderRadius: 6,
       },
       {
         w: 1,
@@ -231,6 +237,8 @@ describe("eo-workbench-layout-v2", () => {
         moved: false,
         static: false,
         type: "card-2",
+        cardBgType: "color",
+        cardBackground: "#1a7aff",
       },
     ];
 
@@ -343,6 +351,12 @@ describe("eo-workbench-layout-v2", () => {
         moved: false,
         static: false,
         type: "card-1",
+        cardBgType: "picture",
+        cardBackground: "78519952-9661-4D47-B44D-FC064BE737AF1745310975468719733.png",
+        cardBorderStyle: "solid",
+        cardBorderWidth: 1,
+        cardTitleColor: "#262626",
+        cardBorderRadius: 6,
       },
       {
         ...defaultCardConfig,
