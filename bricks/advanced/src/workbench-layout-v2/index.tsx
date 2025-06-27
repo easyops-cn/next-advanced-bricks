@@ -28,7 +28,7 @@ import type { showDialog as _showDialog } from "@next-bricks/basic/data-provider
 import { SimpleAction } from "@next-bricks/basic/actions";
 import { keyBy, pick } from "lodash";
 import { SizeMe } from "react-sizeme";
-
+import { getBasePath } from "@next-core/runtime";
 import { WorkbenchComponent, ExtraLayout } from "../interfaces";
 import { DroppableComponentLayoutItem } from "./DroppableComponentLayoutItem";
 import { DraggableComponentMenuItem } from "./DraggableComponentMenuItem";
@@ -52,7 +52,7 @@ const showDialog = unwrapProvider<typeof _showDialog>("basic.show-dialog");
 const ROW_HEIGHT = 1;
 const MARGIN_WIDTH = 16;
 const MARGIN_HEIGHT = 16;
-const URl_PREFIX = `${window.location.origin}/next/api/gateway/object_store.object_store.GetObject/api/v1/objectStore/bucket/sys-setting/object/`;
+const URl_PREFIX = `${window.location.origin}${getBasePath()}api/gateway/object_store.object_store.GetObject/api/v1/objectStore/bucket/sys-setting/object/`;
 export interface EoWorkbenchLayoutV2Props {
   cardTitle?: string;
   layouts?: ExtraLayout[];
