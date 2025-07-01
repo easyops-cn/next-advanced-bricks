@@ -1377,7 +1377,7 @@ describe("eo-draw-canvas", () => {
       view: {
         x: 10,
         y: 50,
-        width: 100,
+        width: 180,
         height: 210,
         text: "Updated",
       },
@@ -1416,8 +1416,8 @@ describe("eo-draw-canvas", () => {
           view: {
             height: 20,
             width: 20,
-            x: 30,
-            y: 100,
+            x: 90,
+            y: 70,
           },
         },
       ]);
