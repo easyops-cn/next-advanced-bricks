@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.64.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.64.1...@next-bricks/diagram@0.64.2) (2025-07-01)
+
+
+### Bug Fixes
+
+* 架构图构件支持同时动态生成的容器以及节点 ([b172353](https://github.com/easyops-cn/next-advanced-bricks/commit/b17235371c58c257756a0f56d5ef7246aea83c51))
+
+
+
+
+
 ## [0.64.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.64.0...@next-bricks/diagram@0.64.1) (2025-06-27)
 
 **Note:** Version bump only for package @next-bricks/diagram
