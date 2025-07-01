@@ -1,6 +1,7 @@
 import { describe, test, expect } from "@jest/globals";
 import { updateCells } from "./updateCells";
 import { SYMBOL_FOR_SIZE_INITIALIZED } from "../constants";
+import { DecoratorView } from "../interfaces";
 
 describe("updateCells", () => {
   test("add related nodes on right side of siblings", () => {
@@ -452,10 +453,7 @@ describe("updateCells", () => {
           },
         },
       ],
-      updated: [
-        expect.anything(),
-        expect.anything(),
-      ],
+      updated: [expect.anything(), expect.anything()],
       // dagre layout
       shouldReCenter: true,
     });
@@ -506,10 +504,7 @@ describe("updateCells", () => {
           },
         },
       ],
-      updated: [
-        expect.anything(),
-        expect.anything(),
-      ],
+      updated: [expect.anything(), expect.anything()],
       // dagre layout
       shouldReCenter: true,
     });
@@ -791,6 +786,79 @@ describe("updateCells", () => {
         },
       ],
       updated: [],
+      shouldReCenter: false,
+    });
+  });
+
+  test("Initialize the container node", () => {
+    expect(
+      updateCells({
+        cells: [
+          {
+            id: "1",
+            type: "node",
+            containerId: "container-1",
+            view: {
+              x: 100,
+              y: 30,
+            },
+          },
+          {
+            id: "container-1",
+            decorator: "container",
+            type: "decorator",
+            view: {
+              direction: "left",
+            } as DecoratorView,
+          },
+        ],
+        previousCells: [],
+        defaultNodeSize: [120, 80],
+        canvasWidth: 800,
+        canvasHeight: 600,
+        scaleRange: [0.5, 2],
+        transform: { k: 1, x: 0, y: 0 },
+      })
+    ).toEqual({
+      cells: [
+        {
+          id: "1",
+          type: "node",
+          containerId: "container-1",
+          view: {
+            x: 100,
+            y: 30,
+            width: 120,
+            height: 80,
+          },
+        },
+        {
+          id: "container-1",
+          decorator: "container",
+          type: "decorator",
+          view: {
+            direction: "left",
+            height: 120,
+            width: 180,
+            x: 80,
+            y: 10,
+          },
+        },
+      ],
+      updated: [
+        {
+          id: "container-1",
+          decorator: "container",
+          type: "decorator",
+          view: {
+            direction: "left",
+            height: 120,
+            width: 180,
+            x: 80,
+            y: 10,
+          },
+        },
+      ],
       shouldReCenter: false,
     });
   });

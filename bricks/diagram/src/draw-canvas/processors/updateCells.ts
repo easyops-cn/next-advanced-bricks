@@ -11,6 +11,7 @@ import {
 } from "../constants";
 import type {
   Cell,
+  DecoratorCell,
   InitialCell,
   LayoutOptions,
   LayoutType,
@@ -19,6 +20,7 @@ import type {
   NodeView,
 } from "../interfaces";
 import {
+  isContainerDecoratorCell,
   isDecoratorCell,
   isEdgeCell,
   isNodeCell,
@@ -70,7 +72,7 @@ export function updateCells({
     layoutOptions,
     isInitialize: false,
   });
-  const updateCandidates: NodeCell[] = [];
+  const updateCandidates: (NodeCell | DecoratorCell)[] = [];
   let shouldReCenter = false;
 
   const previousSizeInitializedNodes = new Map<string, NodeCell>();
@@ -240,9 +242,11 @@ export function updateCells({
       /**
        * 首次通过updateCells渲染时，才会存在容器，节点都没有位置大小，
        */
-      if (
-        newCells.some((cell) => isDecoratorCell(cell) && isNoSize(cell.view))
-      ) {
+      const containerCells = newCells.filter(
+        (cell) => isContainerDecoratorCell(cell) && isNoSize(cell.view)
+      ) as DecoratorCell[];
+      if (containerCells.length > 0) {
+        updateCandidates.push(...containerCells);
         initaliContainerLayout(newCells);
       } else {
         generateNewPointsWithLayout(newCells, { defaultNodeSize });
