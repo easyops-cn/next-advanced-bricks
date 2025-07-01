@@ -14,6 +14,7 @@ import {
 } from "./asserts";
 import { dagreLayout } from "../../shared/canvas/dagreLayout";
 import { computeContainerRect } from "./computeContainerRect";
+import { DEFAULT_AREA_HEIGHT, DEFAULT_AREA_WIDTH } from "../constants";
 
 /**
  * 初始化容器内节点层次布局以及同步容器大小位置
@@ -28,7 +29,6 @@ export function initaliContainerLayout(cells: InitialCell[]) {
   const decoratorCells = cells.filter(
     isContainerDecoratorCell
   ) as DecoratorCell[];
-
   const containerGroup: Record<string, Omit<Cell, "DecoratorCell">[]> = {};
   const groupNameMap: Record<string, Set<string>> = {};
 
@@ -52,7 +52,6 @@ export function initaliContainerLayout(cells: InitialCell[]) {
     maxContainerWidth = 0,
     nodeViews: NodeCell[] = [];
   const uniformWidthContainers: DecoratorCell[] = [];
-
   // 排序容器层级，高层级优先布局
   const sortedContainerIds = decoratorCells
     .filter((cell) => containerGroup[cell.id])
@@ -85,7 +84,8 @@ export function initaliContainerLayout(cells: InitialCell[]) {
         return node;
       });
     const containerRect = computeContainerRect(nodeViews as BaseNodeCell[]);
-    const { height, width } = containerRect;
+    const { height = DEFAULT_AREA_HEIGHT, width = DEFAULT_AREA_WIDTH } =
+      containerRect;
     if (isNoSize(containerCell.view)) {
       containerCell.view = { ...containerCell.view, ...containerRect };
       if (width! > maxContainerWidth) maxContainerWidth = width!;
@@ -96,6 +96,6 @@ export function initaliContainerLayout(cells: InitialCell[]) {
 
   // 统一容器宽度
   uniformWidthContainers.forEach((container) => {
-    container.view.width = maxContainerWidth;
+    container.view.width = Math.max(DEFAULT_AREA_WIDTH, maxContainerWidth);
   });
 }

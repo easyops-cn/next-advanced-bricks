@@ -18,13 +18,20 @@ import type {
   NodeId,
   NodeView,
 } from "../interfaces";
-import { isDecoratorCell, isEdgeCell, isNodeCell, isNoPoint } from "./asserts";
+import {
+  isDecoratorCell,
+  isEdgeCell,
+  isNodeCell,
+  isNoPoint,
+  isNoSize,
+} from "./asserts";
 import { initializeCells } from "./initializeCells";
 import { transformToCenter } from "./transformToCenter";
 import { forceLayout } from "../../shared/canvas/forceLayout";
 import { dagreLayout } from "../../shared/canvas/dagreLayout";
 import { sameTarget } from "./sameTarget";
 import { generateNewPointsWithLayout } from "./generateNewPointsWithLayout";
+import { initaliContainerLayout } from "./initaliContainerLayout";
 
 export function updateCells({
   cells,
@@ -230,7 +237,16 @@ export function updateCells({
           ],
         }));
       }
-      generateNewPointsWithLayout(newCells, { defaultNodeSize });
+      /**
+       * 首次通过updateCells渲染时，才会存在容器，节点都没有位置大小，
+       */
+      if (
+        newCells.some((cell) => isDecoratorCell(cell) && isNoSize(cell.view))
+      ) {
+        initaliContainerLayout(newCells);
+      } else {
+        generateNewPointsWithLayout(newCells, { defaultNodeSize });
+      }
 
       for (const cell of newCells) {
         if (isNodeCell(cell) && isNoPoint(cell.view)) {
