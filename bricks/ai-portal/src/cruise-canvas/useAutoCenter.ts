@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { ZoomTransform, type ZoomBehavior } from "d3-zoom";
-import { select } from "d3-selection";
+import { select, type Selection, type TransitionLike } from "d3-selection";
+import { mergeRects } from "@next-shared/diagram";
 import type { GraphNode } from "./interfaces";
 import { CANVAS_PADDING_BOTTOM } from "./constants";
 
@@ -9,6 +10,12 @@ export interface UseAutoCenterOptions {
   sizeReady: boolean;
   zoomer: ZoomBehavior<HTMLDivElement, unknown>;
   rootRef: RefObject<HTMLDivElement>;
+  selectTransition: (
+    selection: Selection<HTMLDivElement, unknown, null, undefined>,
+    duration?: number
+  ) =>
+    | Selection<HTMLDivElement, unknown, null, undefined>
+    | TransitionLike<HTMLDivElement, unknown>;
 }
 
 export function useAutoCenter({
@@ -16,6 +23,7 @@ export function useAutoCenter({
   sizeReady,
   zoomer,
   rootRef,
+  selectTransition,
 }: UseAutoCenterOptions) {
   const [centered, setCentered] = useState(false);
   const reCenterRef = useRef(false);
@@ -24,28 +32,14 @@ export function useAutoCenter({
   useEffect(() => {
     const root = rootRef.current;
     if (sizeReady && root && !centered && nodes.length > 0) {
-      let left = Infinity;
-      let right = -Infinity;
-      let top = Infinity;
-      let bottom = -Infinity;
-
-      for (const node of nodes) {
-        const view = node.view!;
-        const r = view.x + view.width;
-        const b = view.y + view.height;
-        if (view.x < left) {
-          left = view.x;
-        }
-        if (r > right) {
-          right = r;
-        }
-        if (view.y < top) {
-          top = view.y;
-        }
-        if (b > bottom) {
-          bottom = b;
-        }
-      }
+      const {
+        x: left,
+        y: top,
+        width,
+        height,
+      } = mergeRects(nodes.map((node) => node.view!));
+      const right = left + width;
+      const bottom = top + height;
 
       const x = (root.clientWidth - (right + left)) / 2;
       let y = 30;
@@ -58,13 +52,18 @@ export function useAutoCenter({
           y = (root.clientHeight - (bottom + top)) / 2;
         }
       }
-
-      zoomer.transform(select(root), new ZoomTransform(1, x, y));
+      let selection:
+        | Selection<HTMLDivElement, unknown, null, undefined>
+        | TransitionLike<HTMLDivElement, unknown> = select(root);
+      if (reCenterRef.current) {
+        selection = selectTransition(selection);
+      }
+      zoomer.transform(selection, new ZoomTransform(1, x, y));
       setCentered(true);
     }
 
     reCenterRef.current = false;
-  }, [centered, nodes, rootRef, sizeReady, zoomer]);
+  }, [centered, nodes, rootRef, sizeReady, zoomer, selectTransition]);
 
   return { centered, setCentered, reCenterRef };
 }

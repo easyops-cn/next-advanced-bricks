@@ -50,6 +50,7 @@
     "@next-core/runtime": "^1.62.1",
     "@next-core/theme": "^1.5.4",
     "@next-core/utils": "^1.7.36",
+    "@next-shared/diagram": "^0.0.0",
     "@next-shared/form": "^0.8.2",
     "@next-shared/markdown": "^0.3.1",
     "classnames": "^2.3.2",

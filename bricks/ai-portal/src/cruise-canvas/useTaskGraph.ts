@@ -1,6 +1,12 @@
 // istanbul ignore file
 import { useMemo } from "react";
-import type { Job, GraphEdge, GraphNode, TaskBaseDetail } from "./interfaces";
+import type {
+  Job,
+  GraphEdge,
+  GraphNode,
+  TaskBaseDetail,
+  GraphNavItem,
+} from "./interfaces";
 
 export function useTaskGraph(
   task: TaskBaseDetail | null | undefined,
@@ -14,6 +20,7 @@ export function useTaskGraph(
     const fixedJobs = jobs ?? [];
     const nodes: GraphNode[] = [];
     const edges: GraphEdge[] = [];
+    const nav: GraphNavItem[] = [];
 
     const requirementNodeId = "requirement";
     nodes.push({
@@ -144,6 +151,11 @@ export function useTaskGraph(
         });
 
         nodeIds.push(instructionNodeId);
+
+        nav.push({
+          id: job.id,
+          title: job.instruction,
+        });
       }
 
       if (hasMessages || !job.instruction) {
@@ -183,6 +195,7 @@ export function useTaskGraph(
     return {
       nodes,
       edges,
+      nav,
     };
   }, [task, jobs]);
 }

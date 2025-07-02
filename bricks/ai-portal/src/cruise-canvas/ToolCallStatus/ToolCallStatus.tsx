@@ -5,7 +5,7 @@ import type { Job } from "../interfaces";
 import { WrappedIcon } from "../bricks";
 import { CanvasContext } from "../CanvasContext";
 import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
-import { getToolDataProgress } from "../utils";
+import { getToolDataProgress } from "../utils/getToolDataProgress";
 
 export interface NodeJobToolCallProps {
   job: Job;

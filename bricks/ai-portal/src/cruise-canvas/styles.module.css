@@ -115,3 +115,64 @@ svg.edges {
 .go-back::part(link):active {
   background: rgba(255, 255, 255, 0.3);
 }
+
+.nav {
+  position: absolute;
+  list-style: none;
+  margin: 0;
+  padding: 68px 0;
+  left: 0;
+  top: 72px;
+  bottom: 72px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  width: 146px;
+  height: 36px;
+  border-radius: 0 18px 18px 0;
+  padding: 0 18px 0 26px;
+  font-size: 13px;
+}
+
+.nav-link,
+.nav-link:hover {
+  color: rgba(93, 105, 126, 0.7);
+}
+
+.nav-item:not(:first-child) {
+  margin-top: 12px;
+}
+
+.nav-link-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-link:hover,
+.nav-item.active .nav-link {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.nav-item.active .nav-link {
+  font-size: 14px;
+  color: #424a58;
+}
+
+@media (max-height: 639px) {
+  .nav {
+    padding: 0;
+  }
+}
+
+@media (max-width: 719px) {
+  .nav {
+    display: none;
+  }
+}
