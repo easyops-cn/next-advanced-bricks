@@ -4,7 +4,9 @@ import { fireEvent } from "@testing-library/react";
 import "./";
 import type { EoDisplayCanvas } from "./index.js";
 import type { Cell, EdgeLineConf } from "../draw-canvas/interfaces";
+import ResizeObserver from "resize-observer-polyfill";
 
+global.ResizeObserver = ResizeObserver as any;
 jest.mock("@next-core/theme", () => ({}));
 jest.mock("d3-drag");
 jest.mock("resize-observer-polyfill", () => ({

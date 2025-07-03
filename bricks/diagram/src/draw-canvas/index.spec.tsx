@@ -10,7 +10,7 @@ import * as _handleMouseDown from "./processors/handleMouseDown";
 jest.mock("@next-core/theme", () => ({}));
 jest.mock("d3-drag");
 jest.mock("resize-observer-polyfill");
-
+global.ResizeObserver = ResizeObserver as any;
 const handleMouseDown = jest.spyOn(_handleMouseDown, "handleMouseDown");
 
 document.elementsFromPoint = jest.fn(() => []);
@@ -1376,7 +1376,7 @@ describe("eo-draw-canvas", () => {
       id: "container-1",
       view: {
         x: 10,
-        y: 50,
+        y: 160,
         width: 180,
         height: 210,
         text: "Updated",
@@ -1401,11 +1401,12 @@ describe("eo-draw-canvas", () => {
           id: "add-1-to-container1",
           type: "node",
           containerId: "container-1",
+          useBrick: undefined,
           view: {
             height: 20,
             width: 20,
             x: 60,
-            y: 70,
+            y: 180,
           },
         },
         {
@@ -1413,11 +1414,12 @@ describe("eo-draw-canvas", () => {
           id: "add-2-to-container1",
           type: "node",
           containerId: "container-1",
+          useBrick: undefined,
           view: {
             height: 20,
             width: 20,
             x: 90,
-            y: 70,
+            y: 180,
           },
         },
       ]);

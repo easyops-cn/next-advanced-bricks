@@ -71,6 +71,7 @@ export function DecoratorContainer({
   useEffect(() => {
     setCurrentLabel(label);
   }, [label]);
+
   useEffect(() => {
     const element = textRef.current;
     if (element && element.textContent !== currentLabel) {
@@ -79,27 +80,30 @@ export function DecoratorContainer({
   }, [currentLabel]);
 
   useEffect(() => {
-    const textParentEle = textRef.current?.parentElement;
-    if (textParentEle) {
-      const { clientWidth, clientHeight } = textParentEle;
+    const element = textRef.current?.parentElement;
+    if (!element) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      const { clientWidth, clientHeight } = element;
       if (["left", "right"].includes(direction)) {
-        const rect = {
+        setTitleForeignRect({
           width: clientWidth,
           height: view.height,
           x: direction === "left" ? -clientWidth : view.width,
           y: 0,
-        };
-        setTitleForeignRect(rect);
+        });
       } else {
-        const rect = {
+        setTitleForeignRect({
           width: view.width,
           height: clientHeight,
           x: 0,
           y: direction === "top" ? -clientHeight : view.height,
-        };
-        setTitleForeignRect(rect);
+        });
       }
-    }
+    });
+
+    resizeObserver.observe(element);
+    return () => resizeObserver.disconnect();
   }, [view, currentLabel, direction, recomputation]);
 
   useEffect(() => {

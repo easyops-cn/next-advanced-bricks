@@ -95,7 +95,7 @@ export interface DecoratorView extends NodeView {
   titleStyle?: CSSProperties;
   /** 设置容器装饰器的文本位置 */
   direction?: Direction;
-  /** 设置容器层级（数字越大布局越靠前） */
+  /** 设置容器层级（从小到大排序） */
   level?: number;
   vertices?: NodePosition[] | null;
 }
