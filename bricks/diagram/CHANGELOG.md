@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.64.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.64.3...@next-bricks/diagram@0.64.4) (2025-07-03)
+
+
+### Bug Fixes
+
+* use mergeRects from shared libs ([9a25d82](https://github.com/easyops-cn/next-advanced-bricks/commit/9a25d82f521b0403f67888b528e2368ea0457d04))
+
+
+
+
+
 ## [0.64.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.64.2...@next-bricks/diagram@0.64.3) (2025-07-01)
 
 **Note:** Version bump only for package @next-bricks/diagram
