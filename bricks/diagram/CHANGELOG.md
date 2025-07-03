@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.64.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.64.4...@next-bricks/diagram@0.64.5) (2025-07-03)
+
+
+### Bug Fixes
+
+* 修复容器元素标题位置不对的问题 ([ff7a9ee](https://github.com/easyops-cn/next-advanced-bricks/commit/ff7a9ee2788859cb2748e73c47ab047459680c0c))
+
+
+
+
+
 ## [0.64.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.64.3...@next-bricks/diagram@0.64.4) (2025-07-03)
 
 
