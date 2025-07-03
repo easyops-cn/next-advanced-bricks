@@ -69,10 +69,6 @@
   flex: 1;
 }
 
-.instruction {
-  color: #262626;
-}
-
 .stat {
   margin-left: 6px;
 }
@@ -98,42 +94,48 @@
     0px 3px 6px -4px rgba(0, 0, 0, 0.12);
   list-style: none;
   margin: 0;
-  padding: 12px;
+  padding: 20px;
   cursor: auto;
 }
 
 .step {
+  --state-color: initial;
+
   display: flex;
   align-items: center;
+  color: var(--state-color, var(--text-color-secondary));
+}
+
+.instruction {
+  color: var(--state-color, #262626);
 }
 
 .step:not(:last-child) {
-  margin-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.step.completed {
+  --state-color: var(--color-success);
+}
+
+.step.failed {
+  --state-color: var(--color-error);
+}
+
+.step.working {
+  --state-color: var(--color-info);
+}
+
+.step.input-required {
+  --state-color: var(--palette-cyan-7);
+}
+
+.step.canceled {
+  --state-color: #fcaa07;
 }
 
 .state {
-  margin-right: 6px;
-  color: var(--text-color-secondary);
-}
-
-.state.completed {
-  color: var(--color-success);
-}
-
-.state.failed {
-  color: var(--color-error);
-}
-
-.state.working {
-  color: var(--color-info);
-}
-
-.state.input-required {
-  color: var(--palette-cyan-7);
-}
-
-.state.canceled {
-  color: #fcaa07;
+  margin-right: 10px;
 }
 
 .actions {
@@ -171,4 +173,9 @@
 
 .actions > * + * {
   margin-left: 8px;
+}
+
+.mask {
+  position: fixed;
+  inset: 0;
 }

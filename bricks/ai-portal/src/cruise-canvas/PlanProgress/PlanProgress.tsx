@@ -112,85 +112,88 @@ export function PlanProgress({
   const canIntercept = !taskDone && jobState !== "input-required";
 
   return (
-    <div className={classNames(styles.progress, className)}>
-      <div className={styles.bar} onClick={toggle}>
-        <div className={styles.icon}>
-          <WrappedIcon {...icon} />
+    <>
+      {expanded && <div className={styles.mask} onClick={toggle} />}
+      <div className={classNames(styles.progress, className)}>
+        <div className={styles.bar} onClick={toggle}>
+          <div className={styles.icon}>
+            <WrappedIcon {...icon} />
+          </div>
+          <span
+            className={styles.text}
+            title={jobState === "completed" ? "" : instruction}
+          >
+            {jobState === "completed" ? t(K.PLAN_COMPLETED) : instruction}
+          </span>
+          <span className={styles.stat}>
+            {doneCount}/{plan.length}
+          </span>
+          <WrappedIcon
+            className={styles.expand}
+            lib="antd"
+            theme="outlined"
+            icon={expanded ? "down" : "up"}
+          />
         </div>
-        <span
-          className={styles.text}
-          title={jobState === "completed" ? "" : instruction}
-        >
-          {jobState === "completed" ? t(K.PLAN_COMPLETED) : instruction}
-        </span>
-        <span className={styles.stat}>
-          {doneCount}/{plan.length}
-        </span>
-        <WrappedIcon
-          className={styles.expand}
-          lib="antd"
-          theme="outlined"
-          icon={expanded ? "down" : "up"}
-        />
+        {canIntercept && (
+          <div className={styles.actions}>
+            {actionBeingTaken === "toggle" ? (
+              <WrappedTooltip>
+                <button disabled className={styles.action}>
+                  <WrappedIcon lib="antd" icon="loading-3-quarters" spinning />
+                </button>
+              </WrappedTooltip>
+            ) : taskState === "paused" ? (
+              <WrappedTooltip
+                content={actionBeingTaken ? undefined : t(K.RESUME_THE_TASK)}
+                onClick={handleResume}
+              >
+                <button disabled={!!actionBeingTaken} className={styles.action}>
+                  <WrappedIcon lib="fa" prefix="far" icon="circle-play" />
+                </button>
+              </WrappedTooltip>
+            ) : (
+              <WrappedTooltip
+                content={actionBeingTaken ? undefined : t(K.PAUSE_THE_TASK)}
+                onClick={handlePause}
+              >
+                <button disabled={!!actionBeingTaken} className={styles.action}>
+                  <WrappedIcon lib="fa" prefix="far" icon="circle-pause" />
+                </button>
+              </WrappedTooltip>
+            )}
+            {actionBeingTaken === "cancel" ? (
+              <WrappedTooltip>
+                <button disabled className={styles.action}>
+                  <WrappedIcon lib="antd" icon="loading-3-quarters" spinning />
+                </button>
+              </WrappedTooltip>
+            ) : (
+              <WrappedTooltip
+                content={actionBeingTaken ? undefined : t(K.CANCEL_THE_TASK)}
+                onClick={handleStop}
+              >
+                <button disabled={!!actionBeingTaken} className={styles.action}>
+                  <WrappedIcon lib="fa" prefix="far" icon="circle-stop" />
+                </button>
+              </WrappedTooltip>
+            )}
+          </div>
+        )}
+        {expanded && (
+          <ul className={styles.details}>
+            {plan.map((step, index) => (
+              <PlanStep
+                key={index}
+                state={step.state}
+                taskState={taskState}
+                instruction={step.instruction}
+              />
+            ))}
+          </ul>
+        )}
       </div>
-      {canIntercept && (
-        <div className={styles.actions}>
-          {actionBeingTaken === "toggle" ? (
-            <WrappedTooltip>
-              <button disabled className={styles.action}>
-                <WrappedIcon lib="antd" icon="loading-3-quarters" spinning />
-              </button>
-            </WrappedTooltip>
-          ) : taskState === "paused" ? (
-            <WrappedTooltip
-              content={actionBeingTaken ? undefined : t(K.RESUME_THE_TASK)}
-              onClick={handleResume}
-            >
-              <button disabled={!!actionBeingTaken} className={styles.action}>
-                <WrappedIcon lib="fa" prefix="far" icon="circle-play" />
-              </button>
-            </WrappedTooltip>
-          ) : (
-            <WrappedTooltip
-              content={actionBeingTaken ? undefined : t(K.PAUSE_THE_TASK)}
-              onClick={handlePause}
-            >
-              <button disabled={!!actionBeingTaken} className={styles.action}>
-                <WrappedIcon lib="fa" prefix="far" icon="circle-pause" />
-              </button>
-            </WrappedTooltip>
-          )}
-          {actionBeingTaken === "cancel" ? (
-            <WrappedTooltip>
-              <button disabled className={styles.action}>
-                <WrappedIcon lib="antd" icon="loading-3-quarters" spinning />
-              </button>
-            </WrappedTooltip>
-          ) : (
-            <WrappedTooltip
-              content={actionBeingTaken ? undefined : t(K.CANCEL_THE_TASK)}
-              onClick={handleStop}
-            >
-              <button disabled={!!actionBeingTaken} className={styles.action}>
-                <WrappedIcon lib="fa" prefix="far" icon="circle-stop" />
-              </button>
-            </WrappedTooltip>
-          )}
-        </div>
-      )}
-      {expanded && (
-        <ul className={styles.details}>
-          {plan.map((step, index) => (
-            <PlanStep
-              key={index}
-              state={step.state}
-              taskState={taskState}
-              instruction={step.instruction}
-            />
-          ))}
-        </ul>
-      )}
-    </div>
+    </>
   );
 }
 
@@ -206,8 +209,8 @@ function PlanStep({ state, taskState, instruction }: PlanStepProps) {
   }, [state, taskState]);
 
   return (
-    <li className={styles.step}>
-      <WrappedIcon {...icon} className={classNames(styles.state, className)} />
+    <li className={classNames(styles.step, className)}>
+      <WrappedIcon {...icon} className={styles.state} />
       <span className={styles.instruction} title={instruction}>
         {instruction}
       </span>
