@@ -148,6 +148,12 @@ describe("parseSuiteAst", () => {
           children: [
             {
               type: "block",
+              name: "code",
+              label: null,
+              params: ["const a = 'test'"],
+            },
+            {
+              type: "block",
               name: "it",
               label: "should work",
               params: null,
@@ -200,10 +206,41 @@ describe("includes tags", {
   tags: ["@smokenull", "@cmdb"],
   author: "easyops"
 }, () => {
+  const a = 'test';
   it("should work", () => {
     cy.get("#username").click();
   });
 });"
 `);
+  });
+
+  it("should throw error when the children of describe is not block or code", () => {
+    const suiteData = {
+      type: "suite",
+      name: "create-new-route",
+      label: "test login",
+      params: null,
+      children: [
+        {
+          type: "block",
+          name: "describe",
+          label: "test route create",
+          params: null,
+          children: [
+            {
+              type: "command",
+              name: "get",
+              label: null,
+              params: ["#username"],
+              children: [],
+            },
+          ],
+        },
+      ],
+    } as any as NodeItem;
+
+    expect(() => parseSuiteAst(suiteData)).toThrow(
+      "The children of `describe` can only be `block` type (before, beforeEach, after, afterEach, it) or `code` type."
+    );
   });
 });
