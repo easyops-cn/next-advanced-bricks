@@ -116,16 +116,27 @@ svg.edges {
   background: rgba(255, 255, 255, 0.3);
 }
 
-.nav {
+.nav-container {
   position: absolute;
-  list-style: none;
-  margin: 0;
-  padding: 68px 0;
   left: 0;
   top: 72px;
   bottom: 72px;
+  padding: 48px 0;
   overflow-y: auto;
   scrollbar-width: none;
+}
+
+.nav {
+  list-style: none;
+  margin: 0;
+  padding: 20px 0;
+  background: rgba(255, 255, 255, 0);
+  backdrop-filter: blur(18px);
+}
+
+.nav-container,
+.nav {
+  border-radius: 0px 8px 8px 0px;
 }
 
 .nav-link {
@@ -166,13 +177,13 @@ svg.edges {
 }
 
 @media (max-height: 639px) {
-  .nav {
+  .nav-container {
     padding: 0;
   }
 }
 
 @media (max-width: 719px) {
-  .nav {
+  .nav-container {
     display: none;
   }
 }

@@ -567,25 +567,27 @@ function LegacyCruiseCanvasComponent(
             <WrappedIcon lib="fa" prefix="fas" icon="arrow-left-long" />
           </WrappedLink>
         )}
-        <ul className={styles.nav}>
-          {nav?.map((item) => (
-            <li
-              key={item.id}
-              className={classNames(styles["nav-item"], {
-                [styles.active]: activeNavId === item.id,
-              })}
-            >
-              <a
-                className={styles["nav-link"]}
-                onClick={() => {
-                  scrollTo({ jobId: item.id, block: "start" });
-                }}
+        <div className={styles["nav-container"]}>
+          <ul className={styles.nav}>
+            {nav?.map((item) => (
+              <li
+                key={item.id}
+                className={classNames(styles["nav-item"], {
+                  [styles.active]: activeNavId === item.id,
+                })}
               >
-                <span className={styles["nav-link-text"]}>{item.title}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
+                <a
+                  className={styles["nav-link"]}
+                  onClick={() => {
+                    scrollTo({ jobId: item.id, block: "start" });
+                  }}
+                >
+                  <span className={styles["nav-link-text"]}>{item.title}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
         <PlanProgress plan={plan} state={taskState} />
         <ZoomBar
           scale={transform.k}
