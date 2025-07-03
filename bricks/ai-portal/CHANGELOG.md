@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.10.0...@next-bricks/ai-portal@0.10.1) (2025-07-03)
+
+
+### Bug Fixes
+
+* add background for nav ([a799b0e](https://github.com/easyops-cn/next-advanced-bricks/commit/a799b0e04592a1523086908f93a131926c808090))
+
+
+
+
+
 # [0.10.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.9.4...@next-bricks/ai-portal@0.10.0) (2025-07-03)
 
 
