@@ -1,4 +1,4 @@
-import { forEach, get, groupBy, isNil } from "lodash";
+import { forEach, get, groupBy, isNil, orderBy } from "lodash";
 import type {
   BaseNodeCell,
   Cell,
@@ -52,12 +52,12 @@ export function initaliContainerLayout(cells: InitialCell[]) {
     maxContainerWidth = 0,
     nodeViews: NodeCell[] = [];
   const uniformWidthContainers: DecoratorCell[] = [];
-  // 排序容器层级，高层级优先布局
-  const sortedContainerIds = decoratorCells
-    .filter((cell) => containerGroup[cell.id])
-    .sort((a, b) => get(b, "view.level", 1) - get(a, "view.level", 1))
-    .map((cell) => cell.id);
-
+  // 排序容器层级，level越大越后面；没有大小都排后面
+  const sortedContainerIds = orderBy(
+    decoratorCells.filter((cell) => containerGroup[cell.id]),
+    [(o) => (isNoSize(o.view) ? 1 : 0), (o) => get(o, "view.level", 1)],
+    ["asc", "asc"]
+  ).map((cell) => cell.id);
   sortedContainerIds.forEach((groupId) => {
     const containerCell = decoratorCells.find((d) => d.id === groupId)!;
     const groupedNodes = containerGroup[groupId] as Cell[];
@@ -83,15 +83,21 @@ export function initaliContainerLayout(cells: InitialCell[]) {
         }
         return node;
       });
-    const containerRect = computeContainerRect(nodeViews as BaseNodeCell[]);
-    const { height = DEFAULT_AREA_HEIGHT, width = DEFAULT_AREA_WIDTH } =
-      containerRect;
+    let containerHeight = 0,
+      containerWidth = 0;
+
     if (isNoSize(containerCell.view)) {
+      const containerRect = computeContainerRect(nodeViews as BaseNodeCell[]);
+      containerHeight = get(containerRect, "height", DEFAULT_AREA_HEIGHT);
+      containerWidth = get(containerRect, "width", DEFAULT_AREA_WIDTH);
       containerCell.view = { ...containerCell.view, ...containerRect };
-      if (width! > maxContainerWidth) maxContainerWidth = width!;
       uniformWidthContainers.push(containerCell);
+    } else {
+      containerHeight = get(containerCell, "view.height");
+      containerWidth = get(containerCell, "view.width");
     }
-    containerGap += height! + 50;
+    maxContainerWidth = Math.max(containerWidth, maxContainerWidth);
+    containerGap += containerHeight + 50;
   });
 
   // 统一容器宽度

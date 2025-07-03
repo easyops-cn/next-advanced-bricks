@@ -261,6 +261,5 @@ export function updateCells({
       }
     }
   }
-
   return { cells: newCells, updated: updateCandidates, shouldReCenter };
 }
