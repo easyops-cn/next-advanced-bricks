@@ -16,6 +16,7 @@ export type GraphNode =
   | RequirementGraphNode
   | InstructionGraphNode
   | JobGraphNode
+  | ViewGraphNode
   | StartGraphNode
   | EndGraphNode;
 
@@ -34,6 +35,11 @@ export interface JobGraphNode extends BaseGraphNode {
   job: Job;
 }
 
+export interface ViewGraphNode extends BaseGraphNode {
+  type: "view";
+  job: Job;
+}
+
 export interface StartGraphNode extends BaseGraphNode {
   type: "start";
 }
@@ -46,7 +52,7 @@ export interface BaseGraphNode {
   id: string;
   type: string;
   state?: JobState;
-  view?: NodeView;
+  view?: NodeRect;
 }
 
 export interface GraphEdge {
@@ -54,7 +60,7 @@ export interface GraphEdge {
   target: string;
 }
 
-export interface NodeView extends NodePosition {
+export interface NodeRect extends NodePosition {
   width: number;
   height: number;
 }

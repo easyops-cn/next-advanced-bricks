@@ -19,6 +19,7 @@ import { initializeI18n } from "@next-core/i18n";
 import classNames from "classnames";
 import ResizeObserver from "resize-observer-polyfill";
 import { select, type Selection } from "d3-selection";
+import { mergeRects } from "@next-shared/diagram";
 import { NS, locales } from "./i18n.js";
 import styles from "./styles.module.css";
 import { useZoom } from "./useZoom.js";
@@ -42,6 +43,7 @@ import { NodeRequirement } from "./NodeRequirement/NodeRequirement.js";
 import { NodeInstruction } from "./NodeInstruction/NodeInstruction.js";
 import { NodeJob } from "./NodeJob/NodeJob.js";
 import { NodeEnd } from "./NodeEnd/NodeEnd.js";
+import { NodeView } from "./NodeView/NodeView.js";
 import {
   CANVAS_PADDING_BOTTOM,
   CANVAS_PADDING_LEFT,
@@ -53,7 +55,6 @@ import {
 import { WrappedIcon, WrappedLink } from "./bricks.js";
 import { CanvasContext } from "./CanvasContext.js";
 import { ToolCallDetail } from "./ToolCallDetail/ToolCallDetail.js";
-import { mergeRects } from "@next-shared/diagram";
 import { getScrollTo } from "./utils/getScrollTo.js";
 
 initializeI18n(NS, locales);
@@ -684,6 +685,8 @@ function NodeComponent({
           content={job!.instruction}
           loading={instructionLoading}
         />
+      ) : type === "view" ? (
+        <NodeView job={job!} />
       ) : (
         <NodeJob state={state} job={job!} />
       )}
