@@ -18,7 +18,7 @@ import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import classNames from "classnames";
 import ResizeObserver from "resize-observer-polyfill";
-import { select } from "d3-selection";
+import { select, type Selection } from "d3-selection";
 import { NS, locales } from "./i18n.js";
 import styles from "./styles.module.css";
 import { useZoom } from "./useZoom.js";
@@ -44,12 +44,17 @@ import { NodeJob } from "./NodeJob/NodeJob.js";
 import { NodeEnd } from "./NodeEnd/NodeEnd.js";
 import {
   CANVAS_PADDING_BOTTOM,
+  CANVAS_PADDING_LEFT,
+  CANVAS_PADDING_RIGHT,
+  CANVAS_PADDING_TOP,
   DONE_STATES,
   GENERAL_DONE_STATES,
 } from "./constants.js";
 import { WrappedIcon, WrappedLink } from "./bricks.js";
 import { CanvasContext } from "./CanvasContext.js";
 import { ToolCallDetail } from "./ToolCallDetail/ToolCallDetail.js";
+import { mergeRects } from "@next-shared/diagram";
+import { getScrollTo } from "./utils/getScrollTo.js";
 
 initializeI18n(NS, locales);
 
@@ -146,6 +151,23 @@ interface CruiseCanvasComponentProps extends CruiseCanvasProps {
   onCancel: () => void;
 }
 
+interface ScrollToOptions {
+  nodeId?: string;
+  jobId?: string;
+
+  /**
+   * @default "auto"
+   */
+  behavior?: "smooth" | "instant" | "auto";
+
+  /**
+   * When set to "start", force scroll even if the node is fully visible.
+   *
+   * @default "nearest"
+   */
+  block?: "start" | "nearest";
+}
+
 interface CruiseCanvasRef {
   resumed: () => void;
 }
@@ -178,6 +200,7 @@ function LegacyCruiseCanvasComponent(
   const graph = useTaskGraph(task, jobs);
   const rawNodes = graph?.nodes;
   const rawEdges = graph?.edges;
+  const nav = graph?.nav;
   const pageTitle = task?.title ?? "";
   const taskState = task?.state;
 
@@ -187,6 +210,38 @@ function LegacyCruiseCanvasComponent(
       resumed: () => resumedRef.current?.(),
     }),
     [resumedRef]
+  );
+
+  // Enable transition after 3 seconds to avoid initial flicker
+  const transitionEnabledRef = useRef(false);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      transitionEnabledRef.current = true;
+    }, 3e3);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+
+  const transitionRef = useRef(false);
+  const selectTransition = useCallback(
+    (
+      selection: Selection<HTMLDivElement, unknown, null, undefined>,
+      duration?: number
+    ) => {
+      if (!transitionEnabledRef.current || duration === 0) {
+        return selection;
+      }
+      transitionRef.current = true;
+      return selection
+        .transition()
+        .duration(duration ?? 300)
+        .ease((t) => t * (2 - t)) // Ease in-out
+        .on("end", () => {
+          transitionRef.current = false;
+        });
+    },
+    []
   );
 
   useEffect(() => {
@@ -242,6 +297,7 @@ function LegacyCruiseCanvasComponent(
     sizeReady,
     zoomer,
     rootRef,
+    selectTransition,
   });
 
   const taskDone = DONE_STATES.includes(taskState ?? "working");
@@ -291,15 +347,22 @@ function LegacyCruiseCanvasComponent(
     const diffY = offsetHeight - CANVAS_PADDING_BOTTOM - transformedBottom;
     if (diffY < 0) {
       // Make the latest node visible
-      zoomer.translateBy(select(rootRef.current!), 0, diffY);
+      zoomer.translateBy(
+        selectTransition(
+          select(root),
+          diffY > -100 ? 100 : diffY < -500 ? 300 : 200
+        ),
+        0,
+        diffY / transform.k
+      );
     }
-  }, [bottom, transformRef, zoomer]);
+  }, [bottom, transformRef, zoomer, selectTransition]);
 
   // Detect if the user scrolled up manually
   useEffect(() => {
     const bottom = bottomRef.current;
     const root = rootRef.current;
-    if (!root || bottom === null) {
+    if (!root || bottom === null || transitionRef.current) {
       return;
     }
     const { offsetHeight } = root;
@@ -319,6 +382,87 @@ function LegacyCruiseCanvasComponent(
       zoomer.scaleTo(select(rootRef.current!), scale);
     },
     [zoomer]
+  );
+
+  const [activeNavId, setActiveNavId] = useState<string | undefined>();
+
+  // Find the active nav item by node position against the canvas top
+  useEffect(() => {
+    if (!sizeReady) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      let distance = Infinity;
+      let navId: string | undefined;
+      for (const node of nodes) {
+        if (node.type === "instruction") {
+          const y = node.view!.y * transform.k + transform.y;
+          const diff = y - CANVAS_PADDING_TOP;
+          if (diff >= 0 && diff < distance) {
+            distance = diff;
+            navId = node.job.id;
+          }
+        }
+      }
+      setActiveNavId(navId);
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [nodes, sizeReady, transform]);
+
+  const scrollTo = useCallback(
+    ({ nodeId, jobId, behavior, block }: ScrollToOptions) => {
+      /**
+       * - When the node is fully visible, take no action.
+       * - Otherwise, scroll to make it fully visible while make the scroll
+       *   distance as small as possible.
+       * - Special cases:
+       *   - When the node is higher or wider than the viewport, scroll to
+       *     the top or left of the node.
+       */
+      const root = rootRef.current;
+      const targets = nodes.filter((n) => {
+        if (nodeId && n.id !== nodeId) {
+          return false;
+        }
+        if (jobId && (n as JobGraphNode).job?.id !== jobId) {
+          return false;
+        }
+        return true;
+      });
+      if (!root || targets.length === 0) {
+        return;
+      }
+      const rect = mergeRects(targets.map((node) => node.view!));
+
+      const { x, y } = getScrollTo(
+        rect,
+        [root.offsetWidth, root.offsetHeight],
+        [
+          CANVAS_PADDING_TOP,
+          CANVAS_PADDING_RIGHT,
+          CANVAS_PADDING_BOTTOM,
+          CANVAS_PADDING_LEFT,
+        ],
+        transformRef.current,
+        block
+      );
+
+      if (x || y) {
+        zoomer.translateBy(
+          selectTransition(
+            select(root),
+            behavior === "instant" ? 0 : undefined
+          ),
+          x,
+          y
+        );
+      }
+    },
+    [nodes, selectTransition, transformRef, zoomer]
   );
 
   const [activeToolCallJobId, setActiveToolCallJobId] = useState<string | null>(
@@ -423,6 +567,25 @@ function LegacyCruiseCanvasComponent(
             <WrappedIcon lib="fa" prefix="fas" icon="arrow-left-long" />
           </WrappedLink>
         )}
+        <ul className={styles.nav}>
+          {nav?.map((item) => (
+            <li
+              key={item.id}
+              className={classNames(styles["nav-item"], {
+                [styles.active]: activeNavId === item.id,
+              })}
+            >
+              <a
+                className={styles["nav-link"]}
+                onClick={() => {
+                  scrollTo({ jobId: item.id, block: "start" });
+                }}
+              >
+                <span className={styles["nav-link-text"]}>{item.title}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
         <PlanProgress plan={plan} state={taskState} />
         <ZoomBar
           scale={transform.k}

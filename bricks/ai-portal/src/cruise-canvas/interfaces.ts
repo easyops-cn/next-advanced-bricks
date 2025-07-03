@@ -208,3 +208,8 @@ export interface ComponentGraphNode {
 export interface ComponentGraphEdge extends GraphEdge {
   type: "edge";
 }
+
+export interface GraphNavItem {
+  id: string;
+  title: string;
+}
