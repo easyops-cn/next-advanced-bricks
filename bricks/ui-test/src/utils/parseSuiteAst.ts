@@ -1,5 +1,5 @@
 import * as t from "@babel/types";
-import { isEmpty } from "lodash";
+import { flatten, isEmpty } from "lodash";
 import { parse } from "@babel/parser";
 import { Options as FormatOptions } from "prettier";
 import { format } from "prettier/standalone";
@@ -162,13 +162,24 @@ function processBlockItem(item: NodeItem): t.Statement[] {
   }
 
   if (item.name === "describe") {
-    if (item.children!.some((c) => c.type !== NodeType.Block)) {
+    if (
+      item.children!.some((c) => c.type !== NodeType.Block && c.name !== "code")
+    ) {
       throw new Error(
-        `The children of the \`${item.name}\` are only be  \` block \` type, specifically including before, beforeEach, after, afterEach and "it."`
+        `The children of \`${item.name}\` can only be \`block\` type (before, beforeEach, after, afterEach, it) or \`code\` type.`
       );
     }
 
-    return item.children!.map((c) => createBlockNode(c));
+    return flatten(
+      item.children!.map((c) => {
+        if (c.name === "code") {
+          // 支持 block 类型的 describe 下也直接用 code
+          return processCodeItem(c);
+        } else {
+          return [createBlockNode(c)];
+        }
+      })
+    );
   } else {
     return createCommandNode(item.children!);
   }
