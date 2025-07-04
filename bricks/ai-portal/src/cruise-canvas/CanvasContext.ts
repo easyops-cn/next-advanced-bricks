@@ -10,6 +10,7 @@ export interface CanvasContextValue {
   onNodeResize: (id: string, size: SizeTuple | null) => void;
   activeToolCallJobId: string | null;
   setActiveToolCallJobId: Dispatch<React.SetStateAction<string | null>>;
+  setActiveNodeId: Dispatch<React.SetStateAction<string | null>>;
 }
 
 export const CanvasContext = createContext<CanvasContextValue>({
@@ -21,4 +22,5 @@ export const CanvasContext = createContext<CanvasContextValue>({
   onNodeResize: () => {},
   activeToolCallJobId: null,
   setActiveToolCallJobId: () => {},
+  setActiveNodeId: () => {},
 });

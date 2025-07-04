@@ -28,9 +28,10 @@ import { Topology } from "../Topology/Topology";
 export interface NodeJobProps {
   job: Job;
   state?: string;
+  active?: boolean;
 }
 
-export function NodeJob({ job, state }: NodeJobProps): JSX.Element {
+export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
   const askUser = job.toolCall?.name === "ask_human";
   const askUserPlan = job.toolCall?.name === "ask_human_confirming_plan";
   const generalAskUser = askUser || askUserPlan;
@@ -53,8 +54,10 @@ export function NodeJob({ job, state }: NodeJobProps): JSX.Element {
         [styles.error]: job.isError,
         [styles["ask-user"]]: generalAskUser,
         [styles["fit-content"]]: hasGraph,
+        [styles.active]: active,
       })}
     >
+      <div className={styles.background} />
       <div className={styles.heading}>
         {generalAskUser ? (
           <WrappedIcon

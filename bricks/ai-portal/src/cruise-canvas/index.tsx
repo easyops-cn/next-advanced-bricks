@@ -19,6 +19,7 @@ import { initializeI18n } from "@next-core/i18n";
 import classNames from "classnames";
 import ResizeObserver from "resize-observer-polyfill";
 import { select, type Selection } from "d3-selection";
+import { mergeRects } from "@next-shared/diagram";
 import { NS, locales } from "./i18n.js";
 import styles from "./styles.module.css";
 import { useZoom } from "./useZoom.js";
@@ -42,6 +43,7 @@ import { NodeRequirement } from "./NodeRequirement/NodeRequirement.js";
 import { NodeInstruction } from "./NodeInstruction/NodeInstruction.js";
 import { NodeJob } from "./NodeJob/NodeJob.js";
 import { NodeEnd } from "./NodeEnd/NodeEnd.js";
+import { NodeView } from "./NodeView/NodeView.js";
 import {
   CANVAS_PADDING_BOTTOM,
   CANVAS_PADDING_LEFT,
@@ -53,8 +55,8 @@ import {
 import { WrappedIcon, WrappedLink } from "./bricks.js";
 import { CanvasContext } from "./CanvasContext.js";
 import { ToolCallDetail } from "./ToolCallDetail/ToolCallDetail.js";
-import { mergeRects } from "@next-shared/diagram";
 import { getScrollTo } from "./utils/getScrollTo.js";
+import { handleKeyboardNav } from "./utils/handleKeyboardNav.js";
 
 initializeI18n(NS, locales);
 
@@ -203,6 +205,7 @@ function LegacyCruiseCanvasComponent(
   const nav = graph?.nav;
   const pageTitle = task?.title ?? "";
   const taskState = task?.state;
+  const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
 
   useImperativeHandle(
     ref,
@@ -384,7 +387,7 @@ function LegacyCruiseCanvasComponent(
     [zoomer]
   );
 
-  const [activeNavId, setActiveNavId] = useState<string | undefined>();
+  const [currentNavId, setCurrentNavId] = useState<string | undefined>();
 
   // Find the active nav item by node position against the canvas top
   useEffect(() => {
@@ -405,7 +408,7 @@ function LegacyCruiseCanvasComponent(
           }
         }
       }
-      setActiveNavId(navId);
+      setCurrentNavId(navId);
     }, 100);
 
     return () => {
@@ -479,6 +482,7 @@ function LegacyCruiseCanvasComponent(
       onNodeResize,
       activeToolCallJobId,
       setActiveToolCallJobId,
+      setActiveNodeId,
     }),
     [
       activeToolCallJobId,
@@ -498,6 +502,41 @@ function LegacyCruiseCanvasComponent(
     return jobs?.find((job) => job.id === activeToolCallJobId);
   }, [activeToolCallJobId, jobs]);
 
+  const handleRootClick = useCallback(() => {
+    setActiveNodeId(null);
+  }, []);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || activeToolCallJob) {
+      return;
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const nextNode = handleKeyboardNav(e, { activeNodeId, nodes });
+      if (nextNode) {
+        e.preventDefault();
+        e.stopPropagation();
+        setActiveNodeId(nextNode.id);
+        if (nextNode.type === "job" || nextNode.type === "view") {
+          scrollTo({
+            jobId: nextNode.job.id,
+            behavior: "smooth",
+          });
+        } else {
+          scrollTo({
+            nodeId: nextNode.id,
+            behavior: "smooth",
+          });
+        }
+      }
+    };
+    root.addEventListener("keydown", handleKeyDown);
+    return () => {
+      root.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [activeNodeId, activeToolCallJob, nodes, scrollTo]);
+
   return (
     <CanvasContext.Provider value={canvasContextValue}>
       <div
@@ -506,6 +545,8 @@ function LegacyCruiseCanvasComponent(
         style={{
           cursor: grabbing ? "grabbing" : "grab",
         }}
+        tabIndex={-1}
+        onClick={handleRootClick}
       >
         {!task && (
           <div className={styles["loading-icon"]}>
@@ -557,6 +598,7 @@ function LegacyCruiseCanvasComponent(
               edges={edges}
               x={node.view?.x}
               y={node.view?.y}
+              active={activeNodeId === node.id}
             />
           ))}
         </div>
@@ -573,7 +615,7 @@ function LegacyCruiseCanvasComponent(
               <li
                 key={item.id}
                 className={classNames(styles["nav-item"], {
-                  [styles.active]: activeNavId === item.id,
+                  [styles.active]: currentNavId === item.id,
                 })}
               >
                 <a
@@ -612,6 +654,7 @@ interface NodeComponentProps {
   instructionLoading?: boolean;
   x?: number;
   y?: number;
+  active?: boolean;
 }
 
 function NodeComponent({
@@ -625,9 +668,10 @@ function NodeComponent({
   instructionLoading,
   x,
   y,
+  active,
 }: NodeComponentProps) {
   const nodeRef = useRef<HTMLDivElement>(null);
-  const { onNodeResize } = useContext(CanvasContext);
+  const { onNodeResize, setActiveNodeId } = useContext(CanvasContext);
 
   useEffect(() => {
     const element = nodeRef.current;
@@ -658,6 +702,16 @@ function NodeComponent({
     };
   }, []);
 
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (type !== "start" && type !== "instruction") {
+        setActiveNodeId(id);
+        e.stopPropagation();
+      }
+    },
+    [id, setActiveNodeId, type]
+  );
+
   return (
     <div
       className={classNames(styles.node, {
@@ -668,24 +722,28 @@ function NodeComponent({
         left: x,
         top: y,
       }}
+      onClick={handleClick}
     >
       {type === "start" ? (
         <NodeStart />
       ) : type === "end" ? (
-        <NodeEnd />
+        <NodeEnd active={active} />
       ) : type === "requirement" ? (
         <NodeRequirement
           content={content}
           startTime={startTime}
           loading={taskLoading}
+          active={active}
         />
       ) : type === "instruction" ? (
         <NodeInstruction
           content={job!.instruction}
           loading={instructionLoading}
         />
+      ) : type === "view" ? (
+        <NodeView job={job!} active={active} />
       ) : (
-        <NodeJob state={state} job={job!} />
+        <NodeJob state={state} job={job!} active={active} />
       )}
     </div>
   );

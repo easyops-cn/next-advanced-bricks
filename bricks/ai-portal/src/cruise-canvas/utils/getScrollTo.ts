@@ -1,10 +1,10 @@
-import type { NodeView, SizeTuple, TransformLiteral } from "../interfaces";
+import type { NodeRect, SizeTuple, TransformLiteral } from "../interfaces";
 
 /**
  * Get the scroll movement so that the given rectangle is visible in container.
  */
 export function getScrollTo(
-  rect: NodeView,
+  rect: NodeRect,
   containerSize: SizeTuple,
   padding: [top: number, right: number, bottom: number, left: number],
   transform: TransformLiteral,

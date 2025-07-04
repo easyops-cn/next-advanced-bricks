@@ -6,8 +6,36 @@
     0px 4px 10px 0px rgba(177, 149, 207, 0.4),
     0px 2px 4px 0px rgba(0, 0, 0, 0.06);
   border-radius: 12px;
-  border: 1px solid #fff;
+  border: 1px solid rgba(255, 255, 255, 0.5);
   padding: 8px;
+  position: relative;
+}
+
+.node-job.active {
+  border-color: #a1b5ff;
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background-image: url("../images/job-background.png");
+  background-repeat: no-repeat;
+  background-position: top right;
+  z-index: 0;
+  transition: opacity 0.15s;
+  opacity: 0;
+}
+
+.node-job.active .background,
+.node-job:hover .background {
+  opacity: 1;
+}
+
+.heading,
+.body {
+  position: relative;
+  z-index: 1;
 }
 
 .fit-content {

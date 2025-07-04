@@ -2,7 +2,7 @@ import dagre from "@dagrejs/dagre";
 import { useMemo, useRef } from "react";
 import type {
   NodePosition,
-  NodeView,
+  NodeRect,
   GraphEdge,
   GraphNode,
   SizeTuple,
@@ -83,7 +83,7 @@ export function useLayout({
       for (const node of initialNodes) {
         const view = memoizedPositions.get(node.id);
         if (view) {
-          node.view = view as NodeView;
+          node.view = view as NodeRect;
         }
       }
     }

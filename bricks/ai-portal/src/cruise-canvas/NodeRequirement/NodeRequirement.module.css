@@ -15,6 +15,10 @@
   position: relative;
 }
 
+.node-requirement.active {
+  border-color: #a1b5ff;
+}
+
 .heading {
   display: flex;
   align-items: center;

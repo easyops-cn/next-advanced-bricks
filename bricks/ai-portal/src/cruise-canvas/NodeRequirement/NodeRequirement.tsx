@@ -7,6 +7,7 @@ import type {
   EoEasyopsAvatarProps,
 } from "@next-bricks/basic/easyops-avatar";
 import moment from "moment";
+import classNames from "classnames";
 import styles from "./NodeRequirement.module.css";
 
 const WrappedEasyOpsAvatar = wrapBrick<EoEasyopsAvatar, EoEasyopsAvatarProps>(
@@ -17,19 +18,25 @@ export interface NodeRequirementProps {
   content?: string;
   startTime?: number;
   loading?: boolean;
+  active?: boolean;
 }
 
 export function NodeRequirement({
   content,
   startTime,
   loading,
+  active,
 }: NodeRequirementProps): JSX.Element {
   const username = useMemo(() => {
     return auth.getAuth().username;
   }, []);
 
   return (
-    <div className={styles["node-requirement"]}>
+    <div
+      className={classNames(styles["node-requirement"], {
+        [styles.active]: active,
+      })}
+    >
       <div className={styles.heading}>
         <WrappedEasyOpsAvatar
           className={styles.avatar}
