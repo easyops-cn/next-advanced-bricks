@@ -26,3 +26,5 @@ export const DEFAULT_CANVAS_PADDING = 0;
 
 export const POINT_HELPER_RADIUS = 5;
 export const DEFAULT_MOTION_SPEED = 50;
+export const CONTAINERGAP = 40;
+export const MAXPERROW = 12;

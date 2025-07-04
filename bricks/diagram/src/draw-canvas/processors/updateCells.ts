@@ -1,4 +1,4 @@
-import { without } from "lodash";
+import { get, without } from "lodash";
 import type {
   RangeTuple,
   SizeTuple,
@@ -246,8 +246,12 @@ export function updateCells({
         (cell) => isContainerDecoratorCell(cell) && isNoSize(cell.view)
       ) as DecoratorCell[];
       if (containerCells.length > 0) {
+        const nodeLayout =
+          get(layoutOptions, "initialLayout") === "layered-staggered"
+            ? "staggered"
+            : "dagre";
+        initaliContainerLayout(newCells, { nodeLayout });
         updateCandidates.push(...containerCells);
-        initaliContainerLayout(newCells);
       } else {
         generateNewPointsWithLayout(newCells, { defaultNodeSize });
       }

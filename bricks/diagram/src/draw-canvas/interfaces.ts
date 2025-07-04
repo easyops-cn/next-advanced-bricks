@@ -329,7 +329,10 @@ export type LayoutType = "manual" | "force" | "dagre" | undefined;
 /**
  * layered-architecture: 分层架构
  */
-export type InitialLayout = "default" | "layered-architecture";
+export type InitialLayout =
+  | "default"
+  | "layered-architecture"
+  | "layered-staggered";
 
 export type LayoutOptions =
   | LayoutOptionsManual

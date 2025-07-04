@@ -16,8 +16,11 @@ export function initializeCells(
 ): Cell[] {
   const originalCells = initialCells ?? [];
   if (isInitialize) {
-    if (get(layoutOptions, "initialLayout") === "layered-architecture")
-      initaliContainerLayout(originalCells);
+    if (get(layoutOptions, "initialLayout") === "layered-architecture") {
+      initaliContainerLayout(originalCells, { nodeLayout: "dagre" });
+    } else if (get(layoutOptions, "initialLayout") === "layered-staggered") {
+      initaliContainerLayout(originalCells, { nodeLayout: "staggered" });
+    }
   }
   const finalCells: Cell[] = originalCells.map<Cell>((cell) => {
     if (

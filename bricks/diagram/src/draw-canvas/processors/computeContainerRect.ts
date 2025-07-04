@@ -13,7 +13,7 @@ export function computeContainerRect(cells: BaseNodeCell[]) {
     if (y + height > maxY) maxY = y + height;
   });
   if (![minX, maxX, minY, maxY].some((n) => isFinite(n))) return {};
-  const padding = 20;
+  const padding = 40;
   const width = maxX - minX + padding * 2;
   const height = maxY - minY + padding * 2;
   return {

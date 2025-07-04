@@ -1375,10 +1375,10 @@ describe("eo-draw-canvas", () => {
     expect(onDecoratorTextChange).toHaveBeenCalledWith({
       id: "container-1",
       view: {
-        x: 10,
-        y: 160,
+        x: -10,
+        y: 140,
         width: 180,
-        height: 210,
+        height: 250,
         text: "Updated",
       },
     });
@@ -1405,8 +1405,8 @@ describe("eo-draw-canvas", () => {
           view: {
             height: 20,
             width: 20,
-            x: 60,
-            y: 180,
+            x: 10,
+            y: 160,
           },
         },
         {
@@ -1418,8 +1418,144 @@ describe("eo-draw-canvas", () => {
           view: {
             height: 20,
             width: 20,
-            x: 90,
-            y: 180,
+            x: 40,
+            y: 160,
+          },
+        },
+      ]);
+    });
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
+
+  test("layered-staggered", async () => {
+    const element = document.createElement("eo-draw-canvas") as EoDrawCanvas;
+    element.cells = [
+      {
+        type: "decorator",
+        decorator: "container",
+        id: "container-1",
+        view: {
+          text: "上层服务",
+        },
+      } as Cell,
+      {
+        type: "node",
+        id: "A",
+        containerId: "container-1",
+        view: {
+          width: 60,
+          height: 60,
+        },
+      } as Cell,
+      {
+        type: "node",
+        id: "B",
+        containerId: "container-1",
+        view: {
+          width: 60,
+          height: 60,
+        },
+      } as Cell,
+      {
+        type: "node",
+        id: "C",
+        containerId: "container-2",
+        view: {
+          width: 60,
+          height: 60,
+        },
+      } as Cell,
+      {
+        type: "edge",
+        source: "A",
+        target: "B",
+      },
+      {
+        type: "decorator",
+        decorator: "container",
+        id: "container-2",
+        view: {
+          x: 50,
+          y: 400,
+          width: 80,
+          height: 60,
+          direction: "right",
+          text: "上游系统",
+        },
+      } as Cell,
+      {
+        type: "decorator",
+        decorator: "container",
+        id: "container-3",
+        view: {
+          x: 50,
+          y: 400,
+          width: 80,
+          height: 60,
+          direction: "bottom",
+          text: "中台层",
+        },
+      } as Cell,
+      {
+        type: "decorator",
+        decorator: "container",
+        id: "container-4",
+        view: {
+          x: 500,
+          y: 200,
+          width: 380,
+          height: 120,
+          direction: "left",
+          text: "接入层",
+        },
+      } as Cell,
+    ];
+    element.layoutOptions = { initialLayout: "layered-staggered" };
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    await act(async () => {
+      const result = await element.addNodes([
+        {
+          id: "add-1-to-container1",
+          containerId: "container-1",
+          data: {},
+        },
+        {
+          id: "add-2-to-container1",
+          containerId: "container-1",
+          data: {},
+        },
+      ]);
+      expect(result).toEqual([
+        {
+          data: {},
+          id: "add-1-to-container1",
+          type: "node",
+          containerId: "container-1",
+          useBrick: undefined,
+          view: {
+            height: 20,
+            width: 20,
+            x: -20,
+            y: 130,
+          },
+        },
+        {
+          data: {},
+          id: "add-2-to-container1",
+          type: "node",
+          containerId: "container-1",
+          useBrick: undefined,
+          view: {
+            height: 20,
+            width: 20,
+            x: 10,
+            y: 130,
           },
         },
       ]);
