@@ -26,7 +26,7 @@ export function ZoomBar({
   return (
     <div className={`${toolbarStyles.toolbar} ${styles["zoom-bar"]}`}>
       <button onClick={onReCenter}>
-        <WrappedIcon lib="fa" prefix="fas" icon="expand" />
+        <WrappedIcon lib="easyops" icon="back-to-center" />
       </button>
       <div className={toolbarStyles.divider}></div>
       <button onClick={handleZoomOut}>

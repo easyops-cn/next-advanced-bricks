@@ -7,6 +7,7 @@ import type {
   TaskBaseDetail,
   GraphNavItem,
 } from "./interfaces";
+import { REQUIREMENT_NODE_ID } from "./constants";
 
 export function useTaskGraph(
   task: TaskBaseDetail | null | undefined,
@@ -22,10 +23,9 @@ export function useTaskGraph(
     const edges: GraphEdge[] = [];
     const nav: GraphNavItem[] = [];
 
-    const requirementNodeId = "requirement";
     nodes.push({
       type: "requirement",
-      id: requirementNodeId,
+      id: REQUIREMENT_NODE_ID,
       content: task.requirement,
       state: fixedJobs.length === 0 ? "working" : "completed",
     });
@@ -130,7 +130,7 @@ export function useTaskGraph(
     }
 
     const jobNodesMap = new Map<string, string[]>([
-      [requirementNodeId, [requirementNodeId]],
+      [REQUIREMENT_NODE_ID, [REQUIREMENT_NODE_ID]],
     ]);
 
     for (const jobId of list) {
@@ -190,7 +190,7 @@ export function useTaskGraph(
       const nodeIds = jobNodesMap.get(jobId)!;
 
       const upstreams = upstreamMap.get(jobId);
-      for (const upstream of upstreams ?? [requirementNodeId]) {
+      for (const upstream of upstreams ?? [REQUIREMENT_NODE_ID]) {
         const parentNodeIds = jobNodesMap.get(upstream)!;
         edges.push({
           source: parentNodeIds[parentNodeIds.length - 1],

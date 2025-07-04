@@ -1,5 +1,7 @@
 // istanbul ignore file: experimental
 import React, { useEffect, useRef } from "react";
+import { unstable_createRoot } from "@next-core/runtime";
+import classNames from "classnames";
 // import styles from "./NodeView.module.css";
 import jobStyles from "../NodeJob/NodeJob.module.css";
 // import sharedStyles from "../shared.module.css";
@@ -9,13 +11,13 @@ import {
   convertView,
   type BrickConfWithContext,
 } from "../utils/converters/convertView";
-import { unstable_createRoot } from "@next-core/runtime";
 
 export interface NodeViewProps {
   job: Job;
+  active?: boolean;
 }
 
-export function NodeView({ job }: NodeViewProps): JSX.Element {
+export function NodeView({ job, active }: NodeViewProps): JSX.Element {
   const ref = useRef<HTMLDivElement>(null);
   const rootRef = useRef<Awaited<
     ReturnType<typeof unstable_createRoot>
@@ -79,7 +81,11 @@ export function NodeView({ job }: NodeViewProps): JSX.Element {
   }, [job]);
 
   return (
-    <div className={jobStyles["node-job"]}>
+    <div
+      className={classNames(jobStyles["node-job"], {
+        [jobStyles.active]: active,
+      })}
+    >
       <div ref={ref}></div>
       <pre>{JSON.stringify(storyboard, null, 2)}</pre>
     </div>

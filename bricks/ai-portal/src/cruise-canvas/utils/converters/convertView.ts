@@ -12,7 +12,7 @@ import type { BrickConf, ContextConf } from "@next-core/types";
 import convertButton from "./convertButton.js";
 import convertForm from "./convertForm.js";
 import convertFlexLayout from "./convertFlexLayout.js";
-// import convertFormItem from "./convertFormItem.js";
+import convertFormItem from "./convertFormItem.js";
 import convertModal from "./convertModal.js";
 import { convertEvents } from "./convertEvents.js";
 
@@ -74,9 +74,9 @@ export async function convertView(
       case "form":
         brick = await convertForm(component);
         break;
-      // case "form-item":
-      //   brick = await convertFormItem(component);
-      //   break;
+      case "form-item":
+        brick = await convertFormItem(component);
+        break;
       case "flex-layout":
         brick = await convertFlexLayout(component);
         break;
@@ -128,79 +128,7 @@ export async function convertView(
 function convertDataSourcesToContext(dataSources: DataSource[]): ContextConf[] {
   return dataSources.map((dataSource) => ({
     name: dataSource.name,
-    value:
-      dataSource.api.name === "history@ci"
-        ? [
-            {
-              number: 142,
-              pipeline: "develop",
-              status: "success",
-              startTime: "2025-06-10 12:34:56",
-              costTime: "2 分钟",
-            },
-            {
-              number: 143,
-              pipeline: "publish",
-              status: "failed",
-              startTime: "2025-06-01 21:43:05",
-              costTime: "5 分钟",
-            },
-          ]
-        : dataSource.api.name === "task@ci"
-          ? {
-              number: 142,
-              project: "next-core",
-              pipeline: "develop",
-              status: "success",
-              startTime: "2025-06-01 12:34:56",
-              costTime: "2 分钟",
-            }
-          : null,
-    ...(dataSource.api.name === "olap@monitor"
-      ? {
-          resolve: {
-            useProvider: "basic.http-request",
-            args: ["/api/mocks/monitor/olap"],
-          },
-          track: true,
-        }
-      : dataSource.api.name === "hosts@cmdb"
-        ? {
-            resolve: {
-              useProvider: "basic.http-request",
-              args: [
-                "/api/mocks/cmdb/hosts",
-                {
-                  method: "POST",
-                  body: dataSource.params,
-                },
-              ],
-            },
-            track: true,
-          }
-        : dataSource.api.name === "host@cmdb"
-          ? {
-              resolve: {
-                useProvider: "basic.http-request",
-                args: ["/api/mocks/cmdb/host"],
-              },
-              track: true,
-            }
-          : dataSource.api.name === "search-alert-events@monitor"
-            ? {
-                resolve: {
-                  useProvider: "basic.http-request",
-                  args: [
-                    "/api/mocks/monitor/search-alert-events",
-                    {
-                      method: "POST",
-                      body: dataSource.params,
-                    },
-                  ],
-                },
-                track: true,
-              }
-            : null),
+    value: null,
   }));
 }
 

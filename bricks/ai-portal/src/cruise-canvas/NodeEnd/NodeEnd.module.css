@@ -13,6 +13,10 @@
   padding: 41px 24px 28px;
 }
 
+.node-end.active {
+  border-color: #a1b5ff;
+}
+
 .icon {
   width: 64px;
   height: 64px;
