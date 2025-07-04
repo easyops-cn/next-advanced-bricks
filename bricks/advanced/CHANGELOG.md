@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.47.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.46.1...@next-bricks/advanced@0.47.0) (2025-07-04)
+
+
+### Features
+
+* **eo-next-table:** support theme variant elevo ([9dc933e](https://github.com/easyops-cn/next-advanced-bricks/commit/9dc933e2091a45d36b9e290367b3d1959923a4bf))
+
+
+
+
+
 ## [0.46.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.46.0...@next-bricks/advanced@0.46.1) (2025-06-27)
 
 
