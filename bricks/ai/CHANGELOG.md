@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.32.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai@1.32.5...@next-bricks/ai@1.32.6) (2025-07-04)
+
+
+### Bug Fixes
+
+* fix install path ([e53f5a4](https://github.com/easyops-cn/next-advanced-bricks/commit/e53f5a40c30a5ad6d08aa8f475571f2e9574ab3a))
+
+
+
+
+
 ## [1.32.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai@1.32.4...@next-bricks/ai@1.32.5) (2025-06-27)
 
 **Note:** Version bump only for package @next-bricks/ai
