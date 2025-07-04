@@ -15,6 +15,7 @@ ai-portal\.cruise-canvas {
   --cruise-canvas-node-border: 1px solid gray;
   --cruise-canvas-node-width-small: 330px;
   --cruise-canvas-node-width-medium: 453px;
+  --cruise-canvas-node-width-large: 800px;
 
   --cruise-canvas-primary-color: #2540ff;
   --cruise-canvas-input-background: rgba(255, 255, 255, 0.8);

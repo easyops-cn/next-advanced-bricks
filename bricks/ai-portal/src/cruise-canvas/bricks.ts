@@ -28,7 +28,7 @@ export const WrappedPopover = wrapBrick<Popover, PopoverProps>("eo-popover");
 
 export const WrappedDrawer = wrapBrick<
   Drawer,
-  DrawerProps,
+  DrawerProps & { keyboard?: boolean },
   DrawerEvents,
   DrawerMapEvents
 >("eo-drawer", {

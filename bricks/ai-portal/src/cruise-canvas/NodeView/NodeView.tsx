@@ -1,16 +1,13 @@
 // istanbul ignore file: experimental
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { unstable_createRoot } from "@next-core/runtime";
 import classNames from "classnames";
-// import styles from "./NodeView.module.css";
+import styles from "./NodeView.module.css";
 import jobStyles from "../NodeJob/NodeJob.module.css";
 // import sharedStyles from "../shared.module.css";
 import type { Job } from "../interfaces";
 import type { ViewWithInfo } from "../utils/converters/interfaces";
-import {
-  convertView,
-  type BrickConfWithContext,
-} from "../utils/converters/convertView";
+import { convertView } from "../utils/converters/convertView";
 
 export interface NodeViewProps {
   job: Job;
@@ -22,8 +19,7 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
   const rootRef = useRef<Awaited<
     ReturnType<typeof unstable_createRoot>
   > | null>(null);
-  const [storyboard, setStoryboard] =
-    React.useState<BrickConfWithContext | null>(null);
+  const [view, setView] = useState<ViewWithInfo | null>(null);
 
   useEffect(() => {
     const container = ref.current;
@@ -44,7 +40,7 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
   useEffect(() => {
     const toolCallMessages = job.messages?.filter((msg) => msg.role === "tool");
 
-    let view: ViewWithInfo | undefined;
+    let view: ViewWithInfo | null = null;
 
     loop: for (const message of toolCallMessages ?? []) {
       for (const part of message.parts) {
@@ -62,32 +58,89 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
     if (!view) {
       // eslint-disable-next-line no-console
       console.error("No valid view found in tool call messages.");
-      return;
     }
 
+    setView(view);
+  }, [job.messages]);
+
+  useEffect(() => {
     let ignore = false;
     (async () => {
       const convertedView = await convertView(view);
       if (ignore) {
         return;
       }
-      setStoryboard(convertedView);
-      rootRef.current?.render(convertedView as any);
+      rootRef.current?.render(convertedView ?? []);
     })();
 
     return () => {
       ignore = true;
     };
-  }, [job]);
+  }, [view]);
+
+  useEffect(() => {
+    rootRef.current?.render({
+      brick: "eo-next-table",
+      properties: {
+        themeVariant: "elevo",
+        pagination: false,
+        columns: [
+          {
+            dataIndex: "name",
+            key: "name",
+            title: "Name",
+          },
+          {
+            dataIndex: "age",
+            key: "age",
+            title: "Age",
+          },
+          {
+            dataIndex: "address",
+            key: "address",
+            title: "Address",
+          },
+        ],
+        dataSource: {
+          pageSize: 5,
+          page: 1,
+          list: [
+            {
+              key: 0,
+              name: "Jack",
+              age: 18,
+              address: "Guangzhou",
+            },
+            {
+              key: 1,
+              name: "Alex",
+              age: 20,
+              address: "Shanghai",
+            },
+            {
+              key: 3,
+              name: "Sam",
+              age: 28,
+              address: "Shenzhen",
+            },
+          ],
+        },
+      },
+    });
+  }, []);
 
   return (
     <div
       className={classNames(jobStyles["node-job"], {
         [jobStyles.active]: active,
+        [jobStyles.large]: true,
       })}
     >
-      <div ref={ref}></div>
-      <pre>{JSON.stringify(storyboard, null, 2)}</pre>
+      <div className={jobStyles.background} />
+      <div className={styles.heading}>
+        <div className={styles.title}>{view?.title}</div>
+      </div>
+      <div className={styles.body} ref={ref} />
     </div>
   );
 }

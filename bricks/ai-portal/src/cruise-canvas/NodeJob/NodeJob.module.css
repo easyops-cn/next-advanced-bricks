@@ -32,8 +32,7 @@
   opacity: 1;
 }
 
-.heading,
-.body {
+.background ~ * {
   position: relative;
   z-index: 1;
 }
@@ -41,6 +40,10 @@
 .fit-content {
   min-width: var(--cruise-canvas-node-width-medium);
   width: min-content;
+}
+
+.node-job.large {
+  width: var(--cruise-canvas-node-width-large);
 }
 
 .ask-user {

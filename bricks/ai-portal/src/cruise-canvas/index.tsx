@@ -513,19 +513,37 @@ function LegacyCruiseCanvasComponent(
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      const nextNode = handleKeyboardNav(e, { activeNodeId, nodes });
-      if (nextNode) {
-        e.preventDefault();
-        e.stopPropagation();
-        setActiveNodeId(nextNode.id);
-        if (nextNode.type === "job" || nextNode.type === "view") {
+      const keyboardAction = handleKeyboardNav(e, { activeNodeId, nodes });
+      if (!keyboardAction) {
+        return;
+      }
+      const { action, node } = keyboardAction;
+      if (action === "enter") {
+        if (node.type !== "job") {
+          return;
+        }
+        const askUser = node.job.toolCall?.name === "ask_human";
+        const askUserPlan =
+          node.job.toolCall?.name === "ask_human_confirming_plan";
+        if (askUser || askUserPlan) {
+          return;
+        }
+      }
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (action === "enter") {
+        setActiveToolCallJobId((node as JobGraphNode).job.id);
+      } else {
+        setActiveNodeId(node.id);
+        if (node.type === "job" || node.type === "view") {
           scrollTo({
-            jobId: nextNode.job.id,
+            jobId: node.job.id,
             behavior: "smooth",
           });
         } else {
           scrollTo({
-            nodeId: nextNode.id,
+            nodeId: node.id,
             behavior: "smooth",
           });
         }

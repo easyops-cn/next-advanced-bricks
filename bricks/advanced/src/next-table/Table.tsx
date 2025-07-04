@@ -112,6 +112,7 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
     bordered,
     scrollConfig,
     optimizedColumns,
+    themeVariant,
     onPageChange,
     onPageSizeChange,
     onSort,
@@ -391,10 +392,21 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
             headerBorderRadius:
               "var(--eo-next-table-header-border-radius)" as unknown as number,
             headerSplitColor: "none",
-            headerBg: "var(--antd-table-header-bg)",
-            headerSortActiveBg: "var(--antd-table-header-sort-active-bg)",
-            headerSortHoverBg: "var(--antd-table-header-sort-active-bg)",
-            bodySortBg: "var(--antd-table-header-overwrite-sort-td-active-bg)",
+            ...(themeVariant === "elevo"
+              ? {
+                  headerBg: "none",
+                  headerSortActiveBg: "none",
+                  headerSortHoverBg: "none",
+                  bodySortBg: "none",
+                  rowHoverBg: "rgba(189, 191, 212, 0.1)",
+                }
+              : {
+                  headerBg: "var(--antd-table-header-bg)",
+                  headerSortActiveBg: "var(--antd-table-header-sort-active-bg)",
+                  headerSortHoverBg: "var(--antd-table-header-sort-active-bg)",
+                  bodySortBg:
+                    "var(--antd-table-header-overwrite-sort-td-active-bg)",
+                }),
             // cellPaddingBlock: 11,
             // cellPaddingInline: 12,
             // cellPaddingBlockMD: 8,
@@ -403,7 +415,7 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
             // cellPaddingInlineSM: 12,
             ...(bordered
               ? { borderColor: "var(--theme-gray-border-color)" }
-              : {}),
+              : null),
           },
         },
       }}
