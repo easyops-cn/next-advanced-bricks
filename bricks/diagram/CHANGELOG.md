@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.65.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.64.5...@next-bricks/diagram@0.65.0) (2025-07-04)
+
+
+### Features
+
+* 架构图容器初始化支持网格排列 ([227b3cc](https://github.com/easyops-cn/next-advanced-bricks/commit/227b3cc4a83767204c191371281ee3eb3b379ebe))
+
+
+
+
+
 ## [0.64.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.64.4...@next-bricks/diagram@0.64.5) (2025-07-03)
 
 
