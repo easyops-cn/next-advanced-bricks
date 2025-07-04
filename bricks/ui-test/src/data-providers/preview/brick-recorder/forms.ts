@@ -173,18 +173,22 @@ const formBricksMap: BrickEvtMapField = {
   "forms.general-checkbox": {
     "general.checkbox.change.v2": (event: CustomEvent<OptionItem[]>) => {
       let expr: t.Expression | undefined;
-      event.detail.forEach((item, index) => {
-        if (index === 0) {
-          expr = t.callExpression(t.identifier("brick_clickItem"), [
-            t.stringLiteral(item.label),
-          ]);
-        } else {
-          expr = t.callExpression(
-            t.memberExpression(expr!, t.identifier("brick_clickItem")),
-            [t.stringLiteral(item.label)]
-          );
-        }
-      });
+      if (event.detail?.length) {
+        event.detail.forEach((item, index) => {
+          if (index === 0) {
+            expr = t.callExpression(t.identifier("brick_clickItem"), [
+              t.stringLiteral(item.label),
+            ]);
+          } else {
+            expr = t.callExpression(
+              t.memberExpression(expr!, t.identifier("brick_clickItem")),
+              [t.stringLiteral(item.label)]
+            );
+          }
+        });
+      } else {
+        expr = t.callExpression(t.identifier("brick_clear"), []);
+      }
 
       if (expr) {
         const text = generateCodeText(expr);
