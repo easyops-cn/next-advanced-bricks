@@ -31,6 +31,7 @@ export interface NextTableProps {
   bordered?: boolean;
   scrollConfig?: TableScroll;
   optimizedColumns?: (string | number)[];
+  themeVariant?: "default" | "elevo";
 }
 
 export type TableScroll = TableProps<RecordType>["scroll"] | false;

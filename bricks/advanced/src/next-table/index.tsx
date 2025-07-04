@@ -211,6 +211,10 @@ class EoNextTable extends ReactNextElement implements NextTableProps {
   @property({ type: Boolean })
   accessor injectChartV2Styles: boolean | undefined;
 
+  /** 主题变体 */
+  @property()
+  accessor themeVariant: "default" | "elevo" | undefined;
+
   /**
    * 前端搜索
    */
@@ -357,6 +361,7 @@ class EoNextTable extends ReactNextElement implements NextTableProps {
           showHeader={this.showHeader}
           bordered={this.bordered}
           scrollConfig={this.scrollConfig}
+          themeVariant={this.themeVariant}
           optimizedColumns={this.optimizedColumns}
           onPageChange={this.#handlePageChange}
           onPageSizeChange={this.#handlePageSizeChange}
