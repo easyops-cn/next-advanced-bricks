@@ -104,6 +104,7 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
       closable
       mask
       maskClosable
+      keyboard
       onClose={handleClose}
     >
       <ToolCallStatus job={job} variant="read-only" />

@@ -1,19 +1,12 @@
-.node-instruction {
-  max-width: 437px;
-  max-width: min(437px, 90vw);
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0px 4px 10px 0px rgba(54, 64, 80, 0.08);
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.284);
-  padding: 6px 16px;
-  color: rgba(0, 0, 0, 0.45);
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
-.text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  --shine-text-color: rgba(0, 0, 0, 0.45);
-  --shine-text-highlight-color: #dcdcdc;
+.title {
+  font-size: 12px;
+  color: rgba(38, 38, 38, 0.65);
+  text-indent: 4px;
 }
