@@ -14,17 +14,31 @@ import {
 } from "./asserts";
 import { dagreLayout } from "../../shared/canvas/dagreLayout";
 import { computeContainerRect } from "./computeContainerRect";
-import { DEFAULT_AREA_HEIGHT, DEFAULT_AREA_WIDTH } from "../constants";
+import {
+  CONTAINERGAP,
+  DEFAULT_AREA_HEIGHT,
+  DEFAULT_AREA_WIDTH,
+} from "../constants";
+import { staggeredLayout } from "./staggeredLayout";
+interface LayoutOptions {
+  nodeLayout?: "staggered" | "dagre";
+}
 
 /**
  * 初始化容器内节点层次布局以及同步容器大小位置
  * @param cells
  */
-export function initaliContainerLayout(cells: InitialCell[]) {
+export function initaliContainerLayout(
+  cells: InitialCell[],
+  options: LayoutOptions = {}
+) {
   const nodeCells = cells.filter(
     (c) => c.type === "node" && !isNil(c.containerId)
   ) as NodeCell[];
   if (!nodeCells.length) return;
+
+  const { nodeLayout = "dagre" } = options;
+
   const edgeCells = cells.filter(isEdgeCell);
   const decoratorCells = cells.filter(
     isContainerDecoratorCell
@@ -65,12 +79,13 @@ export function initaliContainerLayout(cells: InitialCell[]) {
     const isVertical = ["top", "bottom"].includes(
       get(containerCell, "view.direction", "top")
     );
-    if (isVertical) containerGap += 40;
-
-    const { getNodeView } = dagreLayout({ cells: groupedNodes });
-    nodeViews = groupedNodes
-      .filter((cell) => cell.type === "node")
-      .map((node: NodeCell) => {
+    if (isVertical) containerGap += CONTAINERGAP;
+    const nodeCells = groupedNodes.filter(
+      (cell) => cell.type === "node"
+    ) as NodeCell[];
+    if (nodeLayout === "dagre") {
+      const { getNodeView } = dagreLayout({ cells: groupedNodes });
+      nodeViews = nodeCells.map((node: NodeCell) => {
         if (isNoPoint(node.view)) {
           const view = getNodeView(node.id);
           node.view = {
@@ -83,6 +98,12 @@ export function initaliContainerLayout(cells: InitialCell[]) {
         }
         return node;
       });
+    } else if (nodeLayout === "staggered") {
+      nodeViews = staggeredLayout(nodeCells, {
+        offsetY: containerGap,
+      });
+    }
+
     let containerHeight = 0,
       containerWidth = 0;
 

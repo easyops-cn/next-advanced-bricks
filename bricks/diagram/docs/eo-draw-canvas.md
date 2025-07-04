@@ -351,7 +351,8 @@
             allowEdgeToArea: true
             dragBehavior: lasso
             layoutOptions:
-              initialLayout: layered-architecture
+              # initialLayout: layered-architecture
+              initialLayout: layered-staggered
               snap:
                 # grid: true
                 object: true

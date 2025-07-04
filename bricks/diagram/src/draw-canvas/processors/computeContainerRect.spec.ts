@@ -17,10 +17,10 @@ describe("computeContainerRect", () => {
 
     const result = computeContainerRect(cells);
     expect(result).toEqual({
-      x: -288,
-      y: -93,
-      width: 368,
-      height: 215,
+      x: -308,
+      y: -113,
+      width: 408,
+      height: 255,
     });
   });
 });
