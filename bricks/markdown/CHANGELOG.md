@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.12.23](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/markdown@1.12.22...@next-bricks/markdown@1.12.23) (2025-07-07)
+
+**Note:** Version bump only for package @next-bricks/markdown
+
+
+
+
+
 ## [1.12.22](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/markdown@1.12.21...@next-bricks/markdown@1.12.22) (2025-06-27)
 
 **Note:** Version bump only for package @next-bricks/markdown
