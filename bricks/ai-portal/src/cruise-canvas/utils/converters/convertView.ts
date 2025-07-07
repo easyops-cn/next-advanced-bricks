@@ -128,7 +128,11 @@ export async function convertView(
 function convertDataSourcesToContext(dataSources: DataSource[]): ContextConf[] {
   return dataSources.map((dataSource) => ({
     name: dataSource.name,
-    value: null,
+    resolve: {
+      useProvider: `${dataSource.api.name}:${dataSource.api.version}`,
+      params: dataSource.params,
+    },
+    track: true,
   }));
 }
 

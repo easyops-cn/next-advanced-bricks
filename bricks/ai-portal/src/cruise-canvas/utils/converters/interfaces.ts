@@ -17,7 +17,7 @@ export interface DataSource {
   api: {
     name: string;
     version: string;
-    objectId?: string;
+    // objectId?: string;
   };
   params?: Record<string, any>;
 }
