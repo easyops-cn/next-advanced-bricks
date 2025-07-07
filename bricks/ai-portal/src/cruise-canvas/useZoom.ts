@@ -164,16 +164,22 @@ export function useZoom({
         (e: WheelEvent & { wheelDeltaX: number; wheelDeltaY: number }) => {
           // Mac OS trackpad pinch event is emitted as a wheel.zoom and d3.event.ctrlKey set to true
           if (!e.ctrlKey && scrollable) {
-            const pre = (e.target as HTMLElement)!.closest(
-              'pre[class*="language-"]'
-            );
-            if (pre) {
-              if (checkScrollableX(pre, e.deltaX)) {
-                return;
-              }
-            }
+            // for (const element of e.composedPath()) {
+            //   if (
+            //     element instanceof HTMLElement &&
+            //     (
+            //       element.matches('pre[class*="language-"]') ||
+            //       element.matches('.ant-table-scroll-horizontal .ant-table-content')
+            //     )
+            //   ) {
+            //     // Handle scroll for code blocks
+            //     if (checkScrollableX(element, e.deltaX)) {
+            //       return;
+            //     }
+            //   }
+            // }
 
-            const node = (e.target as HTMLElement)!.closest(
+            const node = (e.target as HTMLElement).closest(
               `.${jobStyles.body}`
             );
             if (node) {
@@ -237,15 +243,15 @@ function checkScrollableY(element: Element, delta: number) {
 }
 
 // 检查元素是否还能滚动
-function checkScrollableX(element: Element, delta: number) {
-  if (!delta) {
-    return false;
-  }
-  const isScrollingRight = delta > 0; // Updated variable name for clarity
-  // 还能向右滚动 或 还能向左滚动
-  if (isScrollingRight) {
-    const maxScroll = element.scrollWidth - element.clientWidth; // Changed to scrollWidth and clientWidth
-    return element.scrollLeft <= maxScroll - 1; // Changed to scrollLeft
-  }
-  return element.scrollLeft >= 1;
-}
+// function checkScrollableX(element: Element, delta: number) {
+//   if (!delta) {
+//     return false;
+//   }
+//   const isScrollingRight = delta > 0; // Updated variable name for clarity
+//   // 还能向右滚动 或 还能向左滚动
+//   if (isScrollingRight) {
+//     const maxScroll = element.scrollWidth - element.clientWidth; // Changed to scrollWidth and clientWidth
+//     return element.scrollLeft <= maxScroll - 1; // Changed to scrollLeft
+//   }
+//   return element.scrollLeft >= 1;
+// }

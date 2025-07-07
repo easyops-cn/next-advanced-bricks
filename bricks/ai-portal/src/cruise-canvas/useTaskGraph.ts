@@ -169,19 +169,19 @@ export function useTaskGraph(
         nodeIds.push(jobNodeId);
       }
 
-      // if (
-      //   job.toolCall?.name === "get_view_with_info" &&
-      //   job.state === "completed"
-      // ) {
-      //   // Add view node for job
-      //   const viewNodeId = `view:${job.id}`;
-      //   nodes.push({
-      //     type: "view",
-      //     id: viewNodeId,
-      //     job,
-      //   });
-      //   nodeIds.push(viewNodeId);
-      // }
+      if (
+        job.toolCall?.name === "get_view_with_info" &&
+        job.state === "completed"
+      ) {
+        // Add view node for job
+        const viewNodeId = `view:${job.id}`;
+        nodes.push({
+          type: "view",
+          id: viewNodeId,
+          job,
+        });
+        nodeIds.push(viewNodeId);
+      }
 
       jobNodesMap.set(jobId, nodeIds);
     }

@@ -90,16 +90,11 @@ function convertEventAction(
         action: "context.refresh",
         args: [handler.payload.name],
       };
-    case "call_api":
+    case "call_api": {
+      const { api, params } = handler.payload;
       return {
-        useProvider: "basic.http-request",
-        args: [
-          "/api/mocks/api/call",
-          {
-            method: "POST",
-            body: handler.payload,
-          },
-        ],
+        useProvider: `${api.name}:${api.version}`,
+        params,
         callback: {
           success: [
             {
@@ -117,6 +112,7 @@ function convertEventAction(
           },
         },
       };
+    }
     case "call_component":
       return {
         target: `[data-component-id="${handler.payload.componentId}"]`,

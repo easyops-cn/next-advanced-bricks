@@ -502,7 +502,19 @@ function LegacyCruiseCanvasComponent(
     return jobs?.find((job) => job.id === activeToolCallJobId);
   }, [activeToolCallJobId, jobs]);
 
-  const handleRootClick = useCallback(() => {
+  const handleRootClick = useCallback((e: React.MouseEvent) => {
+    for (const element of e.nativeEvent.composedPath()) {
+      if (
+        element instanceof HTMLElement &&
+        element.classList.contains(styles.node)
+      ) {
+        // If the click is on a node, do not reset active node
+        return;
+      }
+      if (element === rootRef.current) {
+        break;
+      }
+    }
     setActiveNodeId(null);
   }, []);
 
@@ -720,15 +732,11 @@ function NodeComponent({
     };
   }, []);
 
-  const handleClick = useCallback(
-    (e: React.MouseEvent) => {
-      if (type !== "start" && type !== "instruction") {
-        setActiveNodeId(id);
-        e.stopPropagation();
-      }
-    },
-    [id, setActiveNodeId, type]
-  );
+  const handleClick = useCallback(() => {
+    if (type !== "start" && type !== "instruction") {
+      setActiveNodeId(id);
+    }
+  }, [id, setActiveNodeId, type]);
 
   return (
     <div

@@ -70,7 +70,13 @@ export default async function convertTable(
             }
           : column;
       }),
-      size: size === "medium" ? "middle" : size,
+      pagination: false,
+      // size: size === "medium" ? "middle" : size,
+      themeVariant: "elevo",
+
+      scrollConfig: {
+        x: "max-content",
+      },
     },
     children:
       configuredColumns.size > 0 ? Array.from(configuredColumns.values()) : [],
