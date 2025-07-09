@@ -4,7 +4,7 @@ import type {
   Variable,
   ViewWithInfo,
 } from "./interfaces.js";
-import convertCardList from "./convertCardList.js";
+import convertList from "./convertList.js";
 import convertDescriptions from "./convertDescriptions.js";
 import convertDashboard from "./convertDashboard.js";
 import convertTable from "./convertTable.js";
@@ -56,8 +56,8 @@ export async function convertView(
 
     let brick: BrickConf | null = null;
     switch (component.componentName) {
-      case "card-list":
-        brick = await convertCardList(component);
+      case "list":
+        brick = await convertList(component);
         break;
       case "table":
         brick = await convertTable(component, view);
@@ -113,15 +113,17 @@ export async function convertView(
     return brick;
   };
 
+  const context = [
+    ...convertDataSourcesToContext(view.dataSources ?? []),
+    ...convertVariablesToContext(view.variables ?? []),
+  ];
+
   return {
     brick: "eo-content-layout",
     children: (await Promise.all(rootComponents.map(convert))).filter(
       Boolean
     ) as BrickConf[],
-    context: [
-      ...convertDataSourcesToContext(view.dataSources),
-      ...convertVariablesToContext(view.variables ?? []),
-    ],
+    context: context.length > 0 ? context : undefined,
   };
 }
 

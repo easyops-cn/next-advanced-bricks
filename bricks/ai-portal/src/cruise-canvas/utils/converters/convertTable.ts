@@ -3,7 +3,7 @@ import type { Component, ViewWithInfo } from "./interfaces.js";
 // import findNearestCandidate from "./findNearestCandidate.js";
 import { lowLevelConvertToStoryboard } from "./raw-data-generate/convert.js";
 import { convertEvents } from "./convertEvents.js";
-import { isExpression } from "./isExpression.js";
+import { fixDataSource } from "./fixDataSource.js";
 
 interface TableColumn {
   key: string;
@@ -56,9 +56,7 @@ export default async function convertTable(
   return {
     brick: "eo-next-table",
     properties: {
-      dataSource: isExpression(data)
-        ? data
-        : `<%= CTX[${JSON.stringify(data)}] %>`,
+      dataSource: fixDataSource(data),
       ...restProps,
       rowKey: rowKey ?? columns[0]?.key,
       columns: columns.map((column) => {

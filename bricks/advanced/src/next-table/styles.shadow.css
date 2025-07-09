@@ -219,7 +219,7 @@
       }
     }
 
-    .ant-table-tbody > tr > td {
+    .ant-table:not(.ant-table-bordered) .ant-table-tbody > tr > td {
       border-bottom: none;
     }
   }

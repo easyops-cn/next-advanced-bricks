@@ -3,7 +3,7 @@ import type { Component, ViewWithInfo } from "./interfaces.js";
 // import fetchObjectAttrList from "./fetchObjectAttrList.js";
 // import findNearestCandidate from "./findNearestCandidate.js";
 import { convertToStoryboard } from "./raw-data-generate/convert.js";
-import { isExpression } from "./isExpression.js";
+import { fixDataSource } from "./fixDataSource.js";
 
 interface DescriptionItem {
   label: string;
@@ -56,11 +56,10 @@ export default async function convertDescriptions(
   return {
     brick: "eo-descriptions",
     properties: {
-      dataSource: isExpression(data)
-        ? data
-        : `<% CTX[${JSON.stringify(data)}] %>`,
-      descriptionTitle: title,
-      column: columns,
+      dataSource: fixDataSource(data),
+      // descriptionTitle: title,
+      // column: columns,
+      column: 1,
       list: list.map((item) => {
         const brick = item.field ? configuredItems.get(item.field) : undefined;
         return brick
@@ -71,6 +70,7 @@ export default async function convertDescriptions(
           : item;
       }),
       ...restProps,
+      themeVariant: "elevo",
     },
     children:
       configuredItems.size > 0 ? Array.from(configuredItems.values()) : [],

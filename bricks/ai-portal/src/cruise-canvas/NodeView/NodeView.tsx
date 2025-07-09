@@ -1,5 +1,5 @@
 // istanbul ignore file: experimental
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { unstable_createRoot } from "@next-core/runtime";
 import classNames from "classnames";
 import styles from "./NodeView.module.css";
@@ -129,11 +129,17 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
   //   });
   // }, []);
 
+  const sizeLarge = useMemo(() => {
+    return view?.components?.some(
+      (component) => component.componentName === "table"
+    );
+  }, [view]);
+
   return (
     <div
       className={classNames(jobStyles["node-job"], {
         [jobStyles.active]: active,
-        [jobStyles.large]: true,
+        [jobStyles.large]: sizeLarge,
       })}
     >
       <div className={jobStyles.background} />
