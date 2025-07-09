@@ -36,6 +36,7 @@ export interface DescriptionsProps {
   bordered?: boolean;
   hideGroups?: string[] | string;
   dataSource?: Record<string, unknown>;
+  themeVariant?: "default" | "elevo";
 }
 
 const { defineElement, property } = createDecorators();
@@ -113,6 +114,10 @@ class Descriptions extends ReactNextElement {
   })
   accessor dataSource: Record<string, unknown> | undefined;
 
+  /** 主题变体 */
+  @property()
+  accessor themeVariant: "default" | "elevo" | undefined;
+
   render() {
     return (
       <DescriptionsComponent
@@ -124,6 +129,7 @@ class Descriptions extends ReactNextElement {
         bordered={this.bordered}
         hideGroups={this.hideGroups}
         dataSource={this.dataSource}
+        themeVariant={this.themeVariant}
       />
     );
   }
@@ -133,15 +139,17 @@ export function DescriptionsComponent(props: DescriptionsProps) {
   const {
     descriptionTitle,
     list,
-    showCard = true,
+    showCard: _showCard,
     column = 3,
     layout = "horizontal",
     bordered = false,
     hideGroups,
     dataSource: _dataSource,
+    themeVariant,
   } = props;
   const dataSource = useMemo(() => _dataSource ?? {}, [_dataSource]);
   const [hideGroupsSet, setHideGroupsSet] = useState<Set<string>>();
+  const showCard = themeVariant !== "elevo" && (_showCard ?? true);
 
   const renderItem = (item: DescriptionItem) => {
     if (item.useBrick) {

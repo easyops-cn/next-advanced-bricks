@@ -6,6 +6,13 @@
   display: none;
 }
 
+:host([theme-variant="elevo"]) {
+  background: rgba(255, 255, 255, 0.73);
+  border-radius: 8px;
+  backdrop-filter: blur(33px);
+  padding: 0 16px;
+}
+
 .description-content {
   padding: var(--description-content-padding);
 }

@@ -300,3 +300,28 @@
           properties:
             textContent: "<% DATA.text %>"
 ```
+
+### Theme variant Elevo
+
+```yaml preview
+# Use this container to emulate background
+brick: ai-portal.home-container
+properties:
+  style:
+    padding: 2em
+    backgroundColor: "#d8d8d8"
+children:
+  - brick: eo-descriptions
+    properties:
+      themeVariant: elevo
+      column: 1
+      list:
+        - label: 姓名
+          text: Tom
+        - label: 年龄
+          text: 18
+        - label: 身高
+          text: 180cm
+        - label: 爱好
+          text: 篮球
+```
