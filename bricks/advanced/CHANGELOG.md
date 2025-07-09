@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.47.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.47.1...@next-bricks/advanced@0.47.2) (2025-07-09)
+
+
+### Bug Fixes
+
+* fix table bordered style ([f681a3e](https://github.com/easyops-cn/next-advanced-bricks/commit/f681a3ec45c3f2695e2b22dd3e148023dc3eb9fe))
+
+
+
+
+
 ## [0.47.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.47.0...@next-bricks/advanced@0.47.1) (2025-07-07)
 
 **Note:** Version bump only for package @next-bricks/advanced

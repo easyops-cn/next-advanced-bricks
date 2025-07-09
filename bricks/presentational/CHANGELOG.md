@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.13.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.13.6...@next-bricks/presentational@1.13.7) (2025-07-09)
+
+
+### Bug Fixes
+
+* **descriptions:** support theme variant ([45521eb](https://github.com/easyops-cn/next-advanced-bricks/commit/45521eb4697e5adec237ea3e1845a01191a7a65f))
+
+
+
+
+
 ## [1.13.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.13.5...@next-bricks/presentational@1.13.6) (2025-07-07)
 
 **Note:** Version bump only for package @next-bricks/presentational
