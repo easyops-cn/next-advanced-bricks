@@ -29,7 +29,6 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import classNames from "classnames";
 import styles from "./HumanAdjustPlan.module.css";
-import sharedStyles from "../shared.module.css";
 import { WrappedButton, WrappedIcon } from "../bricks";
 import { K, t } from "../i18n.js";
 import { getContentEditable } from "../getContentEditable";
@@ -180,7 +179,8 @@ export function HumanAdjustPlan({
       <div className={styles.toolbar}>
         <WrappedButton
           type="primary"
-          className={sharedStyles["rounded-button"]}
+          themeVariant="elevo"
+          shape="round"
           onClick={handleConfirm}
         >
           {t(K.CONFIRM)}

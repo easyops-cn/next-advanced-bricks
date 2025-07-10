@@ -118,6 +118,7 @@ export interface SelectProps extends FormItemProps {
   dropdownStyle?: React.CSSProperties;
   dropdownHoist?: boolean;
   validateState?: string;
+  themeVariant?: "default" | "elevo";
   onChange?: (value: any, options: GeneralComplexOption[]) => void;
   onValueChange?: (value: any) => void;
   optionsChange?: (options: any, name: string) => void;
@@ -271,6 +272,10 @@ class Select extends FormItemElementBase {
    */
   @property({ type: Boolean })
   accessor dropdownHoist: boolean | undefined;
+
+  /** 主题变体 */
+  @property({ render: false })
+  accessor themeVariant: "default" | "elevo" | undefined;
 
   /**
    * 下拉选择事件
@@ -821,12 +826,10 @@ export function SelectComponent(props: SelectProps) {
     return (
       <div
         className={classNames({
-          "selected-item": multiple,
-          "select-single-item": !multiple,
+          "selected-multiple-items": multiple,
+          "selected-single-item": !multiple,
+          empty: isEmptyValue,
         })}
-        style={
-          isEmptyValue ? { color: "var(--antd-input-placeholder-color)" } : {}
-        }
       >
         {selectedOptions?.length
           ? multiple

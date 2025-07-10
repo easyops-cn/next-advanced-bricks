@@ -230,6 +230,7 @@ function HumanChooseComponent({
       {options?.map((option, index) => (
         <WrappedButton
           key={index}
+          themeVariant="elevo"
           onClick={() => {
             humanInput(jobId, option);
           }}

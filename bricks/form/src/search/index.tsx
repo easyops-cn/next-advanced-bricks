@@ -33,6 +33,7 @@ export interface SearchProps {
   trim?: boolean;
   debounceTime?: number;
   inputStyle?: CSSProperties;
+  themeVariant?: "default" | "elevo";
 }
 
 export interface SearchEvents {
@@ -106,6 +107,10 @@ class GeneralSearch extends ReactNextElement implements SearchProps {
   @property({ attribute: false })
   accessor inputStyle: CSSProperties | undefined;
 
+  /** 主题变体 */
+  @property()
+  accessor themeVariant: "default" | "elevo" | undefined;
+
   /**
    * 输入的搜索字符，输入变化时触发
    */
@@ -138,6 +143,7 @@ class GeneralSearch extends ReactNextElement implements SearchProps {
         onChange={this.#handleChange}
         onSearch={this.#handleSearch}
         inputStyle={this.inputStyle}
+        themeVariant={this.themeVariant}
         onDebouncedChange={this.#handleDebouncedChange}
       />
     );
@@ -157,6 +163,7 @@ export function GeneralSearchComponent(props: SearchComponentProps) {
     clearable,
     debounceTime,
     inputStyle,
+    themeVariant,
     onDebouncedChange,
     onChange,
     onSearch,
@@ -195,6 +202,7 @@ export function GeneralSearchComponent(props: SearchComponentProps) {
       onChange={handleChange as any}
       onKeyDown={(e) => e.key === "Enter" && handleSearch()}
       inputStyle={inputStyle}
+      themeVariant={themeVariant}
     >
       <WrappedIcon
         slot="suffix"

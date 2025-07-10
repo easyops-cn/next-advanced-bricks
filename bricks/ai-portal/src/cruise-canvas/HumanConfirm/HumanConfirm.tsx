@@ -1,7 +1,6 @@
 // istanbul ignore file: experimental
 import React, { useContext } from "react";
 import styles from "./HumanConfirm.module.css";
-import sharedStyles from "../shared.module.css";
 import { K, t } from "../i18n.js";
 import { WrappedButton } from "../bricks";
 import { CanvasContext } from "../CanvasContext";
@@ -21,7 +20,8 @@ export function HumanConfirm({
     <div className={styles["human-confirm"]}>
       <WrappedButton
         type="primary"
-        className={sharedStyles["rounded-button"]}
+        themeVariant="elevo"
+        shape="round"
         onClick={() => {
           humanInput(jobId, confirmText || t(K.YES));
         }}
@@ -30,6 +30,7 @@ export function HumanConfirm({
       </WrappedButton>
       <WrappedButton
         type="text"
+        themeVariant="elevo"
         onClick={() => {
           humanInput(jobId, cancelText || t(K.NO));
         }}

@@ -121,8 +121,11 @@ describe("eo-select", () => {
     });
 
     expect(
-      (element.shadowRoot?.querySelector(".select-single-item") as HTMLElement)
-        .textContent
+      (
+        element.shadowRoot?.querySelector(
+          ".selected-single-item"
+        ) as HTMLElement
+      ).textContent
     ).toBe("c");
 
     expect(

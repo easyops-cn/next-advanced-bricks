@@ -48,6 +48,7 @@ export interface InputProps extends FormItemProps {
   minLength?: number;
   validateState?: string;
   inputStyle?: CSSProperties;
+  themeVariant?: "default" | "elevo";
 }
 
 export interface InputEvents {
@@ -196,6 +197,10 @@ class Input extends FormItemElementBase {
   @property({ attribute: false }) accessor inputStyle:
     | React.CSSProperties
     | undefined;
+
+  /** 主题变体 */
+  @property({ render: false })
+  accessor themeVariant: "default" | "elevo" | undefined;
 
   /**
    * 值改变事件

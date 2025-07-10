@@ -90,3 +90,22 @@ button {
 .small.switch-checked .switch-inner {
   margin: 0 18px 0 7px;
 }
+
+:host([theme-variant="elevo"]) {
+  --antd-switch-color: var(--elevo-color-brand);
+
+  button {
+    min-width: 40px;
+    height: 20px;
+    line-height: 20px;
+  }
+
+  .switch-handle {
+    width: 16px;
+    height: 16px;
+  }
+
+  .switch-checked .switch-handle {
+    left: calc(100% - 16px - 2px);
+  }
+}

@@ -96,8 +96,8 @@ export function handleKeyboardNav(
       node = activeNode;
   }
 
-  if (action) {
-    return { action, node } as KeyboardAction;
+  if (action && node) {
+    return { action, node };
   }
 }
 

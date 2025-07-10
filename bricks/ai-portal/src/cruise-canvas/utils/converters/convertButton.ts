@@ -6,12 +6,13 @@ export default function convertButton(component: Component): BrickConf {
   const props = properties as {
     textContent: string;
     icon?: unknown;
+    type?: string;
   };
   return {
     brick: "eo-button",
     properties: {
-      textContent: props.textContent,
-      icon: props.icon,
+      ...props,
+      themeVariant: "elevo",
     },
   };
 }

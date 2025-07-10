@@ -104,9 +104,21 @@ export async function convertView(
     ).filter(Boolean) as BrickConf[];
 
     if (children.length > 0) {
+      brick.children = [...(brick.children ?? []), ...children];
+    }
+
+    if (component.componentName === "form") {
       return {
-        ...brick,
-        children: [...(brick.children ?? []), ...children],
+        brick: "div",
+        properties: {
+          style: {
+            background: "var(--elevo-component-background)",
+            backdropFilter: "var(--elevo-component-backdrop-filter)",
+            borderRadius: "var(--elevo-border-radius)",
+            padding: "16px",
+          },
+        },
+        children: [brick],
       };
     }
 

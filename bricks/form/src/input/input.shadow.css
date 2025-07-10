@@ -1,5 +1,9 @@
 :host {
   display: inline-block;
+  --input-affix-wrapper-padding: 4px 10px;
+  --eo-input-border-color: var(--color-border-divider-line);
+  --eo-input-hover-border-color: var(--antd-input-hover-border-color);
+  --eo-input-focus-border-color: var(--antd-input-focus-border-color);
 }
 
 :host([hidden]) {
@@ -16,7 +20,6 @@
   display: table;
   width: 100%;
   line-height: 22px;
-  --input-affix-wrapper-padding: 4px 10px;
 }
 
 .input-addon-wrapper-size-large {
@@ -39,7 +42,7 @@
   width: 0;
   color: var(--text-color-default);
   background-color: var(--theme-gray-background);
-  border: 1px solid var(--color-border-divider-line);
+  border: 1px solid var(--eo-input-border-color);
   border-radius: var(--small-border-radius);
   transition: all 0.3s;
 }
@@ -73,7 +76,7 @@
   width: 100%;
   color: var(--text-color-default);
   background-color: var(--antd-input-bg);
-  border: 1px solid var(--color-border-divider-line);
+  border: 1px solid var(--eo-input-border-color);
   transition:
     border-color 0.3s,
     box-shadow 0.3s;
@@ -124,7 +127,7 @@
 }
 
 .input::placeholder {
-  color: var(--text-color-disabled);
+  color: var(--antd-input-placeholder-color);
   user-select: none;
 }
 
@@ -190,4 +193,18 @@
 .input-addon-wrapper-status-error .input-affix-wrapper-focused {
   border-color: var(--antd-error-color);
   box-shadow: 0 0 0 2px var(--antd-error-color-fade-20);
+}
+
+:host([theme-variant="elevo"]) {
+  --eo-input-border-color: var(--elevo-border-color);
+  --eo-input-hover-border-color: var(--elevo-color-brand);
+  --eo-input-focus-border-color: var(--elevo-color-brand);
+  --antd-input-placeholder-color: var(--elevo-placeholder-color);
+  --input-affix-wrapper-padding: 5px 10px;
+
+  .input-affix-wrapper {
+    background: var(--elevo-input-background);
+    box-shadow: var(--elevo-input-box-shadow);
+    border-radius: var(--elevo-border-radius);
+  }
 }

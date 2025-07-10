@@ -17,6 +17,7 @@ interface SubmitButtonsProps extends FormItemProps {
   submitDisabled?: boolean;
   cancelText?: string;
   cancelType?: ButtonType;
+  themeVariant?: "default" | "elevo";
   onSubmitClick?: (event: React.MouseEvent) => void;
   onCancelClick?: (event: React.MouseEvent) => void;
 }
@@ -66,6 +67,10 @@ class SubmitButtons extends FormItemElementBase {
    */
   @property() accessor cancelType: ButtonType | undefined;
 
+  /** 主题变体 */
+  @property()
+  accessor themeVariant: "default" | "elevo" | undefined;
+
   /**
    * 点击提交按钮触发的事件
    */
@@ -104,6 +109,7 @@ class SubmitButtons extends FormItemElementBase {
         submitType={this.submitType}
         cancelText={this.cancelText}
         cancelType={this.cancelType}
+        themeVariant={this.themeVariant}
         onCancelClick={this._handleCancelClick}
         onSubmitClick={this._handleSubmitClick}
       />
@@ -118,6 +124,7 @@ export function ButtonsComponent(props: SubmitButtonsProps) {
         <WrappedButton
           className={"submitBtn"}
           type={props.submitType || "primary"}
+          themeVariant={props.themeVariant}
           onClick={props.onSubmitClick}
           disabled={props.submitDisabled}
         >
@@ -128,6 +135,7 @@ export function ButtonsComponent(props: SubmitButtonsProps) {
         <WrappedButton
           data-test-id="cancelBtn"
           type={props.cancelType || "text"}
+          themeVariant={props.themeVariant}
           onClick={props.onCancelClick}
         >
           {props.cancelText}

@@ -1,3 +1,7 @@
+:host {
+  --eo-radio-border-radius: var(--small-border-radius);
+}
+
 .radio-group {
   display: flex;
   flex-wrap: wrap;
@@ -215,12 +219,14 @@
       box-shadow 0.3s;
 
     &:first-child {
-      border-radius: var(--small-border-radius) 0 0 var(--small-border-radius);
+      border-radius: var(--eo-radio-border-radius) 0 0
+        var(--eo-radio-border-radius);
       margin-left: 0px;
     }
 
     &:last-child {
-      border-radius: 0 var(--small-border-radius) var(--small-border-radius) 0;
+      border-radius: 0 var(--eo-radio-border-radius)
+        var(--eo-radio-border-radius) 0;
     }
 
     &.checked.disabled {
@@ -431,7 +437,7 @@
       width: 100%;
       height: 100%;
       top: 0;
-      border-radius: var(--small-border-radius);
+      border-radius: var(--eo-radio-border-radius);
     }
 
     &:not(.disabled):hover .content {
@@ -441,23 +447,30 @@
 }
 
 .radio-item.small {
-  height: 24px;
+  height: 22px;
   font-size: 13px;
-  line-height: 24px;
+  line-height: 22px;
 }
 
 .radio-item.medium {
-  height: 32px;
+  height: 30px;
   font-size: 14px;
 }
 
 .radio-item.large {
-  height: 40px;
+  height: 38px;
   font-size: 18px;
-  line-height: 40px;
+  line-height: 38px;
 }
 
 .disabled,
 .disabled .content {
   cursor: not-allowed;
+}
+
+:host([theme-variant="elevo"]) {
+  --color-brand: var(--elevo-color-brand);
+  --antd-radio-dot-color: var(--elevo-color-brand);
+  --antd-border-color-base: var(--elevo-border-color);
+  --eo-radio-border-radius: var(--elevo-border-radius);
 }

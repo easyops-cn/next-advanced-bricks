@@ -33,6 +33,7 @@ export interface TextareaProps extends FormItemProps {
   maxLength?: number;
   autoSize?: AutoSize;
   validateState?: string;
+  themeVariant?: "default" | "elevo";
 }
 
 export interface TextareaComponentProps extends TextareaProps {
@@ -143,6 +144,12 @@ class Textarea extends FormItemElementBase implements TextareaProps {
   @property({ attribute: false }) accessor textareaStyle:
     | React.CSSProperties
     | undefined;
+
+  /**
+   * 主题变体
+   */
+  @property({ render: false })
+  accessor themeVariant: "default" | "elevo" | undefined;
 
   /**
    * @detail

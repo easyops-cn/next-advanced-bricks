@@ -267,3 +267,85 @@
       - target: "#form"
         method: resetValidateState
 ```
+
+### Theme variant Elevo
+
+```yaml preview
+# Use this container to emulate background
+brick: ai-portal.home-container
+properties:
+  style:
+    padding: 2em
+    backgroundColor: "#d8d8d8"
+children:
+  - brick: eo-form
+    properties:
+      themeVariant: elevo
+      layout: vertical
+      values:
+        city: 深圳
+        public: true
+        tags:
+          - 活泼
+    events:
+      validate.success:
+        useProvider: basic.show-dialog
+        args:
+          - title: 提交表单
+            type: confirm
+            content: 确定提交吗？
+            themeVariant: elevo
+    children:
+      - brick: eo-input
+        properties:
+          label: 名称
+          name: name
+          themeVariant: elevo
+          placeholder: 请输入
+      - brick: eo-textarea
+        properties:
+          label: 说明
+          name: desc
+          themeVariant: elevo
+          placeholder: 请输入
+      - brick: eo-select
+        properties:
+          label: 类型
+          name: type
+          themeVariant: elevo
+          placeholder: 请选择
+          options:
+            - 默认
+            - 其他
+      - brick: eo-radio
+        properties:
+          label: 城市
+          name: city
+          type: button
+          themeVariant: elevo
+          options:
+            - 北京
+            - 上海
+            - 深圳
+      - brick: eo-checkbox
+        properties:
+          label: 标签
+          name: tags
+          themeVariant: elevo
+          options:
+            - 活泼
+            - 开朗
+            - 好动
+      - brick: eo-switch
+        properties:
+          label: 公开
+          name: public
+          themeVariant: elevo
+      - brick: eo-submit-buttons
+        properties:
+          themeVariant: elevo
+          submitText: 提交
+          cancelText: 取消
+          submitType: primary
+          cancelType: default
+```
