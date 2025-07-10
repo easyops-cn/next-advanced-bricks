@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.17.2...@next-bricks/form@1.18.0) (2025-07-10)
+
+
+### Features
+
+* support theme variant ([adb6eaa](https://github.com/easyops-cn/next-advanced-bricks/commit/adb6eaae8e2bca6dc32441f8babb46818e3f492a))
+
+
+
+
+
 ## [1.17.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.17.1...@next-bricks/form@1.17.2) (2025-07-07)
 
 **Note:** Version bump only for package @next-bricks/form

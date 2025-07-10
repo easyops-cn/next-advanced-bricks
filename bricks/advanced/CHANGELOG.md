@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.48.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.47.2...@next-bricks/advanced@0.48.0) (2025-07-10)
+
+
+### Features
+
+* support theme variant ([adb6eaa](https://github.com/easyops-cn/next-advanced-bricks/commit/adb6eaae8e2bca6dc32441f8babb46818e3f492a))
+
+
+
+
+
 ## [0.47.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.47.1...@next-bricks/advanced@0.47.2) (2025-07-09)
 
 
