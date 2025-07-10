@@ -234,3 +234,11 @@
 .collapse-header .checkboxLabel {
   margin-left: 0px;
 }
+
+:host([theme-variant="elevo"]) {
+  --antd-checkbox-color: var(--elevo-color-brand);
+
+  .checkboxLabelCheck {
+    background: none;
+  }
+}

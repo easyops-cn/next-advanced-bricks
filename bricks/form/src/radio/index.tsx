@@ -47,6 +47,7 @@ export interface RadioProps {
   ui?: UIType;
   useBrick?: UseSingleBrickConf;
   customStyle?: React.CSSProperties;
+  themeVariant?: "default" | "elevo";
 }
 export interface RadioEvents {
   change: CustomEvent<GeneralComplexOption>;
@@ -152,6 +153,10 @@ class Radio extends FormItemElementBase {
     attribute: false,
   })
   accessor useBrick: UseSingleBrickConf | undefined;
+
+  /** 主题变体 */
+  @property({ render: false })
+  accessor themeVariant: "default" | "elevo" | undefined;
 
   /**
    * 值变化事件

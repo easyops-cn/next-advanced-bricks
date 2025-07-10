@@ -51,6 +51,7 @@ export interface CheckboxProps extends FormItemProps {
   isCustom?: boolean;
   isGroup?: boolean;
   optionGroups?: OptionGroup[];
+  themeVariant?: "default" | "elevo";
   onChange?: (value: CheckboxValueType[]) => void;
   optionsChange?: (options: CheckboxOptionType[], name: string) => void;
 }
@@ -136,6 +137,10 @@ class Checkbox extends FormItemElementBase {
     attribute: false,
   })
   accessor optionGroups: OptionGroup[] | undefined;
+
+  /** 主题变体 */
+  @property({ render: false })
+  accessor themeVariant: "default" | "elevo" | undefined;
 
   /**
    * 复选框变化事件

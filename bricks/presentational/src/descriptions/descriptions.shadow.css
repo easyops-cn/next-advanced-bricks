@@ -7,9 +7,9 @@
 }
 
 :host([theme-variant="elevo"]) {
-  background: rgba(255, 255, 255, 0.73);
-  border-radius: 8px;
-  backdrop-filter: blur(33px);
+  background: var(--elevo-component-background);
+  backdrop-filter: var(--elevo-component-backdrop-filter);
+  border-radius: var(--elevo-border-radius);
   padding: 0 16px;
 }
 

@@ -23,12 +23,6 @@
   }
 }
 
-.rounded-button::part(button) {
-  border-radius: 9999px;
-  padding-left: 17px;
-  padding-right: 17px;
-}
-
 /* Copied from https://github.com/PrismJS/prism-themes/blob/447479fc7b2be2051fe27e561aceed7cc87a589f/themes/prism-one-light.css */
 .markdown {
   /**

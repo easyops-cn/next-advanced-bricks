@@ -196,7 +196,7 @@
 }
 
 :host([theme-variant="elevo"]) {
-  --eo-next-table-header-border-radius: 8px;
+  --eo-next-table-header-border-radius: var(--elevo-border-radius);
   --eo-table-head-cell-height: 35px;
   --eo-table-head-cell-padding: 7px 16px;
   --eo-table-body-cell-height: 40px;
@@ -204,9 +204,9 @@
 
   .next-table.ant-table-wrapper {
     .ant-table {
-      background: rgba(255, 255, 255, 0.73);
-      backdrop-filter: blur(33px);
-      border-radius: var(--eo-next-table-header-border-radius);
+      background: var(--elevo-component-background);
+      backdrop-filter: var(--elevo-component-backdrop-filter);
+      border-radius: var(--elevo-border-radius);
       color: rgba(0, 0, 0, 0.8);
     }
 

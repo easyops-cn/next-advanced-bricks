@@ -22,6 +22,7 @@ export default function convertList({ properties }: Component): BrickConf {
       variant,
       dataSource: fixDataSource(data),
       fields,
+      themeVariant: "elevo",
     },
   };
 }

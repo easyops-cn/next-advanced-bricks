@@ -25,6 +25,7 @@ interface SwitchProps extends FormItemProps {
   unCheckedText?: string;
   checkedIcon?: GeneralIconProps;
   unCheckedIcon?: GeneralIconProps;
+  themeVariant?: "default" | "elevo";
 }
 
 const { defineElement, property, event } = createDecorators();
@@ -92,6 +93,10 @@ class GeneralSwitch extends FormItemElementBase {
     attribute: false,
   })
   accessor unCheckedIcon: GeneralIconProps | undefined;
+
+  /** 主题变体 */
+  @property({ render: false })
+  accessor themeVariant: "default" | "elevo" | undefined;
 
   /**
    * 开关改变时触发

@@ -81,13 +81,16 @@ export default function convertFormItem(component: Component): BrickConf {
   };
 
   let brick: string;
-  let props = restProps;
+  let props: Record<string, unknown> = {
+    ...restProps,
+    themeVariant: "elevo",
+  };
 
   switch (type) {
     case "search":
       brick = "eo-search";
       props = {
-        ...restProps,
+        ...props,
         trim: true,
       };
       break;
@@ -98,7 +101,7 @@ export default function convertFormItem(component: Component): BrickConf {
       brick = "eo-input";
       props = {
         type: "number",
-        ...restProps,
+        ...props,
       };
       break;
     case "textarea":
@@ -108,10 +111,10 @@ export default function convertFormItem(component: Component): BrickConf {
       brick = "eo-select";
       break;
     case "radio":
-      brick = "eo-radio-group";
+      brick = "eo-radio";
       break;
     case "checkbox":
-      brick = "eo-checkbox-group";
+      brick = "eo-checkbox";
       break;
     case "switch":
       brick = "eo-switch";

@@ -1,5 +1,8 @@
 :host {
   display: block;
+  --eo-input-border-color: var(--antd-input-border-color);
+  --eo-input-hover-border-color: var(--antd-input-hover-border-color);
+  --eo-input-focus-border-color: var(--antd-input-focus-border-color);
 }
 
 :host([hidden]) {
@@ -18,17 +21,17 @@ textarea {
   background: var(--antd-input-bg);
   box-sizing: border-box;
   border-radius: var(--antd-button-border-radius);
-  border: 1px solid var(--antd-input-border-color);
+  border: 1px solid var(--eo-input-border-color);
   font-size: 14px;
   line-height: 22px;
 }
 
 textarea:not(:disabled):hover {
-  border: 1px solid var(--antd-input-hover-border-color);
+  border: 1px solid var(--eo-input-hover-border-color);
 }
 
 textarea:not(:disabled):focus {
-  border: 1px solid var(--antd-input-focus-border-color);
+  border: 1px solid var(--eo-input-focus-border-color);
   outline: 0;
   box-shadow: 0 0 0 2px rgb(0 113 235 / 20%);
 }
@@ -52,4 +55,17 @@ textarea.error:hover {
 }
 textarea.error:focus {
   border-color: var(--antd-error-color);
+}
+
+:host([theme-variant="elevo"]) {
+  --eo-input-border-color: var(--elevo-border-color);
+  --eo-input-hover-border-color: var(--elevo-color-brand);
+  --eo-input-focus-border-color: var(--elevo-color-brand);
+  --antd-input-placeholder-color: var(--elevo-placeholder-color);
+
+  textarea {
+    background: var(--elevo-input-background);
+    box-shadow: var(--elevo-input-box-shadow);
+    border-radius: var(--elevo-border-radius);
+  }
 }

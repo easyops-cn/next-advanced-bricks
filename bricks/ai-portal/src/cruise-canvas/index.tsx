@@ -524,6 +524,9 @@ function LegacyCruiseCanvasComponent(
       return;
     }
 
+    // Disable keyboard navigation because it has conflicts with form components interaction
+    return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
       const keyboardAction = handleKeyboardNav(e, { activeNodeId, nodes });
       if (!keyboardAction) {
@@ -561,9 +564,9 @@ function LegacyCruiseCanvasComponent(
         }
       }
     };
-    root.addEventListener("keydown", handleKeyDown);
+    root!.addEventListener("keydown", handleKeyDown);
     return () => {
-      root.removeEventListener("keydown", handleKeyDown);
+      root!.removeEventListener("keydown", handleKeyDown);
     };
   }, [activeNodeId, activeToolCallJob, nodes, scrollTo]);
 
