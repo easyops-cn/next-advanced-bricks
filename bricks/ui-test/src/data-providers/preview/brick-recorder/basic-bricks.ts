@@ -15,7 +15,7 @@ const basicBricksMap = {
     },
   },
   "basic-bricks.general-modal": {
-    "modal.open	": (event: CustomEvent<Record<string, string>>) => {
+    "modal.open": (event: CustomEvent<Record<string, string>>) => {
       const expr = t.callExpression(
         t.identifier("brick_waitForAnimationEnd"),
         []
@@ -37,6 +37,15 @@ const basicBricksMap = {
     ) => {
       const expr = t.callExpression(t.identifier("brick_click"), [
         t.stringLiteral("cancel"),
+      ]);
+      const text = generateCodeText(expr);
+      generateBaseStep(event, text);
+    },
+  },
+  "visit-history.recent-visit": {
+    "recent.visit.click": (event: CustomEvent<{ name: string }>) => {
+      const expr = t.callExpression(t.identifier("brick_clickItem"), [
+        t.stringLiteral(event.detail.name),
       ]);
       const text = generateCodeText(expr);
       generateBaseStep(event, text);

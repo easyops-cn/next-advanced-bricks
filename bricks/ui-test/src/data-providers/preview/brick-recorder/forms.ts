@@ -20,7 +20,7 @@ const formBricksMap: BrickEvtMapField = {
       const expr =
         event.detail === null
           ? t.callExpression(t.identifier("brick_clear"), [])
-          : t.callExpression(t.identifier("brick_clickItem"), [
+          : t.callExpression(t.identifier("brick_fill"), [
               t.stringLiteral(event.detail.label),
             ]);
       const text = generateCodeText(expr);
@@ -384,6 +384,47 @@ const formBricksMap: BrickEvtMapField = {
       const text = generateCodeText(expr);
       generateBrickInputStep(event, text, {
         brickEvtName: "cascader.change",
+      });
+    },
+  },
+  "forms.cmdb-instance-select": {
+    "forms.cmdb-instance-select.change.v2": (
+      event: CustomEvent<{ label: string[]; value: string }>
+    ) => {
+      let expr: t.Expression;
+      if (event.detail) {
+        expr = t.callExpression(t.identifier("brick_fill"), [
+          t.arrayExpression(event.detail.label.map((l) => t.stringLiteral(l))),
+        ]);
+      } else {
+        expr = t.callExpression(t.identifier("brick_clear"), []);
+      }
+
+      const text = generateCodeText(expr);
+      generateBrickInputStep(event, text, {
+        brickEvtName: "forms.cmdb-instance-select.change.v2",
+      });
+    },
+  },
+  "eo-input": {
+    change: (event: CustomEvent<string>) => {
+      const expr = t.callExpression(t.identifier("brick_type"), [
+        t.stringLiteral(event.detail),
+      ]);
+      const text = generateCodeText(expr);
+      generateBrickInputStep(event, text, {
+        brickEvtName: "change",
+      });
+    },
+  },
+  "eo-textarea": {
+    change: (event: CustomEvent<string>) => {
+      const expr = t.callExpression(t.identifier("brick_type"), [
+        t.stringLiteral(event.detail),
+      ]);
+      const text = generateCodeText(expr);
+      generateBrickInputStep(event, text, {
+        brickEvtName: "change",
       });
     },
   },
