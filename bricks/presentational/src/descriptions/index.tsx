@@ -208,7 +208,7 @@ export function DescriptionsComponent(props: DescriptionsProps) {
             >
               <span className="description-item-label">
                 {item.label}
-                {bordered ? "" : ": "}
+                {bordered || themeVariant === "elevo" ? "" : ": "}
               </span>
               <span className="description-item-content">
                 {renderItem(item)}
