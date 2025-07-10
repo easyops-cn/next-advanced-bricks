@@ -11,6 +11,14 @@
   backdrop-filter: var(--elevo-component-backdrop-filter);
   border-radius: var(--elevo-border-radius);
   padding: 0 16px;
+
+  .description-item-label {
+    color: rgba(0, 0, 0, 0.45);
+    width: 6em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .description-content {
