@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.14.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.14.0...@next-bricks/presentational@1.14.1) (2025-07-10)
+
+
+### Bug Fixes
+
+* **descriptions:** refine elevo style ([6a0f8fe](https://github.com/easyops-cn/next-advanced-bricks/commit/6a0f8fe874808f272e79dd6e26da9584c836f89c))
+
+
+
+
+
 # [1.14.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.13.7...@next-bricks/presentational@1.14.0) (2025-07-10)
 
 

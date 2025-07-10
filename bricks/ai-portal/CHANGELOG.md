@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.12.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.12.0...@next-bricks/ai-portal@0.12.1) (2025-07-10)
+
+
+### Bug Fixes
+
+* support converting new event action: show_message ([34e56cd](https://github.com/easyops-cn/next-advanced-bricks/commit/34e56cd6aec20679a7cf257c9ffa8a0cdf44db47))
+
+
+
+
+
 # [0.12.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.11.4...@next-bricks/ai-portal@0.12.0) (2025-07-10)
 
 
