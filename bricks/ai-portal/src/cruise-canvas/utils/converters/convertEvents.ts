@@ -92,21 +92,19 @@ function convertEventAction(
       };
     case "call_api": {
       const { api, params } = handler.payload;
+
+      const success = handler.callback?.success
+        ? ([]
+            .concat(handler.callback.success)
+            .map((cb: any) => convertEventAction(cb))
+            .filter(Boolean) as BrickEventHandler[])
+        : undefined;
+
       return {
         useProvider: `${api.name}:${api.version}`,
         params,
         callback: {
-          success: [
-            {
-              action: "message.success",
-              args: ["<% EVENT.detail %>"],
-            },
-            ...(handler.callback?.success
-              ? ([convertEventAction(handler.callback.success)].filter(
-                  Boolean
-                ) as BrickEventHandler[])
-              : []),
-          ],
+          success: success?.length ? success : undefined,
           error: {
             action: "handleHttpError",
           },
@@ -118,6 +116,11 @@ function convertEventAction(
         target: `[data-component-id="${handler.payload.componentId}"]`,
         method: handler.payload.method,
         args: handler.payload.args,
+      };
+    case "show_message":
+      return {
+        action: `message.${handler.payload.type}` as "message.info",
+        args: [handler.payload.content],
       };
   }
 }
