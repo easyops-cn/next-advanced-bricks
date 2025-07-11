@@ -428,6 +428,17 @@ const formBricksMap: BrickEvtMapField = {
       });
     },
   },
+  "code-bricks.code-editor": {
+    "code.change": (event: CustomEvent<string>) => {
+      const expr = t.callExpression(t.identifier("brick_type"), [
+        t.stringLiteral(event.detail),
+      ]);
+      const text = generateCodeText(expr);
+      generateBrickInputStep(event, text, {
+        brickEvtName: "code.change",
+      });
+    },
+  },
 };
 
 export const formsBricks = Object.keys(formBricksMap);

@@ -121,4 +121,28 @@ export const presentationalBricks: BrickCommandConf[] = [
       },
     ],
   },
+  {
+    brick: "presentational-bricks.modal-confirm",
+    targets: [
+      {
+        isolate: true,
+        selectors: [
+          { type: "css-selector", value: ".ant-modal-confirm" },
+          {
+            type: "css-selector",
+            value: ".ant-modal-confirm-content",
+          },
+          {
+            type: "css-selector",
+            value: "input",
+          },
+        ],
+        actions: [
+          {
+            name: "type",
+          },
+        ],
+      },
+    ],
+  },
 ];
