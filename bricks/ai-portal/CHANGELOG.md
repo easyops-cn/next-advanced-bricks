@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.12.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.12.1...@next-bricks/ai-portal@0.12.2) (2025-07-11)
+
+
+### Bug Fixes
+
+* refine keyboard nav by detecting active element ([e853d26](https://github.com/easyops-cn/next-advanced-bricks/commit/e853d26a2b97574373fc50aac0834f9f35322e3f))
+
+
+
+
+
 ## [0.12.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.12.0...@next-bricks/ai-portal@0.12.1) (2025-07-10)
 
 

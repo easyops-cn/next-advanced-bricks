@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.18.0...@next-bricks/form@1.18.1) (2025-07-11)
+
+
+### Bug Fixes
+
+* refine form item style ([3f5bd77](https://github.com/easyops-cn/next-advanced-bricks/commit/3f5bd7715999fde473b3d489ec482c65681e37bc))
+
+
+
+
+
 # [1.18.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.17.2...@next-bricks/form@1.18.0) (2025-07-10)
 
 
