@@ -1,0 +1,107 @@
+:host {
+  display: block;
+  white-space: nowrap;
+}
+
+.container {
+  border-radius: var(--elevo-border-radius);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.label {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stat {
+  font-weight: 600;
+}
+
+.chart {
+  min-width: 0;
+}
+
+.chart > * {
+  display: block;
+}
+
+:host(:not([size="small"])) {
+  .container {
+    background:
+      linear-gradient(
+        164deg,
+        rgba(105, 153, 253, 0) 40%,
+        rgba(105, 153, 253, 0.05) 60%,
+        rgba(105, 153, 253, 0.32) 100%
+      ),
+      #fff;
+    padding: 22px;
+  }
+
+  .label {
+    font-size: 14px;
+    height: 22px;
+    margin-bottom: 16px;
+  }
+
+  .stat-and-chart {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    position: relative;
+  }
+
+  .stat {
+    font-size: 36px;
+    color: #1d212a;
+    position: absolute;
+    left: 0;
+  }
+
+  .chart {
+    width: calc(100% - 160px);
+  }
+}
+
+:host([size="small"]) {
+  .container {
+    padding: 11px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    position: relative;
+    background: var(--elevo-component-background);
+    backdrop-filter: var(--elevo-component-backdrop-filter);
+  }
+
+  .label-and-stat {
+    position: absolute;
+    left: 15px;
+  }
+
+  .label {
+    font-size: 12px;
+    color: #8c8c8c;
+    line-height: 17px;
+    height: 17px;
+    margin-bottom: 7px;
+  }
+
+  .stat {
+    font-size: 20px;
+    color: #262626;
+    line-height: 24px;
+  }
+
+  .chart {
+    width: calc(100% - 90px);
+  }
+}

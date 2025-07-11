@@ -10,3 +10,5 @@ dependencies:
     version: "^1.56.0"
   - name: "containers-NB"
     version: "^1.15.0"
+  - name: "mini-chart-NB"
+    version: ">=0.2.9"

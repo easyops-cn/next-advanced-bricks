@@ -1,3 +1,4 @@
+import { pipes } from "@easyops-cn/brick-next-pipes";
 import type {
   Component,
   DataSource,
@@ -128,6 +129,23 @@ export async function convertView(
   const context = [
     ...convertDataSourcesToContext(view.dataSources ?? []),
     ...convertVariablesToContext(view.variables ?? []),
+    {
+      name: "__builtin_fn_getLatestMetricValue",
+      value: function getLatestMetricValue(
+        data: {
+          list?: Record<string, any>[];
+        },
+        {
+          metric,
+          precision,
+        }: { metric: { id: string; unit: string }; precision?: number }
+      ) {
+        const value = data?.list?.findLast?.(
+          (item) => item[metric.id] != null
+        )?.[metric.id];
+        return pipes.unitFormat(value, metric.unit, precision).join("");
+      },
+    },
   ];
 
   return {
@@ -135,7 +153,7 @@ export async function convertView(
     children: (await Promise.all(rootComponents.map(convert))).filter(
       Boolean
     ) as BrickConf[],
-    context: context.length > 0 ? context : undefined,
+    context,
   };
 }
 

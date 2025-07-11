@@ -485,7 +485,7 @@ function LegacyCruiseCanvasComponent(
       if (range === "line") {
         const lineHeight = 40;
         distance =
-          lineHeight * (direction === "up" || direction === "left" ? -1 : 1);
+          lineHeight * (direction === "up" || direction === "left" ? 1 : -1);
         duration = 150;
       } else if (range === "page") {
         const pageHeight = root.offsetHeight - CANVAS_PADDING_BOTTOM;

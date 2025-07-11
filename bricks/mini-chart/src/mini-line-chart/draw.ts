@@ -13,6 +13,8 @@ export interface MiniLineChartOptions {
    * which can be retrieved from `getComputedStyle()`.
    */
   lineColor: string;
+  /** @default 2 */
+  lineWidth?: number;
   showArea?: boolean;
   min?: number;
   max?: number;
@@ -30,6 +32,7 @@ export function drawMiniLineChart(
     padding,
     smooth,
     lineColor,
+    lineWidth,
     showArea,
     min: _min,
     max: _max,
@@ -102,7 +105,7 @@ export function drawMiniLineChart(
     }
   }
 
-  ctx.lineWidth = 2;
+  ctx.lineWidth = lineWidth ?? 2;
   ctx.lineJoin = "round";
   ctx.lineCap = "round";
   ctx.strokeStyle = lineColor;

@@ -130,9 +130,18 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
   // }, []);
 
   const sizeLarge = useMemo(() => {
-    return view?.components?.some(
-      (component) => component.componentName === "table"
-    );
+    for (const component of view?.components ?? []) {
+      if (component.componentName === "table") {
+        return true;
+      }
+      if (component.componentName === "dashboard") {
+        const widgets = component?.properties?.widgets;
+        if (Array.isArray(widgets) && widgets.length >= 6) {
+          return true;
+        }
+      }
+    }
+    return false;
   }, [view]);
 
   return (

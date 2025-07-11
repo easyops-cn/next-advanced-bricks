@@ -49,6 +49,8 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
               // Take the last progress part
               progress = part;
               continue;
+            case "markdown":
+              continue;
             default:
               intermediateParts.push(part);
               continue;
