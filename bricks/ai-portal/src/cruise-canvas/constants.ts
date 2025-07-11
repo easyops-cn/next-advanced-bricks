@@ -17,3 +17,16 @@ export const EDGE_SEP = 10;
 export const DONE_STATES = ["completed", "failed", "canceled"] as TaskState[];
 
 export const GENERAL_DONE_STATES = [...DONE_STATES, "paused"] as TaskState[];
+
+// istanbul ignore next
+export const IS_MAC = /mac/i.test(
+  (
+    navigator as Navigator & {
+      userAgentData?: {
+        platform: string;
+      };
+    }
+  ).userAgentData?.platform ??
+    navigator.platform ??
+    navigator.userAgent
+);

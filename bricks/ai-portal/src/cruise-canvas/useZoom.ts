@@ -6,7 +6,11 @@ import type {
   RangeTuple,
   TransformLiteral /* , ActiveTarget */,
 } from "./interfaces";
-import { DEFAULT_SCALE_RANGE_MIN, DEFAULT_SCALE_RANGE_MAX } from "./constants";
+import {
+  DEFAULT_SCALE_RANGE_MIN,
+  DEFAULT_SCALE_RANGE_MAX,
+  IS_MAC,
+} from "./constants";
 // import type { ActiveTarget } from "./interfaces";
 import jobStyles from "./NodeJob/NodeJob.module.css";
 
@@ -29,19 +33,6 @@ export interface UseZoomResult {
 }
 
 // istanbul ignore next
-const isMac = /mac/i.test(
-  (
-    navigator as Navigator & {
-      userAgentData?: {
-        platform: string;
-      };
-    }
-  ).userAgentData?.platform ??
-    navigator.platform ??
-    navigator.userAgent
-);
-
-// istanbul ignore next
 function wheelData(event: WheelEvent) {
   // On Windows with normal mouse, deltaY is too big when scroll with ctrlKey pressed,
   // which cause the zooming too fast.
@@ -49,7 +40,7 @@ function wheelData(event: WheelEvent) {
   return (
     -event.deltaY *
     (event.deltaMode === 1 ? 0.05 : event.deltaMode ? 1 : 0.002) *
-    (event.ctrlKey && isMac ? 10 : 1)
+    (event.ctrlKey && IS_MAC ? 10 : 1)
   );
 }
 

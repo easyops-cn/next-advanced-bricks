@@ -32,8 +32,9 @@ export interface NodeJobProps {
 }
 
 export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
-  const askUser = job.toolCall?.name === "ask_human";
-  const askUserPlan = job.toolCall?.name === "ask_human_confirming_plan";
+  const toolName = job.toolCall?.name;
+  const askUser = toolName === "ask_human";
+  const askUserPlan = toolName === "ask_human_confirming_plan";
   const generalAskUser = askUser || askUserPlan;
   const knownAskUser =
     (askUser &&
@@ -82,9 +83,7 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
             [sharedStyles["shine-text"]]: loading,
           })}
         >
-          {job.toolCall?.name
-            ? t(K[job.toolCall.name as K]) || job.toolCall.name
-            : "Elevo"}
+          {toolName ? t(K[toolName as K]) || toolName : "Elevo"}
         </div>
         <div className={styles.time}>
           {job.startTime && moment(job.startTime * 1000).format("MM-DD HH:mm")}

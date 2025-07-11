@@ -468,6 +468,53 @@ function LegacyCruiseCanvasComponent(
     [nodes, selectTransition, transformRef, zoomer]
   );
 
+  const scrollBy = useCallback(
+    (
+      direction: "up" | "down" | "left" | "right",
+      range: "line" | "page" | "document"
+    ) => {
+      const root = rootRef.current;
+      if (!root || !sizeReady) {
+        return;
+      }
+      let x = 0;
+      let y = 0;
+      let duration = 300;
+      let distance: number;
+      const isHorizontal = direction === "left" || direction === "right";
+      if (range === "line") {
+        const lineHeight = 40;
+        distance =
+          lineHeight * (direction === "up" || direction === "left" ? -1 : 1);
+        duration = 150;
+      } else if (range === "page") {
+        const pageHeight = root.offsetHeight - CANVAS_PADDING_BOTTOM;
+        distance = pageHeight * (direction === "up" ? -1 : 1);
+      } else {
+        const { y: top, height } = mergeRects(nodes.map((node) => node.view!));
+
+        if (direction === "down") {
+          const bottom = top + height;
+          const targetHeight = bottom - top + CANVAS_PADDING_BOTTOM;
+          distance = root.offsetHeight - targetHeight - transformRef.current.y;
+        } else {
+          distance = top + CANVAS_PADDING_TOP - transformRef.current.y;
+        }
+      }
+
+      if (isHorizontal) {
+        x = distance;
+      } else {
+        y = distance;
+      }
+
+      if (x || y) {
+        zoomer.translateBy(selectTransition(select(root), duration), x, y);
+      }
+    },
+    [nodes, selectTransition, sizeReady, transformRef, zoomer]
+  );
+
   const [activeToolCallJobId, setActiveToolCallJobId] = useState<string | null>(
     null
   );
@@ -524,16 +571,24 @@ function LegacyCruiseCanvasComponent(
       return;
     }
 
-    // Disable keyboard navigation because it has conflicts with form components interaction
-    return;
-
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        document.activeElement &&
+        document.activeElement !== document.body &&
+        document.activeElement !== root
+      ) {
+        return;
+      }
+
       const keyboardAction = handleKeyboardNav(e, { activeNodeId, nodes });
       if (!keyboardAction) {
         return;
       }
       const { action, node } = keyboardAction;
-      if (action === "enter") {
+
+      if (action === "scroll") {
+        scrollBy(keyboardAction.direction, keyboardAction.range);
+      } else if (action === "enter") {
         if (node.type !== "job") {
           return;
         }
@@ -549,7 +604,7 @@ function LegacyCruiseCanvasComponent(
 
       if (action === "enter") {
         setActiveToolCallJobId((node as JobGraphNode).job.id);
-      } else {
+      } else if (action === "switch-active-node") {
         setActiveNodeId(node.id);
         if (node.type === "job" || node.type === "view") {
           scrollTo({
@@ -564,11 +619,11 @@ function LegacyCruiseCanvasComponent(
         }
       }
     };
-    root!.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
-      root!.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [activeNodeId, activeToolCallJob, nodes, scrollTo]);
+  }, [activeNodeId, activeToolCallJob, nodes, scrollTo, scrollBy]);
 
   return (
     <CanvasContext.Provider value={canvasContextValue}>

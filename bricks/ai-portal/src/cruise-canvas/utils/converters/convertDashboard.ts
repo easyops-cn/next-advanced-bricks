@@ -1,5 +1,6 @@
 import type { BrickConf } from "@next-core/types";
 import type { Component } from "./interfaces.js";
+import { fixDataSource } from "./fixDataSource.js";
 
 export default function convertDashboard({ properties }: Component): BrickConf {
   const { dataSource, widgets } = properties as {
@@ -19,17 +20,20 @@ export default function convertDashboard({ properties }: Component): BrickConf {
   };
 
   return {
-    brick: "eo-grid-layout",
+    brick: "div",
     properties: {
-      templateColumns: "repeat(auto-fill, minmax(500px, 1fr))",
-      gap: "var(--card-content-gap)",
+      style: {
+        display: "flex",
+        flexDirection: "column",
+        gap: "var(--card-content-gap)",
+      },
     },
     children: widgets.map((widget) => {
       const { type, metric, size, precision, min, max } = widget;
       return {
         brick: "chart-v2.time-series-chart",
         properties: {
-          data: `<% CTX[${JSON.stringify(dataSource)}] %>`,
+          data: fixDataSource(dataSource, ".list"),
           xField: "time",
           yFields: [metric.id],
           height: size === "large" ? 230 : 200,
