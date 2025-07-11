@@ -3,6 +3,7 @@ import React, {
   Suspense,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -48,6 +49,20 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
     askUserPlan;
   const loading = state === "working" || state === "submitted";
   const hasGraph = !!job.componentGraph;
+
+  const toolMarkdownContent = useMemo(() => {
+    const contents: string[] = [];
+    job.messages?.forEach((message) => {
+      if (message.role === "tool") {
+        for (const part of message.parts) {
+          if (part.type === "data" && part.data?.type === "markdown") {
+            contents.push(part.data.content);
+          }
+        }
+      }
+    });
+    return contents.join("");
+  }, [job.messages]);
 
   return (
     <div
@@ -144,6 +159,17 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
           </div>
         ) : null}
         {!generalAskUser && job.toolCall && <ToolCallStatus job={job} />}
+        {toolMarkdownContent && (
+          <div
+            className={classNames(
+              styles.message,
+              sharedStyles.markdown,
+              styles["role-assistant"]
+            )}
+          >
+            <MarkdownComponent content={toolMarkdownContent} />
+          </div>
+        )}
         {askUserPlan && state !== "input-required" ? (
           <HumanAdjustPlanResult job={job} />
         ) : (
