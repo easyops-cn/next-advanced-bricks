@@ -45,7 +45,7 @@ describe("handleKeyboardNav", () => {
   });
 
   it("should return undefined if no active node exists", () => {
-    const event = new KeyboardEvent("keydown", { key: "ArrowRight" });
+    const event = new KeyboardEvent("keydown", { key: "A" });
     const result = handleKeyboardNav(event, {
       activeNodeId: null,
       nodes: mockNodes,
@@ -54,7 +54,7 @@ describe("handleKeyboardNav", () => {
   });
 
   it("should return undefined if active node id does not match any node", () => {
-    const event = new KeyboardEvent("keydown", { key: "ArrowRight" });
+    const event = new KeyboardEvent("keydown", { key: "A" });
     const result = handleKeyboardNav(event, {
       activeNodeId: "nonexistent",
       nodes: mockNodes,
@@ -110,19 +110,6 @@ describe("handleKeyboardNav", () => {
     });
   });
 
-  it("should handle keyCode for compatibility", () => {
-    const event = new KeyboardEvent("keydown");
-    Object.defineProperty(event, "keyCode", { value: 39 }); // ArrowRight
-    const result = handleKeyboardNav(event, {
-      activeNodeId: "node1",
-      nodes: mockNodes,
-    });
-    expect(result).toEqual({
-      action: "switch-active-node",
-      node: mockNodes[1], // node2 is to the right of node1
-    });
-  });
-
   it("should perform enter action", () => {
     const event = new KeyboardEvent("keydown", { key: "Enter" });
     const result = handleKeyboardNav(event, {
@@ -161,6 +148,166 @@ describe("handleKeyboardNav", () => {
     const event = new KeyboardEvent("keydown", { key: "Tab" });
     const result = handleKeyboardNav(event, {
       activeNodeId: "node1",
+      nodes: mockNodes,
+    });
+    expect(result).toBeUndefined();
+  });
+
+  it("should handle space key scrolling when no active node", () => {
+    const event = new KeyboardEvent("keydown", { key: " " });
+    const result = handleKeyboardNav(event, {
+      activeNodeId: null,
+      nodes: mockNodes,
+    });
+    expect(result).toEqual({
+      action: "scroll",
+      direction: "up",
+      range: "page",
+      node: undefined,
+    });
+  });
+
+  it("should handle shift+space key scrolling when no active node", () => {
+    const event = new KeyboardEvent("keydown", { key: " ", shiftKey: true });
+    const result = handleKeyboardNav(event, {
+      activeNodeId: null,
+      nodes: mockNodes,
+    });
+    expect(result).toEqual({
+      action: "scroll",
+      direction: "down",
+      range: "page",
+      node: undefined,
+    });
+  });
+
+  it("should handle Home key scrolling when no active node", () => {
+    const event = new KeyboardEvent("keydown", { key: "Home" });
+    const result = handleKeyboardNav(event, {
+      activeNodeId: null,
+      nodes: mockNodes,
+    });
+    expect(result).toEqual({
+      action: "scroll",
+      direction: "up",
+      range: "document",
+      node: undefined,
+    });
+  });
+
+  it("should handle End key scrolling when no active node", () => {
+    const event = new KeyboardEvent("keydown", { key: "End" });
+    const result = handleKeyboardNav(event, {
+      activeNodeId: null,
+      nodes: mockNodes,
+    });
+    expect(result).toEqual({
+      action: "scroll",
+      direction: "down",
+      range: "document",
+      node: undefined,
+    });
+  });
+
+  it("should handle ArrowUp line scrolling when no active node", () => {
+    const event = new KeyboardEvent("keydown", { key: "ArrowUp" });
+    const result = handleKeyboardNav(event, {
+      activeNodeId: null,
+      nodes: mockNodes,
+    });
+    expect(result).toEqual({
+      action: "scroll",
+      direction: "up",
+      range: "line",
+      node: undefined,
+    });
+  });
+
+  it("should handle ArrowDown line scrolling when no active node", () => {
+    const event = new KeyboardEvent("keydown", { key: "ArrowDown" });
+    const result = handleKeyboardNav(event, {
+      activeNodeId: null,
+      nodes: mockNodes,
+    });
+    expect(result).toEqual({
+      action: "scroll",
+      direction: "down",
+      range: "line",
+      node: undefined,
+    });
+  });
+
+  it("should ignore metaKey on non-mac", () => {
+    const event = new KeyboardEvent("keydown", {
+      key: "ArrowUp",
+      metaKey: true,
+    });
+    const result = handleKeyboardNav(event, {
+      activeNodeId: null,
+      nodes: mockNodes,
+    });
+    expect(result).toBeUndefined();
+  });
+
+  it("should handle ArrowLeft line scrolling when no active node", () => {
+    const event = new KeyboardEvent("keydown", { key: "ArrowLeft" });
+    const result = handleKeyboardNav(event, {
+      activeNodeId: null,
+      nodes: mockNodes,
+    });
+    expect(result).toEqual({
+      action: "scroll",
+      direction: "left",
+      range: "line",
+      node: undefined,
+    });
+  });
+
+  it("should handle ArrowRight line scrolling when no active node", () => {
+    const event = new KeyboardEvent("keydown", { key: "ArrowRight" });
+    const result = handleKeyboardNav(event, {
+      activeNodeId: null,
+      nodes: mockNodes,
+    });
+    expect(result).toEqual({
+      action: "scroll",
+      direction: "right",
+      range: "line",
+      node: undefined,
+    });
+  });
+
+  it("should return undefined for ctrl+key combinations when no active node", () => {
+    const event = new KeyboardEvent("keydown", {
+      key: "ArrowDown",
+      ctrlKey: true,
+    });
+    const result = handleKeyboardNav(event, {
+      activeNodeId: null,
+      nodes: mockNodes,
+    });
+    expect(result).toBeUndefined();
+  });
+
+  it("should return undefined for alt+key combinations when no active node", () => {
+    const event = new KeyboardEvent("keydown", {
+      key: "ArrowDown",
+      altKey: true,
+    });
+    const result = handleKeyboardNav(event, {
+      activeNodeId: null,
+      nodes: mockNodes,
+    });
+    expect(result).toBeUndefined();
+  });
+
+  it("should return undefined for shift+key combinations when no active node", () => {
+    const event = new KeyboardEvent("keydown", {
+      key: "ArrowDown",
+      shiftKey: true,
+    });
+    const result = handleKeyboardNav(event, {
+      activeNodeId: null,
       nodes: mockNodes,
     });
     expect(result).toBeUndefined();

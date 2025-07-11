@@ -1,9 +1,11 @@
 import { minBy } from "lodash";
 import type { GraphNode, NodePosition, NodeRect } from "../interfaces";
+import { IS_MAC } from "../constants";
 
 export type KeyboardAction =
   | KeyboardActionSwitchActiveNode
-  | KeyboardActionEnter;
+  | KeyboardActionEnter
+  | KeyboardActionScroll;
 
 export interface KeyboardActionSwitchActiveNode {
   action: "switch-active-node";
@@ -13,6 +15,13 @@ export interface KeyboardActionSwitchActiveNode {
 export interface KeyboardActionEnter {
   action: "enter";
   node: GraphNode;
+}
+
+export interface KeyboardActionScroll {
+  action: "scroll";
+  direction: "up" | "down" | "left" | "right";
+  range: "line" | "page" | "document";
+  node?: undefined;
 }
 
 export function handleKeyboardNav(
@@ -29,7 +38,67 @@ export function handleKeyboardNav(
     ? nodes.find((node) => node.id === activeNodeId)
     : null;
 
+  const key = event.key;
+
   if (!activeNode) {
+    if (event.ctrlKey || event.altKey) {
+      return;
+    }
+
+    if (key === " " && !event.ctrlKey && !event.metaKey) {
+      return {
+        action: "scroll",
+        direction: event.shiftKey ? "down" : "up",
+        range: "page",
+      };
+    }
+
+    if (event.shiftKey || (!IS_MAC && event.metaKey)) {
+      return;
+    }
+
+    switch (key) {
+      case "Home":
+        return {
+          action: "scroll",
+          direction: "up",
+          range: "document",
+        };
+      case "End":
+        return {
+          action: "scroll",
+          direction: "down",
+          range: "document",
+        };
+      case "ArrowUp":
+      case "ArrowDown": {
+        const direction = key === "ArrowUp" ? "up" : "down";
+        if (event.metaKey) {
+          return {
+            action: "scroll",
+            direction,
+            range: "document",
+          };
+        }
+        return {
+          action: "scroll",
+          direction,
+          range: "line",
+        };
+      }
+      case "ArrowLeft":
+      case "ArrowRight":
+        if (!event.metaKey) {
+          return {
+            action: "scroll",
+            direction: key === "ArrowLeft" ? "left" : "right",
+            range: "line",
+          };
+        }
+    }
+
+    // Move up or down by arrow keys
+
     return;
   }
 
@@ -58,40 +127,27 @@ export function handleKeyboardNav(
     });
   };
 
-  const key =
-    event.key ||
-    /* istanbul ignore next: compatibility */ event.keyCode ||
-    /* istanbul ignore next: compatibility */ event.which;
   let node: GraphNode | undefined;
-  let action: KeyboardAction["action"] | undefined;
+  let action: "switch-active-node" | "enter" | undefined;
 
   switch (key) {
     case "ArrowLeft":
-    case 37: {
       action = "switch-active-node";
       node = moveOnAxis("x", -1);
       break;
-    }
     case "ArrowUp":
-    case 38: {
       action = "switch-active-node";
       node = moveOnAxis("y", -1);
       break;
-    }
     case "ArrowRight":
-    case 39: {
       action = "switch-active-node";
       node = moveOnAxis("x", 1);
       break;
-    }
     case "ArrowDown":
-    case 40: {
       action = "switch-active-node";
       node = moveOnAxis("y", 1);
       break;
-    }
     case "Enter":
-    case 13:
       action = "enter";
       node = activeNode;
   }

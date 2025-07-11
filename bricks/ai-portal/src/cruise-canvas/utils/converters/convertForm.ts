@@ -6,9 +6,6 @@ export default function convertForm(_component: Component): BrickConf {
     brick: "eo-form",
     properties: {
       themeVariant: "elevo",
-      style: {
-        marginBottom: "-22px",
-      },
     },
   };
 }
