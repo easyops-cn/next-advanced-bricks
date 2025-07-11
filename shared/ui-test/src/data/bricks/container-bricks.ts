@@ -64,4 +64,28 @@ export const containerBricks: BrickCommandConf[] = [
       },
     ],
   },
+  {
+    brick: "container-brick.collapse-container",
+    shadowDom: true,
+    targets: [
+      {
+        selectors: [
+          {
+            type: "css-selector",
+            value: ".ant-collapse-item",
+            multiple: true,
+          },
+          {
+            type: "css-selector",
+            value: ".ant-collapse-header",
+          },
+        ],
+        actions: [
+          {
+            name: "click",
+          },
+        ],
+      },
+    ],
+  },
 ];
