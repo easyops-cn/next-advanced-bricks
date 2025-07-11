@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.26](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/ui-test@1.0.25...@next-shared/ui-test@1.0.26) (2025-07-11)
+
+
+### Bug Fixes
+
+* brick custom record ([03f81e2](https://github.com/easyops-cn/next-advanced-bricks/commit/03f81e2fbfa27a82f3bbd960c6abefc2473dd656))
+
+
+
+
+
 ## [1.0.25](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/ui-test@1.0.24...@next-shared/ui-test@1.0.25) (2025-06-27)
 
 **Note:** Version bump only for package @next-shared/ui-test

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.1.8...@next-bricks/ui-test@1.1.9) (2025-07-11)
+
+
+### Bug Fixes
+
+* brick custom record ([03f81e2](https://github.com/easyops-cn/next-advanced-bricks/commit/03f81e2fbfa27a82f3bbd960c6abefc2473dd656))
+
+
+
+
+
 ## [1.1.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.1.7...@next-bricks/ui-test@1.1.8) (2025-07-10)
 
 
