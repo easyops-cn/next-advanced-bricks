@@ -20,6 +20,7 @@ export interface DataSource {
     // objectId?: string;
   };
   params?: Record<string, any>;
+  transform?: string;
 }
 
 export interface Variable {

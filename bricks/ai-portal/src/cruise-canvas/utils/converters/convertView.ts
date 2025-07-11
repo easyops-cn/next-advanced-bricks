@@ -145,6 +145,9 @@ function convertDataSourcesToContext(dataSources: DataSource[]): ContextConf[] {
     resolve: {
       useProvider: `${dataSource.api.name}:${dataSource.api.version}`,
       params: dataSource.params,
+      ...(dataSource.transform
+        ? { transform: { value: dataSource.transform } }
+        : null),
     },
     track: true,
   }));
