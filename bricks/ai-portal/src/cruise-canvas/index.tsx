@@ -287,11 +287,14 @@ function LegacyCruiseCanvasComponent(
     sizeMap,
   });
 
+  const [hoverOnScrollableContent, setHoverOnScrollableContent] =
+    useState(false);
+
   const { grabbing, transform, transformRef, zoomer /* , scaleRange */ } =
     useZoom({
       rootRef,
       zoomable: sizeReady,
-      scrollable: sizeReady,
+      scrollable: sizeReady && !hoverOnScrollableContent,
       pannable: sizeReady,
     });
 
@@ -530,9 +533,12 @@ function LegacyCruiseCanvasComponent(
       activeToolCallJobId,
       setActiveToolCallJobId,
       setActiveNodeId,
+      hoverOnScrollableContent,
+      setHoverOnScrollableContent,
     }),
     [
       activeToolCallJobId,
+      hoverOnScrollableContent,
       onNodeResize,
       humanInput,
       onShare,
