@@ -160,13 +160,7 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
         ) : null}
         {!generalAskUser && job.toolCall && <ToolCallStatus job={job} />}
         {toolMarkdownContent && (
-          <div
-            className={classNames(
-              styles.message,
-              sharedStyles.markdown,
-              styles["role-assistant"]
-            )}
-          >
+          <div className={classNames(styles.message, sharedStyles.markdown)}>
             <MarkdownComponent content={toolMarkdownContent} />
           </div>
         )}

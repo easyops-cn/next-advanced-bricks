@@ -24,6 +24,7 @@ export interface MiniLineChartProps {
   height?: string;
   smooth?: boolean;
   lineColor?: string;
+  lineWidth?: number;
   showArea?: boolean;
   min?: number;
   max?: number;
@@ -72,6 +73,12 @@ class MiniLineChart extends ReactNextElement implements MiniLineChartProps {
   @property()
   accessor lineColor: string | undefined;
 
+  /**
+   * @default 2
+   */
+  @property({ type: Number })
+  accessor lineWidth: number | undefined;
+
   @property({ type: Boolean })
   accessor showArea: boolean | undefined;
 
@@ -112,6 +119,7 @@ class MiniLineChart extends ReactNextElement implements MiniLineChartProps {
         height={this.height}
         smooth={this.smooth}
         lineColor={this.lineColor}
+        lineWidth={this.lineWidth}
         showArea={this.showArea}
         min={this.min}
         max={this.max}
@@ -133,6 +141,7 @@ export function MiniLineChartComponent({
   height: _height,
   smooth,
   lineColor: _lineColor,
+  lineWidth,
   showArea,
   min,
   max,
@@ -220,6 +229,7 @@ export function MiniLineChartComponent({
       padding,
       smooth,
       lineColor: getComputedStyle(detector).color,
+      lineWidth,
       showArea,
       min,
       max,
@@ -263,6 +273,7 @@ export function MiniLineChartComponent({
     data,
     height,
     lineColor,
+    lineWidth,
     max,
     min,
     showArea,
