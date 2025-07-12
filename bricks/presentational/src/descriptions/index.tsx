@@ -157,7 +157,9 @@ export function DescriptionsComponent(props: DescriptionsProps) {
         <ReactUseMultipleBricks useBrick={item.useBrick} data={dataSource} />
       );
     }
-    return item.field != null ? String(dataSource[item.field]) : item.text;
+    return item.field != null
+      ? String(dataSource[item.field] ?? "")
+      : item.text;
   };
 
   useEffect(() => {
