@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.12.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.12.3...@next-bricks/ai-portal@0.12.4) (2025-07-12)
+
+
+### Bug Fixes
+
+* handle undefined props ([2373a0e](https://github.com/easyops-cn/next-advanced-bricks/commit/2373a0e6098d087d592eb140f876c3b8b6b98651))
+* refine dashboard ([5b7ef33](https://github.com/easyops-cn/next-advanced-bricks/commit/5b7ef33b3adfa7b8a25c81457744064f7bbdfec3))
+
+
+
+
+
 ## [0.12.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.12.2...@next-bricks/ai-portal@0.12.3) (2025-07-11)
 
 

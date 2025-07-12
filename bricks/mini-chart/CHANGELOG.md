@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/mini-chart@0.2.8...@next-bricks/mini-chart@0.2.9) (2025-07-12)
+
+
+### Bug Fixes
+
+* refine dashboard ([5b7ef33](https://github.com/easyops-cn/next-advanced-bricks/commit/5b7ef33b3adfa7b8a25c81457744064f7bbdfec3))
+
+
+
+
+
 ## [0.2.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/mini-chart@0.2.7...@next-bricks/mini-chart@0.2.8) (2025-07-10)
 
 **Note:** Version bump only for package @next-bricks/mini-chart
