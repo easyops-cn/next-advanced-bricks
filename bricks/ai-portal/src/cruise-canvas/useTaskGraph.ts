@@ -158,6 +158,11 @@ export function useTaskGraph(
           id: job.id,
           title: job.instruction,
         });
+      } else if (job.toolCall?.annotations?.title) {
+        nav.push({
+          id: job.id,
+          title: job.toolCall.annotations.title,
+        });
       }
 
       if (hasMessages || !job.instruction) {

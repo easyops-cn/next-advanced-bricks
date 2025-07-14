@@ -110,7 +110,11 @@ export async function convertView(
       brick.children = [...(brick.children ?? []), ...children];
     }
 
-    if (component.componentName === "form" && !component.parentComponentId) {
+    if (
+      component.componentName === "form" &&
+      !component.parentComponentId &&
+      !options?.expanded
+    ) {
       return {
         brick: "div",
         properties: {

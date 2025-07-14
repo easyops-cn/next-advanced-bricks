@@ -33,6 +33,7 @@ export interface NodeJobProps {
 }
 
 export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
+  const toolTitle = job.toolCall?.annotations?.title;
   const toolName = job.toolCall?.name;
   const askUser = toolName === "ask_human";
   const askUserPlan = toolName === "ask_human_confirming_plan";
@@ -98,7 +99,7 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
             [sharedStyles["shine-text"]]: loading,
           })}
         >
-          {toolName ? t(K[toolName as K]) || toolName : "Elevo"}
+          {toolTitle || (toolName ? t(K[toolName as K]) || toolName : "Elevo")}
         </div>
         <div className={styles.time}>
           {job.startTime && moment(job.startTime * 1000).format("MM-DD HH:mm")}
