@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.48.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.48.1...@next-bricks/advanced@0.48.2) (2025-07-14)
+
+
+### Bug Fixes
+
+* **next-table:** support bordered style of elevo ([7f5de03](https://github.com/easyops-cn/next-advanced-bricks/commit/7f5de03e90e14c300dbebc3b2655706a117f4576))
+
+
+
+
+
 ## [0.48.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.48.0...@next-bricks/advanced@0.48.1) (2025-07-14)
 
 
