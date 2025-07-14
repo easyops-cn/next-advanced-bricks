@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useMemo,
   useRef,
-  useState,
+  // useState,
 } from "react";
 import { unstable_createRoot } from "@next-core/runtime";
 import classNames from "classnames";
@@ -13,9 +13,11 @@ import styles from "./NodeView.module.css";
 import jobStyles from "../NodeJob/NodeJob.module.css";
 // import sharedStyles from "../shared.module.css";
 import type { Job } from "../interfaces";
-import type { ViewWithInfo } from "../utils/converters/interfaces";
+// import type { ViewWithInfo } from "../utils/converters/interfaces";
 import { convertView } from "../utils/converters/convertView";
 import { CanvasContext } from "../CanvasContext";
+import { WrappedIcon } from "../bricks";
+import { t } from "../i18n";
 
 export interface NodeViewProps {
   job: Job;
@@ -23,12 +25,14 @@ export interface NodeViewProps {
 }
 
 export function NodeView({ job, active }: NodeViewProps): JSX.Element {
-  const { setHoverOnScrollableContent } = useContext(CanvasContext);
+  const { setHoverOnScrollableContent, setActiveExpandedViewJobId } =
+    useContext(CanvasContext);
   const ref = useRef<HTMLDivElement>(null);
   const rootRef = useRef<Awaited<
     ReturnType<typeof unstable_createRoot>
   > | null>(null);
-  const [view, setView] = useState<ViewWithInfo | null>(null);
+  // const [view, setView] = useState<ViewWithInfo | null>(null);
+  const view = job.generatedView;
 
   useEffect(() => {
     const container = ref.current;
@@ -45,32 +49,6 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
       rootRef.current = null;
     };
   }, []);
-
-  useEffect(() => {
-    const toolCallMessages = job.messages?.filter((msg) => msg.role === "tool");
-
-    let view: ViewWithInfo | null = null;
-
-    loop: for (const message of toolCallMessages ?? []) {
-      for (const part of message.parts) {
-        if (part.type === "text") {
-          try {
-            view = JSON.parse(part.text);
-            break loop;
-          } catch {
-            // Do nothing, continue to next part
-          }
-        }
-      }
-    }
-
-    if (!view) {
-      // eslint-disable-next-line no-console
-      console.error("No valid view found in tool call messages.");
-    }
-
-    setView(view);
-  }, [job.messages]);
 
   useEffect(() => {
     let ignore = false;
@@ -178,6 +156,10 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
     setHoverOnScrollableContent(false);
   }, [setHoverOnScrollableContent]);
 
+  const handleExpandClick = useCallback(() => {
+    setActiveExpandedViewJobId(job.id);
+  }, [job.id, setActiveExpandedViewJobId]);
+
   return (
     <div
       className={classNames(jobStyles["node-job"], {
@@ -188,6 +170,13 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
       <div className={jobStyles.background} />
       <div className={styles.heading}>
         <div className={styles.title}>{view?.title}</div>
+        <button
+          className={styles.expand}
+          title={t("FULLSCREEN")}
+          onClick={handleExpandClick}
+        >
+          <WrappedIcon lib="antd" icon="fullscreen" />
+        </button>
       </div>
       <div
         className={styles.body}

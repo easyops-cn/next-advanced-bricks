@@ -1,3 +1,5 @@
+import type { ViewWithInfo } from "./utils/converters/interfaces";
+
 export type RangeTuple = [min: number, max: number];
 export type SizeTuple = [width: number, height: number];
 
@@ -130,6 +132,7 @@ export interface Job {
   endTime?: number;
 
   componentGraph?: ComponentGraph;
+  generatedView?: ViewWithInfo;
 }
 
 export interface TaskPatch extends Omit<Partial<Task>, "jobs"> {
@@ -218,4 +221,9 @@ export interface ComponentGraphEdge extends GraphEdge {
 export interface GraphNavItem {
   id: string;
   title: string;
+}
+
+export interface GraphGeneratedView {
+  id: string;
+  view: ViewWithInfo;
 }

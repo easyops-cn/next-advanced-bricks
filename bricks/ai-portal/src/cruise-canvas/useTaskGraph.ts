@@ -6,6 +6,7 @@ import type {
   GraphNode,
   TaskBaseDetail,
   GraphNavItem,
+  GraphGeneratedView,
 } from "./interfaces";
 import { REQUIREMENT_NODE_ID } from "./constants";
 
@@ -22,6 +23,7 @@ export function useTaskGraph(
     const nodes: GraphNode[] = [];
     const edges: GraphEdge[] = [];
     const nav: GraphNavItem[] = [];
+    const views: GraphGeneratedView[] = [];
 
     nodes.push({
       type: "requirement",
@@ -181,6 +183,13 @@ export function useTaskGraph(
           job,
         });
         nodeIds.push(viewNodeId);
+
+        if (job.generatedView) {
+          views.push({
+            id: job.id,
+            view: job.generatedView,
+          });
+        }
       }
 
       jobNodesMap.set(jobId, nodeIds);
@@ -210,6 +219,7 @@ export function useTaskGraph(
       nodes,
       edges,
       nav,
+      views,
     };
   }, [task, jobs]);
 }

@@ -408,11 +408,11 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
                     "var(--antd-table-header-overwrite-sort-td-active-bg)",
                 }),
             // cellPaddingBlock: 11,
-            // cellPaddingInline: 12,
+            cellPaddingInline: 16,
             // cellPaddingBlockMD: 8,
-            // cellPaddingInlineMD: 12,
+            cellPaddingInlineMD: 16,
             // cellPaddingBlockSM: 4,
-            // cellPaddingInlineSM: 12,
+            cellPaddingInlineSM: 16,
             ...(bordered
               ? { borderColor: "var(--theme-gray-border-color)" }
               : null),
