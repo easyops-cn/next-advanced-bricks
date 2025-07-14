@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.12.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.12.4...@next-bricks/ai-portal@0.12.5) (2025-07-14)
+
+
+### Bug Fixes
+
+* disable canvas scroll when hover on scrollable content ([319ebaa](https://github.com/easyops-cn/next-advanced-bricks/commit/319ebaa955d5e155457bfab1f56f4c5e49eb39cd))
+
+
+
+
+
 ## [0.12.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.12.3...@next-bricks/ai-portal@0.12.4) (2025-07-12)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.48.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.48.0...@next-bricks/advanced@0.48.1) (2025-07-14)
+
+
+### Bug Fixes
+
+* disable canvas scroll when hover on scrollable content ([319ebaa](https://github.com/easyops-cn/next-advanced-bricks/commit/319ebaa955d5e155457bfab1f56f4c5e49eb39cd))
+
+
+
+
+
 # [0.48.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.47.2...@next-bricks/advanced@0.48.0) (2025-07-10)
 
 
