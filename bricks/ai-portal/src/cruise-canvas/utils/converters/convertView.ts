@@ -1,6 +1,7 @@
 import { pipes } from "@easyops-cn/brick-next-pipes";
 import type {
   Component,
+  ConvertViewOptions,
   DataSource,
   Variable,
   ViewWithInfo,
@@ -22,7 +23,8 @@ export interface BrickConfWithContext extends BrickConf {
 }
 
 export async function convertView(
-  view: ViewWithInfo | null
+  view: ViewWithInfo | null | undefined,
+  options?: ConvertViewOptions
 ): Promise<BrickConfWithContext | null> {
   if (!view) {
     return null;
@@ -61,7 +63,7 @@ export async function convertView(
         brick = await convertList(component);
         break;
       case "table":
-        brick = await convertTable(component, view);
+        brick = await convertTable(component, view, options);
         break;
       case "descriptions":
         brick = await convertDescriptions(component, view);
@@ -108,7 +110,7 @@ export async function convertView(
       brick.children = [...(brick.children ?? []), ...children];
     }
 
-    if (component.componentName === "form") {
+    if (component.componentName === "form" && !component.parentComponentId) {
       return {
         brick: "div",
         properties: {

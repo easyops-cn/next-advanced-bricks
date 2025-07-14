@@ -12,9 +12,11 @@ export default function convertModal(component: Component): BrickConf {
     brick: "eo-modal",
     portal: true,
     properties: {
+      themeVariant: "elevo",
       modalTitle: title,
       confirmText: confirmText,
       cancelText: cancelText,
+      keyboard: true,
     },
   };
 }

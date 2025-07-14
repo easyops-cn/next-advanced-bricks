@@ -1,5 +1,5 @@
 // istanbul ignore file: experimental
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import moment from "moment";
@@ -43,6 +43,7 @@ const { defineElement, property, event } = createDecorators();
 export interface ChatHistoryProps {
   list?: HistoryItem[];
   actions?: ActionType[];
+  nextToken?: string;
 }
 
 export interface HistoryItem {
@@ -72,6 +73,9 @@ class ChatHistory extends ReactNextElement implements ChatHistoryProps {
   @property({ attribute: false })
   accessor actions: ActionType[] | undefined;
 
+  @property()
+  accessor nextToken: string | undefined;
+
   @event({ type: "action.click" })
   accessor #actionClick!: EventEmitter<ActionClickDetail>;
 
@@ -79,19 +83,31 @@ class ChatHistory extends ReactNextElement implements ChatHistoryProps {
     this.#actionClick.emit(detail);
   };
 
+  @event({ type: "load.more" })
+  accessor #loadMore!: EventEmitter<{ nextToken: string }>;
+
+  #handleLoadMore = (nextToken: string) => {
+    this.#loadMore.emit({ nextToken });
+  };
+
   render() {
     return (
       <ChatHistoryComponent
+        root={this}
         list={this.list}
         actions={this.actions}
+        nextToken={this.nextToken}
         onActionClick={this.#handleActionClick}
+        onLoadMore={this.#handleLoadMore}
       />
     );
   }
 }
 
 export interface ChatHistoryComponentProps extends ChatHistoryProps {
-  onActionClick?: (detail: ActionClickDetail) => void;
+  root: HTMLElement;
+  onActionClick: (detail: ActionClickDetail) => void;
+  onLoadMore: (nextToken: string) => void;
 }
 
 interface GroupedHistory {
@@ -100,9 +116,12 @@ interface GroupedHistory {
 }
 
 export function ChatHistoryComponent({
+  root,
   list,
   actions,
+  nextToken,
   onActionClick,
+  onLoadMore,
 }: ChatHistoryComponentProps) {
   const groups = useMemo(() => {
     const groupMap = new Map<string, GroupedHistory>();
@@ -154,6 +173,29 @@ export function ChatHistoryComponent({
 
   const [actionsVisible, setActionsVisible] = useState<string | null>(null);
 
+  const nextRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const next = nextRef.current;
+    if (!next || !nextToken) {
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            onLoadMore(nextToken);
+          }
+        }
+      },
+      { root }
+    );
+    observer.observe(next);
+    return () => {
+      observer.disconnect();
+    };
+  }, [nextToken, onLoadMore, root]);
+
   if (!list) {
     return (
       <div className="loading">
@@ -168,39 +210,46 @@ export function ChatHistoryComponent({
   }
 
   return (
-    <ul>
-      {groups.map((group) => (
-        <li key={group.title} className="group">
-          <div className="group-title">{group.title}</div>
-          <ul className="items">
-            {group.items.map((item) => (
-              <li key={item.id}>
-                <WrappedLink
-                  className={classNames("item", {
-                    active: actionsVisible === item.id,
-                  })}
-                  url={item.url}
-                >
-                  <div className="item-title">{item.title}</div>
-                  <WrappedMiniActions
-                    className="actions"
-                    actions={actions}
-                    onActionClick={(e) => {
-                      onActionClick?.({ action: e.detail, item });
-                    }}
-                    onVisibleChange={(e) => {
-                      setActionsVisible(e.detail ? item.id : null);
-                    }}
-                  />
-                  {!DONE_STATES.includes(item.state!) && (
-                    <div className="working"></div>
-                  )}
-                </WrappedLink>
-              </li>
-            ))}
-          </ul>
-        </li>
-      ))}
-    </ul>
+    <>
+      <ul>
+        {groups.map((group) => (
+          <li key={group.title} className="group">
+            <div className="group-title">{group.title}</div>
+            <ul className="items">
+              {group.items.map((item) => (
+                <li key={item.id}>
+                  <WrappedLink
+                    className={classNames("item", {
+                      active: actionsVisible === item.id,
+                    })}
+                    url={item.url}
+                  >
+                    <div className="item-title">{item.title}</div>
+                    <WrappedMiniActions
+                      className="actions"
+                      actions={actions}
+                      onActionClick={(e) => {
+                        onActionClick({ action: e.detail, item });
+                      }}
+                      onVisibleChange={(e) => {
+                        setActionsVisible(e.detail ? item.id : null);
+                      }}
+                    />
+                    {!DONE_STATES.includes(item.state!) && (
+                      <div className="working"></div>
+                    )}
+                  </WrappedLink>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+      {nextToken && (
+        <div className="load-more" ref={nextRef}>
+          <WrappedIcon lib="fa" icon="spinner" spinning />
+        </div>
+      )}
+    </>
   );
 }

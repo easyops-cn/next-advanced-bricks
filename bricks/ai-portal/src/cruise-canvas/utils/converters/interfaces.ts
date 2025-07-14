@@ -76,3 +76,7 @@ export interface ObjectMetric {
   name: string;
   unit: string;
 }
+
+export interface ConvertViewOptions {
+  expanded?: boolean;
+}

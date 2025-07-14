@@ -1,5 +1,9 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component, ViewWithInfo } from "./interfaces.js";
+import type {
+  Component,
+  ConvertViewOptions,
+  ViewWithInfo,
+} from "./interfaces.js";
 // import findNearestCandidate from "./findNearestCandidate.js";
 import { lowLevelConvertToStoryboard } from "./raw-data-generate/convert.js";
 import { convertEvents } from "./convertEvents.js";
@@ -14,7 +18,8 @@ interface TableColumn {
 
 export default async function convertTable(
   component: Component,
-  view: ViewWithInfo
+  view: ViewWithInfo,
+  options?: ConvertViewOptions
 ): Promise<BrickConf> {
   const { properties } = component;
   const { data, size, columns, rowKey, ...restProps } = properties as {
@@ -68,13 +73,20 @@ export default async function convertTable(
             }
           : column;
       }),
-      pagination: false,
       // size: size === "medium" ? "middle" : size,
       themeVariant: "elevo",
-
       scrollConfig: {
         x: "max-content",
       },
+      pagination: false,
+      ...(options?.expanded
+        ? {
+            bordered: true,
+            size: "large",
+          }
+        : {
+            size: "middle",
+          }),
     },
     children:
       configuredColumns.size > 0 ? Array.from(configuredColumns.values()) : [],

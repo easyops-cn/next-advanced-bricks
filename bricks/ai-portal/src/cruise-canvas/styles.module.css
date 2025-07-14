@@ -143,10 +143,10 @@ svg.edges {
 .nav-link {
   display: flex;
   align-items: center;
-  width: 146px;
+  width: 154px;
   height: 36px;
   border-radius: 0 18px 18px 0;
-  padding: 0 18px 0 26px;
+  padding: 0 24px 0 26px;
   font-size: 13px;
 }
 
@@ -175,6 +175,7 @@ svg.edges {
 .nav-item.active .nav-link {
   font-size: 14px;
   color: #424a58;
+  padding-right: 16px;
 }
 
 @media (max-height: 639px) {

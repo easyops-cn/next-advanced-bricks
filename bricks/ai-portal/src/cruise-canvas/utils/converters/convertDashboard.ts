@@ -71,7 +71,11 @@ export default function convertDashboard({ properties }: Component): BrickConf {
             xField: "time",
             yField: metric.id,
             lineColor: "#295DFF",
-            showArea: type === "area",
+            ...(metric.unit === "percent(1)"
+              ? { min: 0, max: 1, showArea: true }
+              : metric.unit === "percent(100)" || metric.unit === "%"
+                ? { min: 0, max: 100, showArea: true }
+                : { showArea: type === "area" }),
             value: `<%= CTX.__builtin_fn_getLatestMetricValue((${
               isString ? expression : JSON.stringify(dataSource ?? null)
             }), ${JSON.stringify({

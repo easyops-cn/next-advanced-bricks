@@ -17,7 +17,7 @@ const { defineElement, property } = createDecorators();
 export interface StatWithMiniChartProps
   extends Pick<
     MiniLineChartProps,
-    "data" | "xField" | "yField" | "lineColor" | "showArea"
+    "data" | "xField" | "yField" | "lineColor" | "showArea" | "min" | "max"
   > {
   label?: string;
   value?: string;
@@ -57,6 +57,20 @@ class StatWithMiniChart
   accessor showArea: boolean | undefined;
 
   /**
+   * Specify the minimum value of the y-axis.
+   * If not specified, the minimum value will be calculated from the data.
+   */
+  @property({ type: Number })
+  accessor min: number | undefined;
+
+  /**
+   * Specify the maximum value of the y-axis.
+   * If not specified, the maximum value will be calculated from the data.
+   */
+  @property({ type: Number })
+  accessor max: number | undefined;
+
+  /**
    * @default "0"
    */
   @property()
@@ -79,6 +93,8 @@ class StatWithMiniChart
         size={this.size}
         lineColor={this.lineColor}
         showArea={this.showArea}
+        min={this.min}
+        max={this.max}
         xField={this.xField}
         yField={this.yField}
         data={this.data}

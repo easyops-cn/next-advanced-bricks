@@ -13,6 +13,7 @@ import type {
   TextPart,
 } from "../interfaces";
 import type { CruiseCanvasAction } from "./interfaces";
+import type { ViewWithInfo } from "../utils/converters/interfaces";
 
 export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
   switch (action.type) {
@@ -49,6 +50,15 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
           const patch = {
             ...jobPatch,
           };
+          if (
+            patch.toolCall?.name === "get_view_with_info" &&
+            patch.state === "completed"
+          ) {
+            const generatedView = getJobGeneratedView(messagesPatch);
+            if (generatedView) {
+              patch.generatedView = generatedView;
+            }
+          }
           const componentGraph = getJobComponentGraph(
             messagesPatch ?? [],
             previousComponentGraph
@@ -85,6 +95,18 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
               ...(previousJob.messages ?? []),
               ...messagesPatch,
             ]);
+          }
+
+          if (
+            !previousJob.generatedView &&
+            (restMessagesPatch.toolCall?.name ?? previousJob.toolCall?.name) ===
+              "get_view_with_info" &&
+            (restMessagesPatch.state ?? previousJob.state) === "completed"
+          ) {
+            const generatedView = getJobGeneratedView(messagesPatch);
+            if (generatedView) {
+              restMessagesPatch.generatedView = generatedView;
+            }
           }
 
           const componentGraph = getJobComponentGraph(
@@ -163,6 +185,28 @@ function mergeMessageParts(parts: Part[]): Part[] {
     previousDataType = part.type === "data" ? part.data?.type : undefined;
   }
   return merged;
+}
+
+function getJobGeneratedView(
+  messages: Message[] | undefined
+): ViewWithInfo | undefined {
+  if (!messages) {
+    return;
+  }
+
+  for (const message of messages) {
+    if (message.role === "tool") {
+      for (const part of message.parts) {
+        if (part.type === "text") {
+          try {
+            return JSON.parse(part.text) as ViewWithInfo;
+          } catch {
+            // Do nothing, continue to next part
+          }
+        }
+      }
+    }
+  }
 }
 
 function getJobComponentGraph(

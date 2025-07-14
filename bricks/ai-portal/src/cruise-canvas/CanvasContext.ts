@@ -13,6 +13,8 @@ export interface CanvasContextValue {
   setActiveNodeId: Dispatch<React.SetStateAction<string | null>>;
   hoverOnScrollableContent: boolean;
   setHoverOnScrollableContent: Dispatch<React.SetStateAction<boolean>>;
+  activeExpandedViewJobId: string | null;
+  setActiveExpandedViewJobId: Dispatch<React.SetStateAction<string | null>>;
 }
 
 export const CanvasContext = createContext<CanvasContextValue>({
@@ -27,4 +29,6 @@ export const CanvasContext = createContext<CanvasContextValue>({
   setActiveNodeId: () => {},
   hoverOnScrollableContent: false,
   setHoverOnScrollableContent: () => {},
+  activeExpandedViewJobId: null,
+  setActiveExpandedViewJobId: () => {},
 });

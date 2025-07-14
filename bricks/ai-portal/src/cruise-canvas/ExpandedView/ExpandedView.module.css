@@ -1,0 +1,71 @@
+.expanded-view {
+  position: fixed;
+  inset: 0;
+  background: rgba(247, 248, 250, 0.5);
+  backdrop-filter: blur(74px);
+  padding: 39px 114px 110px;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: flex;
+  justify-content: start;
+}
+
+.nav-button {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 28px;
+  background: rgba(2, 0, 102, 0.05);
+  box-shadow:
+    0px 1px 2px 0px #cdd1d7,
+    inset 0px 1px 2px 0px #cdd1d7;
+  backdrop-filter: blur(15px);
+  border: none;
+  border-radius: 9999px;
+  color: #595959;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.nav-button:not(:last-child) {
+  margin-right: 12px;
+}
+
+.nav-button.active {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--elevo-color-brand);
+  box-shadow: none;
+  color: var(--elevo-color-brand);
+}
+
+.body {
+  background: #ffffff;
+  border-radius: 24px;
+  backdrop-filter: blur(10px);
+  padding: 41px 32px;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  padding: 7px;
+}
+
+.close:hover {
+  color: var(--elevo-color-brand);
+}

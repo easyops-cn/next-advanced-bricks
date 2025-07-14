@@ -57,6 +57,7 @@ import { CanvasContext } from "./CanvasContext.js";
 import { ToolCallDetail } from "./ToolCallDetail/ToolCallDetail.js";
 import { getScrollTo } from "./utils/getScrollTo.js";
 import { handleKeyboardNav } from "./utils/handleKeyboardNav.js";
+import { ExpandedView } from "./ExpandedView/ExpandedView.js";
 
 initializeI18n(NS, locales);
 
@@ -203,9 +204,19 @@ function LegacyCruiseCanvasComponent(
   const rawNodes = graph?.nodes;
   const rawEdges = graph?.edges;
   const nav = graph?.nav;
+  const views = graph?.views;
   const pageTitle = task?.title ?? "";
   const taskState = task?.state;
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
+  const currentNavId = useMemo(() => {
+    if (activeNodeId) {
+      const [type, jobId] = activeNodeId.split(":");
+      if (type === "job" || type === "view") {
+        return jobId;
+      }
+    }
+    return null;
+  }, [activeNodeId]);
 
   useImperativeHandle(
     ref,
@@ -390,35 +401,6 @@ function LegacyCruiseCanvasComponent(
     [zoomer]
   );
 
-  const [currentNavId, setCurrentNavId] = useState<string | undefined>();
-
-  // Find the active nav item by node position against the canvas top
-  useEffect(() => {
-    if (!sizeReady) {
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      let distance = Infinity;
-      let navId: string | undefined;
-      for (const node of nodes) {
-        if (node.type === "instruction") {
-          const y = node.view!.y * transform.k + transform.y;
-          const diff = y - CANVAS_PADDING_TOP;
-          if (diff >= 0 && diff < distance) {
-            distance = diff;
-            navId = node.job.id;
-          }
-        }
-      }
-      setCurrentNavId(navId);
-    }, 100);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [nodes, sizeReady, transform]);
-
   const scrollTo = useCallback(
     ({ nodeId, jobId, behavior, block }: ScrollToOptions) => {
       /**
@@ -522,6 +504,10 @@ function LegacyCruiseCanvasComponent(
     null
   );
 
+  const [activeExpandedViewJobId, setActiveExpandedViewJobId] = useState<
+    string | null
+  >(null);
+
   const canvasContextValue = useMemo(
     () => ({
       humanInput,
@@ -535,10 +521,13 @@ function LegacyCruiseCanvasComponent(
       setActiveNodeId,
       hoverOnScrollableContent,
       setHoverOnScrollableContent,
+      activeExpandedViewJobId,
+      setActiveExpandedViewJobId,
     }),
     [
       activeToolCallJobId,
       hoverOnScrollableContent,
+      activeExpandedViewJobId,
       onNodeResize,
       humanInput,
       onShare,
@@ -573,7 +562,7 @@ function LegacyCruiseCanvasComponent(
 
   useEffect(() => {
     const root = rootRef.current;
-    if (!root || activeToolCallJob) {
+    if (!root || activeToolCallJob || activeExpandedViewJobId) {
       return;
     }
 
@@ -595,7 +584,7 @@ function LegacyCruiseCanvasComponent(
       if (action === "scroll") {
         scrollBy(keyboardAction.direction, keyboardAction.range);
       } else if (action === "enter") {
-        if (node.type !== "job") {
+        if (node.type !== "job" && node.type !== "view") {
           return;
         }
         const askUser = node.job.toolCall?.name === "ask_human";
@@ -609,7 +598,11 @@ function LegacyCruiseCanvasComponent(
       e.stopPropagation();
 
       if (action === "enter") {
-        setActiveToolCallJobId((node as JobGraphNode).job.id);
+        if (node.type === "view") {
+          setActiveExpandedViewJobId(node.job.id);
+        } else {
+          setActiveToolCallJobId((node as JobGraphNode).job.id);
+        }
       } else if (action === "switch-active-node") {
         setActiveNodeId(node.id);
         if (node.type === "job" || node.type === "view") {
@@ -629,7 +622,14 @@ function LegacyCruiseCanvasComponent(
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [activeNodeId, activeToolCallJob, nodes, scrollTo, scrollBy]);
+  }, [
+    activeNodeId,
+    activeToolCallJob,
+    activeExpandedViewJobId,
+    nodes,
+    scrollTo,
+    scrollBy,
+  ]);
 
   return (
     <CanvasContext.Provider value={canvasContextValue}>
@@ -715,6 +715,7 @@ function LegacyCruiseCanvasComponent(
                 <a
                   className={styles["nav-link"]}
                   onClick={() => {
+                    setActiveNodeId(`job:${item.id}`);
                     scrollTo({ jobId: item.id, block: "start" });
                   }}
                 >
@@ -732,6 +733,7 @@ function LegacyCruiseCanvasComponent(
         />
       </div>
       {activeToolCallJob && <ToolCallDetail job={activeToolCallJob} />}
+      {activeExpandedViewJobId && <ExpandedView views={views!} />}
     </CanvasContext.Provider>
   );
 }
