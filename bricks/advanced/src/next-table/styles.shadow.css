@@ -222,5 +222,15 @@
     .ant-table:not(.ant-table-bordered) .ant-table-tbody > tr > td {
       border-bottom: none;
     }
+
+    .ant-table-ping-left:not(.ant-table-has-fix-left)
+      .ant-table-container::before {
+      border-radius: var(--elevo-border-radius) 0 0 var(--elevo-border-radius);
+    }
+
+    .ant-table-ping-right:not(.ant-table-has-fix-right)
+      .ant-table-container::after {
+      border-radius: 0 var(--elevo-border-radius) var(--elevo-border-radius) 0;
+    }
   }
 }

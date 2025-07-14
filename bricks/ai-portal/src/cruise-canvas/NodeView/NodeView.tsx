@@ -1,5 +1,12 @@
 // istanbul ignore file: experimental
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { unstable_createRoot } from "@next-core/runtime";
 import classNames from "classnames";
 import styles from "./NodeView.module.css";
@@ -8,6 +15,7 @@ import jobStyles from "../NodeJob/NodeJob.module.css";
 import type { Job } from "../interfaces";
 import type { ViewWithInfo } from "../utils/converters/interfaces";
 import { convertView } from "../utils/converters/convertView";
+import { CanvasContext } from "../CanvasContext";
 
 export interface NodeViewProps {
   job: Job;
@@ -15,6 +23,7 @@ export interface NodeViewProps {
 }
 
 export function NodeView({ job, active }: NodeViewProps): JSX.Element {
+  const { setHoverOnScrollableContent } = useContext(CanvasContext);
   const ref = useRef<HTMLDivElement>(null);
   const rootRef = useRef<Awaited<
     ReturnType<typeof unstable_createRoot>
@@ -144,6 +153,31 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
     return false;
   }, [view]);
 
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      let found = false;
+      for (const el of e.nativeEvent.composedPath()) {
+        if (el === ref.current) {
+          break;
+        }
+        if (
+          el instanceof HTMLElement &&
+          el.classList.contains("ant-table") &&
+          el.classList.contains("ant-table-scroll-horizontal")
+        ) {
+          found = true;
+          break;
+        }
+      }
+      setHoverOnScrollableContent(found);
+    },
+    [setHoverOnScrollableContent]
+  );
+
+  const handleMouseLeave = useCallback(() => {
+    setHoverOnScrollableContent(false);
+  }, [setHoverOnScrollableContent]);
+
   return (
     <div
       className={classNames(jobStyles["node-job"], {
@@ -155,7 +189,12 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
       <div className={styles.heading}>
         <div className={styles.title}>{view?.title}</div>
       </div>
-      <div className={styles.body} ref={ref} />
+      <div
+        className={styles.body}
+        ref={ref}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+      />
     </div>
   );
 }
