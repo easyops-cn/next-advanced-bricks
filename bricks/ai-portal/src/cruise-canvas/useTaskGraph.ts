@@ -176,10 +176,7 @@ export function useTaskGraph(
         nodeIds.push(jobNodeId);
       }
 
-      if (
-        job.toolCall?.name === "get_view_with_info" &&
-        job.state === "completed"
-      ) {
+      if (job.generatedView) {
         // Add view node for job
         const viewNodeId = `view:${job.id}`;
         nodes.push({
@@ -189,12 +186,10 @@ export function useTaskGraph(
         });
         nodeIds.push(viewNodeId);
 
-        if (job.generatedView) {
-          views.push({
-            id: job.id,
-            view: job.generatedView,
-          });
-        }
+        views.push({
+          id: job.id,
+          view: job.generatedView,
+        });
       }
 
       jobNodesMap.set(jobId, nodeIds);

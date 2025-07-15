@@ -3,31 +3,37 @@
   inset: 0;
   background: rgba(247, 248, 250, 0.5);
   backdrop-filter: blur(74px);
-  padding: 39px 114px 110px;
+  padding: 106px var(--page-padding-right) 40px var(--page-padding-left);
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .nav {
+  position: absolute;
+  top: 39px;
+  left: 50%;
+  transform: translate(-50%, 0);
   list-style: none;
-  margin: 0 0 16px;
-  padding: 0;
+  margin: 0 0 25px;
+  padding: 4px;
   display: flex;
   justify-content: start;
+  align-items: center;
+  background: rgba(2, 0, 102, 0.05);
+  box-shadow: inset 0px 1px 2px 0px #cdd1d7;
+  border-radius: 21px;
+  backdrop-filter: blur(15px);
 }
 
 .nav-button {
   display: flex;
   align-items: center;
-  height: 40px;
-  padding: 0 28px;
-  background: rgba(2, 0, 102, 0.05);
-  box-shadow:
-    0px 1px 2px 0px #cdd1d7,
-    inset 0px 1px 2px 0px #cdd1d7;
-  backdrop-filter: blur(15px);
+  height: 34px;
+  padding: 0 26px;
+  background: none;
   border: none;
-  border-radius: 9999px;
   color: #595959;
   white-space: nowrap;
   overflow: hidden;
@@ -41,18 +47,22 @@
 
 .nav-button.active {
   background: rgba(255, 255, 255, 0.6);
-  border: 1px solid var(--elevo-color-brand);
-  box-shadow: none;
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  color: var(--elevo-color-brand);
+}
+
+.nav-button:hover {
   color: var(--elevo-color-brand);
 }
 
 .body {
-  background: #ffffff;
-  border-radius: 24px;
-  backdrop-filter: blur(10px);
-  padding: 41px 32px;
-  min-height: 0;
-  overflow-y: auto;
+  width: 100%;
+  max-width: 1556px;
+}
+
+.body.small {
+  max-width: 804px;
 }
 
 .close {
@@ -68,4 +78,13 @@
 
 .close:hover {
   color: var(--elevo-color-brand);
+}
+
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  color: #fff;
 }

@@ -1,5 +1,9 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component, ViewWithInfo } from "./interfaces.js";
+import type {
+  Component,
+  ConvertViewOptions,
+  ViewWithInfo,
+} from "./interfaces.js";
 // import fetchObjectAttrList from "./fetchObjectAttrList.js";
 // import findNearestCandidate from "./findNearestCandidate.js";
 import { convertToStoryboard } from "./raw-data-generate/convert.js";
@@ -13,7 +17,8 @@ interface DescriptionItem {
 
 export default async function convertDescriptions(
   { properties }: Component,
-  _view: ViewWithInfo
+  view: ViewWithInfo,
+  options: ConvertViewOptions
 ): Promise<BrickConf> {
   const { data, title, columns, list, ...restProps } = properties as {
     data: string;
@@ -59,7 +64,7 @@ export default async function convertDescriptions(
       dataSource: fixDataSource(data),
       // descriptionTitle: title,
       // column: columns,
-      column: 1,
+      column: options.expanded ? 3 : 1,
       list: list.map((item) => {
         const brick = item.field ? configuredItems.get(item.field) : undefined;
         return brick
@@ -70,6 +75,7 @@ export default async function convertDescriptions(
           : item;
       }),
       ...restProps,
+      showCard: !options.expanded,
       themeVariant: "elevo",
     },
     children:

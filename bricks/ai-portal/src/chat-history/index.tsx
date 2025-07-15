@@ -247,7 +247,7 @@ export function ChatHistoryComponent({
       </ul>
       {nextToken && (
         <div className="load-more" ref={nextRef}>
-          <WrappedIcon lib="fa" icon="spinner" spinning />
+          <WrappedIcon lib="antd" icon="loading-3-quarters" spinning />
         </div>
       )}
     </>
