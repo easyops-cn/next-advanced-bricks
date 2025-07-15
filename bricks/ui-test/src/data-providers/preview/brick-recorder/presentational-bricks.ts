@@ -2,32 +2,11 @@
 import * as t from "@babel/types";
 import {
   generateBaseStep,
-  createBrickEvtHandler,
   generateCodeText,
   generateBrickInputStep,
 } from "../utils";
 
-const handleSearchChange = (event: CustomEvent<string>, evtName: string) => {
-  const expr = !event.detail
-    ? t.callExpression(t.identifier("brick_clear"), [])
-    : t.callExpression(t.identifier("brick_type"), [
-        t.stringLiteral(event.detail),
-      ]);
-  const text = generateCodeText(expr);
-  generateBrickInputStep(event, text, {
-    brickEvtName: evtName,
-  });
-};
-
-const handleConfirmClick = (event: CustomEvent<null>, type: string) => {
-  const expr = t.callExpression(t.identifier("brick_click"), [
-    t.stringLiteral(type),
-  ]);
-  const text = generateCodeText(expr);
-  generateBaseStep(event, text);
-};
-
-const presentationalBricksMap = {
+export const presentationalBricksMap = {
   "presentational-bricks.brick-general-search": {
     "query.change": (event: CustomEvent<string>) =>
       handleSearchChange(event, "query.change"),
@@ -47,6 +26,22 @@ export const presentationalBricks = Object.keys(presentationalBricksMap);
 
 export const extraPresentationalBricksRecorderSelectors: string[] = [];
 
-export const presentationalBricksRecordersHandler = createBrickEvtHandler(
-  presentationalBricksMap
-);
+function handleSearchChange(event: CustomEvent<string>, evtName: string): void {
+  const expr = !event.detail
+    ? t.callExpression(t.identifier("brick_clear"), [])
+    : t.callExpression(t.identifier("brick_type"), [
+        t.stringLiteral(event.detail),
+      ]);
+  const text = generateCodeText(expr);
+  generateBrickInputStep(event, text, {
+    brickEvtName: evtName,
+  });
+}
+
+function handleConfirmClick(event: CustomEvent<null>, type: string): void {
+  const expr = t.callExpression(t.identifier("brick_click"), [
+    t.stringLiteral(type),
+  ]);
+  const text = generateCodeText(expr);
+  generateBaseStep(event, text);
+}
