@@ -69,7 +69,7 @@ export async function convertView(
         brick = await convertDescriptions(component, view);
         break;
       case "dashboard":
-        brick = await convertDashboard(component);
+        brick = await convertDashboard(component, view, options);
         break;
       case "button":
         brick = await convertButton(component);
