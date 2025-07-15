@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.48.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.48.2...@next-bricks/advanced@0.48.3) (2025-07-15)
+
+
+### Bug Fixes
+
+* update rc-trigger to fix page selector overflow ([0927979](https://github.com/easyops-cn/next-advanced-bricks/commit/092797981e94130902a72099b763160b9ada40f8))
+
+
+
+
+
 ## [0.48.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.48.1...@next-bricks/advanced@0.48.2) (2025-07-14)
 
 
