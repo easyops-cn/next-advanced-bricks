@@ -401,6 +401,37 @@ function LegacyCruiseCanvasComponent(
     [zoomer]
   );
 
+  const fullRect = useMemo(() => {
+    if (!sizeReady) {
+      return null;
+    }
+    return mergeRects(nodes.map((node) => node.view!));
+  }, [nodes, sizeReady]);
+
+  useEffect(() => {
+    if (!fullRect) {
+      return;
+    }
+    const root = rootRef.current;
+    if (!root) {
+      return;
+    }
+
+    const distance = 20;
+    const { offsetWidth, offsetHeight } = root;
+    const viewportWidth = offsetWidth / transform.k;
+    const viewportHeight = offsetHeight / transform.k;
+    const minX = -(viewportWidth - distance - fullRect.x);
+    const maxX = viewportWidth - distance + (fullRect.x + fullRect.width);
+    const minY = -(viewportHeight - distance - fullRect.y);
+    const maxY = viewportHeight - distance + (fullRect.y + fullRect.height);
+
+    zoomer.translateExtent([
+      [minX, minY],
+      [maxX, maxY],
+    ]);
+  }, [zoomer, transform.k, fullRect]);
+
   const scrollTo = useCallback(
     ({ nodeId, jobId, behavior, block }: ScrollToOptions) => {
       /**

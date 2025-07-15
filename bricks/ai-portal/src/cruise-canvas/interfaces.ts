@@ -192,6 +192,9 @@ export interface ToolCall {
   argumentsParseFailed?: boolean;
   argumentsParseError?: unknown;
   originalArguments?: string;
+  annotations?: {
+    title?: string;
+  };
 }
 
 export interface RawComponentGraphNode {
