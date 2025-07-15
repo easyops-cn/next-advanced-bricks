@@ -1,12 +1,8 @@
 // istanbul ignore file
 import * as t from "@babel/types";
-import {
-  generateBaseStep,
-  createBrickEvtHandler,
-  generateCodeText,
-} from "../utils";
+import { generateBaseStep, generateCodeText } from "../utils";
 
-const basicBricksMap = {
+export const basicBricksMap = {
   "basic-bricks.general-button": {
     "general.button.click": (event: CustomEvent<any>) => {
       const expr = t.callExpression(t.identifier("brick_click"), []);
@@ -56,6 +52,3 @@ const basicBricksMap = {
 export const basicBricks = Object.keys(basicBricksMap);
 
 export const extraBasicBricksRecorderSelectors: string[] = [];
-
-export const basicBricksRecordersHandler =
-  createBrickEvtHandler(basicBricksMap);

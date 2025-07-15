@@ -3,18 +3,14 @@ import * as t from "@babel/types";
 import { generateCodeText } from "../utils";
 import { BrickEvtMapField } from "../interfaces";
 import type { MenuIcon } from "@next-shared/general/types";
-import {
-  generateBaseStep,
-  generateBrickInputStep,
-  createBrickEvtHandler,
-} from "../utils";
+import { generateBaseStep, generateBrickInputStep } from "../utils";
 
 interface OptionItem {
   label: string;
   value: unknown;
 }
 
-const formBricksMap: BrickEvtMapField = {
+export const formBricksMap: BrickEvtMapField = {
   "forms.general-select": {
     "general.select.change.v2": (event: CustomEvent<OptionItem>) => {
       const expr =
@@ -406,28 +402,6 @@ const formBricksMap: BrickEvtMapField = {
       });
     },
   },
-  "eo-input": {
-    change: (event: CustomEvent<string>) => {
-      const expr = t.callExpression(t.identifier("brick_type"), [
-        t.stringLiteral(event.detail),
-      ]);
-      const text = generateCodeText(expr);
-      generateBrickInputStep(event, text, {
-        brickEvtName: "change",
-      });
-    },
-  },
-  "eo-textarea": {
-    change: (event: CustomEvent<string>) => {
-      const expr = t.callExpression(t.identifier("brick_type"), [
-        t.stringLiteral(event.detail),
-      ]);
-      const text = generateCodeText(expr);
-      generateBrickInputStep(event, text, {
-        brickEvtName: "change",
-      });
-    },
-  },
   "code-bricks.code-editor": {
     "code.change": (event: CustomEvent<string>) => {
       const expr = t.callExpression(t.identifier("brick_type"), [
@@ -444,6 +418,3 @@ const formBricksMap: BrickEvtMapField = {
 export const formsBricks = Object.keys(formBricksMap);
 
 export const extraFormsRecorderSelectors: string[] = [".ant-select-dropdown"];
-
-// 监听的构件事件，同一个事件会对应不同构件
-export const formsRecordersHandler = createBrickEvtHandler(formBricksMap);
