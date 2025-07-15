@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.13.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.13.0...@next-bricks/ai-portal@0.13.1) (2025-07-15)
+
+
+### Bug Fixes
+
+* set translate extent ([13a9c18](https://github.com/easyops-cn/next-advanced-bricks/commit/13a9c189313d9a55c04154c726de27e9213c0561))
+
+
+
+
+
 # [0.13.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.12.5...@next-bricks/ai-portal@0.13.0) (2025-07-14)
 
 
