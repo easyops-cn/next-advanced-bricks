@@ -41,6 +41,7 @@
     "@dnd-kit/modifiers": "^6.0.1",
     "@dnd-kit/sortable": "^7.0.2",
     "@dnd-kit/utilities": "^3.2.2",
+    "@easyops-cn/rc-trigger": "^2.2.8",
     "@next-core/element": "^1.2.18",
     "@next-core/http": "^1.2.13",
     "@next-core/react-element": "^1.0.37",
