@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.13.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.13.1...@next-bricks/ai-portal@0.13.2) (2025-07-15)
+
+
+### Bug Fixes
+
+* fix zoomer extent, support table pagination ([8bfe8d1](https://github.com/easyops-cn/next-advanced-bricks/commit/8bfe8d17f1f7ff50ef0fd40eadae837dc2a6155b))
+
+
+
+
+
 ## [0.13.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.13.0...@next-bricks/ai-portal@0.13.1) (2025-07-15)
 
 
