@@ -58,6 +58,7 @@ import { ToolCallDetail } from "./ToolCallDetail/ToolCallDetail.js";
 import { getScrollTo } from "./utils/getScrollTo.js";
 import { handleKeyboardNav } from "./utils/handleKeyboardNav.js";
 import { ExpandedView } from "./ExpandedView/ExpandedView.js";
+import { ZoomTransform } from "d3-zoom";
 
 initializeI18n(NS, locales);
 
@@ -353,6 +354,7 @@ function LegacyCruiseCanvasComponent(
   // Disable auto scroll when the user manually scrolled up
   const manualScrolledUpRef = useRef(false);
 
+  // Make the latest (bottom most) node visible
   useEffect(() => {
     const root = rootRef.current;
     if (!root || bottom === null || manualScrolledUpRef.current) {
@@ -363,14 +365,13 @@ function LegacyCruiseCanvasComponent(
     const transformedBottom = bottom * transform.k + transform.y;
     const diffY = offsetHeight - CANVAS_PADDING_BOTTOM - transformedBottom;
     if (diffY < 0) {
-      // Make the latest node visible
-      zoomer.translateBy(
+      // Use `zoomer.transform()` which will not be restricted to its translate/scale extent
+      zoomer.transform(
         selectTransition(
           select(root),
           diffY > -100 ? 100 : diffY < -500 ? 300 : 200
         ),
-        0,
-        diffY / transform.k
+        new ZoomTransform(transform.k, transform.x, transform.y + diffY)
       );
     }
   }, [bottom, transformRef, zoomer, selectTransition]);

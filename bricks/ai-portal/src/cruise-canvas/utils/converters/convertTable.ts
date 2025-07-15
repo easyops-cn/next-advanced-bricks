@@ -22,12 +22,14 @@ export default async function convertTable(
   options?: ConvertViewOptions
 ): Promise<BrickConf> {
   const { properties } = component;
-  const { data, size, columns, rowKey, ...restProps } = properties as {
-    data: string;
-    columns: Array<TableColumn>;
-    rowKey?: string;
-    size?: "small" | "medium" | "large";
-  };
+  const { data, size, columns, rowKey, pagination, ...restProps } =
+    properties as {
+      data: string;
+      columns: Array<TableColumn>;
+      rowKey?: string;
+      size?: "small" | "medium" | "large";
+      pagination?: boolean;
+    };
 
   const visualConfig = new Map<string, any>();
 
@@ -78,14 +80,15 @@ export default async function convertTable(
       scrollConfig: {
         x: "max-content",
       },
-      pagination: false,
       ...(options?.expanded
         ? {
             bordered: true,
+            pagination,
             size: "large",
           }
         : {
             size: "middle",
+            pagination: false,
           }),
     },
     children:

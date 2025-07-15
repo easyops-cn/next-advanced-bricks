@@ -175,7 +175,7 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
           title={t("FULLSCREEN")}
           onClick={handleExpandClick}
         >
-          <WrappedIcon lib="antd" icon="fullscreen" />
+          <WrappedIcon lib="easyops" icon="fullscreen" />
         </button>
       </div>
       <div

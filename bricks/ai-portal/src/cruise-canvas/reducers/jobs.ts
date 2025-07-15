@@ -38,8 +38,7 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
           try {
             toolCall.arguments = JSON.parse(toolCall.arguments);
           } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error("Failed to parse toolCall arguments:", e);
+            // Failed to parse toolCall arguments
             toolCall.arguments = {};
             toolCall.argumentsParseFailed = true;
             toolCall.argumentsParseError = e;

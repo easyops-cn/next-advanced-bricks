@@ -24,6 +24,13 @@ export function convertEvents(component: Component, view: ViewWithInfo) {
             }
             break;
           }
+          case "paginate": {
+            const action = convertEventAction(eventListener.handler);
+            if (action) {
+              events["page.change"] = action;
+            }
+            break;
+          }
         }
         break;
       case "button":
