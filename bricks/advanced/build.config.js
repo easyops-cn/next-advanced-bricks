@@ -5,6 +5,11 @@ import CopyWebpackPlugin from "copy-webpack-plugin";
 
 /** @type {import("@next-core/build-next-bricks").BuildNextBricksConfig} */
 export default {
+  resolve: {
+    alias: {
+      "@rc-component/trigger": "@easyops-cn/rc-trigger",
+    },
+  },
   plugins: [
     new CopyWebpackPlugin({
       patterns: [
