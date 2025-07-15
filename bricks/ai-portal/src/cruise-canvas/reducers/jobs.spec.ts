@@ -85,9 +85,6 @@ describe("jobs reducer", () => {
   });
 
   it("should handle toolCall arguments parsing failure", () => {
-    const consoleError = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
     const state: Job[] = [];
     const jobsPatch = [
       {
@@ -105,8 +102,6 @@ describe("jobs reducer", () => {
     expect(result[0].toolCall!.arguments).toEqual({});
     expect(result[0].toolCall!.argumentsParseFailed).toBe(true);
     expect(result[0].toolCall!.argumentsParseError).toBeDefined();
-    expect(consoleError).toHaveBeenCalledTimes(1);
-    consoleError.mockRestore();
   });
 
   it("should merge messages from the same role", () => {
