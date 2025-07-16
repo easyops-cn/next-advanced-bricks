@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 import { copyToClipboard, WrappedButton } from "../bricks";
 import styles from "./CodeBlock.module.css";
@@ -29,8 +29,10 @@ export function CodeBlock({ children, node, ...props }: CodeBlockProps) {
   const ref = useRef<HTMLPreElement>(null);
   const isCodeBlock = props.className?.includes("language-");
   const [state, setState] = useState<"idle" | "success" | "failed">("idle");
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>();
 
   const handleCopy = useCallback(async () => {
+    clearTimeout(timerRef.current);
     setState("idle");
     const content = ref.current?.querySelector("code")?.textContent;
     if (content) {
@@ -43,14 +45,16 @@ export function CodeBlock({ children, node, ...props }: CodeBlockProps) {
         setState("failed");
       }
 
-      const timer = setTimeout(() => {
+      timerRef.current = setTimeout(() => {
         setState("idle");
       }, 2000);
-
-      return () => {
-        clearTimeout(timer);
-      };
     }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(timerRef.current);
+    };
   }, []);
 
   return (

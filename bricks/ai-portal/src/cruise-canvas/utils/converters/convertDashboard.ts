@@ -4,7 +4,7 @@ import type {
   ConvertViewOptions,
   ViewWithInfo,
 } from "./interfaces.js";
-import { extractDataSource } from "./expressions.js";
+import { parseDataSource } from "./expressions.js";
 
 const COLORS = [
   "#336EF4",
@@ -50,7 +50,7 @@ export default function convertDashboard(
     }>;
   };
 
-  const { isString, expression } = extractDataSource(dataSource);
+  const { isString, expression } = parseDataSource(dataSource);
 
   const chartData = isString ? `<%= (${expression}).list %>` : dataSource;
 

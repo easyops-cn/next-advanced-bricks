@@ -4,10 +4,11 @@ import type {
   ConvertViewOptions,
   ViewWithInfo,
 } from "./interfaces.js";
-// import findNearestCandidate from "./findNearestCandidate.js";
 import { lowLevelConvertToStoryboard } from "./raw-data-generate/convert.js";
 import { convertEvents } from "./convertEvents.js";
-import { fixDataSource } from "./fixDataSource.js";
+import { parseDataSource } from "./expressions.js";
+import { getPreGeneratedViews } from "./getPreGeneratedViews.js";
+import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
 
 interface TableColumn {
   key: string;
@@ -31,31 +32,28 @@ export default async function convertTable(
       pagination?: boolean;
     };
 
-  const visualConfig = new Map<string, any>();
+  const parsedDataSource = parseDataSource(data);
 
-  // const dataSourceDef = data
-  //   ? view.dataSources?.find((ds) => ds.name === data)
-  //   : undefined;
-  // if (dataSourceDef?.api.name === "hosts@cmdb") {
-  //   const attrList = await fetchObjectAttrList();
-  //   for (const attr of attrList ?? []) {
-  //     const candidates = attr.generatedView?.[0]?.list;
-  //     const select = findNearestCandidate(candidates, 0);
-  //     if (select) {
-  //       visualConfig.set(attr.id, select);
-  //     }
-  //   }
-  // }
+  const objectId = findObjectIdByUsedDataContexts(
+    parsedDataSource.usedContexts,
+    view.dataSources
+  );
+
+  const preGeneratedViews = objectId
+    ? await getPreGeneratedViews(objectId)
+    : undefined;
 
   const configuredColumns = new Map<string, any>();
 
-  for (const column of columns) {
-    const candidate = visualConfig.get(column.dataIndex);
-    if (candidate) {
-      const brick = lowLevelConvertToStoryboard(candidate, ".cellData");
-      if (brick) {
-        brick.slot = `[${column.dataIndex}]`;
-        configuredColumns.set(column.dataIndex, brick);
+  if (preGeneratedViews?.size) {
+    for (const column of columns) {
+      const candidate = preGeneratedViews.get(column.dataIndex);
+      if (candidate) {
+        const brick = lowLevelConvertToStoryboard(candidate, ".cellData");
+        if (brick) {
+          brick.slot = `[${column.dataIndex}]`;
+          configuredColumns.set(column.dataIndex, brick);
+        }
       }
     }
   }
@@ -63,7 +61,7 @@ export default async function convertTable(
   return {
     brick: "eo-next-table",
     properties: {
-      dataSource: fixDataSource(data),
+      dataSource: parsedDataSource.isString ? parsedDataSource.embedded : data,
       ...restProps,
       rowKey: rowKey ?? columns[0]?.key,
       columns: columns.map((column) => {
