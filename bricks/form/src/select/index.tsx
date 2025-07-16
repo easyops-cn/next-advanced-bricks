@@ -602,7 +602,8 @@ export function SelectComponent(props: SelectProps) {
     setValue(computedValue);
     // 设置回填option
     setSelectedOptions(
-      computedValue
+      // Allow falsy values like "" or null
+      computedValue !== undefined
         ? computedOptions.filter((item) =>
             multiple
               ? computedValue.includes(item.value)

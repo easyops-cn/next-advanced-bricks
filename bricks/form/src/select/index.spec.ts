@@ -20,7 +20,12 @@ describe("eo-select", () => {
 
   test("basic usage", async () => {
     const element = document.createElement("eo-select") as Select;
+    element.value = "";
     element.options = [
+      {
+        label: "all",
+        value: "",
+      },
       {
         label: "a",
         value: "a",
@@ -46,6 +51,14 @@ describe("eo-select", () => {
     expect(element.shadowRoot?.childNodes.length).toBe(2);
 
     expect(
+      (
+        element.shadowRoot?.querySelector(
+          ".selected-single-item"
+        ) as HTMLElement
+      ).textContent
+    ).toBe("all");
+
+    expect(
       getByTestId(
         element.shadowRoot as unknown as HTMLElement,
         "select-dropdown-popup"
@@ -64,13 +77,13 @@ describe("eo-select", () => {
         "select-dropdown-popup"
       ) as SlPopupElement
     ).toHaveAttribute("active");
-    expect(element.shadowRoot?.querySelectorAll(".select-item").length).toBe(2);
+    expect(element.shadowRoot?.querySelectorAll(".select-item").length).toBe(3);
 
     expect(mockChangeEvent).toHaveBeenCalledTimes(0);
 
     act(() => {
       (
-        element.shadowRoot?.querySelector(".select-item") as HTMLElement
+        element.shadowRoot?.querySelectorAll(".select-item")[1] as HTMLElement
       ).click();
     });
     expect(mockChangeEvent).toHaveBeenCalledWith(
@@ -91,7 +104,7 @@ describe("eo-select", () => {
 
     expect(
       (
-        element.shadowRoot?.querySelectorAll(".select-item")[0] as HTMLElement
+        element.shadowRoot?.querySelectorAll(".select-item")[1] as HTMLElement
       ).classList.contains("select-option-selected")
     ).toBeTruthy();
 
