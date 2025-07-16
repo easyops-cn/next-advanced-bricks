@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.13.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.13.4...@next-bricks/ai-portal@0.13.5) (2025-07-16)
+
+
+### Bug Fixes
+
+* support coping code blocks ([0d573e6](https://github.com/easyops-cn/next-advanced-bricks/commit/0d573e6cc9fffbe762e181bc99b4d3b231e5ea73))
+* using pre-generated views of model attributes ([5be9d3a](https://github.com/easyops-cn/next-advanced-bricks/commit/5be9d3aa054e891c4d1b61068abeb4f90b9a3ec8))
+
+
+
+
+
 ## [0.13.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.13.3...@next-bricks/ai-portal@0.13.4) (2025-07-16)
 
 
