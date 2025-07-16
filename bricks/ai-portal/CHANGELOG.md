@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.13.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.13.3...@next-bricks/ai-portal@0.13.4) (2025-07-16)
+
+
+### Bug Fixes
+
+* restrict to render root for event listeners in generated views ([6012b5f](https://github.com/easyops-cn/next-advanced-bricks/commit/6012b5f5631125dd34d7a73e1655f8cbbe9bec78))
+
+
+
+
+
 ## [0.13.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.13.2...@next-bricks/ai-portal@0.13.3) (2025-07-15)
 
 

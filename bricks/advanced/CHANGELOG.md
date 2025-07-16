@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.48.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.48.3...@next-bricks/advanced@0.48.4) (2025-07-16)
+
+
+### Bug Fixes
+
+* refine elevo table header height ([485f954](https://github.com/easyops-cn/next-advanced-bricks/commit/485f954479281e5fa01fd312b901c4e3d1b040dc))
+
+
+
+
+
 ## [0.48.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.48.2...@next-bricks/advanced@0.48.3) (2025-07-15)
 
 
