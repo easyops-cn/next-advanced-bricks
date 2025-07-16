@@ -14,6 +14,7 @@ import type {
   DrawerMapEvents,
 } from "@next-bricks/containers/drawer";
 import type { showDialog as _showDialog } from "@next-bricks/basic/data-providers/show-dialog/show-dialog";
+import type { copyToClipboard as _copyToClipboard } from "@next-bricks/basic/data-providers/copy-to-clipboard";
 import { PopoverProps, Popover } from "@next-bricks/basic/popover";
 
 export const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
@@ -38,3 +39,7 @@ export const WrappedDrawer = wrapBrick<
 
 export const showDialog =
   unwrapProvider<typeof _showDialog>("basic.show-dialog");
+
+export const copyToClipboard = unwrapProvider<typeof _copyToClipboard>(
+  "basic.copy-to-clipboard"
+);

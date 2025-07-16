@@ -69,14 +69,13 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
           return;
         }
         await rootRef.current?.render(convertedView ?? []);
-        if (ignore) {
-          return;
-        }
       } catch {
         // eslint-disable-next-line no-console
         console.error("Failed to render view:", view);
       }
-      setLoading(false);
+      if (!ignore) {
+        setLoading(false);
+      }
     })();
 
     return () => {

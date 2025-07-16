@@ -7,7 +7,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { MarkdownComponent } from "@next-shared/markdown";
 import { TextareaAutoResize } from "@next-shared/form";
 import { CmdbObjectApi_getObjectRef } from "@next-api-sdk/cmdb-sdk";
 import classNames from "classnames";
@@ -25,6 +24,8 @@ import { CanvasContext } from "../CanvasContext.js";
 import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus.js";
 import { HumanAdjustPlanResult } from "../HumanAdjustPlanResult/HumanAdjustPlanResult.js";
 import { Topology } from "../Topology/Topology";
+import { CodeBlock } from "../CodeBlock/CodeBlock";
+import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
 
 export interface NodeJobProps {
   job: Job;
@@ -116,7 +117,7 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
               <div
                 className={`${styles.message} ${sharedStyles.markdown} ${styles["role-assistant"]}`}
               >
-                <MarkdownComponent
+                <EnhancedMarkdown
                   content={
                     askUserPlan
                       ? t(K.CONFIRMING_PLAN_TIPS)
@@ -162,7 +163,7 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
         {!generalAskUser && job.toolCall && <ToolCallStatus job={job} />}
         {toolMarkdownContent && (
           <div className={classNames(styles.message, sharedStyles.markdown)}>
-            <MarkdownComponent content={toolMarkdownContent} />
+            <EnhancedMarkdown content={toolMarkdownContent} />
           </div>
         )}
         {askUserPlan && state !== "input-required" ? (
@@ -179,11 +180,11 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
                 {message.parts?.map((part, partIndex) => (
                   <React.Fragment key={partIndex}>
                     {part.type === "text" ? (
-                      <MarkdownComponent content={part.text} />
+                      <EnhancedMarkdown content={part.text} />
                     ) : (
-                      <pre className="language-plaintext">
-                        {JSON.stringify(part, null, 2)}
-                      </pre>
+                      <CodeBlock className="language-plaintext">
+                        <code>{JSON.stringify(part, null, 2)}</code>
+                      </CodeBlock>
                     )}
                   </React.Fragment>
                 ))}
