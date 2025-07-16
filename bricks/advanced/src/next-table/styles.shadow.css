@@ -209,8 +209,8 @@
 
 :host([theme-variant="elevo"]) {
   --eo-next-table-header-border-radius: var(--elevo-border-radius);
-  --eo-table-head-cell-height: 37px;
-  --eo-table-head-cell-padding: 8px 16px;
+  --eo-table-head-cell-height: 41px;
+  --eo-table-head-cell-padding: 9px 16px;
   --eo-table-body-cell-height: 44px;
   --eo-table-body-cell-padding: 9px 16px;
 
@@ -247,7 +247,9 @@
 
     .ant-table.ant-table-bordered {
       .ant-table-thead > tr > th {
+        color: #262626;
         background: #f3f6fa;
+        font-weight: 500;
       }
 
       > .ant-table-container {
@@ -280,6 +282,43 @@
           }
         }
       }
+    }
+  }
+
+  .ant-pagination {
+    .ant-pagination-item {
+      background: transparent;
+
+      a {
+        color: #595959;
+      }
+
+      &:hover {
+        background: rgba(211, 213, 228, 0.3);
+      }
+    }
+
+    .ant-pagination-item-active {
+      background: rgba(211, 213, 228, 0.3);
+      border-color: transparent;
+
+      a {
+        color: var(--elevo-color-brand);
+      }
+    }
+
+    .ant-pagination-prev:hover .ant-pagination-item-link,
+    .ant-pagination-next:hover .ant-pagination-item-link {
+      background: rgba(211, 213, 228, 0.3);
+    }
+
+    .ant-pagination-jump-prev
+      .ant-pagination-item-container
+      .ant-pagination-item-link-icon,
+    .ant-pagination-jump-next
+      .ant-pagination-item-container
+      .ant-pagination-item-link-icon {
+      color: var(--elevo-color-brand);
     }
   }
 }
