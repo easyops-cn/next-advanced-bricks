@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.13.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.13.5...@next-bricks/ai-portal@0.13.6) (2025-07-16)
+
+
+### Bug Fixes
+
+* handle context deps when finding objectId ([0502194](https://github.com/easyops-cn/next-advanced-bricks/commit/05021940eac67afaf9f45f3e469b826eb2c097bc))
+
+
+
+
+
 ## [0.13.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.13.4...@next-bricks/ai-portal@0.13.5) (2025-07-16)
 
 
