@@ -36,7 +36,8 @@ export default async function convertTable(
 
   const objectId = findObjectIdByUsedDataContexts(
     parsedDataSource.usedContexts,
-    view.dataSources
+    view.dataSources,
+    view.variables
   );
 
   const preGeneratedViews = objectId
@@ -73,7 +74,6 @@ export default async function convertTable(
             }
           : column;
       }),
-      // size: size === "medium" ? "middle" : size,
       themeVariant: "elevo",
       scrollConfig: {
         x: "max-content",

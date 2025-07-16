@@ -31,7 +31,8 @@ export default async function convertDescriptions(
 
   const objectId = findObjectIdByUsedDataContexts(
     parsedDataSource.usedContexts,
-    view.dataSources
+    view.dataSources,
+    view.variables
   );
 
   const preGeneratedViews = objectId
