@@ -78,5 +78,6 @@ export interface ObjectMetric {
 }
 
 export interface ConvertViewOptions {
+  rootId: string;
   expanded?: boolean;
 }

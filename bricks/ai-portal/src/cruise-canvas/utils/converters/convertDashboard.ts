@@ -31,7 +31,7 @@ const COLORS = [
 export default function convertDashboard(
   { properties }: Component,
   view: ViewWithInfo,
-  options?: ConvertViewOptions
+  options: ConvertViewOptions
 ): BrickConf {
   const { dataSource, widgets } = properties as {
     dataSource: string;
@@ -54,14 +54,14 @@ export default function convertDashboard(
 
   const chartData = isString ? `<%= (${expression}).list %>` : dataSource;
 
-  if (options?.expanded) {
+  if (options.expanded) {
     return {
       brick: "div",
       properties: {
         style: {
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(500px, 1fr))",
-          gap: "var(--card-content-gap)",
+          gap: "16px",
         },
       },
       children: widgets.map((widget, index) => {
@@ -124,10 +124,10 @@ export default function convertDashboard(
           brick: "div",
           properties: {
             style: {
-              background: "var(--elevo-component-background)",
-              backdropFilter: "var(--elevo-component-backdrop-filter)",
-              border: "1px solid #fff",
-              padding: "16px",
+              background: "rgba(255,255,255,0.8)",
+              boxShadow: "0px 2px 4px 0px rgba(0,0,0,0.06)",
+              borderRadius: "8px",
+              padding: "16px 20px 20px",
             },
           },
           children: [
@@ -135,9 +135,9 @@ export default function convertDashboard(
               brick: "div",
               properties: {
                 style: {
-                  fontSize: "12px",
+                  fontSize: "16px",
                   fontWeight: "500",
-                  marginBottom: "16px",
+                  marginBottom: "20px",
                 },
                 textContent: title || metric.id,
               },

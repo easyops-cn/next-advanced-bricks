@@ -19,7 +19,7 @@ interface TableColumn {
 export default async function convertTable(
   component: Component,
   view: ViewWithInfo,
-  options?: ConvertViewOptions
+  options: ConvertViewOptions
 ): Promise<BrickConf> {
   const { properties } = component;
   const { data, size, columns, rowKey, pagination, ...restProps } =
@@ -80,7 +80,7 @@ export default async function convertTable(
       scrollConfig: {
         x: "max-content",
       },
-      ...(options?.expanded
+      ...(options.expanded
         ? {
             bordered: true,
             pagination,
@@ -93,6 +93,6 @@ export default async function convertTable(
     },
     children:
       configuredColumns.size > 0 ? Array.from(configuredColumns.values()) : [],
-    events: convertEvents(component, view),
+    events: convertEvents(component, view, options),
   };
 }

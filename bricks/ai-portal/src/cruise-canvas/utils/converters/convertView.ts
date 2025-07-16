@@ -24,7 +24,7 @@ export interface BrickConfWithContext extends BrickConf {
 
 export async function convertView(
   view: ViewWithInfo | null | undefined,
-  options?: ConvertViewOptions
+  options: ConvertViewOptions
 ): Promise<BrickConfWithContext | null> {
   if (!view) {
     return null;
@@ -66,7 +66,7 @@ export async function convertView(
         brick = await convertTable(component, view, options);
         break;
       case "descriptions":
-        brick = await convertDescriptions(component, view);
+        brick = await convertDescriptions(component, view, options);
         break;
       case "dashboard":
         brick = await convertDashboard(component, view, options);
@@ -92,7 +92,7 @@ export async function convertView(
       return null;
     }
 
-    brick.events = convertEvents(component, view);
+    brick.events = convertEvents(component, view, options);
 
     // Set [data-component-id] for the brick
     brick.properties ??= {};
@@ -113,7 +113,7 @@ export async function convertView(
     if (
       component.componentName === "form" &&
       !component.parentComponentId &&
-      !options?.expanded
+      !options.expanded
     ) {
       return {
         brick: "div",
