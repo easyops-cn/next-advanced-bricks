@@ -6,7 +6,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { MarkdownComponent } from "@next-shared/markdown";
 import type { Drawer } from "@next-bricks/containers/drawer";
 import classNames from "classnames";
 import type { DataPart, Job, Part } from "../interfaces";
@@ -18,6 +17,8 @@ import { CanvasContext } from "../CanvasContext";
 import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus";
 import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
 import { Topology } from "../Topology/Topology";
+import { CodeBlock } from "../CodeBlock/CodeBlock";
+import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
 
 export interface ToolCallDetailProps {
   job: Job;
@@ -199,11 +200,11 @@ function PreComponent({
   }, [content, maybeJson]);
 
   return fallback ? (
-    <pre className={classNames("language-plaintext", styles.fallback)}>
-      {refinedContent}
-    </pre>
+    <CodeBlock className={classNames("language-plaintext", styles.fallback)}>
+      <code>{refinedContent}</code>
+    </CodeBlock>
   ) : (
-    <MarkdownComponent content={refinedContent} />
+    <EnhancedMarkdown content={refinedContent} />
   );
 }
 
@@ -216,7 +217,7 @@ function ProcessMessageComponent({
     <div
       className={classNames(styles["stream-message"], sharedStyles.markdown)}
     >
-      <MarkdownComponent content={content} />
+      <EnhancedMarkdown content={content} />
     </div>
   );
 }

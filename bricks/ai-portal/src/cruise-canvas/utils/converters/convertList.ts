@@ -1,6 +1,6 @@
 import type { BrickConf } from "@next-core/types";
 import type { Component } from "./interfaces.js";
-import { fixDataSource } from "./fixDataSource.js";
+import { parseDataSource } from "./expressions.js";
 
 export default function convertList({ properties }: Component): BrickConf {
   const props = properties as {
@@ -16,11 +16,13 @@ export default function convertList({ properties }: Component): BrickConf {
 
   const { data, fields, variant } = props;
 
+  const parsedDataSource = parseDataSource(data);
+
   return {
     brick: "eo-list",
     properties: {
       variant,
-      dataSource: fixDataSource(data),
+      dataSource: parsedDataSource.isString ? parsedDataSource.embedded : data,
       fields,
       themeVariant: "elevo",
     },

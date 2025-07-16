@@ -1,3 +1,5 @@
+import { strictCollectMemberUsage } from "@next-core/utils/storyboard";
+
 const VALID_IDENTIFIER_REG = /^[$_\p{ID_Start}][$\p{ID_Continue}]*$/u;
 
 const EXPRESSION_PREFIX_REG = /^\s*<%=?\s+/;
@@ -14,16 +16,18 @@ export function getMemberAccessor(property: unknown): string {
     : `[${JSON.stringify(propertyStr)}]`;
 }
 
-export function extractDataSource(data: string | object):
+export function parseDataSource(data: string | object):
   | {
       isString: false;
       embedded?: undefined;
       expression?: undefined;
+      usedContexts?: undefined;
     }
   | {
       isString: true;
       embedded: string;
       expression: string;
+      usedContexts: Set<string>;
     } {
   if (typeof data !== "string") {
     return {
@@ -31,32 +35,30 @@ export function extractDataSource(data: string | object):
     };
   }
 
+  let embedded: string;
+  let expression: string;
+
   if (isExpression(data)) {
-    const expression = data
+    expression = data
       .replace(EXPRESSION_PREFIX_REG, "")
       .replace(EXPRESSION_SUFFIX_REG, "")
       .trim();
 
-    return {
-      isString: true,
-      embedded: data,
-      expression,
-    };
+    embedded = data;
+  } else if (data.includes("CTX.")) {
+    expression = data;
+    embedded = `<%= ${data} %>`;
+  } else {
+    expression = `CTX${getMemberAccessor(data)}`;
+    embedded = `<%= ${expression} %>`;
   }
 
-  if (data.includes("CTX.")) {
-    return {
-      isString: true,
-      embedded: `<%= ${data} %>`,
-      expression: data,
-    };
-  }
-
-  const expression = `CTX${getMemberAccessor(data)}`;
+  const usedContexts = strictCollectMemberUsage(embedded, "CTX");
 
   return {
     isString: true,
-    embedded: `<%= ${expression} %>`,
+    embedded,
     expression,
+    usedContexts,
   };
 }

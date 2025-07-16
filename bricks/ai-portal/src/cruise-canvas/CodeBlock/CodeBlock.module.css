@@ -1,0 +1,21 @@
+.code-block {
+  position: relative;
+}
+
+.copy {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.code-block:not(:hover) .copy {
+  display: none;
+}
+
+.success::part(button) {
+  color: var(--color-success);
+}
+
+.failed::part(button) {
+  color: var(--color-error);
+}

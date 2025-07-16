@@ -4,10 +4,10 @@ import type {
   ConvertViewOptions,
   ViewWithInfo,
 } from "./interfaces.js";
-// import fetchObjectAttrList from "./fetchObjectAttrList.js";
-// import findNearestCandidate from "./findNearestCandidate.js";
 import { convertToStoryboard } from "./raw-data-generate/convert.js";
-import { fixDataSource } from "./fixDataSource.js";
+import { getPreGeneratedViews } from "./getPreGeneratedViews.js";
+import { parseDataSource } from "./expressions.js";
+import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
 
 interface DescriptionItem {
   label: string;
@@ -27,32 +27,29 @@ export default async function convertDescriptions(
     list: DescriptionItem[];
   };
 
-  const visualConfig = new Map<string, any>();
+  const parsedDataSource = parseDataSource(data);
 
-  // const dataSourceDef = data
-  //   ? view.dataSources?.find((ds) => ds.name === data)
-  //   : undefined;
-  // if (dataSourceDef?.api.name === "host@cmdb") {
-  //   const attrList = await fetchObjectAttrList();
-  //   for (const attr of attrList ?? []) {
-  //     const candidates = attr.generatedView?.[0]?.list;
-  //     const select = findNearestCandidate(candidates, 0);
-  //     if (select) {
-  //       visualConfig.set(attr.id, select);
-  //     }
-  //   }
-  // }
+  const objectId = findObjectIdByUsedDataContexts(
+    parsedDataSource.usedContexts,
+    view.dataSources
+  );
+
+  const preGeneratedViews = objectId
+    ? await getPreGeneratedViews(objectId)
+    : undefined;
 
   const configuredItems = new Map<string, any>();
 
-  for (const item of list) {
-    if (item.field) {
-      const candidate = visualConfig.get(item.field);
-      if (candidate) {
-        const brick = convertToStoryboard(candidate, item.field);
-        if (brick) {
-          brick.slot = `[${item.field}]`;
-          configuredItems.set(item.field, brick);
+  if (preGeneratedViews?.size) {
+    for (const item of list) {
+      if (item.field) {
+        const candidate = preGeneratedViews.get(item.field);
+        if (candidate) {
+          const brick = convertToStoryboard(candidate, item.field);
+          if (brick) {
+            brick.slot = `[${item.field}]`;
+            configuredItems.set(item.field, brick);
+          }
         }
       }
     }
@@ -61,10 +58,9 @@ export default async function convertDescriptions(
   return {
     brick: "eo-descriptions",
     properties: {
-      dataSource: fixDataSource(data),
+      ...restProps,
+      dataSource: parsedDataSource.isString ? parsedDataSource.embedded : data,
       // descriptionTitle: title,
-      // column: columns,
-      column: options.expanded ? 3 : 1,
       list: list.map((item) => {
         const brick = item.field ? configuredItems.get(item.field) : undefined;
         return brick
@@ -74,7 +70,7 @@ export default async function convertDescriptions(
             }
           : item;
       }),
-      ...restProps,
+      column: options.expanded ? 3 : 1,
       showCard: !options.expanded,
       themeVariant: "elevo",
     },
