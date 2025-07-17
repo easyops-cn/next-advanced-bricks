@@ -30,6 +30,11 @@ import {
   extraFormBricksV3RecorderSelectors,
   formBricksV3Map,
 } from "./forms-v3";
+import {
+  presentationalV3Bricks,
+  extraPresentationalV3BricksRecorderSelectors,
+  presentationalV3BricksMap,
+} from "./presentational-v3";
 
 export const customRecorders = createBrickEvtHandler({
   ...presentationalBricksMap,
@@ -39,6 +44,7 @@ export const customRecorders = createBrickEvtHandler({
   ...basicV3Map,
   ...containersV3Map,
   ...formBricksV3Map,
+  ...presentationalV3BricksMap,
 });
 
 export const customRecorderBricks = [
@@ -49,6 +55,7 @@ export const customRecorderBricks = [
   ...basicV3,
   ...containersV3,
   ...formBricksV3,
+  ...presentationalV3Bricks,
 ];
 
 export const extraCustomRecorderSelectors = [
@@ -59,4 +66,5 @@ export const extraCustomRecorderSelectors = [
   ...extraBasicV3RecorderSelectors,
   ...extraContainersV3RecorderSelectors,
   ...extraFormBricksV3RecorderSelectors,
+  ...extraPresentationalV3BricksRecorderSelectors,
 ];
