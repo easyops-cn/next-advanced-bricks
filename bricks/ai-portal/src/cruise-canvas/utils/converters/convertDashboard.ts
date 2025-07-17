@@ -5,6 +5,8 @@ import type {
   ViewWithInfo,
 } from "./interfaces.js";
 import { parseDataSource } from "./expressions.js";
+import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
+import { getPreGeneratedMetricGroups } from "./getPreGeneratedMetricGroups.js";
 
 const COLORS = [
   "#336EF4",
@@ -28,33 +30,80 @@ const COLORS = [
   "#4F69FF",
 ];
 
-export default function convertDashboard(
+interface Widget {
+  title: string;
+  type: "line" | "area";
+  metric: {
+    id: string;
+    unit: string;
+  };
+  size?: "small" | "medium" | "large";
+  precision?: number;
+  min?: number;
+  max?: number;
+  color?: string;
+}
+
+interface MergedWidget extends Widget {
+  relevantMetrics?: string[];
+  counterMetric?: string;
+  groupTitle?: string;
+}
+
+export default async function convertDashboard(
   { properties }: Component,
   view: ViewWithInfo,
   options: ConvertViewOptions
-): BrickConf {
+): Promise<BrickConf> {
   const { dataSource, widgets } = properties as {
     dataSource: string;
-    widgets: Array<{
-      title: string;
-      type: "line" | "area";
-      metric: {
-        id: string;
-        unit: string;
-      };
-      size?: "small" | "medium" | "large";
-      precision?: number;
-      min?: number;
-      max?: number;
-      color?: string;
-    }>;
+    widgets: Array<Widget>;
   };
 
-  const { isString, expression } = parseDataSource(dataSource);
+  const { isString, expression, usedContexts } = parseDataSource(dataSource);
 
   const chartData = isString ? `<%= (${expression}).list %>` : dataSource;
 
+  let mergedWidgets = widgets as MergedWidget[];
+
   if (options.expanded) {
+    const objectId = findObjectIdByUsedDataContexts(
+      usedContexts,
+      view.dataSources,
+      view.variables
+    );
+    const metricGroups = objectId
+      ? await getPreGeneratedMetricGroups(objectId)
+      : [];
+
+    mergedWidgets = [];
+    if (metricGroups.length > 0) {
+      const mergedMetrics = new Set<string>();
+      const metricIds = new Set(widgets.map((w) => w.metric.id));
+      for (const widget of widgets) {
+        if (mergedMetrics.has(widget.metric.id)) {
+          continue; // Skip already merged metrics
+        }
+        const mergedWidget = { ...widget } as MergedWidget;
+        mergedWidgets.push(mergedWidget);
+        const group = metricGroups.find((g) =>
+          g.metrics.includes(widget.metric.id)
+        );
+        if (group) {
+          const relevantMetrics = group.metrics.filter((m) => metricIds.has(m));
+          if (relevantMetrics.length > 1) {
+            mergedWidget.relevantMetrics = relevantMetrics;
+            mergedWidget.counterMetric = group.counter;
+            mergedWidget.groupTitle = group.group;
+            for (const metricId of relevantMetrics) {
+              mergedMetrics.add(metricId);
+              metricIds.delete(metricId);
+            }
+          }
+        }
+      }
+    }
+
     return {
       brick: "div",
       properties: {
@@ -64,7 +113,7 @@ export default function convertDashboard(
           gap: "16px",
         },
       },
-      children: widgets.map((widget, index) => {
+      children: mergedWidgets.map((widget, index) => {
         const { title, /* type, */ metric, size, precision, min, max } = widget;
         const color = COLORS[index % COLORS.length];
         const chart = {
@@ -72,7 +121,17 @@ export default function convertDashboard(
           properties: {
             data: chartData,
             xField: "time",
-            yFields: [metric.id],
+            yFields: widget.relevantMetrics ?? [metric.id],
+            ...(widget.counterMetric
+              ? {
+                  forceAbsoluteNumbers: true,
+                  series: {
+                    [widget.counterMetric]: {
+                      isNegative: true,
+                    },
+                  },
+                }
+              : null),
             height: size === "large" ? 230 : 200,
             timeFormat: "HH:mm",
             areaOptions: {
@@ -139,7 +198,7 @@ export default function convertDashboard(
                   fontWeight: "500",
                   marginBottom: "20px",
                 },
-                textContent: title || metric.id,
+                textContent: widget.groupTitle || title || metric.id,
               },
             },
             chart,

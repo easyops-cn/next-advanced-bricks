@@ -5,7 +5,7 @@ import type {
   ViewWithInfo,
 } from "./interfaces.js";
 import { convertToStoryboard } from "./raw-data-generate/convert.js";
-import { getPreGeneratedViews } from "./getPreGeneratedViews.js";
+import { getPreGeneratedAttrViews } from "./getPreGeneratedAttrViews.js";
 import { parseDataSource } from "./expressions.js";
 import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
 
@@ -35,16 +35,16 @@ export default async function convertDescriptions(
     view.variables
   );
 
-  const preGeneratedViews = objectId
-    ? await getPreGeneratedViews(objectId)
+  const attrViews = objectId
+    ? await getPreGeneratedAttrViews(objectId)
     : undefined;
 
   const configuredItems = new Map<string, any>();
 
-  if (preGeneratedViews?.size) {
+  if (attrViews?.size) {
     for (const item of list) {
       if (item.field) {
-        const candidate = preGeneratedViews.get(item.field);
+        const candidate = attrViews.get(item.field);
         if (candidate) {
           const brick = convertToStoryboard(candidate, item.field);
           if (brick) {

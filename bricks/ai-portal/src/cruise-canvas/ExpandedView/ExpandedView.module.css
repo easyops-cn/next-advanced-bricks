@@ -50,6 +50,12 @@
   border-radius: 20px;
   backdrop-filter: blur(15px);
   color: var(--elevo-color-brand);
+  /* Use text-shadow instead of font-weight to avoid container size changing */
+  /* @see https://stackoverflow.com/a/46452396 */
+  text-shadow:
+    -0.02ex 0 0 currentColor,
+    0.02ex 0 0 currentColor;
+  /* font-weight: 500; */
 }
 
 .nav-button:hover {

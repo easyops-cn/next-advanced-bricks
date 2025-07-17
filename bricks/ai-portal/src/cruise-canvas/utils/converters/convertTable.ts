@@ -7,7 +7,7 @@ import type {
 import { lowLevelConvertToStoryboard } from "./raw-data-generate/convert.js";
 import { convertEvents } from "./convertEvents.js";
 import { parseDataSource } from "./expressions.js";
-import { getPreGeneratedViews } from "./getPreGeneratedViews.js";
+import { getPreGeneratedAttrViews } from "./getPreGeneratedAttrViews.js";
 import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
 
 interface TableColumn {
@@ -40,15 +40,15 @@ export default async function convertTable(
     view.variables
   );
 
-  const preGeneratedViews = objectId
-    ? await getPreGeneratedViews(objectId)
+  const attrViews = objectId
+    ? await getPreGeneratedAttrViews(objectId)
     : undefined;
 
   const configuredColumns = new Map<string, any>();
 
-  if (preGeneratedViews?.size) {
+  if (attrViews?.size) {
     for (const column of columns) {
-      const candidate = preGeneratedViews.get(column.dataIndex);
+      const candidate = attrViews.get(column.dataIndex);
       if (candidate) {
         const brick = lowLevelConvertToStoryboard(candidate, ".cellData");
         if (brick) {
