@@ -64,9 +64,8 @@ export default async function convertDashboard(
 
   const chartData = isString ? `<%= (${expression}).list %>` : dataSource;
 
-  let mergedWidgets = widgets as MergedWidget[];
-
   if (options.expanded) {
+    let mergedWidgets = widgets as MergedWidget[];
     const objectId = findObjectIdByUsedDataContexts(
       usedContexts,
       view.dataSources,

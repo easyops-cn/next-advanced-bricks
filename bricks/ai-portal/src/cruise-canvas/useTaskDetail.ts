@@ -57,7 +57,7 @@ export function useTaskDetail(taskId: string | undefined, replay?: number) {
             return;
           }
 
-          if (replay) {
+          if (replay && !isInitial) {
             await new Promise((resolve) => setTimeout(resolve, replay * 1000));
           }
 
