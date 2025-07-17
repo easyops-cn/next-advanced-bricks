@@ -1,0 +1,12 @@
+:host {
+  display: inline-block;
+  padding: 3px 0;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+img {
+  display: block;
+}
