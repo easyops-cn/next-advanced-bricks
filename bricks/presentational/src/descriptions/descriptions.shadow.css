@@ -6,21 +6,6 @@
   display: none;
 }
 
-:host([theme-variant="elevo"]) {
-  background: var(--elevo-component-background);
-  backdrop-filter: var(--elevo-component-backdrop-filter);
-  border-radius: var(--elevo-border-radius);
-  padding: 0 16px;
-
-  .description-item-label {
-    color: rgba(0, 0, 0, 0.45);
-    width: 6em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-
 .description-content {
   padding: var(--description-content-padding);
 }
@@ -89,4 +74,14 @@
 
 .description-item.bordered > span:first-child {
   background-color: var(--eo-descriptions-label-background);
+}
+
+:host([theme-variant="elevo"]) .description-item-label {
+  .description-item-label {
+    color: rgba(0, 0, 0, 0.45);
+    width: 6em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }

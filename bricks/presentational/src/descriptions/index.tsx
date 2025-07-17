@@ -149,7 +149,8 @@ export function DescriptionsComponent(props: DescriptionsProps) {
   } = props;
   const dataSource = useMemo(() => _dataSource ?? {}, [_dataSource]);
   const [hideGroupsSet, setHideGroupsSet] = useState<Set<string>>();
-  const showCard = themeVariant !== "elevo" && (_showCard ?? true);
+  const isElevo = themeVariant === "elevo";
+  const showCard = !isElevo && (_showCard ?? true);
 
   const renderItem = (item: DescriptionItem) => {
     if (item.useBrick) {
@@ -171,6 +172,45 @@ export function DescriptionsComponent(props: DescriptionsProps) {
     }
   }, [hideGroups]);
 
+  const body = (
+    <WrappedGridLayout
+      gap={layout === "vertical" || bordered ? "0" : "10px"}
+      columns={column}
+      className={classnames("description-content", { bordered })}
+    >
+      {list
+        ?.filter((item) =>
+          item.group ? !hideGroupsSet?.has(item.group) : true
+        )
+        ?.map((item, index) => (
+          <div
+            key={index}
+            className={classnames("description-item", layout, {
+              bordered,
+            })}
+            style={{
+              ...(index === list.length - 1
+                ? {
+                    gridColumnStart: list.length % column,
+                    gridColumnEnd: +column + 1,
+                  }
+                : {}),
+            }}
+          >
+            <span className="description-item-label">
+              {item.label}
+              {bordered || themeVariant === "elevo" ? "" : ": "}
+            </span>
+            <span className="description-item-content">{renderItem(item)}</span>
+          </div>
+        ))}
+    </WrappedGridLayout>
+  );
+
+  if (isElevo) {
+    return body;
+  }
+
   return (
     <WrappedGeneralCard
       cardTitle={descriptionTitle}
@@ -184,40 +224,7 @@ export function DescriptionsComponent(props: DescriptionsProps) {
       }}
       background={showCard}
     >
-      <WrappedGridLayout
-        gap={layout === "vertical" || bordered ? "0" : "10px"}
-        columns={column}
-        className={classnames("description-content", { bordered })}
-      >
-        {list
-          ?.filter((item) =>
-            item.group ? !hideGroupsSet?.has(item.group) : true
-          )
-          ?.map((item, index) => (
-            <div
-              key={index}
-              className={classnames("description-item", layout, {
-                bordered,
-              })}
-              style={{
-                ...(index === list.length - 1
-                  ? {
-                      gridColumnStart: list.length % column,
-                      gridColumnEnd: +column + 1,
-                    }
-                  : {}),
-              }}
-            >
-              <span className="description-item-label">
-                {item.label}
-                {bordered || themeVariant === "elevo" ? "" : ": "}
-              </span>
-              <span className="description-item-content">
-                {renderItem(item)}
-              </span>
-            </div>
-          ))}
-      </WrappedGridLayout>
+      {body}
     </WrappedGeneralCard>
   );
 }
