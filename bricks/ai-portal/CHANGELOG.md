@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.14.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.14.0...@next-bricks/ai-portal@0.14.1) (2025-07-17)
+
+
+### Bug Fixes
+
+* support replay, and using pre-generated metric groups for dashboard ([c65b36b](https://github.com/easyops-cn/next-advanced-bricks/commit/c65b36bfb5de134fdabff401a2ec3ea7ca456d01))
+
+
+
+
+
 # [0.14.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.13.6...@next-bricks/ai-portal@0.14.0) (2025-07-17)
 
 
