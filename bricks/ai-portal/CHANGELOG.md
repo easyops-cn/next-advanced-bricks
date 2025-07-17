@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.14.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.14.1...@next-bricks/ai-portal@0.14.2) (2025-07-17)
+
+
+### Bug Fixes
+
+* do not delay at initial when replay ([8377125](https://github.com/easyops-cn/next-advanced-bricks/commit/8377125ccf3535046a017a809b4835edd43f5126))
+
+
+
+
+
 ## [0.14.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.14.0...@next-bricks/ai-portal@0.14.1) (2025-07-17)
 
 
