@@ -18,6 +18,7 @@ export function ToolCallStatus({
 }: NodeJobToolCallProps): JSX.Element {
   const { setActiveToolCallJobId } = useContext(CanvasContext);
   const toolCall = job.toolCall!;
+  const toolTitle = toolCall.annotations?.title;
   const [progress, hasToolCallMessages] = useMemo(() => {
     const toolCallMessages = job.messages?.filter((msg) => msg.role === "tool");
     return [getToolDataProgress(toolCallMessages), !!toolCallMessages?.length];
@@ -94,7 +95,9 @@ export function ToolCallStatus({
             icon="clock"
           />
         )}
-        <span className={styles.name}>{toolCall.name}</span>
+        <span className={styles.name}>
+          {variant === "read-only" ? toolCall.name : toolTitle || toolCall.name}
+        </span>
       </div>
       {!!progress && !readOnly && (
         <ToolProgressLine progress={progress} failed={failed} />

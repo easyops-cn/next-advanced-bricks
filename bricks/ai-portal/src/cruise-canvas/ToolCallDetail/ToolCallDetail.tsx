@@ -36,6 +36,7 @@ function getDrawerWidth() {
 export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
   const { setActiveToolCallJobId } = useContext(CanvasContext);
   const toolCall = job.toolCall!;
+  const toolTitle = toolCall.annotations?.title;
 
   const [progress, intermediateParts, responseParts] = useMemo(() => {
     const toolCallMessages = job.messages?.filter((msg) => msg.role === "tool");
@@ -102,7 +103,7 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
   return (
     <WrappedDrawer
       ref={ref}
-      customTitle={t(K[toolCall.name as K]) || toolCall.name}
+      customTitle={toolTitle || t(K[toolCall.name as K]) || toolCall.name}
       width={width}
       closable
       mask
