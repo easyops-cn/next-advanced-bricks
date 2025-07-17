@@ -224,7 +224,9 @@ export function ChatHistoryComponent({
                     })}
                     url={item.url}
                   >
-                    <div className="item-title">{item.title}</div>
+                    <div className="item-title" title={item.title}>
+                      {item.title}
+                    </div>
                     <WrappedMiniActions
                       className="actions"
                       actions={actions}
