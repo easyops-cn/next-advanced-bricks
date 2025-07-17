@@ -6,6 +6,4 @@
 
 ```yaml preview
 brick: ai-portal.elevo-logo
-properties:
-  textContent: Hello world
 ```
