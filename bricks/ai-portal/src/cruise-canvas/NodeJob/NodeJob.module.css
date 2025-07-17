@@ -59,7 +59,8 @@
 }
 
 .heading {
-  display: flex;
+  /* display: flex; */
+  display: none;
   align-items: center;
   border-bottom: 1px solid #e2e2ec;
   padding: 0 5px 5px;
