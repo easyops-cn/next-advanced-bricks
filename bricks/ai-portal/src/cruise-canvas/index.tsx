@@ -71,6 +71,7 @@ export interface CruiseCanvasProps {
   task?: TaskBaseDetail;
   jobs?: Job[];
   goBackUrl?: string;
+  replay?: number;
 }
 
 const CruiseCanvasComponent = forwardRef(LegacyCruiseCanvasComponent);
@@ -95,6 +96,12 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
 
   @property()
   accessor goBackUrl: string | undefined;
+
+  /**
+   * 设置回放时消息之间的时间间隔，单位为秒。
+   */
+  @property({ type: Number })
+  accessor replay: number | undefined;
 
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
@@ -138,6 +145,7 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         jobs={this.jobs}
         task={this.task}
         goBackUrl={this.goBackUrl}
+        replay={this.replay}
         onShare={this.#onShare}
         onPause={this.#onPause}
         onResume={this.#onResume}
@@ -182,6 +190,7 @@ function LegacyCruiseCanvasComponent(
     task: propTask,
     jobs: propJobs,
     goBackUrl,
+    replay,
     onShare,
     onPause,
     onResume,
@@ -197,7 +206,7 @@ function LegacyCruiseCanvasComponent(
     error,
     humanInputRef,
     resumedRef,
-  } = useTaskDetail(taskId);
+  } = useTaskDetail(taskId, replay);
   const task = taskId ? _task : propTask;
   const jobs = taskId ? _jobs : propJobs;
   const plan = taskId ? _plan : propTask?.plan;
