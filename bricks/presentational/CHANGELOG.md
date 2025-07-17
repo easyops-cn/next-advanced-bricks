@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.14.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.14.2...@next-bricks/presentational@1.14.3) (2025-07-17)
+
+
+### Bug Fixes
+
+* **descriptions:** do not add box background in Elevo ([07c97fe](https://github.com/easyops-cn/next-advanced-bricks/commit/07c97fe4c8ce38e603086da4771c160ef0c037e0))
+
+
+
+
+
 ## [1.14.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.14.1...@next-bricks/presentational@1.14.2) (2025-07-12)
 
 
