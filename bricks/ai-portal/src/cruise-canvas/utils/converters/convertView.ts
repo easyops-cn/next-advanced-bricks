@@ -17,6 +17,7 @@ import convertFlexLayout from "./convertFlexLayout.js";
 import convertFormItem from "./convertFormItem.js";
 import convertModal from "./convertModal.js";
 import { convertEvents } from "./convertEvents.js";
+import { withBox } from "./withBox.js";
 
 export interface BrickConfWithContext extends BrickConf {
   context?: ContextConf[];
@@ -110,25 +111,6 @@ export async function convertView(
       brick.children = [...(brick.children ?? []), ...children];
     }
 
-    if (
-      component.componentName === "form" &&
-      !component.parentComponentId &&
-      !options.expanded
-    ) {
-      return {
-        brick: "div",
-        properties: {
-          style: {
-            background: "var(--elevo-component-background)",
-            backdropFilter: "var(--elevo-component-backdrop-filter)",
-            borderRadius: "var(--elevo-border-radius)",
-            padding: "16px",
-          },
-        },
-        children: [brick],
-      };
-    }
-
     return brick;
   };
 
@@ -154,11 +136,17 @@ export async function convertView(
     },
   ];
 
+  const children = (await Promise.all(rootComponents.map(convert))).filter(
+    Boolean
+  ) as BrickConf[];
+
+  const needBox = rootComponents.every((component) =>
+    ["form", "descriptions", "button"].includes(component.componentName)
+  );
+
   return {
     brick: "eo-content-layout",
-    children: (await Promise.all(rootComponents.map(convert))).filter(
-      Boolean
-    ) as BrickConf[],
+    children: needBox ? [withBox(children, options)] : children,
     context,
   };
 }
