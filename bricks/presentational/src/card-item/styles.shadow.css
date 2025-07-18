@@ -247,8 +247,11 @@ eo-tooltip::part(popup) {
   font-weight: var(--font-weight-500);
   color: var(--local-card-title-color);
   overflow: hidden;
-  white-space: nowrap;
+  /* white-space: nowrap; */
   text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .card-title-wrapper {
