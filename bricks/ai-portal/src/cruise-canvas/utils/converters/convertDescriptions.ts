@@ -72,7 +72,7 @@ export default async function convertDescriptions(
           : item;
       }),
       column: options.expanded ? 3 : 1,
-      showCard: !options.expanded,
+      // showCard: !options.expanded,
       themeVariant: "elevo",
     },
     children:

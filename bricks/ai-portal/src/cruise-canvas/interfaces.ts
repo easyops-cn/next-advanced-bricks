@@ -230,3 +230,10 @@ export interface GraphGeneratedView {
   id: string;
   view: ViewWithInfo;
 }
+
+export interface CmdbInstanceDetailData {
+  type: "cmdb_instance_detail";
+  objectId: string;
+  detail: Record<string, any>;
+  outputSchema: Record<string, any>;
+}
