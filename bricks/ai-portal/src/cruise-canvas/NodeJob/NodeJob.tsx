@@ -59,6 +59,7 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
   const [toolMarkdownContent, cmdbInstanceDetails, sizeLarge] = useMemo(() => {
     const contents: string[] = [];
     const instanceDetails: CmdbInstanceDetailData[] = [];
+    let large = false;
     job.messages?.forEach((message) => {
       if (message.role === "tool") {
         for (const part of message.parts) {
@@ -69,6 +70,14 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
                 break;
               case "cmdb_instance_detail":
                 instanceDetails.push(part.data as CmdbInstanceDetailData);
+                if (!large) {
+                  large =
+                    Object.keys(
+                      part.data?.outputSchema?.type === "object"
+                        ? part.data.outputSchema.properties
+                        : part.data.detail
+                    ).length > 6;
+                }
                 break;
             }
           }
@@ -78,7 +87,7 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
 
     const markdownContent = contents.join("");
 
-    const large = RegExpLargeTableInMarkdown.test(markdownContent);
+    large = large || RegExpLargeTableInMarkdown.test(markdownContent);
 
     return [markdownContent, instanceDetails, large] as const;
   }, [job.messages]);
@@ -90,7 +99,7 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
         [styles["ask-user"]]: generalAskUser,
         [styles["fit-content"]]: hasGraph,
         [styles.active]: active,
-        [styles.large]: sizeLarge,
+        [styles.large]: sizeLarge || toolName === "llm_answer",
       })}
     >
       <div className={styles.background} />
@@ -180,7 +189,10 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
         ) : null}
         {!generalAskUser && job.toolCall && <ToolCallStatus job={job} />}
         {toolMarkdownContent && (
-          <div className={classNames(styles.message, sharedStyles.markdown)}>
+          <div
+            className={classNames(styles.message, sharedStyles.markdown)}
+            style={{ padding: "0 8px" }}
+          >
             <EnhancedMarkdown content={toolMarkdownContent} />
           </div>
         )}
