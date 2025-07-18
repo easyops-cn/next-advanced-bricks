@@ -91,7 +91,7 @@ export function CmdbInstanceDetail({
       >
         <AsyncWrappedDescriptions
           themeVariant="elevo"
-          column={1}
+          column={list.length > 6 ? 2 : 1}
           dataSource={detail}
           list={list}
         />

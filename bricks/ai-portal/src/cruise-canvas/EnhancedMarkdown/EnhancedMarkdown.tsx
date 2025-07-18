@@ -21,7 +21,10 @@ export function EnhancedMarkdown(props: MarkdownComponentProps) {
         if (el === ref.current) {
           break;
         }
-        if (el instanceof HTMLTableElement && el.scrollWidth > el.clientWidth) {
+        if (
+          (el instanceof HTMLTableElement || el instanceof HTMLPreElement) &&
+          el.scrollWidth > el.clientWidth
+        ) {
           found = true;
           break;
         }
