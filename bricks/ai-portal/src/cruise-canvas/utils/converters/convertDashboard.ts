@@ -133,20 +133,26 @@ export default async function convertDashboard(
               : null),
             height: size === "large" ? 230 : 200,
             timeFormat: "HH:mm",
-            areaOptions: {
-              style: {
-                fill: `l(90) 0:${color} 1:#ffffff`,
-              },
-            },
+            ...(widget.counterMetric
+              ? null
+              : {
+                  areaOptions: {
+                    style: {
+                      fill: `l(90) 0:${color} 1:#ffffff`,
+                    },
+                  },
+                }),
             axis: {
               yAxis: {
                 unit: metric.unit,
                 precision: precision,
-                ...(metric.unit === "percent(1)"
-                  ? { min: 0, max: 1 }
-                  : metric.unit === "percent(100)" || metric.unit === "%"
-                    ? { min: 0, max: 100 }
-                    : { min, max }),
+                ...(widget.counterMetric
+                  ? null
+                  : metric.unit === "percent(1)"
+                    ? { min: 0, max: 1 }
+                    : metric.unit === "percent(100)" || metric.unit === "%"
+                      ? { min: 0, max: 100 }
+                      : { min, max }),
                 shape: "smooth",
               },
             },
