@@ -1,6 +1,6 @@
 import React, { Suspense, useMemo } from "react";
 import sharedStyles from "../shared.module.css";
-import { AsyncWrappedTable } from "../table";
+import { AsyncWrappedTable } from "../bricks";
 
 export interface AlertEventsProps {
   dataSource?: {

@@ -81,3 +81,7 @@ export interface ConvertViewOptions {
   rootId: string;
   expanded?: boolean;
 }
+
+export interface ConvertBrickOptions {
+  ignoreStyle?: boolean;
+}

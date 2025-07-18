@@ -2,26 +2,29 @@ import type { BrickConf } from "@next-core/types";
 import _ from "lodash";
 import type { VisualConfig, VisualStyle } from "./raw-data-interfaces.js";
 import { getMemberAccessor } from "./getMemberAccessor.js";
+import type { ConvertBrickOptions } from "../interfaces.js";
 
 const { pick } = _;
 
 export function convertToStoryboard(
   config: VisualConfig,
-  attr: string
+  attr: string,
+  options?: ConvertBrickOptions
 ): BrickConf | null {
-  return lowLevelConvertToStoryboard(config, getMemberAccessor(attr));
+  return lowLevelConvertToStoryboard(config, getMemberAccessor(attr), options);
 }
 
 export function lowLevelConvertToStoryboard(
   config: VisualConfig,
-  attrAccessor: string
+  attrAccessor: string,
+  options?: ConvertBrickOptions
 ): BrickConf | null {
   let brickItem: BrickConf;
 
   switch (config.display) {
     case "link":
     case "text": {
-      brickItem = getPlainBrick(config, attrAccessor);
+      brickItem = getPlainBrick(config, attrAccessor, options);
       if (config.type === "struct-list" && !config.countOnly) {
         brickItem = {
           brick: "eo-tag",
@@ -64,12 +67,12 @@ export function lowLevelConvertToStoryboard(
       break;
     }
     case "icon": {
-      brickItem = getIconBrick(config, attrAccessor);
+      brickItem = getIconBrick(config, attrAccessor, options);
       break;
     }
     case "icon+text": {
-      const iconBrick = getIconBrick(config, attrAccessor);
-      const textBrick = getPlainBrick(config, attrAccessor);
+      const iconBrick = getIconBrick(config, attrAccessor, options);
+      const textBrick = getPlainBrick(config, attrAccessor, options);
       brickItem = {
         brick: "span",
         // errorBoundary: true,
@@ -120,13 +123,17 @@ export function lowLevelConvertToStoryboard(
   };
 }
 
-function getIconBrick(config: VisualConfig, attrAccessor: string): BrickConf {
+function getIconBrick(
+  config: VisualConfig,
+  attrAccessor: string,
+  options?: ConvertBrickOptions
+): BrickConf {
   if (config.type === "boolean") {
     const valueAccessor = getValueAccessor(config, attrAccessor);
     const trueIcon = config.true?.icon ?? "check";
     const falseIcon = config.false?.icon ?? "xmark";
-    const trueStyle = getPlainStyle(config.true?.style);
-    const falseStyle = getPlainStyle(config.false?.style);
+    const trueStyle = getPlainStyle(config.true?.style, options);
+    const falseStyle = getPlainStyle(config.false?.style, options);
     return {
       brick: "eo-icon",
       // errorBoundary: true,
@@ -150,7 +157,7 @@ function getIconBrick(config: VisualConfig, attrAccessor: string): BrickConf {
         category: `<% ${valueAccessor}?.category %>`,
         theme: `<% ${valueAccessor}?.theme %>`,
         icon: `<% ${valueAccessor}?.icon %>`,
-        style: getPlainStyle(config.style),
+        style: getPlainStyle(config.style, options),
       },
     };
   }
@@ -162,12 +169,16 @@ function getIconBrick(config: VisualConfig, attrAccessor: string): BrickConf {
       lib: "fa",
       prefix: "fas",
       icon: config.icon,
-      style: getPlainStyle(config.style),
+      style: getPlainStyle(config.style, options),
     },
   };
 }
 
-function getPlainBrick(config: VisualConfig, attrAccessor: string): BrickConf {
+function getPlainBrick(
+  config: VisualConfig,
+  attrAccessor: string,
+  options?: ConvertBrickOptions
+): BrickConf {
   if (config.type === "struct-list" && config.countOnly) {
     return {
       brick: "span",
@@ -194,7 +205,7 @@ function getPlainBrick(config: VisualConfig, attrAccessor: string): BrickConf {
             "decimals",
             "thousandsSeparator",
           ]),
-          style: getPlainStyle(config.style),
+          style: getPlainStyle(config.style, options),
         },
       };
     case "date":
@@ -206,7 +217,7 @@ function getPlainBrick(config: VisualConfig, attrAccessor: string): BrickConf {
           value,
           type: config.type === "date" ? "date" : undefined,
           formatter: config.formatter.format,
-          style: getPlainStyle(config.style),
+          style: getPlainStyle(config.style, options),
         },
       };
     case "cost-time":
@@ -216,7 +227,7 @@ function getPlainBrick(config: VisualConfig, attrAccessor: string): BrickConf {
         properties: {
           value,
           isCostTime: true,
-          style: getPlainStyle(config.style),
+          style: getPlainStyle(config.style, options),
         },
       };
     default: {
@@ -226,12 +237,12 @@ function getPlainBrick(config: VisualConfig, attrAccessor: string): BrickConf {
       if (config.type === "boolean") {
         const trueContent = config.true?.text ?? "Yes";
         const falseContent = config.false?.text ?? "No";
-        const trueStyle = getPlainStyle(config.true?.style);
-        const falseStyle = getPlainStyle(config.false?.style);
+        const trueStyle = getPlainStyle(config.true?.style, options);
+        const falseStyle = getPlainStyle(config.false?.style, options);
         textContent = `<% ${valueAccessor} ? ${JSON.stringify(trueContent)} : ${JSON.stringify(falseContent)} %>`;
         style = `<% ${valueAccessor} ? ${JSON.stringify(trueStyle)} : ${JSON.stringify(falseStyle)} %>`;
       } else {
-        style = getPlainStyle(config.style);
+        style = getPlainStyle(config.style, options);
         if (config.type === "json") {
           if (config.display === "link") {
             textContent = `<% I18N("VIEW", "查看") %>`;
@@ -279,9 +290,10 @@ function getTagSize(size: VisualStyle["size"]): string | undefined {
 }
 
 function getPlainStyle(
-  configStyle: VisualStyle | undefined
+  configStyle: VisualStyle | undefined,
+  options?: ConvertBrickOptions
 ): Record<string, any> | undefined {
-  if (!configStyle) {
+  if (!configStyle || options?.ignoreStyle) {
     return;
   }
   const style: Record<string, any> = {};

@@ -14,7 +14,7 @@ import moment from "moment";
 import { handleHttpError } from "@next-core/runtime";
 import styles from "./NodeJob.module.css";
 import sharedStyles from "../shared.module.css";
-import type { Job } from "../interfaces";
+import type { CmdbInstanceDetailData, Job } from "../interfaces";
 import { K, t } from "../i18n.js";
 import { AsyncWrappedCMDB } from "../cmdb.js";
 import { WrappedButton, WrappedIcon } from "../bricks.js";
@@ -26,6 +26,10 @@ import { HumanAdjustPlanResult } from "../HumanAdjustPlanResult/HumanAdjustPlanR
 import { Topology } from "../Topology/Topology";
 import { CodeBlock } from "../CodeBlock/CodeBlock";
 import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
+import { CmdbInstanceDetail } from "../CmdbInstanceDetail/CmdbInstanceDetail";
+
+// 当 markdown 中包含超过 4 列的表格时，对节点使用大尺寸样式
+const RegExpLargeTableInMarkdown = /^\s*\|(?:\s*:?-+:?\s*\|){4,}\s*$/m;
 
 export interface NodeJobProps {
   job: Job;
@@ -52,18 +56,31 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
   const loading = state === "working" || state === "submitted";
   const hasGraph = !!job.componentGraph;
 
-  const toolMarkdownContent = useMemo(() => {
+  const [toolMarkdownContent, cmdbInstanceDetails, sizeLarge] = useMemo(() => {
     const contents: string[] = [];
+    const instanceDetails: CmdbInstanceDetailData[] = [];
     job.messages?.forEach((message) => {
       if (message.role === "tool") {
         for (const part of message.parts) {
-          if (part.type === "data" && part.data?.type === "markdown") {
-            contents.push(part.data.content);
+          if (part.type === "data") {
+            switch (part.data?.type) {
+              case "markdown":
+                contents.push(part.data.content);
+                break;
+              case "cmdb_instance_detail":
+                instanceDetails.push(part.data as CmdbInstanceDetailData);
+                break;
+            }
           }
         }
       }
     });
-    return contents.join("");
+
+    const markdownContent = contents.join("");
+
+    const large = RegExpLargeTableInMarkdown.test(markdownContent);
+
+    return [markdownContent, instanceDetails, large] as const;
   }, [job.messages]);
 
   return (
@@ -73,6 +90,7 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
         [styles["ask-user"]]: generalAskUser,
         [styles["fit-content"]]: hasGraph,
         [styles.active]: active,
+        [styles.large]: sizeLarge,
       })}
     >
       <div className={styles.background} />
@@ -166,6 +184,9 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
             <EnhancedMarkdown content={toolMarkdownContent} />
           </div>
         )}
+        {cmdbInstanceDetails.map((detail, index) => (
+          <CmdbInstanceDetail key={index} {...detail} />
+        ))}
         {askUserPlan && state !== "input-required" ? (
           <HumanAdjustPlanResult job={job} />
         ) : (

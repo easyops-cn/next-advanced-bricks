@@ -49,6 +49,7 @@
     "@next-core/react-runtime": "^1.7.22",
     "@next-core/runtime": "^1.65.0",
     "@next-core/theme": "^1.6.0",
+    "@next-core/types": "^1.17.0",
     "@next-core/utils": "^1.8.2",
     "@next-shared/diagram": "^0.1.0",
     "@next-shared/form": "^0.8.4",
@@ -69,6 +70,7 @@
     "@next-bricks/advanced": "*",
     "@next-bricks/basic": "*",
     "@next-bricks/diagram": "*",
-    "@next-bricks/mini-chart": "*"
+    "@next-bricks/mini-chart": "*",
+    "@next-bricks/presentational": "*"
   }
 }

@@ -6,11 +6,11 @@ import type {
   GridLayout,
   GridProps,
 } from "@next-bricks/containers/grid-layout";
-import styleText from "./descriptions.shadow.css";
 import "@next-core/theme";
 import type { UseBrickConf } from "@next-core/types";
 import classnames from "classnames";
 import { ReactUseMultipleBricks } from "@next-core/react-runtime";
+import styleText from "./descriptions.shadow.css";
 import "./host-context.css";
 
 const WrappedGeneralCard = wrapBrick<Card, CardProps>("eo-card");

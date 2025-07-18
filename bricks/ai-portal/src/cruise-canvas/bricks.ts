@@ -1,5 +1,7 @@
+import React from "react";
 import { wrapBrick } from "@next-core/react-element";
 import { unwrapProvider } from "@next-core/utils/general";
+import { asyncWrapBrick } from "@next-core/react-runtime";
 import type {
   GeneralIcon,
   GeneralIconProps,
@@ -16,6 +18,11 @@ import type {
 import type { showDialog as _showDialog } from "@next-bricks/basic/data-providers/show-dialog/show-dialog";
 import type { copyToClipboard as _copyToClipboard } from "@next-bricks/basic/data-providers/copy-to-clipboard";
 import { PopoverProps, Popover } from "@next-bricks/basic/popover";
+import { EoNextTable, NextTableProps } from "@next-bricks/advanced/next-table";
+import {
+  Descriptions,
+  DescriptionsProps,
+} from "@next-bricks/presentational/descriptions";
 
 export const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
@@ -43,3 +50,13 @@ export const showDialog =
 export const copyToClipboard = unwrapProvider<typeof _copyToClipboard>(
   "basic.copy-to-clipboard"
 );
+
+export const AsyncWrappedTable = React.lazy(async () => ({
+  default: await asyncWrapBrick<EoNextTable, NextTableProps>("eo-next-table"),
+}));
+
+export const AsyncWrappedDescriptions = React.lazy(async () => ({
+  default: await asyncWrapBrick<Descriptions, DescriptionsProps>(
+    "eo-descriptions"
+  ),
+}));
