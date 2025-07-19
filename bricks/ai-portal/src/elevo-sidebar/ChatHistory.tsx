@@ -57,8 +57,10 @@ export function ChatHistory({
         setNextToken(data.next_token);
       })
       .catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error("Error loading chat history:", error);
+        if (process.env.NODE_ENV !== "test") {
+          // eslint-disable-next-line no-console
+          console.error("Error loading chat history:", error);
+        }
       });
   }, [loadNextToken]);
 

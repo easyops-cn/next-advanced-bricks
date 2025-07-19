@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
-import { ZoomTransform, type ZoomBehavior } from "d3-zoom";
-import { select, type Selection, type TransitionLike } from "d3-selection";
+import type { ZoomBehavior } from "d3-zoom";
 import { mergeRects } from "@next-shared/diagram";
-import type { GraphNode } from "./interfaces";
+import type { GraphNode, ZoomAction } from "./interfaces";
 import { CANVAS_PADDING_BOTTOM } from "./constants";
 
 export interface UseAutoCenterOptions {
@@ -10,12 +9,7 @@ export interface UseAutoCenterOptions {
   sizeReady: boolean;
   zoomer: ZoomBehavior<HTMLDivElement, unknown>;
   rootRef: RefObject<HTMLDivElement>;
-  selectTransition: (
-    selection: Selection<HTMLDivElement, unknown, null, undefined>,
-    duration?: number
-  ) =>
-    | Selection<HTMLDivElement, unknown, null, undefined>
-    | TransitionLike<HTMLDivElement, unknown>;
+  pushZoomTransition: (action: ZoomAction) => void;
 }
 
 export function useAutoCenter({
@@ -23,7 +17,7 @@ export function useAutoCenter({
   sizeReady,
   zoomer,
   rootRef,
-  selectTransition,
+  pushZoomTransition,
 }: UseAutoCenterOptions) {
   const [centered, setCentered] = useState(false);
   const reCenterRef = useRef(false);
@@ -52,18 +46,15 @@ export function useAutoCenter({
           y = (root.clientHeight - (bottom + top)) / 2;
         }
       }
-      let selection:
-        | Selection<HTMLDivElement, unknown, null, undefined>
-        | TransitionLike<HTMLDivElement, unknown> = select(root);
-      if (reCenterRef.current) {
-        selection = selectTransition(selection);
-      }
-      zoomer.transform(selection, new ZoomTransform(1, x, y));
+      pushZoomTransition({
+        transform: { k: 1, x, y },
+        duration: reCenterRef.current ? undefined : 0,
+      });
       setCentered(true);
     }
 
     reCenterRef.current = false;
-  }, [centered, nodes, rootRef, sizeReady, zoomer, selectTransition]);
+  }, [centered, nodes, rootRef, sizeReady, zoomer, pushZoomTransition]);
 
   return { centered, setCentered, reCenterRef };
 }

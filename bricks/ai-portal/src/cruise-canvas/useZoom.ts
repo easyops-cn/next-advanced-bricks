@@ -204,7 +204,15 @@ export function useZoom({
     }
 
     return unsetZoom;
-  }, [pannableWithCtrl, pannable, rootRef, scrollable, zoomable, zoomer]);
+  }, [
+    pannableWithCtrl,
+    pannable,
+    rootRef,
+    manualScrolledUpRef,
+    scrollable,
+    zoomable,
+    zoomer,
+  ]);
 
   return { grabbing, transform, transformRef, zoomer, scaleRange };
 }
