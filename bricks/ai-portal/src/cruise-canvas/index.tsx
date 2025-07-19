@@ -302,6 +302,10 @@ function LegacyCruiseCanvasComponent(
     sizeMap,
   });
 
+  // Disable auto scroll when the user manually scrolled up
+  const detectScrolledUpRef = useRef(false);
+  const manualScrolledUpRef = useRef(false);
+
   const [hoverOnScrollableContent, setHoverOnScrollableContent] =
     useState(false);
 
@@ -311,6 +315,7 @@ function LegacyCruiseCanvasComponent(
       zoomable: sizeReady,
       scrollable: sizeReady && !hoverOnScrollableContent,
       pannable: sizeReady,
+      manualScrolledUpRef,
     });
 
   const { centered, setCentered, reCenterRef } = useAutoCenter({
@@ -354,13 +359,14 @@ function LegacyCruiseCanvasComponent(
     bottomRef.current = bottom;
   }, [bottom]);
 
-  // Disable auto scroll when the user manually scrolled up
-  const manualScrolledUpRef = useRef(false);
-
   // Make the latest (bottom most) node visible
   useEffect(() => {
     const root = rootRef.current;
-    if (!root || bottom === null || manualScrolledUpRef.current) {
+    if (
+      !root ||
+      bottom === null ||
+      (detectScrolledUpRef.current && manualScrolledUpRef.current)
+    ) {
       return;
     }
     const { offsetHeight } = root;
@@ -390,7 +396,7 @@ function LegacyCruiseCanvasComponent(
     const transformedBottom = bottom * transform.k + transform.y;
 
     const diffY = offsetHeight - CANVAS_PADDING_BOTTOM - transformedBottom;
-    manualScrolledUpRef.current = diffY < 0;
+    detectScrolledUpRef.current = diffY < 0;
   }, [transform, zoomer]);
 
   const handleReCenter = useCallback(() => {
