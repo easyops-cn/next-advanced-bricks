@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.16.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.16.0...@next-bricks/ai-portal@0.16.1) (2025-07-19)
+
+
+### Bug Fixes
+
+* refine manual scroll up detecting ([9bcc952](https://github.com/easyops-cn/next-advanced-bricks/commit/9bcc95234d72f76d597f6790a092353faf1f6e41))
+
+
+
+
+
 # [0.16.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.15.0...@next-bricks/ai-portal@0.16.0) (2025-07-19)
 
 
