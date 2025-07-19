@@ -1,6 +1,7 @@
 import { visit } from "unist-util-visit";
 import { toString } from "hast-util-to-string";
 import { refractor, type RefractorElement } from "refractor";
+import { getCodeLanguage } from "./utils.js";
 
 // Reference https://github.com/mapbox/rehype-prism
 export function rehypePrism() {
@@ -13,9 +14,9 @@ export function rehypePrism() {
       return;
     }
 
-    const lang = getLanguage(node);
+    const lang = getCodeLanguage(node);
 
-    if (lang === null) {
+    if (lang === null || lang === "mermaid") {
       return;
     }
 
@@ -34,16 +35,4 @@ export function rehypePrism() {
   return (tree: RefractorElement) => {
     visit(tree, "element", visitor);
   };
-}
-
-function getLanguage(node: RefractorElement) {
-  const className = (node.properties.className as string[]) || [];
-
-  for (const classListItem of className) {
-    if (classListItem.slice(0, 9) === "language-") {
-      return classListItem.slice(9).toLowerCase();
-    }
-  }
-
-  return null;
 }

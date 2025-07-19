@@ -19,3 +19,8 @@
 .failed::part(button) {
   color: var(--color-error);
 }
+
+.code-block:global(.mermaid) {
+  display: flex;
+  justify-content: center;
+}
