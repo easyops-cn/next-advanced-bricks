@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/datetime@0.3.6...@next-shared/datetime@0.4.0) (2025-07-19)
+
+
+### Features
+
+* elevo sidebar ([9a00345](https://github.com/easyops-cn/next-advanced-bricks/commit/9a0034567639ec3b5b0b7300769b2bb15f6b49a6))
+
+
+
+
+
 ## [0.3.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/datetime@0.3.5...@next-shared/datetime@0.3.6) (2025-07-10)
 
 **Note:** Version bump only for package @next-shared/datetime

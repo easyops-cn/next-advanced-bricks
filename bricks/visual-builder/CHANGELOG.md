@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.39.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.38.12...@next-bricks/visual-builder@1.39.0) (2025-07-19)
+
+
+### Features
+
+* elevo sidebar ([9a00345](https://github.com/easyops-cn/next-advanced-bricks/commit/9a0034567639ec3b5b0b7300769b2bb15f6b49a6))
+
+
+
+
+
 ## [1.38.12](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.38.11...@next-bricks/visual-builder@1.38.12) (2025-07-19)
 
 **Note:** Version bump only for package @next-bricks/visual-builder
