@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.16.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.16.1...@next-bricks/ai-portal@0.16.2) (2025-07-19)
+
+
+### Bug Fixes
+
+* refine zoom transition ([882b8d7](https://github.com/easyops-cn/next-advanced-bricks/commit/882b8d71e270aca1ad667a5fd22f4cec3f0c58f6))
+
+
+
+
+
 ## [0.16.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.16.0...@next-bricks/ai-portal@0.16.1) (2025-07-19)
 
 
