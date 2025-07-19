@@ -21,6 +21,7 @@ export interface UseZoomOptions {
   pannable?: boolean;
   pannableWithCtrl?: boolean;
   scaleRange?: RangeTuple;
+  manualScrolledUpRef: React.MutableRefObject<boolean>;
   onSwitchActiveTarget?(target: unknown | null): void;
 }
 
@@ -51,6 +52,7 @@ export function useZoom({
   pannable,
   pannableWithCtrl,
   scaleRange: _scaleRange,
+  manualScrolledUpRef,
   onSwitchActiveTarget,
 }: UseZoomOptions): UseZoomResult {
   const [grabbing, setGrabbing] = useState(false);
@@ -155,21 +157,6 @@ export function useZoom({
         (e: WheelEvent & { wheelDeltaX: number; wheelDeltaY: number }) => {
           // Mac OS trackpad pinch event is emitted as a wheel.zoom and d3.event.ctrlKey set to true
           if (!e.ctrlKey && scrollable) {
-            // for (const element of e.composedPath()) {
-            //   if (
-            //     element instanceof HTMLElement &&
-            //     (
-            //       element.matches('pre[class*="language-"]') ||
-            //       element.matches('.ant-table-scroll-horizontal .ant-table-content')
-            //     )
-            //   ) {
-            //     // Handle scroll for code blocks
-            //     if (checkScrollableX(element, e.deltaX)) {
-            //       return;
-            //     }
-            //   }
-            // }
-
             const node = (e.target as HTMLElement).closest(
               `.${jobStyles.body}`
             );
@@ -180,6 +167,9 @@ export function useZoom({
             }
 
             if (e.cancelable) {
+              if (e.deltaY < 0) {
+                manualScrolledUpRef.current = true;
+              }
               e.preventDefault();
               zoomer.translateBy(
                 rootSelection,
