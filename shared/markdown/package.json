@@ -36,7 +36,7 @@
   "dependencies": {
     "hast-util-from-html-isomorphic": "^2.0.0",
     "hast-util-to-string": "^3.0.0",
-    "mermaid": "11.9.0",
+    "mermaid": "^11.9.0",
     "prismjs": "^1.29.0",
     "react": "0.0.0-experimental-ee8509801-20230117",
     "refractor": "^4.8.1",

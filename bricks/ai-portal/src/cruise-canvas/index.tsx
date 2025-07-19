@@ -52,7 +52,7 @@ import {
   DONE_STATES,
   GENERAL_DONE_STATES,
 } from "./constants.js";
-import { WrappedIcon, WrappedLink } from "./bricks.js";
+import { WrappedIcon } from "./bricks.js";
 import { CanvasContext } from "./CanvasContext.js";
 import { ToolCallDetail } from "./ToolCallDetail/ToolCallDetail.js";
 import { getScrollTo } from "./utils/getScrollTo.js";
@@ -70,7 +70,6 @@ export interface CruiseCanvasProps {
   taskId?: string;
   task?: TaskBaseDetail;
   jobs?: Job[];
-  goBackUrl?: string;
   replay?: number;
 }
 
@@ -93,9 +92,6 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
 
   @property({ attribute: false })
   accessor jobs: Job[] | undefined;
-
-  @property()
-  accessor goBackUrl: string | undefined;
 
   /**
    * 设置回放时消息之间的时间间隔，单位为秒。
@@ -144,7 +140,6 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         taskId={this.taskId}
         jobs={this.jobs}
         task={this.task}
-        goBackUrl={this.goBackUrl}
         replay={this.replay}
         onShare={this.#onShare}
         onPause={this.#onPause}
@@ -189,7 +184,6 @@ function LegacyCruiseCanvasComponent(
     taskId,
     task: propTask,
     jobs: propJobs,
-    goBackUrl,
     replay,
     onShare,
     onPause,
@@ -739,11 +733,6 @@ function LegacyCruiseCanvasComponent(
         </div>
       </div>
       <div className={styles.widgets}>
-        {goBackUrl && (
-          <WrappedLink className={styles["go-back"]} url={goBackUrl}>
-            <WrappedIcon lib="fa" prefix="fas" icon="arrow-left-long" />
-          </WrappedLink>
-        )}
         <div className={styles["nav-container"]}>
           <ul className={styles.nav}>
             {nav?.map((item) => (

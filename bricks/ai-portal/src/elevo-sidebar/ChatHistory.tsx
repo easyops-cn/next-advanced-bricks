@@ -1,57 +1,27 @@
-// istanbul ignore file: experimental
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { createDecorators, type EventEmitter } from "@next-core/element";
-import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import moment from "moment";
-import type {
-  GeneralIcon,
-  GeneralIconProps,
-} from "@next-bricks/icons/general-icon";
-import type { Link, LinkProps } from "@next-bricks/basic/link";
+import classNames from "classnames";
+import { AgentFlowApi_searchTaskForAgentFlow } from "@next-api-sdk/llm-sdk";
 import type {
   ActionType,
-  EoMiniActions,
-  EoMiniActionsEvents,
-  EoMiniActionsEventsMapping,
-  EoMiniActionsProps,
   SimpleActionType,
 } from "@next-bricks/basic/mini-actions";
-import "@next-core/theme";
-import { initializeI18n } from "@next-core/i18n";
-import { K, NS, locales, t } from "./i18n.js";
-import styleText from "./styles.shadow.css";
+import { get } from "lodash";
+import { K, t } from "./i18n.js";
 import type { TaskState } from "../cruise-canvas/interfaces.js";
-import classNames from "classnames";
+import { WrappedIcon, WrappedLink, WrappedMiniActions } from "./bricks.js";
 import { DONE_STATES } from "../cruise-canvas/constants.js";
-
-initializeI18n(NS, locales);
-
-const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
-const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
-const WrappedMiniActions = wrapBrick<
-  EoMiniActions,
-  EoMiniActionsProps,
-  EoMiniActionsEvents,
-  EoMiniActionsEventsMapping
->("eo-mini-actions", {
-  onActionClick: "action.click",
-  onVisibleChange: "visible.change",
-});
-
-const { defineElement, property, event } = createDecorators();
-
-export interface ChatHistoryProps {
-  list?: HistoryItem[];
-  actions?: ActionType[];
-  nextToken?: string;
-}
 
 export interface HistoryItem {
   id: string;
-  url: string;
   title: string;
   startTime: number;
   state?: TaskState;
+}
+
+export interface GroupedHistory {
+  title: string;
+  items: HistoryItem[];
 }
 
 export interface ActionClickDetail {
@@ -59,70 +29,39 @@ export interface ActionClickDetail {
   item: HistoryItem;
 }
 
-/**
- * 构件 `ai-portal.chat-history`
- */
-export
-@defineElement("ai-portal.chat-history", {
-  styleTexts: [styleText],
-})
-class ChatHistory extends ReactNextElement implements ChatHistoryProps {
-  @property({ attribute: false })
-  accessor list: HistoryItem[] | undefined;
-
-  @property({ attribute: false })
-  accessor actions: ActionType[] | undefined;
-
-  @property()
-  accessor nextToken: string | undefined;
-
-  @event({ type: "action.click" })
-  accessor #actionClick!: EventEmitter<ActionClickDetail>;
-
-  #handleActionClick = (detail: ActionClickDetail) => {
-    this.#actionClick.emit(detail);
-  };
-
-  @event({ type: "load.more" })
-  accessor #loadMore!: EventEmitter<{ nextToken: string }>;
-
-  #handleLoadMore = (nextToken: string) => {
-    this.#loadMore.emit({ nextToken });
-  };
-
-  render() {
-    return (
-      <ChatHistoryComponent
-        root={this}
-        list={this.list}
-        actions={this.actions}
-        nextToken={this.nextToken}
-        onActionClick={this.#handleActionClick}
-        onLoadMore={this.#handleLoadMore}
-      />
-    );
-  }
-}
-
-export interface ChatHistoryComponentProps extends ChatHistoryProps {
-  root: HTMLElement;
+export interface ChatHistoryProps {
+  urlTemplate?: string;
+  actions?: ActionType[];
   onActionClick: (detail: ActionClickDetail) => void;
-  onLoadMore: (nextToken: string) => void;
+  onHistoryClick: () => void;
 }
 
-interface GroupedHistory {
-  title: string;
-  items: HistoryItem[];
-}
-
-export function ChatHistoryComponent({
-  root,
-  list,
-  actions,
-  nextToken,
+export function ChatHistory({
+  actions = [],
+  urlTemplate,
   onActionClick,
-  onLoadMore,
-}: ChatHistoryComponentProps) {
+  onHistoryClick,
+}: ChatHistoryProps) {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [list, setList] = useState<HistoryItem[] | null>(null);
+  const [nextToken, setNextToken] = useState<string | undefined>();
+  const [loadNextToken, setLoadNextToken] = useState<string | undefined>();
+
+  useEffect(() => {
+    Promise.all([
+      AgentFlowApi_searchTaskForAgentFlow({ next_token: loadNextToken }),
+      new Promise((resolve) => setTimeout(resolve, 500)), // Force a minimum delay
+    ])
+      .then(([data]) => {
+        setList((prev) => [...(prev ?? []), ...(data.data as HistoryItem[])]);
+        setNextToken(data.next_token);
+      })
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error("Error loading chat history:", error);
+      });
+  }, [loadNextToken]);
+
   const groups = useMemo(() => {
     const groupMap = new Map<string, GroupedHistory>();
     // Group history by
@@ -177,14 +116,15 @@ export function ChatHistoryComponent({
 
   useEffect(() => {
     const next = nextRef.current;
-    if (!next || !nextToken) {
+    const root = rootRef.current;
+    if (!next || !nextToken || !root) {
       return;
     }
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            onLoadMore(nextToken);
+            setLoadNextToken(nextToken);
           }
         }
       },
@@ -194,23 +134,25 @@ export function ChatHistoryComponent({
     return () => {
       observer.disconnect();
     };
-  }, [nextToken, onLoadMore, root]);
+  }, [nextToken]);
 
   if (!list) {
     return (
-      <div className="loading">
-        <WrappedIcon
-          lib="antd"
-          theme="outlined"
-          icon="loading-3-quarters"
-          spinning
-        />
+      <div className="history">
+        <div className="loading">
+          <WrappedIcon
+            lib="antd"
+            theme="outlined"
+            icon="loading-3-quarters"
+            spinning
+          />
+        </div>
       </div>
     );
   }
 
   return (
-    <>
+    <div className="history" ref={rootRef}>
       <ul>
         {groups.map((group) => (
           <li key={group.title} className="group">
@@ -222,7 +164,10 @@ export function ChatHistoryComponent({
                     className={classNames("item", {
                       active: actionsVisible === item.id,
                     })}
-                    url={item.url}
+                    onClick={onHistoryClick}
+                    {...(urlTemplate
+                      ? { url: parseTemplate(urlTemplate, item) }
+                      : null)}
                   >
                     <div className="item-title" title={item.title}>
                       {item.title}
@@ -252,6 +197,13 @@ export function ChatHistoryComponent({
           <WrappedIcon lib="antd" icon="loading-3-quarters" spinning />
         </div>
       )}
-    </>
+    </div>
   );
+}
+
+function parseTemplate(template: string, context: Record<string, any>) {
+  return template?.replace(/{{(.*?)}}/g, (_match: string, key: string) => {
+    const value = get(context, key);
+    return value;
+  });
 }
