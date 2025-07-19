@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.13.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/markdown@1.12.25...@next-bricks/markdown@1.13.0) (2025-07-19)
+
+
+### Features
+
+* support mermaid in markdown ([3ce81b5](https://github.com/easyops-cn/next-advanced-bricks/commit/3ce81b58d7d53c4301e61cf26fa8c998386eb1d0))
+
+
+
+
+
 ## [1.12.25](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/markdown@1.12.24...@next-bricks/markdown@1.12.25) (2025-07-16)
 
 **Note:** Version bump only for package @next-bricks/markdown

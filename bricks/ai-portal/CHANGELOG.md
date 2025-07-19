@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.15.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.14.6...@next-bricks/ai-portal@0.15.0) (2025-07-19)
+
+
+### Features
+
+* support mermaid in markdown ([3ce81b5](https://github.com/easyops-cn/next-advanced-bricks/commit/3ce81b58d7d53c4301e61cf26fa8c998386eb1d0))
+
+
+
+
+
 ## [0.14.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.14.5...@next-bricks/ai-portal@0.14.6) (2025-07-18)
 
 

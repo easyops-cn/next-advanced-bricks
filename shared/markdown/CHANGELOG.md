@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/markdown@0.4.0...@next-shared/markdown@0.5.0) (2025-07-19)
+
+
+### Features
+
+* support mermaid in markdown ([3ce81b5](https://github.com/easyops-cn/next-advanced-bricks/commit/3ce81b58d7d53c4301e61cf26fa8c998386eb1d0))
+
+
+
+
+
 # [0.4.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/markdown@0.3.1...@next-shared/markdown@0.4.0) (2025-07-16)
 
 
