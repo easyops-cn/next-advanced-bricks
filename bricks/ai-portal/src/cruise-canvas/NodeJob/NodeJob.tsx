@@ -24,7 +24,6 @@ import { CanvasContext } from "../CanvasContext.js";
 import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus.js";
 import { HumanAdjustPlanResult } from "../HumanAdjustPlanResult/HumanAdjustPlanResult.js";
 import { Topology } from "../Topology/Topology";
-import { CodeBlock } from "../CodeBlock/CodeBlock";
 import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
 import { CmdbInstanceDetail } from "../CmdbInstanceDetail/CmdbInstanceDetail";
 
@@ -188,17 +187,6 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
           </div>
         ) : null}
         {!generalAskUser && job.toolCall && <ToolCallStatus job={job} />}
-        {toolMarkdownContent && (
-          <div
-            className={classNames(styles.message, sharedStyles.markdown)}
-            style={{ padding: "0 8px" }}
-          >
-            <EnhancedMarkdown content={toolMarkdownContent} />
-          </div>
-        )}
-        {cmdbInstanceDetails.map((detail, index) => (
-          <CmdbInstanceDetail key={index} {...detail} />
-        ))}
         {askUserPlan && state !== "input-required" ? (
           <HumanAdjustPlanResult job={job} />
         ) : (
@@ -212,12 +200,8 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
               >
                 {message.parts?.map((part, partIndex) => (
                   <React.Fragment key={partIndex}>
-                    {part.type === "text" ? (
+                    {part.type === "text" && (
                       <EnhancedMarkdown content={part.text} />
-                    ) : (
-                      <CodeBlock className="language-plaintext">
-                        <code>{JSON.stringify(part, null, 2)}</code>
-                      </CodeBlock>
                     )}
                   </React.Fragment>
                 ))}
@@ -225,6 +209,17 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
             )
           )
         )}
+        {toolMarkdownContent && (
+          <div
+            className={classNames(styles.message, sharedStyles.markdown)}
+            style={{ padding: "0 8px" }}
+          >
+            <EnhancedMarkdown content={toolMarkdownContent} />
+          </div>
+        )}
+        {cmdbInstanceDetails.map((detail, index) => (
+          <CmdbInstanceDetail key={index} {...detail} />
+        ))}
         {hasGraph && !job.componentGraph!.initial && (
           <Topology
             componentGraph={job.componentGraph!}
