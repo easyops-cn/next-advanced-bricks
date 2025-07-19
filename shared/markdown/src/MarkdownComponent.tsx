@@ -7,6 +7,7 @@ import remarkToRehype from "remark-rehype";
 import rehypeReact, { Options as RehypeReactOptions } from "rehype-react";
 import type { Components } from "hast-util-to-jsx-runtime";
 import { rehypePrism } from "./rehypePrism.js";
+import { rehypeMermaid } from "./rehypeMermaid.js";
 
 const production = { Fragment, jsx, jsxs };
 
@@ -29,6 +30,7 @@ export function MarkdownComponent({
       .use(remarkGfm)
       .use(remarkToRehype)
       .use([rehypePrism])
+      .use(rehypeMermaid)
       .use(rehypeReact, {
         ...production,
         passNode: true,
