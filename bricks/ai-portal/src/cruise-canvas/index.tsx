@@ -18,7 +18,8 @@ import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import classNames from "classnames";
 import ResizeObserver from "resize-observer-polyfill";
-import { select, type Selection } from "d3-selection";
+import { select, type Selection, type TransitionLike } from "d3-selection";
+import { ZoomTransform } from "d3-zoom";
 import { mergeRects } from "@next-shared/diagram";
 import { NS, locales } from "./i18n.js";
 import styles from "./styles.module.css";
@@ -31,6 +32,7 @@ import type {
   JobGraphNode,
   TaskBaseDetail,
   GraphEdge,
+  ZoomAction,
 } from "./interfaces.js";
 import { useAutoCenter } from "./useAutoCenter.js";
 import { useLayout } from "./useLayout.js";
@@ -58,7 +60,6 @@ import { ToolCallDetail } from "./ToolCallDetail/ToolCallDetail.js";
 import { getScrollTo } from "./utils/getScrollTo.js";
 import { handleKeyboardNav } from "./utils/handleKeyboardNav.js";
 import { ExpandedView } from "./ExpandedView/ExpandedView.js";
-import { ZoomTransform } from "d3-zoom";
 
 initializeI18n(NS, locales);
 
@@ -241,27 +242,6 @@ function LegacyCruiseCanvasComponent(
     };
   }, []);
 
-  const transitionRef = useRef(false);
-  const selectTransition = useCallback(
-    (
-      selection: Selection<HTMLDivElement, unknown, null, undefined>,
-      duration?: number
-    ) => {
-      if (!transitionEnabledRef.current || duration === 0) {
-        return selection;
-      }
-      transitionRef.current = true;
-      return selection
-        .transition()
-        .duration(duration ?? 300)
-        .ease((t) => t * (2 - t)) // Ease in-out
-        .on("end", () => {
-          transitionRef.current = false;
-        });
-    },
-    []
-  );
-
   useEffect(() => {
     getRuntime().applyPageTitle(pageTitle);
   }, [pageTitle]);
@@ -318,12 +298,70 @@ function LegacyCruiseCanvasComponent(
       manualScrolledUpRef,
     });
 
+  const transitionRef = useRef(false);
+
+  const pushZoomTransition = useMemo(() => {
+    let nextAction: ZoomAction | null = null;
+
+    const run = (action: ZoomAction) => {
+      const current = transformRef.current;
+      const target = typeof action === "function" ? action(current) : action;
+
+      if (!target) {
+        return;
+      }
+
+      const { transform, translateBy } = target;
+
+      let selection:
+        | Selection<HTMLDivElement, unknown, null, undefined>
+        | TransitionLike<HTMLDivElement, unknown> = select(rootRef.current!);
+
+      if (transitionEnabledRef.current && target.duration !== 0) {
+        transitionRef.current = true;
+        selection = selection
+          .transition()
+          .duration(target.duration ?? 300)
+          .ease((t) => t * (2 - t)) // Ease in-out
+          .on("end", () => {
+            transitionRef.current = false;
+            if (nextAction) {
+              const next = nextAction;
+              nextAction = null;
+              run(next);
+            }
+          });
+      }
+
+      if (transform) {
+        zoomer.transform(
+          selection,
+          new ZoomTransform(
+            transform.k ?? current.k,
+            transform.x ?? current.x,
+            transform.y ?? current.y
+          )
+        );
+      } else {
+        zoomer.translateBy(selection, translateBy[0] ?? 0, translateBy[1] ?? 0);
+      }
+    };
+
+    return (action: ZoomAction) => {
+      if (transitionRef.current) {
+        nextAction = action;
+      } else {
+        run(action);
+      }
+    };
+  }, [transformRef, zoomer]);
+
   const { centered, setCentered, reCenterRef } = useAutoCenter({
     nodes,
     sizeReady,
     zoomer,
     rootRef,
-    selectTransition,
+    pushZoomTransition,
   });
 
   const taskDone = DONE_STATES.includes(taskState ?? "working");
@@ -369,21 +407,22 @@ function LegacyCruiseCanvasComponent(
     ) {
       return;
     }
-    const { offsetHeight } = root;
-    const transform = transformRef.current;
-    const transformedBottom = bottom * transform.k + transform.y;
-    const diffY = offsetHeight - CANVAS_PADDING_BOTTOM - transformedBottom;
-    if (diffY < 0) {
-      // Use `zoomer.transform()` which will not be restricted to its translate/scale extent
-      zoomer.transform(
-        selectTransition(
-          select(root),
-          diffY > -100 ? 100 : diffY < -500 ? 300 : 200
-        ),
-        new ZoomTransform(transform.k, transform.x, transform.y + diffY)
-      );
-    }
-  }, [bottom, transformRef, zoomer, selectTransition]);
+    pushZoomTransition((current) => {
+      const { offsetHeight } = root;
+      const transformedBottom = bottom * current.k + current.y;
+      const diffY = offsetHeight - CANVAS_PADDING_BOTTOM - transformedBottom;
+      if (diffY < 0) {
+        // Use `zoomer.transform()` which will not be restricted to its translate/scale extent
+        return {
+          transform: {
+            y: current.y + diffY,
+          },
+          duration: diffY > -100 ? 100 : diffY < -500 ? 300 : 200,
+        };
+      }
+      return null;
+    });
+  }, [bottom, pushZoomTransition]);
 
   // Detect if the user scrolled up manually
   useEffect(() => {
@@ -481,17 +520,13 @@ function LegacyCruiseCanvasComponent(
       );
 
       if (x || y) {
-        zoomer.translateBy(
-          selectTransition(
-            select(root),
-            behavior === "instant" ? 0 : undefined
-          ),
-          x,
-          y
-        );
+        pushZoomTransition({
+          translateBy: [x, y],
+          duration: behavior === "instant" ? 0 : undefined,
+        });
       }
     },
-    [nodes, selectTransition, transformRef, zoomer]
+    [nodes, pushZoomTransition, transformRef]
   );
 
   const scrollBy = useCallback(
@@ -535,10 +570,13 @@ function LegacyCruiseCanvasComponent(
       }
 
       if (x || y) {
-        zoomer.translateBy(selectTransition(select(root), duration), x, y);
+        pushZoomTransition({
+          translateBy: [x, y],
+          duration,
+        });
       }
     },
-    [nodes, selectTransition, sizeReady, transformRef, zoomer]
+    [nodes, pushZoomTransition, sizeReady, transformRef]
   );
 
   const [activeToolCallJobId, setActiveToolCallJobId] = useState<string | null>(

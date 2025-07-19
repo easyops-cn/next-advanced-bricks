@@ -4,12 +4,21 @@ import { ZoomBehavior, ZoomTransform } from "d3-zoom";
 import { select } from "d3-selection";
 import { CANVAS_PADDING_BOTTOM } from "./constants";
 import type { GraphNode } from "./interfaces";
-import { identity } from "lodash";
 
 describe("useAutoCenter", () => {
   let mockZoomer: ZoomBehavior<HTMLDivElement, unknown>;
   let mockRootRef: { current: HTMLDivElement | null };
   let mockNodes: any[];
+  const pushZoomTransition = (action: any) => {
+    mockZoomer.transform(
+      select(mockRootRef.current!),
+      new ZoomTransform(
+        action.transform.k,
+        action.transform.x,
+        action.transform.y
+      )
+    );
+  };
 
   beforeEach(() => {
     // Reset mocks
@@ -42,7 +51,7 @@ describe("useAutoCenter", () => {
         sizeReady: false,
         zoomer: mockZoomer,
         rootRef: mockRootRef,
-        selectTransition: identity,
+        pushZoomTransition,
       })
     );
 
@@ -57,7 +66,7 @@ describe("useAutoCenter", () => {
         sizeReady: true,
         zoomer: mockZoomer,
         rootRef: mockRootRef,
-        selectTransition: identity,
+        pushZoomTransition,
       })
     );
 
@@ -74,7 +83,7 @@ describe("useAutoCenter", () => {
         sizeReady: true,
         zoomer: mockZoomer,
         rootRef: mockRootRef,
-        selectTransition: identity,
+        pushZoomTransition,
       })
     );
 
@@ -89,7 +98,7 @@ describe("useAutoCenter", () => {
         sizeReady: true,
         zoomer: mockZoomer,
         rootRef: mockRootRef,
-        selectTransition: identity,
+        pushZoomTransition,
       })
     );
 
@@ -126,7 +135,7 @@ describe("useAutoCenter", () => {
         sizeReady: true,
         zoomer: mockZoomer,
         rootRef: mockRootRef,
-        selectTransition: identity,
+        pushZoomTransition,
       })
     );
 
@@ -153,7 +162,7 @@ describe("useAutoCenter", () => {
         sizeReady: true,
         zoomer: mockZoomer,
         rootRef: mockRootRef,
-        selectTransition: identity,
+        pushZoomTransition,
       })
     );
 
@@ -194,7 +203,7 @@ describe("useAutoCenter", () => {
         sizeReady: true,
         zoomer: mockZoomer,
         rootRef: mockRootRef,
-        selectTransition: identity,
+        pushZoomTransition,
       })
     );
 

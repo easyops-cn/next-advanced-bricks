@@ -237,3 +237,21 @@ export interface CmdbInstanceDetailData {
   detail: Record<string, any>;
   outputSchema: Record<string, any>;
 }
+
+export type ZoomAction =
+  | ZoomActionLiteral
+  | ((current: TransformLiteral) => ZoomActionLiteral | null);
+
+export type ZoomActionLiteral = ZoomActionTransform | ZoomActionTranslateBy;
+
+export interface ZoomActionTransform {
+  transform: Partial<TransformLiteral>;
+  translateBy?: undefined;
+  duration?: number;
+}
+
+export interface ZoomActionTranslateBy {
+  translateBy: [x: number, y: number];
+  transform?: undefined;
+  duration?: number;
+}
