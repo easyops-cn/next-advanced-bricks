@@ -37,6 +37,7 @@ export interface ElevoSidebarProps {
   behavior?: "default" | "drawer";
   logoUrl?: string;
   newChatUrl?: string;
+  historyActiveId?: string;
   historyUrlTemplate?: string;
   historyActions?: ActionType[];
 }
@@ -60,6 +61,9 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
 
   @property()
   accessor newChatUrl: string | undefined;
+
+  @property()
+  accessor historyActiveId: string | undefined;
 
   @property()
   accessor historyUrlTemplate: string | undefined;
@@ -88,6 +92,7 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
         behavior={this.behavior}
         logoUrl={this.logoUrl}
         newChatUrl={this.newChatUrl}
+        historyActiveId={this.historyActiveId}
         historyUrlTemplate={this.historyUrlTemplate}
         historyActions={this.historyActions}
         onLogout={this.#handleLogout}
@@ -107,6 +112,7 @@ function ElevoSidebarComponent({
   behavior,
   logoUrl,
   newChatUrl,
+  historyActiveId,
   historyUrlTemplate,
   historyActions,
   onLogout,
@@ -165,6 +171,7 @@ function ElevoSidebarComponent({
           {t(K.NEW_CHAT)}
         </WrappedLink>
         <ChatHistory
+          activeId={historyActiveId}
           urlTemplate={historyUrlTemplate}
           actions={historyActions}
           onActionClick={onActionClick}

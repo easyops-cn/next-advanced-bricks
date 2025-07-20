@@ -30,6 +30,7 @@ export interface ActionClickDetail {
 }
 
 export interface ChatHistoryProps {
+  activeId?: string;
   urlTemplate?: string;
   actions?: ActionType[];
   onActionClick: (detail: ActionClickDetail) => void;
@@ -37,7 +38,8 @@ export interface ChatHistoryProps {
 }
 
 export function ChatHistory({
-  actions = [],
+  activeId,
+  actions,
   urlTemplate,
   onActionClick,
   onHistoryClick,
@@ -164,7 +166,8 @@ export function ChatHistory({
                 <li key={item.id}>
                   <WrappedLink
                     className={classNames("item", {
-                      active: actionsVisible === item.id,
+                      "actions-active": item.id === actionsVisible,
+                      active: item.id === activeId,
                     })}
                     onClick={onHistoryClick}
                     {...(urlTemplate
