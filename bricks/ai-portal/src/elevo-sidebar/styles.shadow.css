@@ -211,7 +211,11 @@
     color: #000;
   }
 
-  .item::part(link):hover {
+  .item.active::part(link) {
+    background: rgba(0, 0, 0, 0.06);
+  }
+
+  .item:not(.active)::part(link):hover {
     background: rgba(0, 0, 0, 0.04);
   }
 
@@ -226,7 +230,7 @@
     cursor: auto;
   }
 
-  .item:not(:hover):not(.active) .actions {
+  .item:not(:hover):not(.actions-active) .actions {
     display: none;
   }
 
