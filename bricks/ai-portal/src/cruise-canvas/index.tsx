@@ -38,7 +38,6 @@ import { useAutoCenter } from "./useAutoCenter.js";
 import { useLayout } from "./useLayout.js";
 import { useTaskDetail } from "./useTaskDetail.js";
 import { useTaskGraph } from "./useTaskGraph.js";
-import { PlanProgress } from "./PlanProgress/PlanProgress.js";
 import { ZoomBar } from "./ZoomBar/ZoomBar.js";
 import { NodeStart } from "./NodeStart/NodeStart.js";
 import { NodeRequirement } from "./NodeRequirement/NodeRequirement.js";
@@ -52,6 +51,7 @@ import {
   CANVAS_PADDING_RIGHT,
   CANVAS_PADDING_TOP,
   DONE_STATES,
+  END_NODE_ID,
   GENERAL_DONE_STATES,
 } from "./constants.js";
 import { WrappedIcon } from "./bricks.js";
@@ -60,6 +60,8 @@ import { ToolCallDetail } from "./ToolCallDetail/ToolCallDetail.js";
 import { getScrollTo } from "./utils/getScrollTo.js";
 import { handleKeyboardNav } from "./utils/handleKeyboardNav.js";
 import { ExpandedView } from "./ExpandedView/ExpandedView.js";
+import { Nav } from "./Nav/Nav.js";
+import { ReplayToolbar } from "./ReplayToolbar/ReplayToolbar.js";
 
 initializeI18n(NS, locales);
 
@@ -95,11 +97,12 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
   @property({ attribute: false })
   accessor jobs: Job[] | undefined;
 
+  /** 是否启用回放。仅初始设置有效。 */
   @property({ type: Boolean })
   accessor replay: boolean | undefined;
 
   /**
-   * 设置回放时消息之间的时间间隔，单位为秒。
+   * 设置回放时消息之间的时间间隔，单位为秒。仅初始设置有效。
    *
    * @default 2
    */
@@ -205,19 +208,21 @@ function LegacyCruiseCanvasComponent(
   const {
     task: _task,
     jobs: _jobs,
-    plan: _plan,
     error,
     humanInputRef,
     resumedRef,
+    skipToResults,
+    watchAgain,
   } = useTaskDetail(taskId, replay, replayDelay);
   const task = taskId ? _task : propTask;
   const jobs = taskId ? _jobs : propJobs;
-  const plan = taskId ? _plan : propTask?.plan;
+  const plan = task?.plan;
   const graph = useTaskGraph(task, jobs);
   const rawNodes = graph?.nodes;
   const rawEdges = graph?.edges;
   const nav = graph?.nav;
   const views = graph?.views;
+  const jobLevels = graph?.jobLevels;
   const pageTitle = task?.title ?? "";
   const taskState = task?.state;
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
@@ -752,17 +757,19 @@ function LegacyCruiseCanvasComponent(
           }}
         >
           <svg className={styles.edges}>
-            {edges.map((edge) => (
-              <path
-                className={styles.edge}
-                key={`${edge.source}-${edge.target}`}
-                d={edge
-                  .points!.map(
-                    ({ x, y }, i) => `${i === 0 ? "M" : "L"}${x},${y}`
-                  )
-                  .join(" ")}
-              />
-            ))}
+            {edges.map((edge) =>
+              edge.target === END_NODE_ID ? null : (
+                <path
+                  className={styles.edge}
+                  key={`${edge.source}-${edge.target}`}
+                  d={edge
+                    .points!.map(
+                      ({ x, y }, i) => `${i === 0 ? "M" : "L"}${x},${y}`
+                    )
+                    .join(" ")}
+                />
+              )
+            )}
           </svg>
           {nodes.map((node) => (
             <MemoizedNodeComponent
@@ -789,34 +796,33 @@ function LegacyCruiseCanvasComponent(
         </div>
       </div>
       <div className={styles.widgets}>
-        <div className={styles["nav-container"]}>
-          <ul className={styles.nav}>
-            {nav?.map((item) => (
-              <li
-                key={item.id}
-                className={classNames(styles["nav-item"], {
-                  [styles.active]: currentNavId === item.id,
-                })}
-              >
-                <a
-                  className={styles["nav-link"]}
-                  onClick={() => {
-                    setActiveNodeId(`job:${item.id}`);
-                    scrollTo({ jobId: item.id, block: "start" });
-                  }}
-                >
-                  <span className={styles["nav-link-text"]}>{item.title}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <PlanProgress plan={plan} state={taskState} replay={replay} />
+        <Nav
+          nav={nav}
+          plan={plan}
+          jobs={jobs}
+          jobLevels={jobLevels}
+          currentNavId={currentNavId}
+          taskState={taskState}
+          onClick={(jobId: string) => {
+            setActiveNodeId(`job:${jobId}`);
+            scrollTo({ jobId, block: "start" });
+          }}
+        />
         <ZoomBar
           scale={transform.k}
           onScaleChange={handleScaleChange}
           onReCenter={handleReCenter}
         />
+        {replay && (
+          <ReplayToolbar
+            taskDone={taskDone}
+            skipToResults={skipToResults}
+            watchAgain={() => {
+              watchAgain();
+              setCentered(false);
+            }}
+          />
+        )}
       </div>
       {activeToolCallJob && <ToolCallDetail job={activeToolCallJob} />}
       {activeExpandedViewJobId && <ExpandedView views={views!} />}
@@ -905,7 +911,7 @@ function NodeComponent({
       {type === "start" ? (
         <NodeStart />
       ) : type === "end" ? (
-        <NodeEnd active={active} />
+        <NodeEnd />
       ) : type === "requirement" ? (
         <NodeRequirement
           content={content}

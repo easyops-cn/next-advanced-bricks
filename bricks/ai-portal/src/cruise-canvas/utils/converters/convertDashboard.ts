@@ -75,8 +75,8 @@ export default async function convertDashboard(
       ? await getPreGeneratedMetricGroups(objectId)
       : [];
 
-    mergedWidgets = [];
     if (metricGroups.length > 0) {
+      mergedWidgets = [];
       const mergedMetrics = new Set<string>();
       const metricIds = new Set(widgets.map((w) => w.metric.id));
       for (const widget of widgets) {
@@ -103,6 +103,8 @@ export default async function convertDashboard(
       }
     }
 
+    let colorCursor = 0;
+
     return {
       brick: "div",
       properties: {
@@ -112,9 +114,14 @@ export default async function convertDashboard(
           gap: "16px",
         },
       },
-      children: mergedWidgets.map((widget, index) => {
+      children: mergedWidgets.map((widget) => {
         const { title, /* type, */ metric, size, precision, min, max } = widget;
-        const color = COLORS[index % COLORS.length];
+        const colorCount = widget.relevantMetrics?.length ?? 1;
+        const colors = Array.from(
+          { length: colorCount },
+          (_, i) => COLORS[(colorCursor + i) % COLORS.length]
+        );
+        colorCursor += colorCount;
         const chart = {
           brick: "chart-v2.time-series-chart",
           properties: {
@@ -133,12 +140,12 @@ export default async function convertDashboard(
               : null),
             height: size === "large" ? 230 : 200,
             timeFormat: "HH:mm",
-            ...(widget.counterMetric
+            ...(widget.relevantMetrics
               ? null
               : {
                   areaOptions: {
                     style: {
-                      fill: `l(90) 0:${color} 1:#ffffff`,
+                      fill: `l(90) 0:${colors[0]} 1:#ffffff`,
                     },
                   },
                 }),
@@ -158,13 +165,13 @@ export default async function convertDashboard(
             },
             areaShape: "smooth",
             legends: size === "large",
-            colors: [color],
+            colors: colors,
             tooltip: {
               marker: {
-                fill: color,
+                fill: colors[0],
                 stroke: "#fff",
                 lineWidth: 2,
-                shadowColor: color,
+                shadowColor: colors[0],
                 shadowBlur: 8,
                 shadowOffsetX: 0,
                 shadowOffsetY: 4,
@@ -172,10 +179,10 @@ export default async function convertDashboard(
               domStyles: {
                 "g2-tooltip": {
                   background: [
-                    `radial-gradient( farthest-corner at -20px 150px, ${color} 0%, rgba(238,238,238,0) 60%)`,
+                    `radial-gradient( farthest-corner at -20px 150px, ${colors[0]} 0%, rgba(238,238,238,0) 60%)`,
                     "linear-gradient( 180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.8) 100%)",
                   ].join(", "),
-                  boxShadow: `0px 4px 8px 0px ${convertHexColorToRGBA(color, 0.08)}`,
+                  boxShadow: `0px 4px 8px 0px ${convertHexColorToRGBA(colors[0], 0.08)}`,
                   borderRadius: "8px",
                   border: "1px solid rgba(255,255,255,1)",
                   backdropFilter: "blur(3px)",

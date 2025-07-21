@@ -1,44 +1,30 @@
 .node-end {
-  width: var(--cruise-canvas-node-width-small);
-  background-color: #fff;
-  background-image: url("../images/end@2x.png");
-  background-size: var(--cruise-canvas-node-width-small) 271px;
-  background-repeat: no-repeat;
-  background-position: center;
-  border: 1px solid #e0e5f0;
-  border-radius: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 41px 24px 28px;
 }
 
-.node-end.active {
-  border-color: #a1b5ff;
+.content {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .icon {
-  width: 64px;
-  height: 64px;
-  background-image: url("../images/completed@2x.png");
-  background-size: 59px 49px;
-  background-repeat: no-repeat;
-  background-position: center;
-  margin-bottom: 16px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: #29cc49;
+  border-radius: 18px;
+  font-size: 14px;
+  margin-right: 6px;
 }
 
-.title {
-  margin-bottom: 8px;
+.text {
   font-weight: 500;
-  font-size: 16px;
-  line-height: 24px;
-}
-
-.description {
-  margin-bottom: 36px;
-  font-size: 13px;
-  color: #8c8c8c;
-  line-height: 24px;
 }
 
 .button {

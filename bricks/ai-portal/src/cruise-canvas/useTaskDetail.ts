@@ -1,11 +1,10 @@
 // istanbul ignore file
-import { useEffect, useReducer, useRef, useState } from "react";
-import { isEqual } from "lodash";
+import { useCallback, useEffect, useReducer, useRef } from "react";
 import { http } from "@next-core/http";
 import { createSSEStream } from "@next-core/utils/general";
 import { getBasePath, handleHttpError } from "@next-core/runtime";
 import { rootReducer } from "./reducers";
-import type { Job, StepWithState, TaskPatch } from "./interfaces";
+import type { TaskPatch } from "./interfaces";
 
 export function useTaskDetail(
   taskId: string | undefined,
@@ -25,6 +24,37 @@ export function useTaskDetail(
   const humanInputRef = useRef<(jobId: string, input: string) => void>();
   const resumedRef = useRef<() => void>();
 
+  const replayListRef = useRef<TaskPatch[] | null>(null);
+  const replayRef = useRef(replay);
+  const replayDelayRef = useRef((replayDelay ?? 2) * 1000);
+  const replayResolveRef = useRef<(() => void) | null>(null);
+
+  const skipToResults = useCallback(() => {
+    replayRef.current = false;
+    if (replayResolveRef.current) {
+      replayResolveRef.current();
+      replayResolveRef.current = null;
+    }
+  }, []);
+
+  const watchAgain = useCallback(async () => {
+    replayRef.current = true;
+
+    let isInitial = true;
+    for (const value of replayListRef.current!) {
+      if (replayRef.current && !isInitial) {
+        await new Promise<void>((resolve) => {
+          replayResolveRef.current = resolve;
+          setTimeout(resolve, replayDelayRef.current);
+        });
+        replayResolveRef.current = null;
+      }
+
+      dispatch({ type: "sse", payload: value, isInitial });
+      isInitial = false;
+    }
+  }, []);
+
   useEffect(() => {
     dispatch({ type: "reset" });
     humanInputRef.current = undefined;
@@ -42,6 +72,7 @@ export function useTaskDetail(
       }
 
       requesting = true;
+      replayListRef.current = [];
       ctrl = new AbortController();
       try {
         const request = await createSSEStream<TaskPatch>(
@@ -61,10 +92,14 @@ export function useTaskDetail(
             return;
           }
 
-          if (replay && !isInitial) {
-            await new Promise((resolve) =>
-              setTimeout(resolve, (replayDelay ?? 2) * 1000)
-            );
+          replayListRef.current.push(value);
+
+          if (replayRef.current && !isInitial) {
+            await new Promise<void>((resolve) => {
+              replayResolveRef.current = resolve;
+              setTimeout(resolve, replayDelayRef.current);
+            });
+            replayResolveRef.current = null;
           }
 
           dispatch({ type: "sse", payload: value, isInitial });
@@ -105,51 +140,13 @@ export function useTaskDetail(
     };
   }, [taskId]);
 
-  const [plan, setPlan] = useState<StepWithState[]>([]);
-
-  useEffect(() => {
-    setPlan((prev) => {
-      const jobMap = new Map<string, Job>();
-      const childrenMap = new Map<string, string[]>();
-      for (const job of jobs) {
-        jobMap.set(job.id, job);
-
-        if (job.parent) {
-          childrenMap.set(job.parent, [
-            ...(childrenMap.get(job.parent) ?? []),
-            job.id,
-          ]);
-        }
-      }
-
-      // A step is input-required when itself is input-required or any of its descendants is input-required.
-      const isInputRequired = (job: Job): boolean => {
-        return (
-          job.state === "input-required" ||
-          !!childrenMap.get(job.id)?.some((childId) => {
-            const childJob = jobMap.get(childId)!;
-            return isInputRequired(childJob);
-          })
-        );
-      };
-
-      const plan: StepWithState[] = [];
-      for (const step of task?.plan ?? []) {
-        const job = jobMap.get(step.id);
-        plan.push({
-          id: step.id,
-          instruction: step.instruction,
-          state: job
-            ? isInputRequired(job)
-              ? "input-required"
-              : job.state
-            : undefined,
-        });
-      }
-
-      return isEqual(prev, plan) ? prev : plan;
-    });
-  }, [jobs, task?.plan]);
-
-  return { task, jobs, plan, error, humanInputRef, resumedRef };
+  return {
+    task,
+    jobs,
+    error,
+    humanInputRef,
+    resumedRef,
+    skipToResults,
+    watchAgain,
+  };
 }

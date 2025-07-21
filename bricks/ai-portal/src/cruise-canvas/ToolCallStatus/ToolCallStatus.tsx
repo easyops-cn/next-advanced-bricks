@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useMemo } from "react";
 import classNames from "classnames";
+import moment from "moment";
 import styles from "./ToolCallStatus.module.css";
 import type { Job } from "../interfaces";
 import { WrappedIcon } from "../bricks";
@@ -50,7 +51,18 @@ export function ToolCallStatus({
       })}
       onClick={handleClick}
     >
-      <div className={classNames(styles.status)}>
+      <div
+        className={classNames(styles.status)}
+        title={
+          job.startTime
+            ? `${moment(job.startTime * 1000).format("YYYY-MM-DD HH:mm:ss")}${
+                job.endTime
+                  ? ` (${moment.duration(job.endTime * 1000 - job.startTime * 1000).humanize({ ss: -1 })})`
+                  : ""
+              }`
+            : undefined
+        }
+      >
         {job.isError || toolState === "failed" ? (
           <WrappedIcon
             className={styles.icon}

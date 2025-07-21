@@ -17,7 +17,7 @@ ai-portal\.cruise-canvas {
   --cruise-canvas-node-width-medium: 453px;
   --cruise-canvas-node-width-large: 800px;
 
-  --cruise-canvas-primary-color: #2540ff;
+  --cruise-canvas-primary-color: var(--elevo-color-brand);
   --cruise-canvas-input-background: rgba(255, 255, 255, 0.8);
   --cruise-canvas-input-box-shadow:
     0px 1px 0px 0px #ffffff, inset 0px 2px 4px 0px #b3bcf9;
@@ -115,77 +115,4 @@ svg.edges {
 
 .go-back::part(link):active {
   background: rgba(255, 255, 255, 0.3);
-}
-
-.nav-container {
-  position: absolute;
-  left: 0;
-  top: 72px;
-  bottom: 72px;
-  padding: 48px 0;
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-
-.nav {
-  list-style: none;
-  margin: 0;
-  padding: 20px 0;
-  background: rgba(255, 255, 255, 0);
-  backdrop-filter: blur(18px);
-}
-
-.nav-container,
-.nav {
-  border-radius: 0px 8px 8px 0px;
-}
-
-.nav-link {
-  display: flex;
-  align-items: center;
-  width: 154px;
-  height: 36px;
-  border-radius: 0 18px 18px 0;
-  padding: 0 24px 0 26px;
-  font-size: 13px;
-}
-
-.nav-link,
-.nav-link:hover {
-  color: rgba(93, 105, 126, 0.7);
-}
-
-.nav-item:not(:first-child) {
-  margin-top: 12px;
-}
-
-.nav-link-text {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.nav-link:hover,
-.nav-item.active .nav-link {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
-.nav-item.active .nav-link {
-  font-size: 14px;
-  color: #424a58;
-  padding-right: 16px;
-}
-
-@media (max-height: 639px) {
-  .nav-container {
-    padding: 0;
-  }
-}
-
-@media (max-width: 719px) {
-  .nav-container {
-    display: none;
-  }
 }
