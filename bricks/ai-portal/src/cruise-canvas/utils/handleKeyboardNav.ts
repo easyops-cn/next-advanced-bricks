@@ -1,4 +1,4 @@
-import { minBy } from "lodash";
+import { maxBy, minBy } from "lodash";
 import type { GraphNode, NodePosition, NodeRect } from "../interfaces";
 import { IS_MAC } from "../constants";
 
@@ -9,7 +9,7 @@ export type KeyboardAction =
 
 export interface KeyboardActionSwitchActiveNode {
   action: "switch-active-node";
-  node: GraphNode;
+  node: GraphNode | null;
 }
 
 export interface KeyboardActionEnter {
@@ -24,6 +24,19 @@ export interface KeyboardActionScroll {
   node?: undefined;
 }
 
+/**
+ * Keyboard navigation:
+ * - When no node is active, simulate browser page scrolling shortcuts:
+ *   - Space: scroll down (or up with shift) by page
+ *   - Arrow keys: scroll by line in the direction of the arrow
+ *   - Arrow up/down with ⌘ on Mac: scroll to top/bottom of document
+ *   - Home/end: scroll to top/bottom of document
+ * - When a node is active:
+ *   - Arrow keys: switch active node in the direction of the arrow
+ *   - Arrow up/down with ⌘ on Mac: switch active node to the top/bottom most node
+ *   - Escape: clear active node
+ *   - Enter: Enter the detail of the active node
+ */
 export function handleKeyboardNav(
   event: KeyboardEvent,
   {
@@ -34,6 +47,10 @@ export function handleKeyboardNav(
     nodes: GraphNode[];
   }
 ): KeyboardAction | undefined {
+  if (event.ctrlKey || event.altKey) {
+    return;
+  }
+
   const activeNode = activeNodeId
     ? nodes.find((node) => node.id === activeNodeId)
     : null;
@@ -41,11 +58,7 @@ export function handleKeyboardNav(
   const key = event.key;
 
   if (!activeNode) {
-    if (event.ctrlKey || event.altKey) {
-      return;
-    }
-
-    if (key === " " && !event.ctrlKey && !event.metaKey) {
+    if (key === " " && !event.metaKey) {
       return {
         action: "scroll",
         direction: event.shiftKey ? "down" : "up",
@@ -102,7 +115,14 @@ export function handleKeyboardNav(
     return;
   }
 
+  if (event.shiftKey || (!IS_MAC && event.metaKey)) {
+    return;
+  }
+
   const moveOnAxis = (axis: "x" | "y", direction: 1 | -1) => {
+    if (event.metaKey && axis === "x") {
+      return;
+    }
     const oppositeAxis = axis === "x" ? "y" : "x";
     const activePosition = getCenterPosition(activeNode.view!);
     const candidates = nodes.filter((node) => {
@@ -118,7 +138,7 @@ export function handleKeyboardNav(
         diff > Math.abs(activePosition[oppositeAxis] - position[oppositeAxis])
       );
     });
-    return minBy(candidates, (node) => {
+    return (event.metaKey ? maxBy : minBy)(candidates, (node) => {
       const position = getCenterPosition(node.view!);
       return (
         (activePosition[oppositeAxis] - position[oppositeAxis]) ** 2 +
@@ -127,7 +147,7 @@ export function handleKeyboardNav(
     });
   };
 
-  let node: GraphNode | undefined;
+  let node: GraphNode | undefined | null;
   let action: "switch-active-node" | "enter" | undefined;
 
   switch (key) {
@@ -147,13 +167,18 @@ export function handleKeyboardNav(
       action = "switch-active-node";
       node = moveOnAxis("y", 1);
       break;
+    case "Escape":
+      action = "switch-active-node";
+      node = null;
+      break;
     case "Enter":
       action = "enter";
       node = activeNode;
+      break;
   }
 
-  if (action && node) {
-    return { action, node };
+  if (action && node !== undefined) {
+    return { action, node: node! };
   }
 }
 

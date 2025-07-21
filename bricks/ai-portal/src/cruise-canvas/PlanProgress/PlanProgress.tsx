@@ -17,6 +17,7 @@ import { CanvasContext } from "../CanvasContext";
 export interface PlanProgressProps {
   plan?: StepWithState[];
   state?: TaskState;
+  replay?: boolean;
 }
 
 interface PlanProgressStat {
@@ -28,6 +29,7 @@ interface PlanProgressStat {
 export function PlanProgress({
   plan,
   state: taskState,
+  replay,
 }: PlanProgressProps): JSX.Element | null {
   const { onPause, onResume, onCancel } = useContext(CanvasContext);
   const [expanded, setExpanded] = useState(false);
@@ -109,7 +111,7 @@ export function PlanProgress({
   }
 
   const taskDone = DONE_STATES.includes(taskState!);
-  const canIntercept = !taskDone && jobState !== "input-required";
+  const canIntercept = !taskDone && jobState !== "input-required" && !replay;
 
   return (
     <>
