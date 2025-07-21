@@ -13,7 +13,8 @@ export const defaultCardConfig: CardStyleConfig = {
 };
 
 export const getLayoutDefaultCardConfig = (
-  cardType: string
+  cardType: string,
+  customDefaultCardConfigMap?: Record<string, CardStyleConfig>
 ): CardStyleConfig => {
   const moreLinkByCardTypeMap: Record<string, CardStyleConfig> = {
     "notice-card": {
@@ -31,16 +32,17 @@ export const getLayoutDefaultCardConfig = (
       showMoreIcon: true,
       moreIconText: "更多",
     },
-    "abnormalResourceInspectionResults":{
+    abnormalResourceInspectionResults: {
       moreIconLink: "/automatic-inspection/suites",
       showMoreIcon: true,
       moreIconText: "更多",
     },
-    "abnormalSystemInspectionResults":{
+    abnormalSystemInspectionResults: {
       moreIconLink: "/automatic-inspection/system/list",
       showMoreIcon: true,
       moreIconText: "更多",
-    }
+    },
+    ...(customDefaultCardConfigMap ?? {}),
   };
   return {
     ...defaultCardConfig,

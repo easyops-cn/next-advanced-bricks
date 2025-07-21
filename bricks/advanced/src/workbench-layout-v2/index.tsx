@@ -29,7 +29,11 @@ import { SimpleAction } from "@next-bricks/basic/actions";
 import { keyBy, pick } from "lodash";
 import { SizeMe } from "react-sizeme";
 import { getBasePath } from "@next-core/runtime";
-import { WorkbenchComponent, ExtraLayout } from "../interfaces";
+import {
+  WorkbenchComponent,
+  ExtraLayout,
+  CardStyleConfig,
+} from "../interfaces";
 import { DroppableComponentLayoutItem } from "./DroppableComponentLayoutItem";
 import { DraggableComponentMenuItem } from "./DraggableComponentMenuItem";
 import { getLayoutDefaultCardConfig } from "./utils";
@@ -60,6 +64,7 @@ export interface EoWorkbenchLayoutV2Props {
   componentList?: WorkbenchComponent[];
   isEdit?: boolean;
   showSettingButton?: boolean;
+  customDefaultCardConfigMap?: Record<string, CardStyleConfig>;
 }
 
 export interface EoWorkbenchLayoutV2ComponentRef {
@@ -86,6 +91,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
   {
     cardTitle = "卡片列表",
     layouts: layoutsProps,
+    customDefaultCardConfigMap,
     toolbarBricks,
     componentList = [],
     isEdit,
@@ -225,7 +231,10 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     component: WorkbenchComponent,
     currentLayouts?: Layout[]
   ): void => {
-    const defaultCardConfig = getLayoutDefaultCardConfig(component.key);
+    const defaultCardConfig = getLayoutDefaultCardConfig(
+      component.key,
+      customDefaultCardConfigMap
+    );
     const currentLayoutsMap = keyBy(currentLayouts, "i");
     const newLayouts = layouts.map((layout) => {
       return {
@@ -311,11 +320,11 @@ export const EoWorkbenchLayoutComponent = forwardRef<
             }}
             key={layout.i}
             style={{
-              ...(component.style||{}),
+              ...(component.style || {}),
               background,
               border,
               borderRadius,
-              backdropFilter: "blur(10px)"
+              backdropFilter: "blur(10px)",
             }}
           >
             <SizeMe monitorHeight>
@@ -482,6 +491,13 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
 
   @property({ attribute: false })
   accessor componentList: WorkbenchComponent[] | undefined;
+
+  /**
+   * 自定义卡片默认配置, 用于覆盖默认卡片配置
+   */
+  @property({ attribute: false })
+  accessor customDefaultCardConfigMap: Record<string, CardStyleConfig> | undefined;
+
   /**
    * description: 用于设置页面样式和布局的按钮
    */
@@ -557,6 +573,7 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
         componentList={this.componentList}
         showSettingButton={this.showSettingButton}
         isEdit={this.isEdit}
+        customDefaultCardConfigMap={this.customDefaultCardConfigMap}
         onChange={this.#handleChange}
         onSave={this.#handleSave}
         onCancel={this.#handleCancel}
