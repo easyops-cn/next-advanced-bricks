@@ -62,6 +62,13 @@ export const presentationalV3BricksMap = {
       generateBaseStep(event, text);
     },
   },
+  "eo-card-item": {
+    click: (event: CustomEvent<void>) => {
+      const expr = t.callExpression(t.identifier("brick_click"), []);
+      const text = generateCodeText(expr);
+      generateBaseStep(event, text);
+    },
+  },
 };
 
 export const presentationalV3Bricks = Object.keys(presentationalV3BricksMap);
