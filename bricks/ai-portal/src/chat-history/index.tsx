@@ -133,11 +133,11 @@ export function ChatHistoryComponent({
     //   - each month this year
     //   - each year before.
     const now = moment();
-    const startOfDay = now.startOf("day");
+    const startOfDay = now.clone().startOf("day");
     const yesterday = startOfDay.clone().subtract(1, "day");
     const sevenDaysAgo = startOfDay.clone().subtract(7, "days");
     const thirtyDaysAgo = startOfDay.clone().subtract(30, "days");
-    const thisYear = now.startOf("year");
+    const thisYear = now.clone().startOf("year");
 
     const timestamps = {
       startOfDay: +startOfDay / 1000,

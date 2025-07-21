@@ -7,7 +7,11 @@ import { getBasePath, handleHttpError } from "@next-core/runtime";
 import { rootReducer } from "./reducers";
 import type { Job, StepWithState, TaskPatch } from "./interfaces";
 
-export function useTaskDetail(taskId: string | undefined, replay?: number) {
+export function useTaskDetail(
+  taskId: string | undefined,
+  replay?: boolean,
+  replayDelay?: number
+) {
   const [{ task, jobs, error }, dispatch] = useReducer(
     rootReducer,
     null,
@@ -58,7 +62,9 @@ export function useTaskDetail(taskId: string | undefined, replay?: number) {
           }
 
           if (replay && !isInitial) {
-            await new Promise((resolve) => setTimeout(resolve, replay * 1000));
+            await new Promise((resolve) =>
+              setTimeout(resolve, (replayDelay ?? 2) * 1000)
+            );
           }
 
           dispatch({ type: "sse", payload: value, isInitial });

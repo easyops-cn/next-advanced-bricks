@@ -71,7 +71,8 @@ export interface CruiseCanvasProps {
   taskId?: string;
   task?: TaskBaseDetail;
   jobs?: Job[];
-  replay?: number;
+  replay?: boolean;
+  replayDelay?: number;
 }
 
 const CruiseCanvasComponent = forwardRef(LegacyCruiseCanvasComponent);
@@ -94,11 +95,16 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
   @property({ attribute: false })
   accessor jobs: Job[] | undefined;
 
+  @property({ type: Boolean })
+  accessor replay: boolean | undefined;
+
   /**
    * 设置回放时消息之间的时间间隔，单位为秒。
+   *
+   * @default 2
    */
   @property({ type: Number })
-  accessor replay: number | undefined;
+  accessor replayDelay: number | undefined;
 
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
@@ -142,6 +148,7 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         jobs={this.jobs}
         task={this.task}
         replay={this.replay}
+        replayDelay={this.replayDelay}
         onShare={this.#onShare}
         onPause={this.#onPause}
         onResume={this.#onResume}
@@ -186,6 +193,7 @@ function LegacyCruiseCanvasComponent(
     task: propTask,
     jobs: propJobs,
     replay,
+    replayDelay,
     onShare,
     onPause,
     onResume,
@@ -201,7 +209,7 @@ function LegacyCruiseCanvasComponent(
     error,
     humanInputRef,
     resumedRef,
-  } = useTaskDetail(taskId, replay);
+  } = useTaskDetail(taskId, replay, replayDelay);
   const task = taskId ? _task : propTask;
   const jobs = taskId ? _jobs : propJobs;
   const plan = taskId ? _plan : propTask?.plan;
@@ -683,17 +691,21 @@ function LegacyCruiseCanvasComponent(
           setActiveToolCallJobId((node as JobGraphNode).job.id);
         }
       } else if (action === "switch-active-node") {
-        setActiveNodeId(node.id);
-        if (node.type === "job" || node.type === "view") {
-          scrollTo({
-            jobId: node.job.id,
-            behavior: "smooth",
-          });
+        if (node) {
+          setActiveNodeId(node.id);
+          if (node.type === "job" || node.type === "view") {
+            scrollTo({
+              jobId: node.job.id,
+              behavior: "smooth",
+            });
+          } else {
+            scrollTo({
+              nodeId: node.id,
+              behavior: "smooth",
+            });
+          }
         } else {
-          scrollTo({
-            nodeId: node.id,
-            behavior: "smooth",
-          });
+          setActiveNodeId(null);
         }
       }
     };
@@ -799,7 +811,7 @@ function LegacyCruiseCanvasComponent(
             ))}
           </ul>
         </div>
-        <PlanProgress plan={plan} state={taskState} />
+        <PlanProgress plan={plan} state={taskState} replay={replay} />
         <ZoomBar
           scale={transform.k}
           onScaleChange={handleScaleChange}
