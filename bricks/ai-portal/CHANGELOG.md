@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.16.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.16.3...@next-bricks/ai-portal@0.16.4) (2025-07-21)
+
+
+### Bug Fixes
+
+* refine keyboard nav, fix moment manipulation, separate replay and delay props ([7b18cbb](https://github.com/easyops-cn/next-advanced-bricks/commit/7b18cbb357841e51d068c85cdda10006c41567be))
+
+
+
+
+
 ## [0.16.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.16.2...@next-bricks/ai-portal@0.16.3) (2025-07-20)
 
 
