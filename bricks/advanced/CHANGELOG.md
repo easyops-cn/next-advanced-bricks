@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.49.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.48.4...@next-bricks/advanced@0.49.0) (2025-07-21)
+
+
+### Features
+
+* 支持自定义配置卡片配置 ([142cdbe](https://github.com/easyops-cn/next-advanced-bricks/commit/142cdbe99e87ef6e84e8f20f7ed609756aacc915))
+
+
+
+
+
 ## [0.48.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.48.3...@next-bricks/advanced@0.48.4) (2025-07-16)
 
 
