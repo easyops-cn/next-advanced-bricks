@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.18.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.17.0...@next-bricks/ai-portal@0.18.0) (2025-07-22)
+
+
+### Features
+
+* support chat box in canvas ([e050635](https://github.com/easyops-cn/next-advanced-bricks/commit/e0506351b3e236584ff46d09f3ec4a9c151da498))
+
+
+
+
+
 # [0.17.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.16.4...@next-bricks/ai-portal@0.17.0) (2025-07-22)
 
 
