@@ -140,6 +140,8 @@ export interface TaskPatch extends Omit<Partial<Task>, "jobs"> {
   jobs?: JobPatch[];
 
   error?: string;
+
+  time?: number;
 }
 
 export interface JobPatch extends Partial<Job> {

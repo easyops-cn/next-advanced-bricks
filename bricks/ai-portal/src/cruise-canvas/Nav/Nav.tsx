@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import classNames from "classnames";
 import styles from "./Nav.module.css";
 import type {
@@ -72,7 +72,7 @@ export function Nav({
 
       // If the next step state is done, mark the inserted plan steps as skipped
       const nextStep = mergedNav[cursorIndex];
-      const skipped = DONE_STATES.includes(nextStep?.state || "working");
+      const skipped = DONE_STATES.includes(nextStep?.state || "unknown");
 
       mergedNav.splice(
         cursorIndex,
@@ -94,9 +94,21 @@ export function Nav({
     return mergedNav;
   }, [nav, plan, jobs, jobLevels]);
 
+  const ref = useRef<HTMLUListElement>(null);
+  useEffect(() => {
+    const nav = ref.current;
+    if (!nav || !currentNavId) {
+      return;
+    }
+    nav.querySelector(`[data-job-id="${currentNavId}"]`)?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
+  }, [currentNavId]);
+
   return (
     <div className={styles.container}>
-      <ul className={styles.nav}>
+      <ul className={styles.nav} ref={ref}>
         {mergedNav?.map((item) => (
           <NavItem
             key={item.id}
@@ -142,6 +154,7 @@ function NavItem({
         className={classNames(styles.link, className, {
           [styles.disabled]: disabled,
         })}
+        data-job-id={id}
         title={title}
         onClick={() => {
           if (!disabled) {

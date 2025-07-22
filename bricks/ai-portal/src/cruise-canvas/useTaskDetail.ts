@@ -6,6 +6,8 @@ import { getBasePath, handleHttpError } from "@next-core/runtime";
 import { rootReducer } from "./reducers";
 import type { TaskPatch } from "./interfaces";
 
+const MINIMAL_DELAY = 500;
+
 export function useTaskDetail(
   taskId: string | undefined,
   replay?: boolean,
@@ -41,13 +43,24 @@ export function useTaskDetail(
     replayRef.current = true;
 
     let isInitial = true;
+    let previousTime: number | undefined;
     for (const value of replayListRef.current!) {
-      if (replayRef.current && !isInitial) {
-        await new Promise<void>((resolve) => {
-          replayResolveRef.current = resolve;
-          setTimeout(resolve, replayDelayRef.current);
-        });
-        replayResolveRef.current = null;
+      if (replayRef.current) {
+        let delay = replayDelayRef.current;
+        if (value.time && previousTime) {
+          delay = Math.min(
+            Math.max(MINIMAL_DELAY, (value.time - previousTime) * 1000),
+            delay
+          );
+        }
+        previousTime = value.time;
+        if (!isInitial) {
+          await new Promise<void>((resolve) => {
+            replayResolveRef.current = resolve;
+            setTimeout(resolve, delay);
+          });
+          replayResolveRef.current = null;
+        }
       }
 
       dispatch({ type: "sse", payload: value, isInitial });
@@ -86,22 +99,33 @@ export function useTaskDetail(
         );
         const stream = await request;
         let isInitial = true;
+        let previousTime: number | undefined;
         for await (const value of stream) {
           if (ignore) {
             requesting = false;
             return;
           }
 
-          replayListRef.current.push(value);
+          if (replayRef.current) {
+            let delay = replayDelayRef.current;
+            if (value.time && previousTime) {
+              delay = Math.min(
+                Math.max(MINIMAL_DELAY, (value.time - previousTime) * 1000),
+                delay
+              );
+            }
+            previousTime = value.time;
 
-          if (replayRef.current && !isInitial) {
-            await new Promise<void>((resolve) => {
-              replayResolveRef.current = resolve;
-              setTimeout(resolve, replayDelayRef.current);
-            });
-            replayResolveRef.current = null;
+            if (!isInitial) {
+              await new Promise<void>((resolve) => {
+                replayResolveRef.current = resolve;
+                setTimeout(resolve, delay);
+              });
+              replayResolveRef.current = null;
+            }
           }
 
+          replayListRef.current.push(value);
           dispatch({ type: "sse", payload: value, isInitial });
           isInitial = false;
         }

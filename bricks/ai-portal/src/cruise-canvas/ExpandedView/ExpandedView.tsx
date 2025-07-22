@@ -82,9 +82,9 @@ export function ExpandedView({ views }: ExpandedViewProps) {
           return;
         }
         await rootRef.current?.render(convertedView ?? []);
-      } catch {
+      } catch (error) {
         // eslint-disable-next-line no-console
-        console.error("Failed to render view:", view);
+        console.error("Failed to render view:", error);
       }
       if (!ignore) {
         setLoading(false);
