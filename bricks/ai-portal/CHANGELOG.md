@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.17.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.16.4...@next-bricks/ai-portal@0.17.0) (2025-07-22)
+
+
+### Features
+
+* refine job nav ([9b190d7](https://github.com/easyops-cn/next-advanced-bricks/commit/9b190d7c2bfba55e35573c9d19a7b13fd9840817))
+
+
+
+
+
 ## [0.16.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.16.3...@next-bricks/ai-portal@0.16.4) (2025-07-21)
 
 
