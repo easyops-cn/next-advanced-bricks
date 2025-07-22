@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.18.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.18.0...@next-bricks/ai-portal@0.18.1) (2025-07-22)
+
+
+### Bug Fixes
+
+* auto scroll to last active nav item ([e10705c](https://github.com/easyops-cn/next-advanced-bricks/commit/e10705c2e596ed5b00f3ade82daa1b77a448d199))
+
+
+
+
+
 # [0.18.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.17.0...@next-bricks/ai-portal@0.18.0) (2025-07-22)
 
 
