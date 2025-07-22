@@ -6,6 +6,12 @@ import {
   generateBrickInputStep,
 } from "../utils";
 
+interface TreeData {
+  key: string;
+  title: string;
+  children?: TreeData[];
+}
+
 export const presentationalBricksMap = {
   "presentational-bricks.brick-general-search": {
     "query.change": (event: CustomEvent<string>) =>
@@ -58,11 +64,16 @@ export const presentationalBricksMap = {
             );
           }
         });
-        const text = generateCodeText(expr!);
-        generateBrickInputStep(event, text, {
-          brickEvtName: "select.update",
-        });
+      } else {
+        expr = t.callExpression(t.identifier("brick_click"), [
+          t.stringLiteral("clearSelect"),
+        ]);
       }
+
+      const text = generateCodeText(expr!);
+      generateBrickInputStep(event, text, {
+        brickEvtName: "select.update",
+      });
     },
     "row.expand": (event: CustomEvent<Record<string, any>>) => {
       const columns = (event.target as any).columns;
@@ -73,6 +84,74 @@ export const presentationalBricksMap = {
       ]);
       const text = generateCodeText(expr);
       generateBaseStep(event, text);
+    },
+  },
+  "presentational-bricks.card-item": {
+    "presentational-bricks.card-item.click": (
+      event: CustomEvent<Record<string, any>>
+    ) => {
+      const expr = t.callExpression(t.identifier("brick_click"), []);
+      const text = generateCodeText(expr);
+      generateBaseStep(event, text);
+    },
+  },
+  "presentational-bricks.brick-tree": {
+    "tree.select": (event: CustomEvent<string[]>) => {
+      const treeData = (event.target as any).dataSource;
+
+      const currentTreeNode = matchedCurrentTreeNode(treeData, event.detail[0]);
+      const expr = t.callExpression(t.identifier("brick_click"), [
+        t.stringLiteral("select"),
+        t.stringLiteral(currentTreeNode!.title),
+      ]);
+      const text = generateCodeText(expr);
+      generateBaseStep(event, text);
+    },
+    "tree.search": (event: CustomEvent<string>) => {
+      const expr = t.callExpression(t.identifier("brick_type"), [
+        t.stringLiteral(event.detail),
+      ]);
+
+      const text = generateCodeText(expr);
+      generateBrickInputStep(event, text, {
+        brickEvtName: "tree.search",
+      });
+    },
+    "tree.check": (event: CustomEvent<string[]>) => {
+      const treeData = (event.target as any).dataSource;
+
+      const arr: string[] = [];
+      event.detail?.forEach((key) => {
+        const currentTreeNode = matchedCurrentTreeNode(treeData, key);
+        arr.push(currentTreeNode!.title);
+      });
+
+      const expr = t.callExpression(t.identifier("brick_click"), [
+        t.stringLiteral("multipleCheck"),
+        t.arrayExpression(arr.map((v) => t.stringLiteral(v))),
+      ]);
+
+      const text = generateCodeText(expr);
+      generateBaseStep(event, text);
+    },
+    "tree.expand": (event: CustomEvent<string[]>) => {
+      const treeData = (event.target as any).dataSource;
+
+      const arr: string[] = [];
+      event.detail?.forEach((key) => {
+        const currentTreeNode = matchedCurrentTreeNode(treeData, key);
+        arr.push(currentTreeNode!.title);
+      });
+
+      const expr = t.callExpression(t.identifier("brick_click"), [
+        t.stringLiteral("multipleExpand"),
+        t.arrayExpression(arr.map((v) => t.stringLiteral(v))),
+      ]);
+
+      const text = generateCodeText(expr);
+      generateBrickInputStep(event, text, {
+        brickEvtName: "tree.expand",
+      });
     },
   },
 };
@@ -99,4 +178,23 @@ function handleConfirmClick(event: CustomEvent<null>, type: string): void {
   ]);
   const text = generateCodeText(expr);
   generateBaseStep(event, text);
+}
+
+function matchedCurrentTreeNode(
+  treeData: TreeData[] = [],
+  key: string
+): TreeData | null {
+  for (const item of treeData) {
+    if (item.key === key) {
+      return item;
+    }
+
+    if (item.children) {
+      const result = matchedCurrentTreeNode(item.children, key);
+      if (result) {
+        return result;
+      }
+    }
+  }
+  return null;
 }
