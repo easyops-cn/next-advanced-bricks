@@ -133,6 +133,7 @@ export interface Job {
 
   componentGraph?: ComponentGraph;
   generatedView?: ViewWithInfo;
+  level?: number;
 }
 
 export interface TaskPatch extends Omit<Partial<Task>, "jobs"> {
@@ -145,7 +146,7 @@ export interface JobPatch extends Partial<Job> {
   id: string;
 }
 
-export type JobState =
+export type BaseState =
   | "submitted"
   | "working"
   | "input-required"
@@ -153,6 +154,8 @@ export type JobState =
   | "canceled"
   | "failed"
   | "unknown";
+
+export type JobState = BaseState | "skipped";
 
 export type TaskState = JobState | "paused" | "confirming-plan";
 
@@ -224,6 +227,8 @@ export interface ComponentGraphEdge extends GraphEdge {
 export interface GraphNavItem {
   id: string;
   title: string;
+  state: JobState;
+  level: number;
 }
 
 export interface GraphGeneratedView {

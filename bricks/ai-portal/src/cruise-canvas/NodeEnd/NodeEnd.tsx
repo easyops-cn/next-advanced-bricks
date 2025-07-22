@@ -1,26 +1,21 @@
 // istanbul ignore file: experimental
 import React, { useContext } from "react";
-import classNames from "classnames";
 import styles from "./NodeEnd.module.css";
 import { K, t } from "../i18n";
 import { CanvasContext } from "../CanvasContext";
+import { WrappedIcon } from "../bricks";
 
-export interface NodeEndProps {
-  active?: boolean;
-}
-
-export function NodeEnd({ active }: NodeEndProps): JSX.Element {
+export function NodeEnd(): JSX.Element {
   const { onShare } = useContext(CanvasContext);
 
   return (
-    <div
-      className={classNames(styles["node-end"], {
-        [styles.active]: active,
-      })}
-    >
-      <div className={styles.icon} />
-      <div className={styles.title}>{t(K.TASK_COMPLETED)}</div>
-      <div className={styles.description}>{t(K.PLAN_COMPLETED)}</div>
+    <div className={styles["node-end"]}>
+      <div className={styles.content}>
+        <span className={styles.icon}>
+          <WrappedIcon lib="fa" prefix="fas" icon="check" />
+        </span>
+        <span className={styles.text}>{t(K.TASK_COMPLETED)}</span>
+      </div>
       <button className={styles.button} onClick={onShare}>
         {t(K.SHARE)}
       </button>

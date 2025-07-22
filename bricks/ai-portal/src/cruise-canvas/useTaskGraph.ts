@@ -38,6 +38,7 @@ export function useTaskGraph(
     const upstreamMap = new Map<string, string[]>();
     const rootDownstream: string[] = [];
     const rootChildren: string[] = [];
+    const jobLevels = new Map<string, number>();
 
     for (const job of fixedJobs) {
       if (job.parent) {
@@ -72,10 +73,11 @@ export function useTaskGraph(
       }
     }
 
-    const alignDownstreamMap = (children: string[]) => {
-      for (const rootJobId of children) {
-        const subChildren = childrenMap.get(rootJobId);
-        const downstream = downstreamMap.get(rootJobId);
+    const alignDownstreamMap = (children: string[], level: number) => {
+      for (const jobId of children) {
+        jobLevels.set(jobId, level);
+        const subChildren = childrenMap.get(jobId);
+        const downstream = downstreamMap.get(jobId);
 
         if (subChildren) {
           const firstLevelChildren = subChildren.filter((child) => {
@@ -89,18 +91,18 @@ export function useTaskGraph(
               })
             : [];
 
-          downstreamMap.set(rootJobId, firstLevelChildren);
+          downstreamMap.set(jobId, firstLevelChildren);
 
           for (const child of lastLevelChildren) {
             downstreamMap.set(child, [...downstream!]);
           }
 
-          alignDownstreamMap(subChildren);
+          alignDownstreamMap(subChildren, level + 1);
         }
       }
     };
 
-    alignDownstreamMap(rootChildren);
+    alignDownstreamMap(rootChildren, 0);
 
     // Setup upstreamMap
     for (const [upstream, downstream] of downstreamMap) {
@@ -157,11 +159,15 @@ export function useTaskGraph(
         nav.push({
           id: job.id,
           title: job.instruction,
+          state: job.state,
+          level: jobLevels.get(job.id)!,
         });
       } else if (job.toolCall?.annotations?.title) {
         nav.push({
           id: job.id,
           title: job.toolCall.annotations.title,
+          state: job.state,
+          level: jobLevels.get(job.id)!,
         });
       }
 
@@ -220,6 +226,7 @@ export function useTaskGraph(
       edges,
       nav,
       views,
+      jobLevels,
     };
   }, [task, jobs]);
 }

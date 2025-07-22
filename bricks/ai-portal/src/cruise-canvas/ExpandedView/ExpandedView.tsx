@@ -124,21 +124,19 @@ export function ExpandedView({ views }: ExpandedViewProps) {
   }, [handleClose]);
 
   return (
-    <>
-      <div className={styles["expanded-view"]} tabIndex={-1} ref={viewportRef}>
-        {loading && (
-          <div className={styles.loading}>
-            <WrappedIcon lib="antd" icon="loading-3-quarters" spinning />
-          </div>
-        )}
-        <div
-          className={classNames(styles.body, {
-            [styles.small]: sizeSmall,
-          })}
-          ref={containerRef}
-          data-root-id={rootId}
-        />
-      </div>
+    <div className={styles["expanded-view"]} tabIndex={-1} ref={viewportRef}>
+      {loading && (
+        <div className={styles.loading}>
+          <WrappedIcon lib="antd" icon="loading-3-quarters" spinning />
+        </div>
+      )}
+      <div
+        className={classNames(styles.body, {
+          [styles.small]: sizeSmall,
+        })}
+        ref={containerRef}
+        data-root-id={rootId}
+      />
       <ul className={styles.nav}>
         {views.map((view) => (
           <li key={view.id}>
@@ -155,6 +153,6 @@ export function ExpandedView({ views }: ExpandedViewProps) {
       <button className={styles.close} onClick={handleClose}>
         <WrappedIcon lib="antd" icon="close" />
       </button>
-    </>
+    </div>
   );
 }

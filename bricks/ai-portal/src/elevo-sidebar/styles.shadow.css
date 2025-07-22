@@ -163,7 +163,6 @@
 .mask {
   position: fixed;
   inset: 0;
-  background: var(--antd-modal-mask-bg);
 }
 
 .history {
@@ -238,7 +237,7 @@
     width: 8px;
     height: 8px;
     border-radius: 8px;
-    background: #2540ff;
+    background: var(--elevo-color-brand);
     margin: 0 7px;
   }
 

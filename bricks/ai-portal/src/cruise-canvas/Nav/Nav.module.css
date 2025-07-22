@@ -1,0 +1,102 @@
+.container {
+  position: absolute;
+  right: 0;
+  top: 72px;
+  bottom: 72px;
+  padding: 48px 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.nav {
+  list-style: none;
+  margin: 0;
+  padding: 20px 0;
+  background: rgba(255, 255, 255, 0);
+  backdrop-filter: blur(18px);
+}
+
+.container,
+.nav {
+  border-radius: 0px 8px 8px 0px;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  width: 170px;
+  height: 36px;
+  border-radius: 18px 0 0 18px;
+  padding: 0 24px 0 16px;
+  font-size: 13px;
+}
+
+.link,
+.link:hover {
+  color: rgba(93, 105, 126, 0.7);
+}
+
+.link.disabled {
+  cursor: default;
+}
+
+.item:not(:first-child) {
+  margin-top: 12px;
+}
+
+.icon {
+  margin-right: 12px;
+  font-size: 14px;
+  color: #abaab7;
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link:not(.disabled):hover,
+.item.active .link {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.item.active .link {
+  font-size: 14px;
+  color: #424a58;
+  padding-right: 16px;
+}
+
+.completed .icon {
+  color: #0fbe59;
+}
+
+.failed .icon {
+  color: #f24c25;
+}
+
+.working .icon {
+  color: var(--elevo-color-brand);
+}
+
+.input-required .icon {
+  color: #12aacc;
+}
+
+.canceled .icon {
+  color: #fcaa07;
+}
+
+@media (max-height: 639px) {
+  .container {
+    padding: 0;
+  }
+}
+
+@media (max-width: 719px) {
+  .container {
+    display: none;
+  }
+}
