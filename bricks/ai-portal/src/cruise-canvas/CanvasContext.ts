@@ -15,6 +15,7 @@ export interface CanvasContextValue {
   setHoverOnScrollableContent: Dispatch<React.SetStateAction<boolean>>;
   activeExpandedViewJobId: string | null;
   setActiveExpandedViewJobId: Dispatch<React.SetStateAction<string | null>>;
+  supports?: Record<string, boolean>;
 }
 
 export const CanvasContext = createContext<CanvasContextValue>({

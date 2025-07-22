@@ -62,6 +62,7 @@ import { handleKeyboardNav } from "./utils/handleKeyboardNav.js";
 import { ExpandedView } from "./ExpandedView/ExpandedView.js";
 import { Nav } from "./Nav/Nav.js";
 import { ReplayToolbar } from "./ReplayToolbar/ReplayToolbar.js";
+import { ChatBox } from "./ChatBox/ChatBox.js";
 
 initializeI18n(NS, locales);
 
@@ -75,6 +76,7 @@ export interface CruiseCanvasProps {
   jobs?: Job[];
   replay?: boolean;
   replayDelay?: number;
+  supports?: Record<string, boolean>;
 }
 
 const CruiseCanvasComponent = forwardRef(LegacyCruiseCanvasComponent);
@@ -108,6 +110,9 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
    */
   @property({ type: Number })
   accessor replayDelay: number | undefined;
+
+  @property({ attribute: false })
+  accessor supports: Record<string, boolean> | undefined;
 
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
@@ -152,6 +157,7 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         task={this.task}
         replay={this.replay}
         replayDelay={this.replayDelay}
+        supports={this.supports}
         onShare={this.#onShare}
         onPause={this.#onPause}
         onResume={this.#onResume}
@@ -197,6 +203,7 @@ function LegacyCruiseCanvasComponent(
     jobs: propJobs,
     replay,
     replayDelay,
+    supports,
     onShare,
     onPause,
     onResume,
@@ -615,6 +622,7 @@ function LegacyCruiseCanvasComponent(
       setHoverOnScrollableContent,
       activeExpandedViewJobId,
       setActiveExpandedViewJobId,
+      supports,
     }),
     [
       activeToolCallJobId,
@@ -626,6 +634,7 @@ function LegacyCruiseCanvasComponent(
       onPause,
       onResume,
       onCancel,
+      supports,
     ]
   );
 
@@ -813,7 +822,7 @@ function LegacyCruiseCanvasComponent(
           onScaleChange={handleScaleChange}
           onReCenter={handleReCenter}
         />
-        {replay && (
+        {replay ? (
           <ReplayToolbar
             taskDone={taskDone}
             skipToResults={skipToResults}
@@ -822,7 +831,9 @@ function LegacyCruiseCanvasComponent(
               setCentered(false);
             }}
           />
-        )}
+        ) : supports?.chat ? (
+          <ChatBox taskState={taskState} taskDone={taskDone} />
+        ) : null}
       </div>
       {activeToolCallJob && <ToolCallDetail job={activeToolCallJob} />}
       {activeExpandedViewJobId && <ExpandedView views={views!} />}
