@@ -14,16 +14,15 @@ export function handleKeyboard(
   {
     cells,
     activeTarget,
-    lockedContainerIds,
+    lockedIds,
   }: {
     cells: Cell[];
     activeTarget: ActiveTarget | null | undefined;
-    lockedContainerIds?: string[];
+    lockedIds?: string[];
   }
 ): KeyboardAction | undefined {
   const activeCells = cells.filter(
-    (cell) =>
-      targetIsActive(cell, activeTarget) && !isLocked(cell, lockedContainerIds)
+    (cell) => targetIsActive(cell, activeTarget) && !isLocked(cell, lockedIds)
   );
 
   if (activeCells.length === 0) {

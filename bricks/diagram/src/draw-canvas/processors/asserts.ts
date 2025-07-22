@@ -74,11 +74,11 @@ export function isContainerDecoratorCell(
   return cell.type === "decorator" && cell.decorator === "container";
 }
 
-// export function isRectDecoratorCell(
-//   cell: Cell | MoveCellPayload
-// ): cell is DecoratorCell {
-//   return cell.type === "decorator" && cell.decorator === "rect";
-// }
+export function isGroupDecoratorCell(
+  cell: InitialCell | MoveCellPayload
+): cell is DecoratorCell {
+  return cell.type === "decorator" && cell.decorator === "group";
+}
 
 export function isLineDecoratorCell(
   cell: Cell | LineDecoratorCell | MoveCellPayload
@@ -91,11 +91,11 @@ export function isNoManualLayout(layout: LayoutType) {
 }
 
 export function isNoSize(view: InitialNodeView) {
-  return !(view.width && view.height);
+  return !(view?.width && view?.height);
 }
 
 export function isNoPoint(view: InitialNodeView) {
-  return isNil(view.x) || isNil(view.y);
+  return isNil(view?.x) || isNil(view?.y);
 }
 
 export function isStraightType(type: LineType | undefined) {

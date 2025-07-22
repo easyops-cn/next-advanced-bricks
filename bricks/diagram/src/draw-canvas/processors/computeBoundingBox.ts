@@ -1,6 +1,11 @@
+import { get } from "lodash";
 import { BaseNodeCell } from "../interfaces";
+import { CONTAINERGAP } from "../constants";
 
-export function computeContainerRect(cells: BaseNodeCell[]) {
+export function computeBoundingBox(
+  cells: BaseNodeCell[],
+  options?: { padding: number }
+) {
   let minX = Infinity,
     minY = Infinity;
   let maxX = -Infinity,
@@ -13,7 +18,7 @@ export function computeContainerRect(cells: BaseNodeCell[]) {
     if (y + height > maxY) maxY = y + height;
   });
   if (![minX, maxX, minY, maxY].some((n) => isFinite(n))) return {};
-  const padding = 40;
+  const padding = get(options, "padding", CONTAINERGAP);
   const width = maxX - minX + padding * 2;
   const height = maxY - minY + padding * 2;
   return {

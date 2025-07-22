@@ -49,6 +49,7 @@ export interface BaseNodeCell extends BaseCell {
   type: "node";
   id: NodeId;
   containerId?: NodeId;
+  groupId?: NodeId;
   view: NodeView;
   [SYMBOL_FOR_SIZE_INITIALIZED]?: boolean;
   [SYMBOL_FOR_LAYOUT_INITIALIZED]?: boolean;
@@ -61,13 +62,21 @@ export interface EdgeCell extends BaseCell {
   view?: EdgeView;
 }
 
-export type DecoratorType = "text" | "area" | "container" | "rect" | "line";
+export type DecoratorType =
+  | "text"
+  | "area"
+  | "container"
+  | "rect"
+  | "line"
+  | "group";
 export type Direction = "top" | "right" | "bottom" | "left";
 
 export interface DecoratorCell extends BaseCell {
   type: "decorator";
   decorator: DecoratorType;
   id: NodeId;
+  containerId?: NodeId;
+  groupId?: NodeId;
   view: DecoratorView;
 }
 
@@ -98,6 +107,8 @@ export interface DecoratorView extends NodeView {
   /** 设置容器层级（从小到大排序） */
   level?: number;
   vertices?: NodePosition[] | null;
+  /** 分组的+号功能 */
+  usePlus?: boolean;
 }
 
 export interface DecoratorLineView extends NodeView, BaseEdgeLineConf {
@@ -280,6 +291,7 @@ export interface BasicDecoratorProps {
   onSwitchActiveTarget?(activeTarget: ActiveTarget | null): void;
   onDecoratorTextEditing?(detail: { id: string; editing: boolean }): void;
   onDecoratorTextChange?(detail: DecoratorTextChangeDetail): void;
+  onDecoratorGroupPlusClick?(detail: DecoratorCell): void;
 }
 
 export interface CellContextMenuDetail extends CellClickDetail {

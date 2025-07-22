@@ -9,18 +9,20 @@ import type {
 import {
   isContainerDecoratorCell,
   isEdgeCell,
+  isGroupDecoratorCell,
   isNoPoint,
   isNoSize,
 } from "./asserts";
 import { dagreLayout } from "../../shared/canvas/dagreLayout";
-import { computeContainerRect } from "./computeContainerRect";
+import { computeBoundingBox } from "./computeBoundingBox";
 import {
   CONTAINERGAP,
   DEFAULT_AREA_HEIGHT,
   DEFAULT_AREA_WIDTH,
 } from "../constants";
 import { staggeredLayout } from "./staggeredLayout";
-interface LayoutOptions {
+import { GROUPPADDING, initaliGroupLayout } from "./initaliGroupLayout";
+export interface LayoutOptions {
   nodeLayout?: "staggered" | "dagre";
 }
 
@@ -32,25 +34,42 @@ export function initaliContainerLayout(
   cells: InitialCell[],
   options: LayoutOptions = {}
 ) {
+  const { groupMap } = initaliGroupLayout(cells, options);
   const nodeCells = cells.filter(
     (c) => c.type === "node" && !isNil(c.containerId)
   ) as NodeCell[];
-  if (!nodeCells.length) return;
+  const groupCells = cells.filter(
+    (c) =>
+      c.type === "decorator" && c.decorator === "group" && !isNil(c.containerId)
+  ) as DecoratorCell[];
+  if (!nodeCells.length && !groupCells.length) return;
 
   const { nodeLayout = "dagre" } = options;
 
   const edgeCells = cells.filter(isEdgeCell);
-  const decoratorCells = cells.filter(
-    isContainerDecoratorCell
+  const containerCells = cells.filter((c) =>
+    isContainerDecoratorCell(c)
   ) as DecoratorCell[];
+
+  // 预处理 decoratorCells，以便后续查找更高效
+  const containerCellMap = new Map<string, DecoratorCell>();
+  let containerGap = 0,
+    maxContainerWidth = 0;
+
+  containerCells.forEach((cell) => {
+    containerCellMap.set(cell.id, cell);
+  });
+
   const containerGroup: Record<string, Omit<Cell, "DecoratorCell">[]> = {};
   const groupNameMap: Record<string, Set<string>> = {};
 
-  // 分组节点
-  forEach(groupBy(nodeCells, "containerId"), (groupedNodes, containerId) => {
-    containerGroup[containerId] = groupedNodes;
-    groupNameMap[containerId] = new Set(groupedNodes.map((node) => node.id));
-  });
+  forEach(
+    groupBy([...nodeCells, ...groupCells], "containerId"),
+    (groupedNodes, containerId) => {
+      containerGroup[containerId] = groupedNodes;
+      groupNameMap[containerId] = new Set(groupedNodes.map((node) => node.id));
+    }
+  );
 
   // 把边加入所属容器组
   edgeCells.forEach((edge) => {
@@ -62,53 +81,95 @@ export function initaliContainerLayout(
     }
   });
 
-  let containerGap = 0,
-    maxContainerWidth = 0,
-    nodeViews: NodeCell[] = [];
   const uniformWidthContainers: DecoratorCell[] = [];
+
   // 排序容器层级，level越大越后面；没有大小都排后面
   const sortedContainerIds = orderBy(
-    decoratorCells.filter((cell) => containerGroup[cell.id]),
+    containerCells.filter((cell) => containerGroup[cell.id]),
     [(o) => (isNoSize(o.view) ? 1 : 0), (o) => get(o, "view.level", 1)],
     ["asc", "asc"]
   ).map((cell) => cell.id);
+  const { updatedGap, updatedMaxWidth } = processSortedContainers(
+    sortedContainerIds,
+    containerGroup,
+    containerCellMap,
+    nodeLayout,
+    containerGap,
+    uniformWidthContainers,
+    maxContainerWidth,
+    {
+      groupCells,
+      groupMap,
+    }
+  );
+
+  containerGap = updatedGap;
+  maxContainerWidth = updatedMaxWidth;
+
+  // 统一容器宽度
+  uniformWidthContainers.forEach((container) => {
+    container.view.width = Math.max(DEFAULT_AREA_WIDTH, maxContainerWidth);
+  });
+}
+
+function processSortedContainers(
+  sortedContainerIds: string[],
+  containerGroup: Record<string, Omit<Cell, "DecoratorCell">[]>,
+  containerCellMap: Map<string, DecoratorCell>,
+  nodeLayout: string,
+  containerGap: number,
+  uniformWidthContainers: DecoratorCell[],
+  maxContainerWidth: number,
+  decoratorGroup: {
+    groupCells: DecoratorCell[];
+    groupMap: Record<string, Omit<Cell, "DecoratorCell">[]>;
+  }
+) {
+  let currentContainerGap = containerGap;
+  let currentMaxContainerWidth = maxContainerWidth;
+
   sortedContainerIds.forEach((groupId) => {
-    const containerCell = decoratorCells.find((d) => d.id === groupId)!;
+    const containerCell = containerCellMap.get(groupId)!;
     const groupedNodes = containerGroup[groupId] as Cell[];
 
     const isVertical = ["top", "bottom"].includes(
       get(containerCell, "view.direction", "top")
     );
-    if (isVertical) containerGap += CONTAINERGAP;
+    if (isVertical) currentContainerGap += CONTAINERGAP;
     const nodeCells = groupedNodes.filter(
       (cell) => cell.type === "node"
     ) as NodeCell[];
+    const decoratorGroups = get(decoratorGroup, "groupCells", []).filter(
+      (g) => g.containerId === groupId
+    ) as DecoratorCell[];
+
+    let nodeViews: (NodeCell | DecoratorCell)[] = [];
     if (nodeLayout === "dagre") {
-      const { getNodeView } = dagreLayout({ cells: groupedNodes });
-      nodeViews = nodeCells.map((node: NodeCell) => {
-        if (isNoPoint(node.view)) {
-          const view = getNodeView(node.id);
-          node.view = {
-            ...node.view,
+      const { getNodeView } = dagreLayout({
+        cells: [...groupedNodes, ...decoratorGroups],
+      });
+      nodeViews = [...nodeCells, ...decoratorGroups].map((cell) => {
+        if (isNoPoint(cell.view) || isGroupDecoratorCell(cell)) {
+          const view = getNodeView(cell.id);
+          cell.view = {
+            ...cell.view,
             x: view.x,
-            y: view.y + containerGap,
+            y: view.y + currentContainerGap,
             width: view.width,
             height: view.height,
           };
         }
-        return node;
+        return cell;
       });
     } else if (nodeLayout === "staggered") {
-      nodeViews = staggeredLayout(nodeCells, {
-        offsetY: containerGap,
+      nodeViews = staggeredLayout([...nodeCells, ...decoratorGroups], {
+        offsetY: currentContainerGap,
       });
     }
-
     let containerHeight = 0,
       containerWidth = 0;
-
     if (isNoSize(containerCell.view)) {
-      const containerRect = computeContainerRect(nodeViews as BaseNodeCell[]);
+      const containerRect = computeBoundingBox(nodeViews as BaseNodeCell[]);
       containerHeight = get(containerRect, "height", DEFAULT_AREA_HEIGHT);
       containerWidth = get(containerRect, "width", DEFAULT_AREA_WIDTH);
       containerCell.view = { ...containerCell.view, ...containerRect };
@@ -117,12 +178,48 @@ export function initaliContainerLayout(
       containerHeight = get(containerCell, "view.height");
       containerWidth = get(containerCell, "view.width");
     }
-    maxContainerWidth = Math.max(containerWidth, maxContainerWidth);
-    containerGap += containerHeight + 50;
+
+    /**
+     * 计算好容器位置在重新设置组内节点x,y
+     */
+    if (decoratorGroups.length > 0) {
+      const groupMap = get(decoratorGroup, "groupMap", {});
+      decoratorGroups.forEach((group) => {
+        const groupId = group.id;
+        const { x: groupX, y: groupY } = group.view;
+        const nodeCells: NodeCell[] = get(groupMap, groupId, []);
+
+        if (!nodeCells.length) return;
+
+        // 记录第一个节点的基准坐标
+        const baseX = nodeCells[0].view.x;
+        const baseY = nodeCells[0].view.y;
+
+        nodeCells.forEach((node: NodeCell) => {
+          node.view = {
+            ...node.view,
+            x: groupX + (node.view?.x - baseX),
+            y: groupY + (node.view?.y - baseY),
+          };
+        });
+
+        group.view = {
+          ...group.view,
+          x: groupX - GROUPPADDING,
+          y: groupY - GROUPPADDING,
+        };
+      });
+    }
+
+    currentMaxContainerWidth = Math.max(
+      containerWidth,
+      currentMaxContainerWidth
+    );
+    currentContainerGap += containerHeight + 50;
   });
 
-  // 统一容器宽度
-  uniformWidthContainers.forEach((container) => {
-    container.view.width = Math.max(DEFAULT_AREA_WIDTH, maxContainerWidth);
-  });
+  return {
+    updatedGap: currentContainerGap,
+    updatedMaxWidth: currentMaxContainerWidth,
+  };
 }

@@ -1,4 +1,4 @@
-import { pick } from "lodash";
+import { get, pick } from "lodash";
 import dagre from "@dagrejs/dagre";
 import { extractPartialRectTuple } from "../../diagram/processors/extractPartialRectTuple";
 import type {
@@ -10,6 +10,7 @@ import type {
 } from "../../draw-canvas/interfaces";
 import {
   isEdgeCell,
+  isGroupDecoratorCell,
   isNodeCell,
   isNodeOrAreaDecoratorCell,
 } from "../../draw-canvas/processors/asserts";
@@ -64,12 +65,13 @@ export function dagreLayout({
   for (const cell of cells) {
     if (
       (allowEdgeToArea && isNodeOrAreaDecoratorCell(cell)) ||
-      isNodeCell(cell)
+      isNodeCell(cell) ||
+      isGroupDecoratorCell(cell)
     ) {
       graph.setNode(cell.id, {
         id: cell.id,
-        width: cell.view.width + nodePaddings[1] + nodePaddings[3],
-        height: cell.view.height + nodePaddings[0] + nodePaddings[2],
+        width: get(cell, "view.width", 0) + nodePaddings[1] + nodePaddings[3],
+        height: get(cell, "view.height", 0) + nodePaddings[0] + nodePaddings[2],
       });
     } else if (isEdgeCell(cell)) {
       graph.setEdge(cell.source, cell.target);

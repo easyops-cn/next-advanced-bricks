@@ -5,11 +5,13 @@ import { DecoratorText } from "./DecoratorText";
 import { DecoratorContainer } from "./DecoratorContainer";
 import { DecoratorRect } from "./DecoratorRect";
 import { DecoratorLine } from "./DecoratorLine";
+import { DecoratorGroup } from "./DecoratorGroup";
 
 const decoratorComponents = new Map<
   DecoratorType,
   React.ComponentType<BasicDecoratorProps>
 >([
+  ["group", DecoratorGroup],
   ["container", DecoratorContainer],
   ["area", DecoratorArea],
   ["text", DecoratorText],
@@ -35,6 +37,7 @@ export function DecoratorComponent({
   onSwitchActiveTarget,
   onDecoratorTextEditing,
   onDecoratorTextChange,
+  onDecoratorGroupPlusClick,
 }: BasicDecoratorProps): JSX.Element | null {
   const SpecifiedComponent = decoratorComponents.get(cell.decorator);
 
@@ -63,6 +66,7 @@ export function DecoratorComponent({
       onSwitchActiveTarget={onSwitchActiveTarget}
       onDecoratorTextEditing={onDecoratorTextEditing}
       onDecoratorTextChange={onDecoratorTextChange}
+      onDecoratorGroupPlusClick={onDecoratorGroupPlusClick}
     />
   );
 }

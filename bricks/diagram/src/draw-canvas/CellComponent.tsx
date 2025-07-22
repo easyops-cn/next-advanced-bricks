@@ -15,12 +15,15 @@ import type {
   EditableLineCell,
   EditableEdgeLine,
   CellClickDetail,
+  DecoratorCell,
+  BaseNodeCell,
 } from "./interfaces";
 import {
   isContainerDecoratorCell,
   isDecoratorCell,
   isEdgeCell,
   isEdgeSide,
+  isGroupDecoratorCell,
   isLineDecoratorCell,
   isNoManualLayout,
   isNodeCell,
@@ -34,9 +37,13 @@ import { cellToTarget } from "./processors/cellToTarget";
 import type { SizeTuple, TransformLiteral } from "../diagram/interfaces";
 import { sameTarget } from "./processors/sameTarget";
 import { targetIsActive } from "./processors/targetIsActive";
-import { computeContainerRect } from "./processors/computeContainerRect";
+import { computeBoundingBox } from "./processors/computeBoundingBox";
 import { get } from "lodash";
 import { useHoverStateContext } from "./HoverStateContext";
+import {
+  GROUPPADDING,
+  highlightGroupCell,
+} from "./processors/initaliGroupLayout";
 export interface CellComponentProps {
   layout: LayoutType;
   layoutOptions?: LayoutOptions;
@@ -57,6 +64,7 @@ export interface CellComponentProps {
   curActiveEditableLine?: EditableLineCell | null;
   locked?: boolean;
   containerLocked?: boolean;
+  groupLocked?: boolean;
   updateCurActiveEditableLine?: (
     activeEditableLine: EditableLineCell | null
   ) => void;
@@ -69,6 +77,7 @@ export interface CellComponentProps {
   onCellClick?(detail: CellClickDetail): void;
   onDecoratorTextEditing?(detail: { id: string; editing: boolean }): void;
   onDecoratorTextChange?(detail: DecoratorTextChangeDetail): void;
+  onDecoratorGroupPlusClick?(detail: DecoratorCell): void;
   onNodeBrickResize(id: string, size: SizeTuple | null): void;
   onCellMouseEnter?(cell: Cell): void;
   onCellMouseLeave?(cell: Cell): void;
@@ -94,6 +103,7 @@ export function CellComponent({
   curActiveEditableLine,
   locked,
   containerLocked,
+  groupLocked,
   updateCurActiveEditableLine,
   onCellsMoving,
   onCellsMoved,
@@ -104,6 +114,7 @@ export function CellComponent({
   onCellClick,
   onDecoratorTextEditing,
   onDecoratorTextChange,
+  onDecoratorGroupPlusClick,
   onNodeBrickResize,
   onCellMouseEnter,
   onCellMouseLeave,
@@ -129,15 +140,31 @@ export function CellComponent({
       );
       const view = {
         ...cell.view,
-        ...computeContainerRect(containCells),
+        ...computeBoundingBox(containCells),
       };
       cell.view = view; //Update the rect container to make sure Lasso gets the correct size
+      return view;
+    }
+    if (
+      isGroupDecoratorCell(cell) &&
+      highlightGroupCell(cell, activeTarget, cells)
+    ) {
+      const nodeViews = cells.filter(
+        (c) => c.type === "node" && c.groupId === cell.id
+      );
+      const view = {
+        ...cell.view,
+        ...computeBoundingBox(nodeViews as BaseNodeCell[], {
+          padding: GROUPPADDING,
+        }),
+      };
+      cell.view = view;
       return view;
     }
     return isEdgeCell(cell) || isLineDecoratorCell(cell)
       ? undefined
       : get(cell, "view", { x: 0, y: 0, width: 0, height: 0 });
-  }, [layout, cell, cells]);
+  }, [layout, cell, cells, activeTarget]);
 
   useEffect(() => {
     const g = gRef.current;
@@ -147,7 +174,10 @@ export function CellComponent({
     const onMouseDown = (event: MouseEvent) => {
       if (
         readOnly ||
-        (isContainerDecoratorCell(cell) && isNoManualLayout(layout))
+        ([isContainerDecoratorCell(cell), isGroupDecoratorCell(cell)].some(
+          Boolean
+        ) &&
+          isNoManualLayout(layout))
       ) {
         event.stopPropagation();
       } else {
@@ -331,8 +361,8 @@ export function CellComponent({
         (isNodeCell(cell) && !degraded) ||
         isEdgeCell(cell) ||
         isLineDecoratorCell(cell) ||
-        cell.view.x == null ||
-        cell.view.y == null
+        cell.view?.x == null ||
+        cell.view?.y == null
           ? undefined
           : `translate(${containerRect!.x},${containerRect!.y})`
       }
@@ -351,6 +381,7 @@ export function CellComponent({
           defaultNodeBricks={defaultNodeBricks}
           locked={locked}
           containerLocked={containerLocked}
+          groupLocked={groupLocked}
           onResize={onNodeBrickResize}
         />
       ) : isEdgeCell(cell) ? (
@@ -382,6 +413,7 @@ export function CellComponent({
           onSwitchActiveTarget={onSwitchActiveTarget}
           onDecoratorTextEditing={onDecoratorTextEditing}
           onDecoratorTextChange={onDecoratorTextChange}
+          onDecoratorGroupPlusClick={onDecoratorGroupPlusClick}
         />
       ) : null}
     </g>

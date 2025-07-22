@@ -90,10 +90,44 @@
   border: 1px solid rgba(73, 126, 255, 0.7);
 }
 
+.decorator-group {
+  position: relative;
+
+  .lock-icon,
+  .plus-wrapper,
+  .plus-icon {
+    opacity: 0;
+  }
+
+  .plus-icon {
+    cursor: pointer;
+
+    &:hover {
+      color: rgba(33, 212, 243, 1);
+    }
+  }
+}
+.decorator-group.active-group,
+.cell.active .decorator-group {
+  .group {
+    border: 1px dashed rgba(33, 212, 243, 1);
+  }
+
+  .resize-handle,
+  .lock-icon,
+  .plus-wrapper,
+  .plus-icon {
+    opacity: 1;
+  }
+}
+.cell:has(.decorator-group.active-group) {
+  opacity: 1;
+}
 .cell.active .decorator-area .area,
 .cell.active .decorator-rect-container .rect-container,
 .cell.active .decorator-text .text-container,
 .cell.active .container-wrapper .container,
+.cell.active .group-wrapper .group,
 .container-dragover .decorator-container .container {
   border-style: dashed;
   border-color: rgba(73, 126, 255, 0.7);

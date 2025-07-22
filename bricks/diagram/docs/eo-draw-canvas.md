@@ -39,6 +39,27 @@
               },
             },
             {
+              type: "decorator",
+              id: "group-1",
+              decorator: "group",
+              containerId: "container-2",
+              view: {
+                usePlus: true, 
+              },
+            },
+            {
+              type: "node",
+              id: "G",
+              groupId: "group-1",
+              data: {
+                name: `Node G`, 
+              }, 
+              view: {
+                width: 60,
+                height: 60,
+              }
+            },
+            {
               type: "edge", 
               source: "X",
               target: "Y",
@@ -57,22 +78,23 @@
               }
             },
           ].concat(
-            ["A","B","X", "Y", "Z", "W",].map((id) => ({
+            ["A","B","C","S","D","F","X", "Y", "Z", "W"].map((id) => ({
               type: "node",
               id,
-              containerId: ["W","Z","X","Y"].includes(id)?"container-1":"container-2",
+              containerId: ["W","Z","X","Y", "W"].includes(id)?"container-1":(["A","B",].includes(id)?"container-2":null),
+              groupId: ["C","S","D","F",].includes(id)?"group-1":null,
               data: {
                 name: `Node ${id}`,
               }, 
               view: {
-                x: ["A","B","Z","X","Y"].includes(id)?null:Math.round(
+                x: ["A","B","C","S","D","F","Z","X","Y",].includes(id)?null:Math.round(
                   id === "X"
                     ? 200 + Math.random() * 200
                     : id === "Y"
                     ? Math.random() * 300
                     : 300 + Math.random() * 300
                 ),
-                y: ["A","B","Z","X","Y"].includes(id)?null:(id === "X" ? 0 : 300) + Math.round((Math.random() * 200)),
+                y: ["A","B","C","S","D","F","Z","X","Y"].includes(id)?null:(id === "X" ? 0 : 300) + Math.round((Math.random() * 200)),
                 width: 60,
                 height: 60,
               }

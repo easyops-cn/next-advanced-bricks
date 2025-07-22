@@ -168,7 +168,8 @@ export interface AddNodeInfo {
   useBrick?: UseSingleBrickConf;
   data?: unknown;
   size?: SizeTuple;
-  containerId?: string;
+  containerId?: NodeId;
+  groupId?: NodeId;
 }
 
 export interface AddEdgeInfo {
@@ -441,6 +442,16 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
   };
 
   /**
+   * 分组容器点击加号事件，传入的参数为分组容器cell
+   */
+  @event({ type: "decorator.group.plus.click" })
+  accessor #decoratorGroupPlusClick!: EventEmitter<DecoratorCell>;
+
+  #handleDecoratorGroupPlusClick = (detail: DecoratorCell) => {
+    this.#decoratorGroupPlusClick.emit(detail);
+  };
+
+  /**
    * 缩放变化后，从素材库拖拽元素进画布时，拖拽图像应设置对应的缩放比例。
    */
   @event({ type: "scale.change" })
@@ -576,11 +587,12 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
       return [];
     }
     const newNodes = nodes.map<NodeCell>(
-      ({ size, useBrick, id, data, containerId }) => ({
+      ({ size, useBrick, id, data, containerId, groupId }) => ({
         type: "node",
         id,
         data,
         containerId,
+        groupId,
         view: {
           width: size?.[0] ?? this.defaultNodeSize[0],
           height: size?.[1] ?? this.defaultNodeSize[0],
@@ -735,6 +747,7 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
         onCanvasContextMenu={this.#handleCanvasContextMenu}
         onDecoratorTextChange={this.#handleDecoratorTextChange}
         onContainerContainerChange={this.#handleContainerContainerChange}
+        onDecoratorGroupPlusClick={this.#handleDecoratorGroupPlusClick}
         onScaleChange={this.#handleScaleChange}
         onEdgeViewChange={this.#handleEdgeViewChange}
         onDecoratorViewChange={this.#handleDecoratorViewChange}
@@ -760,6 +773,7 @@ export interface EoDrawCanvasComponentProps extends EoDrawCanvasProps {
   onDecoratorTextChange(detail: DecoratorTextChangeDetail): void;
   onDecoratorViewChange(detail: DecoratorViewChangePayload): void;
   onContainerContainerChange(detail: MoveCellPayload[]): void;
+  onDecoratorGroupPlusClick(detail: DecoratorCell): void;
   onScaleChange(scale: number): void;
   onCanvasContextMenu(detail: PositionTuple): void;
   onCanvasCopy(): void;
@@ -827,6 +841,7 @@ function LegacyEoDrawCanvasComponent(
     onDecoratorTextChange,
     onScaleChange,
     onContainerContainerChange,
+    onDecoratorGroupPlusClick,
     onEdgeViewChange,
     onDecoratorViewChange,
     onCanvasContextMenu,
@@ -904,10 +919,7 @@ function LegacyEoDrawCanvasComponent(
     setCentered(false);
   }, [setCentered]);
 
-  const lockedContainerIds = useMemo(
-    () => getLockedContainerIds(cells),
-    [cells]
-  );
+  const lockedIds = useMemo(() => getLockedContainerIds(cells), [cells]);
 
   useImperativeHandle(
     ref,
@@ -1016,7 +1028,7 @@ function LegacyEoDrawCanvasComponent(
           target,
           type,
           cells,
-          lockedContainerIds
+          lockedIds
         );
         if (!newCells) {
           return null;
@@ -1033,7 +1045,7 @@ function LegacyEoDrawCanvasComponent(
       transform,
       allowEdgeToArea,
       reCenter,
-      lockedContainerIds,
+      lockedIds,
     ]
   );
 
@@ -1113,7 +1125,7 @@ function LegacyEoDrawCanvasComponent(
       const action = handleKeyboard(event, {
         cells,
         activeTarget,
-        lockedContainerIds,
+        lockedIds,
       });
 
       switch (action?.action) {
@@ -1133,7 +1145,7 @@ function LegacyEoDrawCanvasComponent(
     activeTarget,
     cells,
     editingTexts.length,
-    lockedContainerIds,
+    lockedIds,
     onCellDelete,
     onCellsDelete,
   ]);
@@ -1155,7 +1167,7 @@ function LegacyEoDrawCanvasComponent(
       dispatch({ type: "move-cells", payload: info });
       const containedIds: string[] = [];
       handleNodeContainedChange(info, cells).forEach((c) => {
-        if (c.containerCell?.id) containedIds.push(c.containerCell?.id);
+        if (c.containerId) containedIds.push(c.containerId);
       });
       setActiveContainers(containedIds);
       setGuideLines(info.flatMap((c) => c.guideLines ?? []));
@@ -1246,13 +1258,13 @@ function LegacyEoDrawCanvasComponent(
     let edges: EditableLineCell[] = [];
     edges = cells.filter(
       (cell) =>
-        !isLocked(cell, lockedContainerIds) &&
+        !isLocked(cell, lockedIds) &&
         targetIsActive(cell, activeTarget) &&
         (isEdgeCell(cell) || isLineDecoratorCell(cell)) &&
         editableLineMap.has(cell)
     ) as EditableLineCell[];
     return edges;
-  }, [activeTarget, cells, editableLineMap, lockedContainerIds]);
+  }, [activeTarget, cells, editableLineMap, lockedIds]);
 
   const ready = useReady({ cells, layout, centered });
 
@@ -1267,7 +1279,7 @@ function LegacyEoDrawCanvasComponent(
     (cell: Cell) => {
       if (
         lineConnectorConf &&
-        !isLocked(cell, lockedContainerIds) &&
+        !isLocked(cell, lockedIds) &&
         isEdgeSide(cell, allowEdgeToArea) &&
         (!lineEditorState || lineEditorState.type !== "control")
       ) {
@@ -1283,7 +1295,7 @@ function LegacyEoDrawCanvasComponent(
         });
       }
     },
-    [allowEdgeToArea, lineConnectorConf, lineEditorState, lockedContainerIds]
+    [allowEdgeToArea, lineConnectorConf, lineEditorState, lockedIds]
   );
 
   const handleCellMouseLeave = useCallback(
@@ -1532,11 +1544,16 @@ function LegacyEoDrawCanvasComponent(
                 unrelatedCells={unrelatedCells}
                 allowEdgeToArea={allowEdgeToArea}
                 curActiveEditableLine={curActiveEditableLine}
-                locked={isLocked(cell, lockedContainerIds)}
+                locked={isLocked(cell, lockedIds)}
                 containerLocked={
                   isNodeCell(cell) &&
                   !!cell.containerId &&
-                  lockedContainerIds.includes(cell.containerId)
+                  lockedIds.includes(cell.containerId)
+                }
+                groupLocked={
+                  isNodeCell(cell) &&
+                  !!cell.groupId &&
+                  lockedIds.includes(cell.groupId)
                 }
                 updateCurActiveEditableLine={setCurActiveEditableLine}
                 onCellsMoving={handleCellsMoving}
@@ -1547,6 +1564,7 @@ function LegacyEoDrawCanvasComponent(
                 onCellContextMenu={onCellContextMenu}
                 onDecoratorTextChange={onDecoratorTextChange}
                 onDecoratorTextEditing={handleDecoratorTextEditing}
+                onDecoratorGroupPlusClick={onDecoratorGroupPlusClick}
                 onNodeBrickResize={handleNodeBrickResize}
                 onCellMouseEnter={handleCellMouseEnter}
                 onCellMouseLeave={handleCellMouseLeave}
