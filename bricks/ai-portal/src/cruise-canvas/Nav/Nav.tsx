@@ -106,6 +106,28 @@ export function Nav({
     });
   }, [currentNavId]);
 
+  useEffect(() => {
+    const nav = ref.current;
+    if (!nav || currentNavId) {
+      return;
+    }
+
+    const lastActiveItem = mergedNav?.findLast(
+      (item) =>
+        DONE_STATES.includes(item.state || "unknown") ||
+        item.state === "working" ||
+        item.state === "input-required"
+    );
+    if (lastActiveItem) {
+      nav
+        .querySelector(`[data-job-id="${lastActiveItem.id}"]`)
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+    }
+  }, [currentNavId, mergedNav]);
+
   return (
     <div className={styles.container}>
       <ul className={styles.nav} ref={ref}>

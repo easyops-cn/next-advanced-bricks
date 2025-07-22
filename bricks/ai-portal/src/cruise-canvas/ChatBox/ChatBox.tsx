@@ -63,7 +63,7 @@ export function ChatBox({ taskState, taskDone }: ChatBoxProps): JSX.Element {
 
   const onSubmit = useCallback(
     (_value: string) => {
-      if (!taskDone && supports?.intercept) {
+      if (!taskDone) {
         return;
       }
       showDialog({
@@ -74,7 +74,7 @@ export function ChatBox({ taskState, taskDone }: ChatBoxProps): JSX.Element {
       valueRef.current = "";
       setValue("");
     },
-    [taskDone, supports]
+    [taskDone]
   );
 
   const handleSubmit = useCallback(
@@ -166,7 +166,7 @@ export function ChatBox({ taskState, taskDone }: ChatBoxProps): JSX.Element {
           {taskDone || !supports?.intercept ? (
             <button
               className={styles["btn-send"]}
-              disabled={!value}
+              disabled={!value || !taskDone}
               onClick={handleSubmitClick}
             >
               <WrappedIcon lib="fa" prefix="fas" icon="arrow-up" />
