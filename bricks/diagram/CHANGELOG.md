@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.66.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.65.2...@next-bricks/diagram@0.66.0) (2025-07-23)
+
+
+### Features
+
+* 自动编组能力 ([8ea9fa3](https://github.com/easyops-cn/next-advanced-bricks/commit/8ea9fa3e378675ea9bc6e3278fb0f03cdefeb51b))
+
+
+
+
+
 ## [0.65.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.65.1...@next-bricks/diagram@0.65.2) (2025-07-10)
 
 **Note:** Version bump only for package @next-bricks/diagram
