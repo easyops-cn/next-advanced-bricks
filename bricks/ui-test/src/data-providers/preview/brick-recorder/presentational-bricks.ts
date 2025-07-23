@@ -1,5 +1,6 @@
 // istanbul ignore file
 import * as t from "@babel/types";
+import moment from "moment";
 import {
   generateBaseStep,
   generateCodeText,
@@ -10,6 +11,20 @@ interface TreeData {
   key: string;
   title: string;
   children?: TreeData[];
+}
+
+interface TimestampRangeValue {
+  from: number;
+  to: number;
+}
+interface DateRangeValue {
+  type: "dateRange" | "specifiedDate";
+  value: string | TimestampRangeValue;
+}
+
+interface CustomRangeOptions {
+  range: string;
+  text: string;
 }
 
 export const presentationalBricksMap = {
@@ -152,6 +167,96 @@ export const presentationalBricksMap = {
       generateBrickInputStep(event, text, {
         brickEvtName: "tree.expand",
       });
+    },
+  },
+  "presentational-bricks.markdown-editor": {
+    "markdown.value.change": (event: CustomEvent<string>) => {
+      const expr = t.callExpression(t.identifier("brick_type"), [
+        t.stringLiteral(event.detail),
+      ]);
+
+      const text = generateCodeText(expr);
+      generateBrickInputStep(event, text, {
+        brickEvtName: "markdown.value.change",
+      });
+    },
+  },
+  "presentational-bricks.basic-icon": {
+    "icon.click": (event: CustomEvent<void>) => {
+      const expr = t.callExpression(t.identifier("brick_click"), []);
+      const text = generateCodeText(expr);
+      generateBaseStep(event, text);
+    },
+  },
+  "presentational-bricks.datetime-selector": {
+    "datetime.selected": (event: CustomEvent<DateRangeValue>) => {
+      const customRange = (event.detail as any)
+        .customTimeRange as CustomRangeOptions[];
+      const defaultRange = [
+        {
+          range: "now-1h",
+          text: "近1小时",
+        },
+        {
+          range: "now-1d",
+          text: "近24小时",
+        },
+        {
+          range: "now/d",
+          text: "今天",
+        },
+        {
+          range: "now-7d",
+          text: "近7天",
+        },
+        {
+          range: "now-30d",
+          text: "近30天",
+        },
+      ];
+
+      let expr: t.Expression;
+
+      if (event.detail.type === "dateRange") {
+        const label = (customRange ? customRange : defaultRange).find(
+          (item) => item.range === event.detail.value
+        )?.text;
+
+        expr = t.callExpression(t.identifier("brick_fill"), [
+          t.objectExpression([
+            t.objectProperty(
+              t.identifier("type"),
+              t.stringLiteral("dateRange")
+            ),
+            t.objectProperty(t.identifier("value"), t.stringLiteral(label!)),
+          ]),
+        ]);
+      } else {
+        const { from, to } = event.detail.value as TimestampRangeValue;
+        expr = t.callExpression(t.identifier("brick_fill"), [
+          t.objectExpression([
+            t.objectProperty(
+              t.identifier("type"),
+              t.stringLiteral("timestamp")
+            ),
+            t.objectProperty(
+              t.identifier("from"),
+              t.stringLiteral(
+                `${moment(from).format("YYYY-MM-DD HH:mm:ss")}{enter}`
+              )
+            ),
+            t.objectProperty(
+              t.identifier("to"),
+              t.stringLiteral(
+                `${moment(to).format("YYYY-MM-DD HH:mm:ss")}{enter}`
+              )
+            ),
+          ]),
+        ]);
+      }
+
+      const text = generateCodeText(expr!);
+      generateBaseStep(event, text);
     },
   },
 };

@@ -46,6 +46,35 @@ export const formBricksV3Map = {
       handleSubmit(event, "cancel");
     },
   },
+  "eo-radio": {
+    change: (event: CustomEvent<{ label: string; value: unknown }>) => {
+      const expr = t.callExpression(t.identifier("brick_clickItem"), [
+        t.stringLiteral(event.detail.label),
+      ]);
+
+      const text = generateCodeText(expr);
+      generateBaseStep(event, text);
+    },
+  },
+  "eo-checkbox": {
+    change: (event: CustomEvent<Array<{ label: string; value: unknown }>>) => {
+      let expr: t.Expression;
+      if (event.detail?.length) {
+        expr = t.callExpression(t.identifier("brick_fill"), [
+          t.arrayExpression(
+            event.detail.map((item) => t.stringLiteral(item.label))
+          ),
+        ]);
+      } else {
+        expr = t.callExpression(t.identifier("brick_clear"), []);
+      }
+
+      const text = generateCodeText(expr);
+      generateBrickInputStep(event, text, {
+        brickEvtName: "change",
+      });
+    },
+  },
 };
 
 export const formBricksV3 = Object.keys(formBricksV3Map);
