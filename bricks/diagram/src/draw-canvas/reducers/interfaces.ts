@@ -95,7 +95,8 @@ export interface MoveCellPayload {
   width?: number;
   height?: number;
   decorator?: DecoratorType;
-  containerCell?: DecoratorCell;
+  groupId?: NodeId;
+  containerId?: NodeId;
   guideLines?: LineTuple[];
   source?: NodePosition;
   target?: NodePosition;

@@ -1,3 +1,4 @@
+import { map } from "lodash";
 import type { PositionTuple } from "../../diagram/interfaces";
 import type {
   ActiveTarget,
@@ -18,6 +19,7 @@ import {
   isContainerDecoratorCell,
   isDecoratorCell,
   isEdgeCell,
+  isGroupDecoratorCell,
   isLineDecoratorCell,
   isNodeCell,
 } from "./asserts";
@@ -121,12 +123,30 @@ export function handleMouseDown(
       : [cell];
   actives.forEach((a) => {
     activeCells.push(a);
-    if (action === "move" && isContainerDecoratorCell(a)) {
-      activeCells.push(
-        ...cells.filter(
-          (c) => isNodeCell(c) && c.containerId === a.id && !actives.includes(c)
-        )
-      );
+    if (action === "move") {
+      if (isContainerDecoratorCell(a)) {
+        const groupIds = map(
+          cells.filter(
+            (c) => isGroupDecoratorCell(c) && c.containerId === a.id
+          ),
+          "id"
+        );
+        const nodeCells = cells.filter(
+          (c) =>
+            ((isNodeCell(c) || isGroupDecoratorCell(c)) &&
+              c.containerId === a.id &&
+              !actives.includes(c)) ||
+            (isNodeCell(c) && groupIds.includes(c?.groupId))
+        );
+        activeCells.push(...nodeCells);
+      }
+      if (isGroupDecoratorCell(a)) {
+        activeCells.push(
+          ...cells.filter(
+            (c) => isNodeCell(c) && c.groupId === a.id && !actives.includes(c)
+          )
+        );
+      }
     }
   });
   const isAutoLayout = layout === "force" || layout === "dagre";
@@ -326,6 +346,8 @@ export function handleMouseDown(
           id: c.id,
           x: newPositions[index][0],
           y: newPositions[index][1],
+          groupId: c.groupId,
+          containerId: c.containerId,
           width: c.view.width,
           height: c.view.height,
           decorator: isDecoratorCell(c) ? c.decorator : undefined,

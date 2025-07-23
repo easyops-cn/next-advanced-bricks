@@ -23,6 +23,7 @@ import {
   isContainerDecoratorCell,
   isDecoratorCell,
   isEdgeCell,
+  isGroupDecoratorCell,
   isNodeCell,
   isNoPoint,
   isNoSize,
@@ -245,13 +246,17 @@ export function updateCells({
       const containerCells = newCells.filter(
         (cell) => isContainerDecoratorCell(cell) && isNoSize(cell.view)
       ) as DecoratorCell[];
-      if (containerCells.length > 0) {
-        const nodeLayout =
-          get(layoutOptions, "initialLayout") === "layered-staggered"
-            ? "staggered"
-            : "dagre";
+      const groupCells = newCells.filter(
+        (cell) => isGroupDecoratorCell(cell) && isNoSize(cell.view)
+      ) as DecoratorCell[];
+      const containerAndGroupCells = [...containerCells, ...groupCells];
+      const nodeLayout =
+        get(layoutOptions, "initialLayout") === "layered-staggered"
+          ? "staggered"
+          : "dagre";
+      if (containerAndGroupCells.length > 0) {
         initaliContainerLayout(newCells, { nodeLayout });
-        updateCandidates.push(...containerCells);
+        updateCandidates.push(...containerAndGroupCells);
       } else {
         generateNewPointsWithLayout(newCells, { defaultNodeSize });
       }

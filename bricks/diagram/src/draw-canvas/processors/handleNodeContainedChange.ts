@@ -1,31 +1,41 @@
 import { Cell, DecoratorCell, NodeCell } from "../interfaces";
 import { MoveCellPayload } from "../reducers/interfaces";
-import { isContainerDecoratorCell, isNodeCell } from "./asserts";
+import {
+  isContainerDecoratorCell,
+  isGroupDecoratorCell,
+  isNodeCell,
+} from "./asserts";
 
 export function handleNodeContainedChange(
   payloads: MoveCellPayload[],
   cells: Cell[],
   onContainerContainerChange?: (detail: MoveCellPayload[]) => void
 ) {
-  const nodeCells = cells.filter((c): c is NodeCell => isNodeCell(c));
+  const nodeAndGroupCells = cells.filter(
+    (c): c is NodeCell => isNodeCell(c) || isGroupDecoratorCell(c)
+  );
   const containerIds = payloads
     .filter((p) => isContainerDecoratorCell(p))
     .map((v) => v.id);
-  const nodePayloads = payloads.filter((p) => {
-    const nodeCell = nodeCells.find((v) => v.id === p.id)!;
+  const cellPayloads = payloads.filter((p) => {
+    const cell = nodeAndGroupCells.find((v) => v.id === p.id)!;
     const includeNodeFlag =
-      nodeCell?.containerId && containerIds.includes(nodeCell.containerId);
-    return isNodeCell(p) && !includeNodeFlag;
+      cell?.containerId && containerIds.includes(cell.containerId);
+    return (
+      ((isNodeCell(p) && !p.groupId) || isGroupDecoratorCell(p)) &&
+      !includeNodeFlag
+    );
   });
-  nodePayloads.forEach((payload) => {
+  const containerDecoratorCells = cells.filter(
+    (cell): cell is DecoratorCell =>
+      isContainerDecoratorCell(cell) && !cell.view?.locked
+  );
+  cellPayloads.forEach((payload) => {
     const left = payload.x;
     const right = payload.x + payload.width!;
     const top = payload.y;
     const bottom = payload.y + payload!.height!;
-    const containerDecoratorCells = cells.filter(
-      (cell): cell is DecoratorCell =>
-        isContainerDecoratorCell(cell) && !cell.view?.locked
-    );
+
     for (const containerCell of containerDecoratorCells) {
       const containerLeft = containerCell.view.x;
       const containerRight = containerCell.view.x + containerCell.view.width;
@@ -37,17 +47,17 @@ export function handleNodeContainedChange(
         top >= containerTop &&
         bottom <= containerBottom
       ) {
-        payload.containerCell = containerCell;
+        payload.containerId = containerCell.id;
         break; //A node can be associated with only one container
       }
     }
   });
   let containedChanges = [];
-  containedChanges = nodePayloads.filter((payload) => {
-    const nodeCell = nodeCells.find((c) => c.id === payload.id);
-    const containerId = nodeCell?.containerId;
-    const containerCellId = payload.containerCell?.id;
-    //过滤掉一直没有combo关系或者combo关系没有改变的
+  containedChanges = cellPayloads.filter((payload) => {
+    const cell = nodeAndGroupCells.find((c) => c.id === payload.id);
+    const containerId = cell?.containerId;
+    const containerCellId = payload.containerId;
+    //过滤掉一直没有关系或者关系没有改变的
     return containerId !== containerCellId;
   });
   if (containedChanges.length > 0) {

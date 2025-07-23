@@ -105,6 +105,29 @@ describe("handleMouseDown", () => {
             text: " 上层服务",
           },
         },
+        {
+          type: "decorator",
+          id: "group-1",
+          decorator: "group",
+          containerId: "container-1",
+          view: {
+            x: 80,
+            y: 380,
+            width: 180,
+            height: 80,
+          },
+        },
+        {
+          type: "node",
+          id: "g-a",
+          groupId: "group-1",
+          view: {
+            x: 20,
+            y: 50,
+            width: 60,
+            height: 60,
+          },
+        },
       ],
     });
 
@@ -124,14 +147,43 @@ describe("handleMouseDown", () => {
         id: "container-1",
         type: "decorator",
         width: undefined,
+        containerId: undefined,
+        groupId: undefined,
         x: 19,
         y: 36,
         guideLines: [],
       },
       {
         decorator: undefined,
+        containerId: "container-1",
+        groupId: undefined,
         height: 60,
         id: "a",
+        type: "node",
+        width: 60,
+        x: 35,
+        y: 80,
+        guideLines: [],
+      },
+      {
+        decorator: "group",
+
+        height: 80,
+        id: "group-1",
+        type: "decorator",
+        width: 180,
+        x: 95,
+        y: 410,
+        guideLines: [],
+        containerId: "container-1",
+        groupId: undefined,
+      },
+      {
+        decorator: undefined,
+        containerId: undefined,
+        groupId: "group-1",
+        height: 60,
+        id: "g-a",
         type: "node",
         width: 60,
         x: 35,
@@ -148,13 +200,144 @@ describe("handleMouseDown", () => {
         id: "container-1",
         type: "decorator",
         width: undefined,
+        guideLines: undefined,
+        containerId: undefined,
+        groupId: undefined,
         x: 20,
         y: 37,
       },
       {
         id: "a",
         type: "node",
+        guideLines: undefined,
         decorator: undefined,
+        containerId: "container-1",
+        groupId: undefined,
+        width: 60,
+        height: 60,
+        x: 36,
+        y: 81,
+      },
+      {
+        decorator: "group",
+        height: 80,
+        id: "group-1",
+        type: "decorator",
+        width: 180,
+        guideLines: undefined,
+        containerId: "container-1",
+        groupId: undefined,
+        x: 96,
+        y: 411,
+      },
+      {
+        id: "g-a",
+        type: "node",
+        guideLines: undefined,
+        decorator: undefined,
+        containerId: undefined,
+        groupId: "group-1",
+        width: 60,
+        height: 60,
+        x: 36,
+        y: 81,
+      },
+    ]);
+
+    expect(onSwitchActiveTarget).toHaveBeenCalledTimes(1);
+  });
+
+  test("move group node", () => {
+    const mousedown = new MouseEvent("mousedown", { clientX: 10, clientY: 20 });
+    handleMouseDown(mousedown, {
+      action: "move",
+      cell: {
+        type: "decorator",
+        id: "group-1",
+        decorator: "group",
+        view: { x: 4, y: 6 },
+      } as any,
+      ...methods,
+      cells: [
+        {
+          type: "decorator",
+          id: "group-1",
+          decorator: "group",
+          view: {
+            x: 80,
+            y: 380,
+            width: 180,
+            height: 80,
+          },
+        },
+        {
+          type: "node",
+          id: "g-a",
+          groupId: "group-1",
+          view: {
+            x: 20,
+            y: 50,
+            width: 60,
+            height: 60,
+          },
+        },
+      ],
+    });
+
+    expect(onSwitchActiveTarget).toHaveBeenCalledWith({
+      type: "decorator",
+      id: "group-1",
+    });
+
+    fireEvent.mouseMove(document, { clientX: 25, clientY: 50 });
+    expect(onCellsMoving).toHaveBeenCalledWith([
+      {
+        decorator: "group",
+        height: undefined,
+        containerId: undefined,
+        groupId: undefined,
+        id: "group-1",
+        type: "decorator",
+        width: undefined,
+        x: 19,
+        y: 36,
+        guideLines: [],
+      },
+      {
+        containerId: undefined,
+        decorator: undefined,
+        height: 60,
+        groupId: "group-1",
+        id: "g-a",
+        type: "node",
+        width: 60,
+        x: 35,
+        y: 80,
+        guideLines: [],
+      },
+    ]);
+
+    fireEvent.mouseUp(document, { clientX: 26, clientY: 51 });
+    expect(onCellsMoved).toHaveBeenCalledWith([
+      {
+        decorator: "group",
+        height: undefined,
+        guideLines: undefined,
+        containerId: undefined,
+        groupId: undefined,
+        id: "group-1",
+        type: "decorator",
+        width: undefined,
+        x: 20,
+        y: 37,
+      },
+      {
+        id: "g-a",
+        type: "node",
+        decorator: undefined,
+        guideLines: undefined,
+        containerId: undefined,
+        groupId: "group-1",
         width: 60,
         height: 60,
         x: 36,

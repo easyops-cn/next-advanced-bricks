@@ -1401,12 +1401,13 @@ describe("eo-draw-canvas", () => {
           id: "add-1-to-container1",
           type: "node",
           containerId: "container-1",
+          groupId: undefined,
           useBrick: undefined,
           view: {
             height: 20,
             width: 20,
-            x: 10,
-            y: 160,
+            x: 60,
+            y: 180,
           },
         },
         {
@@ -1414,12 +1415,85 @@ describe("eo-draw-canvas", () => {
           id: "add-2-to-container1",
           type: "node",
           containerId: "container-1",
+          groupId: undefined,
           useBrick: undefined,
           view: {
             height: 20,
             width: 20,
-            x: 40,
-            y: 160,
+            x: 90,
+            y: 180,
+          },
+        },
+      ]);
+    });
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
+
+  test("decorator group", async () => {
+    const element = document.createElement("eo-draw-canvas") as EoDrawCanvas;
+    element.cells = [
+      {
+        type: "decorator",
+        decorator: "group",
+        id: "group-1",
+        view: {
+          x: 50,
+          y: 400,
+          width: 80,
+          height: 60,
+        },
+      } as Cell,
+      {
+        type: "node",
+        id: "A",
+        groupId: "group-1",
+        view: {
+          width: 60,
+          height: 60,
+        },
+      } as Cell,
+      {
+        type: "node",
+        id: "B",
+        groupId: "group-1",
+        view: {
+          width: 60,
+          height: 60,
+        },
+      } as Cell,
+      {
+        type: "edge",
+        source: "A",
+        target: "B",
+      },
+    ];
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    await act(async () => {
+      const result = await element.addNodes([
+        {
+          id: "add-1-to-group1",
+          groupId: "group-1",
+          data: {},
+        },
+      ]);
+      expect(result).toEqual([
+        {
+          data: {},
+          id: "add-1-to-group1",
+          type: "node",
+          groupId: "group-1",
+          containerId: undefined,
+          useBrick: undefined,
+          view: {
+            height: 20,
+            width: 20,
+            x: 90,
+            y: 470,
           },
         },
       ]);
@@ -1511,6 +1585,35 @@ describe("eo-draw-canvas", () => {
           text: "接入层",
         },
       } as Cell,
+      {
+        type: "decorator",
+        decorator: "group",
+        containerId: "container-4",
+        id: "group-1",
+      } as Cell,
+      {
+        type: "node",
+        id: "G",
+        groupId: "group-1",
+        view: {
+          width: 60,
+          height: 60,
+        },
+      } as Cell,
+      {
+        type: "node",
+        id: "H",
+        groupId: "group-1",
+        view: {
+          width: 60,
+          height: 60,
+        },
+      } as Cell,
+      {
+        type: "edge",
+        source: "G",
+        target: "H",
+      },
     ];
     element.layoutOptions = { initialLayout: "layered-staggered" };
 
@@ -1537,12 +1640,13 @@ describe("eo-draw-canvas", () => {
           id: "add-1-to-container1",
           type: "node",
           containerId: "container-1",
+          groupId: undefined,
           useBrick: undefined,
           view: {
             height: 20,
             width: 20,
-            x: -20,
-            y: 130,
+            x: 30,
+            y: 320,
           },
         },
         {
@@ -1550,12 +1654,13 @@ describe("eo-draw-canvas", () => {
           id: "add-2-to-container1",
           type: "node",
           containerId: "container-1",
+          groupId: undefined,
           useBrick: undefined,
           view: {
             height: 20,
             width: 20,
-            x: 10,
-            y: 130,
+            x: 60,
+            y: 320,
           },
         },
       ]);

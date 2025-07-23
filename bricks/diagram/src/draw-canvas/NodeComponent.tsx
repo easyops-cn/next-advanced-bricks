@@ -27,6 +27,7 @@ export interface NodeComponentProps {
   defaultNodeBricks?: NodeBrickConf[];
   locked?: boolean;
   containerLocked?: boolean;
+  groupLocked?: boolean;
   onResize(id: string, size: SizeTuple | null): void;
 }
 
@@ -39,6 +40,7 @@ export function NodeComponent({
   defaultNodeBricks,
   locked,
   containerLocked,
+  groupLocked,
   onResize,
 }: NodeComponentProps): JSX.Element | null {
   const memoizedData = useDeepMemo({
@@ -194,9 +196,12 @@ export function NodeComponent({
           </text>
         </g>
       ) : null}
-      {locked && !containerLocked && x != null && y != null && (
-        <LockIcon x={x + node.view.width + 4} y={y + node.view.height - 12} />
-      )}
+      {locked &&
+        ![containerLocked, groupLocked].some(Boolean) &&
+        x != null &&
+        y != null && (
+          <LockIcon x={x + node.view.width + 4} y={y + node.view.height - 12} />
+        )}
     </>
   );
 }

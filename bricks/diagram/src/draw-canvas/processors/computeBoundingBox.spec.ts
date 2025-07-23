@@ -1,10 +1,10 @@
 import { describe, test, expect } from "@jest/globals";
-import { computeContainerRect } from "./computeContainerRect";
+import { computeBoundingBox } from "./computeBoundingBox";
 import { BaseNodeCell } from "../interfaces";
-describe("computeContainerRect", () => {
+describe("computeBoundingBox", () => {
   test("should return an empty object for an empty array", () => {
     const cells: BaseNodeCell[] = [];
-    const result = computeContainerRect(cells);
+    const result = computeBoundingBox(cells);
     expect(result).toEqual({});
   });
   test("should calculate the correct container rect for mixed finite and non-finite values", () => {
@@ -15,7 +15,7 @@ describe("computeContainerRect", () => {
       { view: { x: -24, y: 0, width: 60, height: 60 } },
     ] as unknown as BaseNodeCell[];
 
-    const result = computeContainerRect(cells);
+    const result = computeBoundingBox(cells);
     expect(result).toEqual({
       x: -308,
       y: -113,
