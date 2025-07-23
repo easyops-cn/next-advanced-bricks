@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import type { BasicDecoratorProps } from "../interfaces";
 import { LockIcon } from "../LockIcon";
 import classNames from "classnames";
-import { highlightGroupCell } from "../processors/initaliGroupLayout";
+import { highlightGroupCell } from "../processors/initialGroupLayout";
 
 export type DecoratorRectProps = Omit<
   BasicDecoratorProps,

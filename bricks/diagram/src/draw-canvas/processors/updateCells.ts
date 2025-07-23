@@ -34,7 +34,7 @@ import { forceLayout } from "../../shared/canvas/forceLayout";
 import { dagreLayout } from "../../shared/canvas/dagreLayout";
 import { sameTarget } from "./sameTarget";
 import { generateNewPointsWithLayout } from "./generateNewPointsWithLayout";
-import { initaliContainerLayout } from "./initaliContainerLayout";
+import { initialContainerLayout } from "./initialContainerLayout";
 
 export function updateCells({
   cells,
@@ -255,7 +255,7 @@ export function updateCells({
           ? "staggered"
           : "dagre";
       if (containerAndGroupCells.length > 0) {
-        initaliContainerLayout(newCells, { nodeLayout });
+        initialContainerLayout(newCells, { nodeLayout });
         updateCandidates.push(...containerAndGroupCells);
       } else {
         generateNewPointsWithLayout(newCells, { defaultNodeSize });

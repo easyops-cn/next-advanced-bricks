@@ -7,7 +7,7 @@ import {
   InitialCell,
   NodeCell,
 } from "../interfaces";
-import { LayoutOptions } from "./initaliContainerLayout";
+import { LayoutOptions } from "./initialContainerLayout";
 import {
   isEdgeCell,
   isGroupDecoratorCell,
@@ -21,7 +21,7 @@ import { computeBoundingBox } from "./computeBoundingBox";
 import { CONTAINERGAP } from "../constants";
 export const GROUPPADDING = 12;
 
-export function initaliGroupLayout(
+export function initialGroupLayout(
   cells: InitialCell[],
   options: LayoutOptions = {}
 ) {
