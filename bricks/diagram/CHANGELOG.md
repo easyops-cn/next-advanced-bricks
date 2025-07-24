@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.66.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.66.0...@next-bricks/diagram@0.66.1) (2025-07-24)
+
+
+### Bug Fixes
+
+* 修复页面确认数据后，同时添加容器、分组、节点的场景 ([ef91398](https://github.com/easyops-cn/next-advanced-bricks/commit/ef9139899d5f348272a9a4690c3aebb847832bb3))
+
+
+
+
+
 # [0.66.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.65.2...@next-bricks/diagram@0.66.0) (2025-07-23)
 
 
