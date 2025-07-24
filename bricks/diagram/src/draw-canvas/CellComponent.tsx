@@ -43,7 +43,7 @@ import { useHoverStateContext } from "./HoverStateContext";
 import {
   GROUPPADDING,
   highlightGroupCell,
-} from "./processors/initaliGroupLayout";
+} from "./processors/initialGroupLayout";
 export interface CellComponentProps {
   layout: LayoutType;
   layoutOptions?: LayoutOptions;

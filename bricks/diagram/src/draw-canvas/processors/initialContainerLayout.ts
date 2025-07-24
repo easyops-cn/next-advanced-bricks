@@ -21,7 +21,7 @@ import {
   DEFAULT_AREA_WIDTH,
 } from "../constants";
 import { staggeredLayout } from "./staggeredLayout";
-import { GROUPPADDING, initaliGroupLayout } from "./initaliGroupLayout";
+import { GROUPPADDING, initialGroupLayout } from "./initialGroupLayout";
 export interface LayoutOptions {
   nodeLayout?: "staggered" | "dagre";
 }
@@ -30,11 +30,11 @@ export interface LayoutOptions {
  * 初始化容器内节点层次布局以及同步容器大小位置
  * @param cells
  */
-export function initaliContainerLayout(
+export function initialContainerLayout(
   cells: InitialCell[],
   options: LayoutOptions = {}
 ) {
-  const { groupMap } = initaliGroupLayout(cells, options);
+  const { groupMap } = initialGroupLayout(cells, options);
   const nodeCells = cells.filter(
     (c) => c.type === "node" && !isNil(c.containerId)
   ) as NodeCell[];

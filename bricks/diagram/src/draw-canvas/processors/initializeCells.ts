@@ -2,7 +2,7 @@ import { get } from "lodash";
 import type { SizeTuple } from "../../diagram/interfaces";
 import type { Cell, InitialCell, LayoutOptions, NodeCell } from "../interfaces";
 import { isInitialNodeCell } from "./asserts";
-import { initaliContainerLayout } from "./initaliContainerLayout";
+import { initialContainerLayout } from "./initialContainerLayout";
 
 interface initializeConfig {
   defaultNodeSize: SizeTuple;
@@ -17,9 +17,9 @@ export function initializeCells(
   const originalCells = initialCells ?? [];
   if (isInitialize) {
     if (get(layoutOptions, "initialLayout") === "layered-architecture") {
-      initaliContainerLayout(originalCells, { nodeLayout: "dagre" });
+      initialContainerLayout(originalCells, { nodeLayout: "dagre" });
     } else if (get(layoutOptions, "initialLayout") === "layered-staggered") {
-      initaliContainerLayout(originalCells, { nodeLayout: "staggered" });
+      initialContainerLayout(originalCells, { nodeLayout: "staggered" });
     }
   }
   const finalCells: Cell[] = originalCells.map<Cell>((cell) => {

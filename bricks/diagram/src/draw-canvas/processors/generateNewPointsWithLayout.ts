@@ -8,7 +8,7 @@ import {
 import { SizeTuple } from "../../diagram/interfaces";
 import { CONTAINERGAP } from "../constants";
 import { computeBoundingBox } from "./computeBoundingBox";
-import { GROUPPADDING } from "./initaliGroupLayout";
+import { GROUPPADDING } from "./initialGroupLayout";
 interface Point {
   x: number;
   y: number;
