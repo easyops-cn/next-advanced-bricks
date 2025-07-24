@@ -28,6 +28,10 @@ export enum K {
   SKIP_TO_RESULTS = "SKIP_TO_RESULTS",
   WATCH_AGAIN = "WATCH_AGAIN",
   SEND_MESSAGE = "SEND_MESSAGE",
+  UNTITLED = "UNTITLED",
+  FILE_PREVIEW_UNPREVIEWABLE_TIP_PREFIX = "FILE_PREVIEW_UNPREVIEWABLE_TIP_PREFIX",
+  FILE_PREVIEW_UNPREVIEWABLE_TIP_SUFFIX = "FILE_PREVIEW_UNPREVIEWABLE_TIP_SUFFIX",
+  DOWNLOAD = "DOWNLOAD",
 
   cmdb_create_app_system = "cmdb_create_app_system",
   cmdb_create_service_set = "cmdb_create_service_set",
@@ -68,6 +72,11 @@ const en: Locale = {
   SKIP_TO_RESULTS: "Skip to results",
   WATCH_AGAIN: "Watch again",
   SEND_MESSAGE: "Send message",
+  UNTITLED: "Untitled",
+  FILE_PREVIEW_UNPREVIEWABLE_TIP_PREFIX:
+    "This file is unpreviewable currently, you can",
+  FILE_PREVIEW_UNPREVIEWABLE_TIP_SUFFIX: "and view it locally.",
+  DOWNLOAD: "Download",
 
   cmdb_create_app_system: "Create app system",
   cmdb_create_service_set: "Create service set",
@@ -106,6 +115,10 @@ const zh: Locale = {
   SKIP_TO_RESULTS: "跳转到结果",
   WATCH_AGAIN: "重新观看",
   SEND_MESSAGE: "发送消息",
+  UNTITLED: "未命名",
+  FILE_PREVIEW_UNPREVIEWABLE_TIP_PREFIX: "该类型文件暂不支持预览，您可以",
+  FILE_PREVIEW_UNPREVIEWABLE_TIP_SUFFIX: "查看。",
+  DOWNLOAD: "下载",
 
   cmdb_create_app_system: "创建应用系统",
   cmdb_create_service_set: "创建服务集",

@@ -131,8 +131,13 @@ export async function convertView(
         const value = data?.list?.findLast?.(
           (item) => item[metric.id] != null
         )?.[metric.id];
-        return pipes.unitFormat(value, metric.unit, precision).join("");
+        const unit = metric.unit === "load" ? "" : metric.unit;
+        return pipes.unitFormat(value, unit, precision).join("");
       },
+    },
+    {
+      name: "SIZE",
+      value: options.expanded ? "medium" : "small",
     },
   ];
 

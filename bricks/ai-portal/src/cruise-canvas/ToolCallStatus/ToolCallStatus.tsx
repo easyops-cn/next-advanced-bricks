@@ -20,9 +20,14 @@ export function ToolCallStatus({
   const { setActiveToolCallJobId } = useContext(CanvasContext);
   const toolCall = job.toolCall!;
   const toolTitle = toolCall.annotations?.title;
-  const [progress, hasToolCallMessages] = useMemo(() => {
+  const [progress, hasToolCallResponse] = useMemo(() => {
     const toolCallMessages = job.messages?.filter((msg) => msg.role === "tool");
-    return [getToolDataProgress(toolCallMessages), !!toolCallMessages?.length];
+    return [
+      getToolDataProgress(toolCallMessages),
+      toolCallMessages?.some((msg) =>
+        msg.parts.some((part) => part.type === "text")
+      ),
+    ];
   }, [job.messages]);
 
   const readOnly = useMemo(() => {
@@ -37,7 +42,7 @@ export function ToolCallStatus({
   }, [job.id, variant, setActiveToolCallJobId]);
 
   const toolState =
-    ["working", "input-required"].includes(job.state) && hasToolCallMessages
+    ["working", "input-required"].includes(job.state) && hasToolCallResponse
       ? "completed"
       : job.state;
 

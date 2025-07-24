@@ -55,6 +55,16 @@
   * --syntax-cursor-line: hsla(230, 8%, 24%, 0.05);
   */
 
+  a {
+    color: var(--elevo-color-brand);
+  }
+  a:hover {
+    color: var(--elevo-color-brand-hover);
+  }
+  a:active {
+    color: var(--elevo-color-brand-active);
+  }
+
   code[class*="language-"],
   pre[class*="language-"] {
     background: hsl(230, 1%, 98%);

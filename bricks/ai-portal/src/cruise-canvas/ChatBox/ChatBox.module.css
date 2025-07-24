@@ -103,33 +103,3 @@ textarea:focus {
 .btn-send:not(:disabled):active {
   background: #1e33cc;
 }
-
-.btn-intercept {
-  display: block;
-  width: 28px;
-  height: 28px;
-  font-size: 18px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: none;
-}
-
-.btn-intercept:disabled {
-  color: #8c8c8c;
-}
-
-.btn-intercept:not(:disabled) {
-  cursor: pointer;
-}
-
-.btn-intercept:not(:disabled):active,
-.btn-intercept:not(:disabled):hover {
-  background: rgba(0, 0, 0, 0.08);
-}
-
-.btn-intercept:focus {
-  outline: none;
-}

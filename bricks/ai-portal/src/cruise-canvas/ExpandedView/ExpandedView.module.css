@@ -76,15 +76,6 @@
   position: absolute;
   top: 24px;
   right: 24px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  padding: 7px;
-}
-
-.close:hover {
-  color: var(--elevo-color-brand);
 }
 
 .loading {

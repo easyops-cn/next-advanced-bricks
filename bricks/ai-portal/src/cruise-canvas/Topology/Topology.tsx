@@ -3,19 +3,25 @@ import type {
   EoDisplayCanvasProps,
   EoDisplayCanvas,
 } from "@next-bricks/diagram/display-canvas";
+import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import classNames from "classnames";
 import sharedStyles from "../shared.module.css";
 import toolbarStyles from "../toolbar.module.css";
 import styles from "./Topology.module.css";
 import nodeStyleText from "./node.shadow.css";
 import { AsyncWrappedDisplayCanvas } from "../diagram";
-import { WrappedIcon } from "../bricks";
+import { WrappedIcon, WrappedIconButton } from "../bricks";
 import type { ComponentGraph, RawComponentGraphNode } from "../interfaces";
 
 const DEFAULT_NODE_SIZE: EoDisplayCanvasProps["defaultNodeSize"] = [34, 34];
 const CANVAS_PADDING: Required<EoDisplayCanvasProps>["layoutOptions"]["padding"] =
   [12, 54, 34];
 const extraStyleTexts = [nodeStyleText];
+const ICON_EXPAND: GeneralIconProps = {
+  lib: "fa",
+  prefix: "fas",
+  icon: "expand",
+};
 
 export interface TopologyProps {
   componentGraph: ComponentGraph;
@@ -257,9 +263,11 @@ export function Topology({
         extraStyleTexts={extraStyleTexts}
       />
       <div className={`${toolbarStyles.toolbar} ${styles.toolbar}`}>
-        <button onClick={onReCenter}>
-          <WrappedIcon lib="fa" prefix="fas" icon="expand" />
-        </button>
+        <WrappedIconButton
+          variant="mini"
+          icon={ICON_EXPAND}
+          onClick={onReCenter}
+        />
       </div>
     </div>
   );

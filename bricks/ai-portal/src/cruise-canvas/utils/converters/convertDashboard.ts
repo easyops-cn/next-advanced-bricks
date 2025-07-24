@@ -122,6 +122,7 @@ export default async function convertDashboard(
           (_, i) => COLORS[(colorCursor + i) % COLORS.length]
         );
         colorCursor += colorCount;
+        const unit = metric.unit === "load" ? "" : metric.unit;
         const chart = {
           brick: "chart-v2.time-series-chart",
           properties: {
@@ -151,13 +152,13 @@ export default async function convertDashboard(
                 }),
             axis: {
               yAxis: {
-                unit: metric.unit,
-                precision: precision,
+                unit,
+                precision,
                 ...(widget.counterMetric
                   ? null
-                  : metric.unit === "percent(1)"
+                  : unit === "percent(1)"
                     ? { min: 0, max: 1 }
-                    : metric.unit === "percent(100)" || metric.unit === "%"
+                    : unit === "percent(100)" || unit === "%"
                       ? { min: 0, max: 100 }
                       : { min, max }),
                 shape: "smooth",

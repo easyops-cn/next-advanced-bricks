@@ -14,7 +14,7 @@ import moment from "moment";
 import { handleHttpError } from "@next-core/runtime";
 import styles from "./NodeJob.module.css";
 import sharedStyles from "../shared.module.css";
-import type { CmdbInstanceDetailData, Job } from "../interfaces";
+import type { CmdbInstanceDetailData, FileInfo, Job } from "../interfaces";
 import { K, t } from "../i18n.js";
 import { AsyncWrappedCMDB } from "../cmdb.js";
 import { WrappedButton, WrappedIcon } from "../bricks.js";
@@ -26,6 +26,7 @@ import { HumanAdjustPlanResult } from "../HumanAdjustPlanResult/HumanAdjustPlanR
 import { Topology } from "../Topology/Topology";
 import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
 import { CmdbInstanceDetail } from "../CmdbInstanceDetail/CmdbInstanceDetail";
+import { FileList } from "../FileList/FileList";
 
 // 当 markdown 中包含超过 4 列的表格时，对节点使用大尺寸样式
 const RegExpLargeTableInMarkdown = /^\s*\|(?:\s*:?-+:?\s*\|){4,}\s*$/m;
@@ -55,41 +56,55 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
   const loading = state === "working" || state === "submitted";
   const hasGraph = !!job.componentGraph;
 
-  const [toolMarkdownContent, cmdbInstanceDetails, sizeLarge] = useMemo(() => {
-    const contents: string[] = [];
-    const instanceDetails: CmdbInstanceDetailData[] = [];
-    let large = false;
-    job.messages?.forEach((message) => {
-      if (message.role === "tool") {
-        for (const part of message.parts) {
-          if (part.type === "data") {
-            switch (part.data?.type) {
-              case "markdown":
-                contents.push(part.data.content);
-                break;
-              case "cmdb_instance_detail":
-                instanceDetails.push(part.data as CmdbInstanceDetailData);
-                if (!large) {
-                  large =
-                    Object.keys(
-                      part.data?.outputSchema?.type === "object"
-                        ? part.data.outputSchema.properties
-                        : part.data.detail
-                    ).length > 6;
-                }
-                break;
+  const [toolMarkdownContent, cmdbInstanceDetails, files, sizeLarge] =
+    useMemo(() => {
+      const contents: string[] = [];
+      const instanceDetails: CmdbInstanceDetailData[] = [];
+      const files: FileInfo[] = [
+        // {
+        //   name: "Test.md",
+        //   mimeType: "text/markdown",
+        //   size: 10240,
+        //   uri: "api/...",
+        // },
+        // {
+        //   name: "Test.pdf",
+        // },
+      ];
+      let large = toolName === "llm_answer";
+      job.messages?.forEach((message) => {
+        if (message.role === "tool") {
+          for (const part of message.parts) {
+            if (part.type === "data") {
+              switch (part.data?.type) {
+                case "markdown":
+                  contents.push(part.data.content);
+                  break;
+                case "cmdb_instance_detail":
+                  instanceDetails.push(part.data as CmdbInstanceDetailData);
+                  if (!large) {
+                    large =
+                      Object.keys(
+                        part.data?.outputSchema?.type === "object"
+                          ? part.data.outputSchema.properties
+                          : part.data.detail
+                      ).length > 6;
+                  }
+                  break;
+              }
+            } else if (part.type === "file") {
+              files.push(part.file);
             }
           }
         }
-      }
-    });
+      });
 
-    const markdownContent = contents.join("");
+      const markdownContent = contents.join("");
 
-    large = large || RegExpLargeTableInMarkdown.test(markdownContent);
+      large = large || RegExpLargeTableInMarkdown.test(markdownContent);
 
-    return [markdownContent, instanceDetails, large] as const;
-  }, [job.messages]);
+      return [markdownContent, instanceDetails, files, large] as const;
+    }, [job.messages, toolName]);
 
   return (
     <div
@@ -98,7 +113,7 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
         [styles["ask-user"]]: generalAskUser,
         [styles["fit-content"]]: hasGraph,
         [styles.active]: active,
-        [styles.large]: sizeLarge || toolName === "llm_answer",
+        [styles.large]: sizeLarge,
       })}
     >
       <div className={styles.background} />
@@ -227,6 +242,7 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
             autoSize
           />
         )}
+        {files.length > 0 && <FileList files={files} large={sizeLarge} />}
       </div>
     </div>
   );
