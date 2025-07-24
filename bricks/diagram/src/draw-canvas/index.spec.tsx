@@ -1376,7 +1376,7 @@ describe("eo-draw-canvas", () => {
       id: "container-1",
       view: {
         x: -10,
-        y: 140,
+        y: 130,
         width: 180,
         height: 250,
         text: "Updated",
@@ -1407,7 +1407,7 @@ describe("eo-draw-canvas", () => {
             height: 20,
             width: 20,
             x: 60,
-            y: 180,
+            y: 170,
           },
         },
         {
@@ -1421,7 +1421,7 @@ describe("eo-draw-canvas", () => {
             height: 20,
             width: 20,
             x: 90,
-            y: 180,
+            y: 170,
           },
         },
       ]);
@@ -1646,7 +1646,7 @@ describe("eo-draw-canvas", () => {
             height: 20,
             width: 20,
             x: 30,
-            y: 320,
+            y: 300,
           },
         },
         {
@@ -1660,7 +1660,7 @@ describe("eo-draw-canvas", () => {
             height: 20,
             width: 20,
             x: 60,
-            y: 320,
+            y: 300,
           },
         },
       ]);

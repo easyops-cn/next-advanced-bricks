@@ -1,7 +1,7 @@
 import { get } from "lodash";
 import { CONTAINERGAP, DEFAULT_NODE_SIZE, MAXPERROW } from "../constants";
 import { DecoratorCell, NodeCell } from "../interfaces";
-import { isNoPoint } from "./asserts";
+import { isGroupDecoratorCell, isNoPoint } from "./asserts";
 
 /**
  * 交错排列的网格布局
@@ -49,7 +49,7 @@ export function staggeredLayout(
       const nodeHeight = get(node, "view.height", DEFAULT_NODE_SIZE);
       const x = nodeX;
       const y = preRowOffsetY;
-      if (isNoPoint(nodes[index].view)) {
+      if (isNoPoint(nodes[index].view) || isGroupDecoratorCell(nodes[index])) {
         nodes[index].view = {
           ...nodes[index].view,
           x,

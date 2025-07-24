@@ -215,7 +215,7 @@ function processSortedContainers(
       containerWidth,
       currentMaxContainerWidth
     );
-    currentContainerGap += containerHeight + 50;
+    currentContainerGap += containerHeight + CONTAINERGAP;
   });
 
   return {
