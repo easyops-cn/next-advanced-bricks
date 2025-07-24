@@ -165,33 +165,6 @@ function convertDataSourcesToContext(dataSources: DataSource[]): ContextConf[] {
       ...(dataSource.transform
         ? { transform: { value: dataSource.transform } }
         : null),
-      // ...(dataSource.api.name === "easyops.api.data_exchange.olap@Query"
-      //   ? {
-      //     params: {
-      //       ...dataSource.params,
-      //       limit: undefined,
-      //       dims: ["time(10m)"],
-      //       filters: [
-      //         {
-      //             "name": "ip",
-      //             "operator": "==",
-      //             "value": "172.30.0.134"
-      //         },
-      //         {
-      //             "name": "time",
-      //             "operator": ">=",
-      //             "value": "now-24h"
-      //         },
-      //         {
-      //             "name": "time",
-      //             "operator": "<=",
-      //             "value": "now-1s"
-      //         }
-      //       ]
-      //     }
-      //   }
-      //   : null
-      // )
     },
     track: true,
   }));

@@ -7,5 +7,8 @@
 ```yaml preview
 brick: ai-portal.icon-button
 properties:
-  textContent: Hello world
+  icon:
+    lib: ant
+    icon: download
+  tooltip: Go to homepage
 ```

@@ -98,7 +98,7 @@ export function FilePreview({ file }: FilePreviewProps) {
 
   const handleDownload = useCallback(() => {
     const { bytes, uri, mimeType, name } = file;
-    const filename = name || K.UNTITLED;
+    const filename = name || t(K.UNTITLED);
     if (bytes) {
       saveAs(new Blob([atob(bytes)], { type: mimeType }), filename);
     } else if (uri) {
