@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.14.5...@next-bricks/presentational@1.15.0) (2025-07-24)
+
+
+### Features
+
+* **descriptions:** support setting grid-column for desc items ([b53b3fb](https://github.com/easyops-cn/next-advanced-bricks/commit/b53b3fb2c6d5c46f96a84caa7fb42132c5ae9c39))
+
+
+
+
+
 ## [1.14.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.14.4...@next-bricks/presentational@1.14.5) (2025-07-19)
 
 **Note:** Version bump only for package @next-bricks/presentational

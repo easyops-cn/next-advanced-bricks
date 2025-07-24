@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.15](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.1.14...@next-bricks/ui-test@1.1.15) (2025-07-24)
+
+
+### Bug Fixes
+
+* describe 标题增加小产品id和文件名称信息 ([3dc181f](https://github.com/easyops-cn/next-advanced-bricks/commit/3dc181fbe43f87e4ec7537907733f5fd9021d936))
+
+
+
+
+
 ## [1.1.14](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.1.13...@next-bricks/ui-test@1.1.14) (2025-07-23)
 
 
