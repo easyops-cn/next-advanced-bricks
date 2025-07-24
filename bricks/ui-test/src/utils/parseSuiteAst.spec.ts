@@ -18,6 +18,8 @@ describe("parseSuiteAst", () => {
           label: "test route create",
           params: null,
           flag: "only",
+          appId: "cmdb",
+          suiteName: "test-suite",
           children: [
             {
               type: "block",
@@ -186,7 +188,7 @@ describe("parseSuiteAst", () => {
     const generatedCode = transformFromAst(program, undefined, {}).code;
 
     expect(generatedCode).toMatchInlineSnapshot(`
-"describe.only("test route create", () => {
+"describe.only("cmdb@test-suite@test route create", () => {
   it("should work", () => {
     cy.get("#username").type("easyops");
     cy.get("#password").type("easyops");
