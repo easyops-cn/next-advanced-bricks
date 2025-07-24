@@ -131,8 +131,13 @@ export async function convertView(
         const value = data?.list?.findLast?.(
           (item) => item[metric.id] != null
         )?.[metric.id];
-        return pipes.unitFormat(value, metric.unit, precision).join("");
+        const unit = metric.unit === "load" ? "" : metric.unit;
+        return pipes.unitFormat(value, unit, precision).join("");
       },
+    },
+    {
+      name: "SIZE",
+      value: options.expanded ? "medium" : "small",
     },
   ];
 
@@ -160,6 +165,33 @@ function convertDataSourcesToContext(dataSources: DataSource[]): ContextConf[] {
       ...(dataSource.transform
         ? { transform: { value: dataSource.transform } }
         : null),
+      // ...(dataSource.api.name === "easyops.api.data_exchange.olap@Query"
+      //   ? {
+      //     params: {
+      //       ...dataSource.params,
+      //       limit: undefined,
+      //       dims: ["time(10m)"],
+      //       filters: [
+      //         {
+      //             "name": "ip",
+      //             "operator": "==",
+      //             "value": "172.30.0.134"
+      //         },
+      //         {
+      //             "name": "time",
+      //             "operator": ">=",
+      //             "value": "now-24h"
+      //         },
+      //         {
+      //             "name": "time",
+      //             "operator": "<=",
+      //             "value": "now-1s"
+      //         }
+      //       ]
+      //     }
+      //   }
+      //   : null
+      // )
     },
     track: true,
   }));

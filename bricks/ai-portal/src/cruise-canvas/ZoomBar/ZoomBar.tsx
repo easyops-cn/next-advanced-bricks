@@ -1,9 +1,23 @@
 // istanbul ignore file: experimental
 import React, { useCallback } from "react";
+import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import styles from "./ZoomBar.module.css";
 import toolbarStyles from "../toolbar.module.css";
-import { WrappedIcon } from "../bricks";
+import { WrappedIconButton } from "../bricks";
 import { K, t } from "../i18n";
+
+const ICON_BACK_TO_CENTER: GeneralIconProps = {
+  lib: "easyops",
+  icon: "back-to-center",
+};
+const ICON_ZOOM_OUT: GeneralIconProps = {
+  lib: "antd",
+  icon: "minus-circle",
+};
+const ICON_ZOOM_IN: GeneralIconProps = {
+  lib: "antd",
+  icon: "plus-circle",
+};
 
 export interface ZoomBarProps {
   scale: number;
@@ -26,16 +40,25 @@ export function ZoomBar({
 
   return (
     <div className={`${toolbarStyles.toolbar} ${styles["zoom-bar"]}`}>
-      <button onClick={onReCenter} title={t(K.BACK_TO_CENTER)}>
-        <WrappedIcon lib="easyops" icon="back-to-center" />
-      </button>
+      <WrappedIconButton
+        variant="mini"
+        icon={ICON_BACK_TO_CENTER}
+        onClick={onReCenter}
+        title={t(K.BACK_TO_CENTER)}
+      />
       <div className={toolbarStyles.divider}></div>
-      <button onClick={handleZoomOut} title={t(K.ZOOM_OUT)}>
-        <WrappedIcon lib="antd" theme="outlined" icon="minus-circle" />
-      </button>
-      <button onClick={handleZoomIn} title={t(K.ZOOM_IN)}>
-        <WrappedIcon lib="antd" theme="outlined" icon="plus-circle" />
-      </button>
+      <WrappedIconButton
+        variant="mini"
+        icon={ICON_ZOOM_OUT}
+        onClick={handleZoomOut}
+        title={t(K.ZOOM_OUT)}
+      />
+      <WrappedIconButton
+        variant="mini"
+        icon={ICON_ZOOM_IN}
+        onClick={handleZoomIn}
+        title={t(K.ZOOM_IN)}
+      />
     </div>
   );
 }

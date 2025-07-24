@@ -5,6 +5,8 @@ import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import classNames from "classnames";
 import type { DropdownActionsProps } from "@next-bricks/basic/dropdown-actions";
+import type { ActionType } from "@next-bricks/basic/mini-actions";
+import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
 import ElevoLogo from "../elevo-logo/images/logo@2x.png";
@@ -12,12 +14,17 @@ import {
   WrappedDropdownActions,
   WrappedEasyopsAvatar,
   WrappedIcon,
+  WrappedIconButton,
   WrappedLink,
 } from "./bricks.js";
 import { ChatHistory, type ActionClickDetail } from "./ChatHistory.js";
-import type { ActionType } from "@next-bricks/basic/mini-actions";
 
 initializeI18n(NS, locales);
+
+const SIDEBAR_ICON: GeneralIconProps = {
+  lib: "easyops",
+  icon: "sidebar",
+};
 
 const dropdownActions: DropdownActionsProps["actions"] = [
   {
@@ -158,9 +165,11 @@ function ElevoSidebarComponent({
               height={26}
             />
           </WrappedLink>
-          <button className="toggle" onClick={handleCollapse}>
-            <WrappedIcon lib="easyops" icon="sidebar" />
-          </button>
+          <WrappedIconButton
+            icon={SIDEBAR_ICON}
+            variant="light"
+            onClick={handleCollapse}
+          />
         </div>
         <WrappedLink className="new-chat" url={newChatUrl}>
           <WrappedIcon
@@ -194,9 +203,11 @@ function ElevoSidebarComponent({
         </div>
       </div>
       <div className="alternative">
-        <button className="toggle" onClick={handleExpand}>
-          <WrappedIcon lib="easyops" icon="sidebar" />
-        </button>
+        <WrappedIconButton
+          icon={SIDEBAR_ICON}
+          variant="light"
+          onClick={handleExpand}
+        />
         <WrappedLink className="new-chat" url={newChatUrl}>
           <WrappedIcon
             className="new-chat-icon"

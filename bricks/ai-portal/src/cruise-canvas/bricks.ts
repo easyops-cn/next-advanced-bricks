@@ -23,6 +23,7 @@ import {
   Descriptions,
   DescriptionsProps,
 } from "@next-bricks/presentational/descriptions";
+import type { IconButton, IconButtonProps } from "../icon-button";
 
 export const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
@@ -43,6 +44,10 @@ export const WrappedDrawer = wrapBrick<
   onClose: "close",
   onOpen: "open",
 });
+
+export const WrappedIconButton = wrapBrick<IconButton, IconButtonProps>(
+  "ai-portal.icon-button"
+);
 
 export const showDialog =
   unwrapProvider<typeof _showDialog>("basic.show-dialog");

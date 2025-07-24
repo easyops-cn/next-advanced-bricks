@@ -1,0 +1,20 @@
+table {
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+tr {
+  border-top: 1px solid #ccd1de;
+}
+
+td,
+th {
+  border: 1px solid #ccd1de;
+  padding: 6px 13px;
+}
+
+th {
+  font-weight: 500;
+}

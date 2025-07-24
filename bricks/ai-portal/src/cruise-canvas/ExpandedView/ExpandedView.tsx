@@ -13,8 +13,9 @@ import type { GraphGeneratedView } from "../interfaces";
 import styles from "./ExpandedView.module.css";
 import { CanvasContext } from "../CanvasContext";
 import { convertView } from "../utils/converters/convertView";
-import { WrappedIcon } from "../bricks";
+import { WrappedIcon, WrappedIconButton } from "../bricks";
 import { createPortal } from "../utils/createPortal";
+import { ICON_CLOSE } from "../constants";
 
 export interface ExpandedViewProps {
   views: GraphGeneratedView[];
@@ -106,25 +107,23 @@ export function ExpandedView({ views }: ExpandedViewProps) {
     }, 0);
   }, []);
 
-  useEffect(() => {
-    const viewport = viewportRef.current;
-    if (!viewport) {
-      return;
-    }
-    const handleKeyDown = (event: KeyboardEvent) => {
+  const handleKeydown = useCallback(
+    (event: React.KeyboardEvent) => {
       if (event.key === "Escape") {
         event.stopPropagation();
         handleClose();
       }
-    };
-    viewport.addEventListener("keydown", handleKeyDown);
-    return () => {
-      viewport.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [handleClose]);
+    },
+    [handleClose]
+  );
 
   return (
-    <div className={styles["expanded-view"]} tabIndex={-1} ref={viewportRef}>
+    <div
+      className={styles["expanded-view"]}
+      tabIndex={-1}
+      ref={viewportRef}
+      onKeyDown={handleKeydown}
+    >
       {loading && (
         <div className={styles.loading}>
           <WrappedIcon lib="antd" icon="loading-3-quarters" spinning />
@@ -150,9 +149,11 @@ export function ExpandedView({ views }: ExpandedViewProps) {
           </li>
         ))}
       </ul>
-      <button className={styles.close} onClick={handleClose}>
-        <WrappedIcon lib="antd" icon="close" />
-      </button>
+      <WrappedIconButton
+        icon={ICON_CLOSE}
+        className={styles.close}
+        onClick={handleClose}
+      />
     </div>
   );
 }

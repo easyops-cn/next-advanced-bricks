@@ -33,6 +33,7 @@ import type {
   TaskBaseDetail,
   GraphEdge,
   ZoomAction,
+  FileInfo,
 } from "./interfaces.js";
 import { useAutoCenter } from "./useAutoCenter.js";
 import { useLayout } from "./useLayout.js";
@@ -63,6 +64,7 @@ import { ExpandedView } from "./ExpandedView/ExpandedView.js";
 import { Nav } from "./Nav/Nav.js";
 import { ReplayToolbar } from "./ReplayToolbar/ReplayToolbar.js";
 import { ChatBox } from "./ChatBox/ChatBox.js";
+import { FilePreview } from "./FilePreview/FilePreview.js";
 
 initializeI18n(NS, locales);
 
@@ -607,6 +609,8 @@ function LegacyCruiseCanvasComponent(
     string | null
   >(null);
 
+  const [activeFile, setActiveFile] = React.useState<FileInfo | null>(null);
+
   const canvasContextValue = useMemo(
     () => ({
       humanInput,
@@ -623,6 +627,7 @@ function LegacyCruiseCanvasComponent(
       activeExpandedViewJobId,
       setActiveExpandedViewJobId,
       supports,
+      setActiveFile,
     }),
     [
       activeToolCallJobId,
@@ -663,7 +668,7 @@ function LegacyCruiseCanvasComponent(
 
   useEffect(() => {
     const root = rootRef.current;
-    if (!root || activeToolCallJob || activeExpandedViewJobId) {
+    if (!root || activeToolCallJob || activeExpandedViewJobId || activeFile) {
       return;
     }
 
@@ -731,6 +736,7 @@ function LegacyCruiseCanvasComponent(
     activeNodeId,
     activeToolCallJob,
     activeExpandedViewJobId,
+    activeFile,
     nodes,
     scrollTo,
     scrollBy,
@@ -837,6 +843,7 @@ function LegacyCruiseCanvasComponent(
       </div>
       {activeToolCallJob && <ToolCallDetail job={activeToolCallJob} />}
       {activeExpandedViewJobId && <ExpandedView views={views!} />}
+      {activeFile && <FilePreview file={activeFile} />}
     </CanvasContext.Provider>
   );
 }

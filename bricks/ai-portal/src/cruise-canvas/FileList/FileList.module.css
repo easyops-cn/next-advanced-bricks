@@ -1,0 +1,56 @@
+.files {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 4px;
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+
+.large {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.file {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
+  display: flex;
+  height: 60px;
+  align-items: center;
+  padding: 0 14px;
+}
+
+.file,
+.file:hover {
+  color: var(--elevo-color-brand);
+}
+
+.file:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.content {
+  min-width: 0;
+  flex: 1;
+}
+
+.icon {
+  margin-right: 11px;
+}
+
+.name,
+.metadata {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.name {
+  color: rgba(0, 0, 0, 0.88);
+}
+
+.metadata {
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 12px;
+  margin-top: 3px;
+}

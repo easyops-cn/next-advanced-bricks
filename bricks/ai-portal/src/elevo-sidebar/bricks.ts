@@ -20,6 +20,7 @@ import type {
   EoMiniActionsEventsMapping,
   EoMiniActionsProps,
 } from "@next-bricks/basic/mini-actions";
+import type { IconButton, IconButtonProps } from "../icon-button";
 
 export const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 export const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
@@ -45,3 +46,6 @@ export const WrappedMiniActions = wrapBrick<
   onActionClick: "action.click",
   onVisibleChange: "visible.change",
 });
+export const WrappedIconButton = wrapBrick<IconButton, IconButtonProps>(
+  "ai-portal.icon-button"
+);

@@ -1,3 +1,4 @@
+import type { JSONSchema } from "./json-schema";
 import type { ViewWithInfo } from "./utils/converters/interfaces";
 
 export type RangeTuple = [min: number, max: number];
@@ -175,14 +176,17 @@ export interface TextPart {
 
 export interface FilePart {
   type: "file";
-  file: {
-    name?: string;
-    mimeType?: string;
-    // oneof {
-    bytes?: string; // base64 encoded content
-    uri?: string;
-    // }
-  };
+  file: FileInfo;
+}
+
+export interface FileInfo {
+  name?: string;
+  mimeType?: string;
+  size?: number; // in bytes
+  // oneof {
+  bytes?: string; // base64 encoded content
+  uri?: string;
+  // }
 }
 
 // 自定义结构化信息，用于个性化 UI 显示
@@ -242,7 +246,7 @@ export interface CmdbInstanceDetailData {
   type: "cmdb_instance_detail";
   objectId: string;
   detail: Record<string, any>;
-  outputSchema: Record<string, any>;
+  outputSchema?: JSONSchema;
 }
 
 export type ZoomAction =

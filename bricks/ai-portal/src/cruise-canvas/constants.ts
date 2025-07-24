@@ -1,3 +1,4 @@
+import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import { type TaskState } from "./interfaces.js";
 
 export const DEFAULT_SCALE_RANGE_MIN = 0.5;
@@ -30,3 +31,14 @@ export const IS_MAC = /mac/i.test(
     navigator.platform ??
     navigator.userAgent
 );
+
+export const ICON_CLOSE: GeneralIconProps = {
+  lib: "antd",
+  icon: "close",
+};
+
+export const ICON_LOADING: GeneralIconProps = {
+  lib: "antd",
+  icon: "loading-3-quarters",
+  spinning: true,
+};

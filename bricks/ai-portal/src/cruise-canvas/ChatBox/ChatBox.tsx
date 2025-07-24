@@ -11,11 +11,31 @@ import {
   type TextareaAutoResizeRef,
 } from "@next-shared/form";
 import ResizeObserver from "resize-observer-polyfill";
+import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import styles from "./ChatBox.module.css";
-import { showDialog, WrappedIcon, WrappedTooltip } from "../bricks";
+import { showDialog, WrappedIcon, WrappedIconButton } from "../bricks";
 import { CanvasContext } from "../CanvasContext";
 import type { TaskState } from "../interfaces";
 import { K, t } from "../i18n";
+import { ICON_LOADING } from "../constants";
+
+const ICON_PAUSE: GeneralIconProps = {
+  lib: "fa",
+  prefix: "far",
+  icon: "circle-pause",
+};
+
+const ICON_STOP: GeneralIconProps = {
+  lib: "fa",
+  prefix: "far",
+  icon: "circle-stop",
+};
+
+const ICON_RESUME: GeneralIconProps = {
+  lib: "fa",
+  prefix: "far",
+  icon: "circle-play",
+};
 
 export interface ChatBoxProps {
   taskState: TaskState | undefined;
@@ -174,62 +194,31 @@ export function ChatBox({ taskState, taskDone }: ChatBoxProps): JSX.Element {
           ) : (
             <>
               {actionBeingTaken === "toggle" ? (
-                <WrappedTooltip>
-                  <button disabled className={styles["btn-intercept"]}>
-                    <WrappedIcon
-                      lib="antd"
-                      icon="loading-3-quarters"
-                      spinning
-                    />
-                  </button>
-                </WrappedTooltip>
+                <WrappedIconButton icon={ICON_LOADING} disabled />
               ) : taskState === "paused" ? (
-                <WrappedTooltip
-                  content={actionBeingTaken ? undefined : t(K.RESUME_THE_TASK)}
+                <WrappedIconButton
+                  icon={ICON_RESUME}
+                  disabled={!!actionBeingTaken}
+                  tooltip={actionBeingTaken ? undefined : t(K.RESUME_THE_TASK)}
                   onClick={handleResume}
-                >
-                  <button
-                    disabled={!!actionBeingTaken}
-                    className={styles["btn-intercept"]}
-                  >
-                    <WrappedIcon lib="fa" prefix="far" icon="circle-play" />
-                  </button>
-                </WrappedTooltip>
+                />
               ) : (
-                <WrappedTooltip
-                  content={actionBeingTaken ? undefined : t(K.PAUSE_THE_TASK)}
+                <WrappedIconButton
+                  icon={ICON_PAUSE}
+                  disabled={!!actionBeingTaken}
+                  tooltip={actionBeingTaken ? undefined : t(K.PAUSE_THE_TASK)}
                   onClick={handlePause}
-                >
-                  <button
-                    disabled={!!actionBeingTaken}
-                    className={styles["btn-intercept"]}
-                  >
-                    <WrappedIcon lib="fa" prefix="far" icon="circle-pause" />
-                  </button>
-                </WrappedTooltip>
+                />
               )}
               {actionBeingTaken === "cancel" ? (
-                <WrappedTooltip>
-                  <button disabled className={styles["btn-intercept"]}>
-                    <WrappedIcon
-                      lib="antd"
-                      icon="loading-3-quarters"
-                      spinning
-                    />
-                  </button>
-                </WrappedTooltip>
+                <WrappedIconButton icon={ICON_LOADING} disabled />
               ) : (
-                <WrappedTooltip
-                  content={actionBeingTaken ? undefined : t(K.CANCEL_THE_TASK)}
+                <WrappedIconButton
+                  icon={ICON_STOP}
+                  disabled={!!actionBeingTaken}
+                  tooltip={actionBeingTaken ? undefined : t(K.CANCEL_THE_TASK)}
                   onClick={handleStop}
-                >
-                  <button
-                    disabled={!!actionBeingTaken}
-                    className={styles["btn-intercept"]}
-                  >
-                    <WrappedIcon lib="fa" prefix="far" icon="circle-stop" />
-                  </button>
-                </WrappedTooltip>
+                />
               )}
             </>
           )}

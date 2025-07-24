@@ -37,24 +37,6 @@
   vertical-align: middle;
 }
 
-.toggle {
-  color: #595959;
-  font-size: 18px;
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: none;
-  border: none;
-  cursor: pointer;
-  border-radius: 8px;
-}
-
-.toggle:hover {
-  background: rgba(0, 0, 0, 0.04);
-}
-
 .new-chat::part(link) {
   display: flex;
   align-items: center;
