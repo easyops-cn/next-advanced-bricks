@@ -1,4 +1,5 @@
 import { CommandDoc } from "../../../interface.js";
+import { getParamDefinitionOfArbitraryOptions } from "./utils.js";
 
 export default function getCustomCommands(): CommandDoc[] {
   return [
@@ -62,6 +63,54 @@ export default function getCustomCommands(): CommandDoc[] {
         icon: "code",
       },
     },
+    {
+      name: "brick_click",
+      category: "action",
+      description: "构件点击动作",
+      chain: "child",
+      from: "custom",
+      params: [getParamDefinitionOfArbitraryOptions()],
+    },
+    {
+      name: "brick_clickItem",
+      category: "action",
+      description: "构件基于某项内容进行点击",
+      chain: "child",
+      from: "custom",
+      params: [getParamDefinitionOfArbitraryOptions()],
+    },
+    {
+      name: "brick_type",
+      category: "action",
+      description: "构件输入动作",
+      chain: "child",
+      from: "custom",
+      params: [getParamDefinitionOfArbitraryOptions()],
+    },
+    {
+      name: "brick_clear",
+      category: "action",
+      description: "构件内容清除",
+      chain: "child",
+      from: "custom",
+      params: [getParamDefinitionOfArbitraryOptions()],
+    },
+    {
+      name: "brick_fill",
+      category: "action",
+      description: "构件内容填写",
+      chain: "child",
+      from: "custom",
+      params: [getParamDefinitionOfArbitraryOptions()],
+    },
+    {
+      name: "nextWaitForPageLoad",
+      category: "other",
+      description: "等待页面加载完成",
+      chain: "parent",
+      from: "custom",
+    },
+
     // Testing-library commands end -->
   ];
 }

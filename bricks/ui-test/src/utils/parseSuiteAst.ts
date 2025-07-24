@@ -210,11 +210,18 @@ function createBlockNode(item: NodeItem): t.ExpressionStatement {
     extraArgs.push(t.objectExpression(optionsProperties));
   }
 
+  let label = item.label;
+
+  if (item.name === "describe" && item.appId && item.suiteName) {
+    // 测试套件需要增加小产品和名称的前缀，以便快速识别
+    label = `${item.appId}@${item.suiteName}@${item.label}`;
+  }
+
   return t.expressionStatement(
     t.callExpression(callee, [
       ...(["before", "beforeEach", "after", "afterEach"].includes(item.name)
         ? []
-        : [t.stringLiteral(item.label || ""), ...extraArgs]),
+        : [t.stringLiteral(label || ""), ...extraArgs]),
       t.arrowFunctionExpression([], t.blockStatement(processBlockItem(item))),
     ])
   );

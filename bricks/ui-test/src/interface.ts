@@ -17,6 +17,8 @@ export interface NodeItem {
   flag?: NodeFlag;
   tags?: string[];
   creator?: string;
+  appId?: string;
+  suiteName?: string;
 }
 
 export interface CommandParam {
