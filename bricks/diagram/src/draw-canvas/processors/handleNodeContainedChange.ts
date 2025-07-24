@@ -47,7 +47,7 @@ export function handleNodeContainedChange(
         top >= containerTop &&
         bottom <= containerBottom
       ) {
-        payload.containerId = containerCell.id;
+        payload.containerCell = containerCell;
         break; //A node can be associated with only one container
       }
     }
@@ -56,7 +56,7 @@ export function handleNodeContainedChange(
   containedChanges = cellPayloads.filter((payload) => {
     const cell = nodeAndGroupCells.find((c) => c.id === payload.id);
     const containerId = cell?.containerId;
-    const containerCellId = payload.containerId;
+    const containerCellId = payload.containerCell?.id;
     //过滤掉一直没有关系或者关系没有改变的
     return containerId !== containerCellId;
   });

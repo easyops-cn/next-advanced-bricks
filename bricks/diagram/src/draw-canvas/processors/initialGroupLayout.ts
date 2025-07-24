@@ -92,16 +92,15 @@ function processSortedGroups(
 ) {
   let currentContainerGap = containerGap;
   sortedGroupIds.forEach((groupId) => {
-    const containerCell = containerCellMap.get(groupId)!;
+    const groupCell = containerCellMap.get(groupId)!;
     const groupedCells = containerGroup[groupId] as Cell[];
     const nodeCells = groupedCells.filter(
       (cell) => cell.type === "node"
     ) as NodeCell[];
 
-    currentContainerGap += CONTAINERGAP;
+    currentContainerGap += +(GROUPPADDING + CONTAINERGAP * 2); //加上容器的间距,分组间距后面会在initialContainerLayout调整减掉一个GROUPPADDING
 
     let nodeViews: (NodeCell | DecoratorCell)[] = [];
-
     if (nodeLayout === "dagre") {
       const { getNodeView } = dagreLayout({ cells: nodeCells });
       nodeViews = nodeCells.map((node: NodeCell) => {
@@ -126,8 +125,8 @@ function processSortedGroups(
     const containerRect = computeBoundingBox(nodeViews as BaseNodeCell[], {
       padding: GROUPPADDING,
     });
-    containerCell.view = { ...containerCell.view, ...containerRect };
-    currentContainerGap += get(containerRect, "height", 0) + 50;
+    groupCell.view = { ...groupCell.view, ...containerRect };
+    currentContainerGap += get(containerRect, "height", 0) + CONTAINERGAP;
   });
   return {
     updatedGap: currentContainerGap,
@@ -139,13 +138,18 @@ export function highlightGroupCell(
   activeTarget: ActiveTarget | null | undefined,
   cells: Cell[]
 ) {
-  let activeTargetCells = [];
+  let activeTargetCells = [],
+    active = false;
+  // istanbul ignore next
   if (activeTarget?.type === "multi") {
     activeTargetCells = activeTarget.targets;
   } else if (activeTarget?.type === "node") {
     activeTargetCells.push(activeTarget);
+  } else if (activeTarget?.type === "decorator") {
+    active = activeTarget.id === cell.id;
+    return active;
   }
-  const active = activeTargetCells.some(
+  active = activeTargetCells.some(
     (item) =>
       item?.type === "node" &&
       (cells.find((c) => isNodeCell(c) && c.id === item.id) as NodeCell)

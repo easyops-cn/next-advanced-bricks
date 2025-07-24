@@ -249,6 +249,7 @@ export function updateCells({
       const groupCells = newCells.filter(
         (cell) => isGroupDecoratorCell(cell) && isNoSize(cell.view)
       ) as DecoratorCell[];
+
       const containerAndGroupCells = [...containerCells, ...groupCells];
       const nodeLayout =
         get(layoutOptions, "initialLayout") === "layered-staggered"

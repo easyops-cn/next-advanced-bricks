@@ -95,6 +95,10 @@ export interface MoveCellPayload {
   width?: number;
   height?: number;
   decorator?: DecoratorType;
+  /**
+   * 容器装饰器单元格,用于handleNodeContainedChange事件
+   */
+  containerCell?: DecoratorCell;
   groupId?: NodeId;
   containerId?: NodeId;
   guideLines?: LineTuple[];

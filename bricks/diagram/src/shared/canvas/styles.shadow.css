@@ -91,22 +91,32 @@
 }
 
 .decorator-group {
-  position: relative;
-
   .lock-icon,
   .plus-wrapper,
   .plus-icon {
     opacity: 0;
   }
 
-  .plus-icon {
-    cursor: pointer;
+  .group {
+    position: relative;
 
-    &:hover {
-      color: rgba(33, 212, 243, 1);
+    .plus-icon {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translate(-50%, 50%);
+      padding: 2px;
+      background: var(--color-fill-bg-base-1);
+      border-radius: 2px;
+      cursor: pointer;
+
+      &:hover {
+        color: rgba(33, 212, 243, 1);
+      }
     }
   }
 }
+
 .decorator-group.active-group,
 .cell.active .decorator-group {
   .group {
@@ -120,9 +130,11 @@
     opacity: 1;
   }
 }
+
 .cell:has(.decorator-group.active-group) {
   opacity: 1;
 }
+
 .cell.active .decorator-area .area,
 .cell.active .decorator-rect-container .rect-container,
 .cell.active .decorator-text .text-container,
