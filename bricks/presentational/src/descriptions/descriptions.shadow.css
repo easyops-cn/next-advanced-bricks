@@ -23,7 +23,7 @@
 }
 
 .description-item.horizontal {
-  flex-direction: inherit;
+  flex-direction: row;
 }
 
 .description-item.vertical {
@@ -82,4 +82,5 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex-shrink: 0;
 }

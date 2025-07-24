@@ -23,6 +23,7 @@ interface DescriptionItem {
   group?: string;
   text?: string | number;
   useBrick?: UseBrickConf;
+  gridColumn?: string;
 }
 
 type Layout = "horizontal" | "vertical";
@@ -189,12 +190,16 @@ export function DescriptionsComponent(props: DescriptionsProps) {
               bordered,
             })}
             style={{
-              ...(index === list.length - 1
+              ...(item.gridColumn
                 ? {
-                    gridColumnStart: list.length % column,
-                    gridColumnEnd: +column + 1,
+                    gridColumn: item.gridColumn,
                   }
-                : {}),
+                : index === list.length - 1
+                  ? {
+                      gridColumnStart: list.length % column,
+                      gridColumnEnd: +column + 1,
+                    }
+                  : null),
             }}
           >
             <span className="description-item-label">
