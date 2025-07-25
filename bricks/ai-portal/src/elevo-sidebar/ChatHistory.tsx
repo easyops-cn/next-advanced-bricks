@@ -206,7 +206,10 @@ export function ChatHistory({
   );
 }
 
-function parseTemplate(template: string, context: Record<string, any>) {
+function parseTemplate(
+  template: string | undefined,
+  context: Record<string, any>
+) {
   return template?.replace(/{{(.*?)}}/g, (_match: string, key: string) => {
     const value = get(context, key);
     return value;

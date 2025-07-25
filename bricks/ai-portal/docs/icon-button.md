@@ -8,7 +8,7 @@
 brick: ai-portal.icon-button
 properties:
   icon:
-    lib: ant
+    lib: antd
     icon: download
   tooltip: Go to homepage
 ```
