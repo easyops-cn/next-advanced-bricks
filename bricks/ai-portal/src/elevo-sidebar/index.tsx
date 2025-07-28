@@ -208,14 +208,16 @@ function ElevoSidebarComponent({
           variant="light"
           onClick={handleExpand}
         />
-        <WrappedLink className="new-chat" url={newChatUrl}>
-          <WrappedIcon
-            className="new-chat-icon"
-            lib="easyops"
-            icon="new-chat"
-          />
-          {t(K.NEW_CHAT)}
-        </WrappedLink>
+        {newChatUrl ? (
+          <WrappedLink className="new-chat" url={newChatUrl}>
+            <WrappedIcon
+              className="new-chat-icon"
+              lib="easyops"
+              icon="new-chat"
+            />
+            {t(K.NEW_CHAT)}
+          </WrappedLink>
+        ) : null}
       </div>
     </div>
   );
