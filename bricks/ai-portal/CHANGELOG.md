@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.20.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.19.0...@next-bricks/ai-portal@0.20.0) (2025-07-28)
+
+
+### Features
+
+* new bricks: show-cases, mcp-tools ([5c2965d](https://github.com/easyops-cn/next-advanced-bricks/commit/5c2965d0b33fcfa5cfd349f9b73949d1c7088d55))
+
+
+
+
+
 # [0.19.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.18.1...@next-bricks/ai-portal@0.19.0) (2025-07-24)
 
 
