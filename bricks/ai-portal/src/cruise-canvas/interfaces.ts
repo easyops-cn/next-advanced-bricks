@@ -246,7 +246,7 @@ export interface CmdbInstanceDetailData {
   type: "cmdb_instance_detail";
   objectId: string;
   detail: Record<string, any>;
-  outputSchema?: JSONSchema;
+  outputSchema?: JSONSchema | string;
 }
 
 export type ZoomAction =

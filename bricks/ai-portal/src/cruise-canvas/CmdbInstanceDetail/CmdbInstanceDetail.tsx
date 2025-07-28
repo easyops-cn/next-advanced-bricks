@@ -40,8 +40,19 @@ export function CmdbInstanceDetail({
   }, [objectId]);
 
   const list = useMemo(() => {
-    if (outputSchema?.type === "object") {
-      const entries = Object.entries<JSONSchema>(outputSchema.properties);
+    let schema: JSONSchema | undefined;
+    if (typeof outputSchema === "string") {
+      try {
+        schema = JSON.parse(outputSchema) as JSONSchema;
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to parse outputSchema as JSON", e);
+      }
+    } else {
+      schema = outputSchema;
+    }
+    if (schema?.type === "object") {
+      const entries = Object.entries<JSONSchema>(schema.properties);
       return entries.map(([key, def]) => {
         const { description, type } = def;
         const label = description || upperFirst(key);
