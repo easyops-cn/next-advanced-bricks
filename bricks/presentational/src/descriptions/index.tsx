@@ -17,7 +17,7 @@ const WrappedGeneralCard = wrapBrick<Card, CardProps>("eo-card");
 
 const WrappedGridLayout = wrapBrick<GridLayout, GridProps>("eo-grid-layout");
 
-interface DescriptionItem {
+export interface DescriptionItem {
   label: string;
   field?: string;
   group?: string;
