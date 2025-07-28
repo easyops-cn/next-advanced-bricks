@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.20.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.20.0...@next-bricks/ai-portal@0.20.1) (2025-07-28)
+
+
+### Bug Fixes
+
+* **sidebar:** increase padding top ([f22c394](https://github.com/easyops-cn/next-advanced-bricks/commit/f22c394075b61d5fc7a385432c877fa6e325cbbd))
+
+
+
+
+
 # [0.20.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.19.0...@next-bricks/ai-portal@0.20.0) (2025-07-28)
 
 
