@@ -1,0 +1,133 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1200px;
+  width: 100%;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.nav,
+.cases {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav {
+  display: flex;
+  font-size: 16px;
+
+  .item + .item {
+    margin-left: 32px;
+  }
+
+  .item a {
+    color: rgba(38, 38, 38, 0.65);
+    cursor: pointer;
+
+    &.active {
+      color: #262626;
+      font-weight: 500;
+
+      &::after {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 4px;
+        background-color: currentColor;
+        border-radius: 2px;
+      }
+    }
+  }
+}
+
+.cases {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(284px, 1fr));
+  gap: 20px;
+  margin-top: 2em;
+}
+
+.link {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0px 1px 2px rgba(46, 41, 51, 0.08),
+    0px 2px 4px rgba(71, 63, 79, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  display: block;
+}
+
+.link::part(link) {
+  display: flex;
+  gap: 0;
+  flex-direction: column;
+  height: 200px;
+}
+
+.title {
+  font-size: 16px;
+  line-height: 24px;
+  width: 100%;
+  height: 80px;
+  padding: 16px 15px 15px;
+  color: #262626;
+  border: 1px solid rgba(35, 33, 41, 0.05);
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
+
+  span {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.placeholder {
+  width: 100%;
+  background: #f8f8f8;
+  border: 1px solid rgba(35, 33, 41, 0.05);
+  border-radius: 12px 12px 0 0;
+  height: 120px;
+}
+
+.summary {
+  color: rgba(0, 0, 0, 0.65);
+  padding: 15px;
+
+  span {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.thumbnail span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.link:hover {
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
+
+  .title {
+    color: var(--elevo-color-brand);
+  }
+}
