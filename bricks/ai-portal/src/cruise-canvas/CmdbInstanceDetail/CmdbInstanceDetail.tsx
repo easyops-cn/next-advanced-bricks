@@ -276,7 +276,7 @@ async function convertCmdbInstanceDetail(
               brick: "eo-tag",
               properties: {
                 textContent: `<% CTX.${BUILTIN_FN_STRINGIFY}(ITEM, ${JSON.stringify(key)}, ${JSON.stringify(props[0]?.[1].type)}) %>`,
-                outlined: true,
+                outline: true,
                 style: {
                   cursor: "pointer",
                 },
@@ -364,7 +364,7 @@ async function convertCmdbInstanceDetail(
           brick: "eo-tag",
           properties: {
             textContent: `<% CTX.${BUILTIN_FN_STRINGIFY}(${valueAccessor}, ${JSON.stringify(key)}, ${JSON.stringify(props[0]?.[1].type)}) %>`,
-            outlined: true,
+            outline: true,
             style: {
               cursor: "pointer",
             },
