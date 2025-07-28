@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.20.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.20.1...@next-bricks/ai-portal@0.20.2) (2025-07-28)
+
+
+### Bug Fixes
+
+* compatible with string outputSchema ([aa38531](https://github.com/easyops-cn/next-advanced-bricks/commit/aa38531b7ff62759999fe264a68979ebee07f8d9))
+
+
+
+
+
 ## [0.20.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.20.0...@next-bricks/ai-portal@0.20.1) (2025-07-28)
 
 
