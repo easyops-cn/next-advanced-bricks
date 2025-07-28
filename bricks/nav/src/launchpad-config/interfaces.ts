@@ -15,7 +15,6 @@ export type ConfigMenuItemNormal = ConfigMenuItemApp | ConfigMenuItemCustom;
 export interface ConfigMenuItemApp extends ConfigMenuItemBase {
   type: "app";
   url: string;
-  locales?: AppLocales;
 }
 
 export interface ConfigMenuItemCustom extends ConfigMenuItemBase {
@@ -39,6 +38,7 @@ interface ConfigMenuItemBase extends ConfigMenuBase {
 interface ConfigMenuBase {
   id: string;
   name: string;
+  locales?: AppLocales;
   instanceId: string;
   /** 有可屏蔽的 */
   blockable?: boolean;

@@ -21,8 +21,13 @@ import {
 } from "./PlatformCategory";
 import { getRuntime } from "@next-core/runtime";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { initializeReactI18n, useTranslation } from "@next-core/i18n/react";
+import { K, NS, locales } from "./i18n";
+
+initializeReactI18n(NS, locales);
 
 export function Launchpad({ active }: { active?: boolean }) {
+  const { t } = useTranslation(NS);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [favorites, setFavorites] = useState<FavMenuItem[]>([]);
   const handleClickSearchBox = useCallback(() => {
@@ -119,7 +124,7 @@ export function Launchpad({ active }: { active?: boolean }) {
         <div className="sidebar">
           <div className="union">
             <div className="quick-nav">
-              <div className="quick-nav-label">快捷访问</div>
+              <div className="quick-nav-label">{t(K.QUICK_ACCESS)}</div>
               {/* <Loading loading={loading || loadingFavorites} /> */}
               <TransitionGroup>
                 <ul className="sidebar-menu quick-nav-menu">
@@ -148,7 +153,7 @@ export function Launchpad({ active }: { active?: boolean }) {
 
             {showPlatformCategory && (
               <div className="platform-nav">
-                <div className="platform-nav-label">平台底座</div>
+                <div className="platform-nav-label">{t(K.PLATFORM_BASE)}</div>
                 <ul className="sidebar-menu platform-nav-menu">
                   {platformCategories.map((item, index) => (
                     <PlatformCategorySidebarMenuItem
@@ -165,7 +170,7 @@ export function Launchpad({ active }: { active?: boolean }) {
           {showScenarioCenter && (
             <div className="jump-nav">
               <WrappedLink type="plain" url={"/portal/scenario"}>
-                <div className="jump-nav-label">场景中心</div>
+                <div className="jump-nav-label">{t(K.SCENARIO_CENTER)}</div>
                 <WrappedIcon lib="antd" icon="right" theme="outlined" />
               </WrappedLink>
             </div>
@@ -174,7 +179,7 @@ export function Launchpad({ active }: { active?: boolean }) {
           {showSolutionCenter && (
             <div className="jump-nav">
               <WrappedLink type="plain" url={"/portal/solution"}>
-                <div className="jump-nav-label">解决方案</div>
+                <div className="jump-nav-label">{t(K.SOLUTIONS)}</div>
                 <WrappedIcon lib="antd" icon="right" theme="outlined" />
               </WrappedLink>
             </div>
@@ -182,7 +187,7 @@ export function Launchpad({ active }: { active?: boolean }) {
           {showOpenPlatform && (
             <div className="jump-nav">
               <WrappedLink type="plain" url={"/developers"}>
-                <div className="jump-nav-label">开放平台</div>
+                <div className="jump-nav-label">{t(K.OPEN_PLATFORM)}</div>
                 <WrappedIcon lib="antd" icon="right" theme="outlined" />
               </WrappedLink>
             </div>
@@ -201,7 +206,7 @@ export function Launchpad({ active }: { active?: boolean }) {
             />
             <input
               ref={searchInputRef}
-              placeholder="通过关键字搜索"
+              placeholder={t(K.SEARCH_PLACEHOLDER) as string}
               value={q}
               onChange={handleSearch}
               className="search-input"
@@ -216,7 +221,7 @@ export function Launchpad({ active }: { active?: boolean }) {
           </div>
           {platform === "#all" && (
             <div className={classNames({ empty: recentVisits.length === 0 })}>
-              <div className="recent-visits-label">最近访问</div>
+              <div className="recent-visits-label">{t(K.RECENT_VISITS)}</div>
               <ul className="recent-visits">
                 {recentVisits.map((item, index) => (
                   <li key={index}>
@@ -243,7 +248,7 @@ export function Launchpad({ active }: { active?: boolean }) {
               {menuGroups.map((group) => (
                 <MenuGroup
                   key={group.name}
-                  name={group.name}
+                  name={group.localeName as string}
                   items={group.items}
                 />
               ))}

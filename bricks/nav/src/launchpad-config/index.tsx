@@ -187,7 +187,7 @@ function getMenuGroupsWithoutBlockedItems<T extends ConfigMenuGroup>(
       const items = group.items
         .map((item) => getMenuItemWithoutBlockedItems(item))
         .filter(Boolean) as ConfigMenuItem[];
-      return items.length > 0 ? { ...group, items } : null;
+      return { ...group, items };
     })
     .filter(Boolean) as T[];
 }
@@ -199,7 +199,7 @@ function getMenuItemWithoutBlockedItems<T extends ConfigMenuItem>(
     const subItems = item.items
       .map((subItem) => getMenuItemWithoutBlockedItems(subItem))
       .filter(Boolean) as T[];
-    return subItems.length > 0 ? { ...item, items: subItems } : null;
+    return { ...item, items: subItems };
   }
   if (item.type === "app") {
     return item.url && auth.isBlockedPath(item.url) ? null : item;

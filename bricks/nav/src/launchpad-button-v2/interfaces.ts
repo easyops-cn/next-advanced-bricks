@@ -1,8 +1,10 @@
-import type { MicroApp } from "@next-core/types";
+import type { AppLocales, MicroApp } from "@next-core/types";
 import type { LegacyAntdIcon, MenuIcon } from "@next-shared/general/types";
 
 export interface MenuGroupData {
   name: string;
+  localeName?: string;
+  locales?: AppLocales;
   instanceId: string;
   items: MenuItemData[];
 }
@@ -17,30 +19,32 @@ export interface MicroAppWithInstanceId extends MicroApp {
   instanceId: string;
 }
 
-export interface MenuItemDataApp {
+export interface MenuItemDataBase {
+  type: string;
+  name: string;
+  localeName?: string;
+  locales?: AppLocales;
+  id: string;
+}
+
+export interface MenuItemDataApp extends MenuItemDataBase {
   type: "app";
-  name: string;
-  id: string;
   instanceId: string;
   url: string;
   description?: string;
   menuIcon?: Exclude<MenuIcon, LegacyAntdIcon>;
 }
 
-export interface MenuItemDataCustom {
+export interface MenuItemDataCustom extends MenuItemDataBase {
   type: "custom";
-  name: string;
-  id: string;
   instanceId: string;
   url: string;
   description?: string;
   menuIcon?: Exclude<MenuIcon, LegacyAntdIcon>;
 }
 
-export interface MenuItemDataDir {
+export interface MenuItemDataDir extends MenuItemDataBase {
   type: "dir";
-  name: string;
-  id: string;
   items: MenuItemDataNormal[];
 }
 

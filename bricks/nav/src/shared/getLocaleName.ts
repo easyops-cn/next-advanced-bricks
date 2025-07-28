@@ -1,10 +1,7 @@
 import { i18nText } from "@next-core/i18n";
 import type { AppLocales, I18nData } from "@next-core/types";
 
-export function getAppLocaleName(
-  locales: AppLocales | undefined,
-  name: string
-) {
+export function getLocaleName(locales?: AppLocales | undefined, name?: string) {
   if (!locales) {
     return name;
   }

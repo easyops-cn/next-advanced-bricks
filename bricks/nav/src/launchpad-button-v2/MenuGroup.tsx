@@ -9,6 +9,10 @@ import type {
   SidebarMenuItemData,
 } from "./interfaces";
 import { Target } from "@next-bricks/basic/link";
+import { initializeReactI18n, useTranslation } from "@next-core/i18n/react";
+import { K, NS, locales } from "./i18n";
+
+initializeReactI18n(NS, locales);
 
 export interface MenuGroupProps {
   name: string;
@@ -24,7 +28,7 @@ export function MenuGroup({ name, items }: MenuGroupProps) {
           item.type === "dir" ? (
             <MenuItemFolder
               key={`${item.type}-${item.id}`}
-              name={item.name}
+              name={item.localeName as string}
               items={item.items}
             />
           ) : (
@@ -41,6 +45,7 @@ export interface MenuItemProps {
 }
 
 function MenuItem({ item }: MenuItemProps) {
+  const { t } = useTranslation(NS);
   const { loadingFavorites, readonly, pushRecentVisit, toggleStar, isStarred } =
     useLaunchpadContext();
 
@@ -85,7 +90,7 @@ function MenuItem({ item }: MenuItemProps) {
               ]) as any)
             : null)}
         />
-        <span className="menu-item-label">{item.name}</span>
+        <span className="menu-item-label">{item.localeName}</span>
       </WrappedLink>
       {!readonly && (
         <WrappedIcon
@@ -93,8 +98,9 @@ function MenuItem({ item }: MenuItemProps) {
           prefix={starred ? "fas" : "far"}
           icon="star"
           className="menu-item-star"
-          title={starred ? "取消收藏" : "收藏"}
+          title={(starred ? t(K.UNFAVORITE) : t(K.FAVORITE)) as string}
           onClick={handleStarClick}
+          data-testid="menu-item-star"
         />
       )}
     </li>

@@ -1,6 +1,6 @@
 import React from "react";
 import { describe, test, expect, jest } from "@jest/globals";
-import { render, fireEvent } from "@testing-library/react";
+import { render, fireEvent, getByTestId } from "@testing-library/react";
 import { MenuGroup, SidebarMenuItem } from "./MenuGroup.js";
 import { LaunchpadContextData, LaunchpadsContext } from "./LaunchpadContext.js";
 import type {
@@ -43,6 +43,7 @@ describe("MenuGroup", () => {
       type: "app",
       id: "cmdb-instances",
       name: "实例管理",
+      localeName: "实例管理",
       menuIcon: {
         lib: "antd",
         icon: "",
@@ -52,6 +53,7 @@ describe("MenuGroup", () => {
       type: "custom",
       id: "foo",
       name: "Bar",
+      localeName: "Bar",
       menuIcon: {
         lib: "antd",
         icon: "link",
@@ -61,16 +63,19 @@ describe("MenuGroup", () => {
       type: "dir",
       id: "extends",
       name: "扩展",
+      localeName: "扩展",
       items: [
         {
           type: "app",
           id: "dir-cmdb-app",
           name: "Dir APP",
+          localeName: "Dir APP",
         },
         {
           type: "custom",
           instanceId: "dir-cmdb-custom",
           name: "Dir Custom",
+          localeName: "Dir Custom",
         },
       ],
     },
@@ -129,6 +134,7 @@ describe("MenuGroup", () => {
       type: "custom",
       id: "foo",
       name: "Bar",
+      localeName: "Bar",
       menuIcon: {
         lib: "antd",
         icon: "link",
@@ -143,8 +149,9 @@ describe("MenuGroup", () => {
 
     // 取消收藏
     fireEvent.click(
-      getByText("实例管理").parentElement?.parentElement?.querySelector(
-        '[title="取消收藏"]'
+      getByTestId(
+        getByText("实例管理").parentElement?.parentElement as HTMLElement,
+        "menu-item-star"
       ) as HTMLElement
     );
     // 搜索后影响文件夹展开/折叠
@@ -156,8 +163,9 @@ describe("MenuGroup", () => {
 
     // 收藏
     fireEvent.click(
-      getByText("实例管理").parentElement?.parentElement?.querySelector(
-        '[title="收藏"]'
+      getByTestId(
+        getByText("实例管理").parentElement?.parentElement as HTMLElement,
+        "menu-item-star"
       ) as HTMLElement
     );
     rerender(getComponent(true));

@@ -16,7 +16,7 @@ import type {
   MenuAction,
   MenuActionEventDetail,
 } from "./interfaces";
-import { getAppLocaleName } from "../shared/getLocaleName";
+import { getLocaleName } from "../shared/getLocaleName";
 
 export type ProcessedConfigMenuItemNormal = ConfigMenuItemNormal & {
   __pathname?: string;
@@ -43,7 +43,7 @@ export function MenuGroup({
 }: MenuGroupProps) {
   // Make it compatible
   data.type ??= "group";
-  const { name, items } = data;
+  const { name, locales, items } = data;
   const [dropdownActive, setDropdownActive] = useState(false);
 
   const filteredActions = useMemo(() => {
@@ -71,7 +71,7 @@ export function MenuGroup({
       })}
     >
       <div className="menu-group-label-wrapper">
-        <span className="menu-group-label">{name}</span>
+        <span className="menu-group-label">{getLocaleName(locales, name)}</span>
         {variant !== "menu-config" && !!filteredActions?.length && (
           <WrappedDropdownActions
             actions={filteredActions}
@@ -142,13 +142,7 @@ export function MenuItem({
   onClick,
   onActionClick,
 }: MenuItemProps) {
-  const name = useMemo(
-    () =>
-      data.type === "app"
-        ? getAppLocaleName(data.locales, data.name)
-        : data.name,
-    [data]
-  );
+  const name = useMemo(() => getLocaleName(data.locales, data.name), [data]);
 
   const [dropdownActive, setDropdownActive] = useState(false);
 
@@ -267,7 +261,7 @@ function MenuItemFolder({
   onMenuItemClick,
   onActionClick,
 }: MenuItemFolderProps) {
-  const { name, items } = data;
+  const { name, locales, items } = data;
   const [dropdownActive, setDropdownActive] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
@@ -309,7 +303,9 @@ function MenuItemFolder({
             icon="folder-open"
             className="menu-icon"
           />
-          <span className="menu-item-label">{name}</span>
+          <span className="menu-item-label">
+            {getLocaleName(locales, name)}
+          </span>
           <WrappedIcon
             lib="antd"
             icon={expanded ? "up" : "down"}
