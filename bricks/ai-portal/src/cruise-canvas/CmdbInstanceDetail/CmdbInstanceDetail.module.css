@@ -1,0 +1,12 @@
+.container {
+  background: var(--elevo-component-background);
+  backdrop-filter: var(--elevo-component-backdrop-filter);
+  border-radius: var(--elevo-border-radius);
+  padding: 16px;
+}
+
+.loading {
+  position: absolute;
+  top: calc(50% - 7px);
+  left: calc(50% - 7px);
+}
