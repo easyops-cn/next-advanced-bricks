@@ -81,6 +81,83 @@ children:
                     《XX公司运维管理文件》
 
                     依据《XX公司运维管理文件》该系统的重要等级为一级，可用性要求99.999%，MTTR为小于3分钟，该系统部署需要实现异地容灾，建议采用双中心部署，且单中心内核心模块无单点。
+            - role: tool
+              parts:
+                - type: data
+                  data:
+                    type: cmdb_instance_detail
+                    objectId: HOST
+                    detail:
+                      hostname: dev-01
+                      env:
+                        - id: prod
+                          name: 生产
+                        - id: test
+                          name: 测试
+                          backupOwners:
+                            - username: Jerry
+                              email: jerry@example.com
+                            - username: Lucy
+                              email: lucy@example.com
+                            - username: Mark
+                              email: mark@example.com
+                          owner:
+                            username: Jim
+                            email: jim@example.com
+                        - id: dev
+                          name: 开发
+                          owner:
+                            username: Tom
+                            email: tom@example.com
+                      system:
+                        id: web
+                        name: Web
+                    outputSchema:
+                      type: object
+                      properties:
+                        hostname:
+                          description: 主机名
+                          type: string
+                        system:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              description: ID
+                            name:
+                              type: string
+                        env:
+                          type: array
+                          description: 环境
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                description: ID
+                                type: string
+                              name:
+                                description: 环境名称
+                                type: string
+                              owner:
+                                type: object
+                                properties:
+                                  username:
+                                    type: string
+                                    description: 用户名
+                                  email:
+                                    type: string
+                                    description: 邮箱
+                              backupOwners:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    username:
+                                      type: string
+                                      description: 用户名
+                                    email:
+                                      type: string
+                                      description: 邮箱
         - id: "7"
           upstream: ["4", "5"]
           state: completed
