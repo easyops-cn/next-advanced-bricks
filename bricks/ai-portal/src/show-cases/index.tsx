@@ -5,10 +5,10 @@ import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import type { Link, LinkProps } from "@next-bricks/basic/link";
 import { get } from "lodash";
-import { K, NS, locales, t } from "./i18n.js";
-import styleText from "./styles.shadow.css";
 import classNames from "classnames";
 import { getBasePath } from "@next-core/runtime";
+import { K, NS, locales, t } from "./i18n.js";
+import styleText from "./styles.shadow.css";
 
 initializeI18n(NS, locales);
 
@@ -109,7 +109,11 @@ function ShowCasesComponent({ list, taskUrlTemplate }: ShowCasesProps) {
                     }}
                   />
                 ) : (
-                  <span>{item.summary}</span>
+                  <span className="summary-1">
+                    <span className="summary-2">
+                      <span>{item.summary}</span>
+                    </span>
+                  </span>
                 )}
               </span>
               <span className="title">

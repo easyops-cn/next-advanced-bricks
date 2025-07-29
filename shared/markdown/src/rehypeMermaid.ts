@@ -9,10 +9,17 @@ let count = 0;
 
 mermaid.initialize({
   startOnLoad: false,
+  theme: "base",
   themeVariables: {
     fontSize: "14px",
+    lineColor: "#979797",
+    primaryColor: "#DCD2F3",
+    primaryBorderColor: "#0000001A",
   },
 });
+
+const parser = new DOMParser();
+const serializer = new XMLSerializer();
 
 // Reference https://github.com/remcohaszing/rehype-mermaid
 export function rehypeMermaid() {
@@ -39,8 +46,55 @@ export function rehypeMermaid() {
           const id = `mermaid-${count++}`;
 
           const { svg } = await mermaid.render(id, toString(node));
-          const replacements = fromHtmlIsomorphic(svg, { fragment: true })
-            .children as RefractorElement[];
+          const root = parser.parseFromString(svg, "text/html");
+          const svgElement = root.querySelector("svg") as SVGSVGElement;
+
+          const defs = root.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "defs"
+          );
+          defs.innerHTML = `<linearGradient id="linear-gradient-${id}" x1="0%" y1="0%" x2="0%" y2="100%">
+  <stop offset="0%" stop-color="#F0EBFA" />
+  <stop offset="75%" stop-color="#DED4F4" />
+  <stop offset="100%" stop-color="#C5C7FA" />
+</linearGradient>`;
+          svgElement.prepend(defs);
+
+          const style = root.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "style"
+          );
+          style.textContent = `
+#${id} .node rect,
+#${id} .node circle,
+#${id} .node ellipse,
+#${id} .node polygon,
+#${id} .node path {
+  fill: url(#linear-gradient-${id});
+}
+#${id} .node rect {
+  rx: 4;
+  ry: 4;
+}
+#${id} .labelBkg {
+  background-color: #f5f8ff;
+}
+#${id} .edgeLabel,
+#${id} .edgeLabel p {
+  background-color: transparent;
+}
+#${id} .edgeLabel {
+  color: #8c8c8c;
+  font-size: 12px;
+}
+`;
+          svgElement.appendChild(style);
+
+          const modifiedSvg = serializer.serializeToString(svgElement);
+
+          const replacements = fromHtmlIsomorphic(modifiedSvg, {
+            fragment: true,
+          }).children as RefractorElement[];
           parent.children.splice(index!, 1, ...replacements);
           parent.properties.className = (
             (parent.properties.className as string[]) || []
