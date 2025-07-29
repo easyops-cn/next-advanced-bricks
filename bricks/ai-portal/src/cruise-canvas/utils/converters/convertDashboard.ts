@@ -55,14 +55,23 @@ export default async function convertDashboard(
   view: ViewWithInfo,
   options: ConvertViewOptions
 ): Promise<BrickConf> {
-  const { dataSource, widgets } = properties as {
+  const {
+    dataSource,
+    groupField: _groupField,
+    widgets,
+  } = properties as {
     dataSource: string;
+    groupField?: string;
     widgets: Array<Widget>;
   };
 
+  const groupField = _groupField ? "#showKey" : undefined;
+
   const { isString, expression, usedContexts } = parseDataSource(dataSource);
 
-  const chartData = isString ? `<%= (${expression}).list %>` : dataSource;
+  const chartData = isString
+    ? `<%= CTX.__builtin_fn_extractList((${expression})) %>`
+    : dataSource;
 
   if (options.expanded) {
     let mergedWidgets = widgets as MergedWidget[];
@@ -116,7 +125,8 @@ export default async function convertDashboard(
       },
       children: mergedWidgets.map((widget) => {
         const { title, /* type, */ metric, size, precision, min, max } = widget;
-        const colorCount = widget.relevantMetrics?.length ?? 1;
+        const colorCount =
+          widget.relevantMetrics?.length ?? (groupField ? 2 : 1);
         const colors = Array.from(
           { length: colorCount },
           (_, i) => COLORS[(colorCursor + i) % COLORS.length]
@@ -128,7 +138,19 @@ export default async function convertDashboard(
           properties: {
             data: chartData,
             xField: "time",
-            yFields: widget.relevantMetrics ?? [metric.id],
+            ...(widget.relevantMetrics
+              ? {
+                  // yFields: widget.relevantMetrics,
+                  yFields: `<% CTX.__builtin_fn_getMetricDisplayNames((${expression}).displayNameList, ${JSON.stringify(
+                    widget.relevantMetrics
+                  )}) %>`,
+                }
+              : {
+                  // yField: metric.id,
+                  yField: `<% CTX.__builtin_fn_getMetricDisplayNames((${expression}).displayNameList, [${JSON.stringify(
+                    metric.id
+                  )}])[0] %>`,
+                }),
             ...(widget.counterMetric
               ? {
                   forceAbsoluteNumbers: true,
@@ -141,7 +163,7 @@ export default async function convertDashboard(
               : null),
             height: size === "large" ? 230 : 200,
             timeFormat: "HH:mm",
-            ...(widget.relevantMetrics
+            ...(widget.relevantMetrics || groupField
               ? null
               : {
                   areaOptions: {
@@ -164,8 +186,9 @@ export default async function convertDashboard(
                 shape: "smooth",
               },
             },
+            groupField,
             areaShape: "smooth",
-            legends: size === "large",
+            legends: !!(widget.relevantMetrics || groupField),
             colors: colors,
             tooltip: {
               marker: {
@@ -221,6 +244,72 @@ export default async function convertDashboard(
     };
   }
 
+  if (groupField) {
+    return {
+      brick: "div",
+      properties: {
+        style: {
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
+        },
+      },
+      children: [
+        {
+          brick: ":forEach",
+          dataSource: `<%= CTX.__builtin_fn_groupMetricData(CTX.__builtin_fn_extractList((${expression})), ${JSON.stringify(groupField)}) %>`,
+          children: [
+            {
+              brick: "div",
+              properties: {
+                textContent: "<% `${ITEM.group}:` %>",
+                style: {
+                  fontWeight: "500",
+                },
+              },
+            },
+            {
+              brick: "div",
+              properties: {
+                style: {
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(205px, 1fr))",
+                  gap: "10px",
+                  marginBottom: "8px",
+                },
+              },
+              children: widgets.map((widget, i) => {
+                const { title, type, metric, precision } = widget;
+                return {
+                  brick: "ai-portal.stat-with-mini-chart",
+                  properties: {
+                    size: "small",
+                    label: title || metric.id,
+                    data: "<% ITEM.list %>",
+                    xField: "time",
+                    yField: metric.id,
+                    lineColor: COLORS[i % COLORS.length],
+                    ...(metric.unit === "percent(1)"
+                      ? { min: 0, max: 1, showArea: true }
+                      : metric.unit === "percent(100)" || metric.unit === "%"
+                        ? { min: 0, max: 100, showArea: true }
+                        : { showArea: type === "area" }),
+                    value: `<%= CTX.__builtin_fn_getLatestMetricValue(ITEM.list, ${JSON.stringify(
+                      {
+                        metric,
+                        precision,
+                      }
+                    )}) %>`,
+                  },
+                };
+              }),
+            },
+          ],
+        },
+      ],
+    };
+  }
+
   return {
     brick: "div",
     properties: {
@@ -228,11 +317,9 @@ export default async function convertDashboard(
         display: "grid",
         gridTemplateColumns: "repeat(auto-fill, minmax(205px, 1fr))",
         gap: "10px",
-        // gridTemplateColumns: "repeat(auto-fill, minmax(375px, 1fr))",
-        // gap: "12px",
       },
     },
-    children: widgets.map((widget) => {
+    children: widgets.map((widget, i) => {
       const { title, type, metric, precision } = widget;
       return {
         brick: "ai-portal.stat-with-mini-chart",
@@ -242,14 +329,16 @@ export default async function convertDashboard(
           data: chartData,
           xField: "time",
           yField: metric.id,
-          lineColor: "#295DFF",
+          lineColor: COLORS[i % COLORS.length],
           ...(metric.unit === "percent(1)"
             ? { min: 0, max: 1, showArea: true }
             : metric.unit === "percent(100)" || metric.unit === "%"
               ? { min: 0, max: 100, showArea: true }
               : { showArea: type === "area" }),
           value: `<%= CTX.__builtin_fn_getLatestMetricValue((${
-            isString ? expression : JSON.stringify(dataSource ?? null)
+            isString
+              ? `CTX.__builtin_fn_extractList((${expression}))`
+              : JSON.stringify(dataSource ?? null)
           }), ${JSON.stringify({
             metric,
             precision,

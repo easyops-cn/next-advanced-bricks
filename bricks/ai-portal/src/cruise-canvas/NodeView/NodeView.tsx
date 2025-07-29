@@ -90,7 +90,10 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
       }
       if (component.componentName === "dashboard") {
         const widgets = component?.properties?.widgets;
-        if (Array.isArray(widgets) && widgets.length >= 7) {
+        if (
+          Array.isArray(widgets) &&
+          widgets.length >= (component.properties!.groupField ? 3 : 7)
+        ) {
           return true;
         }
       }
