@@ -120,19 +120,65 @@ export async function convertView(
     {
       name: "__builtin_fn_getLatestMetricValue",
       value: function getLatestMetricValue(
-        data: {
-          list?: Record<string, any>[];
-        },
+        list: Record<string, any>[] | undefined,
         {
           metric,
           precision,
         }: { metric: { id: string; unit: string }; precision?: number }
       ) {
-        const value = data?.list?.findLast?.(
-          (item) => item[metric.id] != null
-        )?.[metric.id];
+        const value = list?.findLast?.((item) => item[metric.id] != null)?.[
+          metric.id
+        ];
         const unit = metric.unit === "load" ? "" : metric.unit;
         return pipes.unitFormat(value, unit, precision).join("");
+      },
+    },
+    {
+      name: "__builtin_fn_extractList",
+      value: function extractList<T = unknown>(data: T[] | { list: T[] }): T[] {
+        if (Array.isArray(data)) {
+          return data;
+        }
+        return data?.list;
+      },
+    },
+    {
+      name: "__builtin_fn_groupMetricData",
+      value: function groupMetricData(
+        list: Record<string, any>[],
+        groupField: string
+      ) {
+        if (!list || !Array.isArray(list) || list.length === 0) {
+          return [];
+        }
+        const grouped = new Map<
+          string,
+          { group: string; list: Record<string, any>[] }
+        >();
+        for (const item of list) {
+          const key = item[groupField];
+          let groupedList = grouped.get(key);
+          if (!groupedList) {
+            grouped.set(key, (groupedList = { group: key, list: [] }));
+          }
+          groupedList.list.push(item);
+        }
+        return Array.from(grouped.values());
+      },
+    },
+    {
+      name: "__builtin_fn_getMetricDisplayNames",
+      value: function getMetricDisplayNames(
+        displayNameList:
+          | { metric_name: string; metric_display_name: string }[]
+          | undefined,
+        metricNames: string[]
+      ): string[] {
+        return metricNames.map(
+          (metricName) =>
+            displayNameList?.find((item) => item.metric_name === metricName)
+              ?.metric_display_name ?? metricName
+        );
       },
     },
     {
@@ -162,9 +208,20 @@ function convertDataSourcesToContext(dataSources: DataSource[]): ContextConf[] {
     resolve: {
       useProvider: `${dataSource.api.name}:${dataSource.api.version}`,
       params: dataSource.params,
-      ...(dataSource.transform
-        ? { transform: { value: dataSource.transform } }
-        : null),
+      ...(dataSource.api.name === "easyops.api.data_exchange.olap@Query"
+        ? {
+            params: {
+              ...dataSource.params,
+              translate: ["#showKey"],
+              limit: undefined,
+              limitBy: undefined,
+              order: undefined,
+              displayName: true,
+            },
+          }
+        : dataSource.transform
+          ? { transform: { value: dataSource.transform } }
+          : null),
     },
     track: true,
   }));
