@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/markdown@0.6.0...@next-shared/markdown@0.6.1) (2025-07-29)
+
+
+### Bug Fixes
+
+* refine mermaid label style ([7c6c275](https://github.com/easyops-cn/next-advanced-bricks/commit/7c6c275cc483ddba7dd6cb1f8282b107a2121e6e))
+* refine mermaid style ([3b9651a](https://github.com/easyops-cn/next-advanced-bricks/commit/3b9651a730ab044de38e93bd55928bd246b0267a))
+
+
+
+
+
 # [0.6.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/markdown@0.5.0...@next-shared/markdown@0.6.0) (2025-07-19)
 
 
