@@ -1,5 +1,6 @@
 import { pipes } from "@easyops-cn/brick-next-pipes";
 import fileText from "../images/file-text@2x.png";
+import filePdf from "../images/file-pdf@2x.png";
 import fileOther from "../images/file-other@2x.png";
 
 export function formatFileSize(size: number) {
@@ -17,6 +18,8 @@ export function getFileTypeAndIcon(
   switch (type) {
     case "text/markdown":
       return ["Markdown", fileText];
+    case "application/pdf":
+      return ["PDF", filePdf];
   }
 
   if (type.startsWith("text/")) {
@@ -35,6 +38,8 @@ export function getMimeTypeByFilename(filename: string | undefined): string {
   switch (ext) {
     case "md":
       return "text/markdown";
+    case "pdf":
+      return "application/pdf";
     default:
       return "unknown";
   }
