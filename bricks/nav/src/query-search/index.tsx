@@ -286,7 +286,11 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
             : theme.defaultAlgorithm,
       }}
     >
-      <StyleProvider container={shadowRoot as ShadowRoot} cache={cache}>
+      <StyleProvider
+        container={shadowRoot as ShadowRoot}
+        cache={cache}
+        hashPriority="high"
+      >
         <div style={{ position: "relative" }} ref={containerRef}>
           <div
             className={classNames("container", {
