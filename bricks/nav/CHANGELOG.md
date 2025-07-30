@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.22.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.22.8...@next-bricks/nav@1.22.9) (2025-07-30)
+
+
+### Bug Fixes
+
+* ALERT_EVENT-1911 IP 搜索，chrome=84，firefox=72版本有问题 ref ALERT_EVENT-1911 ([b85bafc](https://github.com/easyops-cn/next-advanced-bricks/commit/b85bafc13f8109c0eb54c4839fda6e5b46c6f4a6))
+
+
+
+
+
 ## [1.22.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.22.7...@next-bricks/nav@1.22.8) (2025-07-10)
 
 **Note:** Version bump only for package @next-bricks/nav
