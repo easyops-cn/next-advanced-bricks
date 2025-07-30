@@ -58,6 +58,8 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
               intermediateParts.push(part);
               continue;
           }
+        } else if (part.type === "file") {
+          continue;
         }
         responseParts.push(part);
       }
