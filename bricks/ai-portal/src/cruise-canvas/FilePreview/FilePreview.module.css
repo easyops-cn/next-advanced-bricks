@@ -34,3 +34,7 @@
     margin: 0 14px;
   }
 }
+
+.embed {
+  display: block;
+}

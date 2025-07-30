@@ -48,15 +48,20 @@ function getDrawerWidth() {
 export function FilePreview({ file }: FilePreviewProps) {
   const ref = useRef<Drawer>(null);
   const { setActiveFile } = useContext(CanvasContext);
+  const { bytes, uri, mimeType, name } = file;
+  const type = mimeType || getMimeTypeByFilename(name);
   const [status, setStatus] = useState<"loading" | "loaded" | "error">(
     "loading"
   );
 
   const [content, setContent] = useState<string | undefined>();
   useEffect(() => {
+    if (type === "application/pdf") {
+      setStatus(uri || bytes ? "loaded" : "error");
+      return;
+    }
+
     setStatus("loading");
-    const { bytes, uri, mimeType, name } = file;
-    const type = mimeType || getMimeTypeByFilename(name);
     if (type !== "text/markdown") {
       setStatus("error");
       return;
@@ -94,7 +99,7 @@ export function FilePreview({ file }: FilePreviewProps) {
         ignore = true;
       };
     }
-  }, [file]);
+  }, [bytes, type, uri]);
 
   const handleDownload = useCallback(() => {
     const { bytes, uri, mimeType, name } = file;
@@ -174,6 +179,19 @@ export function FilePreview({ file }: FilePreviewProps) {
             {t(K.FILE_PREVIEW_UNPREVIEWABLE_TIP_SUFFIX)}
           </p>
         </div>
+      ) : type === "application/pdf" ? (
+        <embed
+          className={styles.embed}
+          src={
+            uri
+              ? new URL(uri, `${location.origin}${getBasePath()}`).toString()
+              : `data:application/pdf;base64,${bytes}`
+          }
+          type={type}
+          title={name}
+          width="100%"
+          height="100%"
+        />
       ) : (
         <div className={classNames(styles.content, shareStyles.markdown)}>
           <EnhancedMarkdown content={content} />
