@@ -6,8 +6,10 @@ import {
 } from "@next-core/runtime";
 import { auth } from "@next-core/easyops-runtime";
 import { JsonStorage } from "@next-shared/general/JsonStorage";
+import { initializeReactI18n, useTranslation } from "@next-core/i18n/react";
 import { DeferredService } from "../shared/DeferredService";
 import { showDialog, showNotification } from "./wrapped-bricks";
+import { K, NS, locales } from "./i18n";
 import type {
   FavMenuItem,
   MenuGroupData,
@@ -28,9 +30,11 @@ import {
 import { search, searchCategories } from "./search";
 import { FAVORITES_LIMIT, RECENT_VISITS_LIMIT } from "./constants";
 
-const storageKey = `launchpad-recent-visits:${(
-  auth.getAuth() as Record<string, string>
-)?.org}`;
+initializeReactI18n(NS, locales);
+
+const storageKey = `launchpad-recent-visits:${
+  (auth.getAuth() as Record<string, string>)?.org
+}`;
 const storage = new JsonStorage(localStorage);
 
 let candidateDesktops: MenuGroupData[] = [];
@@ -77,6 +81,7 @@ const showErrorAsNotification = (error: unknown) =>
  *     - 同时当用户在 launchpad 上操作时，不会出现数据突然更新（新数据请求完成）。
  */
 export function useLaunchpadInfo(active?: boolean) {
+  const { t } = useTranslation(NS);
   const [desktops, setDesktops] = useState(candidateDesktops);
   const [microAppsById, setMicroAppsById] = useState(candidateMicroAppsById);
   const [customLinksById, setCustomLinksById] = useState(
@@ -196,7 +201,14 @@ export function useLaunchpadInfo(active?: boolean) {
               }
             : null;
         }
-        return customLinksById.get(item.id);
+
+        const link = customLinksById.get(item.id);
+        return link
+          ? {
+              ...link,
+              name: link.localeName,
+            }
+          : null;
       })
       .filter(Boolean) as MenuItemDataNormal[];
     setRecentVisits(visits);
@@ -242,8 +254,8 @@ export function useLaunchpadInfo(active?: boolean) {
         if (favorites.length >= FAVORITES_LIMIT) {
           showDialog({
             type: "warn",
-            title: "收藏数量已达上限",
-            content: `当前收藏链接数量已达上限（${FAVORITES_LIMIT}个），请删除部分收藏后再添加。`,
+            title: t(K.FAVORITES_LIMIT_REACHED) as string,
+            content: t(K.FAVORITES_LIMIT_MESSAGE, { count: FAVORITES_LIMIT }),
           });
           return;
         }

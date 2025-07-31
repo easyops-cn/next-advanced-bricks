@@ -1,13 +1,15 @@
-import type { Storyboard } from "@next-core/types";
+import type { AppLocales, Storyboard } from "@next-core/types";
 import { LaunchpadApi_getLaunchpadInfo } from "@next-api-sdk/micro-app-standalone-sdk";
 import {
   LaunchpadApi_createCollectionV2,
   LaunchpadApi_deleteCollectionV2,
   LaunchpadApi_listCollectionV2,
+  UserServiceModels,
 } from "@next-api-sdk/user-service-sdk";
 import { InstanceApi_postSearchV3 } from "@next-api-sdk/cmdb-sdk";
 import { sortBy } from "lodash";
 import { auth } from "@next-core/easyops-runtime";
+import { initializeReactI18n } from "@next-core/i18n/react";
 import type {
   FavMenuItem,
   MenuGroupData,
@@ -20,7 +22,10 @@ import type {
   PlatformCategoryItem,
 } from "./interfaces";
 import { FAVORITES_LIMIT } from "./constants";
-import { getAppLocaleName } from "../shared/getLocaleName";
+import { getLocaleName } from "../shared/getLocaleName";
+import { K, NS, t, locales } from "./i18n";
+
+initializeReactI18n(NS, locales);
 
 export async function fetchLaunchpadInfo() {
   const launchpadInfo = await LaunchpadApi_getLaunchpadInfo(
@@ -34,7 +39,7 @@ export async function fetchLaunchpadInfo() {
   const microAppsById = new Map<string, MicroAppWithInstanceId>();
   for (const storyboard of launchpadInfo.storyboards as Storyboard[]) {
     const app = storyboard.app as unknown as MicroAppWithInstanceId;
-    app.localeName = getAppLocaleName(app.locales, app.name);
+    app.localeName = getLocaleName(app.locales, app.name);
     if (!auth.isBlockedPath?.(app.homepage)) {
       microAppsById.set(app.id, app);
     }
@@ -46,6 +51,7 @@ export async function fetchLaunchpadInfo() {
   for (const group of launchpadInfo.desktops as unknown as MenuGroupData[]) {
     const items: MenuItemData[] = [];
     for (const item of group.items) {
+      item.localeName = getLocaleName(item.locales, item.name);
       switch (item.type) {
         case "app": {
           const app = microAppsById.get(item.id);
@@ -82,6 +88,7 @@ export async function fetchLaunchpadInfo() {
               subItem.type === "custom" &&
               !auth.isBlockedHref?.(subItem.url)
             ) {
+              subItem.localeName = getLocaleName(subItem.locales, subItem.name);
               subItems.push(subItem as MenuItemDataCustom);
               customLinksById.set(subItem.id, subItem);
             }
@@ -97,6 +104,7 @@ export async function fetchLaunchpadInfo() {
       }
     }
     if (items.length > 0) {
+      group.localeName = getLocaleName(group.locales, group.name);
       menuGroups.push({ ...group, items });
     }
   }
@@ -125,11 +133,11 @@ export async function fetchFavorites() {
       const app = fav.relatedApp as Omit<MicroAppWithInstanceId, "id"> & {
         appId: string;
       };
-      app.localeName = getAppLocaleName(app.locales, app.name);
+      const localeName = getLocaleName(app.locales, app.name);
       stored.push({
         favoriteId: fav.instanceId,
         type: "app",
-        name: app.localeName,
+        name: localeName,
         id: app.appId,
         url: app.homepage,
         instanceId: app.instanceId,
@@ -137,10 +145,18 @@ export async function fetchFavorites() {
       } as FavMenuItem);
     } else if (fav.type === "customItem") {
       const customItem = fav.relatedCustomItem!;
+      const localeName = getLocaleName(
+        (
+          customItem as UserServiceModels.ModelLaunchpadCollectionV2_relatedCustomItem & {
+            locales?: AppLocales;
+          }
+        ).locales,
+        customItem.name
+      );
       stored.push({
         favoriteId: fav.instanceId,
         type: "custom",
-        name: customItem.name,
+        name: localeName,
         id: customItem.id,
         url: customItem.url,
         menuIcon: customItem.menuIcon,
@@ -202,18 +218,20 @@ export async function fetchPlatformCategories(): Promise<
         "id",
         "type",
         "name",
+        "locales",
         "icon",
         "order",
         "platformApps.appId",
         "platformApps.name",
+        "platformApps.locales",
         "platformApps.homepage",
         "platformApps.description",
         "platformApps.menuIcon",
-        "platformApps.locales",
         "platformApps._object_id",
         "platformApps.@.order",
         "platformItems.id",
         "platformItems.name",
+        "platformItems.locales",
         "platformItems.url",
         "platformItems.description",
         "platformItems.menuIcon",
@@ -236,7 +254,7 @@ export async function fetchPlatformCategories(): Promise<
         }
         return {
           type: "app",
-          name: getAppLocaleName(app.locales, app.name),
+          name: getLocaleName(app.locales, app.name),
           id: app.appId,
           url: app.homepage,
           menuIcon: app.menuIcon,
@@ -253,7 +271,7 @@ export async function fetchPlatformCategories(): Promise<
         }
         return {
           type: "custom",
-          name: item.name,
+          name: getLocaleName(item.locales, item.name),
           id: item.id,
           url: item.url,
           menuIcon: item.menuIcon,
@@ -268,7 +286,7 @@ export async function fetchPlatformCategories(): Promise<
     return {
       instanceId: category.instanceId,
       id: category.id,
-      name: category.name,
+      name: getLocaleName(category.locales, category.name),
       icon: category.icon,
       order: category.order,
       items,
@@ -278,7 +296,7 @@ export async function fetchPlatformCategories(): Promise<
   return [
     {
       id: "#all",
-      name: "全部",
+      name: t(K.ALL),
       icon: {
         lib: "easyops",
         category: "second-menu",

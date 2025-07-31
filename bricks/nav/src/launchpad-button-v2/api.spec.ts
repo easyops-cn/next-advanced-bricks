@@ -139,11 +139,13 @@ describe("fetchLaunchpadInfo", () => {
   "customLinksById": Map {
     "foo" => {
       "id": "foo",
+      "localeName": "Bar",
       "name": "Bar",
       "type": "custom",
     },
     "dir-cmdb-custom" => {
       "id": "dir-cmdb-custom",
+      "localeName": "Dir Custom",
       "name": "Dir Custom",
       "type": "custom",
     },
@@ -153,6 +155,7 @@ describe("fetchLaunchpadInfo", () => {
       "items": [
         {
           "id": "cmdb-instances",
+          "localeName": undefined,
           "menuIcon": undefined,
           "name": "Cmdb Instances",
           "type": "app",
@@ -160,6 +163,7 @@ describe("fetchLaunchpadInfo", () => {
         },
         {
           "id": "foo",
+          "localeName": "Bar",
           "name": "Bar",
           "type": "custom",
         },
@@ -174,14 +178,17 @@ describe("fetchLaunchpadInfo", () => {
             },
             {
               "id": "dir-cmdb-custom",
+              "localeName": "Dir Custom",
               "name": "Dir Custom",
               "type": "custom",
             },
           ],
+          "localeName": "extends",
           "name": "extends",
           "type": "dir",
         },
       ],
+      "localeName": "IT 资源管理",
       "name": "IT 资源管理",
     },
   ],
@@ -462,7 +469,7 @@ describe("platformCategory", () => {
     },
     "id": "#all",
     "items": [],
-    "name": "全部",
+    "name": "All",
   },
   {
     "icon": {

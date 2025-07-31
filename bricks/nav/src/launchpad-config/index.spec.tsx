@@ -205,11 +205,11 @@ describe("nav.launchpad-config", () => {
       document.body.appendChild(element);
     });
 
-    expect(element.shadowRoot?.querySelectorAll(".menu-group").length).toBe(1);
+    expect(element.shadowRoot?.querySelectorAll(".menu-group").length).toBe(2);
     expect(
       element.shadowRoot?.querySelectorAll(".menu-item.folder").length
-    ).toBe(1);
-    expect(element.shadowRoot?.querySelectorAll(".menu-item").length).toBe(5);
+    ).toBe(2);
+    expect(element.shadowRoot?.querySelectorAll(".menu-item").length).toBe(6);
 
     act(() => {
       document.body.removeChild(element);
