@@ -279,7 +279,7 @@ export default async function convertDashboard(
                 },
               },
               children: widgets.map((widget, i) => {
-                const { title, type, metric, precision } = widget;
+                const { title, /* type, */ metric, precision } = widget;
                 return {
                   brick: "ai-portal.stat-with-mini-chart",
                   properties: {
@@ -289,11 +289,12 @@ export default async function convertDashboard(
                     xField: "time",
                     yField: metric.id,
                     lineColor: COLORS[i % COLORS.length],
+                    showArea: true,
                     ...(metric.unit === "percent(1)"
-                      ? { min: 0, max: 1, showArea: true }
+                      ? { min: 0, max: 1 }
                       : metric.unit === "percent(100)" || metric.unit === "%"
-                        ? { min: 0, max: 100, showArea: true }
-                        : { showArea: type === "area" }),
+                        ? { min: 0, max: 100 }
+                        : null),
                     value: `<%= CTX.__builtin_fn_getLatestMetricValue(ITEM.list, ${JSON.stringify(
                       {
                         metric,
@@ -320,7 +321,7 @@ export default async function convertDashboard(
       },
     },
     children: widgets.map((widget, i) => {
-      const { title, type, metric, precision } = widget;
+      const { title, /* type, */ metric, precision } = widget;
       return {
         brick: "ai-portal.stat-with-mini-chart",
         properties: {
@@ -330,11 +331,12 @@ export default async function convertDashboard(
           xField: "time",
           yField: metric.id,
           lineColor: COLORS[i % COLORS.length],
+          showArea: true,
           ...(metric.unit === "percent(1)"
-            ? { min: 0, max: 1, showArea: true }
+            ? { min: 0, max: 1 }
             : metric.unit === "percent(100)" || metric.unit === "%"
-              ? { min: 0, max: 100, showArea: true }
-              : { showArea: type === "area" }),
+              ? { min: 0, max: 100 }
+              : null),
           value: `<%= CTX.__builtin_fn_getLatestMetricValue((${
             isString
               ? `CTX.__builtin_fn_extractList((${expression}))`

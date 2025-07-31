@@ -101,6 +101,19 @@ declare module "@babel/standalone" {
   export const availablePlugins: Record<string, unknown>;
 }
 
+declare module "@babel/code-frame" {
+  export const codeFrameColumns: (
+    source: string,
+    location: {
+      start: { line: number; column: number };
+      end?: { line?: number; column?: number };
+    },
+    options?: {
+      message?: string;
+    }
+  ) => string;
+}
+
 declare module "typo-js" {
   class Typo {
     constructor(lang: string, aff: string, dic: string);

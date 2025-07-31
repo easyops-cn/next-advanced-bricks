@@ -206,7 +206,7 @@ function convertDataSourcesToContext(dataSources: DataSource[]): ContextConf[] {
   return dataSources.map((dataSource) => ({
     name: dataSource.name,
     resolve: {
-      useProvider: `${dataSource.api.name}:${dataSource.api.version}`,
+      useProvider: `${dataSource.api.name}:*`,
       params: dataSource.params,
       ...(dataSource.api.name === "easyops.api.data_exchange.olap@Query"
         ? {
