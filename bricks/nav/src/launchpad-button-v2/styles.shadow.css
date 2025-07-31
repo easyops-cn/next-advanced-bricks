@@ -86,9 +86,10 @@
 .menu-group-label,
 .menu-item-label,
 .recent-visits span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: auto;
+  white-space: normal;
+  word-break: break-word;
+  width: 90px;
 }
 
 .sidebar-menu,
@@ -119,7 +120,6 @@
 
 .sidebar-menu-item > eo-link::part(link),
 .menu-item > eo-link::part(link) {
-  height: 20px;
   display: flex;
   align-items: center;
   gap: 8px;
