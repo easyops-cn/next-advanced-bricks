@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.23.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.22.9...@next-bricks/nav@1.23.0) (2025-07-31)
+
+
+### Features
+
+* **launchpad-button-v2:** Add i18n support ([705ef6e](https://github.com/easyops-cn/next-advanced-bricks/commit/705ef6e8c7d25a3374952ecc9c2360e6302c3054))
+
+
+
+
+
 ## [1.22.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.22.8...@next-bricks/nav@1.22.9) (2025-07-30)
 
 
