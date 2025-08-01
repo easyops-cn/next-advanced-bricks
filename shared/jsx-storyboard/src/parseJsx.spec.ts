@@ -23,7 +23,10 @@ export default (
   <eo-view title="修改主机 192.168.1.3 基本信息">
     <eo-form
       componentId="form-edit-host"
-      values={CTX.hostDetail}
+      values={{
+        hostname: CTX.hostDetail.hostname,
+        memo: CTX.hostDetail.memo
+      }}
       events={{
         "validate.success": {
           action: "call_api",
@@ -78,7 +81,7 @@ export default (
 
 describe("parseJsx", () => {
   test("should parse JSX code with defineContext", () => {
-    const { errors, ...result } = parseJsx(code);
+    const { errors, componentsMap, source, ...result } = parseJsx(code);
     // if (errors.length > 0) {
     //   for (const error of errors) {
     //     if (!error.node) {

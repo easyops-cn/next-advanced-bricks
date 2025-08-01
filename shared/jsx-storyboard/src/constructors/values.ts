@@ -159,3 +159,44 @@ export function constructJsValue(
   });
   return null;
 }
+
+export function constructPropValue(
+  expr: t.Expression,
+  state: ConstructResult,
+  options: ConstructJsValueOptions
+) {
+  let shouldCompute = false;
+  t.traverse(expr, {
+    enter(node, parent) {
+      let p: t.Node | undefined;
+      if (
+        !shouldCompute &&
+        !(
+          t.isStringLiteral(node) ||
+          t.isNumericLiteral(node) ||
+          t.isBooleanLiteral(node) ||
+          t.isNullLiteral(node) ||
+          t.isObjectExpression(node) ||
+          t.isArrayExpression(node) ||
+          (t.isIdentifier(node) &&
+            (node.name === "undefined" ||
+              ((p = parent[parent.length - 1]?.node) &&
+                t.isObjectProperty(p) &&
+                !p.computed &&
+                !p.shorthand)))
+        )
+      ) {
+        shouldCompute = true;
+      }
+    },
+  });
+
+  if (shouldCompute) {
+    const invalidNode = validateExpression(expr);
+    if (!invalidNode) {
+      return `<%${options.modifier ?? ""} ${state.source.substring(expr.start!, expr.end!)} %>`;
+    }
+  }
+
+  return constructJsValue(expr, state, options);
+}

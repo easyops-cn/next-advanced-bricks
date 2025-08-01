@@ -8,7 +8,7 @@ import type {
   ConstructResult,
   Events,
 } from "../interfaces.js";
-import { constructJsValue } from "./values.js";
+import { constructPropValue } from "./values.js";
 import { validateExpression } from "../utils.js";
 import { constructEvents } from "./events.js";
 
@@ -97,7 +97,7 @@ export function constructElement(
             });
             continue;
           }
-          properties[attrName] = constructJsValue(
+          properties[attrName] = constructPropValue(
             attr.value.expression,
             result,
             {
@@ -230,10 +230,13 @@ export function constructElement(
     };
   }
   if (t.isJSXText(node)) {
-    return {
-      type: "text",
-      text: node.value,
-    };
+    if (node.value.trim()) {
+      return {
+        type: "text",
+        text: node.value,
+      };
+    }
+    return null;
   }
   if (t.isJSXExpressionContainer(node)) {
     if (t.isJSXEmptyExpression(node.expression)) {
