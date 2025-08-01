@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.1.1...@next-shared/jsx-storyboard@0.1.2) (2025-08-01)
+
+
+### Bug Fixes
+
+* construct whole prop value ([0ce097e](https://github.com/easyops-cn/next-advanced-bricks/commit/0ce097e647a8b22a8da629ef04804182278df5bd))
+
+
+
+
+
 ## [0.1.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.1.0...@next-shared/jsx-storyboard@0.1.1) (2025-08-01)
 
 
