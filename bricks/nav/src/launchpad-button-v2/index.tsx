@@ -56,7 +56,7 @@ export function EoLaunchpadButtonV2Component({ host }: { host: HTMLElement }) {
   };
 
   useEffect(() => {
-    // 当切换页面时，关闭 Launchpad。
+    // 当切换页面时，关闭Launchpad。
     const unlisten = getHistory().listen(() => {
       setActive(false);
     });
