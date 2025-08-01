@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.1.3...@next-shared/jsx-storyboard@0.1.4) (2025-08-01)
+
+
+### Bug Fixes
+
+* add ambiguous props ([ddcdbce](https://github.com/easyops-cn/next-advanced-bricks/commit/ddcdbced9db4402b7cab35134ec523b8d93475a8))
+
+
+
+
+
 ## [0.1.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.1.2...@next-shared/jsx-storyboard@0.1.3) (2025-08-01)
 
 
