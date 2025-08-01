@@ -1,5 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import type { BasicDecoratorProps } from "../interfaces";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import type { BasicDecoratorProps, NodeCell } from "../interfaces";
 import { handleMouseDown } from "../processors/handleMouseDown";
 import classNames from "classnames";
 import { get } from "lodash";
@@ -38,6 +44,41 @@ export function DecoratorContainer({
     width: cell.view.width,
     height: cell.view.height,
   });
+  // istanbul ignore next
+  const shouldHighlight = useMemo(() => {
+    let activeTargetCells = [],
+      active = false;
+    if (activeTarget?.type === "multi") {
+      activeTargetCells = activeTarget.targets;
+    } else if (activeTarget?.type === "node") {
+      activeTargetCells.push(activeTarget);
+    }
+    const containerLeft = cell.view.x;
+    const containerRight = cell.view.x + cell.view.width;
+    const containerTop = cell.view.y;
+    const containerBottom = cell.view.y + cell.view.height;
+    active = activeTargetCells.some((item) => {
+      if (item?.type === "node" || item.type === "decorator") {
+        const targetCell = cells.find(
+          (c) =>
+            (c?.type === "node" || c.type === "decorator") && c.id === item.id
+        ) as NodeCell;
+        if (targetCell) {
+          const left = targetCell.view.x;
+          const right = targetCell.view.x + targetCell.view.width;
+          const top = targetCell.view.y;
+          const bottom = targetCell.view.y + targetCell.view.height;
+          return (
+            left >= containerLeft &&
+            right <= containerRight &&
+            top >= containerTop &&
+            bottom <= containerBottom
+          );
+        }
+      }
+    });
+    return active;
+  }, [activeTarget, cell, cells]);
   const handleEnableEdit = useCallback(
     (e: React.MouseEvent) => {
       if (readOnly || locked) {
@@ -179,7 +220,9 @@ export function DecoratorContainer({
       </foreignObject>
       <foreignObject className="container-wrapper">
         <div
-          className="container"
+          className={classNames("container", {
+            ["active-container"]: shouldHighlight,
+          })}
           style={{
             ...cell.view.style,
             width: view.width,

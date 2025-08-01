@@ -131,7 +131,8 @@
   }
 }
 
-.cell:has(.decorator-group.active-group) {
+.cell:has(.decorator-group.active-group),
+.cell:has(.container.active-container) {
   opacity: 1;
 }
 
@@ -140,7 +141,8 @@
 .cell.active .decorator-text .text-container,
 .cell.active .container-wrapper .container,
 .cell.active .group-wrapper .group,
-.container-dragover .decorator-container .container {
+.container-dragover .decorator-container .container,
+.active-container.container {
   border-style: dashed;
   border-color: rgba(73, 126, 255, 0.7);
 }
