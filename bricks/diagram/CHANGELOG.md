@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.66.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.66.1...@next-bricks/diagram@0.66.2) (2025-08-01)
+
+
+### Bug Fixes
+
+* 修复拖到节点、分组需要高亮对应容器 ([33cc8af](https://github.com/easyops-cn/next-advanced-bricks/commit/33cc8afd4601d4cf50086143d30a66a89d1b450b))
+
+
+
+
+
 ## [0.66.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.66.0...@next-bricks/diagram@0.66.1) (2025-07-24)
 
 
