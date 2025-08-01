@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.1.2...@next-shared/jsx-storyboard@0.1.3) (2025-08-01)
+
+
+### Bug Fixes
+
+* disallow arrow functions ([ea62563](https://github.com/easyops-cn/next-advanced-bricks/commit/ea6256325b72c9bed19f8fa3e44d5dbd17e2fe38))
+
+
+
+
+
 ## [0.1.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.1.1...@next-shared/jsx-storyboard@0.1.2) (2025-08-01)
 
 
