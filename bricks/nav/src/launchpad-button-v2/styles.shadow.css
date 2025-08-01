@@ -86,9 +86,13 @@
 .menu-group-label,
 .menu-item-label,
 .recent-visits span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: auto;
+  white-space: normal;
+  word-break: break-word;
+  width: 90px;
+}
+.recent-visits span {
+  width: 100%;
 }
 
 .sidebar-menu,
@@ -115,11 +119,11 @@
 .recent-visits eo-link {
   display: block;
   min-width: 0;
+  height: 100%;
 }
 
 .sidebar-menu-item > eo-link::part(link),
 .menu-item > eo-link::part(link) {
-  height: 20px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -351,7 +355,7 @@
   color: var(--color-header-text);
   display: flex;
   align-items: center;
-  height: 24px;
+  height: 100%;
   padding: 0 8px;
 }
 
