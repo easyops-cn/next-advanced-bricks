@@ -8,7 +8,7 @@ import type {
   ConstructResult,
   Events,
 } from "../interfaces.js";
-import { constructPropValue } from "./values.js";
+import { constructJsValue, constructPropValue } from "./values.js";
 import { validateExpression } from "../utils.js";
 import { constructEvents } from "./events.js";
 
@@ -33,6 +33,7 @@ export function constructElement(
 
     const tagName = node.openingElement.name.name;
     const properties: Record<string, unknown> = {};
+    const ambiguousProps: Record<string, unknown> = {};
     let events: Events | undefined;
     let componentId: string | undefined;
 
@@ -86,8 +87,10 @@ export function constructElement(
       } else {
         if (attr.value == null) {
           properties[attrName] = true;
+          ambiguousProps[attrName] = true;
         } else if (t.isStringLiteral(attr.value)) {
           properties[attrName] = attr.value.value;
+          ambiguousProps[attrName] = attr.value.value;
         } else if (t.isJSXExpressionContainer(attr.value)) {
           if (t.isJSXEmptyExpression(attr.value.expression)) {
             result.errors.push({
@@ -103,6 +106,20 @@ export function constructElement(
             {
               allowExpression: true,
               disallowArrowFunction: true,
+              modifier: "=",
+            }
+          );
+          ambiguousProps[attrName] = constructJsValue(
+            attr.value.expression,
+            {
+              ...result,
+              // Ignore errors in ambiguous props
+              errors: [],
+            },
+            {
+              allowExpression: true,
+              disallowArrowFunction: true,
+              ambiguous: true,
               modifier: "=",
             }
           );
@@ -209,6 +226,7 @@ export function constructElement(
       name: tagName,
       componentId,
       properties,
+      ambiguousProps,
       events,
       children,
     };

@@ -19,6 +19,7 @@ export interface Component {
   name: string;
   componentId?: string;
   properties: Record<string, unknown>;
+  ambiguousProps?: Record<string, unknown>;
   events?: Events;
   children?: Component[];
 }
@@ -58,6 +59,7 @@ export type ChildMerged = {
 export interface ConstructJsValueOptions {
   allowExpression?: boolean;
   disallowArrowFunction?: boolean;
+  ambiguous?: boolean;
   modifier?: string;
 }
 
