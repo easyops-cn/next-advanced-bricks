@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.24.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.23.0...@next-bricks/nav@1.24.0) (2025-08-01)
+
+
+### Features
+
+* 【国际化】桌面的微应用翻译成英文名后，因为字符过长显示不全，希望可以支持换行展示 ([f432382](https://github.com/easyops-cn/next-advanced-bricks/commit/f43238241eb3ff6ec9b0da4fca4cd1511d00324d))
+
+
+
+
+
 # [1.23.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.22.9...@next-bricks/nav@1.23.0) (2025-07-31)
 
 
