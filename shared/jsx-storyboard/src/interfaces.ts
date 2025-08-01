@@ -18,7 +18,7 @@ export interface DataSource {
 export interface Component {
   name: string;
   componentId?: string;
-  properties?: Record<string, unknown>;
+  properties: Record<string, unknown>;
   events?: Events;
   children?: Component[];
 }

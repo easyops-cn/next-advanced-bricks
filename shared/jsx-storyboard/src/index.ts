@@ -2,7 +2,7 @@ export * from "./parseJsx.js";
 
 export type {
   Component,
-  ConstructResult as ConstructState,
+  ConstructResult,
   DataSource,
   ParseError,
   Variable,
