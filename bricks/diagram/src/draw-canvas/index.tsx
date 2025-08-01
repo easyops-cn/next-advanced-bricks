@@ -1167,7 +1167,7 @@ function LegacyEoDrawCanvasComponent(
       dispatch({ type: "move-cells", payload: info });
       const containedIds: string[] = [];
       handleNodeContainedChange(info, cells).forEach((c) => {
-        if (c.containerId) containedIds.push(c.containerId);
+        if (c.containerCell?.id) containedIds.push(c.containerCell?.id);
       });
       setActiveContainers(containedIds);
       setGuideLines(info.flatMap((c) => c.guideLines ?? []));
