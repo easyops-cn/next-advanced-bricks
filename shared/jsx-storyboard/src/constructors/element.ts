@@ -191,7 +191,7 @@ export function constructElement(
               ? child.component
               : {
                   name: "eo-text",
-                  props: {
+                  properties: {
                     textContent:
                       child.type === "text"
                         ? child.text
