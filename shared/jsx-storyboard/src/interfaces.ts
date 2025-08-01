@@ -57,6 +57,7 @@ export type ChildMerged = {
 
 export interface ConstructJsValueOptions {
   allowExpression?: boolean;
+  disallowArrowFunction?: boolean;
   modifier?: string;
 }
 
