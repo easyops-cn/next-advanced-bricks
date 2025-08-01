@@ -5,6 +5,8 @@ import type {
 } from "../interfaces.js";
 import { validateExpression } from "../utils.js";
 
+const ambiguousSymbol = Symbol("ambiguous");
+
 export function constructJsObject(
   node: t.ObjectExpression,
   state: ConstructResult,
@@ -20,6 +22,9 @@ export function constructJsObject(
           severity: "error",
         });
       } else {
+        if (options.ambiguous) {
+          return ambiguousSymbol as unknown as string;
+        }
         return `<%${options.modifier ?? ""} ${state.source.substring(node.start!, node.end!)} %>`;
       }
     }
@@ -79,6 +84,9 @@ export function constructJsArray(
           severity: "error",
         });
       } else {
+        if (options.ambiguous) {
+          return ambiguousSymbol as unknown as string;
+        }
         return `<%${options.modifier ?? ""} ${state.source.substring(node.start!, node.end!)} %>`;
       }
     }
@@ -148,6 +156,9 @@ export function constructJsValue(
       });
       return null;
     } else {
+      if (options.ambiguous) {
+        return ambiguousSymbol;
+      }
       return `<%${options.modifier ?? ""} ${state.source.substring(node.start!, node.end!)} %>`;
     }
   }
