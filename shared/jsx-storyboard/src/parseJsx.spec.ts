@@ -25,7 +25,8 @@ export default (
       componentId="form-edit-host"
       values={{
         hostname: CTX.hostDetail.hostname,
-        memo: CTX.hostDetail.memo
+        memo: CTX.hostDetail.memo,
+        x: (y) => "oops"
       }}
       events={{
         "validate.success": {
@@ -99,7 +100,7 @@ describe("parseJsx", () => {
     //   }
     // }
     // console.dir(result, { depth: null, colors: true });
-    expect(errors).toHaveLength(0);
+    expect(errors).toHaveLength(1);
     expect(result.components).toHaveLength(1);
   });
 });

@@ -12,7 +12,7 @@ export function constructJsObject(
 ): string | Record<string, unknown> {
   if (node.properties.some((prop) => t.isSpreadElement(prop))) {
     if (options.allowExpression) {
-      const invalidNode = validateExpression(node);
+      const invalidNode = validateExpression(node, options);
       if (invalidNode) {
         state.errors.push({
           message: `Unsupported node type: ${invalidNode.type}`,
@@ -71,7 +71,7 @@ export function constructJsArray(
 ): string | unknown[] {
   if (node.elements.some((elem) => t.isSpreadElement(elem))) {
     if (options.allowExpression) {
-      const invalidNode = validateExpression(node);
+      const invalidNode = validateExpression(node, options);
       if (invalidNode) {
         state.errors.push({
           message: `Unsupported node type: ${invalidNode.type}`,
@@ -139,7 +139,7 @@ export function constructJsValue(
   }
 
   if (t.isExpression(node) && options.allowExpression) {
-    const invalidNode = validateExpression(node);
+    const invalidNode = validateExpression(node, options);
     if (invalidNode) {
       state.errors.push({
         message: `Unsupported node type: ${invalidNode.type}`,
@@ -192,7 +192,7 @@ export function constructPropValue(
   });
 
   if (shouldCompute) {
-    const invalidNode = validateExpression(expr);
+    const invalidNode = validateExpression(expr, options);
     if (!invalidNode) {
       return `<%${options.modifier ?? ""} ${state.source.substring(expr.start!, expr.end!)} %>`;
     }
