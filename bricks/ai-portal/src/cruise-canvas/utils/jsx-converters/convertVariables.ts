@@ -1,0 +1,9 @@
+import type { ContextConf } from "@next-core/types";
+import type { Variable } from "@next-shared/jsx-storyboard";
+
+export function convertVariables(variables: Variable[]): ContextConf[] {
+  return variables.map(({ name, value }) => ({
+    name,
+    value,
+  }));
+}

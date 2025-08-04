@@ -172,7 +172,122 @@ children:
           instruction: |-
             深度搜素CMDB给出资源的纳管现状
           state: completed
+          toolCall:
+            name: create_view
+            originalArguments: |-
+              {"requirement":"创建一个 XX 视图"}
           messages:
+            - role: tool
+              parts:
+                - type: text
+                  text: |-
+                    <%
+                      JSON.stringify({
+                        "viewId": "view-123",
+                        "code": `// 调用监控数据查询接口查询该主机该时间段内的 CPU 使用率、磁盘使用率和网络流量的指标数据
+                    defineDataSource("hostMetrics", {
+                      api: "easyops.api.data_exchange.olap@Query",
+                      objectId: "HOST",
+                      params: {
+                        model: "easyops.HOST",
+                        filters: [
+                          {
+                            name: "ip",
+                            operator: "==",
+                            value: "1.2.3.4"
+                          },
+                          {
+                            name: "time",
+                            operator: ">=",
+                            value: "now-2d"
+                          },
+                          {
+                            name: "time",
+                            operator: "<=",
+                            value: "now-1s"
+                          }
+                        ],
+                        dims: ["time(auto)"],
+                        measures: [
+                          {
+                            function: {
+                              args: ["system_cpu_total_norm_pct"],
+                              expression: "avg"
+                            },
+                            name: "system_cpu_total_norm_pct"
+                          },
+                          {
+                            function: {
+                              args: ["system_filesystem_usage_pct"],
+                              expression: "avg"
+                            },
+                            name: "system_filesystem_usage_pct"
+                          },
+                          {
+                            function: {
+                              args: ["system_network_in_bits_per_sec"],
+                              expression: "avg"
+                            },
+                            name: "system_network_in_bits_per_sec"
+                          },
+                          {
+                            function: {
+                              args: ["system_network_out_bits_per_sec"],
+                              expression: "avg"
+                            },
+                            name: "system_network_out_bits_per_sec"
+                          }
+                        ]
+                      }
+                    });
+
+                    export default (
+                      <eo-view title="主机 1.2.3.4 监控趋势">
+                        <eo-dashboard
+                          dataSource={CTX.hostMetrics}
+                          widgets={[
+                            {
+                              widget: "chart",
+                              type: "line",
+                              title: "CPU 使用率",
+                              metric: {
+                                id: "system_cpu_total_norm_pct",
+                                unit: "percent(1)"
+                              }
+                            },
+                            {
+                              widget: "chart",
+                              type: "area",
+                              title: "磁盘使用率",
+                              metric: {
+                                id: "system_filesystem_usage_pct",
+                                unit: "percent(1)"
+                              }
+                            },
+                            {
+                              widget: "chart",
+                              type: "line",
+                              title: "网络流量 (入)",
+                              metric: {
+                                id: "system_network_in_bits_per_sec",
+                                unit: "bits/sec"
+                              }
+                            },
+                            {
+                              widget: "chart",
+                              type: "line",
+                              title: "网络流量 (出)",
+                              metric: {
+                                id: "system_network_out_bits_per_sec",
+                                unit: "bits/sec"
+                              }
+                            }
+                          ]}
+                        />
+                      </eo-view>
+                    );`
+                      })
+                    %>
             - role: assistant
               parts:
                 - type: text

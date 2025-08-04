@@ -1,3 +1,4 @@
+import type { ConstructResult } from "@next-shared/jsx-storyboard";
 import type { JSONSchema } from "./json-schema";
 import type { ViewWithInfo } from "./utils/converters/interfaces";
 
@@ -133,7 +134,7 @@ export interface Job {
   endTime?: number;
 
   componentGraph?: ComponentGraph;
-  generatedView?: ViewWithInfo;
+  generatedView?: ConstructResult | ViewWithInfo;
   level?: number;
 }
 
@@ -239,7 +240,7 @@ export interface GraphNavItem {
 
 export interface GraphGeneratedView {
   id: string;
-  view: ViewWithInfo;
+  view: ConstructResult | ViewWithInfo;
 }
 
 export interface CmdbInstanceDetailData {

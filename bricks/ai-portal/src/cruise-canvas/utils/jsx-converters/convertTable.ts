@@ -1,12 +1,9 @@
 import type { BrickConf } from "@next-core/types";
-import type {
-  Component,
-  ConvertViewOptions,
-  ViewWithInfo,
-} from "./interfaces.js";
-import { lowLevelConvertToStoryboard } from "./raw-data-generate/convert.js";
-import { parseDataSource } from "./expressions.js";
-import { getPreGeneratedAttrViews } from "./getPreGeneratedAttrViews.js";
+import type { Component, ConstructResult } from "@next-shared/jsx-storyboard";
+import type { ConvertViewOptions } from "../converters/interfaces.js";
+import { lowLevelConvertToStoryboard } from "../converters/raw-data-generate/convert.js";
+import { parseDataSource } from "../converters/expressions.js";
+import { getPreGeneratedAttrViews } from "../converters/getPreGeneratedAttrViews.js";
 import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
 
 interface TableColumn {
@@ -18,7 +15,7 @@ interface TableColumn {
 
 export default async function convertTable(
   component: Component,
-  view: ViewWithInfo,
+  view: ConstructResult,
   options: ConvertViewOptions
 ): Promise<BrickConf> {
   const { properties } = component;

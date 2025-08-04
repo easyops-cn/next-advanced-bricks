@@ -16,6 +16,8 @@ import { convertView } from "../utils/converters/convertView";
 import { WrappedIcon, WrappedIconButton } from "../bricks";
 import { createPortal } from "../utils/createPortal";
 import { ICON_CLOSE } from "../constants";
+import { isJsxView } from "../utils/jsx-converters/isJsxView";
+import { convertJsx } from "../utils/jsx-converters/convertJsx";
 
 export interface ExpandedViewProps {
   views: GraphGeneratedView[];
@@ -34,15 +36,28 @@ export function ExpandedView({ views }: ExpandedViewProps) {
 
   const sizeSmall = useMemo(() => {
     let hasForm = false;
-    for (const component of view?.components ?? []) {
-      if (!component.parentComponentId) {
-        switch (component.componentName) {
+    if (view && isJsxView(view)) {
+      for (const component of view?.components ?? []) {
+        switch (component.name) {
           case "form":
           case "button":
             hasForm = true;
             break;
           default:
             return false;
+        }
+      }
+    } else {
+      for (const component of view?.components ?? []) {
+        if (!component.parentComponentId) {
+          switch (component.componentName) {
+            case "form":
+            case "button":
+              hasForm = true;
+              break;
+            default:
+              return false;
+          }
         }
       }
     }
@@ -75,10 +90,11 @@ export function ExpandedView({ views }: ExpandedViewProps) {
     (async () => {
       setLoading(true);
       try {
-        const convertedView = await convertView(view, {
-          rootId,
-          expanded: true,
-        });
+        const convertedView = view
+          ? await (isJsxView(view)
+              ? convertJsx(view, { rootId, expanded: true })
+              : convertView(view, { rootId, expanded: true }))
+          : null;
         if (ignore) {
           return;
         }
