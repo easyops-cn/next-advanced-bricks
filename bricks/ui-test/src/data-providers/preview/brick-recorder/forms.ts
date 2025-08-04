@@ -3,6 +3,7 @@ import * as t from "@babel/types";
 import { generateCodeText } from "../utils";
 import { BrickEvtMapField } from "../interfaces";
 import type { MenuIcon } from "@next-shared/general/types";
+import { compact, castArray } from "lodash";
 import { generateBaseStep, generateBrickInputStep } from "../utils";
 
 interface OptionItem {
@@ -12,16 +13,25 @@ interface OptionItem {
 
 export const formBricksMap: BrickEvtMapField = {
   "forms.general-select": {
-    "general.select.change.v2": (event: CustomEvent<OptionItem>) => {
-      const expr =
-        event.detail === null
-          ? t.callExpression(t.identifier("brick_clear"), [])
-          : t.callExpression(t.identifier("brick_fill"), [
-              t.stringLiteral(event.detail.label),
-            ]);
+    "general.select.change.v2": (
+      event: CustomEvent<OptionItem | OptionItem[]>
+    ) => {
+      let expr: t.Expression;
+      const options = compact(castArray(event.detail));
+
+      if (!options?.length) {
+        expr = t.callExpression(t.identifier("brick_clear"), []);
+      } else {
+        expr = t.callExpression(t.identifier("brick_fill"), [
+          t.arrayExpression(options.map((item) => t.stringLiteral(item.label))),
+        ]);
+      }
+
       const text = generateCodeText(expr);
 
-      generateBaseStep(event, text);
+      generateBrickInputStep(event, text, {
+        brickEvtName: "general.select.change.v2",
+      });
     },
   },
   "forms.general-input": {
