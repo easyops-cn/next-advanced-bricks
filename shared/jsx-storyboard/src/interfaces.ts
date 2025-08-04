@@ -74,3 +74,7 @@ export interface ConstructResult {
   componentsMap: Map<string, Component>;
   errors: ParseError[];
 }
+
+export interface ParseJsxOptions {
+  reward?: boolean;
+}

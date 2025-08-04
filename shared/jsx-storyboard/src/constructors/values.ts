@@ -189,12 +189,12 @@ export function constructPropValue(
           t.isNullLiteral(node) ||
           t.isObjectExpression(node) ||
           t.isArrayExpression(node) ||
+          t.isObjectProperty(node) ||
           (t.isIdentifier(node) &&
-            (node.name === "undefined" ||
-              ((p = parent[parent.length - 1]?.node) &&
-                t.isObjectProperty(p) &&
-                !p.computed &&
-                !p.shorthand)))
+            ((p = parent[parent.length - 1]?.node), true) &&
+            (p && t.isObjectProperty(p)
+              ? !p.computed && !p.shorthand
+              : node.name === "undefined"))
         )
       ) {
         shouldCompute = true;

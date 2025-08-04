@@ -6,12 +6,13 @@ import type {
   ConstructResult,
   DataSource,
   ParseError,
+  ParseJsxOptions,
   Variable,
 } from "./interfaces.js";
 import { constructJsObject, constructJsValue } from "./constructors/values.js";
 import { constructView } from "./constructors/view.js";
 
-export function parseJsx(source: string) {
+export function parseJsx(source: string, options?: ParseJsxOptions) {
   const dataSources: DataSource[] = [];
   const variables: Variable[] = [];
   const components: Component[] = [];
@@ -264,7 +265,7 @@ export function parseJsx(source: string) {
         continue;
       }
 
-      constructView(declaration, result);
+      constructView(declaration, result, options);
     } else {
       errors.push({
         message: `Unsupported statement type: ${stmt.type}`,

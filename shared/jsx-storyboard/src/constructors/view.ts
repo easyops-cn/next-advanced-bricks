@@ -1,8 +1,12 @@
 import * as t from "@babel/types";
-import type { ConstructResult } from "../interfaces.js";
+import type { ConstructResult, ParseJsxOptions } from "../interfaces.js";
 import { constructElement } from "./element.js";
 
-export function constructView(node: t.JSXElement, result: ConstructResult) {
+export function constructView(
+  node: t.JSXElement,
+  result: ConstructResult,
+  options?: ParseJsxOptions
+) {
   const element = node.openingElement;
   if (!t.isJSXIdentifier(element.name)) {
     result.errors.push({
@@ -70,7 +74,7 @@ export function constructView(node: t.JSXElement, result: ConstructResult) {
   }
 
   for (const child of node.children) {
-    const element = constructElement(child, result);
+    const element = constructElement(child, result, options);
     if (element === null) {
       continue;
     }

@@ -8,4 +8,5 @@ export type {
   Variable,
   Events,
   EventHandler,
+  ParseJsxOptions,
 } from "./interfaces.js";

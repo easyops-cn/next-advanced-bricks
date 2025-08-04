@@ -7,6 +7,7 @@ import type {
   Component,
   ConstructResult,
   Events,
+  ParseJsxOptions,
 } from "../interfaces.js";
 import { constructJsValue, constructPropValue } from "./values.js";
 import { validateExpression } from "../utils.js";
@@ -19,7 +20,8 @@ export function constructElement(
     | t.JSXExpressionContainer
     | t.JSXFragment
     | t.JSXSpreadChild,
-  result: ConstructResult
+  result: ConstructResult,
+  options?: ParseJsxOptions
 ): ChildElement | null {
   if (t.isJSXElement(node)) {
     if (!t.isJSXIdentifier(node.openingElement.name)) {
@@ -87,7 +89,6 @@ export function constructElement(
       } else {
         if (attr.value == null) {
           properties[attrName] = true;
-          ambiguousProps[attrName] = true;
         } else if (t.isStringLiteral(attr.value)) {
           properties[attrName] = attr.value.value;
           ambiguousProps[attrName] = attr.value.value;
@@ -109,20 +110,23 @@ export function constructElement(
               modifier: "=",
             }
           );
-          ambiguousProps[attrName] = constructJsValue(
-            attr.value.expression,
-            {
-              ...result,
-              // Ignore errors in ambiguous props
-              errors: [],
-            },
-            {
-              allowExpression: true,
-              disallowArrowFunction: true,
-              ambiguous: true,
-              modifier: "=",
-            }
-          );
+
+          if (options?.reward) {
+            ambiguousProps[attrName] = constructJsValue(
+              attr.value.expression,
+              {
+                ...result,
+                // Ignore errors in ambiguous props
+                errors: [],
+              },
+              {
+                allowExpression: true,
+                disallowArrowFunction: true,
+                ambiguous: true,
+                modifier: "=",
+              }
+            );
+          }
         } else {
           result.errors.push({
             message: `Unsupported attribute value type in component: ${attr.value.type}`,
@@ -134,7 +138,7 @@ export function constructElement(
     }
 
     let rawChildren: (ChildElement | ChildMerged)[] = node.children.map(
-      (child) => constructElement(child, result)
+      (child) => constructElement(child, result, options)
     );
     let onlyTextChildren = rawChildren.every((child) => child?.type === "text");
 
@@ -226,10 +230,13 @@ export function constructElement(
       name: tagName,
       componentId,
       properties,
-      ambiguousProps,
       events,
       children,
     };
+
+    if (options?.reward) {
+      component.ambiguousProps = ambiguousProps;
+    }
 
     if (componentId) {
       if (result.componentsMap.has(componentId)) {
