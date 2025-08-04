@@ -6,7 +6,6 @@ import React, {
   useMemo,
   useRef,
   useState,
-  // useState,
 } from "react";
 import { unstable_createRoot } from "@next-core/runtime";
 import classNames from "classnames";
@@ -14,14 +13,14 @@ import { uniqueId } from "lodash";
 import styles from "./NodeView.module.css";
 import jobStyles from "../NodeJob/NodeJob.module.css";
 import sharedStyles from "../shared.module.css";
-// import sharedStyles from "../shared.module.css";
 import type { Job } from "../interfaces";
-// import type { ViewWithInfo } from "../utils/converters/interfaces";
 import { convertView } from "../utils/converters/convertView";
 import { CanvasContext } from "../CanvasContext";
 import { WrappedIcon } from "../bricks";
 import { t } from "../i18n";
 import { createPortal } from "../utils/createPortal";
+import { convertJsx } from "../utils/jsx-converters/convertJsx";
+import { isJsxView } from "../utils/jsx-converters/isJsxView";
 
 export interface NodeViewProps {
   job: Job;
@@ -64,7 +63,9 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
     (async () => {
       setLoading(true);
       try {
-        const convertedView = await convertView(view, { rootId });
+        const convertedView = await (isJsxView(view)
+          ? convertJsx(view, { rootId })
+          : convertView(view, { rootId }));
         if (ignore) {
           return;
         }
@@ -84,17 +85,35 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
   }, [rootId, view]);
 
   const sizeLarge = useMemo(() => {
-    for (const component of view.components ?? []) {
-      if (component.componentName === "table") {
-        return true;
-      }
-      if (component.componentName === "dashboard") {
-        const widgets = component?.properties?.widgets;
-        if (
-          Array.isArray(widgets) &&
-          widgets.length >= (component.properties!.groupField ? 3 : 7)
-        ) {
+    if (isJsxView(view)) {
+      // TODO: handle nested components
+      for (const component of view.components ?? []) {
+        if (component.name === "table") {
           return true;
+        }
+        if (component.name === "dashboard") {
+          const widgets = component?.properties?.widgets;
+          if (
+            Array.isArray(widgets) &&
+            widgets.length >= (component.properties!.groupField ? 3 : 7)
+          ) {
+            return true;
+          }
+        }
+      }
+    } else {
+      for (const component of view.components ?? []) {
+        if (component.componentName === "table") {
+          return true;
+        }
+        if (component.componentName === "dashboard") {
+          const widgets = component?.properties?.widgets;
+          if (
+            Array.isArray(widgets) &&
+            widgets.length >= (component.properties!.groupField ? 3 : 7)
+          ) {
+            return true;
+          }
         }
       }
     }

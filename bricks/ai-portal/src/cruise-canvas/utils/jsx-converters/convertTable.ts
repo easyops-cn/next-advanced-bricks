@@ -1,12 +1,9 @@
 import type { BrickConf } from "@next-core/types";
-import type {
-  Component,
-  ConvertViewOptions,
-  ViewWithInfo,
-} from "./interfaces.js";
-import { lowLevelConvertToStoryboard } from "./raw-data-generate/convert.js";
-import { parseDataSource } from "./expressions.js";
-import { getPreGeneratedAttrViews } from "./getPreGeneratedAttrViews.js";
+import type { Component, ConstructResult } from "@next-shared/jsx-storyboard";
+import type { ConvertViewOptions } from "../converters/interfaces.js";
+import { lowLevelConvertToStoryboard } from "../converters/raw-data-generate/convert.js";
+import { parseDataSource } from "../converters/expressions.js";
+import { getPreGeneratedAttrViews } from "../converters/getPreGeneratedAttrViews.js";
 import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
 
 interface TableColumn {
@@ -18,20 +15,20 @@ interface TableColumn {
 
 export default async function convertTable(
   component: Component,
-  view: ViewWithInfo,
+  view: ConstructResult,
   options: ConvertViewOptions
 ): Promise<BrickConf> {
   const { properties } = component;
-  const { data, size, columns, rowKey, pagination, ...restProps } =
+  const { dataSource, size, columns, rowKey, pagination, ...restProps } =
     properties as {
-      data: string;
+      dataSource: string;
       columns: Array<TableColumn>;
       rowKey?: string;
       size?: "small" | "medium" | "large";
       pagination?: boolean;
     };
 
-  const parsedDataSource = parseDataSource(data);
+  const parsedDataSource = parseDataSource(dataSource);
 
   const objectId = findObjectIdByUsedDataContexts(
     parsedDataSource.usedContexts,
@@ -61,7 +58,9 @@ export default async function convertTable(
   return {
     brick: "eo-next-table",
     properties: {
-      dataSource: parsedDataSource.isString ? parsedDataSource.embedded : data,
+      dataSource: parsedDataSource.isString
+        ? parsedDataSource.embedded
+        : dataSource,
       ...restProps,
       rowKey: rowKey ?? columns[0]?.key,
       columns: columns.map((column) => {

@@ -7,4 +7,6 @@ export type {
   ParseError,
   Variable,
   Events,
+  EventHandler,
+  ParseJsxOptions,
 } from "./interfaces.js";

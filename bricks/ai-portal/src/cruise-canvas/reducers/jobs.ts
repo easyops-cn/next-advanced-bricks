@@ -14,6 +14,7 @@ import type {
 } from "../interfaces";
 import type { CruiseCanvasAction } from "./interfaces";
 import type { ViewWithInfo } from "../utils/converters/interfaces";
+import { parseJsx, type ConstructResult } from "@next-shared/jsx-storyboard";
 
 export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
   switch (action.type) {
@@ -50,7 +51,8 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
             ...jobPatch,
           };
           if (
-            patch.toolCall?.name === "get_view_with_info" &&
+            (patch.toolCall?.name === "get_view_with_info" ||
+              patch.toolCall?.name === "create_view") &&
             patch.state === "completed"
           ) {
             const generatedView = getJobGeneratedView(messagesPatch);
@@ -98,8 +100,11 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
 
           if (
             !previousJob.generatedView &&
-            (restMessagesPatch.toolCall?.name ?? previousJob.toolCall?.name) ===
-              "get_view_with_info" &&
+            (
+              ["get_view_with_info", "create_view"] as (string | undefined)[]
+            ).includes(
+              restMessagesPatch.toolCall?.name ?? previousJob.toolCall?.name
+            ) &&
             (restMessagesPatch.state ?? previousJob.state) === "completed"
           ) {
             const generatedView = getJobGeneratedView(messagesPatch);
@@ -188,7 +193,7 @@ function mergeMessageParts(parts: Part[]): Part[] {
 
 function getJobGeneratedView(
   messages: Message[] | undefined
-): ViewWithInfo | undefined {
+): ConstructResult | ViewWithInfo | undefined {
   if (!messages) {
     return;
   }
@@ -198,7 +203,8 @@ function getJobGeneratedView(
       for (const part of message.parts) {
         if (part.type === "text") {
           try {
-            return JSON.parse(part.text) as ViewWithInfo;
+            const result = JSON.parse(part.text) as JsxResult | ViewWithInfo;
+            return isJsxResult(result) ? parseJsx(result.code) : result;
           } catch {
             // Do nothing, continue to next part
           }
@@ -282,4 +288,13 @@ function getJobComponentGraph(
     }
   }
   return hasGraph ? graph : undefined;
+}
+
+interface JsxResult {
+  viewId: string;
+  code: string;
+}
+
+function isJsxResult(view: JsxResult | ViewWithInfo): view is JsxResult {
+  return !!(view as JsxResult).code;
 }

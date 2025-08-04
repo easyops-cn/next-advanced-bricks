@@ -1,6 +1,6 @@
 import * as t from "@babel/types";
 import type z from "zod";
-import type { OneOrMoreEventHandlers } from "./schemas.js";
+import type { EventHandler as TypeEventHandler } from "./schemas.js";
 
 export interface Variable {
   name: string;
@@ -25,8 +25,10 @@ export interface Component {
 }
 
 export interface Events {
-  [key: string]: z.infer<typeof OneOrMoreEventHandlers>;
+  [key: string]: EventHandler | EventHandler[];
 }
+
+export type EventHandler = z.infer<typeof TypeEventHandler>;
 
 export interface ParseError {
   message: string;
@@ -71,4 +73,8 @@ export interface ConstructResult {
   components: Component[];
   componentsMap: Map<string, Component>;
   errors: ParseError[];
+}
+
+export interface ParseJsxOptions {
+  reward?: boolean;
 }
