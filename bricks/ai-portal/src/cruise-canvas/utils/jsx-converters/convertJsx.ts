@@ -13,8 +13,8 @@ import convertDashboard from "./convertDashboard";
 import convertButton from "./convertButton";
 import convertForm from "./convertForm";
 import convertFormItem from "./convertFormItem";
-import convertFlexLayout from "./convertFlexLayout";
 import convertModal from "./convertModal";
+import convertToolbar from "./convertToolbar";
 
 export async function convertJsx(
   result: ConstructResult,
@@ -41,8 +41,8 @@ export async function convertJsx(
       case "eo-form":
         brick = await convertForm(component);
         break;
-      case "eo-flex-layout":
-        brick = await convertFlexLayout(component);
+      case "eo-toolbar":
+        brick = await convertToolbar(component);
         break;
       case "eo-modal":
         brick = await convertModal(component);

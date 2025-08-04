@@ -17,14 +17,14 @@ export default async function convertDescriptions(
   view: ConstructResult,
   options: ConvertViewOptions
 ): Promise<BrickConf> {
-  const { data, title, columns, list, ...restProps } = properties as {
-    data: string;
+  const { dataSource, title, columns, list, ...restProps } = properties as {
+    dataSource: string;
     title?: string;
     columns?: number;
     list: DescriptionItem[];
   };
 
-  const parsedDataSource = parseDataSource(data);
+  const parsedDataSource = parseDataSource(dataSource);
 
   const objectId = findObjectIdByUsedDataContexts(
     parsedDataSource.usedContexts,
@@ -57,7 +57,9 @@ export default async function convertDescriptions(
     brick: "eo-descriptions",
     properties: {
       ...restProps,
-      dataSource: parsedDataSource.isString ? parsedDataSource.embedded : data,
+      dataSource: parsedDataSource.isString
+        ? parsedDataSource.embedded
+        : dataSource,
       // descriptionTitle: title,
       list: list.map((item) => {
         const brick = item.field ? configuredItems.get(item.field) : undefined;

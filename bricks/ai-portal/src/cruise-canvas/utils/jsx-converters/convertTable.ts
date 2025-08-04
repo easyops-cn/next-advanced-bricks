@@ -19,16 +19,16 @@ export default async function convertTable(
   options: ConvertViewOptions
 ): Promise<BrickConf> {
   const { properties } = component;
-  const { data, size, columns, rowKey, pagination, ...restProps } =
+  const { dataSource, size, columns, rowKey, pagination, ...restProps } =
     properties as {
-      data: string;
+      dataSource: string;
       columns: Array<TableColumn>;
       rowKey?: string;
       size?: "small" | "medium" | "large";
       pagination?: boolean;
     };
 
-  const parsedDataSource = parseDataSource(data);
+  const parsedDataSource = parseDataSource(dataSource);
 
   const objectId = findObjectIdByUsedDataContexts(
     parsedDataSource.usedContexts,
@@ -58,7 +58,9 @@ export default async function convertTable(
   return {
     brick: "eo-next-table",
     properties: {
-      dataSource: parsedDataSource.isString ? parsedDataSource.embedded : data,
+      dataSource: parsedDataSource.isString
+        ? parsedDataSource.embedded
+        : dataSource,
       ...restProps,
       rowKey: rowKey ?? columns[0]?.key,
       columns: columns.map((column) => {
