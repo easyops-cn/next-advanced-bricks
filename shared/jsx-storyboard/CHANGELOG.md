@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.1.4...@next-shared/jsx-storyboard@0.2.0) (2025-08-04)
+
+
+### Bug Fixes
+
+* export type EventHandler ([da9b3d9](https://github.com/easyops-cn/next-advanced-bricks/commit/da9b3d9ee4c257e18f56f94249d3f29f71de122d))
+
+
+### Features
+
+* collect ambiguous props only in reward mode,  deep walk values to collect invalid globals ([4a83f41](https://github.com/easyops-cn/next-advanced-bricks/commit/4a83f41d1aa465a21d76c04f8fd8523f3a007ccd))
+
+
+
+
+
 ## [0.1.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.1.3...@next-shared/jsx-storyboard@0.1.4) (2025-08-01)
 
 

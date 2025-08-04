@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.20.10](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.20.9...@next-bricks/ai-portal@0.20.10) (2025-08-04)
+
+
+### Bug Fixes
+
+* fix component dataSource props ([b00c044](https://github.com/easyops-cn/next-advanced-bricks/commit/b00c044b2a34712ef94ea26fc11054683b3a8fbf))
+* support convert jsx view ([7a0bbd5](https://github.com/easyops-cn/next-advanced-bricks/commit/7a0bbd528337c6730869651b7402ece426817754))
+
+
+
+
+
 ## [0.20.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.20.8...@next-bricks/ai-portal@0.20.9) (2025-07-31)
 
 
