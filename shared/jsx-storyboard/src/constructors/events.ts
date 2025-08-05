@@ -2,7 +2,7 @@ import * as t from "@babel/types";
 import type z from "zod";
 import type { ConstructResult, Events } from "../interfaces.js";
 import { constructJsValue } from "./values.js";
-import { EventHandler } from "../schemas.js";
+import { EventHandler, type EventHandlerOfCallAPI } from "../schemas.js";
 
 export function constructEvents(node: t.Expression, result: ConstructResult) {
   if (!t.isObjectExpression(node)) {
@@ -95,6 +95,7 @@ export function constructEventHandler(
     return null;
   }
   const handler: Record<string, unknown> = {};
+  let payloadProp: t.Node | undefined;
   for (const prop of node.properties) {
     if (!t.isObjectProperty(prop)) {
       result.errors.push({
@@ -130,11 +131,62 @@ export function constructEventHandler(
     handler[key] = constructJsValue(prop.value, result, {
       allowExpression: true,
     });
+
+    if (key === "payload") {
+      payloadProp = prop.value;
+    }
+  }
+
+  // Set ambiguousParams if for call_api action
+  let ambiguousParams: unknown;
+  if (
+    handler.action === "call_api" &&
+    (handler as z.infer<typeof EventHandlerOfCallAPI>).payload?.api &&
+    payloadProp
+  ) {
+    if (t.isObjectExpression(payloadProp)) {
+      for (const prop of payloadProp.properties) {
+        if (
+          t.isObjectProperty(prop) &&
+          !prop.computed &&
+          !prop.shorthand &&
+          t.isIdentifier(prop.key) &&
+          prop.key.name === "params"
+        ) {
+          ambiguousParams = constructJsValue(
+            prop.value,
+            {
+              ...result,
+              // Ignore errors in ambiguous params
+              errors: [],
+            },
+            {
+              allowExpression: true,
+              disallowArrowFunction: true,
+              ambiguous: true,
+            }
+          );
+        }
+      }
+    }
   }
 
   const parsedHandler = EventHandler.safeParse(handler);
   if (parsedHandler.success) {
-    return parsedHandler.data;
+    const result = parsedHandler.data;
+
+    if (ambiguousParams) {
+      // Assert: result is a call_api action
+      (
+        result as {
+          payload: {
+            ambiguousParams?: unknown;
+          };
+        }
+      ).payload.ambiguousParams = ambiguousParams;
+    }
+
+    return result;
   } else {
     result.errors.push({
       message: `Invalid event handler structure: ${parsedHandler.error}`,

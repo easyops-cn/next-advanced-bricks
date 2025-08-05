@@ -9,8 +9,19 @@ import type {
   ParseJsxOptions,
   Variable,
 } from "./interfaces.js";
-import { constructJsObject, constructJsValue } from "./constructors/values.js";
+import { constructJsValue } from "./constructors/values.js";
 import { constructView } from "./constructors/view.js";
+
+const EXPRESSION_PREFIX_REG = /^\s*<%=?\s+/;
+const EXPRESSION_SUFFIX_REG = /\s+%>\s*$/;
+
+export function isExpressionString(value: unknown): value is string {
+  return (
+    typeof value === "string" &&
+    EXPRESSION_PREFIX_REG.test(value) &&
+    EXPRESSION_SUFFIX_REG.test(value)
+  );
+}
 
 export function parseJsx(source: string, options?: ParseJsxOptions) {
   const dataSources: DataSource[] = [];
@@ -160,7 +171,7 @@ export function parseJsx(source: string, options?: ParseJsxOptions) {
                 case "api":
                   if (!t.isStringLiteral(prop.value)) {
                     errors.push({
-                      message: `"api" property expects a string literal, but got ${prop.value.type}`,
+                      message: `Data source "api" expects a string literal, but got ${prop.value.type}`,
                       node: prop.value,
                       severity: "error",
                     });
@@ -171,7 +182,7 @@ export function parseJsx(source: string, options?: ParseJsxOptions) {
                 case "objectId":
                   if (!t.isStringLiteral(prop.value)) {
                     errors.push({
-                      message: `"objectId" property expects a string literal, but got ${prop.value.type}`,
+                      message: `Data source "objectId" expects a string literal, but got ${prop.value.type}`,
                       node: prop.value,
                       severity: "error",
                     });
@@ -183,22 +194,51 @@ export function parseJsx(source: string, options?: ParseJsxOptions) {
                   if (!isNilNode(prop.value)) {
                     if (!t.isObjectExpression(prop.value)) {
                       errors.push({
-                        message: `"params" property expects an object literal, but got ${prop.value.type}`,
+                        message: `Data source "params" prefers an object literal, but got ${prop.value.type}`,
                         node: prop.value,
-                        severity: "error",
+                        severity: "notice",
                       });
                       continue;
                     }
-                    dataSource.params = constructJsObject(prop.value, result, {
+                    const params = constructJsValue(prop.value, result, {
                       allowExpression: true,
                     });
+                    if (
+                      isExpressionString(params) ||
+                      (typeof params === "object" && params !== null)
+                    ) {
+                      dataSource.params = params as
+                        | string
+                        | Record<string, unknown>;
+                    } else {
+                      errors.push({
+                        message: `Data source "params" expects an object or expression, but got ${typeof params}`,
+                        node: prop.value,
+                        severity: "error",
+                      });
+                    }
+                    if (options?.reward) {
+                      dataSource.ambiguousParams = constructJsValue(
+                        prop.value,
+                        {
+                          ...result,
+                          // Ignore errors in ambiguous params
+                          errors: [],
+                        },
+                        {
+                          allowExpression: true,
+                          disallowArrowFunction: true,
+                          ambiguous: true,
+                        }
+                      );
+                    }
                   }
                   break;
                 case "transform":
                   if (!isNilNode(prop.value)) {
                     if (!t.isArrowFunctionExpression(prop.value)) {
                       errors.push({
-                        message: `"transform" property expects an arrow function, but got ${prop.value.type}`,
+                        message: `Data source "transform" expects an arrow function, but got ${prop.value.type}`,
                         node: prop.value,
                         severity: "error",
                       });
