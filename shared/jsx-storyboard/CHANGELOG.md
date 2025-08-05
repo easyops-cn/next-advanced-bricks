@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.2.0...@next-shared/jsx-storyboard@0.2.1) (2025-08-05)
+
+
+### Bug Fixes
+
+* set ambiguous params for api calls ([da19317](https://github.com/easyops-cn/next-advanced-bricks/commit/da19317f08b6e11d0cec1f34e44c46858c5dd0da))
+
+
+
+
+
 # [0.2.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.1.4...@next-shared/jsx-storyboard@0.2.0) (2025-08-04)
 
 
