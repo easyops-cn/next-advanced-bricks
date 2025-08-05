@@ -12,6 +12,7 @@ export interface DataSource {
   api: string;
   objectId?: string;
   params?: string | Record<string, unknown>;
+  ambiguousParams?: unknown;
   transform?: string;
 }
 

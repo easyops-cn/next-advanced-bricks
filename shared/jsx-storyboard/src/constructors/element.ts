@@ -123,7 +123,6 @@ export function constructElement(
                 allowExpression: true,
                 disallowArrowFunction: true,
                 ambiguous: true,
-                modifier: "=",
               }
             );
           }
