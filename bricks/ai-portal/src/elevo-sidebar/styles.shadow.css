@@ -91,13 +91,17 @@
 
 .alternative {
   position: fixed;
-  top: 14px;
-  left: 16px;
+  top: 8px;
+  left: 8px;
+  padding: 6px 10px 6px 8px;
   display: flex;
   align-items: center;
   opacity: 0;
   z-index: 1;
   transition: opacity 0.2s ease-in-out;
+  background: rgba(255, 255, 255, 0);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
 
   .new-chat::part(link) {
     padding: 4px;
