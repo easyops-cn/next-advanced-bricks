@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.16](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.1.15...@next-bricks/ui-test@1.1.16) (2025-08-05)
+
+
+### Bug Fixes
+
+* 修复下拉选择框单选和多选的场景 ([6475b42](https://github.com/easyops-cn/next-advanced-bricks/commit/6475b42e69cd16b51b34aa4c31351db9394bf316))
+
+
+
+
+
 ## [1.1.15](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.1.14...@next-bricks/ui-test@1.1.15) (2025-07-24)
 
 
