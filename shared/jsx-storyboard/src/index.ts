@@ -1,5 +1,7 @@
 export * from "./parseJsx.js";
 
+export { isExpressionString } from "./utils.js";
+
 export type {
   Component,
   ConstructResult,
