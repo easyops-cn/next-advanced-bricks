@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.20.14](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.20.13...@next-bricks/ai-portal@0.20.14) (2025-08-06)
+
+
+### Bug Fixes
+
+* fix code block copy button when scroll ([751e18f](https://github.com/easyops-cn/next-advanced-bricks/commit/751e18ff077e1771b42b2d928d14fad301f3e0b8))
+* support manually pull history ([327aace](https://github.com/easyops-cn/next-advanced-bricks/commit/327aace286ac00fc12870017817c9b4681cbcb32))
+
+
+
+
+
 ## [0.20.13](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.20.12...@next-bricks/ai-portal@0.20.13) (2025-08-06)
 
 **Note:** Version bump only for package @next-bricks/ai-portal
