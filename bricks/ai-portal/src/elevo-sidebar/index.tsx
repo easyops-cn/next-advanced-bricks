@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  createRef,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
 import "@next-core/theme";
@@ -17,7 +23,11 @@ import {
   WrappedIconButton,
   WrappedLink,
 } from "./bricks.js";
-import { ChatHistory, type ActionClickDetail } from "./ChatHistory.js";
+import {
+  ChatHistory,
+  type ActionClickDetail,
+  type ChatHistoryRef,
+} from "./ChatHistory.js";
 
 initializeI18n(NS, locales);
 
@@ -37,7 +47,7 @@ const dropdownActions: DropdownActionsProps["actions"] = [
   },
 ];
 
-const { defineElement, property, event } = createDecorators();
+const { defineElement, property, event, method } = createDecorators();
 
 export interface ElevoSidebarProps {
   userInstanceId?: string;
@@ -48,6 +58,8 @@ export interface ElevoSidebarProps {
   historyUrlTemplate?: string;
   historyActions?: ActionType[];
 }
+
+const ElevoSidebarComponent = forwardRef(LegacyElevoSidebarComponent);
 
 /**
  * 构件 `ai-portal.elevo-sidebar`
@@ -92,9 +104,23 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
     this.#actionClick.emit(detail);
   };
 
+  #ref = createRef<ChatHistoryRef>();
+
+  /**
+   * @param delay Delay in milliseconds before pulling the latest chat history.
+   */
+  @method()
+  pullHistory(delay: number) {
+    // Wait 3 seconds to let the task title to be summarized.
+    setTimeout(() => {
+      this.#ref.current?.pull();
+    }, delay);
+  }
+
   render() {
     return (
       <ElevoSidebarComponent
+        ref={this.#ref}
         userInstanceId={this.userInstanceId}
         behavior={this.behavior}
         logoUrl={this.logoUrl}
@@ -114,17 +140,20 @@ interface ElevoSidebarComponentProps extends ElevoSidebarProps {
   onActionClick: (detail: ActionClickDetail) => void;
 }
 
-function ElevoSidebarComponent({
-  userInstanceId,
-  behavior,
-  logoUrl,
-  newChatUrl,
-  historyActiveId,
-  historyUrlTemplate,
-  historyActions,
-  onLogout,
-  onActionClick,
-}: ElevoSidebarComponentProps) {
+function LegacyElevoSidebarComponent(
+  {
+    userInstanceId,
+    behavior,
+    logoUrl,
+    newChatUrl,
+    historyActiveId,
+    historyUrlTemplate,
+    historyActions,
+    onLogout,
+    onActionClick,
+  }: ElevoSidebarComponentProps,
+  ref: React.Ref<ChatHistoryRef>
+) {
   const [collapsed, setCollapsed] = useState(behavior === "drawer");
   const handleCollapse = useCallback(() => {
     setCollapsed(true);
@@ -180,6 +209,7 @@ function ElevoSidebarComponent({
           {t(K.NEW_CHAT)}
         </WrappedLink>
         <ChatHistory
+          ref={ref}
           activeId={historyActiveId}
           urlTemplate={historyUrlTemplate}
           actions={historyActions}

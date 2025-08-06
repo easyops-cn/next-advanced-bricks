@@ -58,29 +58,27 @@ export function CodeBlock({ children, node, ...props }: CodeBlockProps) {
   }, []);
 
   return (
-    <pre
-      {...props}
-      className={classNames(props.className, styles["code-block"])}
-      ref={ref}
-    >
-      {children}
-      {isCodeBlock && (
-        <WrappedButton
-          themeVariant="elevo"
-          className={classNames(styles.copy, {
-            [styles.success]: state === "success",
-            [styles.failed]: state === "failed",
-          })}
-          onClick={handleCopy}
-          icon={
-            state === "success"
-              ? COPY_BUTTON_ICON_SUCCESS
-              : state === "failed"
-                ? COPY_BUTTON_ICON_FAILED
-                : COPY_BUTTON_ICON
-          }
-        />
-      )}
-    </pre>
+    <div className={styles["code-block"]}>
+      <pre {...props} className={props.className} ref={ref}>
+        {children}
+        {isCodeBlock && (
+          <WrappedButton
+            themeVariant="elevo"
+            className={classNames(styles.copy, {
+              [styles.success]: state === "success",
+              [styles.failed]: state === "failed",
+            })}
+            onClick={handleCopy}
+            icon={
+              state === "success"
+                ? COPY_BUTTON_ICON_SUCCESS
+                : state === "failed"
+                  ? COPY_BUTTON_ICON_FAILED
+                  : COPY_BUTTON_ICON
+            }
+          />
+        )}
+      </pre>
+    </div>
   );
 }
