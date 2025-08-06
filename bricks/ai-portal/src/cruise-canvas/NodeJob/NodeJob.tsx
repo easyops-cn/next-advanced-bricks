@@ -60,17 +60,7 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
     useMemo(() => {
       const contents: string[] = [];
       const instanceDetails: CmdbInstanceDetailData[] = [];
-      const files: FileInfo[] = [
-        // {
-        //   name: "Test.md",
-        //   mimeType: "text/markdown",
-        //   size: 10240,
-        //   uri: "api/...",
-        // },
-        // {
-        //   name: "Test.pdf",
-        // },
-      ];
+      const files: FileInfo[] = [];
       let large = toolName === "llm_answer";
       job.messages?.forEach((message) => {
         if (message.role === "tool") {
