@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.2.1...@next-shared/jsx-storyboard@0.2.2) (2025-08-06)
+
+
+### Bug Fixes
+
+* allow non-object params to continue parsing ([da88baa](https://github.com/easyops-cn/next-advanced-bricks/commit/da88baa804267682c1b8375d1aa3676538129790))
+
+
+
+
+
 ## [0.2.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.2.0...@next-shared/jsx-storyboard@0.2.1) (2025-08-05)
 
 
