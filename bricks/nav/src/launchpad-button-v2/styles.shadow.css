@@ -268,6 +268,7 @@
   font-weight: 500;
   color: var(--color-header-text);
   margin-bottom: 14px;
+  width: 100%;
 }
 
 .sidebar-menu-item,
