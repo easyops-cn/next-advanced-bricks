@@ -1,4 +1,12 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import moment from "moment";
 import classNames from "classnames";
 import { AgentFlowApi_searchTaskForAgentFlow } from "@next-api-sdk/llm-sdk";
@@ -6,7 +14,7 @@ import type {
   ActionType,
   SimpleActionType,
 } from "@next-bricks/basic/mini-actions";
-import { get } from "lodash";
+import { get, isEqual } from "lodash";
 import { K, t } from "./i18n.js";
 import type { TaskState } from "../cruise-canvas/interfaces.js";
 import { WrappedIcon, WrappedLink, WrappedMiniActions } from "./bricks.js";
@@ -37,13 +45,22 @@ export interface ChatHistoryProps {
   onHistoryClick: () => void;
 }
 
-export function ChatHistory({
-  activeId,
-  actions,
-  urlTemplate,
-  onActionClick,
-  onHistoryClick,
-}: ChatHistoryProps) {
+export interface ChatHistoryRef {
+  pull: () => void;
+}
+
+export const ChatHistory = forwardRef(LegacyChatHistory);
+
+export function LegacyChatHistory(
+  {
+    activeId,
+    actions,
+    urlTemplate,
+    onActionClick,
+    onHistoryClick,
+  }: ChatHistoryProps,
+  ref: React.Ref<ChatHistoryRef>
+) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [list, setList] = useState<HistoryItem[] | null>(null);
   const [nextToken, setNextToken] = useState<string | undefined>();
@@ -51,7 +68,14 @@ export function ChatHistory({
 
   useEffect(() => {
     Promise.all([
-      AgentFlowApi_searchTaskForAgentFlow({ next_token: loadNextToken }),
+      AgentFlowApi_searchTaskForAgentFlow(
+        { next_token: loadNextToken },
+        {
+          interceptorParams: {
+            ignoreLoadingBar: true,
+          },
+        }
+      ),
       new Promise((resolve) => setTimeout(resolve, 500)), // Force a minimum delay
     ])
       .then(([data]) => {
@@ -139,6 +163,75 @@ export function ChatHistory({
       observer.disconnect();
     };
   }, [nextToken]);
+
+  const pullIdRef = useRef(0);
+
+  const pull = useCallback(async () => {
+    try {
+      const pullId = ++pullIdRef.current;
+      const list = await AgentFlowApi_searchTaskForAgentFlow(
+        {},
+        {
+          interceptorParams: {
+            ignoreLoadingBar: true,
+          },
+        }
+      );
+      if (pullId !== pullIdRef.current) {
+        // Ignore this pull if a newer one has been triggered
+        return;
+      }
+      setList((prev) => {
+        const prevList = prev ?? [];
+        const newList = list.data as HistoryItem[];
+        const newIds = new Set(newList.map((item) => item.id));
+        const newItemsMap = new Map(newList.map((item) => [item.id, item]));
+
+        let foundIntersection = false;
+        let foundChanged = false;
+        let isFirst = true;
+        for (const item of prevList) {
+          const newItem = newItemsMap.get(item.id);
+          if (newItem) {
+            foundIntersection = true;
+            foundChanged =
+              (isFirst && newItem !== newList[0]) || !isEqual(newItem, item);
+            if (foundChanged) {
+              break;
+            }
+          } else {
+            break;
+          }
+          isFirst = false;
+        }
+
+        if (!foundIntersection) {
+          setNextToken(list.next_token);
+          return newList;
+        }
+
+        if (foundChanged) {
+          return [
+            ...newList,
+            ...prevList.filter((item) => !newIds.has(item.id)),
+          ];
+        }
+
+        return prev;
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error("Error pulling chat history:", error);
+    }
+  }, []);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      pull,
+    }),
+    [pull]
+  );
 
   if (!list) {
     return (
