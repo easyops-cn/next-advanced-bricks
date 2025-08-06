@@ -11,17 +11,7 @@ import type {
 } from "./interfaces.js";
 import { constructJsValue } from "./constructors/values.js";
 import { constructView } from "./constructors/view.js";
-
-const EXPRESSION_PREFIX_REG = /^\s*<%=?\s+/;
-const EXPRESSION_SUFFIX_REG = /\s+%>\s*$/;
-
-export function isExpressionString(value: unknown): value is string {
-  return (
-    typeof value === "string" &&
-    EXPRESSION_PREFIX_REG.test(value) &&
-    EXPRESSION_SUFFIX_REG.test(value)
-  );
-}
+import { isExpressionString } from "./utils.js";
 
 export function parseJsx(source: string, options?: ParseJsxOptions) {
   const dataSources: DataSource[] = [];
@@ -198,7 +188,6 @@ export function parseJsx(source: string, options?: ParseJsxOptions) {
                         node: prop.value,
                         severity: "notice",
                       });
-                      continue;
                     }
                     const params = constructJsValue(prop.value, result, {
                       allowExpression: true,
