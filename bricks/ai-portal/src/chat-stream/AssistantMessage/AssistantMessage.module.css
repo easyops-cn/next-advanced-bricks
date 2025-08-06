@@ -1,0 +1,9 @@
+.assistant {
+  display: flex;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  padding-left: 16px;
+}

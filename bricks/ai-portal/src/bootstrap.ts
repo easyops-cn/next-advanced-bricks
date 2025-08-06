@@ -8,3 +8,4 @@ import "./elevo-sidebar/index.js";
 import "./icon-button/index.js";
 import "./show-cases/index.js";
 import "./mcp-tools/index.js";
+import "./chat-stream/index.js";

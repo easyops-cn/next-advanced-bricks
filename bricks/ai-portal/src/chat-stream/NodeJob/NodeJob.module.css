@@ -1,0 +1,71 @@
+.heading {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.icon {
+  width: 26px;
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  color: #262626;
+  font-weight: 500;
+}
+
+.tool {
+  background: #e6e9f3;
+  border-radius: 12px;
+  border: 1px solid #e2e2ec;
+  padding: 0 12px;
+  width: fit-content;
+  color: #595959;
+}
+
+.body {
+  padding-left: 26px;
+  margin-bottom: 20px;
+}
+
+.content {
+  margin-top: 14px;
+
+  .markdown :global(.mermaid) {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    max-width: 453px;
+  }
+}
+
+.content:empty {
+  display: none;
+}
+
+.icon {
+  color: #abaab7;
+}
+
+.completed .icon {
+  color: #0fbe59;
+}
+
+.failed .icon {
+  color: #f24c25;
+}
+
+.working .icon {
+  color: var(--elevo-color-brand);
+}
+
+.input-required .icon {
+  color: #12aacc;
+}
+
+.canceled .icon {
+  color: #fcaa07;
+}

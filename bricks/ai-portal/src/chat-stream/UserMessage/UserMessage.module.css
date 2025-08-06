@@ -1,0 +1,10 @@
+.user {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 24px;
+  padding: 10px 16px;
+  width: fit-content;
+  max-width: 500px;
+  margin-left: auto;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
