@@ -228,7 +228,7 @@ export function MiniLineChartComponent({
       height,
       padding,
       smooth,
-      lineColor: getComputedStyle(detector).color,
+      lineColor: getComputedStyle(detector).color || lineColor,
       lineWidth,
       showArea,
       min,
