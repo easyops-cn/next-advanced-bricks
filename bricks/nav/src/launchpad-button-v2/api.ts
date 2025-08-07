@@ -58,9 +58,7 @@ export async function fetchLaunchpadInfo() {
           if (app) {
             items.push({
               ...item,
-              name: app.localeName,
               url: app.homepage,
-              menuIcon: app.menuIcon,
             } as MenuItemDataApp);
           }
           break;
@@ -74,21 +72,19 @@ export async function fetchLaunchpadInfo() {
         case "dir": {
           const subItems: MenuItemDataNormal[] = [];
           for (const subItem of item.items) {
+            subItem.localeName = getLocaleName(subItem.locales, subItem.name);
             if (subItem.type === "app") {
               const app = microAppsById.get(subItem.id);
               if (app) {
                 subItems.push({
                   ...subItem,
-                  name: app.localeName,
                   url: app.homepage,
-                  menuIcon: app.menuIcon,
                 } as MenuItemDataApp);
               }
             } else if (
               subItem.type === "custom" &&
               !auth.isBlockedHref?.(subItem.url)
             ) {
-              subItem.localeName = getLocaleName(subItem.locales, subItem.name);
               subItems.push(subItem as MenuItemDataCustom);
               customLinksById.set(subItem.id, subItem);
             }

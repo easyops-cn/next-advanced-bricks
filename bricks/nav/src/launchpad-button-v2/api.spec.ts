@@ -39,10 +39,20 @@ describe("fetchLaunchpadInfo", () => {
             {
               type: "app",
               id: "cmdb-instances",
+              name: "实例管理",
+              locales: {
+                en: {
+                  name: "Cmdb Instances",
+                },
+                zh: {
+                  name: "实例管理",
+                },
+              },
             },
             {
               type: "app",
               id: "models",
+              name: "Models",
             },
             {
               type: "custom",
@@ -56,6 +66,7 @@ describe("fetchLaunchpadInfo", () => {
                 {
                   type: "app",
                   id: "dir-cmdb-app",
+                  name: "DIR CMDB",
                 },
                 {
                   type: "custom",
@@ -73,6 +84,7 @@ describe("fetchLaunchpadInfo", () => {
             {
               type: "app",
               id: "blocked-app",
+              name: "Blocked App",
             },
             {
               type: "custom",
@@ -92,6 +104,7 @@ describe("fetchLaunchpadInfo", () => {
                 {
                   type: "app",
                   id: "dir-foo-app",
+                  name: "DIR Foo App",
                 },
               ],
             },
@@ -102,6 +115,7 @@ describe("fetchLaunchpadInfo", () => {
         {
           app: {
             id: "cmdb-instances",
+            name: "实例管理",
             locales: {
               en: {
                 name: "Cmdb Instances",
@@ -155,9 +169,16 @@ describe("fetchLaunchpadInfo", () => {
       "items": [
         {
           "id": "cmdb-instances",
-          "localeName": undefined,
-          "menuIcon": undefined,
-          "name": "Cmdb Instances",
+          "localeName": "Cmdb Instances",
+          "locales": {
+            "en": {
+              "name": "Cmdb Instances",
+            },
+            "zh": {
+              "name": "实例管理",
+            },
+          },
+          "name": "实例管理",
           "type": "app",
           "url": undefined,
         },
@@ -171,7 +192,7 @@ describe("fetchLaunchpadInfo", () => {
           "items": [
             {
               "id": "dir-cmdb-app",
-              "menuIcon": undefined,
+              "localeName": "DIR CMDB",
               "name": "DIR CMDB",
               "type": "app",
               "url": undefined,
@@ -204,6 +225,7 @@ describe("fetchLaunchpadInfo", () => {
           "name": "实例管理",
         },
       },
+      "name": "实例管理",
     },
     "dir-cmdb-app" => {
       "id": "dir-cmdb-app",
