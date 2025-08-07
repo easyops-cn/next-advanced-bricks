@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.24.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.24.1...@next-bricks/nav@1.24.2) (2025-08-07)
+
+
+### Bug Fixes
+
+* i18n fix ([bae3138](https://github.com/easyops-cn/next-advanced-bricks/commit/bae31386ab0c0f2bca7e6360517c7a3ca4164dde))
+
+
+
+
+
 ## [1.24.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.24.0...@next-bricks/nav@1.24.1) (2025-08-01)
 
 **Note:** Version bump only for package @next-bricks/nav

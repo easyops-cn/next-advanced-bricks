@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.10](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/mini-chart@0.2.9...@next-bricks/mini-chart@0.2.10) (2025-08-07)
+
+
+### Bug Fixes
+
+* 【7.10.1 en】APM接口详情，来源、去向列表曲线变成黑色。 ([273d33a](https://github.com/easyops-cn/next-advanced-bricks/commit/273d33a4bf59c9423f4c31532ab34ccf513226f5))
+
+
+
+
+
 ## [0.2.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/mini-chart@0.2.8...@next-bricks/mini-chart@0.2.9) (2025-07-12)
 
 
