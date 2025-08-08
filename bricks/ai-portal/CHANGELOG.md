@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.21.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.20.14...@next-bricks/ai-portal@0.21.0) (2025-08-08)
+
+
+### Bug Fixes
+
+* fix mermaid style ([1c203e1](https://github.com/easyops-cn/next-advanced-bricks/commit/1c203e1399d70f82e2cba0d6237a9256c956aed3))
+* simplify removing hidden jobs ([5fc6a69](https://github.com/easyops-cn/next-advanced-bricks/commit/5fc6a697af79f10dab93a2857e681a07e4daa839))
+* support hidden jobs ([225833e](https://github.com/easyops-cn/next-advanced-bricks/commit/225833ebe0911eed371168d4b4c44e4cda2286ae))
+
+
+### Features
+
+* new brick: chat-stream ([e331a7a](https://github.com/easyops-cn/next-advanced-bricks/commit/e331a7adace0f4e6c34e62479ab653ac9d529660))
+* support feedback ([65a6ed3](https://github.com/easyops-cn/next-advanced-bricks/commit/65a6ed307b812a50b23772cfd51b259c193ebe54))
+
+
+
+
+
 ## [0.20.14](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.20.13...@next-bricks/ai-portal@0.20.14) (2025-08-06)
 
 
