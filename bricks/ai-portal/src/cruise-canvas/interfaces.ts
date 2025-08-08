@@ -130,6 +130,8 @@ export interface Job {
 
   isError?: boolean;
 
+  hidden?: boolean;
+
   startTime: number;
   endTime?: number;
 
