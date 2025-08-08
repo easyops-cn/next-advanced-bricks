@@ -22,7 +22,8 @@ export type GraphNode =
   | JobGraphNode
   | ViewGraphNode
   | StartGraphNode
-  | EndGraphNode;
+  | EndGraphNode
+  | FeedbackGraphNode;
 
 export interface RequirementGraphNode extends BaseGraphNode {
   type: "requirement";
@@ -50,6 +51,10 @@ export interface StartGraphNode extends BaseGraphNode {
 
 export interface EndGraphNode extends BaseGraphNode {
   type: "end";
+}
+
+export interface FeedbackGraphNode extends BaseGraphNode {
+  type: "feedback";
 }
 
 export interface BaseGraphNode {
@@ -268,4 +273,10 @@ export interface ZoomActionTranslateBy {
   translateBy: [x: number, y: number];
   transform?: undefined;
   duration?: number;
+}
+
+export interface FeedbackDetail {
+  plan: string[];
+  result: string[];
+  feedback: string;
 }

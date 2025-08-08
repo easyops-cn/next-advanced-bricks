@@ -33,20 +33,7 @@ export function useTaskGraph(
       state: fixedJobs.length === 0 ? "working" : "completed",
     });
 
-    const { list, jobMap, jobLevels, downstreamMap } = getOrderedJobs(jobs);
-
-    const upstreamMap = new Map<string, string[]>();
-    // Setup upstreamMap
-    for (const [upstream, downstream] of downstreamMap) {
-      for (const target of downstream) {
-        let upstreams = upstreamMap.get(target);
-        if (!upstreams) {
-          upstreams = [];
-          upstreamMap.set(target, upstreams);
-        }
-        upstreams.push(upstream);
-      }
-    }
+    const { list, jobMap, jobLevels, upstreamMap } = getOrderedJobs(jobs);
 
     const jobNodesMap = new Map<string, string[]>([
       [REQUIREMENT_NODE_ID, [REQUIREMENT_NODE_ID]],

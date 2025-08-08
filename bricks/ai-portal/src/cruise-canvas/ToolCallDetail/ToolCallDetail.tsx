@@ -106,7 +106,7 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
   return (
     <WrappedDrawer
       ref={ref}
-      customTitle={toolTitle || t(K[toolCall.name as K]) || toolCall.name}
+      customTitle={toolTitle || toolCall.name}
       width={width}
       closable
       mask

@@ -46,7 +46,7 @@
   flex-basis: 100%;
 }
 
-textarea {
+.input textarea {
   display: block;
   width: 100%;
   padding: 8px;
@@ -59,7 +59,7 @@ textarea {
   color: #262626;
 }
 
-textarea::placeholder {
+.input textarea::placeholder {
   color: #bfbfbf;
 }
 
