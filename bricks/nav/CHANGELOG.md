@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.24.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.24.2...@next-bricks/nav@1.24.3) (2025-08-08)
+
+
+### Bug Fixes
+
+* **launchpad-button-v2:** Fix display of application names in directory ([0a117f9](https://github.com/easyops-cn/next-advanced-bricks/commit/0a117f9f8222b62fd9e10068632311300c69489c))
+
+
+
+
+
 ## [1.24.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.24.1...@next-bricks/nav@1.24.2) (2025-08-07)
 
 
