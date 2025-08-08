@@ -34,6 +34,7 @@ import type {
   GraphEdge,
   ZoomAction,
   FileInfo,
+  FeedbackDetail,
 } from "./interfaces.js";
 import { useAutoCenter } from "./useAutoCenter.js";
 import { useLayout } from "./useLayout.js";
@@ -65,6 +66,7 @@ import { Nav } from "./Nav/Nav.js";
 import { ReplayToolbar } from "./ReplayToolbar/ReplayToolbar.js";
 import { ChatBox } from "./ChatBox/ChatBox.js";
 import { FilePreview } from "./FilePreview/FilePreview.js";
+import { NodeFeedback } from "./NodeFeedback/NodeFeedback.js";
 
 initializeI18n(NS, locales);
 
@@ -79,6 +81,8 @@ export interface CruiseCanvasProps {
   replay?: boolean;
   replayDelay?: number;
   supports?: Record<string, boolean>;
+  showHiddenJobs?: boolean;
+  showFeedback?: boolean;
 }
 
 const CruiseCanvasComponent = forwardRef(LegacyCruiseCanvasComponent);
@@ -116,6 +120,12 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
   @property({ attribute: false })
   accessor supports: Record<string, boolean> | undefined;
 
+  @property({ type: Boolean })
+  accessor showHiddenJobs: boolean | undefined;
+
+  @property({ type: Boolean })
+  accessor showFeedback: boolean | undefined;
+
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
 
@@ -144,11 +154,28 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
     this.#cancelEvent.emit();
   };
 
+  @event({ type: "feedback.submit" })
+  accessor #feedbackSubmitEvent!: EventEmitter<FeedbackDetail>;
+
+  #onSubmitFeedback = (detail: FeedbackDetail) => {
+    this.#feedbackSubmitEvent.emit(detail);
+  };
+
   #ref = createRef<CruiseCanvasRef>();
 
   @method()
   resumed() {
     this.#ref.current?.resumed();
+  }
+
+  @method()
+  feedbackSubmitDone() {
+    this.#ref.current?.feedbackSubmitDone();
+  }
+
+  @method()
+  feedbackSubmitFailed() {
+    this.#ref.current?.feedbackSubmitFailed();
   }
 
   render() {
@@ -160,10 +187,13 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         replay={this.replay}
         replayDelay={this.replayDelay}
         supports={this.supports}
+        showHiddenJobs={this.showHiddenJobs}
+        showFeedback={this.showFeedback}
         onShare={this.#onShare}
         onPause={this.#onPause}
         onResume={this.#onResume}
         onCancel={this.#onCancel}
+        onSubmitFeedback={this.#onSubmitFeedback}
         ref={this.#ref}
       />
     );
@@ -175,6 +205,7 @@ interface CruiseCanvasComponentProps extends CruiseCanvasProps {
   onPause: () => void;
   onResume: () => void;
   onCancel: () => void;
+  onSubmitFeedback: (detail: FeedbackDetail) => void;
 }
 
 interface ScrollToOptions {
@@ -196,6 +227,8 @@ interface ScrollToOptions {
 
 interface CruiseCanvasRef {
   resumed: () => void;
+  feedbackSubmitDone: () => void;
+  feedbackSubmitFailed: () => void;
 }
 
 function LegacyCruiseCanvasComponent(
@@ -206,10 +239,13 @@ function LegacyCruiseCanvasComponent(
     replay,
     replayDelay,
     supports,
+    showHiddenJobs,
+    showFeedback: propShowFeedback,
     onShare,
     onPause,
     onResume,
     onCancel,
+    onSubmitFeedback,
   }: CruiseCanvasComponentProps,
   ref: React.Ref<CruiseCanvasRef>
 ) {
@@ -226,7 +262,7 @@ function LegacyCruiseCanvasComponent(
   const task = taskId ? _task : propTask;
   const jobs = taskId ? _jobs : propJobs;
   const plan = task?.plan;
-  const graph = useTaskGraph(task, jobs);
+  const graph = useTaskGraph(task, jobs, { showHiddenJobs });
   const rawNodes = graph?.nodes;
   const rawEdges = graph?.edges;
   const nav = graph?.nav;
@@ -245,10 +281,34 @@ function LegacyCruiseCanvasComponent(
     return null;
   }, [activeNodeId]);
 
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
+  const [submittedFeedback, setSubmittedFeedback] = useState(false);
+  const [showFeedback, setShowFeedback] = useState<boolean>(!!propShowFeedback);
+  useEffect(() => {
+    setShowFeedback(!!propShowFeedback);
+  }, [propShowFeedback]);
+
+  const handleSubmitFeedback = useCallback(
+    (detail: FeedbackDetail) => {
+      setSubmittingFeedback(true);
+      onSubmitFeedback(detail);
+    },
+    [onSubmitFeedback]
+  );
+
   useImperativeHandle(
     ref,
     () => ({
       resumed: () => resumedRef.current?.(),
+      feedbackSubmitDone: () => {
+        setSubmittedFeedback(true);
+        setTimeout(() => {
+          setShowFeedback(false);
+        }, 3000);
+      },
+      feedbackSubmitFailed: () => {
+        setSubmittingFeedback(false);
+      },
     }),
     [resumedRef]
   );
@@ -302,6 +362,7 @@ function LegacyCruiseCanvasComponent(
     rawEdges,
     state: taskState,
     sizeMap,
+    showFeedback,
   });
 
   // Disable auto scroll when the user manually scrolled up
@@ -619,6 +680,7 @@ function LegacyCruiseCanvasComponent(
       onResume,
       onCancel,
       onNodeResize,
+      onSubmitFeedback: handleSubmitFeedback,
       activeToolCallJobId,
       setActiveToolCallJobId,
       setActiveNodeId,
@@ -628,6 +690,9 @@ function LegacyCruiseCanvasComponent(
       setActiveExpandedViewJobId,
       supports,
       setActiveFile,
+      setShowFeedback,
+      submittingFeedback,
+      submittedFeedback,
     }),
     [
       activeToolCallJobId,
@@ -639,7 +704,10 @@ function LegacyCruiseCanvasComponent(
       onPause,
       onResume,
       onCancel,
+      handleSubmitFeedback,
       supports,
+      submittingFeedback,
+      submittedFeedback,
     ]
   );
 
@@ -773,6 +841,7 @@ function LegacyCruiseCanvasComponent(
         >
           <svg className={styles.edges}>
             {edges.map((edge) =>
+              edge.source === END_NODE_ID ||
               edge.target === END_NODE_ID ? null : (
                 <path
                   className={styles.edge}
@@ -930,6 +999,8 @@ function NodeComponent({
         <NodeStart />
       ) : type === "end" ? (
         <NodeEnd />
+      ) : type === "feedback" ? (
+        <NodeFeedback />
       ) : type === "requirement" ? (
         <NodeRequirement
           content={content}

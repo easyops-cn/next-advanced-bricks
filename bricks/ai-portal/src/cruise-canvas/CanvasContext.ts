@@ -1,5 +1,5 @@
 import { createContext, type Dispatch } from "react";
-import type { FileInfo, SizeTuple } from "./interfaces";
+import type { FeedbackDetail, FileInfo, SizeTuple } from "./interfaces";
 
 export interface CanvasContextValue {
   humanInput: (jobId: string, input: string) => void;
@@ -8,6 +8,7 @@ export interface CanvasContextValue {
   onResume: () => void;
   onCancel: () => void;
   onNodeResize: (id: string, size: SizeTuple | null) => void;
+  onSubmitFeedback: (detail: FeedbackDetail) => void;
   activeToolCallJobId: string | null;
   setActiveToolCallJobId: Dispatch<React.SetStateAction<string | null>>;
   setActiveNodeId: Dispatch<React.SetStateAction<string | null>>;
@@ -17,6 +18,9 @@ export interface CanvasContextValue {
   setActiveExpandedViewJobId: Dispatch<React.SetStateAction<string | null>>;
   supports?: Record<string, boolean>;
   setActiveFile: Dispatch<React.SetStateAction<FileInfo | null>>;
+  setShowFeedback: Dispatch<React.SetStateAction<boolean>>;
+  submittingFeedback: boolean;
+  submittedFeedback: boolean;
 }
 
 export const CanvasContext = createContext<CanvasContextValue>({
@@ -26,6 +30,7 @@ export const CanvasContext = createContext<CanvasContextValue>({
   onResume: () => {},
   onCancel: () => {},
   onNodeResize: () => {},
+  onSubmitFeedback: () => {},
   activeToolCallJobId: null,
   setActiveToolCallJobId: () => {},
   setActiveNodeId: () => {},
@@ -34,4 +39,7 @@ export const CanvasContext = createContext<CanvasContextValue>({
   activeExpandedViewJobId: null,
   setActiveExpandedViewJobId: () => {},
   setActiveFile: () => {},
+  setShowFeedback: () => {},
+  submittingFeedback: false,
+  submittedFeedback: false,
 });

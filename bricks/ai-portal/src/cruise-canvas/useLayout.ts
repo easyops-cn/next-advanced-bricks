@@ -11,6 +11,7 @@ import type {
 import {
   EDGE_SEP,
   END_NODE_ID,
+  FEEDBACK_NODE_ID,
   NODE_SEP,
   RANK_SEP,
   START_NODE_ID,
@@ -21,6 +22,7 @@ export interface UseLayoutOptions {
   rawEdges: GraphEdge[] | undefined;
   sizeMap: Map<string, SizeTuple> | null;
   state?: TaskState;
+  showFeedback?: boolean;
 }
 
 export function useLayout({
@@ -28,6 +30,7 @@ export function useLayout({
   rawEdges: _rawEdges,
   sizeMap,
   state,
+  showFeedback,
 }: UseLayoutOptions) {
   const memoizedPositionsRef = useRef<Map<string, NodePosition> | null>(null);
   const completed = state === "completed";
@@ -76,6 +79,16 @@ export function useLayout({
           target: END_NODE_ID,
         }))
       );
+      if (showFeedback) {
+        initialNodes.push({
+          id: FEEDBACK_NODE_ID,
+          type: "feedback",
+        });
+        initialEdges.push({
+          source: END_NODE_ID,
+          target: FEEDBACK_NODE_ID,
+        });
+      }
     }
 
     const memoizedPositions = memoizedPositionsRef.current;
@@ -89,7 +102,7 @@ export function useLayout({
     }
 
     return { initialNodes, initialEdges };
-  }, [completed, _rawEdges, _rawNodes]);
+  }, [completed, showFeedback, _rawEdges, _rawNodes]);
 
   const startNodePositionRef = useRef<NodePosition | null>(null);
 

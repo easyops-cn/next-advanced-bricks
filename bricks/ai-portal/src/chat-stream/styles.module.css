@@ -1,0 +1,40 @@
+.container {
+  background-color: #f3f3f4;
+  display: block;
+  position: relative;
+  color: rgba(0, 0, 0, 0.88);
+  height: 100%;
+  padding: 0 24px;
+  overflow-y: auto;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  height: 54px;
+  position: sticky;
+  top: 0;
+  background-color: #f3f3f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  h1 {
+    font-weight: 500;
+    font-size: 14px;
+    margin: 0;
+  }
+}
+
+.chat {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+.message + .message {
+  margin-top: 40px;
+}

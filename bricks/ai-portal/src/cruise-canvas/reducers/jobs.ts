@@ -88,6 +88,7 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
             "instruction",
             "toolCall",
             "isError",
+            "hidden",
             "startTime",
             "endTime",
           ]);
