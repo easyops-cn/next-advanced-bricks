@@ -51,14 +51,17 @@ getLaunchpadInfo.mockResolvedValue({
         {
           type: "app",
           id: "hello",
+          name: "Hello",
         },
         {
           type: "app",
           id: "unknown-1",
+          name: "Unknown 1",
         },
         {
           type: "app",
           id: "empty-locales",
+          name: "Empty Locales",
         },
         {
           type: "custom",
@@ -72,10 +75,12 @@ getLaunchpadInfo.mockResolvedValue({
             {
               type: "app",
               id: "instances",
+              name: "Instances",
             },
             {
               type: "app",
               id: "unknown-2",
+              name: "Unknown 2",
             },
             {
               type: "custom",
@@ -84,6 +89,7 @@ getLaunchpadInfo.mockResolvedValue({
             },
             {
               type: "unknown",
+              name: "Unknown",
             },
           ],
         },
