@@ -25,12 +25,12 @@ function getChecks() {
       },
       {
         label: `2. ${t(K.IS_THE_TASK_PLAN_LOGICALLY_CORRECT)}`,
-        value: "计划逻辑正确",
+        value: "逻辑正确",
         group: "plan",
       },
       {
         label: `3. ${t(K.ARE_THE_TASK_PLAN_STEPS_CONCISE)}`,
-        value: "计划步骤精简",
+        value: "步骤精简",
         group: "plan",
       },
       {
@@ -40,7 +40,7 @@ function getChecks() {
       },
       {
         label: `5. ${t(K.IS_THE_EVIDENCE_SUPPORTING_THE_CONCLUSIONS_SUFFICIENT)}`,
-        value: "证据充足",
+        value: "支撑证据充足",
         group: "result",
       },
     ];

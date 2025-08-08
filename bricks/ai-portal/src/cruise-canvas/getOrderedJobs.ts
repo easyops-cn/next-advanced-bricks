@@ -1,7 +1,7 @@
 import type { Job } from "./interfaces";
 
 export interface GetOrderedJobsOptions {
-  showHidden?: boolean;
+  showHiddenJobs?: boolean;
 }
 
 export function getOrderedJobs(
@@ -11,19 +11,18 @@ export function getOrderedJobs(
   const fixedJobs = jobs ?? [];
   const jobMap = new Map<string, Job>();
   const childrenMap = new Map<string, string[]>();
-  const downstreamMap = new Map<string, Set<string>>();
-  const upstreamMap = new Map<string, Set<string>>();
-  const rootDownstream = new Set<string>();
+  let downstreamMap = new Map<string, string[]>();
+  let rootDownstreams: string[] = [];
   const rootChildren: string[] = [];
   const jobLevels = new Map<string, number>();
   const hiddenJobIds = new Set<string>();
-  const showHidden = options?.showHidden;
+  const showHiddenJobs = options?.showHiddenJobs;
 
   // Setup children relations
   for (const job of fixedJobs) {
     jobMap.set(job.id, job);
     // TODO: remove mock
-    if (!showHidden && job.hidden) {
+    if (!showHiddenJobs && job.hidden) {
       hiddenJobIds.add(job.id);
     }
     if (job.parent) {
@@ -42,13 +41,17 @@ export function getOrderedJobs(
     for (const up of job.upstream ?? []) {
       let downstream = downstreamMap.get(up);
       if (!downstream) {
-        downstreamMap.set(up, (downstream = new Set()));
+        downstreamMap.set(up, (downstream = []));
       }
-      downstream.add(job.id);
+      downstream.push(job.id);
     }
 
-    if (!job.parent && !job.upstream?.length && (showHidden || !job.hidden)) {
-      rootDownstream.add(job.id);
+    if (
+      !job.parent &&
+      !job.upstream?.length &&
+      (showHiddenJobs || !job.hidden)
+    ) {
+      rootDownstreams.push(job.id);
     }
   }
 
@@ -71,10 +74,10 @@ export function getOrderedJobs(
             })
           : [];
 
-        downstreamMap.set(jobId, new Set(directSubChildren));
+        downstreamMap.set(jobId, directSubChildren);
 
         for (const child of leafSubChildren) {
-          downstreamMap.set(child, new Set(downstream!));
+          downstreamMap.set(child, [...downstream!]);
         }
 
         alignDownstreamMap(subChildren, level + 1);
@@ -84,21 +87,10 @@ export function getOrderedJobs(
 
   alignDownstreamMap(rootChildren, 0);
 
-  // Setup upstreamMap
-  for (const [jobId, downstreams] of downstreamMap) {
-    for (const target of downstreams) {
-      let upstreams = upstreamMap.get(target);
-      if (!upstreams) {
-        upstreamMap.set(target, (upstreams = new Set()));
-      }
-      upstreams.add(jobId);
-    }
-  }
-
-  // Remove hidden jobs, and reconnect related connections.
-  if (!showHidden && hiddenJobIds.size > 0) {
-    const findVisibleDownstreams = (downstreams: Set<string>): string[] => {
-      return [...downstreams].flatMap((jobId) => {
+  // Remove hidden jobs, and reconnect related downstream connections.
+  if (!showHiddenJobs && hiddenJobIds.size > 0) {
+    const findVisibleDownstreams = (downstreams: string[]): string[] => {
+      return downstreams.flatMap((jobId) => {
         const job = jobMap.get(jobId)!;
         if (job.hidden) {
           const nextDownstreams = downstreamMap.get(jobId);
@@ -108,78 +100,28 @@ export function getOrderedJobs(
       });
     };
 
-    const findVisibleUpstreams = (upstreams: Set<string>): string[] => {
-      return [...upstreams].flatMap((jobId) => {
-        const job = jobMap.get(jobId)!;
-        if (job.hidden) {
-          const nextUpstreams = upstreamMap.get(jobId);
-          return nextUpstreams ? findVisibleUpstreams(nextUpstreams) : [];
+    const newDownstreamMap = new Map<string, string[]>();
+
+    const fixDownstreams = (visibleDownstreams: string[]) => {
+      for (const id of visibleDownstreams) {
+        const downstreams = downstreamMap.get(id);
+        if (downstreams) {
+          const visibleDownstreams = findVisibleDownstreams(downstreams);
+          newDownstreamMap.set(id, visibleDownstreams);
+          fixDownstreams(visibleDownstreams);
         }
-        return jobId;
-      });
+      }
     };
 
-    for (const [jobId, downstreams] of downstreamMap) {
-      if (hiddenJobIds.has(jobId)) {
-        const visibleDownstreams = findVisibleDownstreams(downstreams);
-        const upstreams = upstreamMap.get(jobId);
-
-        if (upstreams) {
-          const visibleUpstreams = findVisibleUpstreams(upstreams);
-          for (const upstream of visibleUpstreams) {
-            let originalDownstreams = downstreamMap.get(upstream);
-            if (!originalDownstreams) {
-              downstreamMap.set(upstream, (originalDownstreams = new Set()));
-            }
-            for (const id of visibleDownstreams) {
-              originalDownstreams.add(id);
-            }
-          }
-          for (const downstream of visibleDownstreams) {
-            let originalUpstreams = upstreamMap.get(downstream);
-            if (!originalUpstreams) {
-              upstreamMap.set(downstream, (originalUpstreams = new Set()));
-            }
-            for (const id of visibleUpstreams) {
-              originalUpstreams.add(id);
-            }
-          }
-        } else {
-          for (const id of visibleDownstreams) {
-            rootDownstream.add(id);
-          }
-        }
-      }
-    }
-
-    for (const jobId of hiddenJobIds) {
-      downstreamMap.delete(jobId);
-      upstreamMap.delete(jobId);
-    }
-
-    for (const [jobId, downstreams] of downstreamMap) {
-      const filteredDownstreams = [...downstreams].filter(
-        (child) => !hiddenJobIds.has(child)
-      );
-      if (filteredDownstreams.length < downstreams.size) {
-        downstreamMap.set(jobId, new Set(filteredDownstreams));
-      }
-    }
-
-    for (const [jobId, upstreams] of upstreamMap) {
-      const filteredUpstreams = [...upstreams].filter(
-        (parent) => !hiddenJobIds.has(parent)
-      );
-      if (filteredUpstreams.length < upstreams.size) {
-        upstreamMap.set(jobId, new Set(filteredUpstreams));
-      }
-    }
+    rootDownstreams = findVisibleDownstreams(rootDownstreams);
+    fixDownstreams(rootDownstreams);
+    downstreamMap = newDownstreamMap;
   }
 
   // Get BFS order of jobs
   const list: string[] = [];
   const visitedJobs = new Set<string>();
-  const queue: string[] = [...rootDownstream];
+  const queue: string[] = [...rootDownstreams];
   while (queue.length > 0) {
     const id = queue.shift()!;
     if (visitedJobs.has(id)) {
@@ -193,5 +135,5 @@ export function getOrderedJobs(
     }
   }
 
-  return { list, jobMap, jobLevels, upstreamMap };
+  return { list, jobMap, jobLevels, downstreamMap };
 }

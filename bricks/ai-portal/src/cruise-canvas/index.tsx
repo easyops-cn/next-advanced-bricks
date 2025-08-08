@@ -81,6 +81,7 @@ export interface CruiseCanvasProps {
   replay?: boolean;
   replayDelay?: number;
   supports?: Record<string, boolean>;
+  showHiddenJobs?: boolean;
   showFeedback?: boolean;
 }
 
@@ -118,6 +119,9 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
 
   @property({ attribute: false })
   accessor supports: Record<string, boolean> | undefined;
+
+  @property({ type: Boolean })
+  accessor showHiddenJobs: boolean | undefined;
 
   @property({ type: Boolean })
   accessor showFeedback: boolean | undefined;
@@ -169,6 +173,7 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
     this.#ref.current?.feedbackSubmitDone();
   }
 
+  @method()
   feedbackSubmitFailed() {
     this.#ref.current?.feedbackSubmitFailed();
   }
@@ -182,6 +187,7 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         replay={this.replay}
         replayDelay={this.replayDelay}
         supports={this.supports}
+        showHiddenJobs={this.showHiddenJobs}
         showFeedback={this.showFeedback}
         onShare={this.#onShare}
         onPause={this.#onPause}
@@ -233,6 +239,7 @@ function LegacyCruiseCanvasComponent(
     replay,
     replayDelay,
     supports,
+    showHiddenJobs,
     showFeedback: propShowFeedback,
     onShare,
     onPause,
@@ -255,7 +262,7 @@ function LegacyCruiseCanvasComponent(
   const task = taskId ? _task : propTask;
   const jobs = taskId ? _jobs : propJobs;
   const plan = task?.plan;
-  const graph = useTaskGraph(task, jobs);
+  const graph = useTaskGraph(task, jobs, { showHiddenJobs });
   const rawNodes = graph?.nodes;
   const rawEdges = graph?.edges;
   const nav = graph?.nav;

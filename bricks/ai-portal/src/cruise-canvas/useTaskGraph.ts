@@ -9,11 +9,12 @@ import type {
   GraphGeneratedView,
 } from "./interfaces";
 import { REQUIREMENT_NODE_ID } from "./constants";
-import { getOrderedJobs } from "./getOrderedJobs";
+import { getOrderedJobs, type GetOrderedJobsOptions } from "./getOrderedJobs";
 
 export function useTaskGraph(
   task: TaskBaseDetail | null | undefined,
-  jobs: Job[] | null | undefined
+  jobs: Job[] | null | undefined,
+  options?: GetOrderedJobsOptions
 ) {
   return useMemo(() => {
     if (!task) {
@@ -33,7 +34,22 @@ export function useTaskGraph(
       state: fixedJobs.length === 0 ? "working" : "completed",
     });
 
-    const { list, jobMap, jobLevels, upstreamMap } = getOrderedJobs(jobs);
+    const { list, jobMap, jobLevels, downstreamMap } = getOrderedJobs(
+      jobs,
+      options
+    );
+
+    const upstreamMap = new Map<string, string[]>();
+    // Setup upstreamMap
+    for (const [jobId, downstreams] of downstreamMap) {
+      for (const target of downstreams) {
+        let upstreams = upstreamMap.get(target);
+        if (!upstreams) {
+          upstreamMap.set(target, (upstreams = []));
+        }
+        upstreams.push(jobId);
+      }
+    }
 
     const jobNodesMap = new Map<string, string[]>([
       [REQUIREMENT_NODE_ID, [REQUIREMENT_NODE_ID]],
