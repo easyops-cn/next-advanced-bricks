@@ -8,7 +8,7 @@ import type {
   Step,
   TaskState,
 } from "../interfaces";
-import { WrappedIcon } from "../bricks";
+import { WrappedIcon } from "../../shared/bricks";
 import { DONE_STATES } from "../constants";
 
 export interface NavProps {

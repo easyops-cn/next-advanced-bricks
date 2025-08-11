@@ -273,7 +273,7 @@ export default async function convertDashboard(
               properties: {
                 style: {
                   display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(205px, 1fr))",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
                   gap: "10px",
                   marginBottom: "8px",
                 },
@@ -316,7 +316,7 @@ export default async function convertDashboard(
     properties: {
       style: {
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(205px, 1fr))",
+        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
         gap: "10px",
       },
     },

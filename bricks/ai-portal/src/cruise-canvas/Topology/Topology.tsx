@@ -10,7 +10,7 @@ import toolbarStyles from "../toolbar.module.css";
 import styles from "./Topology.module.css";
 import nodeStyleText from "./node.shadow.css";
 import { AsyncWrappedDisplayCanvas } from "../diagram";
-import { WrappedIcon, WrappedIconButton } from "../bricks";
+import { WrappedIcon, WrappedIconButton } from "../../shared/bricks";
 import type { ComponentGraph, RawComponentGraphNode } from "../interfaces";
 
 const DEFAULT_NODE_SIZE: EoDisplayCanvasProps["defaultNodeSize"] = [34, 34];

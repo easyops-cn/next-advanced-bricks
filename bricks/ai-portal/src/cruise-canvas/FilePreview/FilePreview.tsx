@@ -16,7 +16,7 @@ import {
   WrappedIconButton,
   WrappedIcon,
   WrappedButton,
-} from "../bricks";
+} from "../../shared/bricks";
 import { CanvasContext } from "../CanvasContext";
 import styles from "./FilePreview.module.css";
 import shareStyles from "../shared.module.css";

@@ -1,6 +1,6 @@
 import React, { Suspense, useMemo } from "react";
 import sharedStyles from "../shared.module.css";
-import { AsyncWrappedTable } from "../bricks";
+import { AsyncWrappedTable } from "../../shared/bricks";
 
 export interface DeploymentChangesProps {
   dataSource?: {

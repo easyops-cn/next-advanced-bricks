@@ -1,0 +1,32 @@
+.aside {
+  padding: 12px 12px 12px 0;
+  height: 100%;
+}
+
+.box {
+  background: #ffffff;
+  box-shadow: 1px 1px 10px 0px rgba(0, 10, 26, 0.1);
+  border-radius: 12px;
+  height: 100%;
+}
+
+.heading {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 0 20px;
+}
+
+.title {
+  font-weight: 500;
+  font-size: 16px;
+  color: #262626;
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  padding: 20px;
+}

@@ -9,10 +9,10 @@ import React, {
 import classNames from "classnames";
 import styles from "./PlanProgress.module.css";
 import type { JobState, StepWithState, TaskState } from "../interfaces";
-import { WrappedIcon, WrappedTooltip, showDialog } from "../bricks";
+import { WrappedIcon, WrappedTooltip, showDialog } from "../../shared/bricks";
 import { K, t } from "../i18n";
 import { DONE_STATES } from "../constants";
-import { CanvasContext } from "../CanvasContext";
+import { TaskContext } from "../../shared/TaskContext";
 
 export interface PlanProgressProps {
   plan?: StepWithState[];
@@ -31,7 +31,7 @@ export function PlanProgress({
   state: taskState,
   replay,
 }: PlanProgressProps): JSX.Element | null {
-  const { onPause, onResume, onCancel } = useContext(CanvasContext);
+  const { onPause, onResume, onCancel } = useContext(TaskContext);
   const [expanded, setExpanded] = useState(false);
   const [actionBeingTaken, setActionBeingTaken] = useState<
     "toggle" | "cancel" | null

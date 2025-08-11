@@ -17,16 +17,16 @@ import sharedStyles from "../shared.module.css";
 import type { CmdbInstanceDetailData, FileInfo, Job } from "../interfaces";
 import { K, t } from "../i18n.js";
 import { AsyncWrappedCMDB } from "../cmdb.js";
-import { WrappedButton, WrappedIcon } from "../bricks.js";
+import { WrappedButton, WrappedIcon } from "../../shared/bricks";
 import { HumanConfirm } from "../HumanConfirm/HumanConfirm.js";
-import { HumanAdjustPlan } from "../HumanAdjustPlan/HumanAdjustPlan.js";
-import { CanvasContext } from "../CanvasContext.js";
+import { HumanAdjustPlan } from "../../shared/HumanAdjustPlan/HumanAdjustPlan";
 import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus.js";
 import { HumanAdjustPlanResult } from "../HumanAdjustPlanResult/HumanAdjustPlanResult.js";
 import { Topology } from "../Topology/Topology";
 import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
 import { CmdbInstanceDetail } from "../CmdbInstanceDetail/CmdbInstanceDetail";
 import { FileList } from "../FileList/FileList";
+import { TaskContext } from "../../shared/TaskContext";
 
 // 当 markdown 中包含超过 4 列的表格时，对节点使用大尺寸样式
 const RegExpLargeTableInMarkdown = /^\s*\|(?:\s*:?-+:?\s*\|){4,}\s*$/m;
@@ -240,7 +240,7 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
 
 function HumanInputComponent({ jobId }: { jobId: string }): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { humanInput } = useContext(CanvasContext);
+  const { humanInput } = useContext(TaskContext);
 
   return (
     <div ref={containerRef}>
@@ -271,7 +271,7 @@ function HumanChooseComponent({
   jobId: string;
   options?: string[];
 }): JSX.Element {
-  const { humanInput } = useContext(CanvasContext);
+  const { humanInput } = useContext(TaskContext);
 
   return (
     <div
@@ -306,7 +306,7 @@ function HumanSelectFromCmdb({
   objectId?: string;
   attrId?: string;
 }): JSX.Element {
-  const { humanInput } = useContext(CanvasContext);
+  const { humanInput } = useContext(TaskContext);
   const [objectList, setObjectList] = useState<any[] | null>(null);
 
   useEffect(() => {

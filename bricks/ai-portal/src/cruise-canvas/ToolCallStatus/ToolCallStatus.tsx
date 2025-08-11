@@ -3,8 +3,8 @@ import classNames from "classnames";
 import moment from "moment";
 import styles from "./ToolCallStatus.module.css";
 import type { Job } from "../interfaces";
-import { WrappedIcon } from "../bricks";
-import { CanvasContext } from "../CanvasContext";
+import { WrappedIcon } from "../../shared/bricks";
+import { TaskContext } from "../../shared/TaskContext";
 import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
 import { getToolDataProgress } from "../utils/getToolDataProgress";
 
@@ -17,7 +17,7 @@ export function ToolCallStatus({
   job,
   variant,
 }: NodeJobToolCallProps): JSX.Element {
-  const { setActiveToolCallJobId } = useContext(CanvasContext);
+  const { setActiveToolCallJobId } = useContext(TaskContext);
   const toolCall = job.toolCall!;
   const toolTitle = toolCall.annotations?.title;
   const [progress, hasToolCallResponse] = useMemo(() => {

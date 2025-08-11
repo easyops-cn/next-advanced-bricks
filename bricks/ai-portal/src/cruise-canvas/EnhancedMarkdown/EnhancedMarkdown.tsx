@@ -10,7 +10,14 @@ const components: MarkdownComponentProps["components"] = {
   pre: CodeBlock,
 };
 
-export function EnhancedMarkdown(props: MarkdownComponentProps) {
+export interface EnhancedMarkdownProps extends MarkdownComponentProps {
+  className?: string;
+}
+
+export function EnhancedMarkdown({
+  className,
+  ...props
+}: EnhancedMarkdownProps) {
   const ref = useRef<HTMLDivElement>(null);
   const { setHoverOnScrollableContent } = useContext(CanvasContext);
 
@@ -39,7 +46,11 @@ export function EnhancedMarkdown(props: MarkdownComponentProps) {
   }, [setHoverOnScrollableContent]);
 
   return (
-    <div onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
+    <div
+      className={className}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
       <MarkdownComponent {...props} components={components} />
     </div>
   );

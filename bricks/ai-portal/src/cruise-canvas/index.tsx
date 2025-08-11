@@ -56,17 +56,18 @@ import {
   END_NODE_ID,
   GENERAL_DONE_STATES,
 } from "./constants.js";
-import { WrappedIcon } from "./bricks.js";
+import { WrappedIcon } from "../shared/bricks";
 import { CanvasContext } from "./CanvasContext.js";
 import { ToolCallDetail } from "./ToolCallDetail/ToolCallDetail.js";
 import { getScrollTo } from "./utils/getScrollTo.js";
 import { handleKeyboardNav } from "./utils/handleKeyboardNav.js";
-import { ExpandedView } from "./ExpandedView/ExpandedView.js";
+import { ExpandedView } from "../shared/ExpandedView/ExpandedView.js";
 import { Nav } from "./Nav/Nav.js";
-import { ReplayToolbar } from "./ReplayToolbar/ReplayToolbar.js";
-import { ChatBox } from "./ChatBox/ChatBox.js";
+import { ReplayToolbar } from "../shared/ReplayToolbar/ReplayToolbar.js";
+import { ChatBox } from "../shared/ChatBox/ChatBox.js";
 import { FilePreview } from "./FilePreview/FilePreview.js";
 import { NodeFeedback } from "./NodeFeedback/NodeFeedback.js";
+import { TaskContext } from "../shared/TaskContext.js";
 
 initializeI18n(NS, locales);
 
@@ -672,40 +673,47 @@ function LegacyCruiseCanvasComponent(
 
   const [activeFile, setActiveFile] = React.useState<FileInfo | null>(null);
 
-  const canvasContextValue = useMemo(
+  const taskContextValue = useMemo(
     () => ({
       humanInput,
       onShare,
       onPause,
       onResume,
       onCancel,
-      onNodeResize,
-      onSubmitFeedback: handleSubmitFeedback,
+      supports,
+      activeExpandedViewJobId,
+      setActiveExpandedViewJobId,
       activeToolCallJobId,
       setActiveToolCallJobId,
+    }),
+    [
+      humanInput,
+      onCancel,
+      onPause,
+      onResume,
+      onShare,
+      supports,
+      activeExpandedViewJobId,
+      activeToolCallJobId,
+    ]
+  );
+
+  const canvasContextValue = useMemo(
+    () => ({
+      onNodeResize,
+      onSubmitFeedback: handleSubmitFeedback,
       setActiveNodeId,
       hoverOnScrollableContent,
       setHoverOnScrollableContent,
-      activeExpandedViewJobId,
-      setActiveExpandedViewJobId,
-      supports,
       setActiveFile,
       setShowFeedback,
       submittingFeedback,
       submittedFeedback,
     }),
     [
-      activeToolCallJobId,
       hoverOnScrollableContent,
-      activeExpandedViewJobId,
       onNodeResize,
-      humanInput,
-      onShare,
-      onPause,
-      onResume,
-      onCancel,
       handleSubmitFeedback,
-      supports,
       submittingFeedback,
       submittedFeedback,
     ]
@@ -811,109 +819,115 @@ function LegacyCruiseCanvasComponent(
   ]);
 
   return (
-    <CanvasContext.Provider value={canvasContextValue}>
-      <div
-        className={classNames(styles.root, { [styles.loading]: !task })}
-        ref={rootRef}
-        style={{
-          cursor: grabbing ? "grabbing" : "grab",
-        }}
-        tabIndex={-1}
-        onClick={handleRootClick}
-      >
-        {!task && (
-          <div className={styles["loading-icon"]}>
-            <WrappedIcon
-              lib="antd"
-              theme="outlined"
-              icon="loading-3-quarters"
-              spinning
-            />
-          </div>
-        )}
+    <TaskContext.Provider value={taskContextValue}>
+      <CanvasContext.Provider value={canvasContextValue}>
         <div
-          className={classNames(styles.canvas, {
-            [styles.ready]: sizeReady && centered,
-          })}
+          className={classNames(styles.root, { [styles.loading]: !task })}
+          ref={rootRef}
           style={{
-            transform: `translate3d(${transform.x}px, ${transform.y}px, 0) scale(${transform.k})`,
+            cursor: grabbing ? "grabbing" : "grab",
           }}
+          tabIndex={-1}
+          onClick={handleRootClick}
         >
-          <svg className={styles.edges}>
-            {edges.map((edge) =>
-              edge.source === END_NODE_ID ||
-              edge.target === END_NODE_ID ? null : (
-                <path
-                  className={styles.edge}
-                  key={`${edge.source}-${edge.target}`}
-                  d={edge
-                    .points!.map(
-                      ({ x, y }, i) => `${i === 0 ? "M" : "L"}${x},${y}`
-                    )
-                    .join(" ")}
-                />
-              )
-            )}
-          </svg>
-          {nodes.map((node) => (
-            <MemoizedNodeComponent
-              key={node.id}
-              id={node.id}
-              type={node.type}
-              content={(node as RequirementGraphNode).content}
-              job={(node as JobGraphNode).job}
-              state={node.state}
-              startTime={task?.startTime}
-              taskLoading={taskLoading}
-              instructionLoading={
-                node.type === "instruction" &&
-                !nonLeafNodes.has(node.id) &&
-                !DONE_STATES.includes(node.state ?? "working") &&
-                !GENERAL_DONE_STATES.includes(taskState ?? "working")
-              }
-              edges={edges}
-              x={node.view?.x}
-              y={node.view?.y}
-              active={activeNodeId === node.id}
-            />
-          ))}
+          {!task && (
+            <div className={styles["loading-icon"]}>
+              <WrappedIcon
+                lib="antd"
+                theme="outlined"
+                icon="loading-3-quarters"
+                spinning
+              />
+            </div>
+          )}
+          <div
+            className={classNames(styles.canvas, {
+              [styles.ready]: sizeReady && centered,
+            })}
+            style={{
+              transform: `translate3d(${transform.x}px, ${transform.y}px, 0) scale(${transform.k})`,
+            }}
+          >
+            <svg className={styles.edges}>
+              {edges.map((edge) =>
+                edge.source === END_NODE_ID ||
+                edge.target === END_NODE_ID ? null : (
+                  <path
+                    className={styles.edge}
+                    key={`${edge.source}-${edge.target}`}
+                    d={edge
+                      .points!.map(
+                        ({ x, y }, i) => `${i === 0 ? "M" : "L"}${x},${y}`
+                      )
+                      .join(" ")}
+                  />
+                )
+              )}
+            </svg>
+            {nodes.map((node) => (
+              <MemoizedNodeComponent
+                key={node.id}
+                id={node.id}
+                type={node.type}
+                content={(node as RequirementGraphNode).content}
+                job={(node as JobGraphNode).job}
+                state={node.state}
+                startTime={task?.startTime}
+                taskLoading={taskLoading}
+                instructionLoading={
+                  node.type === "instruction" &&
+                  !nonLeafNodes.has(node.id) &&
+                  !DONE_STATES.includes(node.state ?? "working") &&
+                  !GENERAL_DONE_STATES.includes(taskState ?? "working")
+                }
+                edges={edges}
+                x={node.view?.x}
+                y={node.view?.y}
+                active={activeNodeId === node.id}
+              />
+            ))}
+          </div>
         </div>
-      </div>
-      <div className={styles.widgets}>
-        <Nav
-          nav={nav}
-          plan={plan}
-          jobs={jobs}
-          jobLevels={jobLevels}
-          currentNavId={currentNavId}
-          taskState={taskState}
-          onClick={(jobId: string) => {
-            setActiveNodeId(`job:${jobId}`);
-            scrollTo({ jobId, block: "start" });
-          }}
-        />
-        <ZoomBar
-          scale={transform.k}
-          onScaleChange={handleScaleChange}
-          onReCenter={handleReCenter}
-        />
-        {replay ? (
-          <ReplayToolbar
-            taskDone={taskDone}
-            skipToResults={skipToResults}
-            watchAgain={() => {
-              watchAgain();
-              setCentered(false);
+        <div className={styles.widgets}>
+          <Nav
+            nav={nav}
+            plan={plan}
+            jobs={jobs}
+            jobLevels={jobLevels}
+            currentNavId={currentNavId}
+            taskState={taskState}
+            onClick={(jobId: string) => {
+              setActiveNodeId(`job:${jobId}`);
+              scrollTo({ jobId, block: "start" });
             }}
           />
-        ) : supports?.chat ? (
-          <ChatBox taskState={taskState} taskDone={taskDone} />
-        ) : null}
-      </div>
-      {activeToolCallJob && <ToolCallDetail job={activeToolCallJob} />}
-      {activeExpandedViewJobId && <ExpandedView views={views!} />}
-      {activeFile && <FilePreview file={activeFile} />}
-    </CanvasContext.Provider>
+          <ZoomBar
+            scale={transform.k}
+            onScaleChange={handleScaleChange}
+            onReCenter={handleReCenter}
+          />
+          {replay ? (
+            <div className={styles["footer-container"]}>
+              <ReplayToolbar
+                taskDone={taskDone}
+                skipToResults={skipToResults}
+                watchAgain={() => {
+                  watchAgain();
+                  setCentered(false);
+                }}
+              />
+            </div>
+          ) : supports?.chat ? (
+            <div className={styles["footer-container"]}>
+              <ChatBox taskState={taskState} taskDone={taskDone} />
+            </div>
+          ) : null}
+        </div>
+        {activeToolCallJob && <ToolCallDetail job={activeToolCallJob} />}
+        {activeExpandedViewJobId && <ExpandedView views={views!} />}
+        {activeFile && <FilePreview file={activeFile} />}
+      </CanvasContext.Provider>
+    </TaskContext.Provider>
   );
 }
 

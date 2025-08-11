@@ -116,3 +116,12 @@ svg.edges {
 .go-back::part(link):active {
   background: rgba(255, 255, 255, 0.3);
 }
+
+.footer-container {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: var(--cruise-canvas-node-width-large);
+  max-width: 80%;
+}

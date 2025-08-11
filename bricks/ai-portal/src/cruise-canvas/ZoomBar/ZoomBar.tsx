@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import styles from "./ZoomBar.module.css";
 import toolbarStyles from "../toolbar.module.css";
-import { WrappedIconButton } from "../bricks";
+import { WrappedIconButton } from "../../shared/bricks";
 import { K, t } from "../i18n";
 
 const ICON_BACK_TO_CENTER: GeneralIconProps = {

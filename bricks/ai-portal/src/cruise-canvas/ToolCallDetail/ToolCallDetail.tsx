@@ -9,11 +9,11 @@ import React, {
 import type { Drawer } from "@next-bricks/containers/drawer";
 import classNames from "classnames";
 import type { DataPart, Job, Part } from "../interfaces";
-import { WrappedDrawer } from "../bricks";
+import { WrappedDrawer } from "../../shared/bricks";
 import styles from "./ToolCallDetail.module.css";
 import sharedStyles from "../shared.module.css";
 import { K, t } from "../i18n";
-import { CanvasContext } from "../CanvasContext";
+import { TaskContext } from "../../shared/TaskContext";
 import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus";
 import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
 import { Topology } from "../Topology/Topology";
@@ -34,7 +34,7 @@ function getDrawerWidth() {
 }
 
 export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
-  const { setActiveToolCallJobId } = useContext(CanvasContext);
+  const { setActiveToolCallJobId } = useContext(TaskContext);
   const toolCall = job.toolCall!;
   const toolTitle = toolCall.annotations?.title;
 

@@ -1,7 +1,10 @@
 import React from "react";
+import { initializeI18n } from "@next-core/i18n";
 import styles from "./ReplayToolbar.module.css";
 import { WrappedButton } from "../../shared/bricks";
-import { K, t } from "../i18n";
+import { K, locales, NS, t } from "./i18n";
+
+initializeI18n(NS, locales);
 
 export interface ReplayToolbarProps {
   taskDone: boolean;

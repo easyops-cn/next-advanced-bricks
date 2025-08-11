@@ -1,5 +1,6 @@
-import React, { useMemo } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import classNames from "classnames";
+import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import type {
   CmdbInstanceDetailData,
   FileInfo,
@@ -9,18 +10,44 @@ import type {
 } from "../../cruise-canvas/interfaces.js";
 import styles from "./NodeJob.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
-import { WrappedIcon } from "../../cruise-canvas/bricks.js";
+import { WrappedIcon } from "../../shared/bricks.js";
 import { EnhancedMarkdown } from "../../cruise-canvas/EnhancedMarkdown/EnhancedMarkdown.js";
 import { CmdbInstanceDetail } from "../../cruise-canvas/CmdbInstanceDetail/CmdbInstanceDetail.js";
+import { K, t } from "../i18n.js";
+import { HumanAdjustPlanResult } from "../HumanAdjustPlanResult/HumanAdjustPlanResult.js";
+import { HumanAdjustPlan } from "../../shared/HumanAdjustPlan/HumanAdjustPlan.js";
+import { NodeView } from "../NodeView/NodeView.js";
+import { TaskContext } from "../../shared/TaskContext.js";
 
 export interface NodeJobProps {
   job: Job;
   taskState: TaskState | undefined;
 }
 
+const ICON_UP: GeneralIconProps = {
+  lib: "fa",
+  icon: "angle-up",
+};
+
 export function NodeJob({ job, taskState }: NodeJobProps) {
-  const toolTitle = job.toolCall?.annotations?.title || job.toolCall?.name;
-  const toolName = job.toolCall?.name;
+  const toolCall = job.toolCall;
+  const toolTitle = toolCall?.annotations?.title || toolCall?.name;
+  const toolName = toolCall?.name;
+  const askUser = toolName === "ask_human";
+  const askUserPlan = toolName === "ask_human_confirming_plan";
+  const generalAskUser = askUser || askUserPlan;
+  const knownAskUser =
+    (askUser &&
+      [
+        "ask_user_more",
+        "ask_user_confirm",
+        "ask_user_choose",
+        "ask_user_select_from_cmdb",
+        "ask_user_adjust_plan",
+      ].includes(job.toolCall!.arguments?.command as string)) ||
+    askUserPlan;
+  const showToolCall = !!toolCall && !askUserPlan;
+  const { setActiveToolCallJobId } = useContext(TaskContext);
 
   const { className, icon } = useMemo(() => {
     return getClassNameAndIconProps(job.state, taskState);
@@ -64,29 +91,101 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
       return [markdownContent, instanceDetails, files] as const;
     }, [job.messages, toolName]);
 
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
-    <div className={styles.job}>
-      <div className={classNames(styles.heading, className)}>
-        <div className={styles.icon}>
-          <WrappedIcon className={styles.icon} {...icon} />
-        </div>
-        <div className={styles.title}>{job.instruction || toolTitle}</div>
-      </div>
-      <div className={styles.body}>
-        <div className={styles.tool}>{toolTitle}</div>
-        <div className={styles.content}>
-          {toolMarkdownContent && (
-            <div className={classNames(styles.markdown, sharedStyles.markdown)}>
-              <EnhancedMarkdown content={toolMarkdownContent} />
+    <div className={classNames(styles.job, { [styles.collapsed]: collapsed })}>
+      {knownAskUser ? (
+        <>
+          {(askUserPlan || !!toolCall!.arguments?.question) && (
+            <div className={`${styles.message} ${sharedStyles.markdown}}`}>
+              <EnhancedMarkdown
+                content={
+                  askUserPlan
+                    ? t(K.CONFIRMING_PLAN_TIPS)
+                    : (job.toolCall!.arguments?.question as string)
+                }
+              />
             </div>
           )}
-          {cmdbInstanceDetails.map((detail, index) => (
-            <div key={index} className={styles.box}>
-              <CmdbInstanceDetail {...detail} />
-            </div>
-          ))}
+          {job.state === "input-required" &&
+            (askUserPlan ? (
+              <HumanAdjustPlan
+                jobId={job.id}
+                steps={job.toolCall!.arguments!.steps as string[]}
+              />
+            ) : null)}
+        </>
+      ) : askUser ? (
+        <div className={styles.message}>
+          Unexpected ask_human command:{" "}
+          {JSON.stringify(toolCall!.arguments?.command ?? null)}
         </div>
-      </div>
+      ) : null}
+      {askUserPlan && job.state !== "input-required" ? (
+        <HumanAdjustPlanResult job={job} />
+      ) : (
+        job.messages?.map((message, index) =>
+          message.role === "tool" && !generalAskUser ? null : (
+            <div
+              key={index}
+              className={classNames(styles.message, sharedStyles.markdown, {
+                [styles["role-user"]]: message.role === "tool",
+              })}
+            >
+              {message.parts?.map((part, partIndex) => (
+                <React.Fragment key={partIndex}>
+                  {part.type === "text" && (
+                    <EnhancedMarkdown
+                      className={styles["message-part"]}
+                      content={part.text}
+                    />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          )
+        )
+      )}
+      {showToolCall && (
+        <>
+          <div
+            className={classNames(styles.heading, className)}
+            onClick={() => setCollapsed((prev) => !prev)}
+          >
+            <div className={styles.icon}>
+              <WrappedIcon {...icon} />
+            </div>
+            <div className={styles.title}>{job.instruction || toolTitle}</div>
+            <WrappedIcon className={styles.caret} {...ICON_UP} />
+          </div>
+          <div className={styles.body}>
+            <div
+              className={styles.tool}
+              onClick={() => {
+                setActiveToolCallJobId(job.id);
+              }}
+            >
+              {toolTitle}
+            </div>
+            <div className={styles.content}>
+              {toolMarkdownContent && (
+                <div
+                  className={classNames(styles.markdown, sharedStyles.markdown)}
+                >
+                  <EnhancedMarkdown content={toolMarkdownContent} />
+                </div>
+              )}
+              {cmdbInstanceDetails.map((detail, index) => (
+                <div key={index} className={styles.box}>
+                  <CmdbInstanceDetail {...detail} />
+                </div>
+              ))}
+              {job.generatedView ? <NodeView job={job} /> : null}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -100,9 +199,9 @@ function getClassNameAndIconProps(
       return {
         className: styles.completed,
         icon: {
-          lib: "fa",
-          prefix: "fas",
-          icon: "check",
+          lib: "antd",
+          theme: "filled",
+          icon: "check-circle",
         },
       };
     case "submitted":

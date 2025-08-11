@@ -3,9 +3,6 @@ import { i18n } from "@next-core/i18n";
 export enum K {
   YES = "YES",
   NO = "NO",
-  CONFIRM = "CONFIRM",
-  ADD_STEP = "ADD_STEP",
-  RESET_PLAN = "RESET_PLAN",
   PLAN_COMPLETED = "PLAN_COMPLETED",
   TASK_COMPLETED = "TASK_COMPLETED",
   SHARE = "SHARE",
@@ -48,9 +45,6 @@ export enum K {
 const en: Locale = {
   YES: "Yes",
   NO: "No",
-  CONFIRM: "Confirm",
-  ADD_STEP: "Add step",
-  RESET_PLAN: "Reset plan",
   PLAN_COMPLETED: "All jobs done",
   TASK_COMPLETED: "Task completed",
   SHARE: "Share",
@@ -59,7 +53,7 @@ const en: Locale = {
   PROCESS: "Process",
   RESPONSE: "Response",
   CONFIRMING_PLAN_TIPS:
-    "According to your request, I have made the following plan:",
+    "According to the request, I have made the following plan:",
   PAUSE_THE_TASK: "Pause the task",
   RESUME_THE_TASK: "Resume the task",
   CANCEL_THE_TASK: "Cancel the task",
@@ -98,9 +92,6 @@ const en: Locale = {
 const zh: Locale = {
   YES: "是",
   NO: "否",
-  CONFIRM: "确认",
-  ADD_STEP: "添加步骤",
-  RESET_PLAN: "重置计划",
   PLAN_COMPLETED: "所有任务已全部完成",
   TASK_COMPLETED: "任务完成",
   SHARE: "分享",
@@ -108,7 +99,7 @@ const zh: Locale = {
   ARGUMENTS: "参数",
   PROCESS: "过程",
   RESPONSE: "响应",
-  CONFIRMING_PLAN_TIPS: "根据你的需求，我已制定如下计划：",
+  CONFIRMING_PLAN_TIPS: "根据需求，我已制定如下计划：",
   PAUSE_THE_TASK: "暂停任务",
   RESUME_THE_TASK: "恢复任务",
   CANCEL_THE_TASK: "取消任务",
