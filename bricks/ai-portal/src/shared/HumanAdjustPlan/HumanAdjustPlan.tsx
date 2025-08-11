@@ -28,11 +28,14 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import classNames from "classnames";
+import { initializeI18n } from "@next-core/i18n";
 import styles from "./HumanAdjustPlan.module.css";
 import { WrappedButton, WrappedIcon } from "../bricks";
-import { K, t } from "../i18n.js";
+import { K, locales, NS, t } from "./i18n.js";
 import { getContentEditable } from "../getContentEditable";
-import { CanvasContext } from "../CanvasContext";
+import { TaskContext } from "../TaskContext";
+
+initializeI18n(NS, locales);
 
 interface DraggableStep {
   id: string;
@@ -49,8 +52,8 @@ export function HumanAdjustPlan({
   jobId,
   steps,
 }: HumanAdjustPlanProps): JSX.Element {
+  const { humanInput } = useContext(TaskContext);
   const [list, setList] = useState<DraggableStep[]>([]);
-  const { humanInput } = useContext(CanvasContext);
 
   useEffect(() => {
     setList(

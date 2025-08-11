@@ -2,11 +2,11 @@
 import React, { useContext } from "react";
 import styles from "./NodeEnd.module.css";
 import { K, t } from "../i18n";
-import { CanvasContext } from "../CanvasContext";
-import { WrappedIcon } from "../bricks";
+import { WrappedIcon } from "../../shared/bricks";
+import { TaskContext } from "../../shared/TaskContext";
 
 export function NodeEnd(): JSX.Element {
-  const { onShare } = useContext(CanvasContext);
+  const { onShare } = useContext(TaskContext);
 
   return (
     <div className={styles["node-end"]}>

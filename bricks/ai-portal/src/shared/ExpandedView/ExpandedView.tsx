@@ -9,15 +9,15 @@ import React, {
 import classNames from "classnames";
 import { unstable_createRoot } from "@next-core/runtime";
 import { uniqueId } from "lodash";
-import type { GraphGeneratedView } from "../interfaces";
+import type { GraphGeneratedView } from "../../cruise-canvas/interfaces";
 import styles from "./ExpandedView.module.css";
-import { CanvasContext } from "../CanvasContext";
-import { convertView } from "../utils/converters/convertView";
-import { WrappedIcon, WrappedIconButton } from "../bricks";
-import { createPortal } from "../utils/createPortal";
+import { convertView } from "../../cruise-canvas/utils/converters/convertView";
+import { WrappedIcon, WrappedIconButton } from "../../shared/bricks";
+import { createPortal } from "../../cruise-canvas/utils/createPortal";
 import { ICON_CLOSE } from "../constants";
-import { isJsxView } from "../utils/jsx-converters/isJsxView";
-import { convertJsx } from "../utils/jsx-converters/convertJsx";
+import { isJsxView } from "../../cruise-canvas/utils/jsx-converters/isJsxView";
+import { convertJsx } from "../../cruise-canvas/utils/jsx-converters/convertJsx";
+import { TaskContext } from "../TaskContext";
 
 export interface ExpandedViewProps {
   views: GraphGeneratedView[];
@@ -26,7 +26,7 @@ export interface ExpandedViewProps {
 export function ExpandedView({ views }: ExpandedViewProps) {
   const rootId = useMemo(() => uniqueId(), []);
   const { activeExpandedViewJobId, setActiveExpandedViewJobId } =
-    useContext(CanvasContext);
+    useContext(TaskContext);
   const viewportRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const rootRef = useRef<Awaited<

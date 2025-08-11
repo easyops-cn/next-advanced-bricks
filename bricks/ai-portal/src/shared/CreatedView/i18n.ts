@@ -1,19 +1,18 @@
 import { i18n } from "@next-core/i18n";
 
 export enum K {
-  CONFIRMING_PLAN_TIPS = "CONFIRMING_PLAN_TIPS",
+  FULLSCREEN = "FULLSCREEN",
 }
 
 const en: Locale = {
-  CONFIRMING_PLAN_TIPS:
-    "According to the request, I have made the following plan:",
+  FULLSCREEN: "Fullscreen",
 };
 
 const zh: Locale = {
-  CONFIRMING_PLAN_TIPS: "根据需求，我已制定如下计划：",
+  FULLSCREEN: "全屏",
 };
 
-export const NS = "bricks/ai-portal/chat-stream";
+export const NS = "bricks/ai-portal/CreatedView";
 
 export const locales = { en, zh };
 

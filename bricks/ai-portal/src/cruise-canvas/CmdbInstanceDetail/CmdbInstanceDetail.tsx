@@ -16,7 +16,7 @@ import { convertToStoryboard } from "../utils/converters/raw-data-generate/conve
 import type { JSONSchema, JSONSchemaObject } from "../json-schema";
 import styles from "./CmdbInstanceDetail.module.css";
 import { createPortal } from "../utils/createPortal";
-import { WrappedIcon } from "../bricks";
+import { WrappedIcon } from "../../shared/bricks";
 import { ICON_LOADING } from "../constants";
 
 /**

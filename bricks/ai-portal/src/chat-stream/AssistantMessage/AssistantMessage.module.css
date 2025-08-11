@@ -5,5 +5,29 @@
 .body {
   flex: 1;
   min-width: 0;
-  padding-left: 16px;
+  padding: 5px 0 5px 16px;
+}
+
+.texting::after {
+  content: "   ";
+  animation: texting 2s infinite;
+  white-space: pre;
+}
+
+@keyframes texting {
+  0% {
+    content: "   ";
+  }
+  25% {
+    content: ".  ";
+  }
+  50% {
+    content: ".. ";
+  }
+  75% {
+    content: "...";
+  }
+  100% {
+    content: "   ";
+  }
 }

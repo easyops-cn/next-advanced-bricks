@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
-import { copyToClipboard, WrappedButton } from "../bricks";
+import { copyToClipboard, WrappedButton } from "../../shared/bricks";
 import styles from "./CodeBlock.module.css";
 
 const COPY_BUTTON_ICON = {

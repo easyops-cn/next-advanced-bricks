@@ -12,12 +12,15 @@ import {
 } from "@next-shared/form";
 import ResizeObserver from "resize-observer-polyfill";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
+import { initializeI18n } from "@next-core/i18n";
 import styles from "./ChatBox.module.css";
 import { showDialog, WrappedIcon, WrappedIconButton } from "../bricks";
-import { CanvasContext } from "../CanvasContext";
-import type { TaskState } from "../interfaces";
-import { K, t } from "../i18n";
+import type { TaskState } from "../../cruise-canvas/interfaces";
+import { K, locales, NS, t } from "./i18n";
 import { ICON_LOADING } from "../constants";
+import { TaskContext } from "../TaskContext";
+
+initializeI18n(NS, locales);
 
 const ICON_PAUSE: GeneralIconProps = {
   lib: "fa",
@@ -48,7 +51,7 @@ export function ChatBox({ taskState, taskDone }: ChatBoxProps): JSX.Element {
   const [value, setValue] = useState("");
   const valueRef = useRef("");
   const [wrap, setWrap] = useState(false);
-  const { onPause, onResume, onCancel, supports } = useContext(CanvasContext);
+  const { onPause, onResume, onCancel, supports } = useContext(TaskContext);
   const [actionBeingTaken, setActionBeingTaken] = useState<
     "toggle" | "cancel" | null
   >(null);

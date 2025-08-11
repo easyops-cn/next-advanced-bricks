@@ -2,8 +2,8 @@
 import React, { useContext } from "react";
 import styles from "./HumanConfirm.module.css";
 import { K, t } from "../i18n.js";
-import { WrappedButton } from "../bricks";
-import { CanvasContext } from "../CanvasContext";
+import { WrappedButton } from "../../shared/bricks";
+import { TaskContext } from "../../shared/TaskContext";
 
 export function HumanConfirm({
   jobId,
@@ -14,7 +14,7 @@ export function HumanConfirm({
   confirmText?: string;
   cancelText?: string;
 }): JSX.Element {
-  const { humanInput } = useContext(CanvasContext);
+  const { humanInput } = useContext(TaskContext);
 
   return (
     <div className={styles["human-confirm"]}>
