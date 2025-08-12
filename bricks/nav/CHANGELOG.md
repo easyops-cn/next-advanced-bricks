@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.24.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.24.3...@next-bricks/nav@1.24.4) (2025-08-12)
+
+
+### Bug Fixes
+
+* launchpad支持三列展示 ([5d8852b](https://github.com/easyops-cn/next-advanced-bricks/commit/5d8852bcea683c2d58e64e64c3d7d678778a73d6))
+
+
+
+
+
 ## [1.24.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.24.2...@next-bricks/nav@1.24.3) (2025-08-08)
 
 
