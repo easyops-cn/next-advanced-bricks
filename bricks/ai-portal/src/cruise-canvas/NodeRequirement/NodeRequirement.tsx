@@ -17,14 +17,12 @@ const WrappedEasyOpsAvatar = wrapBrick<EoEasyopsAvatar, EoEasyopsAvatarProps>(
 export interface NodeRequirementProps {
   content?: string;
   startTime?: number;
-  loading?: boolean;
   active?: boolean;
 }
 
 export function NodeRequirement({
   content,
   startTime,
-  loading,
   active,
 }: NodeRequirementProps): JSX.Element {
   const username = useMemo(() => {
@@ -49,21 +47,6 @@ export function NodeRequirement({
         </div>
       </div>
       <div className={styles.body}>{content}</div>
-      {loading && (
-        <>
-          <svg
-            className={styles["loading-line"]}
-            viewBox="0 0 2 62"
-            width="2"
-            height="62"
-          >
-            <path d="M1 0 L1 62" />
-          </svg>
-          <div className={styles.loading}>
-            <div className={styles.inner} />
-          </div>
-        </>
-      )}
     </div>
   );
 }

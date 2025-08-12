@@ -18,6 +18,7 @@ export interface TransformLiteral {
 
 export type GraphNode =
   | RequirementGraphNode
+  | LoadingGraphNode
   | InstructionGraphNode
   | JobGraphNode
   | ViewGraphNode
@@ -28,6 +29,10 @@ export type GraphNode =
 export interface RequirementGraphNode extends BaseGraphNode {
   type: "requirement";
   content: string;
+}
+
+export interface LoadingGraphNode extends BaseGraphNode {
+  type: "loading";
 }
 
 export interface InstructionGraphNode extends BaseGraphNode {

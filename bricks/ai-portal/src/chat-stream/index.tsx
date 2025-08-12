@@ -143,7 +143,7 @@ function ChatStreamComponent({
   } = useTaskDetail(taskId, replay, replayDelay);
   const pageTitle = task?.title ?? "";
   const taskState = task?.state;
-  const taskDone = DONE_STATES.includes(taskState ?? "working");
+  const taskDone = DONE_STATES.includes(taskState!);
   const { messages, inputRequiredJobId } = useChatStream(task, jobs);
 
   const views = useMemo(() => {

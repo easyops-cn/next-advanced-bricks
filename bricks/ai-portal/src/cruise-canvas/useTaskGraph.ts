@@ -8,8 +8,9 @@ import type {
   GraphNavItem,
   GraphGeneratedView,
 } from "./interfaces";
-import { REQUIREMENT_NODE_ID } from "./constants";
+import { LOADING_NODE_ID, REQUIREMENT_NODE_ID } from "./constants";
 import { getOrderedJobs, type GetOrderedJobsOptions } from "./getOrderedJobs";
+import { DONE_STATES } from "../shared/constants";
 
 export function useTaskGraph(
   task: TaskBaseDetail | null | undefined,
@@ -34,10 +35,8 @@ export function useTaskGraph(
       state: fixedJobs.length === 0 ? "working" : "completed",
     });
 
-    const { list, jobMap, jobLevels, downstreamMap } = getOrderedJobs(
-      jobs,
-      options
-    );
+    const { list, jobMap, jobLevels, downstreamMap, originalDownstreamMap } =
+      getOrderedJobs(jobs, options);
 
     const upstreamMap = new Map<string, string[]>();
     // Setup upstreamMap
@@ -48,6 +47,22 @@ export function useTaskGraph(
           upstreamMap.set(target, (upstreams = []));
         }
         upstreams.push(jobId);
+      }
+    }
+
+    const withHiddenDownstreamJobs: string[] = [];
+    if (originalDownstreamMap) {
+      for (const jobId of list) {
+        const job = jobMap.get(jobId)!;
+        if (job.state === "completed") {
+          const downstream = downstreamMap.get(jobId);
+          if (!downstream?.length) {
+            const originalDownstream = originalDownstreamMap.get(jobId);
+            if (originalDownstream?.length) {
+              withHiddenDownstreamJobs.push(jobId);
+            }
+          }
+        }
       }
     }
 
@@ -136,6 +151,34 @@ export function useTaskGraph(
           source: nodeIds[i - 1],
           target: nodeIds[i],
         });
+      }
+    }
+
+    if (nodes.length === 1 && !DONE_STATES.includes(task.state)) {
+      nodes.push({
+        type: "loading",
+        id: LOADING_NODE_ID,
+      });
+      edges.push({
+        source: REQUIREMENT_NODE_ID,
+        target: LOADING_NODE_ID,
+      });
+    } else if (withHiddenDownstreamJobs.length > 0) {
+      let counter = 0;
+      for (const jobId of withHiddenDownstreamJobs) {
+        const nodeIds = jobNodesMap.get(jobId)!;
+        const lastNodeId = nodeIds[nodeIds.length - 1];
+        if (!edges.some((edge) => edge.source === lastNodeId)) {
+          const loadingId = `${LOADING_NODE_ID}:${counter++}`;
+          nodes.push({
+            type: "loading",
+            id: loadingId,
+          });
+          edges.push({
+            source: lastNodeId,
+            target: loadingId,
+          });
+        }
       }
     }
 
