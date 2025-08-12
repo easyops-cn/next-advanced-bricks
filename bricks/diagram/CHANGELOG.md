@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.67.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.66.2...@next-bricks/diagram@0.67.0) (2025-08-12)
+
+
+### Features
+
+* 拓扑图构件支持组合、取消组合快捷键事件 ([1ab622b](https://github.com/easyops-cn/next-advanced-bricks/commit/1ab622b1d0d5b0c6c03e4e8c6fface3723e6a9f3))
+
+
+
+
+
 ## [0.66.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.66.1...@next-bricks/diagram@0.66.2) (2025-08-01)
 
 
