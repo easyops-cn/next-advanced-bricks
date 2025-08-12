@@ -23,6 +23,7 @@ import { getRuntime } from "@next-core/runtime";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { initializeReactI18n, useTranslation } from "@next-core/i18n/react";
 import { K, NS, locales } from "./i18n";
+import { i18n, i18nText } from "@next-core/i18n";
 
 initializeReactI18n(NS, locales);
 
@@ -30,6 +31,7 @@ export function Launchpad({ active }: { active?: boolean }) {
   const { t } = useTranslation(NS);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [favorites, setFavorites] = useState<FavMenuItem[]>([]);
+  const isEn = i18n.language && i18n.language.split("-")[0] === "en";
   const handleClickSearchBox = useCallback(() => {
     searchInputRef.current?.focus();
   }, []);
@@ -111,7 +113,7 @@ export function Launchpad({ active }: { active?: boolean }) {
   }, [_favorites, favorites.length]);
 
   return (
-    <div className={classNames("launchpad", { active })}>
+    <div className={classNames("launchpad", { active, "launchpad-en": isEn })}>
       <LaunchpadsContext.Provider
         value={{
           searching,
@@ -121,7 +123,7 @@ export function Launchpad({ active }: { active?: boolean }) {
           isStarred,
         }}
       >
-        <div className="sidebar">
+        <div className={classNames("sidebar", { "sidebar-en": isEn })}>
           <div className="union">
             <div className="quick-nav">
               <div className="quick-nav-label">{t(K.QUICK_ACCESS)}</div>
@@ -153,7 +155,7 @@ export function Launchpad({ active }: { active?: boolean }) {
 
             {showPlatformCategory && (
               <div className="platform-nav">
-                <div className="platform-nav-label">{t(K.PLATFORM_BASE)}</div>
+                <div className={classNames("platform-nav-label", { "platform-nav-label-en": isEn })}>{t(K.PLATFORM_BASE)}</div>
                 <ul className="sidebar-menu platform-nav-menu">
                   {platformCategories.map((item, index) => (
                     <PlatformCategorySidebarMenuItem
@@ -228,13 +230,8 @@ export function Launchpad({ active }: { active?: boolean }) {
                     <WrappedLink
                       onClick={() => pushRecentVisit(item)}
                       {...(item.type === "app"
-                        ? {
-                            url: item.url,
-                          }
-                        : {
-                            href: item.url,
-                            target: "_blank",
-                          })}
+                        ? { url: item.url }
+                        : { href: item.url, target: "_blank" })}
                     >
                       <span>{item.name}</span>
                     </WrappedLink>
@@ -244,7 +241,9 @@ export function Launchpad({ active }: { active?: boolean }) {
             </div>
           )}
           {platform === "#all" && (
-            <ul className="menu-groups">
+            <ul
+              className={classNames("menu-groups", { "menu-groups-en": isEn })}
+            >
               {menuGroups.map((group) => (
                 <MenuGroup
                   key={group.name}

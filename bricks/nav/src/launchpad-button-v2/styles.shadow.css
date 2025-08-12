@@ -262,7 +262,25 @@
   padding-right: 12px;
   color: var(--color-header-text);
 }
+.menu-groups-en {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+.menu-groups-en .menu-item-label {
+  width: 190px;
+}
+.sidebar-en {
+  width: 220px;
+}
+.launchpad-en {
+  width: 1210px;
+}
+.platform-nav-label-en {
+  width: 110px;
+}
 
+.sidebar-en .sidebar-menu-item .menu-item-label{
+  width: 140px;
+}
 .menu-group-label {
   font-size: var(--card-title-font-size);
   font-weight: 500;
