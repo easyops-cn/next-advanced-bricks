@@ -28,6 +28,30 @@ export function useChatStream(
     let inputRequiredJobId: string | null = null;
     for (const jobId of list) {
       const job = jobMap.get(jobId)!;
+
+      if (
+        job.state === "completed" &&
+        job.messages?.length &&
+        job.messages.every((msg) => msg.role === "user")
+      ) {
+        if (prevAssistantMessage.jobs.length > 0) {
+          messages.push(prevAssistantMessage);
+        }
+        messages.push({
+          role: "user",
+          content: job.messages
+            .flatMap((msg) =>
+              msg.parts.map((part) => (part.type === "text" ? part.text : ""))
+            )
+            .join(""),
+        });
+        prevAssistantMessage = {
+          role: "assistant",
+          jobs: [],
+        };
+        continue;
+      }
+
       prevAssistantMessage.jobs.push(job);
 
       const toolName = job.toolCall?.name;

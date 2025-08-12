@@ -213,7 +213,8 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
               <div
                 key={index}
                 className={classNames(styles.message, sharedStyles.markdown, {
-                  [styles["role-user"]]: message.role === "tool",
+                  [styles["role-user"]]:
+                    message.role === "tool" || message.role === "user",
                 })}
               >
                 {message.role === "tool" && askUser

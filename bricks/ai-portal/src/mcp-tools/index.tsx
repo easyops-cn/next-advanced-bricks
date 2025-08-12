@@ -87,7 +87,7 @@ function McpToolsComponent({ list }: McpToolsProps) {
 
   return (
     <div className="container">
-      <h1>{t(K.MCP_TOOL_HUB)}</h1>
+      <h1>{t(K.MCP_HUB)}</h1>
       <ul className="nav">
         {groups?.map((group) => (
           <li key={group} className="item">

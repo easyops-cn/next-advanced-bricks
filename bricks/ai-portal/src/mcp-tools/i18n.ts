@@ -1,7 +1,7 @@
 import { i18n } from "@next-core/i18n";
 
 export enum K {
-  MCP_TOOL_HUB = "MCP_TOOL_HUB",
+  MCP_HUB = "MCP_HUB",
   ALL = "ALL",
 
   SERVER_cmdb = "SERVER_cmdb",
@@ -12,7 +12,7 @@ export enum K {
 }
 
 const en: Locale = {
-  [K.MCP_TOOL_HUB]: "MCP Tool Hub",
+  [K.MCP_HUB]: "MCP Hub",
   [K.ALL]: "All",
 
   [K.SERVER_cmdb]: "CMDB",
@@ -23,7 +23,7 @@ const en: Locale = {
 };
 
 const zh: Locale = {
-  [K.MCP_TOOL_HUB]: "MCP 工具中心",
+  [K.MCP_HUB]: "MCP 中心",
   [K.ALL]: "全部",
 
   [K.SERVER_cmdb]: "CMDB",
