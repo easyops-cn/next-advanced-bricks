@@ -88,6 +88,7 @@ export function getOrderedJobs(
   alignDownstreamMap(rootChildren, 0);
 
   // Remove hidden jobs, and reconnect related downstream connections.
+  let originalDownstreamMap: Map<string, string[]> | undefined;
   if (!showHiddenJobs && hiddenJobIds.size > 0) {
     const findVisibleDownstreams = (downstreams: string[]): string[] => {
       return downstreams.flatMap((jobId) => {
@@ -115,6 +116,7 @@ export function getOrderedJobs(
 
     rootDownstreams = findVisibleDownstreams(rootDownstreams);
     fixDownstreams(rootDownstreams);
+    originalDownstreamMap = downstreamMap;
     downstreamMap = newDownstreamMap;
   }
 
@@ -135,5 +137,5 @@ export function getOrderedJobs(
     }
   }
 
-  return { list, jobMap, jobLevels, downstreamMap };
+  return { list, jobMap, jobLevels, downstreamMap, originalDownstreamMap };
 }

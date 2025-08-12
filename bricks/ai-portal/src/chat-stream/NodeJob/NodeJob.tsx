@@ -94,7 +94,7 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className={classNames(styles.job, { [styles.collapsed]: collapsed })}>
+    <div className={classNames({ [styles.collapsed]: collapsed })}>
       <div className={styles.main}>
         {knownAskUser ? (
           <>

@@ -67,6 +67,7 @@ import { ChatBox } from "../shared/ChatBox/ChatBox.js";
 import { FilePreview } from "./FilePreview/FilePreview.js";
 import { NodeFeedback } from "./NodeFeedback/NodeFeedback.js";
 import { TaskContext } from "../shared/TaskContext.js";
+import { NodeLoading } from "./NodeLoading/NodeLoading.js";
 
 initializeI18n(NS, locales);
 
@@ -447,8 +448,7 @@ function LegacyCruiseCanvasComponent(
     pushZoomTransition,
   });
 
-  const taskDone = DONE_STATES.includes(taskState ?? "working");
-  const taskLoading = !taskDone && nodes.length === 2;
+  const taskDone = DONE_STATES.includes(taskState!);
 
   const nonLeafNodes = useMemo(() => {
     return new Set<string>(edges.map((edge) => edge.source));
@@ -872,7 +872,6 @@ function LegacyCruiseCanvasComponent(
                 job={(node as JobGraphNode).job}
                 state={node.state}
                 startTime={task?.startTime}
-                taskLoading={taskLoading}
                 instructionLoading={
                   node.type === "instruction" &&
                   !nonLeafNodes.has(node.id) &&
@@ -938,7 +937,6 @@ interface NodeComponentProps {
   job?: Job;
   state?: string;
   startTime?: number;
-  taskLoading?: boolean;
   instructionLoading?: boolean;
   x?: number;
   y?: number;
@@ -952,7 +950,6 @@ function NodeComponent({
   job,
   content,
   startTime,
-  taskLoading,
   instructionLoading,
   x,
   y,
@@ -1018,9 +1015,10 @@ function NodeComponent({
         <NodeRequirement
           content={content}
           startTime={startTime}
-          loading={taskLoading}
           active={active}
         />
+      ) : type === "loading" ? (
+        <NodeLoading />
       ) : type === "instruction" ? (
         <NodeInstruction
           content={job!.instruction}

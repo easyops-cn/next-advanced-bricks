@@ -39,6 +39,7 @@
 
 .new-chat::part(link) {
   display: flex;
+  gap: 0;
   align-items: center;
   color: var(--elevo-color-brand);
   font-size: 14px;
@@ -52,7 +53,7 @@
   border: 1px solid #c9d7ff;
   padding: 9px 13px;
   font-weight: 500;
-  margin-bottom: 23px;
+  margin-bottom: 16px;
 }
 
 .sidebar .new-chat::part(link):hover {
@@ -149,6 +150,41 @@
 .mask {
   position: fixed;
   inset: 0;
+}
+
+.links {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+
+.link {
+  display: block;
+
+  &::part(link) {
+    display: flex;
+    gap: 0;
+    align-items: center;
+    padding: 9px 13px;
+    border-radius: 8px;
+    color: #000;
+  }
+
+  &::part(link):hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  .icon {
+    font-size: 16px;
+    margin-right: 10px;
+  }
+
+  .title {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 }
 
 .history {
