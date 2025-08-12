@@ -52,10 +52,9 @@ import {
   CANVAS_PADDING_LEFT,
   CANVAS_PADDING_RIGHT,
   CANVAS_PADDING_TOP,
-  DONE_STATES,
   END_NODE_ID,
-  GENERAL_DONE_STATES,
 } from "./constants.js";
+import { DONE_STATES, GENERAL_DONE_STATES } from "../shared/constants.js";
 import { WrappedIcon } from "../shared/bricks";
 import { CanvasContext } from "./CanvasContext.js";
 import { ToolCallDetail } from "./ToolCallDetail/ToolCallDetail.js";
@@ -877,8 +876,8 @@ function LegacyCruiseCanvasComponent(
                 instructionLoading={
                   node.type === "instruction" &&
                   !nonLeafNodes.has(node.id) &&
-                  !DONE_STATES.includes(node.state ?? "working") &&
-                  !GENERAL_DONE_STATES.includes(taskState ?? "working")
+                  !DONE_STATES.includes(node.state!) &&
+                  !GENERAL_DONE_STATES.includes(taskState!)
                 }
                 edges={edges}
                 x={node.view?.x}

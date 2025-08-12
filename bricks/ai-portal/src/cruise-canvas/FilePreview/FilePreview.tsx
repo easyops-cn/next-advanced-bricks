@@ -23,7 +23,7 @@ import shareStyles from "../shared.module.css";
 import toolbarStyles from "../toolbar.module.css";
 import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
 import { K, t } from "../i18n";
-import { ICON_CLOSE, ICON_LOADING } from "../constants";
+import { ICON_CLOSE, ICON_LOADING } from "../../shared/constants";
 import { getMimeTypeByFilename } from "../utils/file";
 import imageUnpreviewable from "../images/unpreviewable.png";
 

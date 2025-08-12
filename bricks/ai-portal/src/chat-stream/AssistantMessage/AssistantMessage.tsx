@@ -3,28 +3,41 @@ import type { Job, TaskState } from "../../cruise-canvas/interfaces.js";
 import styles from "./AssistantMessage.module.css";
 import Avatar from "../images/avatar@2x.png";
 import { NodeJob } from "../NodeJob/NodeJob.js";
-import { DONE_STATES } from "../../cruise-canvas/constants.js";
+import { NON_WORKING_STATES } from "../../shared/constants.js";
 
 export interface AssistantMessageProps {
   jobs: Job[];
   taskState: TaskState | undefined;
+  isLatest?: boolean;
 }
 
-export function AssistantMessage({ jobs, taskState }: AssistantMessageProps) {
+export function AssistantMessage({
+  jobs,
+  taskState,
+  isLatest,
+}: AssistantMessageProps) {
   const working = useMemo(() => {
-    if (DONE_STATES.includes(taskState!)) {
+    if (!isLatest || NON_WORKING_STATES.includes(taskState!)) {
       return false;
     }
     for (const job of jobs) {
       if (job.state === "input-required") {
         return false;
       }
-      if (job.state === "working") {
-        return true;
+    }
+    const lastJob = jobs[jobs.length - 1];
+    if (lastJob && lastJob.state === "working" && lastJob.toolCall) {
+      const toolName = lastJob.toolCall.name;
+      if (
+        toolName !== "ask_human" &&
+        toolName !== "ask_human_confirming_plan"
+      ) {
+        return false;
       }
     }
+
     return true;
-  }, [jobs, taskState]);
+  }, [isLatest, jobs, taskState]);
 
   return (
     <div className={styles.assistant}>

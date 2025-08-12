@@ -43,15 +43,21 @@ const ICON_RESUME: GeneralIconProps = {
 export interface ChatBoxProps {
   taskState: TaskState | undefined;
   taskDone: boolean;
+  inputRequiredJobId?: string | null;
 }
 
-export function ChatBox({ taskState, taskDone }: ChatBoxProps): JSX.Element {
+export function ChatBox({
+  taskState,
+  taskDone,
+  inputRequiredJobId,
+}: ChatBoxProps): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<TextareaAutoResizeRef>(null);
   const [value, setValue] = useState("");
   const valueRef = useRef("");
   const [wrap, setWrap] = useState(false);
-  const { onPause, onResume, onCancel, supports } = useContext(TaskContext);
+  const { humanInput, onPause, onResume, onCancel, supports } =
+    useContext(TaskContext);
   const [actionBeingTaken, setActionBeingTaken] = useState<
     "toggle" | "cancel" | null
   >(null);
@@ -84,20 +90,31 @@ export function ChatBox({ taskState, taskDone }: ChatBoxProps): JSX.Element {
     setActionBeingTaken("cancel");
   }, [onCancel]);
 
+  useEffect(() => {
+    if (inputRequiredJobId) {
+      textareaRef.current?.focus();
+    }
+  }, [inputRequiredJobId]);
+
   const onSubmit = useCallback(
-    (_value: string) => {
-      if (!taskDone) {
+    (value: string) => {
+      if ((!taskDone && !inputRequiredJobId) || !value) {
         return;
       }
-      showDialog({
-        type: "warn",
-        title: "提示",
-        content: "功能暂未实现",
-      });
+
+      if (inputRequiredJobId) {
+        humanInput(inputRequiredJobId, value);
+      } else {
+        showDialog({
+          type: "warn",
+          title: "提示",
+          content: "功能暂未实现",
+        });
+      }
       valueRef.current = "";
       setValue("");
     },
-    [taskDone]
+    [humanInput, inputRequiredJobId, taskDone]
   );
 
   const handleSubmit = useCallback(

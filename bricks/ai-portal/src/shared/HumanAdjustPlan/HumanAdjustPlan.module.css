@@ -1,3 +1,9 @@
+.plan,
+.toolbar {
+  font-size: 14px;
+  line-height: 22px;
+}
+
 .plan {
   padding: 8px;
   background: rgba(62, 67, 102, 0.05);

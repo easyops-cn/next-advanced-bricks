@@ -46,7 +46,7 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
         "ask_user_adjust_plan",
       ].includes(job.toolCall!.arguments?.command as string)) ||
     askUserPlan;
-  const showToolCall = !!toolCall && !askUserPlan;
+  const showToolCall = !!toolCall && !generalAskUser;
   const { setActiveToolCallJobId } = useContext(TaskContext);
 
   const { className, icon } = useMemo(() => {
@@ -95,58 +95,56 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
 
   return (
     <div className={classNames(styles.job, { [styles.collapsed]: collapsed })}>
-      {knownAskUser ? (
-        <>
-          {(askUserPlan || !!toolCall!.arguments?.question) && (
-            <div className={`${styles.message} ${sharedStyles.markdown}}`}>
-              <EnhancedMarkdown
-                content={
-                  askUserPlan
-                    ? t(K.CONFIRMING_PLAN_TIPS)
-                    : (job.toolCall!.arguments?.question as string)
-                }
-              />
-            </div>
-          )}
-          {job.state === "input-required" &&
-            (askUserPlan ? (
-              <HumanAdjustPlan
-                jobId={job.id}
-                steps={job.toolCall!.arguments!.steps as string[]}
-              />
-            ) : null)}
-        </>
-      ) : askUser ? (
-        <div className={styles.message}>
-          Unexpected ask_human command:{" "}
-          {JSON.stringify(toolCall!.arguments?.command ?? null)}
-        </div>
-      ) : null}
-      {askUserPlan && job.state !== "input-required" ? (
-        <HumanAdjustPlanResult job={job} />
-      ) : (
-        job.messages?.map((message, index) =>
-          message.role === "tool" && !generalAskUser ? null : (
-            <div
-              key={index}
-              className={classNames(styles.message, sharedStyles.markdown, {
-                [styles["role-user"]]: message.role === "tool",
-              })}
-            >
-              {message.parts?.map((part, partIndex) => (
-                <React.Fragment key={partIndex}>
-                  {part.type === "text" && (
-                    <EnhancedMarkdown
-                      className={styles["message-part"]}
-                      content={part.text}
-                    />
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
+      <div className={styles.main}>
+        {knownAskUser ? (
+          <>
+            {(askUserPlan || !!toolCall!.arguments?.question) && (
+              <div
+                className={classNames(styles.message, sharedStyles.markdown)}
+              >
+                <EnhancedMarkdown
+                  className={styles["message-part"]}
+                  content={
+                    askUserPlan
+                      ? t(K.CONFIRMING_PLAN_TIPS)
+                      : (job.toolCall!.arguments?.question as string)
+                  }
+                />
+              </div>
+            )}
+            {job.state === "input-required" &&
+              (askUserPlan ? (
+                <HumanAdjustPlan
+                  jobId={job.id}
+                  steps={job.toolCall!.arguments!.steps as string[]}
+                />
+              ) : null)}
+          </>
+        ) : null}
+        {askUserPlan && job.state === "completed" ? (
+          <HumanAdjustPlanResult job={job} />
+        ) : askUser ? null : (
+          job.messages?.map((message, index) =>
+            message.role === "tool" && !generalAskUser ? null : (
+              <div
+                key={index}
+                className={classNames(styles.message, sharedStyles.markdown)}
+              >
+                {message.parts?.map((part, partIndex) => (
+                  <React.Fragment key={partIndex}>
+                    {part.type === "text" && (
+                      <EnhancedMarkdown
+                        className={styles["message-part"]}
+                        content={part.text}
+                      />
+                    )}
+                  </React.Fragment>
+                ))}
+              </div>
+            )
           )
-        )
-      )}
+        )}
+      </div>
       {showToolCall && (
         <>
           <div

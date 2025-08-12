@@ -11,7 +11,7 @@ import styles from "./PlanProgress.module.css";
 import type { JobState, StepWithState, TaskState } from "../interfaces";
 import { WrappedIcon, WrappedTooltip, showDialog } from "../../shared/bricks";
 import { K, t } from "../i18n";
-import { DONE_STATES } from "../constants";
+import { DONE_STATES } from "../../shared/constants";
 import { TaskContext } from "../../shared/TaskContext";
 
 export interface PlanProgressProps {

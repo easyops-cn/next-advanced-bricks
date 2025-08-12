@@ -7,7 +7,7 @@ import { ToolCallStatus } from "../../cruise-canvas/ToolCallStatus/ToolCallStatu
 import { TaskContext } from "../../shared/TaskContext";
 
 const ICON_SHRINK: GeneralIconProps = {
-  lib: "antd",
+  lib: "easyops",
   icon: "shrink",
 };
 

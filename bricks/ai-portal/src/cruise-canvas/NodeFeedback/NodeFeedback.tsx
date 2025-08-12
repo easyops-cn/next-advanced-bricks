@@ -3,7 +3,7 @@ import React, { useCallback, useContext, useRef, useState } from "react";
 import styles from "./NodeFeedback.module.css";
 import { K, t } from "../i18n";
 import { WrappedButton, WrappedIconButton } from "../../shared/bricks";
-import { ICON_CLOSE } from "../constants";
+import { ICON_CLOSE } from "../../shared/constants";
 import classNames from "classnames";
 import { CanvasContext } from "../CanvasContext";
 

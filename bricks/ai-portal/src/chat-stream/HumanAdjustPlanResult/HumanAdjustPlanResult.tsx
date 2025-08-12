@@ -28,7 +28,7 @@ export function HumanAdjustPlanResult({
 
   if (response?.type === "plan" && Array.isArray(response.steps)) {
     return (
-      <div className={`${styles.message} ${styles["role-user"]}`}>
+      <div className={styles.message}>
         <ol
           style={{
             paddingLeft: `${Math.floor(Math.log10(response.steps.length + 1)) * 0.5 + 1.5}em`,
@@ -42,9 +42,5 @@ export function HumanAdjustPlanResult({
     );
   }
 
-  return (
-    <div className={`${styles.message} ${styles["role-user"]}`}>
-      Something went wrong.
-    </div>
-  );
+  return <div className={styles.message}>Something went wrong.</div>;
 }

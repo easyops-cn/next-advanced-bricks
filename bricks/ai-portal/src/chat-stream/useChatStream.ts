@@ -6,10 +6,10 @@ import { getOrderedJobs } from "../cruise-canvas/getOrderedJobs.js";
 export function useChatStream(
   task: TaskBaseDetail | null | undefined,
   jobs: Job[] | null | undefined
-): ChatMessage[] | null {
+) {
   return useMemo(() => {
     if (!task) {
-      return null;
+      return {};
     }
 
     const messages: ChatMessage[] = [
@@ -20,11 +20,54 @@ export function useChatStream(
     ];
 
     const { list, jobMap } = getOrderedJobs(jobs);
-    messages.push({
-      role: "assistant",
-      jobs: list.map((jobId) => jobMap.get(jobId)!),
-    });
 
-    return messages;
+    let prevAssistantMessage: ChatMessage = {
+      role: "assistant",
+      jobs: [],
+    };
+    let inputRequiredJobId: string | null = null;
+    for (const jobId of list) {
+      const job = jobMap.get(jobId)!;
+      prevAssistantMessage.jobs.push(job);
+
+      const toolName = job.toolCall?.name;
+      const askUser = toolName === "ask_human";
+      if (askUser && job.state === "completed") {
+        messages.push(prevAssistantMessage);
+
+        loop: for (const msg of job.messages ?? []) {
+          if (msg.role === "tool") {
+            for (const part of msg.parts) {
+              if (part.type === "text") {
+                try {
+                  const { human_answer } = JSON.parse(part.text);
+                  messages.push({
+                    role: "user",
+                    content: human_answer,
+                  });
+                } catch (error) {
+                  // eslint-disable-next-line no-console
+                  console.error("Error parsing human answer:", error);
+                }
+              }
+              break loop;
+            }
+          }
+        }
+
+        prevAssistantMessage = {
+          role: "assistant",
+          jobs: [],
+        };
+      }
+
+      if (askUser && job.state === "input-required") {
+        inputRequiredJobId = jobId;
+      }
+    }
+
+    messages.push(prevAssistantMessage);
+
+    return { messages, inputRequiredJobId };
   }, [task, jobs]);
 }
