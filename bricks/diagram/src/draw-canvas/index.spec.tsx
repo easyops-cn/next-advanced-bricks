@@ -2016,4 +2016,56 @@ describe("eo-draw-canvas", () => {
       document.body.removeChild(element);
     });
   });
+  test("group and ungroup ", async () => {
+    const element = document.createElement("eo-draw-canvas") as EoDrawCanvas;
+    element.defaultNodeBricks = [{ useBrick: { brick: "div" } }];
+    element.cells = [
+      {
+        type: "node",
+        id: "a",
+        view: {
+          x: 20,
+          y: 20,
+        },
+      },
+      {
+        type: "node",
+        id: "b",
+        view: {
+          x: 20,
+          y: 320,
+        },
+      },
+    ] as NodeBrickCell[];
+
+    const onCanvasGroup = jest.fn();
+    const onCanvasUngroup = jest.fn();
+    element.addEventListener("canvas.group", () => onCanvasGroup());
+
+    element.addEventListener("canvas.ungroup", () => onCanvasUngroup());
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    await act(() => new Promise((resolve) => setTimeout(resolve, 1)));
+
+    fireEvent.keyDown(element.shadowRoot!.querySelector("svg")!, {
+      key: "g",
+      ctrlKey: true,
+    });
+
+    expect(onCanvasGroup).toHaveBeenCalledTimes(1);
+
+    fireEvent.keyDown(element.shadowRoot!.querySelector("svg")!, {
+      key: "g",
+      ctrlKey: true,
+      shiftKey: true,
+    });
+    expect(onCanvasUngroup).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
 });

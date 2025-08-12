@@ -495,6 +495,19 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     this.#canvasPaste.emit();
   };
 
+  @event({ type: "canvas.group" })
+  accessor #canvasGroup!: EventEmitter<void>;
+
+  #handleCanvasGroup = () => {
+    this.#canvasGroup.emit();
+  };
+  @event({ type: "canvas.ungroup" })
+  accessor #canvasUngroup!: EventEmitter<void>;
+
+  #handleCanvasUngroup = () => {
+    this.#canvasUngroup.emit();
+  };
+
   @method()
   async dropNode({
     id,
@@ -753,6 +766,8 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
         onDecoratorViewChange={this.#handleDecoratorViewChange}
         onCanvasCopy={this.#handleCanvasCopy}
         onCanvasPaste={this.#handleCanvasPaste}
+        onCanvasGroup={this.#handleCanvasGroup}
+        onCanvasUngroup={this.#handleCanvasUngroup}
       />
     );
   }
@@ -778,6 +793,8 @@ export interface EoDrawCanvasComponentProps extends EoDrawCanvasProps {
   onCanvasContextMenu(detail: PositionTuple): void;
   onCanvasCopy(): void;
   onCanvasPaste(): void;
+  onCanvasGroup(): void;
+  onCanvasUngroup(): void;
 }
 
 export interface DrawCanvasRef {
@@ -847,6 +864,8 @@ function LegacyEoDrawCanvasComponent(
     onCanvasContextMenu,
     onCanvasCopy,
     onCanvasPaste,
+    onCanvasGroup,
+    onCanvasUngroup,
   }: EoDrawCanvasComponentProps,
   ref: React.Ref<DrawCanvasRef>
 ) {
@@ -1435,21 +1454,44 @@ function LegacyEoDrawCanvasComponent(
   // istanbul ignore next
   const handleCanvasKeyDown = useCallback(
     (event: React.KeyboardEvent<SVGElement>) => {
-      const modKey = /Mac|iPod|iPhone|iPad/.test(navigator.platform)
-        ? "metaKey"
-        : "ctrlKey";
-      if (event[modKey]) {
-        if (event.key === "c") {
-          onCanvasCopy();
+      const isMac = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
+      const modKey = isMac ? "metaKey" : "ctrlKey";
+
+      if (!event[modKey]) return; // 没按 Ctrl/Command 直接跳过
+      const key = event.key.toLowerCase();
+      switch (key) {
+        case "c":
+          if (!event.shiftKey) {
+            onCanvasCopy();
+            event.preventDefault();
+          }
+          break;
+
+        case "v":
+          if (!event.shiftKey) {
+            onCanvasPaste();
+            event.preventDefault();
+          }
+          break;
+
+        case "g":
+          if (event.shiftKey) {
+            // Ctrl+Shift+G → 取消组合
+            onCanvasUngroup?.();
+          } else {
+            // Ctrl+G → 组合
+            onCanvasGroup?.();
+          }
           event.preventDefault();
-        } else if (event.key === "v") {
-          onCanvasPaste();
-          event.preventDefault();
-        }
+          break;
+
+        default:
+          break;
       }
     },
-    [onCanvasCopy, onCanvasPaste]
+    [onCanvasCopy, onCanvasPaste, onCanvasGroup, onCanvasUngroup]
   );
+
   useEffect(() => {
     const root = rootRef.current;
     if (!root || dragBehavior !== "lasso") {
