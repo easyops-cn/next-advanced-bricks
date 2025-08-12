@@ -7,6 +7,7 @@ export enum K {
   YESTERDAY = "YESTERDAY",
   PREVIOUS_7_DAYS = "PREVIOUS_7_DAYS",
   PREVIOUS_30_DAYS = "PREVIOUS_30_DAYS",
+  SWITCH_LANGUAGE = "SWITCH_LANGUAGE",
 }
 
 const en: Locale = {
@@ -16,6 +17,7 @@ const en: Locale = {
   [K.YESTERDAY]: "Yesterday",
   [K.PREVIOUS_7_DAYS]: "Previous 7 days",
   [K.PREVIOUS_30_DAYS]: "Previous 30 days",
+  [K.SWITCH_LANGUAGE]: "中文",
 };
 
 const zh: Locale = {
@@ -25,6 +27,7 @@ const zh: Locale = {
   [K.YESTERDAY]: "昨天",
   [K.PREVIOUS_7_DAYS]: "过去7天",
   [K.PREVIOUS_30_DAYS]: "过去30天",
+  [K.SWITCH_LANGUAGE]: "English",
 };
 
 export const NS = "bricks/ai-portal/elevo-sidebar";

@@ -3,12 +3,14 @@ import React, {
   forwardRef,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
 import "@next-core/theme";
-import { initializeI18n } from "@next-core/i18n";
+import { i18n, initializeI18n } from "@next-core/i18n";
+import { getHistory } from "@next-core/runtime";
 import classNames from "classnames";
 import type { DropdownActionsProps } from "@next-bricks/basic/dropdown-actions";
 import type { ActionType } from "@next-bricks/basic/mini-actions";
@@ -36,17 +38,6 @@ const SIDEBAR_ICON: GeneralIconProps = {
   icon: "sidebar",
 };
 
-const dropdownActions: DropdownActionsProps["actions"] = [
-  {
-    icon: {
-      lib: "fa",
-      prefix: "fas",
-      icon: "arrow-right-from-bracket",
-    },
-    text: t(K.LOGOUT),
-  },
-];
-
 const { defineElement, property, event, method } = createDecorators();
 
 export interface ElevoSidebarProps {
@@ -57,6 +48,13 @@ export interface ElevoSidebarProps {
   historyActiveId?: string;
   historyUrlTemplate?: string;
   historyActions?: ActionType[];
+  links?: SidebarLink[];
+}
+
+export interface SidebarLink {
+  title: string;
+  url: string;
+  icon: GeneralIconProps;
 }
 
 const ElevoSidebarComponent = forwardRef(LegacyElevoSidebarComponent);
@@ -89,6 +87,9 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
 
   @property({ attribute: false })
   accessor historyActions: ActionType[] | undefined;
+
+  @property({ attribute: false })
+  accessor links: SidebarLink[] | undefined;
 
   @event({ type: "logout" })
   accessor #logout!: EventEmitter<void>;
@@ -128,6 +129,7 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
         historyActiveId={this.historyActiveId}
         historyUrlTemplate={this.historyUrlTemplate}
         historyActions={this.historyActions}
+        links={this.links}
         onLogout={this.#handleLogout}
         onActionClick={this.#handleActionClick}
       />
@@ -149,6 +151,7 @@ function LegacyElevoSidebarComponent(
     historyActiveId,
     historyUrlTemplate,
     historyActions,
+    links,
     onLogout,
     onActionClick,
   }: ElevoSidebarComponentProps,
@@ -177,6 +180,29 @@ function LegacyElevoSidebarComponent(
       setCollapsed(true);
     }
   }, [behavior]);
+
+  const dropdownActions = useMemo<DropdownActionsProps["actions"]>(
+    () => [
+      {
+        key: "logout",
+        icon: {
+          lib: "fa",
+          prefix: "fas",
+          icon: "arrow-right-from-bracket",
+        },
+        text: t(K.LOGOUT),
+      },
+      {
+        key: "switch-language",
+        icon: {
+          lib: "easyops",
+          icon: "language",
+        },
+        text: t(K.SWITCH_LANGUAGE),
+      },
+    ],
+    []
+  );
 
   return (
     <div className={classNames("container", { collapsed })}>
@@ -208,6 +234,16 @@ function LegacyElevoSidebarComponent(
           />
           {t(K.NEW_CHAT)}
         </WrappedLink>
+        {links?.length ? (
+          <div className="links">
+            {links.map((link, index) => (
+              <WrappedLink className="link" key={index} url={link.url}>
+                <WrappedIcon className="icon" {...link.icon} />
+                <span className="title">{link.title}</span>
+              </WrappedLink>
+            ))}
+          </div>
+        ) : null}
         <ChatHistory
           ref={ref}
           activeId={historyActiveId}
@@ -220,7 +256,18 @@ function LegacyElevoSidebarComponent(
           <WrappedDropdownActions
             className="dropdown"
             actions={dropdownActions}
-            onActionClick={onLogout}
+            onActionClick={async (e) => {
+              if (e.detail.key === "logout") {
+                onLogout();
+              } else {
+                await i18n.changeLanguage(
+                  i18n.language && i18n.language.split("-")[0] === "en"
+                    ? "zh"
+                    : "en"
+                );
+                getHistory().reload();
+              }
+            }}
           >
             <button className="account">
               <WrappedEasyopsAvatar
