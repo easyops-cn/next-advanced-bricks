@@ -31,9 +31,8 @@ import { Aside } from "./Aside/Aside.js";
 initializeI18n(NS, locales);
 
 const ICON_SHARE: GeneralIconProps = {
-  lib: "fa",
-  prefix: "far",
-  icon: "share-from-square",
+  lib: "easyops",
+  icon: "share",
 };
 
 const { defineElement, property, event } = createDecorators();
@@ -145,7 +144,7 @@ function ChatStreamComponent({
   const pageTitle = task?.title ?? "";
   const taskState = task?.state;
   const taskDone = DONE_STATES.includes(taskState ?? "working");
-  const messages = useChatStream(task, jobs);
+  const { messages, inputRequiredJobId } = useChatStream(task, jobs);
 
   const views = useMemo(() => {
     return jobs?.flatMap((job) =>
@@ -278,12 +277,16 @@ function ChatStreamComponent({
         {taskAvailable ? (
           <div className={styles.main} ref={scrollContainerRef}>
             <div className={styles.narrow}>
-              {messages?.map((msg, index) => (
+              {messages?.map((msg, index, list) => (
                 <div className={styles.message} key={index}>
                   {msg.role === "user" ? (
                     <UserMessage content={msg.content} />
                   ) : (
-                    <AssistantMessage jobs={msg.jobs} taskState={taskState} />
+                    <AssistantMessage
+                      jobs={msg.jobs}
+                      taskState={taskState}
+                      isLatest={index === list.length - 1}
+                    />
                   )}
                 </div>
               ))}
@@ -309,7 +312,11 @@ function ChatStreamComponent({
                   watchAgain={watchAgain}
                 />
               ) : (
-                <ChatBox taskState={taskState} taskDone={taskDone} />
+                <ChatBox
+                  taskState={taskState}
+                  taskDone={taskDone}
+                  inputRequiredJobId={inputRequiredJobId}
+                />
               )}
             </div>
           </div>

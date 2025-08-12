@@ -9,7 +9,7 @@ import type {
   TaskState,
 } from "../interfaces";
 import { WrappedIcon } from "../../shared/bricks";
-import { DONE_STATES } from "../constants";
+import { DONE_STATES } from "../../shared/constants";
 
 export interface NavProps {
   nav: GraphNavItem[] | undefined;

@@ -5,6 +5,11 @@ ai-portal\.chat-stream {
   height: 100%;
   overflow: hidden;
   background-color: #f3f3f4;
+  background-image: url("./images/background.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
   color: rgba(0, 0, 0, 0.88);
   --cruise-canvas-node-width-small: 330px;
   --cruise-canvas-node-width-medium: 453px;

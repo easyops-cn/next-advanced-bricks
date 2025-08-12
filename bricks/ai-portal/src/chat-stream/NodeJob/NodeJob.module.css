@@ -6,6 +6,11 @@
   cursor: pointer;
 }
 
+.main {
+  font-size: 16px;
+  line-height: 26px;
+}
+
 .caret {
   opacity: 0;
   transition: transform 0.2s ease-in-out;

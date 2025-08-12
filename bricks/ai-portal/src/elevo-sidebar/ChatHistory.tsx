@@ -18,7 +18,7 @@ import { get, isEqual } from "lodash";
 import { K, t } from "./i18n.js";
 import type { TaskState } from "../cruise-canvas/interfaces.js";
 import { WrappedIcon, WrappedLink, WrappedMiniActions } from "./bricks.js";
-import { DONE_STATES } from "../cruise-canvas/constants.js";
+import { DONE_STATES } from "../shared/constants.js";
 
 export interface HistoryItem {
   id: string;

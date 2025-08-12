@@ -18,11 +18,11 @@ import type {
 } from "@next-bricks/basic/mini-actions";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
+import classNames from "classnames";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
 import type { TaskState } from "../cruise-canvas/interfaces.js";
-import classNames from "classnames";
-import { DONE_STATES } from "../cruise-canvas/constants.js";
+import { DONE_STATES } from "../shared/constants.js";
 
 initializeI18n(NS, locales);
 

@@ -17,7 +17,7 @@ import type { JSONSchema, JSONSchemaObject } from "../json-schema";
 import styles from "./CmdbInstanceDetail.module.css";
 import { createPortal } from "../utils/createPortal";
 import { WrappedIcon } from "../../shared/bricks";
-import { ICON_LOADING } from "../constants";
+import { ICON_LOADING } from "../../shared/constants";
 
 /**
  * 如果属性数量超过阈值，则使用两列布局

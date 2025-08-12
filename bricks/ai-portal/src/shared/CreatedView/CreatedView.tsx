@@ -147,7 +147,7 @@ export function CreatedView({
           title={t(K.FULLSCREEN)}
           onClick={handleExpandClick}
         >
-          <WrappedIcon lib="easyops" icon="fullscreen" />
+          <WrappedIcon lib="easyops" icon="expand" />
         </button>
       </div>
       <div data-root-id={rootId} ref={ref} />

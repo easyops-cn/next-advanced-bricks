@@ -50,51 +50,69 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
         "ask_user_confirm",
         "ask_user_choose",
         "ask_user_select_from_cmdb",
-        "ask_user_adjust_plan",
       ].includes(job.toolCall!.arguments?.command as string)) ||
     askUserPlan;
   const loading = state === "working" || state === "submitted";
   const hasGraph = !!job.componentGraph;
 
-  const [toolMarkdownContent, cmdbInstanceDetails, files, sizeLarge] =
-    useMemo(() => {
-      const contents: string[] = [];
-      const instanceDetails: CmdbInstanceDetailData[] = [];
-      const files: FileInfo[] = [];
-      let large = toolName === "llm_answer";
-      job.messages?.forEach((message) => {
-        if (message.role === "tool") {
-          for (const part of message.parts) {
-            if (part.type === "data") {
-              switch (part.data?.type) {
-                case "markdown":
-                  contents.push(part.data.content);
-                  break;
-                case "cmdb_instance_detail":
-                  instanceDetails.push(part.data as CmdbInstanceDetailData);
-                  if (!large) {
-                    large =
-                      Object.keys(
-                        part.data?.outputSchema?.type === "object"
-                          ? part.data.outputSchema.properties
-                          : part.data.detail
-                      ).length > 6;
-                  }
-                  break;
-              }
-            } else if (part.type === "file") {
-              files.push(part.file);
+  const [
+    toolMarkdownContent,
+    humanAnswer,
+    cmdbInstanceDetails,
+    files,
+    sizeLarge,
+  ] = useMemo(() => {
+    const contents: string[] = [];
+    let humanAnswer: string | undefined;
+    const instanceDetails: CmdbInstanceDetailData[] = [];
+    const files: FileInfo[] = [];
+    let large = toolName === "llm_answer";
+    job.messages?.forEach((message) => {
+      if (message.role === "tool") {
+        for (const part of message.parts) {
+          if (part.type === "data") {
+            switch (part.data?.type) {
+              case "markdown":
+                contents.push(part.data.content);
+                break;
+              case "cmdb_instance_detail":
+                instanceDetails.push(part.data as CmdbInstanceDetailData);
+                if (!large) {
+                  large =
+                    Object.keys(
+                      part.data?.outputSchema?.type === "object"
+                        ? part.data.outputSchema.properties
+                        : part.data.detail
+                    ).length > 6;
+                }
+                break;
+            }
+          } else if (part.type === "file") {
+            files.push(part.file);
+          } else if (part.type === "text" && askUser) {
+            try {
+              humanAnswer = JSON.parse(part.text).human_answer as string;
+            } catch (error) {
+              // eslint-disable-next-line no-console
+              console.error("Failed to parse human answer:", error);
             }
           }
         }
-      });
+      }
+    });
 
-      const markdownContent = contents.join("");
+    const markdownContent = contents.join("");
 
-      large = large || RegExpLargeTableInMarkdown.test(markdownContent);
+    large = large || RegExpLargeTableInMarkdown.test(markdownContent);
 
-      return [markdownContent, instanceDetails, files, large] as const;
-    }, [job.messages, toolName]);
+    return [
+      markdownContent,
+      humanAnswer,
+      instanceDetails,
+      files,
+      large,
+    ] as const;
+  }, [askUser, job.messages, toolName]);
 
   return (
     <div
@@ -185,14 +203,9 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
                 />
               ) : null)}
           </>
-        ) : askUser ? (
-          <div className={`${styles.message} ${styles["role-assistant"]}`}>
-            Unexpected ask_human command:{" "}
-            {JSON.stringify(job.toolCall!.arguments?.command ?? null)}
-          </div>
         ) : null}
         {!generalAskUser && job.toolCall && <ToolCallStatus job={job} />}
-        {askUserPlan && state !== "input-required" ? (
+        {askUserPlan && state === "completed" ? (
           <HumanAdjustPlanResult job={job} />
         ) : (
           job.messages?.map((message, index) =>
@@ -203,13 +216,15 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
                   [styles["role-user"]]: message.role === "tool",
                 })}
               >
-                {message.parts?.map((part, partIndex) => (
-                  <React.Fragment key={partIndex}>
-                    {part.type === "text" && (
-                      <EnhancedMarkdown content={part.text} />
-                    )}
-                  </React.Fragment>
-                ))}
+                {message.role === "tool" && askUser
+                  ? humanAnswer
+                  : message.parts?.map((part, partIndex) => (
+                      <React.Fragment key={partIndex}>
+                        {part.type === "text" && (
+                          <EnhancedMarkdown content={part.text} />
+                        )}
+                      </React.Fragment>
+                    ))}
               </div>
             )
           )
