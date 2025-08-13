@@ -1,7 +1,12 @@
 import { visit } from "unist-util-visit";
 import { toString } from "hast-util-to-string";
 import { refractor, type RefractorElement } from "refractor";
+import jsx from "refractor/lang/jsx.js";
+import mermaid from "refractor/lang/mermaid.js";
 import { getCodeLanguage } from "./utils.js";
+
+refractor.register(jsx);
+refractor.register(mermaid);
 
 // Reference https://github.com/mapbox/rehype-prism
 export function rehypePrism() {
