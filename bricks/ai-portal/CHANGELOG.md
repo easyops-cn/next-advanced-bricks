@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.23.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.22.3...@next-bricks/ai-portal@0.23.0) (2025-08-13)
+
+
+### Features
+
+* new brick: ai-employees ([2e95320](https://github.com/easyops-cn/next-advanced-bricks/commit/2e95320ef2e5946eca740a7e6e98069caa47e9a7))
+
+
+
+
+
 ## [0.22.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.22.2...@next-bricks/ai-portal@0.22.3) (2025-08-12)
 
 
