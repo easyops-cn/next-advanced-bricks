@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.23.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.23.0...@next-bricks/ai-portal@0.23.1) (2025-08-13)
+
+
+### Bug Fixes
+
+* group mcp tools by platform ([20d290e](https://github.com/easyops-cn/next-advanced-bricks/commit/20d290ef8cd86e7c2cea47f91929b4bde5e73189))
+* refine i18n ([823a3ad](https://github.com/easyops-cn/next-advanced-bricks/commit/823a3ad33b2c9de245acc8ebe916b2f19336465a))
+
+
+
+
+
 # [0.23.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.22.3...@next-bricks/ai-portal@0.23.0) (2025-08-13)
 
 
