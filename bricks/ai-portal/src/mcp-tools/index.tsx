@@ -18,6 +18,57 @@ const DEFAULT_TOOL_ICON: GeneralIconProps = {
   icon: "tool",
 };
 
+const PLATFORM_CONFIG = new Map([
+  [
+    "EasyOps平台",
+    {
+      servers: ["cmdb", "cmdb_product_helper"],
+    },
+  ],
+  [
+    "Grafana",
+    {
+      servers: ["grafana"],
+    },
+  ],
+  [
+    "Kubernetes",
+    {
+      servers: ["kubernetes"],
+    },
+  ],
+  [
+    "监控事件",
+    {
+      servers: ["alert"],
+    },
+  ],
+  [
+    "浏览器",
+    {
+      servers: ["playwright"],
+    },
+  ],
+  [
+    "低代码",
+    {
+      servers: ["web-builder", "web-builder2"],
+    },
+  ],
+  [
+    "大模型",
+    {
+      servers: ["llm"],
+    },
+  ],
+  [
+    "故障排查",
+    {
+      servers: ["host-troubleshooting"],
+    },
+  ],
+]);
+
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
 const { defineElement, property } = createDecorators();
@@ -57,45 +108,82 @@ class McpTools extends ReactNextElement implements McpToolsProps {
 
 function McpToolsComponent({ list }: McpToolsProps) {
   // Grouping the list by server name
-  const groupMap = useMemo(() => {
+  const [groupMap, platformMap] = useMemo(() => {
     const map = new Map<string, McpTool[]>();
+    const platformMap = new Map<string, string[]>();
     list?.forEach((item) => {
-      const key = t(
+      const groupName = t(
         `SERVER_${item.server.id.replaceAll("-", "_")}`,
         item.server.name
       );
-      let list = map.get(key);
+      let list = map.get(groupName);
       if (!list) {
-        map.set(key, (list = []));
+        map.set(groupName, (list = []));
       }
       list.push(item);
+
+      const platform = [...PLATFORM_CONFIG.entries()].find(
+        ([_name, { servers }]) => servers.includes(item.server.id)
+      );
+      const platformName = platform ? platform[0] : "其他";
+      let groups = platformMap.get(platformName);
+      if (!groups) {
+        platformMap.set(platformName, (groups = []));
+      }
+      groups.push(groupName);
     });
-    return map;
+
+    const orderedNames = ["CMDB"];
+    const orderedMap = new Map<string, McpTool[]>(
+      [...map.entries()].sort(([nameA], [nameB]) => {
+        const indexA = orderedNames.indexOf(nameA);
+        const indexB = orderedNames.indexOf(nameB);
+        return (
+          (indexA < 0 ? orderedNames.length : indexA) -
+          (indexB < 0 ? orderedNames.length : indexB)
+        );
+      })
+    );
+
+    return [orderedMap, platformMap];
   }, [list]);
 
-  const groups = useMemo(() => [null, ...groupMap.keys()], [groupMap]);
+  const platforms = useMemo(() => {
+    const orderedNames = [...PLATFORM_CONFIG.keys()];
+    const names = [...platformMap.keys()];
+    names.sort((a, b) => {
+      const aIndex = orderedNames.indexOf(a);
+      const bIndex = orderedNames.indexOf(b);
+      return (
+        (aIndex < 0 ? orderedNames.length : aIndex) -
+        (bIndex < 0 ? orderedNames.length : bIndex)
+      );
+    });
+    return [null, ...names];
+  }, [platformMap]);
 
-  const [activeGroup, setActiveGroup] = useState<string | null>(null);
+  const [activePlatform, setActivePlatform] = useState<string | null>(null);
 
   const filteredGroups = useMemo(() => {
     const groupedList = [...groupMap];
-    if (activeGroup === null) {
+    if (activePlatform === null) {
       return groupedList;
     }
-    return groupedList.filter(([group]) => group === activeGroup);
-  }, [activeGroup, groupMap]);
+    const platformGroups = platformMap.get(activePlatform);
+    return groupedList.filter(([group]) => platformGroups?.includes(group));
+  }, [activePlatform, groupMap, platformMap]);
 
   return (
     <div className="container">
       <h1>{t(K.MCP_HUB)}</h1>
       <ul className="nav">
-        {groups?.map((group) => (
-          <li key={group} className="item">
+        {platforms?.map((platform) => (
+          <li key={platform} className="item">
             <a
-              className={classNames({ active: activeGroup === group })}
-              onClick={() => setActiveGroup(group)}
+              className={classNames({ active: activePlatform === platform })}
+              onClick={() => setActivePlatform(platform)}
             >
-              {group === null ? t(K.ALL) : group}
+              {platform === null ? t(K.ALL) : platform}
             </a>
           </li>
         ))}
