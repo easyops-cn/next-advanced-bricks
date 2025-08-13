@@ -50,7 +50,15 @@ ai-portal\.chat-stream {
 
   .left,
   .right {
-    width: 24px;
+    /* 24 * 2 + 8 */
+    width: 56px;
+  }
+
+  .right {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 8px;
   }
 }
 
@@ -91,4 +99,9 @@ ai-portal\.chat-stream {
 
 .expanded {
   width: 50%;
+}
+
+.feedback {
+  width: 100%;
+  margin: 24px auto 0;
 }

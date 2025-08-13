@@ -5,6 +5,7 @@ import styles from "./ZoomBar.module.css";
 import toolbarStyles from "../toolbar.module.css";
 import { WrappedIconButton } from "../../shared/bricks";
 import { K, t } from "../i18n";
+import { ICON_CHAT } from "../../shared/constants";
 
 const ICON_BACK_TO_CENTER: GeneralIconProps = {
   lib: "easyops",
@@ -21,14 +22,18 @@ const ICON_ZOOM_IN: GeneralIconProps = {
 
 export interface ZoomBarProps {
   scale: number;
+  showUiSwitch?: boolean;
   onScaleChange?: (scale: number) => void;
   onReCenter?: () => void;
+  onSwitchToChat?: () => void;
 }
 
 export function ZoomBar({
   scale,
+  showUiSwitch,
   onScaleChange,
   onReCenter,
+  onSwitchToChat,
 }: ZoomBarProps): JSX.Element {
   const handleZoomIn = useCallback(() => {
     onScaleChange?.(scale + 0.1);
@@ -40,6 +45,16 @@ export function ZoomBar({
 
   return (
     <div className={`${toolbarStyles.toolbar} ${styles["zoom-bar"]}`}>
+      {showUiSwitch && (
+        <>
+          <WrappedIconButton
+            variant="mini"
+            icon={ICON_CHAT}
+            onClick={onSwitchToChat}
+          />
+          <div className={toolbarStyles.divider}></div>
+        </>
+      )}
       <WrappedIconButton
         variant="mini"
         icon={ICON_BACK_TO_CENTER}

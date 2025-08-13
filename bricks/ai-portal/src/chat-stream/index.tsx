@@ -1,7 +1,10 @@
 // istanbul ignore file: experimental
 import React, {
+  createRef,
+  forwardRef,
   useCallback,
   useEffect,
+  useImperativeHandle,
   useMemo,
   useRef,
   useState,
@@ -23,10 +26,13 @@ import { UserMessage } from "./UserMessage/UserMessage.js";
 import { AssistantMessage } from "./AssistantMessage/AssistantMessage.js";
 import { TaskContext } from "../shared/TaskContext.js";
 import { ChatBox } from "../shared/ChatBox/ChatBox.js";
-import { DONE_STATES } from "../shared/constants.js";
+import { DONE_STATES, ICON_CANVAS } from "../shared/constants.js";
 import { ExpandedView } from "../shared/ExpandedView/ExpandedView.js";
 import { ReplayToolbar } from "../shared/ReplayToolbar/ReplayToolbar.js";
 import { Aside } from "./Aside/Aside.js";
+import { StreamContext } from "./StreamContext.js";
+import type { FeedbackDetail } from "../cruise-canvas/interfaces.js";
+import { NodeFeedback } from "../shared/NodeFeedback/NodeFeedback.js";
 
 initializeI18n(NS, locales);
 
@@ -35,14 +41,18 @@ const ICON_SHARE: GeneralIconProps = {
   icon: "share",
 };
 
-const { defineElement, property, event } = createDecorators();
+const { defineElement, property, event, method } = createDecorators();
 
 export interface ChatStreamProps {
   taskId?: string;
   replay?: boolean;
   replayDelay?: number;
   supports?: Record<string, boolean>;
+  showFeedback?: boolean;
+  showUiSwitch?: boolean;
 }
+
+const ChatStreamComponent = forwardRef(LegacyChatStreamComponent);
 
 /**
  * 构件 `ai-portal.chat-stream`
@@ -70,6 +80,12 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
 
   @property({ attribute: false })
   accessor supports: Record<string, boolean> | undefined;
+
+  @property({ type: Boolean })
+  accessor showFeedback: boolean | undefined;
+
+  @property({ type: Boolean })
+  accessor showUiSwitch: boolean | undefined;
 
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
@@ -99,6 +115,37 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
     this.#cancelEvent.emit();
   };
 
+  @event({ type: "feedback.submit" })
+  accessor #feedbackSubmitEvent!: EventEmitter<FeedbackDetail>;
+
+  #onSubmitFeedback = (detail: FeedbackDetail) => {
+    this.#feedbackSubmitEvent.emit(detail);
+  };
+
+  @event({ type: "ui.switch" })
+  accessor #switch!: EventEmitter<"canvas">;
+
+  #onSwitchToCanvas = () => {
+    this.#switch.emit("canvas");
+  };
+
+  #ref = createRef<ChatStreamRef>();
+
+  @method()
+  resumed() {
+    this.#ref.current?.resumed();
+  }
+
+  @method()
+  feedbackSubmitDone() {
+    this.#ref.current?.feedbackSubmitDone();
+  }
+
+  @method()
+  feedbackSubmitFailed() {
+    this.#ref.current?.feedbackSubmitFailed();
+  }
+
   render() {
     return (
       <ChatStreamComponent
@@ -106,10 +153,14 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
         replay={this.replay}
         replayDelay={this.replayDelay}
         supports={this.supports}
+        showFeedback={this.showFeedback}
+        showUiSwitch={this.showUiSwitch}
         onShare={this.#onShare}
         onPause={this.#onPause}
         onResume={this.#onResume}
         onCancel={this.#onCancel}
+        onSubmitFeedback={this.#onSubmitFeedback}
+        onSwitchToCanvas={this.#onSwitchToCanvas}
       />
     );
   }
@@ -120,31 +171,49 @@ interface ChatStreamComponentProps extends ChatStreamProps {
   onPause: () => void;
   onResume: () => void;
   onCancel: () => void;
+  onSubmitFeedback: (detail: FeedbackDetail) => void;
+  onSwitchToCanvas: () => void;
 }
 
-function ChatStreamComponent({
-  taskId,
-  replay,
-  replayDelay,
-  supports,
-  onShare,
-  onPause,
-  onResume,
-  onCancel,
-}: ChatStreamComponentProps) {
+interface ChatStreamRef {
+  resumed: () => void;
+  feedbackSubmitDone: () => void;
+  feedbackSubmitFailed: () => void;
+}
+
+function LegacyChatStreamComponent(
+  {
+    taskId,
+    replay,
+    replayDelay,
+    supports,
+    showFeedback: propShowFeedback,
+    showUiSwitch,
+    onShare,
+    onPause,
+    onResume,
+    onCancel,
+    onSubmitFeedback,
+    onSwitchToCanvas,
+  }: ChatStreamComponentProps,
+  ref: React.Ref<ChatStreamRef>
+) {
   const {
     task,
     jobs,
     error,
     humanInputRef,
-    // resumedRef,
+    resumedRef,
     skipToResults,
     watchAgain,
   } = useTaskDetail(taskId, replay, replayDelay);
   const pageTitle = task?.title ?? "";
   const taskState = task?.state;
   const taskDone = DONE_STATES.includes(taskState!);
-  const { messages, inputRequiredJobId } = useChatStream(task, jobs);
+  const { messages, inputRequiredJobId, lastToolCallJobId } = useChatStream(
+    task,
+    jobs
+  );
 
   const views = useMemo(() => {
     return jobs?.flatMap((job) =>
@@ -157,6 +226,38 @@ function ChatStreamComponent({
     );
   }, [jobs]);
 
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
+  const [submittedFeedback, setSubmittedFeedback] = useState(false);
+  const [showFeedback, setShowFeedback] = useState<boolean>(!!propShowFeedback);
+  useEffect(() => {
+    setShowFeedback(!!propShowFeedback);
+  }, [propShowFeedback]);
+
+  const handleSubmitFeedback = useCallback(
+    (detail: FeedbackDetail) => {
+      setSubmittingFeedback(true);
+      onSubmitFeedback(detail);
+    },
+    [onSubmitFeedback]
+  );
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      resumed: () => resumedRef.current?.(),
+      feedbackSubmitDone: () => {
+        setSubmittedFeedback(true);
+        setTimeout(() => {
+          setShowFeedback(false);
+        }, 3000);
+      },
+      feedbackSubmitFailed: () => {
+        setSubmittingFeedback(false);
+      },
+    }),
+    [resumedRef]
+  );
+
   const [activeExpandedViewJobId, setActiveExpandedViewJobId] = useState<
     string | null
   >(null);
@@ -164,6 +265,27 @@ function ChatStreamComponent({
   const [activeToolCallJobId, setActiveToolCallJobId] = useState<string | null>(
     null
   );
+  const [userClosedAside, setUserClosedAside] = useState(false);
+  // Delay flag to prevent aside from auto opened for a completed task
+  const delayRef = useRef(false);
+
+  const taskAvailable = !!task;
+  useEffect(() => {
+    if (taskAvailable) {
+      const timer = setTimeout(() => {
+        delayRef.current = true;
+      }, 1000);
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [taskAvailable]);
+
+  useEffect(() => {
+    if (delayRef.current && lastToolCallJobId && !userClosedAside) {
+      setActiveToolCallJobId(lastToolCallJobId);
+    }
+  }, [lastToolCallJobId, userClosedAside]);
 
   useEffect(() => {
     getRuntime().applyPageTitle(pageTitle);
@@ -190,10 +312,16 @@ function ChatStreamComponent({
       onResume,
       onCancel,
       supports,
+
       activeExpandedViewJobId,
       setActiveExpandedViewJobId,
       activeToolCallJobId,
       setActiveToolCallJobId,
+
+      submittingFeedback,
+      submittedFeedback,
+      onSubmitFeedback: handleSubmitFeedback,
+      setShowFeedback,
     }),
     [
       humanInput,
@@ -202,15 +330,27 @@ function ChatStreamComponent({
       onResume,
       onCancel,
       supports,
+
       activeExpandedViewJobId,
       activeToolCallJobId,
+
+      submittingFeedback,
+      submittedFeedback,
+      handleSubmitFeedback,
     ]
+  );
+
+  const streamContextValue = useMemo(
+    () => ({
+      lastToolCallJobId,
+      setUserClosedAside,
+    }),
+    [lastToolCallJobId]
   );
 
   const detectScrolledUpRef = useRef(false);
   const manualScrolledRef = useRef(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const taskAvailable = !!task;
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
@@ -262,74 +402,89 @@ function ChatStreamComponent({
 
   return (
     <TaskContext.Provider value={taskContextValue}>
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <div className={styles.left} />
-          <h1>{pageTitle}</h1>
-          <div className={styles.right}>
-            <WrappedIconButton
-              icon={ICON_SHARE}
-              variant="mini"
-              onClick={onShare}
-            />
-          </div>
-        </div>
-        {taskAvailable ? (
-          <div className={styles.main} ref={scrollContainerRef}>
-            <div className={styles.narrow}>
-              {messages?.map((msg, index, list) => (
-                <div className={styles.message} key={index}>
-                  {msg.role === "user" ? (
-                    <UserMessage content={msg.content} />
-                  ) : (
-                    <AssistantMessage
-                      jobs={msg.jobs}
-                      taskState={taskState}
-                      isLatest={index === list.length - 1}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className={styles["loading-icon"]}>
-            <WrappedIcon
-              lib="antd"
-              theme="outlined"
-              icon="loading-3-quarters"
-              spinning
-            />
-          </div>
-        )}
-        {replay || supports?.chat ? (
-          <div className={styles.footer}>
-            <div className={styles.narrow}>
-              {replay ? (
-                <ReplayToolbar
-                  taskDone={taskDone}
-                  skipToResults={skipToResults}
-                  watchAgain={watchAgain}
-                />
-              ) : (
-                <ChatBox
-                  taskState={taskState}
-                  taskDone={taskDone}
-                  inputRequiredJobId={inputRequiredJobId}
+      <StreamContext.Provider value={streamContextValue}>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.left} />
+            <h1>{pageTitle}</h1>
+            <div className={styles.right}>
+              {showUiSwitch && (
+                <WrappedIconButton
+                  icon={ICON_CANVAS}
+                  variant="mini"
+                  style={{
+                    transform: "rotate(90deg)",
+                  }}
+                  onClick={onSwitchToCanvas}
                 />
               )}
+              <WrappedIconButton
+                icon={ICON_SHARE}
+                variant="mini"
+                onClick={onShare}
+              />
             </div>
           </div>
-        ) : null}
-      </div>
-      <div
-        className={classNames(styles.aside, {
-          [styles.expanded]: !!activeToolCallJobId,
-        })}
-      >
-        {activeToolCallJobId && <Aside job={activeToolCallJob!} />}
-      </div>
-      {activeExpandedViewJobId && <ExpandedView views={views!} />}
+          {taskAvailable ? (
+            <div className={styles.main} ref={scrollContainerRef}>
+              <div className={styles.narrow}>
+                {messages.map((msg, index, list) => (
+                  <div className={styles.message} key={index}>
+                    {msg.role === "user" ? (
+                      <UserMessage content={msg.content} />
+                    ) : (
+                      <AssistantMessage
+                        jobs={msg.jobs}
+                        taskState={taskState}
+                        isLatest={index === list.length - 1}
+                      />
+                    )}
+                  </div>
+                ))}
+                {showFeedback && taskState === "completed" && (
+                  <NodeFeedback className={styles.feedback} />
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className={styles["loading-icon"]}>
+              <WrappedIcon
+                lib="antd"
+                theme="outlined"
+                icon="loading-3-quarters"
+                spinning
+              />
+            </div>
+          )}
+          {replay || supports?.chat ? (
+            <div className={styles.footer}>
+              <div className={styles.narrow}>
+                {replay ? (
+                  <ReplayToolbar
+                    taskDone={taskDone}
+                    skipToResults={skipToResults}
+                    watchAgain={watchAgain}
+                  />
+                ) : (
+                  <ChatBox
+                    taskState={taskState}
+                    taskDone={taskDone}
+                    inputRequiredJobId={inputRequiredJobId}
+                  />
+                )}
+              </div>
+            </div>
+          ) : null}
+        </div>
+        <div
+          className={classNames(styles.aside, {
+            [styles.expanded]: !!activeToolCallJobId,
+          })}
+        >
+          {activeToolCallJobId && <Aside job={activeToolCallJob!} />}
+        </div>
+        {activeExpandedViewJobId && <ExpandedView views={views!} />}
+      </StreamContext.Provider>
     </TaskContext.Provider>
   );
 }

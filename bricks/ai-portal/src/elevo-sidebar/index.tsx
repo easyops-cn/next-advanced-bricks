@@ -3,7 +3,9 @@ import React, {
   forwardRef,
   useCallback,
   useEffect,
+  useImperativeHandle,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { createDecorators, type EventEmitter } from "@next-core/element";
@@ -59,6 +61,10 @@ export interface SidebarLink {
 
 const ElevoSidebarComponent = forwardRef(LegacyElevoSidebarComponent);
 
+interface ElevoSidebarRef extends ChatHistoryRef {
+  close: () => void;
+}
+
 /**
  * 构件 `ai-portal.elevo-sidebar`
  */
@@ -105,17 +111,22 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
     this.#actionClick.emit(detail);
   };
 
-  #ref = createRef<ChatHistoryRef>();
+  #ref = createRef<ElevoSidebarRef>();
 
   /**
    * @param delay Delay in milliseconds before pulling the latest chat history.
    */
   @method()
   pullHistory(delay: number) {
-    // Wait 3 seconds to let the task title to be summarized.
+    // Wait several seconds to let the task title to be summarized.
     setTimeout(() => {
       this.#ref.current?.pull();
     }, delay);
+  }
+
+  @method()
+  close() {
+    this.#ref.current?.close();
   }
 
   render() {
@@ -155,7 +166,7 @@ function LegacyElevoSidebarComponent(
     onLogout,
     onActionClick,
   }: ElevoSidebarComponentProps,
-  ref: React.Ref<ChatHistoryRef>
+  ref: React.Ref<ElevoSidebarRef>
 ) {
   const [collapsed, setCollapsed] = useState(behavior === "drawer");
   const handleCollapse = useCallback(() => {
@@ -204,6 +215,21 @@ function LegacyElevoSidebarComponent(
     []
   );
 
+  const historyRef = useRef<ChatHistoryRef>(null);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      close: () => {
+        setCollapsed(true);
+      },
+      pull: () => {
+        historyRef.current?.pull();
+      },
+    }),
+    []
+  );
+
   return (
     <div className={classNames("container", { collapsed })}>
       {behavior === "drawer" && !collapsed && (
@@ -245,7 +271,7 @@ function LegacyElevoSidebarComponent(
           </div>
         ) : null}
         <ChatHistory
-          ref={ref}
+          ref={historyRef}
           activeId={historyActiveId}
           urlTemplate={historyUrlTemplate}
           actions={historyActions}

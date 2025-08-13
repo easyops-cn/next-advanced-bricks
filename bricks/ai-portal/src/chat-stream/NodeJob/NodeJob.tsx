@@ -18,6 +18,7 @@ import { HumanAdjustPlanResult } from "../HumanAdjustPlanResult/HumanAdjustPlanR
 import { HumanAdjustPlan } from "../../shared/HumanAdjustPlan/HumanAdjustPlan.js";
 import { NodeView } from "../NodeView/NodeView.js";
 import { TaskContext } from "../../shared/TaskContext.js";
+import { StreamContext } from "../StreamContext.js";
 
 export interface NodeJobProps {
   job: Job;
@@ -48,6 +49,7 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
     askUserPlan;
   const showToolCall = !!toolCall && !generalAskUser;
   const { setActiveToolCallJobId } = useContext(TaskContext);
+  const { lastToolCallJobId, setUserClosedAside } = useContext(StreamContext);
 
   const { className, icon } = useMemo(() => {
     return getClassNameAndIconProps(job.state, taskState);
@@ -162,6 +164,9 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
               className={styles.tool}
               onClick={() => {
                 setActiveToolCallJobId(job.id);
+                if (job.id === lastToolCallJobId) {
+                  setUserClosedAside(false);
+                }
               }}
             >
               {toolTitle}

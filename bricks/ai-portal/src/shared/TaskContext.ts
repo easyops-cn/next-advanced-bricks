@@ -1,4 +1,5 @@
 import { createContext, type Dispatch } from "react";
+import type { FeedbackDetail } from "../cruise-canvas/interfaces";
 
 export interface TaskContextValue {
   humanInput: (jobId: string, input: string) => void;
@@ -12,6 +13,11 @@ export interface TaskContextValue {
   setActiveExpandedViewJobId: Dispatch<React.SetStateAction<string | null>>;
   activeToolCallJobId: string | null;
   setActiveToolCallJobId: Dispatch<React.SetStateAction<string | null>>;
+
+  submittingFeedback: boolean;
+  submittedFeedback: boolean;
+  onSubmitFeedback: (detail: FeedbackDetail) => void;
+  setShowFeedback: Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const TaskContext = createContext<TaskContextValue>({
@@ -24,4 +30,8 @@ export const TaskContext = createContext<TaskContextValue>({
   setActiveExpandedViewJobId: () => {},
   activeToolCallJobId: null,
   setActiveToolCallJobId: () => {},
+  submittingFeedback: false,
+  submittedFeedback: false,
+  onSubmitFeedback: () => {},
+  setShowFeedback: () => {},
 });
