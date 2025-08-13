@@ -9,7 +9,7 @@ const en: Locale = {
 };
 
 const zh: Locale = {
-  AI_EMPLOYEES: "AI 数字人",
+  AI_EMPLOYEES: "Ai 数字人",
 };
 
 export const NS = "bricks/ai-portal/ai-employees";

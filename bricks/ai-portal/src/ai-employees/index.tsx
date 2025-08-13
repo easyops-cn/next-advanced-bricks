@@ -98,6 +98,8 @@ function AIEmployeesComponent({
     return [...map.entries()];
   }, [activeIndustry, list]);
 
+  const industryIndex = industries.indexOf(activeIndustry);
+
   return (
     <div className="container">
       <h1>{t(K.AI_EMPLOYEES)}</h1>
@@ -114,15 +116,22 @@ function AIEmployeesComponent({
         ))}
       </ul>
       <ul className="groups">
-        {groups?.map(([groupName, items]) => (
+        {groups.map(([groupName, items], groupIndex) => (
           <li key={groupName} className="group">
             <h2>{groupName}</h2>
             <ul className="list">
               {items.map((item, index) => (
-                <li key={item.name} className="item">
+                <li key={index} className="item">
                   <div className="heading">
                     <div className="avatar">
-                      <img src={AVATARS[index % AVATARS.length]} />
+                      <img
+                        src={
+                          AVATARS[
+                            (index + groupIndex + industryIndex) %
+                              AVATARS.length
+                          ]
+                        }
+                      />
                     </div>
                     <div className="title">{item.name}</div>
                   </div>
