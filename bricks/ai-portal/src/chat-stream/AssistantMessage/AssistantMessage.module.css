@@ -8,7 +8,12 @@
   padding: 3px 0 3px 16px;
 }
 
+.texting {
+  position: relative;
+}
+
 .texting::after {
+  position: absolute;
   content: "   ";
   animation: texting 2s infinite;
   white-space: pre;

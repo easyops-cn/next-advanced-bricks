@@ -9,7 +9,11 @@ export function useChatStream(
 ) {
   return useMemo(() => {
     if (!task) {
-      return {};
+      return {
+        messages: [],
+        inputRequiredJobId: null,
+        lastToolCallJobId: null,
+      };
     }
 
     const messages: ChatMessage[] = [
@@ -26,8 +30,13 @@ export function useChatStream(
       jobs: [],
     };
     let inputRequiredJobId: string | null = null;
+    let lastToolCallJobId: string | null = null;
     for (const jobId of list) {
       const job = jobMap.get(jobId)!;
+
+      if (job.toolCall) {
+        lastToolCallJobId = jobId;
+      }
 
       if (
         job.state === "completed" &&
@@ -92,6 +101,6 @@ export function useChatStream(
 
     messages.push(prevAssistantMessage);
 
-    return { messages, inputRequiredJobId };
+    return { messages, inputRequiredJobId, lastToolCallJobId };
   }, [task, jobs]);
 }

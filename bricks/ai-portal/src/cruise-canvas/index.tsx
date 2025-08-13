@@ -65,7 +65,7 @@ import { Nav } from "./Nav/Nav.js";
 import { ReplayToolbar } from "../shared/ReplayToolbar/ReplayToolbar.js";
 import { ChatBox } from "../shared/ChatBox/ChatBox.js";
 import { FilePreview } from "./FilePreview/FilePreview.js";
-import { NodeFeedback } from "./NodeFeedback/NodeFeedback.js";
+import { NodeFeedback } from "../shared/NodeFeedback/NodeFeedback.js";
 import { TaskContext } from "../shared/TaskContext.js";
 import { NodeLoading } from "./NodeLoading/NodeLoading.js";
 
@@ -84,6 +84,7 @@ export interface CruiseCanvasProps {
   supports?: Record<string, boolean>;
   showHiddenJobs?: boolean;
   showFeedback?: boolean;
+  showUiSwitch?: boolean;
 }
 
 const CruiseCanvasComponent = forwardRef(LegacyCruiseCanvasComponent);
@@ -127,6 +128,9 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
   @property({ type: Boolean })
   accessor showFeedback: boolean | undefined;
 
+  @property({ type: Boolean })
+  accessor showUiSwitch: boolean | undefined;
+
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
 
@@ -162,6 +166,13 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
     this.#feedbackSubmitEvent.emit(detail);
   };
 
+  @event({ type: "ui.switch" })
+  accessor #switch!: EventEmitter<"chat">;
+
+  #onSwitchToChat = () => {
+    this.#switch.emit("chat");
+  };
+
   #ref = createRef<CruiseCanvasRef>();
 
   @method()
@@ -190,11 +201,13 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         supports={this.supports}
         showHiddenJobs={this.showHiddenJobs}
         showFeedback={this.showFeedback}
+        showUiSwitch={this.showUiSwitch}
         onShare={this.#onShare}
         onPause={this.#onPause}
         onResume={this.#onResume}
         onCancel={this.#onCancel}
         onSubmitFeedback={this.#onSubmitFeedback}
+        onSwitchToChat={this.#onSwitchToChat}
         ref={this.#ref}
       />
     );
@@ -207,6 +220,7 @@ interface CruiseCanvasComponentProps extends CruiseCanvasProps {
   onResume: () => void;
   onCancel: () => void;
   onSubmitFeedback: (detail: FeedbackDetail) => void;
+  onSwitchToChat: () => void;
 }
 
 interface ScrollToOptions {
@@ -242,11 +256,13 @@ function LegacyCruiseCanvasComponent(
     supports,
     showHiddenJobs,
     showFeedback: propShowFeedback,
+    showUiSwitch,
     onShare,
     onPause,
     onResume,
     onCancel,
     onSubmitFeedback,
+    onSwitchToChat,
   }: CruiseCanvasComponentProps,
   ref: React.Ref<CruiseCanvasRef>
 ) {
@@ -680,10 +696,16 @@ function LegacyCruiseCanvasComponent(
       onResume,
       onCancel,
       supports,
+
       activeExpandedViewJobId,
       setActiveExpandedViewJobId,
       activeToolCallJobId,
       setActiveToolCallJobId,
+
+      submittingFeedback,
+      submittedFeedback,
+      onSubmitFeedback: handleSubmitFeedback,
+      setShowFeedback,
     }),
     [
       humanInput,
@@ -692,30 +714,25 @@ function LegacyCruiseCanvasComponent(
       onResume,
       onShare,
       supports,
+
       activeExpandedViewJobId,
       activeToolCallJobId,
+
+      submittingFeedback,
+      submittedFeedback,
+      handleSubmitFeedback,
     ]
   );
 
   const canvasContextValue = useMemo(
     () => ({
       onNodeResize,
-      onSubmitFeedback: handleSubmitFeedback,
       setActiveNodeId,
       hoverOnScrollableContent,
       setHoverOnScrollableContent,
       setActiveFile,
-      setShowFeedback,
-      submittingFeedback,
-      submittedFeedback,
     }),
-    [
-      hoverOnScrollableContent,
-      onNodeResize,
-      handleSubmitFeedback,
-      submittingFeedback,
-      submittedFeedback,
-    ]
+    [hoverOnScrollableContent, onNodeResize]
   );
 
   const activeToolCallJob = useMemo(() => {
@@ -901,8 +918,10 @@ function LegacyCruiseCanvasComponent(
           />
           <ZoomBar
             scale={transform.k}
+            showUiSwitch={showUiSwitch}
             onScaleChange={handleScaleChange}
             onReCenter={handleReCenter}
+            onSwitchToChat={onSwitchToChat}
           />
           {replay ? (
             <div className={styles["footer-container"]}>

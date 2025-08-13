@@ -17,3 +17,13 @@ export const ICON_LOADING: GeneralIconProps = {
   icon: "loading-3-quarters",
   spinning: true,
 };
+
+export const ICON_CANVAS: GeneralIconProps = {
+  lib: "antd",
+  icon: "partition",
+};
+
+export const ICON_CHAT: GeneralIconProps = {
+  lib: "antd",
+  icon: "message",
+};
