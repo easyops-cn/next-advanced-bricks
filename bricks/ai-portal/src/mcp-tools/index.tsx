@@ -105,8 +105,8 @@ function McpToolsComponent({ list }: McpToolsProps) {
           <li key={groupName} className="group">
             <h2>{groupName}</h2>
             <ul className="list">
-              {items.map((item) => (
-                <li key={item.name} className="item">
+              {items.map((item, index) => (
+                <li key={index} className="item">
                   <div className="heading">
                     <WrappedIcon
                       className="icon"
