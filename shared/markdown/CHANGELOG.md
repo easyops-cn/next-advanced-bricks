@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/markdown@0.6.1...@next-shared/markdown@0.6.2) (2025-08-13)
+
+
+### Bug Fixes
+
+* register language jsx/mermaid ([5af9921](https://github.com/easyops-cn/next-advanced-bricks/commit/5af9921d9b5f6de5beb0392aa826cb2801d73002))
+
+
+
+
+
 ## [0.6.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/markdown@0.6.0...@next-shared/markdown@0.6.1) (2025-07-29)
 
 
