@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.24.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.23.1...@next-bricks/ai-portal@0.24.0) (2025-08-13)
+
+
+### Features
+
+* new brick: ai-agents ([0e4f4fb](https://github.com/easyops-cn/next-advanced-bricks/commit/0e4f4fbcff92e8300e0ca214e274a7ecb0efd3a9))
+
+
+
+
+
 ## [0.23.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.23.0...@next-bricks/ai-portal@0.23.1) (2025-08-13)
 
 
