@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.25.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.25.0...@next-bricks/ai-portal@0.25.1) (2025-08-14)
+
+
+### Bug Fixes
+
+* support hiding mermaid ([2c065b0](https://github.com/easyops-cn/next-advanced-bricks/commit/2c065b0902303459db80c9b749aaaaf168df635f))
+
+
+
+
+
 # [0.25.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.24.0...@next-bricks/ai-portal@0.25.0) (2025-08-13)
 
 

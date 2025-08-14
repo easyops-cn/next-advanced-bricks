@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/markdown@0.6.2...@next-shared/markdown@0.6.3) (2025-08-14)
+
+
+### Bug Fixes
+
+* handle mermaid syntax error ([6b5a48e](https://github.com/easyops-cn/next-advanced-bricks/commit/6b5a48e476ffe2dfa2b55b934ac64f1f26be4812))
+
+
+
+
+
 ## [0.6.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/markdown@0.6.1...@next-shared/markdown@0.6.2) (2025-08-13)
 
 
