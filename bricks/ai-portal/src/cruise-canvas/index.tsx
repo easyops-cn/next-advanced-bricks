@@ -131,6 +131,9 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
   @property({ type: Boolean })
   accessor showUiSwitch: boolean | undefined;
 
+  @property({ type: Boolean, render: false })
+  accessor hideMermaid: boolean | undefined;
+
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
 
