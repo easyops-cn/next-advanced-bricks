@@ -73,6 +73,7 @@ export interface EoWorkbenchLayoutV2ComponentRef {
 
 export interface EoWorkbenchLayoutV2ComponentProps
   extends EoWorkbenchLayoutV2Props {
+  gap?: number;
   onChange?: (layout: ExtraLayout[]) => void;
   onSave?: (layout: ExtraLayout[]) => void;
   onCancel?: () => void;
@@ -101,6 +102,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     onCancel,
     onActionClick,
     onSetting,
+    gap,
   },
   ref
 ) {
@@ -274,7 +276,8 @@ export const EoWorkbenchLayoutComponent = forwardRef<
   const handleResize = useCallback(
     (i: string, contentHeight: number) => {
       const newH = Math.ceil(
-        (contentHeight + MARGIN_HEIGHT) / (MARGIN_HEIGHT + ROW_HEIGHT)
+        (contentHeight + (gap ?? MARGIN_HEIGHT)) /
+          ((gap ?? MARGIN_HEIGHT) + ROW_HEIGHT)
       );
       const oldLayout = layouts.find((layout: ExtraLayout) => layout.i === i);
 
@@ -288,7 +291,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
         handleChange(newLayouts);
       }
     },
-    [layouts, handleChange]
+    [layouts, handleChange, gap]
   );
 
   const renderChild = useMemo(() => {
@@ -446,7 +449,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
           isDraggable={isEdit}
           isDroppable={isEdit}
           compactType="vertical"
-          margin={[MARGIN_WIDTH, MARGIN_HEIGHT]}
+          margin={[gap ?? MARGIN_WIDTH, gap ?? MARGIN_HEIGHT]}
           // onDrag={handleDragCallback}
           useCSSTransforms={false}
           onDropDragOver={() => {
@@ -496,13 +499,21 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
    * 自定义卡片默认配置, 用于覆盖默认卡片配置
    */
   @property({ attribute: false })
-  accessor customDefaultCardConfigMap: Record<string, CardStyleConfig> | undefined;
+  accessor customDefaultCardConfigMap:
+    | Record<string, CardStyleConfig>
+    | undefined;
 
   /**
    * description: 用于设置页面样式和布局的按钮
    */
   @property({ type: Boolean })
   accessor showSettingButton: boolean | undefined;
+
+  /**
+   * description: 卡片间隔
+   */
+  @property({ type: Number })
+  accessor gap: number | undefined;
 
   @event({ type: "change" })
   accessor #changeEvent!: EventEmitter<ExtraLayout[]>;
@@ -569,6 +580,7 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
       <EoWorkbenchLayoutComponent
         cardTitle={this.cardTitle}
         layouts={this.layouts}
+        gap={this.gap}
         toolbarBricks={this.toolbarBricks}
         componentList={this.componentList}
         showSettingButton={this.showSettingButton}
