@@ -74,6 +74,7 @@
     "@next-bricks/basic": "*",
     "@next-bricks/diagram": "*",
     "@next-bricks/mini-chart": "*",
-    "@next-bricks/presentational": "*"
+    "@next-bricks/presentational": "*",
+    "@next-bricks/vs": "*"
   }
 }

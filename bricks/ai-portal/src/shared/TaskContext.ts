@@ -1,5 +1,6 @@
 import { createContext, type Dispatch } from "react";
-import type { FeedbackDetail } from "../cruise-canvas/interfaces";
+import type { ConstructResult } from "@next-shared/jsx-storyboard";
+import type { FeedbackDetail, Job } from "../cruise-canvas/interfaces";
 
 export interface TaskContextValue {
   humanInput: (jobId: string, input: string) => void;
@@ -18,6 +19,12 @@ export interface TaskContextValue {
   submittedFeedback: boolean;
   onSubmitFeedback: (detail: FeedbackDetail) => void;
   setShowFeedback: Dispatch<React.SetStateAction<boolean>>;
+
+  showJsxEditor?: boolean;
+  activeJsxEditorJob?: Job;
+  setActiveJsxEditorJob?: Dispatch<React.SetStateAction<Job | undefined>>;
+  manuallyUpdatedViews?: Map<string, ConstructResult>;
+  updateView?: (jobId: string, view: ConstructResult) => void;
 }
 
 export const TaskContext = createContext<TaskContextValue>({

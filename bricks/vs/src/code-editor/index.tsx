@@ -186,6 +186,7 @@ export interface CodeEditorProps {
   spellCheck?: boolean;
   knownWords?: string[];
   domLibsEnabled?: boolean;
+  uri?: string;
 }
 
 export interface Marker {
@@ -380,6 +381,9 @@ class CodeEditor extends FormItemElementBase implements CodeEditorProps {
   @property({ type: Boolean })
   accessor domLibsEnabled: boolean | undefined;
 
+  @property()
+  accessor uri: string | undefined;
+
   @event({ type: "code.change" })
   accessor #codeChange!: EventEmitter<string>;
 
@@ -466,6 +470,7 @@ class CodeEditor extends FormItemElementBase implements CodeEditorProps {
           spellCheck={this.spellCheck}
           knownWords={this.knownWords}
           domLibsEnabled={this.domLibsEnabled}
+          uri={this.uri}
         />
       </WrappedFormItem>
     );
@@ -501,6 +506,7 @@ export function CodeEditorComponent({
   spellCheck: _spellCheck,
   knownWords,
   domLibsEnabled,
+  uri,
 }: CodeEditorProps & {
   onChange(value: string): void;
   onUserInput: (value: any) => void;
@@ -697,7 +703,11 @@ export function CodeEditorComponent({
     if (editorRef.current || !containerRef.current) {
       return;
     }
-    const model = monaco.editor.createModel(value, language);
+    const model = monaco.editor.createModel(
+      value,
+      language,
+      uri ? monaco.Uri.parse(uri) : undefined
+    );
     if (language === "brick_next_yaml") {
       // 注册嵌套的 model， language 为 js
       const uri = getEmbeddedJavascriptUri(model.uri);

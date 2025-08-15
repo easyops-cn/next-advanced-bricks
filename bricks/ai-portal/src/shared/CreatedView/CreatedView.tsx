@@ -34,12 +34,17 @@ export function CreatedView({
   onSizeChange,
 }: CreatedViewProps): JSX.Element {
   const rootId = useMemo(() => uniqueId(), []);
-  const { setActiveExpandedViewJobId } = useContext(TaskContext);
+  const {
+    showJsxEditor,
+    setActiveExpandedViewJobId,
+    setActiveJsxEditorJob,
+    manuallyUpdatedViews,
+  } = useContext(TaskContext);
   const ref = useRef<HTMLDivElement>(null);
   const rootRef = useRef<Awaited<
     ReturnType<typeof unstable_createRoot>
   > | null>(null);
-  const view = job.generatedView!;
+  const view = manuallyUpdatedViews?.get(job.id) ?? job.generatedView!;
 
   useEffect(() => {
     const container = ref.current;
@@ -142,13 +147,25 @@ export function CreatedView({
         >
           {view.title}
         </div>
-        <button
-          className={styles.expand}
-          title={t(K.FULLSCREEN)}
-          onClick={handleExpandClick}
-        >
-          <WrappedIcon lib="easyops" icon="expand" />
-        </button>
+        <div className={styles.buttons}>
+          {showJsxEditor && isJsxView(view) && (
+            <button
+              className={styles.button}
+              onClick={() => {
+                setActiveJsxEditorJob?.(job);
+              }}
+            >
+              <WrappedIcon lib="antd" icon="bug" />
+            </button>
+          )}
+          <button
+            className={styles.button}
+            title={t(K.FULLSCREEN)}
+            onClick={handleExpandClick}
+          >
+            <WrappedIcon lib="easyops" icon="expand" />
+          </button>
+        </div>
       </div>
       <div data-root-id={rootId} ref={ref} />
     </div>
