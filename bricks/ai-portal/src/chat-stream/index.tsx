@@ -354,6 +354,7 @@ function LegacyChatStreamComponent(
   const detectScrolledUpRef = useRef(false);
   const manualScrolledRef = useRef(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [scrollable, setScrollable] = useState(false);
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
@@ -363,6 +364,10 @@ function LegacyChatStreamComponent(
     }
 
     const handleScroll = () => {
+      setScrollable(
+        scrollContainer.scrollTop + scrollContainer.clientHeight! + 24 <
+          scrollContainer.scrollHeight
+      );
       if (!detectScrolledUpRef.current) {
         return;
       }
@@ -395,6 +400,14 @@ function LegacyChatStreamComponent(
       scrollContainer.removeEventListener("scroll", handleScroll);
     };
   }, [taskAvailable]);
+
+  const scrollToBottom = useCallback(() => {
+    const scrollContainer = scrollContainerRef.current;
+    scrollContainer?.scrollTo({
+      top: scrollContainer?.scrollHeight,
+      behavior: "instant",
+    });
+  }, []);
 
   const activeToolCallJob = useMemo(() => {
     if (!activeToolCallJobId) {
@@ -429,26 +442,35 @@ function LegacyChatStreamComponent(
             </div>
           </div>
           {taskAvailable ? (
-            <div className={styles.main} ref={scrollContainerRef}>
-              <div className={styles.narrow}>
-                {messages.map((msg, index, list) => (
-                  <div className={styles.message} key={index}>
-                    {msg.role === "user" ? (
-                      <UserMessage content={msg.content} />
-                    ) : (
-                      <AssistantMessage
-                        jobs={msg.jobs}
-                        taskState={taskState}
-                        isLatest={index === list.length - 1}
-                      />
-                    )}
-                  </div>
-                ))}
-                {showFeedback && taskState === "completed" && (
-                  <NodeFeedback className={styles.feedback} />
-                )}
+            <>
+              <div className={styles.main} ref={scrollContainerRef}>
+                <div className={styles.narrow}>
+                  {messages.map((msg, index, list) => (
+                    <div className={styles.message} key={index}>
+                      {msg.role === "user" ? (
+                        <UserMessage content={msg.content} />
+                      ) : (
+                        <AssistantMessage
+                          jobs={msg.jobs}
+                          taskState={taskState}
+                          isLatest={index === list.length - 1}
+                        />
+                      )}
+                    </div>
+                  ))}
+                  {showFeedback && taskState === "completed" && (
+                    <NodeFeedback className={styles.feedback} />
+                  )}
+                </div>
               </div>
-            </div>
+              <div
+                className={styles["scroll-down"]}
+                hidden={!scrollable}
+                onClick={scrollToBottom}
+              >
+                <WrappedIcon lib="antd" icon="down" />
+              </div>
+            </>
           ) : (
             <div className={styles["loading-icon"]}>
               <WrappedIcon
