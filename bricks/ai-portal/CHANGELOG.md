@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.25.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.25.1...@next-bricks/ai-portal@0.25.2) (2025-08-15)
+
+
+### Bug Fixes
+
+* **chat-stream:** add scroll down button ([3928711](https://github.com/easyops-cn/next-advanced-bricks/commit/3928711c48adc453dcae08122ba4b952f2f232da))
+
+
+
+
+
 ## [0.25.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.25.0...@next-bricks/ai-portal@0.25.1) (2025-08-14)
 
 
