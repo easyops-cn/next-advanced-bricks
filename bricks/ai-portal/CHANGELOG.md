@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.26.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.25.2...@next-bricks/ai-portal@0.26.0) (2025-08-15)
+
+
+### Features
+
+* jsx editor ([c5e97e6](https://github.com/easyops-cn/next-advanced-bricks/commit/c5e97e63c632b7fd122d3a8b89ee2be07f695000))
+
+
+
+
+
 ## [0.25.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.25.1...@next-bricks/ai-portal@0.25.2) (2025-08-15)
 
 

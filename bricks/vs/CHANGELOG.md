@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.10](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.16.9...@next-bricks/vs@1.16.10) (2025-08-15)
+
+
+### Bug Fixes
+
+* new prop: uri ([6f4eb23](https://github.com/easyops-cn/next-advanced-bricks/commit/6f4eb23ffe4f4fdda28ecea5dff16429727e30aa))
+
+
+
+
+
 ## [1.16.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.16.8...@next-bricks/vs@1.16.9) (2025-07-10)
 
 **Note:** Version bump only for package @next-bricks/vs
