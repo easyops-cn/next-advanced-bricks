@@ -1,0 +1,49 @@
+.container {
+  position: fixed;
+  inset: 0;
+  padding: 20px;
+  background-color: var(--mask-bg);
+}
+
+.editor {
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #ffffff;
+  box-shadow: 1px 1px 10px 0px rgba(0, 10, 26, 0.1);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 0 20px;
+}
+
+.title {
+  font-weight: 500;
+  font-size: 16px;
+  color: #262626;
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  height: 100%;
+}
+
+.footer {
+  padding: 12px 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+}

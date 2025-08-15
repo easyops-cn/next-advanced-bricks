@@ -5,6 +5,12 @@
   margin-bottom: 16px;
 }
 
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .title {
   font-size: 12px;
   min-width: 0;
@@ -23,7 +29,7 @@ ai-portal\.cruise-canvas .heading {
   margin-bottom: 10px;
 }
 
-.expand {
+.button {
   display: flex;
   background: none;
   border: none;
@@ -32,6 +38,6 @@ ai-portal\.cruise-canvas .heading {
   color: #595959;
 }
 
-.expand:hover {
+.button:hover {
   color: var(--elevo-color-brand);
 }

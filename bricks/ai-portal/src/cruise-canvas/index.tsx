@@ -21,6 +21,7 @@ import ResizeObserver from "resize-observer-polyfill";
 import { select, type Selection, type TransitionLike } from "d3-selection";
 import { ZoomTransform } from "d3-zoom";
 import { mergeRects } from "@next-shared/diagram";
+import type { ConstructResult } from "@next-shared/jsx-storyboard";
 import { NS, locales } from "./i18n.js";
 import styles from "./styles.module.css";
 import { useZoom } from "./useZoom.js";
@@ -68,6 +69,7 @@ import { FilePreview } from "./FilePreview/FilePreview.js";
 import { NodeFeedback } from "../shared/NodeFeedback/NodeFeedback.js";
 import { TaskContext } from "../shared/TaskContext.js";
 import { NodeLoading } from "./NodeLoading/NodeLoading.js";
+import { JsxEditor } from "../shared/JsxEditor/JsxEditor.js";
 
 initializeI18n(NS, locales);
 
@@ -85,6 +87,7 @@ export interface CruiseCanvasProps {
   showHiddenJobs?: boolean;
   showFeedback?: boolean;
   showUiSwitch?: boolean;
+  showJsxEditor?: boolean;
 }
 
 const CruiseCanvasComponent = forwardRef(LegacyCruiseCanvasComponent);
@@ -133,6 +136,9 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
 
   @property({ type: Boolean, render: false })
   accessor hideMermaid: boolean | undefined;
+
+  @property({ type: Boolean })
+  accessor showJsxEditor: boolean | undefined;
 
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
@@ -205,6 +211,7 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         showHiddenJobs={this.showHiddenJobs}
         showFeedback={this.showFeedback}
         showUiSwitch={this.showUiSwitch}
+        showJsxEditor={this.showJsxEditor}
         onShare={this.#onShare}
         onPause={this.#onPause}
         onResume={this.#onResume}
@@ -260,6 +267,7 @@ function LegacyCruiseCanvasComponent(
     showHiddenJobs,
     showFeedback: propShowFeedback,
     showUiSwitch,
+    showJsxEditor,
     onShare,
     onPause,
     onResume,
@@ -688,8 +696,20 @@ function LegacyCruiseCanvasComponent(
   const [activeExpandedViewJobId, setActiveExpandedViewJobId] = useState<
     string | null
   >(null);
-
   const [activeFile, setActiveFile] = React.useState<FileInfo | null>(null);
+  const [activeJsxEditorJob, setActiveJsxEditorJob] = useState<
+    Job | undefined
+  >();
+  const [manuallyUpdatedViews, setManuallyUpdatedViews] = useState<
+    Map<string, ConstructResult> | undefined
+  >();
+  const updateView = useCallback((jobId: string, view: ConstructResult) => {
+    setManuallyUpdatedViews((prev) => {
+      const next = new Map(prev);
+      next.set(jobId, view);
+      return next;
+    });
+  }, []);
 
   const taskContextValue = useMemo(
     () => ({
@@ -709,6 +729,12 @@ function LegacyCruiseCanvasComponent(
       submittedFeedback,
       onSubmitFeedback: handleSubmitFeedback,
       setShowFeedback,
+
+      showJsxEditor,
+      activeJsxEditorJob,
+      setActiveJsxEditorJob,
+      manuallyUpdatedViews,
+      updateView,
     }),
     [
       humanInput,
@@ -724,6 +750,11 @@ function LegacyCruiseCanvasComponent(
       submittingFeedback,
       submittedFeedback,
       handleSubmitFeedback,
+
+      showJsxEditor,
+      activeJsxEditorJob,
+      manuallyUpdatedViews,
+      updateView,
     ]
   );
 
@@ -946,6 +977,7 @@ function LegacyCruiseCanvasComponent(
         {activeToolCallJob && <ToolCallDetail job={activeToolCallJob} />}
         {activeExpandedViewJobId && <ExpandedView views={views!} />}
         {activeFile && <FilePreview file={activeFile} />}
+        {showJsxEditor && activeJsxEditorJob && <JsxEditor />}
       </CanvasContext.Provider>
     </TaskContext.Provider>
   );
