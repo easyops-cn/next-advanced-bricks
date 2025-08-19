@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.26.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.26.0...@next-bricks/ai-portal@0.26.1) (2025-08-19)
+
+
+### Bug Fixes
+
+* update logo, fix sidebar alt icon layer issue ([70bfd74](https://github.com/easyops-cn/next-advanced-bricks/commit/70bfd74c10c3b962f7507069d5c636ef6d59caef))
+
+
+
+
+
 # [0.26.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.25.2...@next-bricks/ai-portal@0.26.0) (2025-08-15)
 
 
