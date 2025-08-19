@@ -1,8 +1,13 @@
 import * as t from "@babel/types";
 import type z from "zod";
-import type { ConstructResult, Events } from "../interfaces.js";
+import type {
+  ConstructResult,
+  Events,
+  EventHandler as TypeEventHandler,
+  TypeEventHandlerOfCallAPI,
+} from "../interfaces.js";
 import { constructJsValue } from "./values.js";
-import { EventHandler, type EventHandlerOfCallAPI } from "../schemas.js";
+import { EventHandler } from "../schemas.js";
 
 export function constructEvents(node: t.Expression, result: ConstructResult) {
   if (!t.isObjectExpression(node)) {
@@ -48,7 +53,7 @@ export function constructEvents(node: t.Expression, result: ConstructResult) {
     }
 
     if (t.isArrayExpression(prop.value)) {
-      const handlers: z.infer<typeof EventHandler>[] = [];
+      const handlers: TypeEventHandler[] = [];
       for (const elem of prop.value.elements) {
         if (elem === null) {
           result.errors.push({
@@ -141,7 +146,7 @@ export function constructEventHandler(
   let ambiguousParams: unknown;
   if (
     handler.action === "call_api" &&
-    (handler as z.infer<typeof EventHandlerOfCallAPI>).payload?.api &&
+    (handler as unknown as TypeEventHandlerOfCallAPI).payload?.api &&
     payloadProp
   ) {
     if (t.isObjectExpression(payloadProp)) {
@@ -162,7 +167,6 @@ export function constructEventHandler(
             },
             {
               allowExpression: true,
-              disallowArrowFunction: true,
               ambiguous: true,
             }
           );
@@ -171,7 +175,13 @@ export function constructEventHandler(
     }
   }
 
-  const parsedHandler = EventHandler.safeParse(handler);
+  const parsedHandler = (
+    EventHandler as unknown as {
+      safeParse: (
+        data: unknown
+      ) => z.ZodSafeParseResult<TypeEventHandlerOfCallAPI>;
+    }
+  ).safeParse(handler);
   if (parsedHandler.success) {
     const result = parsedHandler.data;
 

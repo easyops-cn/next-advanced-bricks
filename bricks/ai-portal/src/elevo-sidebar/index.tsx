@@ -235,6 +235,21 @@ function LegacyElevoSidebarComponent(
       {behavior === "drawer" && !collapsed && (
         <div className="mask" onClick={handleClickMask} />
       )}
+      <div className="alternative">
+        <WrappedIconButton
+          icon={SIDEBAR_ICON}
+          variant="light"
+          onClick={handleExpand}
+        />
+        <WrappedLink className="new-chat" url={newChatUrl}>
+          <WrappedIcon
+            className="new-chat-icon"
+            lib="easyops"
+            icon="new-chat"
+          />
+          {t(K.NEW_CHAT)}
+        </WrappedLink>
+      </div>
       <div className="sidebar">
         <div className="logo-bar">
           <WrappedLink url={logoUrl} className="logo-link">
@@ -243,7 +258,7 @@ function LegacyElevoSidebarComponent(
               alt="Elevo"
               src={ElevoLogo}
               width={95}
-              height={26}
+              height={28}
             />
           </WrappedLink>
           <WrappedIconButton
@@ -304,21 +319,6 @@ function LegacyElevoSidebarComponent(
             </button>
           </WrappedDropdownActions>
         </div>
-      </div>
-      <div className="alternative">
-        <WrappedIconButton
-          icon={SIDEBAR_ICON}
-          variant="light"
-          onClick={handleExpand}
-        />
-        <WrappedLink className="new-chat" url={newChatUrl}>
-          <WrappedIcon
-            className="new-chat-icon"
-            lib="easyops"
-            icon="new-chat"
-          />
-          {t(K.NEW_CHAT)}
-        </WrappedLink>
       </div>
     </div>
   );

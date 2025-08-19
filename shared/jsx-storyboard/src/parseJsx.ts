@@ -11,7 +11,7 @@ import type {
 } from "./interfaces.js";
 import { constructJsValue } from "./constructors/values.js";
 import { constructView } from "./constructors/view.js";
-import { isExpressionString } from "./utils.js";
+import { isExpressionString, isNilNode } from "./utils.js";
 
 export function parseJsx(source: string, options?: ParseJsxOptions) {
   const dataSources: DataSource[] = [];
@@ -20,6 +20,8 @@ export function parseJsx(source: string, options?: ParseJsxOptions) {
   const errors: ParseError[] = [];
   let title: string | undefined;
   const componentsMap = new Map<string, Component>();
+  const contexts: string[] = [];
+  const contracts = new Set<string>();
   const result: ConstructResult = {
     source,
     title,
@@ -28,6 +30,8 @@ export function parseJsx(source: string, options?: ParseJsxOptions) {
     components,
     componentsMap,
     errors,
+    contexts,
+    contracts,
   };
 
   let ast: ParseResult<t.File> | undefined;
@@ -216,7 +220,6 @@ export function parseJsx(source: string, options?: ParseJsxOptions) {
                         },
                         {
                           allowExpression: true,
-                          disallowArrowFunction: true,
                           ambiguous: true,
                         }
                       );
@@ -306,10 +309,4 @@ export function parseJsx(source: string, options?: ParseJsxOptions) {
   }
 
   return result;
-}
-
-function isNilNode(node: t.Node) {
-  return (
-    t.isNullLiteral(node) || (t.isIdentifier(node) && node.name === "undefined")
-  );
 }

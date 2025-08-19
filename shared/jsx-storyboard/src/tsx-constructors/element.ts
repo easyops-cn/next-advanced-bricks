@@ -10,10 +10,10 @@ import type {
   ParseJsxOptions,
 } from "../interfaces.js";
 import { constructJsValue, constructPropValue } from "./values.js";
-import { validateExpression } from "../utils.js";
-import { constructEvents } from "./events.js";
+import { convertJsxEventAttr, validateExpression } from "../utils.js";
+import { constructTsxEvent } from "./events.js";
 
-export function constructElement(
+export function constructTsxElement(
   node:
     | t.JSXElement
     | t.JSXText
@@ -57,11 +57,11 @@ export function constructElement(
         continue;
       }
       const attrName = attr.name.name;
-
-      if (attrName === "events") {
+      const isEventHandler = /^on[A-Z]/.test(attrName);
+      if (isEventHandler) {
         if (!t.isJSXExpressionContainer(attr.value)) {
           result.errors.push({
-            message: `"events" attribute in component expects a JSXExpressionContainer, but got ${attr.value?.type}`,
+            message: `Event handler "${attrName}" expects a JSXExpressionContainer, but got ${attr.value?.type}`,
             node: attr.value ?? attr,
             severity: "error",
           });
@@ -75,7 +75,15 @@ export function constructElement(
           });
           continue;
         }
-        events = constructEvents(attr.value.expression, result);
+        const handler = constructTsxEvent(
+          attr.value.expression,
+          result,
+          options
+        );
+        if (handler) {
+          events ??= {};
+          events[convertJsxEventAttr(attrName)] = handler;
+        }
       } else if (attrName === "componentId") {
         if (!t.isStringLiteral(attr.value)) {
           result.errors.push({
@@ -135,7 +143,7 @@ export function constructElement(
     }
 
     let rawChildren: (ChildElement | ChildMerged)[] = node.children.map(
-      (child) => constructElement(child, result, options)
+      (child) => constructTsxElement(child, result, options)
     );
     let onlyTextChildren = rawChildren.every((child) => child?.type === "text");
 
@@ -209,7 +217,7 @@ export function constructElement(
             child.type === "component"
               ? child.component
               : {
-                  name: "eo-text",
+                  name: "Plaintext",
                   properties: {
                     textContent:
                       child.type === "text"
