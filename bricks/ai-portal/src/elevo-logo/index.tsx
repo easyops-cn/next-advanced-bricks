@@ -21,5 +21,5 @@ class ElevoLogo extends ReactNextElement {
 }
 
 function ElevoLogoComponent() {
-  return <img src={logoImage} alt="Elevo" width={95} height={26} />;
+  return <img src={logoImage} alt="Elevo" width={95} height={28} />;
 }
