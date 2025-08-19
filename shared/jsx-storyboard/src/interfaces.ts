@@ -1,6 +1,4 @@
 import * as t from "@babel/types";
-import type z from "zod";
-import type { EventHandler as TypeEventHandler } from "./schemas.js";
 
 export interface Variable {
   name: string;
@@ -29,7 +27,60 @@ export interface Events {
   [key: string]: EventHandler | EventHandler[];
 }
 
-export type EventHandler = z.infer<typeof TypeEventHandler>;
+export type EventHandler =
+  | TypeEventHandlerOfUpdateVariable
+  | TypeEventHandlerOfRefreshDataSource
+  | TypeEventHandlerOfCallComponent
+  | TypeEventHandlerOfShowMessage
+  | TypeEventHandlerOfCallAPI;
+
+export interface TypeEventHandlerOfUpdateVariable {
+  action: "update_variable";
+  payload: {
+    name: string;
+    value: any;
+  };
+}
+
+export interface TypeEventHandlerOfRefreshDataSource {
+  action: "refresh_data_source";
+  payload: {
+    name: string;
+  };
+}
+
+export interface TypeEventHandlerOfCallComponent {
+  action: "call_component";
+  payload: {
+    componentId: string;
+    method: string;
+    args?: any[];
+  };
+}
+
+export interface TypeEventHandlerOfShowMessage {
+  action: "show_message";
+  payload: {
+    type: "info" | "success" | "warn" | "error";
+    content: string;
+  };
+}
+
+export interface TypeEventHandlerOfCallAPI {
+  action: "call_api";
+  payload: {
+    api: string;
+    params?: any;
+    objectId?: string;
+  };
+  callback?: TypeEventHandlerCallback;
+}
+
+export interface TypeEventHandlerCallback {
+  success?: EventHandler | EventHandler[];
+  error?: EventHandler | EventHandler[];
+  finally?: EventHandler | EventHandler[];
+}
 
 export interface ParseError {
   message: string;
@@ -61,9 +112,9 @@ export type ChildMerged = {
 
 export interface ConstructJsValueOptions {
   allowExpression?: boolean;
-  disallowArrowFunction?: boolean;
   ambiguous?: boolean;
   modifier?: string;
+  replacePatterns?: Map<string, string>;
 }
 
 export interface ConstructResult {
@@ -73,7 +124,9 @@ export interface ConstructResult {
   variables: Variable[];
   components: Component[];
   componentsMap: Map<string, Component>;
+  contracts: Set<string>;
   errors: ParseError[];
+  contexts: string[];
 }
 
 export interface ParseJsxOptions {
