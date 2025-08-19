@@ -97,10 +97,13 @@ export function CreatedView({
     if (isJsxView(view)) {
       // TODO: handle nested components
       for (const component of view.components ?? []) {
-        if (component.name === "table") {
+        if (component.name === "Table" || component.name === "eo-table") {
           return true;
         }
-        if (component.name === "dashboard") {
+        if (
+          component.name === "Dashboard" ||
+          component.name === "eo-dashboard"
+        ) {
           const widgets = component?.properties?.widgets;
           if (
             Array.isArray(widgets) &&

@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@babel/standalone": "^7.22.9",
-    "@babel/types": "^7.22.5",
+    "@babel/types": "^7.27.7",
     "@next-core/types": "^1.17.0",
     "@next-core/utils": "^1.8.2",
     "file-saver": "^2.0.5",

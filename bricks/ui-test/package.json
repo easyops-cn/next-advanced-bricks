@@ -37,7 +37,7 @@
   "dependencies": {
     "@babel/parser": "^7.22.7",
     "@babel/standalone": "^7.22.9",
-    "@babel/types": "^7.22.5",
+    "@babel/types": "^7.27.7",
     "@next-api-sdk/cmdb-sdk": "^1.1.1",
     "@next-core/element": "^1.2.18",
     "@next-core/i18n": "^1.0.81",

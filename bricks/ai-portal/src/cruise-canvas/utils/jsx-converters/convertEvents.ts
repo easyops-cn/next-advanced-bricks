@@ -9,7 +9,8 @@ export function convertEvents(
   const events: BrickEventsMap = {};
   for (const [event, handler] of Object.entries(component.events ?? {})) {
     switch (component.name) {
-      case "table":
+      case "Table":
+      case "eo-table":
         switch (event) {
           case "select": {
             const action = convertEventHandlers(handler, options);
@@ -34,7 +35,8 @@ export function convertEvents(
           }
         }
         break;
-      case "button":
+      case "Button":
+      case "eo-button":
         if (event === "click") {
           const action = convertEventHandlers(handler, options);
           if (action) {
@@ -42,24 +44,22 @@ export function convertEvents(
           }
         }
         break;
-      case "form-item":
-        switch ((component.properties as { type: string }).type) {
-          case "search":
-            if (event === "search") {
-              const action = convertEventHandlers(handler, options);
-              if (action) {
-                events.search = action;
-              }
-            }
-            break;
-          case "select":
-            if (event === "change") {
-              const action = convertEventHandlers(handler, options);
-              if (action) {
-                events["change.v2"] = action;
-              }
-            }
-            break;
+      case "Search":
+      case "eo-search":
+        if (event === "search") {
+          const action = convertEventHandlers(handler, options);
+          if (action) {
+            events.search = action;
+          }
+        }
+        break;
+      case "Select":
+      case "eo-select":
+        if (event === "change") {
+          const action = convertEventHandlers(handler, options);
+          if (action) {
+            events["change.v2"] = action;
+          }
         }
         break;
       default: {
@@ -112,7 +112,7 @@ function convertEventHandler(
         useProvider: `${api}:*`,
         params,
         callback: {
-          success,
+          ...(success && { success }),
           error: {
             action: "handleHttpError",
           },
