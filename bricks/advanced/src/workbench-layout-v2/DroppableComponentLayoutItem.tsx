@@ -47,6 +47,7 @@ export function DroppableComponentLayoutItemElement(
       {
         ...layout,
         cardWidth: layout.cardWidth || component.position.w,
+        cardTitle: component.title,
       },
       position
     )
@@ -81,7 +82,7 @@ export function DroppableComponentLayoutItemElement(
   const deleteIconPosition = useMemo(() => {
     const top = 15 + cardBorderWidth;
     return {
-      top,
+      top: !layout.noPadding ? top : 0,
       right: top,
     };
   }, [cardBorderWidth]);
