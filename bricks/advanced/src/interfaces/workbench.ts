@@ -31,6 +31,7 @@ export type CardStyleConfig = {
   timeRange?: Record<string, any>;
   isCreatedBySystemAdmin?: boolean;
   type?: string;
+  noPadding?: boolean;
 };
 
 export type ExtraLayout = Layout & CardStyleConfig;
