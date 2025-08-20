@@ -25,22 +25,30 @@ export interface ExpandedViewProps {
 
 export function ExpandedView({ views }: ExpandedViewProps) {
   const rootId = useMemo(() => uniqueId(), []);
-  const { activeExpandedViewJobId, setActiveExpandedViewJobId } =
-    useContext(TaskContext);
+  const {
+    activeExpandedViewJobId,
+    setActiveExpandedViewJobId,
+    manuallyUpdatedViews,
+  } = useContext(TaskContext);
   const viewportRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const rootRef = useRef<Awaited<
     ReturnType<typeof unstable_createRoot>
   > | null>(null);
-  const view = views.find((v) => v.id === activeExpandedViewJobId)?.view;
+  const view = activeExpandedViewJobId
+    ? (manuallyUpdatedViews?.get(activeExpandedViewJobId) ??
+      views.find((v) => v.id === activeExpandedViewJobId)?.view)
+    : null;
 
   const sizeSmall = useMemo(() => {
     let hasForm = false;
     if (view && isJsxView(view)) {
       for (const component of view?.components ?? []) {
         switch (component.name) {
-          case "form":
-          case "button":
+          case "Form":
+          case "eo-form":
+          case "Button":
+          case "eo-button":
             hasForm = true;
             break;
           default:

@@ -14,7 +14,11 @@ import type {
 } from "../interfaces";
 import type { CruiseCanvasAction } from "./interfaces";
 import type { ViewWithInfo } from "../utils/converters/interfaces";
-import { parseJsx, type ConstructResult } from "@next-shared/jsx-storyboard";
+import {
+  parseJsx,
+  parseTsx,
+  type ConstructResult,
+} from "@next-shared/jsx-storyboard";
 
 export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
   switch (action.type) {
@@ -205,7 +209,11 @@ function getJobGeneratedView(
         if (part.type === "text") {
           try {
             const result = JSON.parse(part.text) as JsxResult | ViewWithInfo;
-            return isJsxResult(result) ? parseJsx(result.code) : result;
+            return isJsxResult(result)
+              ? (result.code.includes("<eo-view") ? parseJsx : parseTsx)(
+                  result.code
+                )
+              : result;
           } catch {
             // Do nothing, continue to next part
           }

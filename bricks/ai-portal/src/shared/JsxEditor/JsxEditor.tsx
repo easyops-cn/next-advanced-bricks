@@ -1,7 +1,11 @@
 import React, { Suspense, useContext, useState } from "react";
 import { asyncWrapBrick } from "@next-core/react-runtime";
 import type { CodeEditor, CodeEditorProps } from "@next-bricks/vs/code-editor";
-import { parseJsx, type ConstructResult } from "@next-shared/jsx-storyboard";
+import {
+  parseJsx,
+  parseTsx,
+  type ConstructResult,
+} from "@next-shared/jsx-storyboard";
 import styles from "./JsxEditor.module.css";
 import { WrappedButton, WrappedIconButton } from "../bricks";
 import { ICON_CLOSE } from "../constants";
@@ -71,7 +75,10 @@ export function JsxEditor() {
             themeVariant="elevo"
             type="primary"
             onClick={() => {
-              updateView?.(activeJsxEditorJob!.id, parseJsx(code));
+              updateView?.(
+                activeJsxEditorJob!.id,
+                (code.includes("<eo-view") ? parseJsx : parseTsx)(code)
+              );
               setActiveJsxEditorJob?.(undefined);
             }}
           >

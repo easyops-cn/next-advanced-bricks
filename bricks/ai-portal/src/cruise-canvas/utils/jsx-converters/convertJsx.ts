@@ -15,6 +15,7 @@ import convertForm from "./convertForm";
 import convertFormItem from "./convertFormItem";
 import convertModal from "./convertModal";
 import convertToolbar from "./convertToolbar";
+import convertText from "./convertText";
 
 export async function convertJsx(
   result: ConstructResult,
@@ -23,29 +24,41 @@ export async function convertJsx(
   const convert = async (component: Component) => {
     let brick: BrickConf | null = null;
     switch (component.name) {
+      case "List":
       case "eo-list":
         brick = await convertList(component);
         break;
+      case "Table":
       case "eo-table":
         brick = await convertTable(component, result, options);
         break;
+      case "Descriptions":
       case "eo-descriptions":
         brick = await convertDescriptions(component, result, options);
         break;
+      case "Dashboard":
       case "eo-dashboard":
         brick = await convertDashboard(component, result, options);
         break;
+      case "Button":
       case "eo-button":
         brick = await convertButton(component);
         break;
+      case "Form":
       case "eo-form":
         brick = await convertForm(component);
         break;
+      case "Toolbar":
       case "eo-toolbar":
         brick = await convertToolbar(component);
         break;
+      case "Modal":
       case "eo-modal":
         brick = await convertModal(component);
+        break;
+      case "Plaintext":
+      case "eo-text":
+        brick = await convertText(component);
         break;
       case "eo-search":
       case "eo-input":
@@ -57,7 +70,20 @@ export async function convertJsx(
       case "eo-switch":
       case "eo-date-picker":
       case "eo-time-picker":
-        brick = await convertFormItem(component, component.name);
+      case "Search":
+      case "Input":
+      case "NumberInput":
+      case "Textarea":
+      case "Select":
+      case "Radio":
+      case "Checkbox":
+      case "Switch":
+      case "DatePicker":
+      case "TimePicker":
+        brick = await convertFormItem(
+          component,
+          convertComponentName(component.name)
+        );
         break;
     }
 
@@ -114,7 +140,17 @@ export async function convertJsx(
   ) as BrickConf[];
 
   const needBox = result.components.every((component) =>
-    ["form", "descriptions", "button"].includes(component.name)
+    [
+      "Form",
+      "Descriptions",
+      "Button",
+      "eo-form",
+      "eo-descriptions",
+      "eo-button",
+      "form",
+      "descriptions",
+      "button",
+    ].includes(component.name)
   );
 
   return {
@@ -206,4 +242,10 @@ function getMetricDisplayNames(
       displayNameList?.find((item) => item.metric_name === metricName)
         ?.metric_display_name ?? metricName
   );
+}
+
+function convertComponentName(name: string) {
+  return name.includes("-")
+    ? name
+    : `eo${name.replace(/([A-Z])/g, "-$1").toLowerCase()}`;
 }
