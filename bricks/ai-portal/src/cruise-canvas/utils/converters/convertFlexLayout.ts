@@ -6,6 +6,7 @@ export default function convertFlexLayout(_component: Component): BrickConf {
     brick: "eo-flex-layout",
     properties: {
       gap: "0.5em",
+      alignItems: "center",
     },
   };
 }
