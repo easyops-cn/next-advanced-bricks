@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.26.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.26.1...@next-bricks/ai-portal@0.26.2) (2025-08-20)
+
+
+### Bug Fixes
+
+* support converting tsx storyboard ([f4809f2](https://github.com/easyops-cn/next-advanced-bricks/commit/f4809f26239f782465aa9c8678e50094c68bc4fd))
+
+
+
+
+
 ## [0.26.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.26.0...@next-bricks/ai-portal@0.26.1) (2025-08-19)
 
 
