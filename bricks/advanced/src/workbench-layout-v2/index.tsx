@@ -304,9 +304,11 @@ export const EoWorkbenchLayoutComponent = forwardRef<
         const background =
           layout?.cardBgType === "picture"
             ? `url("${URl_PREFIX}${layout?.cardBackground}") no-repeat center / cover`
-            : layout?.cardBgType === "color"
-              ? layout?.cardBackground
-              : "#fff";
+            : layout?.cardBgType === "realNone"
+              ? "none"
+              : layout?.cardBgType === "color"
+                ? layout?.cardBackground
+                : "#fff";
         const border =
           layout?.cardBorderStyle === "solid"
             ? `${layout?.cardBorderWidth}px ${layout?.cardBorderStyle} ${layout?.cardBorderColor}`
