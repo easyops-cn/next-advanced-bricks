@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.12](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.16.11...@next-bricks/vs@1.16.12) (2025-08-20)
+
+
+### Bug Fixes
+
+* fix find widget toggle style ([9fdf950](https://github.com/easyops-cn/next-advanced-bricks/commit/9fdf950aa523817217a224c0a19665d485778c33))
+
+
+
+
+
 ## [1.16.11](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.16.10...@next-bricks/vs@1.16.11) (2025-08-20)
 
 
