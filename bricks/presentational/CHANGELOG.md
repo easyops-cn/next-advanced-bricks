@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.16.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.15.1...@next-bricks/presentational@1.16.0) (2025-08-21)
+
+
+### Features
+
+* **card-item:** add borderColor and cardBodyStyle property and content slot ([2fcd348](https://github.com/easyops-cn/next-advanced-bricks/commit/2fcd348c53bc28b0e542d1a528e8549045342df2))
+
+
+
+
+
 ## [1.15.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.15.0...@next-bricks/presentational@1.15.1) (2025-07-28)
 
 
