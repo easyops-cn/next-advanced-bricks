@@ -275,23 +275,28 @@ export const EoWorkbenchLayoutComponent = forwardRef<
   /* istanbul ignore next */
   const handleResize = useCallback(
     (i: string, contentHeight: number) => {
-      const newH = Math.ceil(
-        (contentHeight + (gap ?? MARGIN_HEIGHT)) /
-          ((gap ?? MARGIN_HEIGHT) + ROW_HEIGHT)
-      );
       const oldLayout = layouts.find((layout: ExtraLayout) => layout.i === i);
+      const initNewH =
+        ((oldLayout?.cardBorderStyle === "solid"
+          ? oldLayout?.cardBorderWidth || 0
+          : 0) *
+          2 +
+          contentHeight +
+          (gap ?? MARGIN_HEIGHT)) /
+        ((gap ?? MARGIN_HEIGHT) + ROW_HEIGHT);
+      const newH = isEdit ? Math.ceil(initNewH) : initNewH;
 
       if (!oldLayout) return;
 
-      const currentH = Math.ceil(oldLayout.h);
+      const currentH = isEdit ? Math.ceil(oldLayout.h) : oldLayout.h;
       if (currentH !== newH) {
         const newLayouts = layouts.map((item) =>
-          item.i === i ? { ...item, h: newH } : item
+          item.i === i ? { ...item, h: newH, realH: initNewH } : item
         );
         handleChange(newLayouts);
       }
     },
-    [layouts, handleChange, gap]
+    [layouts, handleChange, gap, isEdit]
   );
 
   const renderChild = useMemo(() => {
