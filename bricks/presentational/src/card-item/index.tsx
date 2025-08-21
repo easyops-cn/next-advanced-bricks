@@ -94,12 +94,15 @@ export interface EoCardItemProps {
   tagConfig?: TagConfig;
   avatarPosition?: "content" | "cover";
   coverImageSize?: React.CSSProperties["backgroundSize"];
+  borderColor?: string;
   cardStyle?: React.CSSProperties;
+  cardBodyStyle?: React.CSSProperties;
   cardTitleStyle?: React.CSSProperties;
 }
 
 /**
  * 信息类卡片 —— 通用卡片
+ * @slot - 内容区域，通常放置卡片自定义内容
  * @slot expanded-area-1 - 扩展区域 1，通常放置标签信息
  * @slot expanded-area-2 - 扩展区域 2，通常放置操作和其他属性信息（图标/头像/小字描述/统计信息）
  * @category card-info
@@ -233,12 +236,26 @@ class EoCardItem extends ReactNextElement implements EoCardItemProps {
   accessor tagConfig: TagConfig | undefined;
 
   /**
+   * 卡片边框颜色
+   */
+  @property()
+  accessor borderColor: string | undefined;
+
+  /**
    * 卡片样式
    */
   @property({
     attribute: false,
   })
   accessor cardStyle: React.CSSProperties;
+
+  /**
+   * 卡片内容区域样式
+   */
+  @property({
+    attribute: false,
+  })
+  accessor cardBodyStyle: React.CSSProperties;
 
   /**
    * 卡片标题样式
@@ -323,7 +340,9 @@ class EoCardItem extends ReactNextElement implements EoCardItemProps {
         onTagClick={this.#handleTagClick}
         coverImageSize={this.coverImageSize}
         styleType={this.styleType}
+        borderColor={this.borderColor}
         cardStyle={this.cardStyle}
+        cardBodyStyle={this.cardBodyStyle}
         cardTitleStyle={this.cardTitleStyle}
       />
     );
@@ -364,7 +383,9 @@ export function EoCardItemComponent(props: EoCardItemComponentProps) {
     onActionClick,
     onTagClick,
     coverImageSize,
+    borderColor,
     cardStyle,
+    cardBodyStyle,
     cardTitleStyle,
   } = props;
 
@@ -446,9 +467,13 @@ export function EoCardItemComponent(props: EoCardItemComponentProps) {
     }
   }, [avatar]);
 
-  const useDefineColor = useMemo(() => {
+  const tagUseDefineColor = useMemo(() => {
     return Object.values(TagColor).includes(tagConfig?.bgColor as TagColor);
   }, [tagConfig]);
+
+  const borderUseDefineColor = useMemo(() => {
+    return Object.values(TagColor).includes(borderColor as TagColor);
+  }, [borderColor]);
 
   const handleTagClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -470,9 +495,17 @@ export function EoCardItemComponent(props: EoCardItemComponentProps) {
           ALLOWED_SHOW_ACTIONS.includes(showActions)
             ? `show-actions-${showActions}`
             : null,
+          borderUseDefineColor ? `border-color-${borderColor}` : null,
           { selected }
         )}
-        style={cardStyle}
+        style={{
+          ...(borderUseDefineColor
+            ? {}
+            : {
+                borderColor: borderColor,
+              }),
+          ...cardStyle,
+        }}
         ref={callback}
       >
         {hasCover && (
@@ -498,9 +531,9 @@ export function EoCardItemComponent(props: EoCardItemComponentProps) {
         ) : (
           !hasCover && MiniActions
         )}
-        <div className="card-content">
+        <div className="card-body" style={cardBodyStyle}>
           {avatarPosition !== "cover" && Avatar}
-          <div className="card-content-container">
+          <div className="card-content">
             <div className="card-title-wrapper">
               <div
                 className="card-title"
@@ -514,16 +547,17 @@ export function EoCardItemComponent(props: EoCardItemComponentProps) {
               </div>
             </div>
             <div className="card-description">{description}</div>
+            <slot />
           </div>
           {tagConfig && (
             <div
               className={classNames("card-tag", {
-                [`color-${tagConfig.bgColor}`]: useDefineColor,
+                [`color-${tagConfig.bgColor}`]: tagUseDefineColor,
                 "icon-tag": tagConfig.text ? false : tagConfig.icon,
                 "text-tag": tagConfig.text,
               })}
               style={{
-                ...(useDefineColor
+                ...(tagUseDefineColor
                   ? {}
                   : {
                       color: tagConfig.color,
