@@ -1,11 +1,14 @@
 // istanbul ignore file: experimental
 import React, { useCallback, useContext, useRef, useState } from "react";
-import styles from "./NodeFeedback.module.css";
-import { K, t } from "../i18n";
-import { WrappedButton, WrappedIconButton } from "../../shared/bricks";
-import { ICON_CLOSE } from "../../shared/constants";
 import classNames from "classnames";
-import { CanvasContext } from "../CanvasContext";
+import { initializeI18n } from "@next-core/i18n";
+import styles from "./NodeFeedback.module.css";
+import { K, locales, NS, t } from "./i18n";
+import { WrappedButton, WrappedIconButton } from "../bricks";
+import { ICON_CLOSE } from "../constants";
+import { TaskContext } from "../TaskContext";
+
+initializeI18n(NS, locales);
 
 let checks:
   | Array<{
@@ -48,13 +51,17 @@ function getChecks() {
   return checks;
 }
 
-export function NodeFeedback(): JSX.Element {
+export interface NodeFeedbackProps {
+  className?: string;
+}
+
+export function NodeFeedback({ className }: NodeFeedbackProps): JSX.Element {
   const {
     submittingFeedback,
     submittedFeedback,
     setShowFeedback,
     onSubmitFeedback,
-  } = useContext(CanvasContext);
+  } = useContext(TaskContext);
   const formRef = useRef<HTMLFormElement>(null);
   const checks = getChecks();
   const [triedSubmit, setTriedSubmit] = useState(false);
@@ -103,7 +110,7 @@ export function NodeFeedback(): JSX.Element {
   }
 
   return (
-    <div className={styles["node-feedback"]}>
+    <div className={classNames(styles["node-feedback"], className)}>
       <div className={styles.heading}>
         <div className={styles.title}>{t(K.FEEDBACK_NODE_TITLE)}</div>
         <WrappedIconButton

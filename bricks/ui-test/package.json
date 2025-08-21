@@ -1,6 +1,6 @@
 {
   "name": "@next-bricks/ui-test",
-  "version": "1.1.16",
+  "version": "1.1.17",
   "homepage": "https://github.com/easyops-cn/next-advanced-bricks/tree/master/bricks/ui-test",
   "repository": {
     "type": "git",
@@ -37,7 +37,7 @@
   "dependencies": {
     "@babel/parser": "^7.22.7",
     "@babel/standalone": "^7.22.9",
-    "@babel/types": "^7.22.5",
+    "@babel/types": "^7.27.7",
     "@next-api-sdk/cmdb-sdk": "^1.1.1",
     "@next-core/element": "^1.2.18",
     "@next-core/i18n": "^1.0.81",

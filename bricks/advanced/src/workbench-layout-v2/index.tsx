@@ -73,6 +73,7 @@ export interface EoWorkbenchLayoutV2ComponentRef {
 
 export interface EoWorkbenchLayoutV2ComponentProps
   extends EoWorkbenchLayoutV2Props {
+  gap?: number;
   onChange?: (layout: ExtraLayout[]) => void;
   onSave?: (layout: ExtraLayout[]) => void;
   onCancel?: () => void;
@@ -101,6 +102,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     onCancel,
     onActionClick,
     onSetting,
+    gap,
   },
   ref
 ) {
@@ -273,14 +275,20 @@ export const EoWorkbenchLayoutComponent = forwardRef<
   /* istanbul ignore next */
   const handleResize = useCallback(
     (i: string, contentHeight: number) => {
-      const newH = Math.ceil(
-        (contentHeight + MARGIN_HEIGHT) / (MARGIN_HEIGHT + ROW_HEIGHT)
-      );
       const oldLayout = layouts.find((layout: ExtraLayout) => layout.i === i);
+      const initNewH =
+        ((oldLayout?.cardBorderStyle === "solid"
+          ? oldLayout?.cardBorderWidth || 0
+          : 0) *
+          2 +
+          contentHeight +
+          (gap ?? MARGIN_HEIGHT)) /
+        ((gap ?? MARGIN_HEIGHT) + ROW_HEIGHT);
+      const newH = isEdit ? Math.ceil(initNewH) : initNewH;
 
       if (!oldLayout) return;
 
-      const currentH = Math.ceil(oldLayout.h);
+      const currentH = isEdit ? Math.ceil(oldLayout.h) : oldLayout.h;
       if (currentH !== newH) {
         const newLayouts = layouts.map((item) =>
           item.i === i ? { ...item, h: newH } : item
@@ -288,7 +296,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
         handleChange(newLayouts);
       }
     },
-    [layouts, handleChange]
+    [layouts, handleChange, gap, isEdit]
   );
 
   const renderChild = useMemo(() => {
@@ -301,9 +309,11 @@ export const EoWorkbenchLayoutComponent = forwardRef<
         const background =
           layout?.cardBgType === "picture"
             ? `url("${URl_PREFIX}${layout?.cardBackground}") no-repeat center / cover`
-            : layout?.cardBgType === "color"
-              ? layout?.cardBackground
-              : "#fff";
+            : layout?.cardBgType === "realNone"
+              ? "none"
+              : layout?.cardBgType === "color"
+                ? layout?.cardBackground
+                : "#fff";
         const border =
           layout?.cardBorderStyle === "solid"
             ? `${layout?.cardBorderWidth}px ${layout?.cardBorderStyle} ${layout?.cardBorderColor}`
@@ -446,7 +456,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
           isDraggable={isEdit}
           isDroppable={isEdit}
           compactType="vertical"
-          margin={[MARGIN_WIDTH, MARGIN_HEIGHT]}
+          margin={[gap ?? MARGIN_WIDTH, gap ?? MARGIN_HEIGHT]}
           // onDrag={handleDragCallback}
           useCSSTransforms={false}
           onDropDragOver={() => {
@@ -496,13 +506,21 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
    * 自定义卡片默认配置, 用于覆盖默认卡片配置
    */
   @property({ attribute: false })
-  accessor customDefaultCardConfigMap: Record<string, CardStyleConfig> | undefined;
+  accessor customDefaultCardConfigMap:
+    | Record<string, CardStyleConfig>
+    | undefined;
 
   /**
    * description: 用于设置页面样式和布局的按钮
    */
   @property({ type: Boolean })
   accessor showSettingButton: boolean | undefined;
+
+  /**
+   * description: 卡片间隔
+   */
+  @property({ type: Number })
+  accessor gap: number | undefined;
 
   @event({ type: "change" })
   accessor #changeEvent!: EventEmitter<ExtraLayout[]>;
@@ -569,6 +587,7 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
       <EoWorkbenchLayoutComponent
         cardTitle={this.cardTitle}
         layouts={this.layouts}
+        gap={this.gap}
         toolbarBricks={this.toolbarBricks}
         componentList={this.componentList}
         showSettingButton={this.showSettingButton}

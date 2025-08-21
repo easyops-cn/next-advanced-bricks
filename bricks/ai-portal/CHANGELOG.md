@@ -3,6 +3,128 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.26.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.26.2...@next-bricks/ai-portal@0.26.3) (2025-08-20)
+
+
+### Bug Fixes
+
+* toolbar: align items center ([13e5d16](https://github.com/easyops-cn/next-advanced-bricks/commit/13e5d161d295534a2af6373c5a7a13c968cee51c))
+
+
+
+
+
+## [0.26.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.26.1...@next-bricks/ai-portal@0.26.2) (2025-08-20)
+
+
+### Bug Fixes
+
+* support converting tsx storyboard ([f4809f2](https://github.com/easyops-cn/next-advanced-bricks/commit/f4809f26239f782465aa9c8678e50094c68bc4fd))
+
+
+
+
+
+## [0.26.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.26.0...@next-bricks/ai-portal@0.26.1) (2025-08-19)
+
+
+### Bug Fixes
+
+* update logo, fix sidebar alt icon layer issue ([70bfd74](https://github.com/easyops-cn/next-advanced-bricks/commit/70bfd74c10c3b962f7507069d5c636ef6d59caef))
+
+
+
+
+
+# [0.26.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.25.2...@next-bricks/ai-portal@0.26.0) (2025-08-15)
+
+
+### Features
+
+* jsx editor ([c5e97e6](https://github.com/easyops-cn/next-advanced-bricks/commit/c5e97e63c632b7fd122d3a8b89ee2be07f695000))
+
+
+
+
+
+## [0.25.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.25.1...@next-bricks/ai-portal@0.25.2) (2025-08-15)
+
+
+### Bug Fixes
+
+* **chat-stream:** add scroll down button ([3928711](https://github.com/easyops-cn/next-advanced-bricks/commit/3928711c48adc453dcae08122ba4b952f2f232da))
+
+
+
+
+
+## [0.25.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.25.0...@next-bricks/ai-portal@0.25.1) (2025-08-14)
+
+
+### Bug Fixes
+
+* support hiding mermaid ([2c065b0](https://github.com/easyops-cn/next-advanced-bricks/commit/2c065b0902303459db80c9b749aaaaf168df635f))
+
+
+
+
+
+# [0.25.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.24.0...@next-bricks/ai-portal@0.25.0) (2025-08-13)
+
+
+### Features
+
+* **chat-stream:** show job detail ([1e9f4fa](https://github.com/easyops-cn/next-advanced-bricks/commit/1e9f4fa6e72c4899e704db10141f86b981050de0))
+
+
+
+
+
+# [0.24.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.23.1...@next-bricks/ai-portal@0.24.0) (2025-08-13)
+
+
+### Features
+
+* new brick: ai-agents ([0e4f4fb](https://github.com/easyops-cn/next-advanced-bricks/commit/0e4f4fbcff92e8300e0ca214e274a7ecb0efd3a9))
+
+
+
+
+
+## [0.23.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.23.0...@next-bricks/ai-portal@0.23.1) (2025-08-13)
+
+
+### Bug Fixes
+
+* group mcp tools by platform ([20d290e](https://github.com/easyops-cn/next-advanced-bricks/commit/20d290ef8cd86e7c2cea47f91929b4bde5e73189))
+* refine i18n ([823a3ad](https://github.com/easyops-cn/next-advanced-bricks/commit/823a3ad33b2c9de245acc8ebe916b2f19336465a))
+
+
+
+
+
+# [0.23.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.22.3...@next-bricks/ai-portal@0.23.0) (2025-08-13)
+
+
+### Features
+
+* new brick: ai-employees ([2e95320](https://github.com/easyops-cn/next-advanced-bricks/commit/2e95320ef2e5946eca740a7e6e98069caa47e9a7))
+
+
+
+
+
+## [0.22.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.22.2...@next-bricks/ai-portal@0.22.3) (2025-08-12)
+
+
+### Bug Fixes
+
+* distinguish user messages ([8e3f21f](https://github.com/easyops-cn/next-advanced-bricks/commit/8e3f21f11cff69b0dff4bd1780c2a35f25450999))
+
+
+
+
+
 ## [0.22.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.22.1...@next-bricks/ai-portal@0.22.2) (2025-08-12)
 
 

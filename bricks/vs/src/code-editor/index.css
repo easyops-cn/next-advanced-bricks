@@ -89,7 +89,7 @@
   margin-right: 25px;
 }
 
-.monaco-editor.monaco-editor-v3 .find-widget .button {
+.monaco-editor.monaco-editor-v3 .find-widget .button:not(.toggle) {
   box-sizing: content-box;
 }
 

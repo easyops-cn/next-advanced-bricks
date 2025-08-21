@@ -24,3 +24,7 @@
   display: flex;
   justify-content: center;
 }
+
+ai-portal\.cruise-canvas[hide-mermaid] .code-block :global(.mermaid) {
+  display: none;
+}

@@ -114,3 +114,7 @@
 .canceled .icon {
   color: #fcaa07;
 }
+
+ai-portal\.chat-stream[hide-mermaid] .content .markdown :global(.mermaid) {
+  display: none;
+}

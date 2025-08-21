@@ -50,7 +50,15 @@ ai-portal\.chat-stream {
 
   .left,
   .right {
-    width: 24px;
+    /* 24 * 2 + 8 */
+    width: 56px;
+  }
+
+  .right {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 8px;
   }
 }
 
@@ -80,7 +88,7 @@ ai-portal\.chat-stream {
 }
 
 .footer {
-  padding: 20px 24px;
+  padding: 0 20px 24px;
 }
 
 .aside {
@@ -91,4 +99,30 @@ ai-portal\.chat-stream {
 
 .expanded {
   width: 50%;
+}
+
+.feedback {
+  margin: 24px auto 0;
+}
+
+.scroll-down {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 50%;
+  bottom: 120px;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 32px;
+  font-size: 12px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+  cursor: pointer;
+}
+
+.scroll-down:hover {
+  box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.1);
 }

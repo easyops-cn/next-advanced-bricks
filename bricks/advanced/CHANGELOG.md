@@ -3,6 +3,72 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.49.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.49.5...@next-bricks/advanced@0.49.6) (2025-08-21)
+
+
+### Bug Fixes
+
+* DESKTOP-597 工作台和dashboard支持设置卡片边距 ref DESKTOP-597 ([01d694e](https://github.com/easyops-cn/next-advanced-bricks/commit/01d694e42b4fd0aceb618b367b6be2223bcf76e7))
+
+
+
+
+
+## [0.49.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.49.4...@next-bricks/advanced@0.49.5) (2025-08-21)
+
+
+### Bug Fixes
+
+* DESKTOP-597 工作台和dashboard支持设置卡片边距 ref DESKTOP-597 ([3a16d1b](https://github.com/easyops-cn/next-advanced-bricks/commit/3a16d1b16a7927d7d75c08423bcb818cf4ddcce6))
+
+
+
+
+
+## [0.49.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.49.3...@next-bricks/advanced@0.49.4) (2025-08-20)
+
+
+### Bug Fixes
+
+* DESKTOP-597 工作台和dashboard支持设置卡片边距 ref DESKTOP-597 ([6414b54](https://github.com/easyops-cn/next-advanced-bricks/commit/6414b545483196e4190fec15594140f1253b1bdd))
+
+
+
+
+
+## [0.49.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.49.2...@next-bricks/advanced@0.49.3) (2025-08-20)
+
+
+### Bug Fixes
+
+* DESKTOP-597 工作台和dashboard支持设置卡片边距 ref DESKTOP-597 ([ed61ad2](https://github.com/easyops-cn/next-advanced-bricks/commit/ed61ad29348009ffb663fcfa36b68ed58a95e9ea))
+
+
+
+
+
+## [0.49.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.49.1...@next-bricks/advanced@0.49.2) (2025-08-19)
+
+
+### Bug Fixes
+
+* DESKTOP-597 工作台和dashboard支持设置卡片边距 ref DESKTOP-597 ([4ff5352](https://github.com/easyops-cn/next-advanced-bricks/commit/4ff53520c5310472e3859c7868801eb2a41bc32c))
+
+
+
+
+
+## [0.49.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.49.0...@next-bricks/advanced@0.49.1) (2025-08-15)
+
+
+### Bug Fixes
+
+* DESKTOP-597 工作台和dashboard支持设置卡片边距 ref DESKTOP-597 ([f667e98](https://github.com/easyops-cn/next-advanced-bricks/commit/f667e98a1db878df20ae4f905626e06719871437))
+
+
+
+
+
 # [0.49.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.48.4...@next-bricks/advanced@0.49.0) (2025-07-21)
 
 

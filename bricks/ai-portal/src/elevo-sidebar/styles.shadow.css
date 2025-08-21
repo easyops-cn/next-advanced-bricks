@@ -12,6 +12,7 @@
 
 .sidebar {
   position: relative;
+  z-index: 1;
   width: 261px;
   height: 100%;
   background: #f6f7f9;
@@ -161,11 +162,15 @@
 .link {
   display: block;
 
+  + .link {
+    margin-top: 4px;
+  }
+
   &::part(link) {
     display: flex;
     gap: 0;
     align-items: center;
-    padding: 9px 13px;
+    padding: 7px 13px;
     border-radius: 8px;
     color: #000;
   }
@@ -236,7 +241,8 @@
     background: rgba(0, 0, 0, 0.06);
   }
 
-  .item:not(.active)::part(link):hover {
+  .item.actions-active::part(link),
+  .item::part(link):hover {
     background: rgba(0, 0, 0, 0.04);
   }
 
@@ -263,6 +269,7 @@
     margin: 0 7px;
   }
 
+  .item.actions-active .working,
   .item:hover .working,
   .item.active .working {
     display: none;

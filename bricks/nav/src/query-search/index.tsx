@@ -3,7 +3,7 @@ import { createDecorators } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
-import { NS, locales } from "./i18n.js";
+import { NS, locales, K, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
 
 import type { Button, ButtonProps } from "@next-bricks/basic/button";
@@ -185,24 +185,24 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
         const defaultQueriers = [
           {
             type: QuerierTypes.fullText,
-            name: "全文搜索",
+            name: t(K.FULL_TEXT_SEARCH),
             config: {
               url: fullTextUrl,
             },
           },
           {
             type: QuerierTypes.ipSearch,
-            name: "ip搜索",
+            name: t(K.IP_SEARCH),
             config: {
               url: ipSearchUrl,
             },
           },
           {
             type: QuerierTypes.link,
-            name: "工单搜索",
+            name: t(K.TICKET_SEARCH),
             config: {
               url: itsmSearchUrl,
-              searchPlaceholde: "输入工单编号/标题等关键字",
+              searchPlaceholder: t(K.TICKET_SEARCH_PLACEHOLDER),
             },
           },
         ];
@@ -326,9 +326,9 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
                         placeholder={
                           selectedQuerier?.config?.searchPlaceholder ||
                           (selectedQuerier?.type === QuerierTypes.ipSearch
-                            ? "输入IP查询主机关联的应用、系统等资源"
+                            ? t(K.IP_SEARCH_PLACEHOLDER)
                             : selectedQuerier?.type === QuerierTypes.fullText
-                              ? '搜索应用、主机等信息，支持""精确搜索'
+                              ? t(K.FULL_TEXT_SEARCH_PLACEHOLDER)
                               : "")
                         }
                         ref={inputRef}
@@ -353,7 +353,7 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
               }
             </div>
             {!showInput && (
-              <WrappedToolTip content="IP搜索" placement="left">
+              <WrappedToolTip content={t(K.IP_SEARCH_TOOLTIP)} placement="left">
                 <WrappedButton
                   onClick={() => {
                     if (checkIsDirectJump()) {
@@ -385,7 +385,7 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
               })}
             >
               <div className="historySearchContent">
-                <div className="latestSearchText">最近搜索</div>
+                <div className="latestSearchText">{t(K.RECENT_SEARCH)}</div>
 
                 <div className="latestSearchTagContainer">
                   {visits.map((i) => (
@@ -409,11 +409,11 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
                     </span>
                   ))}
                   {!visits.length && (
-                    <div className="emptyText">暂无搜索记录</div>
+                    <div className="emptyText">{t(K.NO_SEARCH_HISTORY)}</div>
                   )}
                 </div>
               </div>
-              <div className="quickSearchTip">快捷搜索（Cmd/Ctrl+K）</div>
+              <div className="quickSearchTip">{t(K.QUICK_SEARCH_TIP)}</div>
             </div>
           }
         </div>

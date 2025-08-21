@@ -1,6 +1,7 @@
 export * from "./parseJsx.js";
+export * from "./parseTsx.js";
 
-export { isExpressionString } from "./utils.js";
+export { isExpressionString, convertJsxEventAttr } from "./utils.js";
 
 export type {
   Component,

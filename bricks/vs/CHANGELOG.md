@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.12](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.16.11...@next-bricks/vs@1.16.12) (2025-08-20)
+
+
+### Bug Fixes
+
+* fix find widget toggle style ([9fdf950](https://github.com/easyops-cn/next-advanced-bricks/commit/9fdf950aa523817217a224c0a19665d485778c33))
+
+
+
+
+
+## [1.16.11](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.16.10...@next-bricks/vs@1.16.11) (2025-08-20)
+
+
+### Bug Fixes
+
+* support converting tsx storyboard ([f4809f2](https://github.com/easyops-cn/next-advanced-bricks/commit/f4809f26239f782465aa9c8678e50094c68bc4fd))
+
+
+
+
+
+## [1.16.10](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.16.9...@next-bricks/vs@1.16.10) (2025-08-15)
+
+
+### Bug Fixes
+
+* new prop: uri ([6f4eb23](https://github.com/easyops-cn/next-advanced-bricks/commit/6f4eb23ffe4f4fdda28ecea5dff16429727e30aa))
+
+
+
+
+
 ## [1.16.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.16.8...@next-bricks/vs@1.16.9) (2025-07-10)
 
 **Note:** Version bump only for package @next-bricks/vs

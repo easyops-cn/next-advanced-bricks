@@ -106,7 +106,6 @@ export function constructElement(
             result,
             {
               allowExpression: true,
-              disallowArrowFunction: true,
               modifier: "=",
             }
           );
@@ -121,7 +120,6 @@ export function constructElement(
               },
               {
                 allowExpression: true,
-                disallowArrowFunction: true,
                 ambiguous: true,
               }
             );
@@ -272,9 +270,7 @@ export function constructElement(
       });
       return null;
     }
-    const invalidNode = validateExpression(node.expression, {
-      disallowArrowFunction: true,
-    });
+    const invalidNode = validateExpression(node.expression);
     if (invalidNode) {
       result.errors.push({
         message: `Unsupported node type in expression: ${invalidNode.type}`,

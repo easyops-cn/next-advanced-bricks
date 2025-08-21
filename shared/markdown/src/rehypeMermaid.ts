@@ -44,8 +44,16 @@ export function rehypeMermaid() {
       promises.push(
         (async () => {
           const id = `mermaid-${count++}`;
-
-          const { svg } = await mermaid.render(id, toString(node));
+          let svg: string;
+          try {
+            const result = await mermaid.render(id, toString(node));
+            svg = result.svg;
+          } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error("Error rendering mermaid diagram:", error);
+            document.getElementById(id)?.remove();
+            return;
+          }
           const root = parser.parseFromString(svg, "text/html");
           const svgElement = root.querySelector("svg") as SVGSVGElement;
 
