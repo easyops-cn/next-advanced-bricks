@@ -291,7 +291,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
       const currentH = isEdit ? Math.ceil(oldLayout.h) : oldLayout.h;
       if (currentH !== newH) {
         const newLayouts = layouts.map((item) =>
-          item.i === i ? { ...item, h: newH, realH: initNewH } : item
+          item.i === i ? { ...item, h: newH } : item
         );
         handleChange(newLayouts);
       }
