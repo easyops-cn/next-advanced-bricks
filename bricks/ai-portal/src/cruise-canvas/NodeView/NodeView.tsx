@@ -24,16 +24,26 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
       let found = false;
+      let scrollableContent: HTMLElement | undefined;
       for (const el of e.nativeEvent.composedPath()) {
         if (el === ref.current) {
           break;
         }
-        if (
-          el instanceof HTMLElement &&
+        if (!(el instanceof HTMLElement)) {
+          continue;
+        }
+        if (el.classList.contains("ant-table-content")) {
+          scrollableContent = el;
+        } else if (
           el.classList.contains("ant-table") &&
           el.classList.contains("ant-table-scroll-horizontal")
         ) {
-          found = true;
+          if (
+            scrollableContent &&
+            scrollableContent.scrollWidth > scrollableContent.clientWidth
+          ) {
+            found = true;
+          }
           break;
         }
       }

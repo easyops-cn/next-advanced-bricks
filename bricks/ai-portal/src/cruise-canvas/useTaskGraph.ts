@@ -9,13 +9,15 @@ import type {
   GraphGeneratedView,
 } from "./interfaces";
 import { LOADING_NODE_ID, REQUIREMENT_NODE_ID } from "./constants";
-import { getOrderedJobs, type GetOrderedJobsOptions } from "./getOrderedJobs";
+import { getOrderedNodes } from "./getOrderedNodes";
 import { DONE_STATES } from "../shared/constants";
 
 export function useTaskGraph(
   task: TaskBaseDetail | null | undefined,
   jobs: Job[] | null | undefined,
-  options?: GetOrderedJobsOptions
+  options?: {
+    showHiddenJobs?: boolean;
+  }
 ) {
   return useMemo(() => {
     if (!task) {
@@ -35,8 +37,13 @@ export function useTaskGraph(
       state: fixedJobs.length === 0 ? "working" : "completed",
     });
 
-    const { list, jobMap, jobLevels, downstreamMap, originalDownstreamMap } =
-      getOrderedJobs(jobs, options);
+    const {
+      list,
+      map: jobMap,
+      levels: jobLevels,
+      downstreamMap,
+      fullDownstreamMap,
+    } = getOrderedNodes(jobs, { showHiddenNodes: options?.showHiddenJobs });
 
     const upstreamMap = new Map<string, string[]>();
     // Setup upstreamMap
@@ -51,13 +58,13 @@ export function useTaskGraph(
     }
 
     const withHiddenDownstreamJobs: string[] = [];
-    if (originalDownstreamMap) {
+    if (fullDownstreamMap) {
       for (const jobId of list) {
         const job = jobMap.get(jobId)!;
         if (job.state === "completed") {
           const downstream = downstreamMap.get(jobId);
           if (!downstream?.length) {
-            const originalDownstream = originalDownstreamMap.get(jobId);
+            const originalDownstream = fullDownstreamMap.get(jobId);
             if (originalDownstream?.length) {
               withHiddenDownstreamJobs.push(jobId);
             }
@@ -187,6 +194,7 @@ export function useTaskGraph(
       edges,
       nav,
       views,
+      jobMap,
       jobLevels,
     };
   }, [task, jobs]);

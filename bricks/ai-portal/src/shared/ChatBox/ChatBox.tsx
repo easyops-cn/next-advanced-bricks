@@ -22,22 +22,10 @@ import { TaskContext } from "../TaskContext";
 
 initializeI18n(NS, locales);
 
-const ICON_PAUSE: GeneralIconProps = {
-  lib: "fa",
-  prefix: "far",
-  icon: "circle-pause",
-};
-
 const ICON_STOP: GeneralIconProps = {
   lib: "fa",
   prefix: "far",
   icon: "circle-stop",
-};
-
-const ICON_RESUME: GeneralIconProps = {
-  lib: "fa",
-  prefix: "far",
-  icon: "circle-play",
 };
 
 export interface ChatBoxProps {
@@ -56,27 +44,14 @@ export function ChatBox({
   const [value, setValue] = useState("");
   const valueRef = useRef("");
   const [wrap, setWrap] = useState(false);
-  const { humanInput, onPause, onResume, onCancel, supports } =
-    useContext(TaskContext);
-  const [actionBeingTaken, setActionBeingTaken] = useState<
-    "toggle" | "cancel" | null
-  >(null);
+  const { humanInput, onTerminate, supports } = useContext(TaskContext);
+  const [actionBeingTaken, setActionBeingTaken] = useState(false);
 
   useEffect(() => {
-    setActionBeingTaken(null);
+    setActionBeingTaken(false);
   }, [taskState]);
 
-  const handleResume = useCallback(() => {
-    onResume();
-    setActionBeingTaken("toggle");
-  }, [onResume]);
-
-  const handlePause = useCallback(() => {
-    onPause();
-    setActionBeingTaken("toggle");
-  }, [onPause]);
-
-  const handleStop = useCallback(async () => {
+  const handleTerminate = useCallback(async () => {
     try {
       await showDialog({
         type: "confirm",
@@ -86,9 +61,9 @@ export function ChatBox({
     } catch {
       return;
     }
-    onCancel();
-    setActionBeingTaken("cancel");
-  }, [onCancel]);
+    onTerminate();
+    setActionBeingTaken(true);
+  }, [onTerminate]);
 
   useEffect(() => {
     if (inputRequiredJobId) {
@@ -213,31 +188,14 @@ export function ChatBox({
             </button>
           ) : (
             <>
-              {actionBeingTaken === "toggle" ? (
-                <WrappedIconButton icon={ICON_LOADING} disabled />
-              ) : taskState === "paused" ? (
-                <WrappedIconButton
-                  icon={ICON_RESUME}
-                  disabled={!!actionBeingTaken}
-                  tooltip={actionBeingTaken ? undefined : t(K.RESUME_THE_TASK)}
-                  onClick={handleResume}
-                />
-              ) : (
-                <WrappedIconButton
-                  icon={ICON_PAUSE}
-                  disabled={!!actionBeingTaken}
-                  tooltip={actionBeingTaken ? undefined : t(K.PAUSE_THE_TASK)}
-                  onClick={handlePause}
-                />
-              )}
-              {actionBeingTaken === "cancel" ? (
+              {actionBeingTaken ? (
                 <WrappedIconButton icon={ICON_LOADING} disabled />
               ) : (
                 <WrappedIconButton
                   icon={ICON_STOP}
                   disabled={!!actionBeingTaken}
                   tooltip={actionBeingTaken ? undefined : t(K.CANCEL_THE_TASK)}
-                  onClick={handleStop}
+                  onClick={handleTerminate}
                 />
               )}
             </>

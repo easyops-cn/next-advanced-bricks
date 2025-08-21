@@ -5,9 +5,7 @@ import type { FeedbackDetail, Job } from "../cruise-canvas/interfaces";
 export interface TaskContextValue {
   humanInput: (jobId: string, input: string) => void;
   onShare: () => void;
-  onPause: () => void;
-  onResume: () => void;
-  onCancel: () => void;
+  onTerminate: () => void;
   supports?: Record<string, boolean>;
 
   activeExpandedViewJobId: string | null;
@@ -30,9 +28,7 @@ export interface TaskContextValue {
 export const TaskContext = createContext<TaskContextValue>({
   humanInput: () => {},
   onShare: () => {},
-  onPause: () => {},
-  onResume: () => {},
-  onCancel: () => {},
+  onTerminate: () => {},
   activeExpandedViewJobId: null,
   setActiveExpandedViewJobId: () => {},
   activeToolCallJobId: null,

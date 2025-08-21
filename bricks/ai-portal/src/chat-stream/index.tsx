@@ -97,25 +97,11 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
     this.#shareEvent.emit();
   };
 
-  @event({ type: "pause" })
-  accessor #pauseEvent!: EventEmitter<void>;
+  @event({ type: "terminate" })
+  accessor #terminateEvent!: EventEmitter<void>;
 
-  #onPause = () => {
-    this.#pauseEvent.emit();
-  };
-
-  @event({ type: "resume" })
-  accessor #resumeEvent!: EventEmitter<void>;
-
-  #onResume = () => {
-    this.#resumeEvent.emit();
-  };
-
-  @event({ type: "cancel" })
-  accessor #cancelEvent!: EventEmitter<void>;
-
-  #onCancel = () => {
-    this.#cancelEvent.emit();
+  #onTerminate = () => {
+    this.#terminateEvent.emit();
   };
 
   @event({ type: "feedback.submit" })
@@ -159,9 +145,7 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
         showFeedback={this.showFeedback}
         showUiSwitch={this.showUiSwitch}
         onShare={this.#onShare}
-        onPause={this.#onPause}
-        onResume={this.#onResume}
-        onCancel={this.#onCancel}
+        onTerminate={this.#onTerminate}
         onSubmitFeedback={this.#onSubmitFeedback}
         onSwitchToCanvas={this.#onSwitchToCanvas}
       />
@@ -171,9 +155,7 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
 
 interface ChatStreamComponentProps extends ChatStreamProps {
   onShare: () => void;
-  onPause: () => void;
-  onResume: () => void;
-  onCancel: () => void;
+  onTerminate: () => void;
   onSubmitFeedback: (detail: FeedbackDetail) => void;
   onSwitchToCanvas: () => void;
 }
@@ -193,9 +175,7 @@ function LegacyChatStreamComponent(
     showFeedback: propShowFeedback,
     showUiSwitch,
     onShare,
-    onPause,
-    onResume,
-    onCancel,
+    onTerminate,
     onSubmitFeedback,
     onSwitchToCanvas,
   }: ChatStreamComponentProps,
@@ -311,9 +291,7 @@ function LegacyChatStreamComponent(
     () => ({
       humanInput,
       onShare,
-      onPause,
-      onResume,
-      onCancel,
+      onTerminate,
       supports,
 
       activeExpandedViewJobId,
@@ -329,9 +307,7 @@ function LegacyChatStreamComponent(
     [
       humanInput,
       onShare,
-      onPause,
-      onResume,
-      onCancel,
+      onTerminate,
       supports,
 
       activeExpandedViewJobId,
