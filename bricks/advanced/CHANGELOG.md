@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.49.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.49.4...@next-bricks/advanced@0.49.5) (2025-08-21)
+
+
+### Bug Fixes
+
+* DESKTOP-597 工作台和dashboard支持设置卡片边距 ref DESKTOP-597 ([3a16d1b](https://github.com/easyops-cn/next-advanced-bricks/commit/3a16d1b16a7927d7d75c08423bcb818cf4ddcce6))
+
+
+
+
+
 ## [0.49.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.49.3...@next-bricks/advanced@0.49.4) (2025-08-20)
 
 
