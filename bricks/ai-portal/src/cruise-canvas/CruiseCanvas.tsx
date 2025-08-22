@@ -73,6 +73,7 @@ interface CruiseCanvasComponentProps extends CruiseCanvasProps {
   onTerminate: () => void;
   onSubmitFeedback: (detail: FeedbackDetail) => void;
   onSwitchToChat: () => void;
+  onFeedbackOnView: (viewId: string) => void;
 }
 
 interface ScrollToOptions {
@@ -96,6 +97,7 @@ export interface CruiseCanvasRef {
   resumed?: () => void;
   feedbackSubmitDone: () => void;
   feedbackSubmitFailed: () => void;
+  feedbackOnViewDone: (viewId: string) => void;
 }
 
 export function CruiseCanvasComponent(
@@ -107,12 +109,14 @@ export function CruiseCanvasComponent(
     supports,
     showHiddenJobs,
     showFeedback: propShowFeedback,
+    showFeedbackOnView,
     showUiSwitch,
     showJsxEditor,
     onShare,
     onTerminate,
     onSubmitFeedback,
     onSwitchToChat,
+    onFeedbackOnView,
   }: CruiseCanvasComponentProps,
   ref: React.Ref<CruiseCanvasRef>
 ) {
@@ -157,6 +161,9 @@ export function CruiseCanvasComponent(
   useEffect(() => {
     setShowFeedback(!!propShowFeedback);
   }, [propShowFeedback]);
+  const [feedbackDoneViews, setFeedbackDoneViews] = useState<
+    Set<string> | undefined
+  >();
 
   const handleSubmitFeedback = useCallback(
     (detail: FeedbackDetail) => {
@@ -177,6 +184,13 @@ export function CruiseCanvasComponent(
       },
       feedbackSubmitFailed: () => {
         setSubmittingFeedback(false);
+      },
+      feedbackOnViewDone: (viewId: string) => {
+        setFeedbackDoneViews((prev) => {
+          const newSet = new Set(prev);
+          newSet.add(viewId);
+          return newSet;
+        });
       },
     }),
     []
@@ -574,6 +588,9 @@ export function CruiseCanvasComponent(
       setActiveJsxEditorJob,
       manuallyUpdatedViews,
       updateView,
+      showFeedbackOnView,
+      onFeedbackOnView,
+      feedbackDoneViews,
     }),
     [
       humanInput,
@@ -592,6 +609,9 @@ export function CruiseCanvasComponent(
       activeJsxEditorJob,
       manuallyUpdatedViews,
       updateView,
+      showFeedbackOnView,
+      onFeedbackOnView,
+      feedbackDoneViews,
     ]
   );
 

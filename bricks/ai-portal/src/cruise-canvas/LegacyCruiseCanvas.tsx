@@ -72,6 +72,7 @@ interface CruiseCanvasComponentProps extends CruiseCanvasProps {
   onTerminate: () => void;
   onSubmitFeedback: (detail: FeedbackDetail) => void;
   onSwitchToChat: () => void;
+  onFeedbackOnView: (viewId: string) => void;
 }
 
 interface ScrollToOptions {
@@ -95,6 +96,7 @@ export interface CruiseCanvasRef {
   resumed?: () => void;
   feedbackSubmitDone: () => void;
   feedbackSubmitFailed: () => void;
+  feedbackOnViewDone: (viewId: string) => void;
 }
 
 export function LegacyCruiseCanvasComponent(
@@ -107,12 +109,14 @@ export function LegacyCruiseCanvasComponent(
     supports,
     showHiddenJobs,
     showFeedback: propShowFeedback,
+    showFeedbackOnView,
     showUiSwitch,
     showJsxEditor,
     onShare,
     onTerminate,
     onSubmitFeedback,
     onSwitchToChat,
+    onFeedbackOnView,
   }: CruiseCanvasComponentProps,
   ref: React.Ref<CruiseCanvasRef>
 ) {
@@ -155,6 +159,9 @@ export function LegacyCruiseCanvasComponent(
   useEffect(() => {
     setShowFeedback(!!propShowFeedback);
   }, [propShowFeedback]);
+  const [feedbackDoneViews, setFeedbackDoneViews] = useState<
+    Set<string> | undefined
+  >();
 
   const handleSubmitFeedback = useCallback(
     (detail: FeedbackDetail) => {
@@ -176,6 +183,13 @@ export function LegacyCruiseCanvasComponent(
       },
       feedbackSubmitFailed: () => {
         setSubmittingFeedback(false);
+      },
+      feedbackOnViewDone: (viewId: string) => {
+        setFeedbackDoneViews((prev) => {
+          const newSet = new Set(prev);
+          newSet.add(viewId);
+          return newSet;
+        });
       },
     }),
     [resumedRef]
@@ -573,6 +587,9 @@ export function LegacyCruiseCanvasComponent(
       setActiveJsxEditorJob,
       manuallyUpdatedViews,
       updateView,
+      showFeedbackOnView,
+      onFeedbackOnView,
+      feedbackDoneViews,
     }),
     [
       humanInput,
@@ -591,6 +608,9 @@ export function LegacyCruiseCanvasComponent(
       activeJsxEditorJob,
       manuallyUpdatedViews,
       updateView,
+      showFeedbackOnView,
+      onFeedbackOnView,
+      feedbackDoneViews,
     ]
   );
 

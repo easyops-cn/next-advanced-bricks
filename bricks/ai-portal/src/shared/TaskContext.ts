@@ -26,6 +26,9 @@ export interface TaskContextValue {
   setActiveJsxEditorJob?: Dispatch<React.SetStateAction<Job | undefined>>;
   manuallyUpdatedViews?: Map<string, ConstructedView>;
   updateView?: (jobId: string, view: ConstructedView) => void;
+  showFeedbackOnView?: boolean;
+  onFeedbackOnView?: (viewId: string) => void;
+  feedbackDoneViews?: Set<string>;
 }
 
 export const TaskContext = createContext<TaskContextValue>({

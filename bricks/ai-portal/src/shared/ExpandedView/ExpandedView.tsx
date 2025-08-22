@@ -14,10 +14,11 @@ import styles from "./ExpandedView.module.css";
 import { convertView } from "../../cruise-canvas/utils/converters/convertView";
 import { WrappedIcon, WrappedIconButton } from "../../shared/bricks";
 import { createPortal } from "../../cruise-canvas/utils/createPortal";
-import { ICON_CLOSE } from "../constants";
+import { ICON_CLOSE, ICON_FEEDBACK } from "../constants";
 import { isJsxView } from "../../cruise-canvas/utils/jsx-converters/isJsxView";
 import { convertJsx } from "../../cruise-canvas/utils/jsx-converters/convertJsx";
 import { TaskContext } from "../TaskContext";
+import { useViewFeedbackDone } from "../useViewFeedbackDone";
 
 export interface ExpandedViewProps {
   views: GraphGeneratedView[];
@@ -29,6 +30,9 @@ export function ExpandedView({ views }: ExpandedViewProps) {
     activeExpandedViewJobId,
     setActiveExpandedViewJobId,
     manuallyUpdatedViews,
+    showFeedbackOnView,
+    onFeedbackOnView,
+    feedbackDoneViews,
   } = useContext(TaskContext);
   const viewportRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -39,6 +43,9 @@ export function ExpandedView({ views }: ExpandedViewProps) {
     ? (manuallyUpdatedViews?.get(activeExpandedViewJobId) ??
       views.find((v) => v.id === activeExpandedViewJobId)?.view)
     : null;
+  const feedbackDone =
+    useViewFeedbackDone(view?.viewId, showFeedbackOnView) ||
+    (view && feedbackDoneViews?.has(view.viewId));
 
   const sizeSmall = useMemo(() => {
     let hasForm = false;
@@ -173,11 +180,15 @@ export function ExpandedView({ views }: ExpandedViewProps) {
           </li>
         ))}
       </ul>
-      <WrappedIconButton
-        icon={ICON_CLOSE}
-        className={styles.close}
-        onClick={handleClose}
-      />
+      <div className={styles.buttons}>
+        {showFeedbackOnView && !!view && !feedbackDone && (
+          <WrappedIconButton
+            icon={ICON_FEEDBACK}
+            onClick={() => onFeedbackOnView?.(view.viewId)}
+          />
+        )}
+        <WrappedIconButton icon={ICON_CLOSE} onClick={handleClose} />
+      </div>
     </div>
   );
 }

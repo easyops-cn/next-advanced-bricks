@@ -26,6 +26,7 @@ export interface CruiseCanvasProps {
   showHiddenJobs?: boolean;
   showFeedback?: boolean;
   showUiSwitch?: boolean;
+  showFeedbackOnView?: boolean;
   showJsxEditor?: boolean;
 }
 
@@ -82,6 +83,9 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
   accessor showFeedback: boolean | undefined;
 
   @property({ type: Boolean })
+  accessor showFeedbackOnView: boolean | undefined;
+
+  @property({ type: Boolean })
   accessor showUiSwitch: boolean | undefined;
 
   @property({ type: Boolean, render: false })
@@ -111,6 +115,13 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
     this.#feedbackSubmitEvent.emit(detail);
   };
 
+  @event({ type: "feedback.on.view" })
+  accessor #feedbackOnViewEvent!: EventEmitter<string>;
+
+  #onFeedbackOnView = (viewId: string) => {
+    this.#feedbackOnViewEvent.emit(viewId);
+  };
+
   @event({ type: "ui.switch" })
   accessor #switch!: EventEmitter<"chat">;
 
@@ -135,6 +146,11 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
     this.#ref.current?.feedbackSubmitFailed();
   }
 
+  @method()
+  feedbackOnViewDone(viewId: string) {
+    this.#ref.current?.feedbackOnViewDone(viewId);
+  }
+
   render() {
     const Component = this.conversationId
       ? ForwardedCruiseCanvasComponent
@@ -152,11 +168,13 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         showHiddenJobs={this.showHiddenJobs}
         showFeedback={this.showFeedback}
         showUiSwitch={this.showUiSwitch}
+        showFeedbackOnView={this.showFeedbackOnView}
         showJsxEditor={this.showJsxEditor}
         onShare={this.#onShare}
         onTerminate={this.#onTerminate}
         onSubmitFeedback={this.#onSubmitFeedback}
         onSwitchToChat={this.#onSwitchToChat}
+        onFeedbackOnView={this.#onFeedbackOnView}
         ref={this.#ref}
       />
     );

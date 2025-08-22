@@ -21,6 +21,8 @@ import { createPortal } from "../../cruise-canvas/utils/createPortal";
 import { convertJsx } from "../../cruise-canvas/utils/jsx-converters/convertJsx";
 import { isJsxView } from "../../cruise-canvas/utils/jsx-converters/isJsxView";
 import { TaskContext } from "../TaskContext";
+import { ICON_FEEDBACK } from "../constants";
+import { useViewFeedbackDone } from "../useViewFeedbackDone";
 
 initializeI18n(NS, locales);
 
@@ -39,12 +41,18 @@ export function CreatedView({
     setActiveExpandedViewJobId,
     setActiveJsxEditorJob,
     manuallyUpdatedViews,
+    showFeedbackOnView,
+    onFeedbackOnView,
+    feedbackDoneViews,
   } = useContext(TaskContext);
   const ref = useRef<HTMLDivElement>(null);
   const rootRef = useRef<Awaited<
     ReturnType<typeof unstable_createRoot>
   > | null>(null);
   const view = manuallyUpdatedViews?.get(job.id) ?? job.generatedView!;
+  const feedbackDone =
+    useViewFeedbackDone(view.viewId, showFeedbackOnView) ||
+    feedbackDoneViews?.has(view.viewId);
 
   useEffect(() => {
     const container = ref.current;
@@ -159,6 +167,15 @@ export function CreatedView({
               }}
             >
               <WrappedIcon lib="antd" icon="bug" />
+            </button>
+          )}
+          {showFeedbackOnView && !feedbackDone && (
+            <button
+              className={styles.button}
+              title={t(K.FEEDBACK)}
+              onClick={() => onFeedbackOnView?.(view.viewId)}
+            >
+              <WrappedIcon {...ICON_FEEDBACK} />
             </button>
           )}
           <button
