@@ -27,3 +27,9 @@ export const ICON_CHAT: GeneralIconProps = {
   lib: "antd",
   icon: "message",
 };
+
+export const ICON_FEEDBACK: GeneralIconProps = {
+  lib: "fa",
+  prefix: "far",
+  icon: "message",
+};

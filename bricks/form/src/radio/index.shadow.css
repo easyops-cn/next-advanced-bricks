@@ -238,7 +238,7 @@
         border-color: var(--antd-radio-dot-color);
         background-color: var(--antd-radio-dot-color);
         color: #fff;
-        margin-right: -1px;
+        /* margin-right: -1px; */
         z-index: 1;
 
         &:hover {

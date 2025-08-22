@@ -1,32 +1,31 @@
 // istanbul ignore file
 import { useCallback, useEffect, useReducer, useRef } from "react";
-import { http } from "@next-core/http";
 import { createSSEStream } from "@next-core/utils/general";
 import { getBasePath, handleHttpError } from "@next-core/runtime";
-import { rootReducer } from "./legacy-reducers";
-import type { TaskPatch } from "./interfaces";
+import { rootReducer } from "./reducers";
+import type { ConversationPatch, RequestStore } from "../shared/interfaces";
 
 const MINIMAL_DELAY = 500;
 
-export function useTaskDetail(
-  taskId: string | undefined,
+export function useConversationDetail(
+  conversationId: string,
+  initialRequest?: RequestStore | null,
   replay?: boolean,
   replayDelay?: number
 ) {
-  const [{ task, jobs, error }, dispatch] = useReducer(
+  const [{ conversation, tasks, error }, dispatch] = useReducer(
     rootReducer,
     null,
     () => ({
-      task: null,
-      jobs: [],
+      conversation: null,
+      tasks: [],
       error: null,
     })
   );
 
   const humanInputRef = useRef<(jobId: string, input: string) => void>();
-  const resumedRef = useRef<() => void>();
 
-  const replayListRef = useRef<TaskPatch[] | null>(null);
+  const replayListRef = useRef<ConversationPatch[]>([]);
   const replayRef = useRef(replay);
   const replayDelayRef = useRef((replayDelay ?? 2) * 1000);
   const replayResolveRef = useRef<(() => void) | null>(null);
@@ -44,7 +43,7 @@ export function useTaskDetail(
 
     let isInitial = true;
     let previousTime: number | undefined;
-    for (const value of replayListRef.current!) {
+    for (const value of replayListRef.current) {
       if (replayRef.current) {
         let delay = replayDelayRef.current;
         if (value.time && previousTime) {
@@ -63,38 +62,47 @@ export function useTaskDetail(
         }
       }
 
-      dispatch({ type: "sse", payload: value, isInitial });
+      dispatch({ type: "sse", payload: value });
       isInitial = false;
     }
   }, []);
 
   useEffect(() => {
     dispatch({ type: "reset" });
+    replayListRef.current = [];
     humanInputRef.current = undefined;
-    if (!taskId) {
-      return;
-    }
 
     let ignore = false;
     let requesting = false;
     let ctrl: AbortController | undefined;
 
-    const makeRequest = async () => {
+    const makeRequest = async (content: string | null) => {
       if (requesting) {
         return;
       }
 
       requesting = true;
-      replayListRef.current = [];
       ctrl = new AbortController();
       try {
-        const request = await createSSEStream<TaskPatch>(
-          `${getBasePath()}api/gateway/logic.llm.aiops_service/api/v1/llm/agent/flow/${taskId}`,
-          {
-            signal: ctrl.signal,
-          }
-        );
-        const stream = await request;
+        const sseRequest = await (initialRequest === null
+          ? createSSEStream<ConversationPatch>(
+              `${getBasePath()}api/gateway/logic.llm.aiops_service/api/v1/elevo/conversations/${conversationId}/stream`,
+              {
+                signal: ctrl.signal,
+              }
+            )
+          : createSSEStream<ConversationPatch>(
+              `${getBasePath()}api/gateway/logic.llm.aiops_service/api/v1/elevo/conversations/${conversationId}/messages`,
+              {
+                signal: ctrl.signal,
+                method: "POST",
+                body: JSON.stringify({ content }),
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            ));
+        const stream = await sseRequest;
         let isInitial = true;
         let previousTime: number | undefined;
         for await (const value of stream) {
@@ -123,7 +131,7 @@ export function useTaskDetail(
           }
 
           replayListRef.current.push(value);
-          dispatch({ type: "sse", payload: value, isInitial });
+          dispatch({ type: "sse", payload: value });
           isInitial = false;
         }
       } catch (e) {
@@ -135,38 +143,27 @@ export function useTaskDetail(
       }
     };
 
-    resumedRef.current = makeRequest;
-
-    humanInputRef.current = async (jobId: string, input: string) => {
-      try {
-        await http.post(
-          `${getBasePath()}api/gateway/logic.llm.aiops_service/api/v1/llm/agent/flow/${taskId}/job/${jobId}`,
-          { input }
-        );
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error("human input failed", e);
-        handleHttpError(e);
-        return;
-      }
-
-      makeRequest();
+    humanInputRef.current = async (jobId: string, content: string) => {
+      makeRequest(content);
     };
 
-    makeRequest();
+    makeRequest(
+      initialRequest?.conversationId === conversationId
+        ? initialRequest.content
+        : null
+    );
 
     return () => {
       ignore = true;
       ctrl?.abort();
     };
-  }, [taskId]);
+  }, [conversationId, initialRequest]);
 
   return {
-    task,
-    jobs,
+    conversation,
+    tasks,
     error,
     humanInputRef,
-    resumedRef,
     skipToResults,
     watchAgain,
   };

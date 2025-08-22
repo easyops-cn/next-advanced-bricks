@@ -68,6 +68,26 @@
       - false
 ```
 
+### Emoji
+
+```yaml preview
+- brick: eo-radio
+  properties:
+    name: overall
+    label: 总体满意度
+    type: button
+    options:
+      - label: 差
+        emoji: 😔
+        value: -1
+      - label: 一般
+        emoji: 😐
+        value: 0
+      - label: 好
+        emoji: 😊
+        value: 1
+```
+
 ### Disabled
 
 ```yaml preview

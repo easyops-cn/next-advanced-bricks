@@ -132,3 +132,7 @@ export interface ConstructResult {
 export interface ParseJsxOptions {
   reward?: boolean;
 }
+
+export interface ParseTsxOptions extends ParseJsxOptions {
+  withContexts?: string[];
+}

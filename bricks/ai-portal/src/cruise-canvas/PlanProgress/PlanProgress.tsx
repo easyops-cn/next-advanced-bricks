@@ -31,14 +31,12 @@ export function PlanProgress({
   state: taskState,
   replay,
 }: PlanProgressProps): JSX.Element | null {
-  const { onPause, onResume, onCancel } = useContext(TaskContext);
+  const { onTerminate } = useContext(TaskContext);
   const [expanded, setExpanded] = useState(false);
-  const [actionBeingTaken, setActionBeingTaken] = useState<
-    "toggle" | "cancel" | null
-  >(null);
+  const [actionBeingTaken, setActionBeingTaken] = useState(false);
 
   useEffect(() => {
-    setActionBeingTaken(null);
+    setActionBeingTaken(false);
   }, [taskState]);
 
   const {
@@ -82,17 +80,7 @@ export function PlanProgress({
     setExpanded((prev) => !prev);
   }, []);
 
-  const handleResume = useCallback(() => {
-    onResume();
-    setActionBeingTaken("toggle");
-  }, [onResume]);
-
-  const handlePause = useCallback(() => {
-    onPause();
-    setActionBeingTaken("toggle");
-  }, [onPause]);
-
-  const handleStop = useCallback(async () => {
+  const handleTerminate = useCallback(async () => {
     try {
       await showDialog({
         type: "confirm",
@@ -102,9 +90,9 @@ export function PlanProgress({
     } catch {
       return;
     }
-    onCancel();
-    setActionBeingTaken("cancel");
-  }, [onCancel]);
+    onTerminate();
+    setActionBeingTaken(true);
+  }, [onTerminate]);
 
   if (!plan?.length) {
     return null;
@@ -139,32 +127,7 @@ export function PlanProgress({
         </div>
         {canIntercept && (
           <div className={styles.actions}>
-            {actionBeingTaken === "toggle" ? (
-              <WrappedTooltip>
-                <button disabled className={styles.action}>
-                  <WrappedIcon lib="antd" icon="loading-3-quarters" spinning />
-                </button>
-              </WrappedTooltip>
-            ) : taskState === "paused" ? (
-              <WrappedTooltip
-                content={actionBeingTaken ? undefined : t(K.RESUME_THE_TASK)}
-                onClick={handleResume}
-              >
-                <button disabled={!!actionBeingTaken} className={styles.action}>
-                  <WrappedIcon lib="fa" prefix="far" icon="circle-play" />
-                </button>
-              </WrappedTooltip>
-            ) : (
-              <WrappedTooltip
-                content={actionBeingTaken ? undefined : t(K.PAUSE_THE_TASK)}
-                onClick={handlePause}
-              >
-                <button disabled={!!actionBeingTaken} className={styles.action}>
-                  <WrappedIcon lib="fa" prefix="far" icon="circle-pause" />
-                </button>
-              </WrappedTooltip>
-            )}
-            {actionBeingTaken === "cancel" ? (
+            {actionBeingTaken ? (
               <WrappedTooltip>
                 <button disabled className={styles.action}>
                   <WrappedIcon lib="antd" icon="loading-3-quarters" spinning />
@@ -173,7 +136,7 @@ export function PlanProgress({
             ) : (
               <WrappedTooltip
                 content={actionBeingTaken ? undefined : t(K.CANCEL_THE_TASK)}
-                onClick={handleStop}
+                onClick={handleTerminate}
               >
                 <button disabled={!!actionBeingTaken} className={styles.action}>
                   <WrappedIcon lib="fa" prefix="far" icon="circle-stop" />

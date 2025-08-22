@@ -14,7 +14,7 @@ import { DONE_STATES } from "../../shared/constants";
 export interface NavProps {
   nav: GraphNavItem[] | undefined;
   plan: Step[] | undefined;
-  jobs: Job[] | undefined;
+  jobMap: Map<string, Job> | undefined;
   jobLevels: Map<string, number> | undefined;
   currentNavId: string | null;
   taskState: TaskState | undefined;
@@ -29,7 +29,7 @@ interface MergedNavItem extends Omit<GraphNavItem, "state"> {
 export function Nav({
   nav,
   plan,
-  jobs,
+  jobMap,
   jobLevels,
   currentNavId,
   taskState,
@@ -78,7 +78,7 @@ export function Nav({
         cursorIndex,
         0,
         ...steps.map<MergedNavItem>((step) => {
-          const job = jobs?.find((job) => job.id === step.id);
+          const job = jobMap?.get(step.id);
           const level = jobLevels?.get(step.id);
           return {
             id: step.id,
@@ -92,7 +92,7 @@ export function Nav({
     }
 
     return mergedNav;
-  }, [nav, plan, jobs, jobLevels]);
+  }, [nav, plan, jobMap, jobLevels]);
 
   const ref = useRef<HTMLUListElement>(null);
   useEffect(() => {
