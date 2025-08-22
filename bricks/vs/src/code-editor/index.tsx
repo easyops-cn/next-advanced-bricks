@@ -14,7 +14,7 @@ import { getRuntime } from "@next-core/runtime";
 import { HttpAbortError } from "@next-core/http";
 import { FormItemElementBase } from "@next-shared/form";
 import type { FormItem, FormItemProps } from "@next-bricks/form/form-item";
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
+import * as monaco from "monaco-editor";
 // import { register as registerJavaScript } from "@next-core/monaco-contributions/javascript";
 // import { register as registerTypeScript } from "@next-core/monaco-contributions/typescript";
 import { register as registerYaml } from "@next-core/monaco-contributions/yaml";
@@ -81,27 +81,28 @@ import { Registry } from "monaco-textmate";
 import { wireTmGrammars } from "monaco-editor-textmate";
 import grammarJavaScript from "./grammars/JavaScript.tmLanguage.json?raw";
 import grammarTypeScript from "./grammars/TypeScript.tmLanguage.json?raw";
+import grammarTypeScriptReact from "./grammars/TypeScriptReact.tmLanguage.json?raw";
 import tmVsDark from "./themes/dark-modern.json" with { type: "json" };
 
 initializeReactI18n(NS, locales);
 
 self.MonacoEnvironment = {
 	getWorkerUrl: function (moduleId, label) {
-    console.log(`getWorkerUrl: ${label}`);
+    console.log("getWorkerUrl:", label);
 		return `${__webpack_public_path__}${getWorkerUrl(label)}`;
 	}
 };
 
 function getWorkerUrl(label: string) {
-  // if (label === 'json') {
-  //   return 'workers/json.worker.bundle.js';
-  // }
-  // if (label === 'css' || label === 'scss' || label === 'less') {
-  //   return 'workers/css.worker.bundle.js';
-  // }
-  // if (label === 'html' || label === 'handlebars' || label === 'razor') {
-  //   return 'workers/html.worker.bundle.js';
-  // }
+  if (label === 'json') {
+    return 'workers/json.worker.bundle.js';
+  }
+  if (label === 'css' || label === 'scss' || label === 'less') {
+    return 'workers/css.worker.bundle.js';
+  }
+  if (label === 'html' || label === 'handlebars' || label === 'razor') {
+    return 'workers/html.worker.bundle.js';
+  }
   if (label === 'typescript' || label === 'javascript') {
     return 'chunks/ts.worker.bundle.js';
   }
@@ -112,6 +113,7 @@ await loadWASM(onigasm);
 
 const tmRegistry = new Registry({
   getGrammarDefinition: async (scopeName) => {
+    console.log(`getGrammarDefinition: ${scopeName}`);
     if (scopeName === "source.js") {
       return {
         format: "json",
@@ -124,7 +126,15 @@ const tmRegistry = new Registry({
       return {
         format: "json",
         content: await (
-          await fetch(grammarTypeScript)
+          await fetch(grammarTypeScriptReact)
+        ).text(),
+      };
+    }
+    if (scopeName === "source.tsx") {
+      return {
+        format: "json",
+        content: await (
+          await fetch(grammarTypeScriptReact)
         ).text(),
       };
     }
@@ -134,24 +144,9 @@ const tmRegistry = new Registry({
 
 const grammars = new Map();
 grammars.set("javascript", "source.js");
-grammars.set("typescript", "source.ts");
+grammars.set("typescript", "source.tsx");
 
-// monaco.languages.register({
-//   id: 'javascript',
-//   extensions: [".js", ".es6", ".jsx", ".mjs", ".cjs"],
-//     firstLine: "^#!.*\\bnode",
-//     filenames: ["jakefile"],
-//     aliases: ["JavaScript", "javascript", "js"],
-//     mimetypes: ["text/javascript"],
-// });
-// monaco.languages.register({
-//   id: 'typescript',
-//     extensions: [".ts", ".tsx", ".cts", ".mts"],
-//     aliases: ["TypeScript", "ts", "typescript"],
-//     mimetypes: ["text/typescript"],
-// });
-
-await wireTmGrammars(monaco, tmRegistry, grammars, undefined);
+await wireTmGrammars(monaco, tmRegistry, grammars);
 
 // registerJavaScript(monaco);
 // registerTypeScript(monaco);
@@ -625,24 +620,26 @@ export function CodeEditorComponent({
   const isDarkTheme =
     computedTheme === "vs-dark" || computedTheme === "hc-black" || computedTheme === "tm-vs-dark";
 
-  // useEffect(() => {
-  //   const lineHighlightBackground = isDarkTheme ? "#FFFFFF0F" : "#0000000A";
-  //   monaco.editor.defineTheme("custom-theme", {
-  //     base: computedTheme as "vs-dark" | "vs",
-  //     inherit: true,
-  //     rules: [],
-  //     colors: {
-  //       "editor.lineHighlightBackground": `${lineHighlightBackground}`,
-  //     },
-  //   });
-  //   // Currently theme is configured globally.
-  //   // See https://github.com/microsoft/monaco-editor/issues/338
-  //   monaco.editor.setTheme("custom-theme");
-  // }, [computedTheme, isDarkTheme]);
-
   useEffect(() => {
-     monaco.editor.setTheme(computedTheme);
-  }, [computedTheme]);
+    const lineHighlightBackground = isDarkTheme ? "#FFFFFF0F" : "#0000000A";
+    monaco.editor.defineTheme("custom-theme", computedTheme === "tm-vs-dark" ? {
+      ...tmVsDark,
+      colors: {
+        ...tmVsDark.colors,
+        "editor.lineHighlightBackground": `${lineHighlightBackground}`,
+      }
+    } as monaco.editor.IStandaloneThemeData : {
+      base: computedTheme as "vs-dark" | "vs",
+      inherit: true,
+      rules: [],
+        colors: {
+          "editor.lineHighlightBackground": `${lineHighlightBackground}`,
+      },
+    });
+    // Currently theme is configured globally.
+    // See https://github.com/microsoft/monaco-editor/issues/338
+    monaco.editor.setTheme("custom-theme");
+  }, [computedTheme, isDarkTheme]);
 
   useEffect(() => {
     if (editorRef.current) {
@@ -863,13 +860,13 @@ export function CodeEditorComponent({
       language === "typescript" ||
       language === "brick_next_yaml"
     ) {
-      // monaco.languages.typescript[languageDefaults].setCompilerOptions({
-      //   allowNonTsExtensions: true,
-      //   lib: domLibsEnabled ? undefined : ["esnext"],
-      //   target: monaco.languages.typescript.ScriptTarget.ESNext,
-      //   moduleResolution:
-      //     monaco.languages.typescript.ModuleResolutionKind.NodeJs,
-      // });
+      monaco.languages.typescript[languageDefaults].setCompilerOptions({
+        allowNonTsExtensions: true,
+        lib: domLibsEnabled ? undefined : ["esnext"],
+        target: monaco.languages.typescript.ScriptTarget.ESNext,
+        module: monaco.languages.typescript.ModuleKind.ESNext,
+        jsx: monaco.languages.typescript.JsxEmit.Preserve,
+      });
     }
   }, [language, domLibsEnabled, languageDefaults]);
 
@@ -901,8 +898,8 @@ export function CodeEditorComponent({
           allowNonTsExtensions: true,
           lib: domLibsEnabled ? undefined : ["esnext"],
           target: monaco.languages.typescript.ScriptTarget.ESNext,
-          moduleResolution:
-            monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+          module: monaco.languages.typescript.ModuleKind.ESNext,
+          jsx: monaco.languages.typescript.JsxEmit.Preserve,
         });
       }
     };

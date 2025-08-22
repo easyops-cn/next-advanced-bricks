@@ -133,6 +133,10 @@
             "token": "punctuation.definition.comment"
         },
         {
+            "foreground": "#ce9178",
+            "token": "punctuation.definition.string"
+        },
+        {
             "foreground": "#D4D4D4",
             "token": "meta.embedded"
         },
