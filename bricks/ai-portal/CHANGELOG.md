@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.27.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.26.3...@next-bricks/ai-portal@0.27.0) (2025-08-22)
+
+
+### Features
+
+* cruise canvas v2 ([1d89009](https://github.com/easyops-cn/next-advanced-bricks/commit/1d8900926f7abd09a4ad6ba991afc71538f05562))
+* support feedback on views ([721bd75](https://github.com/easyops-cn/next-advanced-bricks/commit/721bd75ba435a94826fa4debb7cfdbd6c33ed5ff))
+* support static data view ([74486c5](https://github.com/easyops-cn/next-advanced-bricks/commit/74486c578411d1ab286714729858b93009433e36))
+
+
+
+
+
 ## [0.26.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.26.2...@next-bricks/ai-portal@0.26.3) (2025-08-20)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.3.0...@next-shared/jsx-storyboard@0.4.0) (2025-08-22)
+
+
+### Features
+
+* support static data view ([74486c5](https://github.com/easyops-cn/next-advanced-bricks/commit/74486c578411d1ab286714729858b93009433e36))
+
+
+
+
+
 # [0.3.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.2.2...@next-shared/jsx-storyboard@0.3.0) (2025-08-19)
 
 
