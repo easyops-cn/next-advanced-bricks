@@ -122,7 +122,8 @@ export function useTaskGraph(
         nodeIds.push(jobNodeId);
       }
 
-      if (job.generatedView) {
+      const view = job.generatedView || job.staticDataView;
+      if (view) {
         // Add view node for job
         const viewNodeId = `view:${job.id}`;
         nodes.push({
@@ -134,7 +135,7 @@ export function useTaskGraph(
 
         views.push({
           id: job.id,
-          view: job.generatedView,
+          view,
         });
       }
 

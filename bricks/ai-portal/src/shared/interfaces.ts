@@ -83,7 +83,8 @@ export interface Job {
   startTime: number;
   endTime?: number;
 
-  generatedView?: ConstructResult;
+  generatedView?: ConstructedView;
+  staticDataView?: ConstructedView;
   level?: number;
 }
 
@@ -162,4 +163,9 @@ export interface JobPatch extends Partial<Job> {
 export interface RequestStore {
   conversationId: string;
   content: string;
+}
+
+export interface ConstructedView extends ConstructResult {
+  viewId: string;
+  withContexts?: Record<string, unknown>;
 }

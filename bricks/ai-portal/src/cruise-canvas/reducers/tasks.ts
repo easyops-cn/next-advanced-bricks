@@ -1,11 +1,8 @@
 import type { Reducer } from "react";
 import { isMatch, pick } from "lodash";
-import {
-  parseJsx,
-  parseTsx,
-  type ConstructResult,
-} from "@next-shared/jsx-storyboard";
+import { parseJsx, parseTsx } from "@next-shared/jsx-storyboard";
 import type {
+  ConstructedView,
   DataPart,
   Job,
   JobPatch,
@@ -148,6 +145,17 @@ function mergeJobs(
         }
       }
 
+      if (!previousJob.staticDataView) {
+        const view = getJobStaticDataView(messagesPatch);
+        if (view) {
+          view.withContexts = {
+            RESPONSE: getJobStaticDataResponse(restMessagesPatch.messages!),
+          };
+
+          restMessagesPatch.staticDataView = view;
+        }
+      }
+
       if (!isMatch(previousJob, restMessagesPatch)) {
         jobs = [
           ...jobs.slice(0, previousJobIndex),
@@ -211,7 +219,7 @@ function mergeMessageParts(parts: Part[]): Part[] {
 
 function getJobGeneratedView(
   messages: Message[] | undefined
-): ConstructResult | undefined {
+): ConstructedView | undefined {
   if (!messages) {
     return;
   }
@@ -222,9 +230,10 @@ function getJobGeneratedView(
         if (part.type === "text") {
           try {
             const result = JSON.parse(part.text) as JsxResult;
-            return (result.code.includes("<eo-view") ? parseJsx : parseTsx)(
-              result.code
-            );
+            const view = (
+              result.code.includes("<eo-view") ? parseJsx : parseTsx
+            )(result.code);
+            return { viewId: result.viewId, ...view };
           } catch {
             // Do nothing, continue to next part
           }
@@ -232,6 +241,49 @@ function getJobGeneratedView(
       }
     }
   }
+}
+
+function getJobStaticDataView(
+  messages: Message[] | undefined
+): ConstructedView | undefined {
+  if (!messages) {
+    return;
+  }
+
+  for (const message of messages) {
+    if (message.role === "tool") {
+      for (const part of message.parts) {
+        if (part.type === "data" && part.data?.type === "static_data_view") {
+          try {
+            const view = parseTsx(part.data.code, {
+              withContexts: ["RESPONSE"],
+            });
+            return { viewId: part.data.viewId, ...view };
+          } catch {
+            // Do nothing, continue to next part
+          }
+        }
+      }
+    }
+  }
+}
+
+function getJobStaticDataResponse(messages: Message[]) {
+  for (const message of messages) {
+    if (message.role === "tool") {
+      for (const part of message.parts) {
+        if (part.type === "text") {
+          try {
+            return JSON.parse(part.text);
+          } catch {
+            // Do nothing, continue to next part
+          }
+        }
+      }
+    }
+  }
+
+  return null;
 }
 
 interface JsxResult {

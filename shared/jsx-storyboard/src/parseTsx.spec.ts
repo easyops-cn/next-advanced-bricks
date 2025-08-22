@@ -1,58 +1,43 @@
 // import { codeFrameColumns } from "@babel/code-frame";
 import { parseTsx } from "./parseTsx.js";
 
-const code = `let keyword: string | undefined;
-
-let pagination: { page: number; pageSize: number } = { page: 1, pageSize: 10 };
-
-let alerts = await callApi(
-  "easyops.api.alert_service.monitor_event@SearchNotRecoverEvents",
-  {
-    page: pagination.page,
-    page_size: pagination.pageSize,
-    ...(keyword ? { keyword } : null),
-    st: "-1h",
-  },
-  { objectId: "EVENT" }
-).then((data) => data);
+const code = `
+// 构造表格组件需要的数据结构
+const tableData = {
+  list: RESPONSE.processes
+};
 
 export default (
-  <View title="未解决告警事件">
-    <Toolbar>
-      <Search
-        componentId="search"
-        placeholder="按告警内容搜索"
-        onSearch={(event) => {
-          keyword = event.detail;
-        }}
-      />
-    </Toolbar>
+  <View title="进程列表">
     <Table
-      dataSource={alerts}
+      dataSource={tableData}
       columns={[
-        { dataIndex: "eventId", key: "eventId", title: "告警ID" },
-        { dataIndex: "target", key: "target", title: "告警对象" },
-        { dataIndex: "level", key: "level", title: "告警等级" },
-        { dataIndex: "time", key: "time", title: "告警时间" },
-        { dataIndex: "originContent", key: "originContent", title: "告警内容" },
+        { dataIndex: "cmdline", key: "cmdline", title: "命令行" },
+        { dataIndex: "cpu_time", key: "cpu_time", title: "CPU 时间" },
+        { dataIndex: "cpu_usage_percent", key: "cpu_usage_percent", title: "CPU 使用率" },
+        { dataIndex: "cwd", key: "cwd", title: "当前工作目录" },
+        { dataIndex: "memory_rss", key: "memory_rss", title: "内存使用量" },
+        { dataIndex: "memory_swap", key: "memory_swap", title: "交换内存使用量" },
+        { dataIndex: "memory_usage_percent", key: "memory_usage_percent", title: "内存使用率" },
+        { dataIndex: "memory_vms", key: "memory_vms", title: "虚拟内存使用量" },
+        { dataIndex: "open_fd_count", key: "open_fd_count", title: "打开的文件描述符数量" },
+        { dataIndex: "pid", key: "pid", title: "进程 ID" },
+        { dataIndex: "process_name", key: "process_name", title: "进程名称" },
+        { dataIndex: "start_time", key: "start_time", title: "启动时间" },
+        { dataIndex: "status", key: "status", title: "状态" }
       ]}
-      rowKey="eventId"
-      onPaginate={(event) => {
-        showMessage({
-          type: event.detail ? "success" : "error",
-          content: String(event.detail)
-        });
-        refresh(alerts);
-        getComponent("Search", "search").open();
-      }}
+      rowKey="pid"
     />
   </View>
 );
+
 `;
 
-describe("parseJsx", () => {
+describe("parseTsx", () => {
   test("should parse TSX code with defineContext", () => {
-    const { errors, componentsMap, source, ...result } = parseTsx(code);
+    const { errors, componentsMap, source, ...result } = parseTsx(code, {
+      withContexts: ["RESPONSE"],
+    });
     // if (errors.length > 0) {
     //   for (const error of errors) {
     //     if (!error.node) {
@@ -71,6 +56,6 @@ describe("parseJsx", () => {
     // }
     // console.dir(result, { depth: null, colors: true });
     // expect(errors).toHaveLength(1);
-    expect(result.components).toHaveLength(2);
+    expect(result.components).toHaveLength(1);
   });
 });

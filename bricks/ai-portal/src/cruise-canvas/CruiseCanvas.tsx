@@ -16,7 +16,6 @@ import ResizeObserver from "resize-observer-polyfill";
 import { select, type Selection, type TransitionLike } from "d3-selection";
 import { ZoomTransform } from "d3-zoom";
 import { mergeRects } from "@next-shared/diagram";
-import type { ConstructResult } from "@next-shared/jsx-storyboard";
 import styles from "./styles.module.css";
 import { useZoom } from "./useZoom.js";
 import type {
@@ -64,6 +63,7 @@ import { TaskContext } from "../shared/TaskContext.js";
 import { NodeLoading } from "./NodeLoading/NodeLoading.js";
 import { JsxEditor } from "../shared/JsxEditor/JsxEditor.js";
 import type { CruiseCanvasProps } from ".";
+import type { ConstructedView } from "../shared/interfaces";
 
 const MemoizedNodeComponent = memo(NodeComponent);
 
@@ -542,9 +542,9 @@ export function CruiseCanvasComponent(
     Job | undefined
   >();
   const [manuallyUpdatedViews, setManuallyUpdatedViews] = useState<
-    Map<string, ConstructResult> | undefined
+    Map<string, ConstructedView> | undefined
   >();
-  const updateView = useCallback((jobId: string, view: ConstructResult) => {
+  const updateView = useCallback((jobId: string, view: ConstructedView) => {
     setManuallyUpdatedViews((prev) => {
       const next = new Map(prev);
       next.set(jobId, view);

@@ -1,15 +1,12 @@
 import React, { Suspense, useContext, useState } from "react";
 import { asyncWrapBrick } from "@next-core/react-runtime";
 import type { CodeEditor, CodeEditorProps } from "@next-bricks/vs/code-editor";
-import {
-  parseJsx,
-  parseTsx,
-  type ConstructResult,
-} from "@next-shared/jsx-storyboard";
+import { parseJsx, parseTsx } from "@next-shared/jsx-storyboard";
 import styles from "./JsxEditor.module.css";
 import { WrappedButton, WrappedIconButton } from "../bricks";
 import { ICON_CLOSE } from "../constants";
 import { TaskContext } from "../TaskContext";
+import type { ConstructedView } from "../../cruise-canvas/interfaces";
 
 interface CodeEditorEvents {
   "code.change": CustomEvent<string>;
@@ -39,7 +36,7 @@ export function JsxEditor() {
   } = useContext(TaskContext);
   const view =
     manuallyUpdatedViews?.get(activeJsxEditorJob!.id) ??
-    (activeJsxEditorJob!.generatedView as ConstructResult);
+    (activeJsxEditorJob!.generatedView as ConstructedView);
   const source = view.source;
   const [code, setCode] = useState(source);
 
@@ -63,8 +60,8 @@ export function JsxEditor() {
                 onCodeChange={(e) => {
                   setCode(e.detail);
                 }}
-                language="javascript"
-                uri="file:///view.jsx"
+                language="typescript"
+                uri="file:///view.tsx"
                 automaticLayout="fit-container"
               />
             </Suspense>
@@ -75,10 +72,15 @@ export function JsxEditor() {
             themeVariant="elevo"
             type="primary"
             onClick={() => {
-              updateView?.(
-                activeJsxEditorJob!.id,
-                (code.includes("<eo-view") ? parseJsx : parseTsx)(code)
-              );
+              updateView?.(activeJsxEditorJob!.id, {
+                viewId: view.viewId,
+                ...(code.includes("<eo-view") ? parseJsx : parseTsx)(
+                  code,
+                  view.withContexts
+                    ? { withContexts: Object.keys(view.withContexts) }
+                    : undefined
+                ),
+              });
               setActiveJsxEditorJob?.(undefined);
             }}
           >

@@ -1,5 +1,5 @@
 import type { BrickConf, ContextConf } from "@next-core/types";
-import type { Component, ConstructResult } from "@next-shared/jsx-storyboard";
+import type { Component } from "@next-shared/jsx-storyboard";
 import { pipes } from "@easyops-cn/brick-next-pipes";
 import convertList from "./convertList";
 import type { ConvertViewOptions } from "../converters/interfaces";
@@ -16,9 +16,10 @@ import convertFormItem from "./convertFormItem";
 import convertModal from "./convertModal";
 import convertToolbar from "./convertToolbar";
 import convertText from "./convertText";
+import type { ConstructedView } from "../../interfaces";
 
 export async function convertJsx(
-  result: ConstructResult,
+  result: ConstructedView,
   options: ConvertViewOptions
 ) {
   const convert = async (component: Component) => {
@@ -113,6 +114,12 @@ export async function convertJsx(
   const context: ContextConf[] = [
     ...convertDataSources(result.dataSources ?? []),
     ...convertVariables(result.variables ?? []),
+    ...(result.withContexts
+      ? Object.entries(result.withContexts).map(([name, value]) => ({
+          name,
+          value,
+        }))
+      : []),
     {
       name: "__builtin_fn_mergeTexts",
       value: mergeTexts,
