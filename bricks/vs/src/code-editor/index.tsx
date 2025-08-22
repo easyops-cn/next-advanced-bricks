@@ -15,8 +15,8 @@ import { HttpAbortError } from "@next-core/http";
 import { FormItemElementBase } from "@next-shared/form";
 import type { FormItem, FormItemProps } from "@next-bricks/form/form-item";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
-import { register as registerJavaScript } from "@next-core/monaco-contributions/javascript";
-import { register as registerTypeScript } from "@next-core/monaco-contributions/typescript";
+// import { register as registerJavaScript } from "@next-core/monaco-contributions/javascript";
+// import { register as registerTypeScript } from "@next-core/monaco-contributions/typescript";
 import { register as registerYaml } from "@next-core/monaco-contributions/yaml";
 import { register as registerHtml } from "@next-core/monaco-contributions/html";
 import yaml from "js-yaml";
@@ -75,15 +75,93 @@ import {
 } from "./utils/EditorService.js";
 import { setExtraLibs } from "./utils/setExtraLibs.js";
 
+import { loadWASM } from "onigasm";
+import onigasm from "onigasm/lib/onigasm.wasm";
+import { Registry } from "monaco-textmate";
+import { wireTmGrammars } from "monaco-editor-textmate";
+import grammarJavaScript from "./grammars/JavaScript.tmLanguage.json?raw";
+import grammarTypeScript from "./grammars/TypeScript.tmLanguage.json?raw";
+import tmVsDark from "./themes/dark-modern.json" with { type: "json" };
+
 initializeReactI18n(NS, locales);
 
-registerJavaScript(monaco);
-registerTypeScript(monaco);
+self.MonacoEnvironment = {
+	getWorkerUrl: function (moduleId, label) {
+    console.log(`getWorkerUrl: ${label}`);
+		return `${__webpack_public_path__}${getWorkerUrl(label)}`;
+	}
+};
+
+function getWorkerUrl(label: string) {
+  // if (label === 'json') {
+  //   return 'workers/json.worker.bundle.js';
+  // }
+  // if (label === 'css' || label === 'scss' || label === 'less') {
+  //   return 'workers/css.worker.bundle.js';
+  // }
+  // if (label === 'html' || label === 'handlebars' || label === 'razor') {
+  //   return 'workers/html.worker.bundle.js';
+  // }
+  if (label === 'typescript' || label === 'javascript') {
+    return 'chunks/ts.worker.bundle.js';
+  }
+  return 'chunks/editor.worker.bundle.js';
+}
+
+await loadWASM(onigasm);
+
+const tmRegistry = new Registry({
+  getGrammarDefinition: async (scopeName) => {
+    if (scopeName === "source.js") {
+      return {
+        format: "json",
+        content: await (
+          await fetch(grammarJavaScript)
+        ).text(),
+      };
+    }
+    if (scopeName === "source.ts") {
+      return {
+        format: "json",
+        content: await (
+          await fetch(grammarTypeScript)
+        ).text(),
+      };
+    }
+    return null!;
+  },
+});
+
+const grammars = new Map();
+grammars.set("javascript", "source.js");
+grammars.set("typescript", "source.ts");
+
+// monaco.languages.register({
+//   id: 'javascript',
+//   extensions: [".js", ".es6", ".jsx", ".mjs", ".cjs"],
+//     firstLine: "^#!.*\\bnode",
+//     filenames: ["jakefile"],
+//     aliases: ["JavaScript", "javascript", "js"],
+//     mimetypes: ["text/javascript"],
+// });
+// monaco.languages.register({
+//   id: 'typescript',
+//     extensions: [".ts", ".tsx", ".cts", ".mts"],
+//     aliases: ["TypeScript", "ts", "typescript"],
+//     mimetypes: ["text/typescript"],
+// });
+
+await wireTmGrammars(monaco, tmRegistry, grammars, undefined);
+
+// registerJavaScript(monaco);
+// registerTypeScript(monaco);
 registerYaml(monaco, "brick_next_yaml");
 registerHtml(monaco);
 registerCel(monaco);
 registerCelYaml(monaco);
 registerCelStr(monaco);
+
+monaco.editor.defineTheme("tm-vs-dark", tmVsDark as monaco.editor.IStandaloneThemeData);
 
 const EMBEDDED_CEL = ["cel_yaml", "cel_str"];
 const CEL_FAMILY = ["cel", ...EMBEDDED_CEL];
@@ -545,22 +623,26 @@ export function CodeEditorComponent({
         : "vs"
       : theme;
   const isDarkTheme =
-    computedTheme === "vs-dark" || computedTheme === "hc-black";
+    computedTheme === "vs-dark" || computedTheme === "hc-black" || computedTheme === "tm-vs-dark";
+
+  // useEffect(() => {
+  //   const lineHighlightBackground = isDarkTheme ? "#FFFFFF0F" : "#0000000A";
+  //   monaco.editor.defineTheme("custom-theme", {
+  //     base: computedTheme as "vs-dark" | "vs",
+  //     inherit: true,
+  //     rules: [],
+  //     colors: {
+  //       "editor.lineHighlightBackground": `${lineHighlightBackground}`,
+  //     },
+  //   });
+  //   // Currently theme is configured globally.
+  //   // See https://github.com/microsoft/monaco-editor/issues/338
+  //   monaco.editor.setTheme("custom-theme");
+  // }, [computedTheme, isDarkTheme]);
 
   useEffect(() => {
-    const lineHighlightBackground = isDarkTheme ? "#FFFFFF0F" : "#0000000A";
-    monaco.editor.defineTheme("custom-theme", {
-      base: computedTheme as "vs-dark" | "vs",
-      inherit: true,
-      rules: [],
-      colors: {
-        "editor.lineHighlightBackground": `${lineHighlightBackground}`,
-      },
-    });
-    // Currently theme is configured globally.
-    // See https://github.com/microsoft/monaco-editor/issues/338
-    monaco.editor.setTheme("custom-theme");
-  }, [computedTheme, isDarkTheme]);
+     monaco.editor.setTheme(computedTheme);
+  }, [computedTheme]);
 
   useEffect(() => {
     if (editorRef.current) {
@@ -781,13 +863,13 @@ export function CodeEditorComponent({
       language === "typescript" ||
       language === "brick_next_yaml"
     ) {
-      monaco.languages.typescript[languageDefaults].setCompilerOptions({
-        allowNonTsExtensions: true,
-        lib: domLibsEnabled ? undefined : ["esnext"],
-        target: monaco.languages.typescript.ScriptTarget.ESNext,
-        moduleResolution:
-          monaco.languages.typescript.ModuleResolutionKind.NodeJs,
-      });
+      // monaco.languages.typescript[languageDefaults].setCompilerOptions({
+      //   allowNonTsExtensions: true,
+      //   lib: domLibsEnabled ? undefined : ["esnext"],
+      //   target: monaco.languages.typescript.ScriptTarget.ESNext,
+      //   moduleResolution:
+      //     monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+      // });
     }
   }, [language, domLibsEnabled, languageDefaults]);
 
