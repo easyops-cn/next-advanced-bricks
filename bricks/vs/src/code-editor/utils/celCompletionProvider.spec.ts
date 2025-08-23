@@ -1,4 +1,4 @@
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
+import * as monaco from "monaco-editor";
 import {
   celCommonCompletionProviderFactory,
   celSpecificCompletionProviderFactory,
@@ -7,7 +7,7 @@ import {
 import { setEditorId } from "./editorId";
 import type { MixedCompleter } from "../interfaces";
 
-jest.mock("monaco-editor/esm/vs/editor/editor.api.js", () => ({
+jest.mock("monaco-editor", () => ({
   ...jest.requireActual("monaco-editor/esm/vs/editor/editor.api.js"),
 }));
 

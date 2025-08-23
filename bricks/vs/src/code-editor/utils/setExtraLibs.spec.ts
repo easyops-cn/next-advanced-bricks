@@ -1,8 +1,8 @@
 import { setExtraLibs } from "./setExtraLibs.js";
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
+import * as monaco from "monaco-editor";
 
 // Mock monaco
-jest.mock("monaco-editor/esm/vs/editor/editor.api.js", () => {
+jest.mock("monaco-editor", () => {
   const Uri = {
     file: (path: string) => ({
       toString: () => `file://${path}`,
