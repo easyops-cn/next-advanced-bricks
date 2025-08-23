@@ -506,8 +506,8 @@ function LegacyChatStreamComponent(
                   />
                 ) : (
                   <ChatBox
-                    taskState={taskState}
-                    taskDone={taskDone}
+                    state={taskState}
+                    canChat={taskDone && !!inputRequiredJobId}
                     inputRequiredJobId={inputRequiredJobId}
                   />
                 )}

@@ -29,14 +29,14 @@ const ICON_STOP: GeneralIconProps = {
 };
 
 export interface ChatBoxProps {
-  taskState: TaskState | undefined;
-  taskDone: boolean;
+  state: TaskState | undefined;
+  canChat: boolean;
   inputRequiredJobId?: string | null;
 }
 
 export function ChatBox({
-  taskState,
-  taskDone,
+  state,
+  canChat,
   inputRequiredJobId,
 }: ChatBoxProps): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -49,7 +49,7 @@ export function ChatBox({
 
   useEffect(() => {
     setActionBeingTaken(false);
-  }, [taskState]);
+  }, [state]);
 
   const handleTerminate = useCallback(async () => {
     try {
@@ -66,30 +66,26 @@ export function ChatBox({
   }, [onTerminate]);
 
   useEffect(() => {
-    if (inputRequiredJobId) {
+    if (canChat) {
       textareaRef.current?.focus();
     }
-  }, [inputRequiredJobId]);
+  }, [canChat]);
 
   const onSubmit = useCallback(
     (value: string) => {
-      if ((!taskDone && !inputRequiredJobId) || !value) {
+      if (!canChat || !value) {
         return;
       }
 
       if (inputRequiredJobId) {
         humanInput(inputRequiredJobId, value);
       } else {
-        showDialog({
-          type: "warn",
-          title: "提示",
-          content: "功能暂未实现",
-        });
+        humanInput("", value);
       }
       valueRef.current = "";
       setValue("");
     },
-    [humanInput, inputRequiredJobId, taskDone]
+    [humanInput, inputRequiredJobId, canChat]
   );
 
   const handleSubmit = useCallback(
@@ -178,10 +174,10 @@ export function ChatBox({
           />
         </div>
         <div className={styles.toolbar}>
-          {taskDone || !supports?.intercept ? (
+          {canChat || !supports?.intercept ? (
             <button
               className={styles["btn-send"]}
-              disabled={!value || !taskDone}
+              disabled={!value || !canChat}
               onClick={handleSubmitClick}
             >
               <WrappedIcon lib="fa" prefix="fas" icon="arrow-up" />

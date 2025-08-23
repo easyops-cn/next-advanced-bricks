@@ -143,7 +143,7 @@ export function CruiseCanvasComponent(
   const jobMap = graph?.jobMap;
   const jobLevels = graph?.jobLevels;
   const pageTitle = conversation?.title ?? "";
-  const taskState = conversation?.state;
+  const state = conversation?.state;
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
   const currentNavId = useMemo(() => {
     if (activeNodeId) {
@@ -243,7 +243,7 @@ export function CruiseCanvasComponent(
   const { sizeReady, nodes, edges } = useLayout({
     rawNodes,
     rawEdges,
-    state: taskState,
+    state: state,
     sizeMap,
     showFeedback,
   });
@@ -330,7 +330,7 @@ export function CruiseCanvasComponent(
     pushZoomTransition,
   });
 
-  const taskDone = DONE_STATES.includes(taskState!);
+  const taskDone = DONE_STATES.includes(state!);
 
   const nonLeafNodes = useMemo(() => {
     return new Set<string>(edges.map((edge) => edge.source));
@@ -725,6 +725,13 @@ export function CruiseCanvasComponent(
     scrollBy,
   ]);
 
+  const canChat = useMemo(() => {
+    return (
+      !!tasks?.length &&
+      tasks.every((task) => GENERAL_DONE_STATES.includes(task.state))
+    );
+  }, [tasks]);
+
   return (
     <TaskContext.Provider value={taskContextValue}>
       <CanvasContext.Provider value={canvasContextValue}>
@@ -786,7 +793,7 @@ export function CruiseCanvasComponent(
                   node.type === "instruction" &&
                   !nonLeafNodes.has(node.id) &&
                   !DONE_STATES.includes(node.state!) &&
-                  !GENERAL_DONE_STATES.includes(taskState!)
+                  !GENERAL_DONE_STATES.includes(state!)
                 }
                 edges={edges}
                 x={node.view?.x}
@@ -803,7 +810,7 @@ export function CruiseCanvasComponent(
             jobMap={jobMap}
             jobLevels={jobLevels}
             currentNavId={currentNavId}
-            taskState={taskState}
+            taskState={state}
             onClick={(jobId: string) => {
               setActiveNodeId(`job:${jobId}`);
               scrollTo({ jobId, block: "start" });
@@ -829,7 +836,7 @@ export function CruiseCanvasComponent(
             </div>
           ) : supports?.chat ? (
             <div className={styles["footer-container"]}>
-              <ChatBox taskState={taskState} taskDone={taskDone} />
+              <ChatBox state={state} canChat={canChat} />
             </div>
           ) : null}
         </div>
