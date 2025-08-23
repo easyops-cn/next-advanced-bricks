@@ -259,8 +259,9 @@ function getJobStaticDataView(
               withContexts: ["RESPONSE"],
             });
             return { viewId: part.data.viewId, ...view };
-          } catch {
-            // Do nothing, continue to next part
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error("Failed to parse static data view:", e);
           }
         }
       }
@@ -275,8 +276,9 @@ function getJobStaticDataResponse(messages: Message[]) {
         if (part.type === "text") {
           try {
             return JSON.parse(part.text);
-          } catch {
-            // Do nothing, continue to next part
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error("Failed to parse static data response as JSON:", e);
           }
         }
       }
