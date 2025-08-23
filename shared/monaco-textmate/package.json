@@ -10,6 +10,8 @@
   "license": "GPL-3.0",
   "sideEffects": true,
   "type": "module",
+  "main": "./dist/esm/index.js",
+  "types": "./dist/types/TokensProvider.d.ts",
   "files": [
     "dist",
     "themes"
