@@ -826,7 +826,7 @@ export function LegacyCruiseCanvasComponent(
             </div>
           ) : supports?.chat ? (
             <div className={styles["footer-container"]}>
-              <ChatBox taskState={taskState} taskDone={taskDone} />
+              <ChatBox state={taskState} canChat={false} />
             </div>
           ) : null}
         </div>

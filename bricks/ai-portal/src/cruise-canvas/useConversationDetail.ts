@@ -84,7 +84,7 @@ export function useConversationDetail(
       requesting = true;
       ctrl = new AbortController();
       try {
-        const sseRequest = await (initialRequest === null
+        const sseRequest = await (content === null
           ? createSSEStream<ConversationPatch>(
               `${getBasePath()}api/gateway/logic.llm.aiops_service/api/v1/elevo/conversations/${conversationId}/stream`,
               {
