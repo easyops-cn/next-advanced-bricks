@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "scopeName": "builtin.entity.injection.string",
+  "injectionSelector": "L:expression.placeholder.injection",
+  "patterns": [
+    {
+      "name": "support.class.builtin.js",
+      "match": "\\b(?:EVENT|DATA|PIPES|(?:SNIPPET_)?PARAMS|PATH|QUERY(?:_ARRAY)?|APP|HASH|ANCHOR|SYS|FLAGS|I18N|I18N_TEXT|CTX|SEGUE|ALIAS|PROCESSORS|IMAGES|TPL|PERMISSIONS|LOCAL_STORAGE|INSTALLED_APPS|TAG_URL|SAFE_TAG_URL|FN|BASE_URL|PATH_NAME|STATE|ITEM)\\b"
+    }
+  ]
+}
