@@ -49,7 +49,10 @@ export function CreatedView({
   const rootRef = useRef<Awaited<
     ReturnType<typeof unstable_createRoot>
   > | null>(null);
-  const view = manuallyUpdatedViews?.get(job.id) ?? job.generatedView!;
+  const view =
+    manuallyUpdatedViews?.get(job.id) ??
+    job.generatedView ??
+    job.staticDataView!;
   const feedbackDone =
     useViewFeedbackDone(view.viewId, showFeedbackOnView) ||
     feedbackDoneViews?.has(view.viewId);

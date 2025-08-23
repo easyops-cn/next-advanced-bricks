@@ -36,7 +36,8 @@ export function JsxEditor() {
   } = useContext(TaskContext);
   const view =
     manuallyUpdatedViews?.get(activeJsxEditorJob!.id) ??
-    (activeJsxEditorJob!.generatedView as ConstructedView);
+    (activeJsxEditorJob!.generatedView as ConstructedView) ??
+    activeJsxEditorJob!.staticDataView!;
   const source = view.source;
   const [code, setCode] = useState(source);
 
@@ -80,6 +81,7 @@ export function JsxEditor() {
                     ? { withContexts: Object.keys(view.withContexts) }
                     : undefined
                 ),
+                withContexts: view.withContexts,
               });
               setActiveJsxEditorJob?.(undefined);
             }}
