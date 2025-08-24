@@ -1,7 +1,7 @@
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
+import * as monaco from "monaco-editor";
 import { isInEmbedded } from "./isInEmbedded";
 
-jest.mock("monaco-editor/esm/vs/editor/editor.api.js", () => ({
+jest.mock("monaco-editor", () => ({
   ...jest.requireActual("monaco-editor/esm/vs/editor/editor.api.js"),
 }));
 

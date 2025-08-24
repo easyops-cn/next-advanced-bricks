@@ -1,4 +1,4 @@
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
+import * as monaco from "monaco-editor";
 import { hasOwnProperty } from "@next-core/utils/general";
 import { constants, instanceMembers } from "../languages/cel";
 import { getEditorId } from "./editorId";

@@ -1,4 +1,4 @@
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
+import * as monaco from "monaco-editor";
 
 export let currentEditor: monaco.editor.IStandaloneCodeEditor | null = null;
 

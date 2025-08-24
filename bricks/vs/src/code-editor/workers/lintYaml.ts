@@ -1,7 +1,7 @@
 import type { CST } from "yaml";
 import type { Identifier, MemberExpression } from "@babel/types";
 import type { EstreeParent } from "@next-core/cook";
-import type * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
+import type * as monaco from "monaco-editor";
 import type { Marker } from "..";
 
 export interface LintRequest {
