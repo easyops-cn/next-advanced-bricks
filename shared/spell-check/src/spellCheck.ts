@@ -139,6 +139,13 @@ const WELL_KNOWN_WORDS: string[] = [
   "offline",
   "dropdown",
   "elevo",
+  "dasharray",
+  "iframe",
+  "clearable",
+  "emoji",
+  "elif",
+  "ascii",
+  "strftime",
 ];
 
 export interface SpellCheckRequest {
