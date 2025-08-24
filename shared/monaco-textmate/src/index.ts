@@ -1,1 +1,1 @@
-export { initializeTokensProvider } from "./TokensProvider.js";
+export { initializeTokensProvider, languages } from "./TokensProvider.js";
