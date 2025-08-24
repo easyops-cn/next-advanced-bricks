@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.17.0...@next-bricks/vs@1.17.1) (2025-08-24)
+
+
+### Bug Fixes
+
+* expose textmate languages ([55c48c6](https://github.com/easyops-cn/next-advanced-bricks/commit/55c48c69e114667eb6381be018d15828d980b216))
+
+
+
+
+
 # [1.17.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.16.12...@next-bricks/vs@1.17.0) (2025-08-24)
 
 
