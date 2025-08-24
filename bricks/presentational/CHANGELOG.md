@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.17.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.16.0...@next-bricks/presentational@1.17.0) (2025-08-24)
+
+
+### Features
+
+* **card-item:** add action.click event ([dff0273](https://github.com/easyops-cn/next-advanced-bricks/commit/dff0273076ef8cdd3c9002c5c125288b83596e1c))
+
+
+
+
+
 # [1.16.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.15.1...@next-bricks/presentational@1.16.0) (2025-08-21)
 
 
