@@ -4,7 +4,7 @@ import { loadWASM, OnigScanner, OnigString } from "vscode-oniguruma";
 import wasm from "vscode-oniguruma/release/onig.wasm";
 import { registerBrickNextYaml } from "./brick_next_yaml.js";
 
-const languageToScope = new Map();
+const languageToScope = new Map<string, string>();
 languageToScope.set("javascript", "source.js.jsx");
 languageToScope.set("typescript", "source.tsx");
 languageToScope.set("html", "text.html.basic");
@@ -20,9 +20,11 @@ languageToScope.set("powershell", "source.powershell");
 languageToScope.set("yaml", "source.yaml");
 languageToScope.set("brick_next_yaml", "source.brick_next_yaml");
 
+export const languages = [...languageToScope.keys()];
+
 registerBrickNextYaml(monaco);
 
-const grammars = new Map([
+const grammars = new Map<string, string>([
   ["source.js", "JavaScript.tmLanguage"],
   ["source.js.jsx", "JavaScriptReact.tmLanguage"],
   ["source.ts", "TypeScript.tmLanguage"],

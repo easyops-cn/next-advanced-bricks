@@ -15,7 +15,10 @@ import { HttpAbortError } from "@next-core/http";
 import { FormItemElementBase } from "@next-shared/form";
 import type { FormItem, FormItemProps } from "@next-bricks/form/form-item";
 import * as monaco from "monaco-editor";
-import { initializeTokensProvider } from "@next-shared/monaco-textmate";
+import {
+  initializeTokensProvider,
+  languages as textmateLanguages,
+} from "@next-shared/monaco-textmate";
 import "@next-shared/monaco-textmate/workers.js";
 import tmVsLight from "@next-shared/monaco-textmate/themes/light-modern.json";
 import tmVsDark from "@next-shared/monaco-textmate/themes/dark-modern.json";
@@ -546,7 +549,7 @@ export function CodeEditorComponent({
   const automaticLayoutRef = useRef(automaticLayout);
   const systemTheme = useCurrentTheme();
 
-  const useTextmateTheme = !CEL_FAMILY.includes(language);
+  const useTextmateTheme = textmateLanguages.includes(language);
   const computedTheme = useMemo(() => {
     const candidateTheme =
       theme === "auto"
