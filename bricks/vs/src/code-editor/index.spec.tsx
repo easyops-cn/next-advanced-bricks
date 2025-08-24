@@ -18,6 +18,7 @@ jest.mock("@next-core/react-runtime");
 jest.mock("monaco-editor");
 jest.mock("@next-shared/monaco-textmate", () => ({
   initializeTokensProvider: jest.fn(),
+  languages: ["javascript", "typescript"],
 }));
 jest.mock("@next-shared/monaco-textmate/workers.js", () => ({}));
 jest.mock("./workers/yamlLinter.js", () => ({}));
