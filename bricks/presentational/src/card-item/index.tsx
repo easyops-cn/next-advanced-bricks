@@ -283,7 +283,14 @@ class EoCardItem extends ReactNextElement implements EoCardItemProps {
   })
   accessor hasExpandedArea2: boolean | undefined;
 
+  /**
+   * 操作按钮点击事件
+   */
+  @event({ type: "action.click" })
+  accessor #actionClickEvent!: EventEmitter<SimpleActionType>;
+
   #handleActionClick = (action: SimpleActionType) => {
+    this.#actionClickEvent.emit(action);
     this.dispatchEvent(new CustomEvent(action.event));
   };
 
