@@ -1,5 +1,9 @@
 import type { BrickConf } from "@next-core/types";
 import type { Component, ConstructResult } from "@next-shared/jsx-storyboard";
+import type {
+  DashboardProps,
+  DashboardWidget,
+} from "@next-shared/jsx-storyboard/lib/components.js";
 import { parseDataSource } from "../converters/expressions.js";
 import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
 import { getPreGeneratedMetricGroups } from "../converters/getPreGeneratedMetricGroups.js";
@@ -27,24 +31,13 @@ const COLORS = [
   "#4F69FF",
 ];
 
-interface Widget {
-  title: string;
-  type: "line" | "area";
-  metric: {
-    id: string;
-    unit: string;
-  };
-  size?: "small" | "medium" | "large";
-  precision?: number;
-  min?: number;
-  max?: number;
-  color?: string;
-}
-
-interface MergedWidget extends Widget {
+interface MergedWidget extends DashboardWidget {
   relevantMetrics?: string[];
   counterMetric?: string;
   groupTitle?: string;
+  size?: "small" | "medium" | "large";
+  min?: number;
+  max?: number;
 }
 
 export default async function convertDashboard(
@@ -56,10 +49,8 @@ export default async function convertDashboard(
     dataSource,
     groupField: _groupField,
     widgets,
-  } = properties as {
-    dataSource: string;
-    groupField?: string;
-    widgets: Array<Widget>;
+  } = properties as Omit<DashboardProps, "dataSource"> & {
+    dataSource: string | object;
   };
 
   const groupField = _groupField ? "#showKey" : undefined;

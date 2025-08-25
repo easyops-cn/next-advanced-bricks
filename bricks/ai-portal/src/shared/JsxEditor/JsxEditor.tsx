@@ -1,7 +1,9 @@
-import React, { Suspense, useContext, useState } from "react";
+import React, { Suspense, useContext, useMemo, useState } from "react";
 import { asyncWrapBrick } from "@next-core/react-runtime";
 import type { CodeEditor, CodeEditorProps } from "@next-bricks/vs/code-editor";
 import { parseJsx, parseTsx } from "@next-shared/jsx-storyboard";
+import actionsDefinition from "@next-shared/jsx-storyboard/lib/actions.d.ts?raw";
+import componentsDefinition from "@next-shared/jsx-storyboard/lib/components.d.ts?raw";
 import styles from "./JsxEditor.module.css";
 import { WrappedButton, WrappedIconButton } from "../bricks";
 import { ICON_CLOSE } from "../constants";
@@ -15,6 +17,21 @@ interface CodeEditorEvents {
 interface CodeEditorMapEvents {
   onCodeChange: "code.change";
 }
+
+const editorLibs: CodeEditorProps["extraLibs"] = [
+  {
+    filePath: "tsx-view/actions.d.ts",
+    content: actionsDefinition,
+  },
+  {
+    filePath: "tsx-view/components.d.ts",
+    content: componentsDefinition.replaceAll("export interface", "interface"),
+  },
+  {
+    filePath: "tsx-view/contracts.d.ts",
+    content: `type ContractMap = Record<string, any>;`,
+  },
+];
 
 const AsyncWrappedCodeEditor = React.lazy(async () => ({
   default: await asyncWrapBrick<
@@ -41,6 +58,22 @@ export function JsxEditor() {
   const source = view.source;
   const [code, setCode] = useState(source);
 
+  const libs = useMemo(() => {
+    const commonLibs = editorLibs!;
+    if (view.withContexts?.RESPONSE) {
+      return [
+        ...commonLibs,
+        {
+          filePath: "tsx-view/response.d.ts",
+          content: `const RESPONSE_VALUE = ${JSON.stringify(view.withContexts.RESPONSE, null, 2)};
+
+declare const RESPONSE: typeof RESPONSE_VALUE;`,
+        },
+      ];
+    }
+    return commonLibs;
+  }, [view.withContexts?.RESPONSE]);
+
   return (
     <div className={styles.container}>
       <div className={styles.editor}>
@@ -64,6 +97,8 @@ export function JsxEditor() {
                 language="typescript"
                 uri="file:///view.tsx"
                 automaticLayout="fit-container"
+                theme="tm-vs-dark"
+                extraLibs={libs}
               />
             </Suspense>
           </div>

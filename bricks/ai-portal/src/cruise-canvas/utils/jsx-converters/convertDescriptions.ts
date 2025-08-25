@@ -1,5 +1,6 @@
 import type { BrickConf } from "@next-core/types";
 import type { Component, ConstructResult } from "@next-shared/jsx-storyboard";
+import type { DescriptionsProps } from "@next-shared/jsx-storyboard/lib/components.js";
 import type { ConvertViewOptions } from "../converters/interfaces.js";
 import { convertToStoryboard } from "../converters/raw-data-generate/convert.js";
 import { getPreGeneratedAttrViews } from "../converters/getPreGeneratedAttrViews.js";
@@ -17,12 +18,14 @@ export default async function convertDescriptions(
   view: ConstructResult,
   options: ConvertViewOptions
 ): Promise<BrickConf> {
-  const { dataSource, title, columns, list, ...restProps } = properties as {
-    dataSource: string;
-    title?: string;
-    columns?: number;
-    list: DescriptionItem[];
-  };
+  const { dataSource, title, list, ...restProps } =
+    properties as Partial<DescriptionsProps> as Omit<
+      DescriptionsProps,
+      "list"
+    > & {
+      dataSource: string | object;
+      list: DescriptionItem[];
+    };
 
   const parsedDataSource = parseDataSource(dataSource);
 
