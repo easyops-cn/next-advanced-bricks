@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.28.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.27.4...@next-bricks/ai-portal@0.28.0) (2025-08-25)
+
+
+### Features
+
+* support fragment and :forEach ([11db4f2](https://github.com/easyops-cn/next-advanced-bricks/commit/11db4f2450eaf8f209b75ad622fc51d83c547518))
+
+
+
+
+
 ## [0.27.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.27.3...@next-bricks/ai-portal@0.27.4) (2025-08-25)
 
 

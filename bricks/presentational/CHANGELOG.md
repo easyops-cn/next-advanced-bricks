@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.17.1...@next-bricks/presentational@1.17.2) (2025-08-25)
+
+
+### Bug Fixes
+
+* **descriptions:** support dots in list.field ([aa9fc2f](https://github.com/easyops-cn/next-advanced-bricks/commit/aa9fc2f1e2be01892df8b063e39322726390c3f8))
+
+
+
+
+
 ## [1.17.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.17.0...@next-bricks/presentational@1.17.1) (2025-08-25)
 
 **Note:** Version bump only for package @next-bricks/presentational
