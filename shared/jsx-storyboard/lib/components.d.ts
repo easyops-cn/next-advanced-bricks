@@ -1,0 +1,169 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+
+export interface ViewProps {
+  title: string;
+}
+
+export interface BaseProps {
+  componentId?: string;
+}
+
+export interface TableProps<T extends object, S extends boolean>
+  extends BaseProps {
+  dataSource: {
+    list: T[];
+    page?: number;
+    pageSize?: number;
+    total?: number;
+  };
+  columns: Array<{
+    key: string;
+    dataIndex: string;
+    title: string;
+    sortable?: boolean;
+  }>;
+  rowKey: string;
+  rowSelection?: S;
+  sort?: TableSort | null;
+  onSelect?: S extends true ? (event: CustomEvent<T[]>) => void : never;
+  onPaginate?: (event: CustomEvent<{ page: number; pageSize: number }>) => void;
+  onSort?: (event: CustomEvent<TableSort | null>) => void;
+}
+
+export interface ListProps extends BaseProps {
+  dataSource: object[];
+  fields?: {
+    title?: string;
+    icon?: string;
+    url?: string;
+  };
+  variant?: "default" | "navigation" | "ranking";
+}
+
+export interface DescriptionsProps extends BaseProps {
+  title?: string;
+  dataSource?: object;
+  list: Array<
+    | {
+        label: string;
+        text: string;
+      }
+    | {
+        label: string;
+        field: string;
+      }
+  >;
+}
+
+export interface ButtonProps extends BaseProps {
+  type?: "default" | "primary";
+  icon?: IconProps;
+  onClick?: (e: Event) => void;
+}
+
+export interface SearchProps extends BaseProps {
+  placeholder?: string;
+  onSearch?: (e: CustomEvent<string>) => void;
+}
+
+export interface FormProps<T extends object> extends BaseProps {
+  values?: T;
+  onValidateSuccess?: (e: CustomEvent<T>) => void;
+}
+
+export interface InputProps extends FormItemProps {
+  placeholder?: string;
+}
+
+export interface NumberInputProps extends InputProps {
+  min?: number;
+  max?: number;
+}
+
+export interface TextareaProps extends InputProps {}
+
+export interface SelectProps extends InputProps {
+  options: FormItemOptions[];
+  onChange?: (e: CustomEvent<string | number | boolean | null>) => void;
+}
+
+export interface RadioProps extends SelectProps {}
+
+export interface CheckboxProps extends SelectProps {}
+
+export interface SwitchProps extends FormItemProps {}
+
+export interface DatePickerProps extends FormItemProps {}
+
+export interface TimePickerProps extends FormItemProps {}
+
+export interface DashboardProps extends BaseProps {
+  dataSource: Array<object>;
+  groupField?: string;
+  widgets: Array<DashboardWidget>;
+}
+
+export interface ModalProps extends BaseProps {
+  title: string;
+  confirmText?: string;
+  cancelText?: string;
+  onConfirm?: () => void;
+}
+
+export interface DashboardWidget {
+  widget: "chart";
+  type: "line" | "area";
+  title?: string;
+  metric: {
+    id: string;
+    unit: string;
+  };
+  precision?: number;
+}
+
+export interface FormItemProps extends BaseProps {
+  name: string;
+  label?: string;
+  required?: boolean;
+  disabled?: boolean;
+}
+
+export interface FormItemOptions {
+  label: string;
+  value: string;
+}
+
+export interface IconProps {
+  lib: "fa";
+  prefix: "fas" | "far";
+  icon: string;
+}
+
+export interface TableSort {
+  columnKey: string | number;
+  order: "ascend" | "descend";
+}
+
+declare const View: (props: ViewProps) => any;
+declare const Table: <T extends object, S extends boolean = false>(
+  props: TableProps<T, S>
+) => any;
+declare const List: (props: ListProps) => any;
+declare const Descriptions: (props: DescriptionsProps) => any;
+declare const Button: (props: ButtonProps) => any;
+declare const Toolbar: (props: BaseProps) => any;
+declare const Search: (props: SearchProps) => any;
+declare const Form: <T extends object>(props: FormProps<T>) => any;
+declare const Input: (props: InputProps) => any;
+declare const NumberInput: (props: NumberInputProps) => any;
+declare const Textarea: (props: TextareaProps) => any;
+declare const Select: (props: SelectProps) => any;
+declare const Radio: (props: RadioProps) => any;
+declare const Checkbox: (props: CheckboxProps) => any;
+declare const Switch: (props: SwitchProps) => any;
+declare const DatePicker: (props: DatePickerProps) => any;
+declare const TimePicker: (props: TimePickerProps) => any;
+declare const Dashboard: (props: DashboardProps) => any;
+declare const Modal: (props: ModalProps) => any;
+declare const Plaintext: (props: {}) => any;
