@@ -39,10 +39,6 @@ export default {
         filename: "[name].[hash][ext]",
       },
     },
-    {
-      resourceQuery: /raw/,
-      type: "asset/resource",
-    },
   ],
   resolve: {
     fallback: {
