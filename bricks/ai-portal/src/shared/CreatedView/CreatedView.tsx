@@ -11,6 +11,7 @@ import { unstable_createRoot } from "@next-core/runtime";
 import classNames from "classnames";
 import { uniqueId } from "lodash";
 import { initializeI18n } from "@next-core/i18n";
+import type { Component } from "@next-shared/jsx-storyboard";
 import styles from "./CreatedView.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
 import type { Job } from "../../cruise-canvas/interfaces";
@@ -106,12 +107,14 @@ export function CreatedView({
 
   const sizeLarge = useMemo(() => {
     if (isJsxView(view)) {
-      // TODO: handle nested components
-      for (const component of view.components ?? []) {
-        if (component.name === "Table" || component.name === "eo-table") {
-          return true;
+      let large = false;
+      traverseComponents(view.components ?? [], (component) => {
+        if (large) {
+          return;
         }
-        if (
+        if (component.name === "Table" || component.name === "eo-table") {
+          large = true;
+        } else if (
           component.name === "Dashboard" ||
           component.name === "eo-dashboard"
         ) {
@@ -120,10 +123,11 @@ export function CreatedView({
             Array.isArray(widgets) &&
             widgets.length >= (component.properties!.groupField ? 3 : 7)
           ) {
-            return true;
+            large = true;
           }
         }
-      }
+      });
+      return large;
     } else {
       for (const component of view.components ?? []) {
         if (component.componentName === "table") {
@@ -193,4 +197,14 @@ export function CreatedView({
       <div data-root-id={rootId} ref={ref} />
     </div>
   );
+}
+
+function traverseComponents(
+  components: Component[],
+  callback: (component: Component) => void
+) {
+  for (const component of components) {
+    callback(component);
+    traverseComponents(component.children ?? [], callback);
+  }
 }

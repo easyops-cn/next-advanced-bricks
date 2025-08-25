@@ -81,8 +81,8 @@ export function parseTsxCallApi(
       });
     }
     const params = constructJsValue(valueNode, result, {
-      allowExpression: true,
       ...jsValueOptions,
+      allowExpression: true,
     });
     if (
       isExpressionString(params) ||

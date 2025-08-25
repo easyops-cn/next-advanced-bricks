@@ -6,6 +6,16 @@ interface Replacement {
   shorthand?: boolean;
 }
 
+export function mergeReplacePatterns(
+  pattern1: Map<string, string> | undefined,
+  pattern2: Map<string, string> | undefined
+): Map<string, string> | undefined {
+  if (pattern1 && pattern2) {
+    return new Map([...pattern1, ...pattern2]);
+  }
+  return pattern1 || pattern2;
+}
+
 export function replaceCTX(expr: string, contexts: string[]): string {
   const patterns = new Map(contexts.map((k) => [k, `CTX.${k}`]));
   return replaceVariables(expr, patterns);

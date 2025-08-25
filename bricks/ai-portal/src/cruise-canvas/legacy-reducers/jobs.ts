@@ -221,6 +221,10 @@ function getJobGeneratedView(
               const view = (
                 result.code.includes("<eo-view") ? parseJsx : parseTsx
               )(result.code);
+              if (view.errors.length > 0) {
+                // eslint-disable-next-line no-console
+                console.warn("Parsed generated view with errors:", view.errors);
+              }
               return { viewId: result.viewId, ...view };
             }
             return result;
@@ -248,6 +252,10 @@ function getJobStaticDataView(
             const view = parseTsx(part.data.code, {
               withContexts: ["RESPONSE"],
             });
+            if (view.errors.length > 0) {
+              // eslint-disable-next-line no-console
+              console.warn("Parsed static data view with errors:", view.errors);
+            }
             return { viewId: part.data.viewId, ...view };
           } catch (e) {
             // eslint-disable-next-line no-console
