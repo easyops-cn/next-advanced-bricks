@@ -109,14 +109,22 @@ declare const RESPONSE: typeof RESPONSE_VALUE;`,
             themeVariant="elevo"
             type="primary"
             onClick={() => {
+              const newView = (code.includes("<eo-view") ? parseJsx : parseTsx)(
+                code,
+                view.withContexts
+                  ? { withContexts: Object.keys(view.withContexts) }
+                  : undefined
+              );
+              if (newView.errors.length > 0) {
+                // eslint-disable-next-line no-console
+                console.warn(
+                  "Parsed modified view with errors:",
+                  newView.errors
+                );
+              }
               updateView?.(activeJsxEditorJob!.id, {
                 viewId: view.viewId,
-                ...(code.includes("<eo-view") ? parseJsx : parseTsx)(
-                  code,
-                  view.withContexts
-                    ? { withContexts: Object.keys(view.withContexts) }
-                    : undefined
-                ),
+                ...newView,
                 withContexts: view.withContexts,
               });
               setActiveJsxEditorJob?.(undefined);

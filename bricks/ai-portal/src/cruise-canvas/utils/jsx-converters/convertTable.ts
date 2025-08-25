@@ -14,7 +14,7 @@ export default async function convertTable(
 ): Promise<BrickConf> {
   const { properties } = component;
   const { dataSource, size, columns, rowKey, pagination, ...restProps } =
-    properties as Omit<TableProps<any, boolean>, "dataSource"> & {
+    properties as Omit<TableProps<any>, "dataSource"> & {
       dataSource: string | object;
       size?: "small" | "medium" | "large";
       pagination?: boolean;

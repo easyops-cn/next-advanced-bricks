@@ -1,5 +1,6 @@
 import * as t from "@babel/types";
 import type {
+  ConstructJsValueOptions,
   ConstructResult,
   EventHandler,
   ParseJsxOptions,
@@ -11,7 +12,8 @@ import { parseTsxCallApi } from "./api.js";
 export function constructTsxEvent(
   node: t.Expression | t.ArgumentPlaceholder | t.SpreadElement,
   result: ConstructResult,
-  options?: ParseJsxOptions
+  options?: ParseJsxOptions,
+  valueOptions?: ConstructJsValueOptions
 ): EventHandler[] | null {
   if (!t.isArrowFunctionExpression(node)) {
     result.errors.push({
@@ -31,7 +33,9 @@ export function constructTsxEvent(
     return null;
   }
 
-  let replacePatterns: Map<string, string> | undefined;
+  const replacePatterns = new Map<string, string>(
+    valueOptions?.replacePatterns ?? []
+  );
   const param = node.params[0];
   if (param) {
     if (!t.isIdentifier(param)) {
@@ -43,7 +47,7 @@ export function constructTsxEvent(
       return null;
     }
     const eventParamName = param.name;
-    replacePatterns = new Map([[eventParamName, "EVENT"]]);
+    replacePatterns.set(eventParamName, "EVENT");
     if (result.contexts.includes(eventParamName)) {
       result.errors.push({
         message: `Event handler parameter "${eventParamName}" conflicts with existing global variables`,
@@ -76,6 +80,7 @@ export function constructTsxEvent(
           continue;
         }
         const value = constructJsValue(right, result, {
+          ...valueOptions,
           allowExpression: true,
           replacePatterns,
         });
@@ -185,7 +190,12 @@ export function constructTsxEvent(
               continue;
             }
             result.contracts.add(payload.api);
-            const successCallback = constructTsxEvent(args[0], result, options);
+            const successCallback = constructTsxEvent(
+              args[0],
+              result,
+              options,
+              valueOptions
+            );
             handlers.push({
               action: "call_api",
               payload,

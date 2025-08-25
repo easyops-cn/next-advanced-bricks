@@ -1,6 +1,6 @@
 import * as t from "@babel/types";
 import type { ConstructResult, ParseJsxOptions } from "../interfaces.js";
-import { constructTsxElement } from "./element.js";
+import { constructComponents } from "./components.js";
 
 export function constructTsxView(
   node: t.JSXElement,
@@ -73,30 +73,6 @@ export function constructTsxView(
     });
   }
 
-  for (const child of node.children) {
-    const element = constructTsxElement(child, result, options);
-    if (element === null) {
-      continue;
-    }
-    if (element.type === "text") {
-      if (element.text.trim() === "") {
-        continue; // Skip empty text nodes
-      }
-      result.errors.push({
-        message: `Unexpected string child in <View>: "${element.text}". Only components are allowed.`,
-        node: child,
-        severity: "warning",
-      });
-      continue;
-    }
-    if (element.type === "expression") {
-      result.errors.push({
-        message: `Unexpected expression child in <View>: "${element.expression}". Only components are allowed.`,
-        node: element.expression,
-        severity: "warning",
-      });
-      continue;
-    }
-    result.components.push(element.component);
-  }
+  const components = constructComponents(node.children, result, options);
+  result.components.push(...components);
 }

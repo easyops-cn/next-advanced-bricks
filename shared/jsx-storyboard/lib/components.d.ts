@@ -9,8 +9,7 @@ export interface BaseProps {
   componentId?: string;
 }
 
-export interface TableProps<T extends object, S extends boolean>
-  extends BaseProps {
+export interface TableProps<T extends object> extends BaseProps {
   dataSource: {
     list: T[];
     page?: number;
@@ -24,9 +23,10 @@ export interface TableProps<T extends object, S extends boolean>
     sortable?: boolean;
   }>;
   rowKey: string;
-  rowSelection?: S;
+  rowSelection?: boolean;
   sort?: TableSort | null;
-  onSelect?: S extends true ? (event: CustomEvent<T[]>) => void : never;
+  pagination?: boolean;
+  onSelect?: (event: CustomEvent<T[]>) => void;
   onPaginate?: (event: CustomEvent<{ page: number; pageSize: number }>) => void;
   onSort?: (event: CustomEvent<TableSort | null>) => void;
 }
@@ -111,6 +111,10 @@ export interface ModalProps extends BaseProps {
   onConfirm?: () => void;
 }
 
+export interface CardProps extends BaseProps {
+  title?: string;
+}
+
 export interface DashboardWidget {
   widget: "chart";
   type: "line" | "area";
@@ -146,9 +150,7 @@ export interface TableSort {
 }
 
 declare const View: (props: ViewProps) => any;
-declare const Table: <T extends object, S extends boolean = false>(
-  props: TableProps<T, S>
-) => any;
+declare const Table: <T extends object>(props: TableProps<T>) => any;
 declare const List: (props: ListProps) => any;
 declare const Descriptions: (props: DescriptionsProps) => any;
 declare const Button: (props: ButtonProps) => any;
@@ -166,4 +168,5 @@ declare const DatePicker: (props: DatePickerProps) => any;
 declare const TimePicker: (props: TimePickerProps) => any;
 declare const Dashboard: (props: DashboardProps) => any;
 declare const Modal: (props: ModalProps) => any;
-declare const Plaintext: (props: {}) => any;
+declare const Card: (props: CardProps) => any;
+declare const Plaintext: (props: BaseProps) => any;

@@ -215,7 +215,7 @@ export function constructElement(
                       child.type === "text"
                         ? child.text
                         : child.type === "expression"
-                          ? `<%= ${child.expression} %>`
+                          ? `<%= ${result.source.slice(child.expression.start!, child.expression.end!)} %>`
                           : mergeTexts(child.children, result.source),
                   },
                 }

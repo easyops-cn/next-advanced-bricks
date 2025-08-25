@@ -1,10 +1,8 @@
 import * as t from "@babel/types";
 import type {
   ChildElement,
-  ChildExpression,
-  ChildMerged,
-  ChildText,
   Component,
+  ConstructJsValueOptions,
   ConstructResult,
   Events,
   ParseJsxOptions,
@@ -12,6 +10,8 @@ import type {
 import { constructJsValue, constructPropValue } from "./values.js";
 import { convertJsxEventAttr, validateExpression } from "../utils.js";
 import { constructTsxEvent } from "./events.js";
+import { constructChildren } from "./children.js";
+import { constructComponents } from "./components.js";
 
 export function constructTsxElement(
   node:
@@ -21,8 +21,9 @@ export function constructTsxElement(
     | t.JSXFragment
     | t.JSXSpreadChild,
   result: ConstructResult,
-  options?: ParseJsxOptions
-): ChildElement | null {
+  options?: ParseJsxOptions,
+  valueOptions?: ConstructJsValueOptions
+): ChildElement | null | (ChildElement | null)[] {
   if (t.isJSXElement(node)) {
     if (!t.isJSXIdentifier(node.openingElement.name)) {
       result.errors.push({
@@ -34,6 +35,28 @@ export function constructTsxElement(
     }
 
     const tagName = node.openingElement.name.name;
+
+    if (tagName === "Fragment") {
+      for (const attr of node.openingElement.attributes) {
+        if (
+          !(
+            t.isJSXAttribute(attr) &&
+            t.isJSXIdentifier(attr.name) &&
+            attr.name.name === "key"
+          )
+        ) {
+          result.errors.push({
+            message: `Invalid attribute for Fragment`,
+            node: attr,
+            severity: "error",
+          });
+        }
+      }
+      return node.children.flatMap((child) =>
+        constructTsxElement(child, result, options, valueOptions)
+      );
+    }
+
     const properties: Record<string, unknown> = {};
     const ambiguousProps: Record<string, unknown> = {};
     let events: Events | undefined;
@@ -113,6 +136,7 @@ export function constructTsxElement(
             attr.value.expression,
             result,
             {
+              ...valueOptions,
               allowExpression: true,
               modifier: "=",
             }
@@ -142,93 +166,15 @@ export function constructTsxElement(
       }
     }
 
-    let rawChildren: (ChildElement | ChildMerged)[] = node.children.map(
-      (child) => constructTsxElement(child, result, options)
+    const { textContent, children } = constructChildren(
+      node.children,
+      result,
+      options,
+      valueOptions
     );
-    let onlyTextChildren = rawChildren.every((child) => child?.type === "text");
 
-    if (!onlyTextChildren) {
-      let previousChild: ChildElement | ChildMerged | null = null;
-      const tempChildren: (ChildElement | ChildMerged)[] = [];
-
-      for (const child of rawChildren) {
-        if (child === null) {
-          // Do nothing
-        } else if (child.type === "text" || child.type === "expression") {
-          if (
-            previousChild?.type === "text" ||
-            previousChild?.type === "expression"
-          ) {
-            previousChild = {
-              type: "merged",
-              children: [previousChild, child],
-            };
-            tempChildren.splice(tempChildren.length - 1, 1, previousChild);
-            continue;
-          } else if (previousChild?.type === "merged") {
-            previousChild.children.push(child);
-            continue;
-          }
-        }
-        previousChild = child;
-        tempChildren.push(child);
-      }
-
-      rawChildren = tempChildren;
-      onlyTextChildren = rawChildren.every(
-        (child) =>
-          child?.type === "text" ||
-          (child?.type === "merged" &&
-            child.children.every((c) => c.type === "text"))
-      );
-    }
-
-    let children: Component[] | undefined;
-    if (onlyTextChildren) {
-      const text = rawChildren
-        .flatMap((child) =>
-          child!.type === "text"
-            ? child!.text
-            : (child as ChildMerged).children.map((c) => (c as ChildText).text)
-        )
-        .join("")
-        .trim();
-      if (text) {
-        properties.textContent = text;
-      }
-    } else {
-      const onlyLooseTextChildren = rawChildren.every(
-        (child) => !!child && child.type !== "component"
-      );
-      if (onlyLooseTextChildren) {
-        const text = mergeTexts(
-          rawChildren.flatMap((child) =>
-            child!.type === "merged"
-              ? (child as ChildMerged).children
-              : (child as ChildText)
-          ),
-          result.source
-        );
-        properties.textContent = text;
-      } else {
-        children = rawChildren
-          .filter((child) => !!child)
-          .map((child) =>
-            child.type === "component"
-              ? child.component
-              : {
-                  name: "Plaintext",
-                  properties: {
-                    textContent:
-                      child.type === "text"
-                        ? child.text
-                        : child.type === "expression"
-                          ? `<%= ${child.expression} %>`
-                          : mergeTexts(child.children, result.source),
-                  },
-                }
-          );
-      }
+    if (textContent) {
+      properties.textContent = textContent;
     }
 
     const component: Component = {
@@ -260,6 +206,13 @@ export function constructTsxElement(
       component,
     };
   }
+
+  if (t.isJSXFragment(node)) {
+    return node.children.flatMap((child) =>
+      constructTsxElement(child, result, options, valueOptions)
+    );
+  }
+
   if (t.isJSXText(node)) {
     if (node.value.trim()) {
       return {
@@ -278,6 +231,110 @@ export function constructTsxElement(
       });
       return null;
     }
+
+    // Convert `{list.map((item) => (<X>...</X>))}`
+    // to `brick: :forEach`
+    if (t.isCallExpression(node.expression)) {
+      const callee = node.expression.callee;
+      if (t.isMemberExpression(callee)) {
+        if (
+          t.isIdentifier(callee.property) &&
+          !callee.computed &&
+          callee.property.name === "map"
+        ) {
+          const args = node.expression.arguments;
+          if (args.length > 0) {
+            if (args.length > 1) {
+              result.errors.push({
+                message: "Only one argument is allowed for map function",
+                node: args[1],
+                severity: "error",
+              });
+            }
+            const [func] = args;
+            if (t.isArrowFunctionExpression(func)) {
+              if (t.isBlockStatement(func.body)) {
+                result.errors.push({
+                  message: "Block statement is not allowed in map function",
+                  node: func.body,
+                  severity: "error",
+                });
+                return null;
+              }
+              if (t.isJSXElement(func.body) || t.isJSXFragment(func.body)) {
+                const invalidNode = validateExpression(callee.object);
+                if (invalidNode) {
+                  result.errors.push({
+                    message: `Unsupported node type as the object of a map function with JSX element: ${invalidNode.type}`,
+                    node: invalidNode,
+                    severity: "error",
+                  });
+                  return null;
+                }
+
+                if (func.params.length > 2) {
+                  result.errors.push({
+                    message: `Only up to 2 parameters are allowed in map function with JSX element`,
+                    node: func,
+                    severity: "error",
+                  });
+                  return null;
+                }
+                const invalidParam = func.params.find(
+                  (param) => !t.isIdentifier(param)
+                );
+                if (invalidParam) {
+                  result.errors.push({
+                    message: `Only identifier parameters are allowed in map function with JSX element`,
+                    node: invalidParam,
+                    severity: "error",
+                  });
+                  return null;
+                }
+
+                const replacePatterns = new Map<string, string>(
+                  valueOptions?.replacePatterns ?? []
+                );
+                if (func.params.length > 0) {
+                  const [itemArg, indexArg] = func.params;
+                  replacePatterns.set((itemArg as t.Identifier).name, "ITEM");
+                  if (indexArg) {
+                    replacePatterns.set(
+                      (indexArg as t.Identifier).name,
+                      "INDEX"
+                    );
+                  }
+                }
+
+                return {
+                  type: "component",
+                  component: {
+                    name: "ForEach",
+                    properties: {
+                      dataSource: constructPropValue(callee.object, result, {
+                        ...valueOptions,
+                        modifier: "=",
+                        allowExpression: true,
+                      }),
+                    },
+                    children: constructComponents(
+                      [func.body],
+                      result,
+                      options,
+                      {
+                        ...valueOptions,
+                        replacePatterns,
+                      }
+                    ),
+                  },
+                };
+              }
+            }
+          }
+        }
+      }
+    }
+
     const invalidNode = validateExpression(node.expression);
     if (invalidNode) {
       result.errors.push({
@@ -299,14 +356,4 @@ export function constructTsxElement(
     severity: "error",
   });
   return null;
-}
-
-function mergeTexts(elements: (ChildText | ChildExpression)[], source: string) {
-  return `<%= CTX.__builtin_fn_mergeTexts(${elements
-    .map((elem) =>
-      elem.type === "text"
-        ? JSON.stringify(elem)
-        : `{type:"expression",value:(${source.substring(elem.expression.start!, elem.expression.end!)})}`
-    )
-    .join(", ")}) %>`;
 }

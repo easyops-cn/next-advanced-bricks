@@ -30,6 +30,7 @@ export function useConversationGraph(
 
     const {
       list,
+      roots: jobRoots,
       map: jobMap,
       levels: jobLevels,
       downstreamMap,
@@ -44,6 +45,23 @@ export function useConversationGraph(
         (Array.isArray(messages) && messages.length > 0) || job.toolCall;
 
       const nodeIds: string[] = [];
+
+      if (jobRoots.includes(jobId)) {
+        const userInput = messages
+          ?.find((msg) => msg.role === "user")
+          ?.parts?.find((part) => part.type === "text")?.text;
+        if (userInput !== undefined) {
+          const requirementId = `requirement:${jobId}`;
+          nodes.push({
+            type: "requirement",
+            id: requirementId,
+            content: userInput,
+          });
+          nodeIds.push(requirementId);
+          jobNodesMap.set(jobId, nodeIds);
+          continue;
+        }
+      }
 
       if (job.instruction) {
         const instructionNodeId = `instruction:${jobId}`;
@@ -110,8 +128,9 @@ export function useConversationGraph(
         });
       }
       const source = nodeIds[nodeIds.length - 1];
-      for (const target of downstreams) {
-        edges.push({ source, target });
+      for (const targetJobId of downstreams) {
+        const targetNodeIds = jobNodesMap.get(targetJobId)!;
+        edges.push({ source, target: targetNodeIds[0] });
       }
     }
 
