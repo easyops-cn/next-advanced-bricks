@@ -144,6 +144,14 @@
   },
   "rules": [
     {
+      "foreground": "#CCCCCC",
+      "token": "punctuation.section.embedded.begin.yaml"
+    },
+    {
+      "foreground": "#CCCCCC",
+      "token": "punctuation.section.embedded.end.yaml"
+    },
+    {
       "foreground": "#6A9955",
       "token": "punctuation.definition.comment"
     },

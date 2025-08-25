@@ -805,6 +805,8 @@ export function CodeEditorComponent({
     decorationsCollection.current =
       editorRef.current.createDecorationsCollection();
 
+    switchEditor(editor);
+
     return () => {
       model.dispose();
       editor.dispose();
@@ -828,6 +830,8 @@ export function CodeEditorComponent({
         target: monaco.languages.typescript.ScriptTarget.ESNext,
         module: monaco.languages.typescript.ModuleKind.ESNext,
         jsx: monaco.languages.typescript.JsxEmit.Preserve,
+        skipLibCheck: true,
+        skipDefaultLibCheck: true,
       });
     }
   }, [language, domLibsEnabled, languageDefaults]);
@@ -862,6 +866,8 @@ export function CodeEditorComponent({
           target: monaco.languages.typescript.ScriptTarget.ESNext,
           module: monaco.languages.typescript.ModuleKind.ESNext,
           jsx: monaco.languages.typescript.JsxEmit.Preserve,
+          skipLibCheck: true,
+          skipDefaultLibCheck: true,
         });
       }
     };

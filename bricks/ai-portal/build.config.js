@@ -8,6 +8,10 @@ export default {
       test: /\.md$/,
       type: "asset/source",
     },
+    {
+      resourceQuery: /raw/,
+      type: "asset/source",
+    },
   ],
   plugins: [
     new webpack.DefinePlugin({
