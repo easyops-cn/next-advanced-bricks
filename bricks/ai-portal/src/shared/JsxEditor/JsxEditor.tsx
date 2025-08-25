@@ -99,6 +99,7 @@ declare const RESPONSE: typeof RESPONSE_VALUE;`,
                 automaticLayout="fit-container"
                 theme="tm-vs-dark"
                 extraLibs={libs}
+                data-override-theme="dark-v2"
               />
             </Suspense>
           </div>
