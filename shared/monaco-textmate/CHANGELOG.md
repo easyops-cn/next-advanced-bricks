@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/monaco-textmate@0.1.1...@next-shared/monaco-textmate@0.1.2) (2025-08-25)
+
+
+### Bug Fixes
+
+* refine yaml embedded tokens ([a6b1a40](https://github.com/easyops-cn/next-advanced-bricks/commit/a6b1a40cf6f140ef638a174fb180f09a22aa40f8))
+
+
+
+
+
 ## [0.1.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/monaco-textmate@0.1.0...@next-shared/monaco-textmate@0.1.1) (2025-08-24)
 
 

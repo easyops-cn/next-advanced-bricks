@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.17.1...@next-bricks/vs@1.17.2) (2025-08-25)
+
+
+### Bug Fixes
+
+* set current editor when brick created ([31bc4d4](https://github.com/easyops-cn/next-advanced-bricks/commit/31bc4d4a24ce26a5c0adbaa6430ede152daa6eac))
+
+
+
+
+
 ## [1.17.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.17.0...@next-bricks/vs@1.17.1) (2025-08-24)
 
 
