@@ -25,3 +25,4 @@ import "./pre-generated-config/index.js";
 import "./pre-generated-config-preview/index.js";
 import "./data-providers/get-config-by-data-for-ai.js";
 import "./raw-metric-preview/index.js";
+import "./data-providers/get-usage-member-statistics.js";
