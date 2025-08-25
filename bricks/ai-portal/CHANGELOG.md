@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.27.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.27.3...@next-bricks/ai-portal@0.27.4) (2025-08-25)
+
+
+### Bug Fixes
+
+* override theme ([902912e](https://github.com/easyops-cn/next-advanced-bricks/commit/902912ef6ddae3675b8249bc9bb19c275513ab42))
+
+
+
+
+
 ## [0.27.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.27.2...@next-bricks/ai-portal@0.27.3) (2025-08-25)
 
 
