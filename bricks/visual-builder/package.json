@@ -45,12 +45,12 @@
     "@next-core/element": "^1.2.18",
     "@next-core/http": "^1.2.13",
     "@next-core/react-element": "^1.0.37",
-    "@next-core/react-runtime": "^1.7.22",
-    "@next-core/runtime": "^1.65.0",
+    "@next-core/react-runtime": "^1.7.28",
+    "@next-core/runtime": "^1.65.6",
     "@next-core/storyboard": "^0.6.19",
     "@next-core/theme": "^1.6.0",
     "@next-core/types": "^1.17.0",
-    "@next-core/utils": "^1.8.2",
+    "@next-core/utils": "^1.8.4",
     "@next-shared/general": "^0.10.5",
     "@next-shared/markdown": "^0.6.3",
     "classnames": "^2.3.2",
@@ -62,7 +62,7 @@
     "react-i18next": "^12.3.1"
   },
   "devDependencies": {
-    "@next-core/build-next-bricks": "^1.23.13",
+    "@next-core/build-next-bricks": "^1.23.14",
     "@next-core/test-next": "^2.0.0"
   },
   "peerDependencies": {

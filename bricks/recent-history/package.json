@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@next-core/element": "^1.2.18",
-    "@next-core/i18n": "^1.0.81",
+    "@next-core/i18n": "^1.0.83",
     "@next-core/react-element": "^1.0.37",
     "@next-core/theme": "^1.6.0",
     "@next-shared/general": "^0.10.5",
@@ -45,7 +45,7 @@
     "react-i18next": "^12.3.1"
   },
   "devDependencies": {
-    "@next-core/build-next-bricks": "^1.23.13",
+    "@next-core/build-next-bricks": "^1.23.14",
     "@next-core/test-next": "^2.0.0"
   },
   "peerDependencies": {
