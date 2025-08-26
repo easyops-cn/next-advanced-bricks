@@ -6,7 +6,6 @@ import type {
   GraphEdge,
   GraphNode,
   SizeTuple,
-  TaskState,
 } from "./interfaces";
 import {
   EDGE_SEP,
@@ -21,7 +20,7 @@ export interface UseLayoutOptions {
   rawNodes: GraphNode[] | undefined;
   rawEdges: GraphEdge[] | undefined;
   sizeMap: Map<string, SizeTuple> | null;
-  state?: TaskState;
+  completed?: boolean;
   showFeedback?: boolean;
 }
 
@@ -29,11 +28,10 @@ export function useLayout({
   rawNodes: _rawNodes,
   rawEdges: _rawEdges,
   sizeMap,
-  state,
+  completed,
   showFeedback,
 }: UseLayoutOptions) {
   const memoizedPositionsRef = useRef<Map<string, NodePosition> | null>(null);
-  const completed = state === "completed";
 
   const { initialNodes, initialEdges } = useMemo(() => {
     const initialNodes: GraphNode[] = [

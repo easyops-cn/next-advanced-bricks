@@ -59,7 +59,7 @@ describe("useLayout", () => {
       ],
       rawEdges: mockEdges.concat({ source: "node2", target: "node3" }),
       sizeMap: new Map([...mockSizeMap, ["node3", [150, 120]]]),
-      state: "completed",
+      completed: true,
     });
 
     expect(result.current.sizeReady).toBe(true);
@@ -73,7 +73,7 @@ describe("useLayout", () => {
         rawNodes: mockNodes,
         rawEdges: [],
         sizeMap: mockSizeMap,
-        state: "completed",
+        completed: true,
       })
     );
 

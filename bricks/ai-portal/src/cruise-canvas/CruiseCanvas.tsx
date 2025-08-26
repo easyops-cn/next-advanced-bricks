@@ -243,7 +243,9 @@ export function CruiseCanvasComponent(
   const { sizeReady, nodes, edges } = useLayout({
     rawNodes,
     rawEdges,
-    state: conversationState,
+    completed:
+      conversationState === "completed" &&
+      tasks.every((t) => t.state === "completed"),
     sizeMap,
     showFeedback,
   });
@@ -330,7 +332,7 @@ export function CruiseCanvasComponent(
     pushZoomTransition,
   });
 
-  const taskDone = DONE_STATES.includes(conversationState!);
+  const taskDone = DONE_STATES.includes(conversationState);
 
   const nonLeafNodes = useMemo(() => {
     return new Set<string>(edges.map((edge) => edge.source));
@@ -725,8 +727,6 @@ export function CruiseCanvasComponent(
     scrollBy,
   ]);
 
-  const canChat = GENERAL_DONE_STATES.includes(conversationState);
-
   return (
     <TaskContext.Provider value={taskContextValue}>
       <CanvasContext.Provider value={canvasContextValue}>
@@ -831,7 +831,7 @@ export function CruiseCanvasComponent(
             </div>
           ) : supports?.chat ? (
             <div className={styles["footer-container"]}>
-              <ChatBox state={conversationState} canChat={canChat} />
+              <ChatBox state={conversationState} canChat={taskDone} />
             </div>
           ) : null}
         </div>
