@@ -1,4 +1,5 @@
 import { pipes } from "@easyops-cn/brick-next-pipes";
+import type { ConvertResult } from "@next-shared/jsx-storyboard";
 import type {
   Component,
   ConvertViewOptions,
@@ -19,14 +20,10 @@ import convertModal from "./convertModal.js";
 import { convertEvents } from "./convertEvents.js";
 import { withBox } from "./withBox.js";
 
-export interface BrickConfWithContext extends BrickConf {
-  context?: ContextConf[];
-}
-
 export async function convertView(
   view: ViewWithInfo | null | undefined,
   options: ConvertViewOptions
-): Promise<BrickConfWithContext | null> {
+): Promise<ConvertResult | null> {
   if (!view) {
     return null;
   }
@@ -196,8 +193,10 @@ export async function convertView(
   );
 
   return {
-    brick: "eo-content-layout",
-    children: needBox ? [withBox(children, options)] : children,
+    brick: {
+      brick: "eo-content-layout",
+      children: needBox ? [withBox(children, options)] : children,
+    },
     context,
   };
 }

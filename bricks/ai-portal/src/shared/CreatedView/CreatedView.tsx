@@ -89,7 +89,8 @@ export function CreatedView({
         if (ignore) {
           return;
         }
-        await rootRef.current?.render(convertedView ?? []);
+        const { brick, context } = convertedView ?? {};
+        await rootRef.current?.render(brick ?? [], { context });
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to render view:", error);

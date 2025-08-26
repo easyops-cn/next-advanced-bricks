@@ -3121,10 +3121,10 @@
   dependencies:
     "@next-core/http" "^1.0.6"
 
-"@next-api-sdk/llm-sdk@^1.1.3", "@next-api-sdk/llm-sdk@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@next-api-sdk/llm-sdk/-/llm-sdk-1.4.0.tgz#106b7dc9200ef481daaf8b7a75ac3610ae38b5dd"
-  integrity sha512-0Xg+Agu4ZMnujQ7SKATRASaeoNkQ4X6EfwDdT7kk57Y1zz2/uZnC5XMSBfTNiqmGqgByEmEykHjDQk6F46Tn2A==
+"@next-api-sdk/llm-sdk@^1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@next-api-sdk/llm-sdk/-/llm-sdk-1.6.0.tgz#afb2c60e2bddcd113d2ee01ee1318253c9fcaba2"
+  integrity sha512-kRyFxNj8TnDn8dkULieB4eVuPtK6v+k25o6oizz1KsrzP1dSlzv+fmRE0JBMsz3RevCYzEpzo1X+uyP065sRZQ==
   dependencies:
     "@next-core/http" "^1.0.0"
 

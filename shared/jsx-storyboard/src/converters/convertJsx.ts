@@ -1,6 +1,6 @@
 import type { BrickConf, ContextConf } from "@next-core/types";
 import { pipes } from "@easyops-cn/brick-next-pipes";
-import type { Component } from "../interfaces.js";
+import type { Component, ConvertResult } from "../interfaces.js";
 import convertList from "./convertList.js";
 import type { ConvertViewOptions } from "../interfaces.js";
 import { convertEvents } from "./convertEvents.js";
@@ -21,10 +21,33 @@ import convertCard from "./convertCard.js";
 import convertForEach from "./convertForEach.js";
 import convertIf from "./convertIf.js";
 
+const BUILTIN_FUNCTIONS: ContextConf[] = [
+  {
+    name: "__builtin_fn_mergeTexts",
+    value: mergeTexts,
+  },
+  {
+    name: "__builtin_fn_getLatestMetricValue",
+    value: getLatestMetricValue,
+  },
+  {
+    name: "__builtin_fn_extractList",
+    value: extractList,
+  },
+  {
+    name: "__builtin_fn_groupMetricData",
+    value: groupMetricData,
+  },
+  {
+    name: "__builtin_fn_getMetricDisplayNames",
+    value: getMetricDisplayNames,
+  },
+];
+
 export async function convertJsx(
   result: ConstructedView,
   options: ConvertViewOptions
-) {
+): Promise<ConvertResult> {
   const convert = async (
     component: Component
   ): Promise<BrickConf | BrickConf[]> => {
@@ -150,26 +173,7 @@ export async function convertJsx(
           value,
         }))
       : []),
-    {
-      name: "__builtin_fn_mergeTexts",
-      value: mergeTexts,
-    },
-    {
-      name: "__builtin_fn_getLatestMetricValue",
-      value: getLatestMetricValue,
-    },
-    {
-      name: "__builtin_fn_extractList",
-      value: extractList,
-    },
-    {
-      name: "__builtin_fn_groupMetricData",
-      value: groupMetricData,
-    },
-    {
-      name: "__builtin_fn_getMetricDisplayNames",
-      value: getMetricDisplayNames,
-    },
+    ...BUILTIN_FUNCTIONS,
   ];
 
   const children = (await Promise.all(result.components.map(convert))).flat();
@@ -189,8 +193,10 @@ export async function convertJsx(
   );
 
   return {
-    brick: "eo-content-layout",
-    children: needBox ? [withBox(children, options)] : children,
+    brick: {
+      brick: "eo-content-layout",
+      children: needBox ? [withBox(children, options)] : children,
+    },
     context,
   };
 }

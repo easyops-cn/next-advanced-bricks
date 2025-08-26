@@ -15,4 +15,5 @@ export type {
   ParseJsxOptions,
   ConstructedView,
   ConvertViewOptions,
+  ConvertResult,
 } from "./interfaces.js";
