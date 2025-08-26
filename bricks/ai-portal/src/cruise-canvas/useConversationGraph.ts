@@ -7,7 +7,6 @@ import type {
   GraphGeneratedView,
 } from "./interfaces";
 import { LOADING_NODE_ID } from "./constants";
-import { DONE_STATES } from "../shared/constants";
 import type { ConversationBaseDetail, Task } from "../shared/interfaces";
 import { getFlatOrderedJobs } from "./getFlatOrderedJobs";
 
@@ -134,19 +133,38 @@ export function useConversationGraph(
       }
     }
 
-    if (nodes.length === 0 && !DONE_STATES.includes(conversation.state)) {
+    if (nodes.length === 0) {
       nodes.push({
         type: "loading",
         id: LOADING_NODE_ID,
       });
-    } else
-      return {
-        nodes,
-        edges,
-        nav,
-        views,
-        jobMap,
-        jobLevels,
-      };
+    } else {
+      const requirementNodes = nodes.filter(
+        (node) => node.type === "requirement"
+      );
+      let counter = 0;
+      for (const node of requirementNodes) {
+        if (!edges.some((edge) => edge.source === node.id)) {
+          const loadingId = `${LOADING_NODE_ID}:${counter++}`;
+          nodes.push({
+            type: "loading",
+            id: loadingId,
+          });
+          edges.push({
+            source: node.id,
+            target: loadingId,
+          });
+        }
+      }
+    }
+
+    return {
+      nodes,
+      edges,
+      nav,
+      views,
+      jobMap,
+      jobLevels,
+    };
   }, [conversation, tasks]);
 }
