@@ -23,7 +23,7 @@ import { DONE_STATES } from "../shared/constants.js";
 export interface HistoryItem {
   conversationId: string;
   title: string;
-  time: number;
+  startTime: number;
   state?: TaskState;
 }
 
@@ -80,6 +80,7 @@ export function LowLevelChatHistory(
         {
           token: loadNextToken,
           username,
+          limit: 30,
         },
         {
           interceptorParams: {
@@ -129,18 +130,18 @@ export function LowLevelChatHistory(
     };
     for (const item of list ?? []) {
       let groupKey: string;
-      if (item.time >= timestamps.startOfDay) {
+      if (item.startTime >= timestamps.startOfDay) {
         groupKey = t(K.TODAY);
-      } else if (item.time >= timestamps.yesterday) {
+      } else if (item.startTime >= timestamps.yesterday) {
         groupKey = t(K.YESTERDAY);
-      } else if (item.time >= timestamps.sevenDaysAgo) {
+      } else if (item.startTime >= timestamps.sevenDaysAgo) {
         groupKey = t(K.PREVIOUS_7_DAYS);
-      } else if (item.time >= timestamps.thirtyDaysAgo) {
+      } else if (item.startTime >= timestamps.thirtyDaysAgo) {
         groupKey = t(K.PREVIOUS_30_DAYS);
-      } else if (item.time >= timestamps.thisYear) {
-        groupKey = moment(item.time * 1000).format("MMMM");
+      } else if (item.startTime >= timestamps.thisYear) {
+        groupKey = moment(item.startTime * 1000).format("MMMM");
       } else {
-        groupKey = moment(item.time * 1000).format("YYYY");
+        groupKey = moment(item.startTime * 1000).format("YYYY");
       }
       let group = groupMap.get(groupKey);
       if (!group) {
@@ -184,7 +185,7 @@ export function LowLevelChatHistory(
     try {
       const pullId = ++pullIdRef.current;
       const tempList = await ElevoApi_listElevoConversations(
-        { username },
+        { username, limit: 30 },
         {
           interceptorParams: {
             ignoreLoadingBar: true,

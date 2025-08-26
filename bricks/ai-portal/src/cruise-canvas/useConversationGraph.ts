@@ -118,7 +118,7 @@ export function useConversationGraph(
       jobNodesMap.set(jobId, nodeIds);
     }
 
-    for (const [jobId, downstreams] of downstreamMap) {
+    for (const jobId of list) {
       const nodeIds = jobNodesMap.get(jobId)!;
       for (let i = 1; i < nodeIds.length; i++) {
         edges.push({
@@ -127,6 +127,7 @@ export function useConversationGraph(
         });
       }
       const source = nodeIds[nodeIds.length - 1];
+      const downstreams = downstreamMap.get(jobId) ?? [];
       for (const targetJobId of downstreams) {
         const targetNodeIds = jobNodesMap.get(targetJobId)!;
         edges.push({ source, target: targetNodeIds[0] });
