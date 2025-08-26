@@ -17,6 +17,7 @@ export interface DataSource {
 export interface Component {
   name: string;
   componentId?: string;
+  slot?: string;
   properties: Record<string, unknown>;
   ambiguousProps?: Record<string, unknown>;
   events?: Events;

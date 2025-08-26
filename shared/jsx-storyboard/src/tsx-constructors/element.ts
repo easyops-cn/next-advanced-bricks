@@ -14,12 +14,7 @@ import { constructChildren } from "./children.js";
 import { constructComponents } from "./components.js";
 
 export function constructTsxElement(
-  node:
-    | t.JSXElement
-    | t.JSXText
-    | t.JSXExpressionContainer
-    | t.JSXFragment
-    | t.JSXSpreadChild,
+  node: t.Node,
   result: ConstructResult,
   options?: ParseJsxOptions,
   valueOptions?: ConstructJsValueOptions
@@ -332,6 +327,54 @@ export function constructTsxElement(
             }
           }
         }
+      }
+    } else if (t.isConditionalExpression(node.expression)) {
+      const { test, consequent, alternate } = node.expression;
+      const invalidNodeInTest = validateExpression(test);
+      if (invalidNodeInTest) {
+        result.errors.push({
+          message: `Unsupported node type in conditional expression test: ${invalidNodeInTest.type}`,
+          node: invalidNodeInTest,
+          severity: "error",
+        });
+        return null;
+      }
+      if (
+        t.isJSXElement(consequent) ||
+        t.isJSXFragment(consequent) ||
+        t.isJSXElement(alternate) ||
+        t.isJSXFragment(alternate)
+      ) {
+        return {
+          type: "component",
+          component: {
+            name: "If",
+            properties: {
+              dataSource: constructPropValue(test, result, {
+                ...valueOptions,
+                modifier: "=",
+                allowExpression: true,
+              }),
+            },
+            children: [
+              ...constructComponents(
+                [consequent],
+                result,
+                options,
+                valueOptions
+              ),
+              ...constructComponents(
+                [alternate],
+                result,
+                options,
+                valueOptions
+              ).map((component) => ({
+                ...component,
+                slot: "else",
+              })),
+            ],
+          },
+        };
       }
     }
 

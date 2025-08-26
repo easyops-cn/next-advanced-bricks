@@ -13,13 +13,7 @@ import { constructTsxElement } from "./element.js";
 import { replaceCTX, replaceVariables } from "./replaceVariables.js";
 
 export function constructChildren(
-  nodes: Array<
-    | t.JSXElement
-    | t.JSXText
-    | t.JSXExpressionContainer
-    | t.JSXFragment
-    | t.JSXSpreadChild
-  >,
+  nodes: t.Node[],
   result: ConstructResult,
   options?: ParseJsxOptions,
   valueOptions?: ConstructJsValueOptions

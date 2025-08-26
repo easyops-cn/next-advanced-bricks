@@ -19,6 +19,7 @@ import convertText from "./convertText.js";
 import type { ConstructedView } from "../interfaces.js";
 import convertCard from "./convertCard.js";
 import convertForEach from "./convertForEach.js";
+import convertIf from "./convertIf.js";
 
 export async function convertJsx(
   result: ConstructedView,
@@ -96,6 +97,9 @@ export async function convertJsx(
       case "ForEach":
         brick = await convertForEach(component);
         break;
+      case "If":
+        brick = await convertIf(component);
+        break;
       default:
         // eslint-disable-next-line no-console
         console.error("Unsupported component:", component.name);
@@ -111,6 +115,10 @@ export async function convertJsx(
       brick.properties.dataset ??= {};
       (brick.properties.dataset as Record<string, string>).componentId =
         component.componentId;
+    }
+
+    if (component.slot) {
+      brick.slot = component.slot;
     }
 
     brick.events = convertEvents(component, options);
