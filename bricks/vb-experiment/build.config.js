@@ -8,6 +8,10 @@ export default {
       test: /\.txt$/,
       type: "asset/source",
     },
+    {
+      resourceQuery: /raw/,
+      type: "asset/source",
+    },
   ],
   plugins: [
     new webpack.ProvidePlugin({
