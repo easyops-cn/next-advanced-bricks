@@ -325,16 +325,16 @@ export function constructTsxElement(
     }
   } else if (t.isConditionalExpression(node)) {
     const { test, consequent, alternate } = node;
-    const invalidNodeInTest = validateExpression(test);
-    if (invalidNodeInTest) {
-      result.errors.push({
-        message: `Unsupported node type in conditional expression test: ${invalidNodeInTest.type}`,
-        node: invalidNodeInTest,
-        severity: "error",
-      });
-      return null;
-    }
     if (containsJsxNode(consequent) || containsJsxNode(alternate)) {
+      const invalidNodeInTest = validateExpression(test);
+      if (invalidNodeInTest) {
+        result.errors.push({
+          message: `Unsupported node type in conditional expression test: ${invalidNodeInTest.type}`,
+          node: invalidNodeInTest,
+          severity: "error",
+        });
+        return null;
+      }
       return {
         type: "component",
         component: {
@@ -358,6 +358,45 @@ export function constructTsxElement(
               slot: "else",
             })),
           ],
+        },
+      };
+    }
+  } else if (t.isLogicalExpression(node)) {
+    const { left, right, operator } = node;
+    if ((operator === "&&" || operator === "||") && containsJsxNode(right)) {
+      const invalidNodeInLeft = validateExpression(left);
+      if (invalidNodeInLeft) {
+        result.errors.push({
+          message: `Unsupported node type in logical expression left: ${invalidNodeInLeft.type}`,
+          node: invalidNodeInLeft,
+          severity: "error",
+        });
+        return null;
+      }
+      const children = constructComponents(
+        [right],
+        result,
+        options,
+        valueOptions
+      );
+      return {
+        type: "component",
+        component: {
+          name: "If",
+          properties: {
+            dataSource: constructPropValue(left, result, {
+              ...valueOptions,
+              modifier: "=",
+              allowExpression: true,
+            }),
+          },
+          children:
+            node.operator === "&&"
+              ? children
+              : children.map((component) => ({
+                  ...component,
+                  slot: "else",
+                })),
         },
       };
     }
