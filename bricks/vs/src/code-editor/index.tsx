@@ -203,6 +203,8 @@ export interface CodeEditorProps {
   uri?: string;
 }
 
+export type { ExtraLib, ExtraMarker };
+
 export interface Marker {
   token: string;
   level?: keyof typeof Level;
