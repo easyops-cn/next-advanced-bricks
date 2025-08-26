@@ -1,6 +1,9 @@
 import type { BrickEventHandler, BrickEventsMap } from "@next-core/types";
-import type { Component, EventHandler } from "@next-shared/jsx-storyboard";
-import type { ConvertViewOptions } from "../converters/interfaces";
+import type {
+  Component,
+  EventHandler,
+  ConvertViewOptions,
+} from "../interfaces.js";
 
 export function convertEvents(
   component: Component,

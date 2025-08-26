@@ -1,5 +1,5 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component } from "@next-shared/jsx-storyboard";
+import type { Component } from "../interfaces.js";
 
 export default function convertToolbar(_component: Component): BrickConf {
   return {

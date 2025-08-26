@@ -1,13 +1,10 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component, ConstructResult } from "@next-shared/jsx-storyboard";
-import type {
-  DashboardProps,
-  DashboardWidget,
-} from "@next-shared/jsx-storyboard/lib/components.js";
-import { parseDataSource } from "../converters/expressions.js";
+import type { Component, ConstructResult } from "../interfaces.js";
+import type { DashboardProps, DashboardWidget } from "../../lib/components.js";
+import { parseDataSource } from "./expressions.js";
 import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
-import { getPreGeneratedMetricGroups } from "../converters/getPreGeneratedMetricGroups.js";
-import type { ConvertViewOptions } from "../converters/interfaces.js";
+import { getPreGeneratedMetricGroups } from "./getPreGeneratedMetricGroups.js";
+import type { ConvertViewOptions } from "../interfaces.js";
 
 const COLORS = [
   "#336EF4",

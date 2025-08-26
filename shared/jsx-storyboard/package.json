@@ -40,6 +40,10 @@
     "@babel/code-frame": "^7.27.1",
     "@babel/parser": "^7.27.2",
     "@babel/types": "^7.27.7",
+    "@easyops-cn/brick-next-pipes": "^0.7.3",
+    "@next-api-sdk/cmdb-sdk": "^1.1.1",
+    "@next-core/types": "^1.17.0",
+    "@next-core/utils": "^1.8.4",
     "zod": "^4.0.13"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component } from "@next-shared/jsx-storyboard";
-import type { CardProps } from "@next-shared/jsx-storyboard/lib/components.js";
+import type { Component } from "../interfaces.js";
+import type { CardProps } from "../../lib/components.js";
 
 export default function convertCard(component: Component): BrickConf {
   const { properties } = component;

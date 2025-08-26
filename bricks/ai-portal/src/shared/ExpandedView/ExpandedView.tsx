@@ -9,14 +9,14 @@ import React, {
 import classNames from "classnames";
 import { unstable_createRoot } from "@next-core/runtime";
 import { uniqueId } from "lodash";
+import { convertJsx } from "@next-shared/jsx-storyboard";
 import type { GraphGeneratedView } from "../../cruise-canvas/interfaces";
 import styles from "./ExpandedView.module.css";
 import { convertView } from "../../cruise-canvas/utils/converters/convertView";
 import { WrappedIcon, WrappedIconButton } from "../../shared/bricks";
 import { createPortal } from "../../cruise-canvas/utils/createPortal";
 import { ICON_CLOSE, ICON_FEEDBACK } from "../constants";
-import { isJsxView } from "../../cruise-canvas/utils/jsx-converters/isJsxView";
-import { convertJsx } from "../../cruise-canvas/utils/jsx-converters/convertJsx";
+import { isJsxView } from "../../cruise-canvas/utils/isJsxView";
 import { TaskContext } from "../TaskContext";
 import { useViewFeedbackDone } from "../useViewFeedbackDone";
 
