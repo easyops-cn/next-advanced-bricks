@@ -713,9 +713,28 @@ export function CodeEditorComponent({
       return;
     }
     // Manually layout the editor once the container resized.
-    const observer = new ResizeObserver((): void => {
-      setActualWidth(container.clientWidth);
-      setActualHeight(container.clientHeight);
+    const observer = new ResizeObserver((entries): void => {
+      for (const entry of entries) {
+        if (entry.target === container) {
+          // istanbul ignore next: compatibility
+          const newWidth = entry.contentBoxSize
+            ? entry.contentBoxSize[0]
+              ? entry.contentBoxSize[0].inlineSize
+              : (entry.contentBoxSize as unknown as ResizeObserverSize)
+                  .inlineSize
+            : entry.contentRect.width;
+          setActualWidth(newWidth);
+
+          // istanbul ignore next: compatibility
+          const newHeight = entry.contentBoxSize
+            ? entry.contentBoxSize[0]
+              ? entry.contentBoxSize[0].blockSize
+              : (entry.contentBoxSize as unknown as ResizeObserverSize)
+                  .blockSize
+            : entry.contentRect.height;
+          setActualHeight(newHeight);
+        }
+      }
     });
     observer.observe(container);
     return () => {
