@@ -34,6 +34,7 @@ import {
 import {
   AdvancedCompleterMap,
   ExtraLib,
+  type ExtraMarker,
   type MixedCompleter,
 } from "./interfaces.js";
 import { brickNextYAMLProviderCompletionItems } from "./utils/brickNextYaml.js";
@@ -167,6 +168,7 @@ const showNotification = unwrapProvider<typeof _showNotification>(
 
 const SPELL_CHECK = "spell_check";
 const BRICK_NEXT_YAML_LINT = "brick_next_yaml_lint";
+const EXTRA_MARKERS = "extra_markers";
 
 export interface CodeEditorProps {
   name?: string;
@@ -185,6 +187,7 @@ export interface CodeEditorProps {
   tokenConfig?: TokenConfig;
   advancedCompleters?: AdvancedCompleterMap | MixedCompleter[];
   extraLibs?: ExtraLib[];
+  extraMarkers?: ExtraMarker[];
   markers?: Marker[];
   links?: string[];
   showExpandButton?: boolean;
@@ -367,6 +370,11 @@ class CodeEditor extends FormItemElementBase implements CodeEditorProps {
   })
   accessor extraLibs: ExtraLib[] | undefined;
 
+  @property({
+    attribute: false,
+  })
+  accessor extraMarkers: ExtraMarker[] | undefined;
+
   /**
    * @default true
    */
@@ -464,6 +472,7 @@ class CodeEditor extends FormItemElementBase implements CodeEditorProps {
           completers={this.completers}
           advancedCompleters={this.advancedCompleters}
           extraLibs={this.extraLibs}
+          extraMarkers={this.extraMarkers}
           markers={this.markers}
           links={this.links}
           tokenConfig={this.tokenConfig}
@@ -502,6 +511,7 @@ export function CodeEditorComponent({
   readOnly,
   links,
   extraLibs,
+  extraMarkers,
   tokenConfig,
   showExpandButton,
   showCopyButton = true,
@@ -1210,6 +1220,24 @@ export function CodeEditorComponent({
       );
     };
   }, [language, links, markers, theme, workerId]);
+
+  useEffect(() => {
+    const model = editorRef.current?.getModel();
+    if (!model || !extraMarkers?.length) {
+      return;
+    }
+    monaco.editor.setModelMarkers(
+      model,
+      EXTRA_MARKERS,
+      extraMarkers.map(({ severity, ...rest }) => ({
+        ...rest,
+        severity: monaco.MarkerSeverity[severity],
+      }))
+    );
+    return () => {
+      monaco.editor.setModelMarkers(model, EXTRA_MARKERS, []);
+    };
+  }, [extraMarkers]);
 
   // istanbul ignore next
   useEffect(() => {
