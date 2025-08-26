@@ -1,10 +1,10 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component, ConstructResult } from "@next-shared/jsx-storyboard";
-import type { DescriptionsProps } from "@next-shared/jsx-storyboard/lib/components.js";
-import type { ConvertViewOptions } from "../converters/interfaces.js";
-import { convertToStoryboard } from "../converters/raw-data-generate/convert.js";
-import { getPreGeneratedAttrViews } from "../converters/getPreGeneratedAttrViews.js";
-import { parseDataSource } from "../converters/expressions.js";
+import type { Component, ConstructResult } from "../interfaces.js";
+import type { DescriptionsProps } from "../../lib/components.js";
+import type { ConvertViewOptions } from "../interfaces.js";
+import { convertToStoryboard } from "./raw-data-generate/convert.js";
+import { getPreGeneratedAttrViews } from "./getPreGeneratedAttrViews.js";
+import { parseDataSource } from "./expressions.js";
 import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
 
 interface DescriptionItem {
@@ -24,7 +24,7 @@ export default async function convertDescriptions(
       "list"
     > & {
       dataSource: string | object;
-      list: DescriptionItem[];
+      list: DescriptionItem[] | string;
     };
 
   const parsedDataSource = parseDataSource(dataSource);
@@ -41,7 +41,7 @@ export default async function convertDescriptions(
 
   const configuredItems = new Map<string, any>();
 
-  if (attrViews?.size) {
+  if (attrViews?.size && Array.isArray(list)) {
     for (const item of list) {
       if (item.field) {
         const candidate = attrViews.get(item.field);
@@ -64,16 +64,21 @@ export default async function convertDescriptions(
         ? parsedDataSource.embedded
         : dataSource,
       // descriptionTitle: title,
-      list: list.map((item) => {
-        const brick = item.field ? configuredItems.get(item.field) : undefined;
-        return brick
-          ? {
-              label: item.label,
-              useChildren: `[${item.field}]`,
-            }
-          : item;
-      }),
+      list: Array.isArray(list)
+        ? list.map((item) => {
+            const brick = item.field
+              ? configuredItems.get(item.field)
+              : undefined;
+            return brick
+              ? {
+                  label: item.label,
+                  useChildren: `[${item.field}]`,
+                }
+              : item;
+          })
+        : list,
       column: options.expanded ? 3 : 1,
+      templateColumns: "repeat(auto-fill,minmax(360px,1fr))",
       // showCard: !options.expanded,
       themeVariant: "elevo",
     },

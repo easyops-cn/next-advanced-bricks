@@ -17,6 +17,7 @@ export interface DataSource {
 export interface Component {
   name: string;
   componentId?: string;
+  slot?: string;
   properties: Record<string, unknown>;
   ambiguousProps?: Record<string, unknown>;
   events?: Events;
@@ -135,4 +136,14 @@ export interface ParseJsxOptions {
 
 export interface ParseTsxOptions extends ParseJsxOptions {
   withContexts?: string[];
+}
+
+export interface ConstructedView extends ConstructResult {
+  viewId: string;
+  withContexts?: Record<string, unknown>;
+}
+
+export interface ConvertViewOptions {
+  rootId: string;
+  expanded?: boolean;
 }

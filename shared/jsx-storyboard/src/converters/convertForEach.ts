@@ -1,5 +1,5 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component } from "@next-shared/jsx-storyboard";
+import type { Component } from "../interfaces.js";
 
 export default function convertForEach(component: Component): BrickConf {
   const { properties } = component;

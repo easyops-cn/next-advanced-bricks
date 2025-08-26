@@ -1,10 +1,10 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component, ConstructResult } from "@next-shared/jsx-storyboard";
-import type { TableProps } from "@next-shared/jsx-storyboard/lib/components.js";
-import type { ConvertViewOptions } from "../converters/interfaces.js";
+import type { Component, ConstructResult } from "../interfaces.js";
+import type { TableProps } from "../../lib/components.js";
+import type { ConvertViewOptions } from "../interfaces.js";
 import { lowLevelConvertToStoryboard } from "../converters/raw-data-generate/convert.js";
-import { parseDataSource } from "../converters/expressions.js";
-import { getPreGeneratedAttrViews } from "../converters/getPreGeneratedAttrViews.js";
+import { parseDataSource } from "./expressions.js";
+import { getPreGeneratedAttrViews } from "./getPreGeneratedAttrViews.js";
 import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
 
 export default async function convertTable(
