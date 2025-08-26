@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.18.5...@next-bricks/form@1.18.6) (2025-08-26)
+
+
+### Bug Fixes
+
+* 系统管理之服务管理bug合集(一) ([22026f5](https://github.com/easyops-cn/next-advanced-bricks/commit/22026f597480966d1c3f9ed5d0f74b3f4e1e21ca))
+
+
+
+
+
 ## [1.18.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.18.4...@next-bricks/form@1.18.5) (2025-08-25)
 
 **Note:** Version bump only for package @next-bricks/form
