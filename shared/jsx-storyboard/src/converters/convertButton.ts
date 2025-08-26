@@ -1,6 +1,6 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component } from "@next-shared/jsx-storyboard";
-import type { ButtonProps } from "@next-shared/jsx-storyboard/lib/components.js";
+import type { Component } from "../interfaces.js";
+import type { ButtonProps } from "../../lib/components.js";
 
 export default function convertButton(component: Component): BrickConf {
   const { properties } = component;

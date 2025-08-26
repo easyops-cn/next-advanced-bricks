@@ -136,3 +136,13 @@ export interface ParseJsxOptions {
 export interface ParseTsxOptions extends ParseJsxOptions {
   withContexts?: string[];
 }
+
+export interface ConstructedView extends ConstructResult {
+  viewId: string;
+  withContexts?: Record<string, unknown>;
+}
+
+export interface ConvertViewOptions {
+  rootId: string;
+  expanded?: boolean;
+}

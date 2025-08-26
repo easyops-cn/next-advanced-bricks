@@ -13,7 +13,7 @@ import { TaskContext } from "../../shared/TaskContext";
 import { StreamContext } from "../StreamContext";
 import classNames from "classnames";
 import { EnhancedMarkdown } from "../../cruise-canvas/EnhancedMarkdown/EnhancedMarkdown";
-import { isJsxView } from "../../cruise-canvas/utils/jsx-converters/isJsxView";
+import { isJsxView } from "../../cruise-canvas/utils/isJsxView";
 
 const ICON_SHRINK: GeneralIconProps = {
   lib: "easyops",

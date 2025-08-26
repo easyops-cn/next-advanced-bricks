@@ -1,24 +1,24 @@
 import type { BrickConf, ContextConf } from "@next-core/types";
-import type { Component } from "@next-shared/jsx-storyboard";
 import { pipes } from "@easyops-cn/brick-next-pipes";
-import convertList from "./convertList";
-import type { ConvertViewOptions } from "../converters/interfaces";
-import { convertEvents } from "./convertEvents";
-import { withBox } from "../converters/withBox";
-import { convertDataSources } from "./convertDataSources";
-import { convertVariables } from "./convertVariables";
-import convertTable from "./convertTable";
-import convertDescriptions from "./convertDescriptions";
-import convertDashboard from "./convertDashboard";
-import convertButton from "./convertButton";
-import convertForm from "./convertForm";
-import convertFormItem from "./convertFormItem";
-import convertModal from "./convertModal";
-import convertToolbar from "./convertToolbar";
-import convertText from "./convertText";
-import type { ConstructedView } from "../../interfaces";
-import convertCard from "./convertCard";
-import convertForEach from "./convertForEach";
+import type { Component } from "../interfaces.js";
+import convertList from "./convertList.js";
+import type { ConvertViewOptions } from "../interfaces.js";
+import { convertEvents } from "./convertEvents.js";
+import { withBox } from "./withBox.js";
+import { convertDataSources } from "./convertDataSources.js";
+import { convertVariables } from "./convertVariables.js";
+import convertTable from "./convertTable.js";
+import convertDescriptions from "./convertDescriptions.js";
+import convertDashboard from "./convertDashboard.js";
+import convertButton from "./convertButton.js";
+import convertForm from "./convertForm.js";
+import convertFormItem from "./convertFormItem.js";
+import convertModal from "./convertModal.js";
+import convertToolbar from "./convertToolbar.js";
+import convertText from "./convertText.js";
+import type { ConstructedView } from "../interfaces.js";
+import convertCard from "./convertCard.js";
+import convertForEach from "./convertForEach.js";
 
 export async function convertJsx(
   result: ConstructedView,

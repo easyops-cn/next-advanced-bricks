@@ -84,8 +84,8 @@ export function PlanProgress({
     try {
       await showDialog({
         type: "confirm",
-        title: t(K.CONFIRM_TO_CANCEL_THE_TASK_TITLE),
-        content: t(K.CONFIRM_TO_CANCEL_THE_TASK_CONTENT),
+        title: t(K.CONFIRM_TO_TERMINATE_THE_TASK_TITLE),
+        content: t(K.CONFIRM_TO_TERMINATE_THE_TASK_CONTENT),
       });
     } catch {
       return;

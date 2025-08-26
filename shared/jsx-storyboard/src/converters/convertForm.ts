@@ -1,6 +1,6 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component } from "@next-shared/jsx-storyboard";
-import type { FormProps } from "@next-shared/jsx-storyboard/lib/components.js";
+import type { Component } from "../interfaces.js";
+import type { FormProps } from "../../lib/components.js";
 
 export default function convertForm(component: Component): BrickConf {
   const { properties } = component;

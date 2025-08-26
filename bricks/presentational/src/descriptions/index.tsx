@@ -34,6 +34,7 @@ export interface DescriptionsProps {
   list?: DescriptionItem[];
   showCard?: boolean;
   column?: number;
+  templateColumns?: string;
   layout?: Layout;
   bordered?: boolean;
   hideGroups?: string[] | string;
@@ -85,6 +86,12 @@ class Descriptions extends ReactNextElement {
   accessor column: number | undefined;
 
   /**
+   * CSS [grid-template-columns](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns)
+   */
+  @property()
+  accessor templateColumns: string | undefined;
+
+  /**
    * 布局模式
    * @default "horizontal"
    */
@@ -127,6 +134,7 @@ class Descriptions extends ReactNextElement {
         list={this.list}
         showCard={this.showCard}
         column={this.column}
+        templateColumns={this.templateColumns}
         layout={this.layout}
         bordered={this.bordered}
         hideGroups={this.hideGroups}
@@ -143,6 +151,7 @@ export function DescriptionsComponent(props: DescriptionsProps) {
     list,
     showCard: _showCard,
     column = 3,
+    templateColumns,
     layout = "horizontal",
     bordered = false,
     hideGroups,
@@ -178,6 +187,7 @@ export function DescriptionsComponent(props: DescriptionsProps) {
     <WrappedGridLayout
       gap={layout === "vertical" || bordered ? "0" : "10px"}
       columns={column}
+      templateColumns={templateColumns}
       className={classnames("description-content", { bordered })}
     >
       {list
@@ -195,7 +205,7 @@ export function DescriptionsComponent(props: DescriptionsProps) {
                 ? {
                     gridColumn: item.gridColumn,
                   }
-                : index === list.length - 1
+                : !templateColumns && index === list.length - 1
                   ? {
                       gridColumnStart: list.length % column,
                       gridColumnEnd: +column + 1,

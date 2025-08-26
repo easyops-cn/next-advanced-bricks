@@ -1,6 +1,6 @@
 import type { ContextConf } from "@next-core/types";
 import { isObject } from "@next-core/utils/general";
-import type { DataSource } from "@next-shared/jsx-storyboard";
+import type { DataSource } from "../interfaces.js";
 
 export function convertDataSources(dataSources: DataSource[]): ContextConf[] {
   return dataSources.map((dataSource) => ({

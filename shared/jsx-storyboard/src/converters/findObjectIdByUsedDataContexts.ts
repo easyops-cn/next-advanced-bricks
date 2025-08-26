@@ -1,5 +1,5 @@
 import { strictCollectMemberUsage } from "@next-core/utils/storyboard";
-import type { DataSource, Variable } from "@next-shared/jsx-storyboard";
+import type { DataSource, Variable } from "../interfaces.js";
 
 /**
  * Find the object ID associated with the used data contexts.
