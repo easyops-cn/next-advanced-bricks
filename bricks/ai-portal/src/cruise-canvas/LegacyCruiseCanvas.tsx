@@ -242,7 +242,7 @@ export function LegacyCruiseCanvasComponent(
   const { sizeReady, nodes, edges } = useLayout({
     rawNodes,
     rawEdges,
-    state: taskState,
+    completed: taskState === "completed",
     sizeMap,
     showFeedback,
   });
