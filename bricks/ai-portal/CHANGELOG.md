@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.28.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.28.0...@next-bricks/ai-portal@0.28.1) (2025-08-26)
+
+
+### Bug Fixes
+
+* add loading nodes ([eedbe55](https://github.com/easyops-cn/next-advanced-bricks/commit/eedbe55059376bc6642ff32846eafa360af9f5ea))
+
+
+
+
+
 # [0.28.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.27.4...@next-bricks/ai-portal@0.28.0) (2025-08-25)
 
 
