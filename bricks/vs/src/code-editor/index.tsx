@@ -556,6 +556,7 @@ export function CodeEditorComponent({
     width: 300,
     height: getContentHeightByCode(value, minLines, maxLines),
   });
+  const [actualWidth, setActualWidth] = useState<string | number>();
   const [actualHeight, setActualHeight] = useState<string | number>();
   // `automaticLayout` should never change
   const automaticLayoutRef = useRef(automaticLayout);
@@ -713,7 +714,8 @@ export function CodeEditorComponent({
     }
     // Manually layout the editor once the container resized.
     const observer = new ResizeObserver((): void => {
-      setActualHeight(container.offsetHeight);
+      setActualWidth(container.clientWidth);
+      setActualHeight(container.clientHeight);
     });
     observer.observe(container);
     return () => {
@@ -1301,6 +1303,7 @@ export function CodeEditorComponent({
         ref={containerRef}
         style={{
           height: expanded ? "100%" : actualHeight,
+          width: expanded ? "100%" : actualWidth,
           overflow: expanded ? "scroll" : "",
         }}
       />
