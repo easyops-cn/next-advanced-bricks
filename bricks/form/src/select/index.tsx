@@ -30,6 +30,10 @@ import { UseSingleBrickConf } from "@next-core/types";
 import { ReactUseBrick } from "@next-core/react-runtime";
 import { handleHttpError, fetchByProvider } from "@next-core/runtime";
 import Empty from "./empty.svg";
+import { NS, locales, K, t } from "./i18n.js";
+import { initializeI18n } from "@next-core/i18n";
+
+initializeI18n(NS, locales);
 
 interface UseBackendConf {
   provider: string;
@@ -925,7 +929,7 @@ export function SelectComponent(props: SelectProps) {
     ) : (
       <div className="empty-tips">
         <Empty />
-        <span>暂无数据</span>
+        <span>{t(K.NO_DATA)}</span>
       </div>
     );
   }, [
