@@ -2,14 +2,17 @@ import { strictCollectMemberUsage } from "@next-core/utils/storyboard";
 
 const VALID_IDENTIFIER_REG = /^[$_\p{ID_Start}][$\p{ID_Continue}]*$/u;
 
-const EXPRESSION_PREFIX_REG = /^\s*<%=?\s+/;
-const EXPRESSION_SUFFIX_REG = /\s+%>\s*$/;
+const EXPRESSION_PREFIX_REG = /^<%=?\s/;
+const EXPRESSION_SUFFIX_REG = /\s%>$/;
 
-export function isExpression(value: string) {
-  return EXPRESSION_PREFIX_REG.test(value) && EXPRESSION_SUFFIX_REG.test(value);
+function isExpression(value: string) {
+  const trimmed = value.trim();
+  return (
+    EXPRESSION_PREFIX_REG.test(trimmed) && EXPRESSION_SUFFIX_REG.test(trimmed)
+  );
 }
 
-export function getMemberAccessor(property: unknown): string {
+function getMemberAccessor(property: unknown): string {
   const propertyStr = String(property);
   return VALID_IDENTIFIER_REG.test(propertyStr)
     ? `.${propertyStr}`
