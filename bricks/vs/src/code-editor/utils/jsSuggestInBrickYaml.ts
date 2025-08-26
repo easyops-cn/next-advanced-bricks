@@ -1,16 +1,11 @@
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
+import * as monaco from "monaco-editor";
 import { builtInKeywordDeclare } from "./constants.js";
 
 interface BlockContext {
   offset?: number;
 }
 
-export function getEmbeddedJavascriptUri(
-  value: monaco.editor.IModel | monaco.Uri
-) {
-  if ("uri" in value) {
-    value = value.uri;
-  }
+export function getEmbeddedJavascriptUri(value: monaco.Uri) {
   return monaco.Uri.parse(value.toString() + ".ts");
 }
 
@@ -23,7 +18,7 @@ export async function provideJsSuggestItems(
   const workerGetter = await monaco.languages.typescript.getJavaScriptWorker();
   const worker = await workerGetter(model.uri);
   const javascriptModel = monaco.editor.getModel(
-    getEmbeddedJavascriptUri(model)
+    getEmbeddedJavascriptUri(model.uri)
   );
 
   const endOffset = model.getOffsetAt(position);

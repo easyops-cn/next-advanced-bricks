@@ -1,6 +1,6 @@
 {
   "name": "@next-bricks/mini-chart",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "homepage": "https://github.com/easyops-cn/next-advanced-bricks/tree/master/bricks/mini-chart",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@next-core/element": "^1.2.18",
-    "@next-core/i18n": "^1.0.81",
+    "@next-core/i18n": "^1.0.83",
     "@next-core/react-element": "^1.0.37",
     "@next-core/theme": "^1.6.0",
     "comlink": "^4.4.2",
@@ -46,7 +46,7 @@
     "resize-observer-polyfill": "^1.5.1"
   },
   "devDependencies": {
-    "@next-core/build-next-bricks": "^1.23.13",
+    "@next-core/build-next-bricks": "^1.23.14",
     "@next-core/test-next": "^2.0.0"
   }
 }

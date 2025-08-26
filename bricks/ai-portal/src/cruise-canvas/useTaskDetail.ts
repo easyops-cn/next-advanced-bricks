@@ -3,7 +3,7 @@ import { useCallback, useEffect, useReducer, useRef } from "react";
 import { http } from "@next-core/http";
 import { createSSEStream } from "@next-core/utils/general";
 import { getBasePath, handleHttpError } from "@next-core/runtime";
-import { rootReducer } from "./reducers";
+import { rootReducer } from "./legacy-reducers";
 import type { TaskPatch } from "./interfaces";
 
 const MINIMAL_DELAY = 500;
@@ -90,9 +90,6 @@ export function useTaskDetail(
       try {
         const request = await createSSEStream<TaskPatch>(
           `${getBasePath()}api/gateway/logic.llm.aiops_service/api/v1/llm/agent/flow/${taskId}`,
-          // `/api/mocks/task/get?${new URLSearchParams({ id: taskId })}`
-          // `http://localhost:8888/.netlify/functions/task-get?${new URLSearchParams({ id: taskId })}`
-          // `https://serverless-mocks.netlify.app/.netlify/functions/task-get?${new URLSearchParams({ id: taskId })}`
           {
             signal: ctrl.signal,
           }

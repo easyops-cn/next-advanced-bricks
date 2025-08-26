@@ -10,6 +10,7 @@ import "@next-core/theme";
 import type { UseBrickConf } from "@next-core/types";
 import classnames from "classnames";
 import { ReactUseMultipleBricks } from "@next-core/react-runtime";
+import { get } from "lodash";
 import styleText from "./descriptions.shadow.css";
 import "./host-context.css";
 
@@ -160,7 +161,7 @@ export function DescriptionsComponent(props: DescriptionsProps) {
       );
     }
     return item.field != null
-      ? String(dataSource[item.field] ?? "")
+      ? (get(dataSource, item.field, "") as string)
       : item.text;
   };
 

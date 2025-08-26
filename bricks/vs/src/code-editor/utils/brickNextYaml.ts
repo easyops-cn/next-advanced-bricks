@@ -1,4 +1,4 @@
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
+import * as monaco from "monaco-editor";
 import { brickNextKeywords } from "./constants.js";
 import { getEditorId } from "./editorId.js";
 import { TokenConfig } from "../index.jsx";

@@ -1,0 +1,170 @@
+// istanbul ignore file
+import { useCallback, useEffect, useReducer, useRef } from "react";
+import { createSSEStream } from "@next-core/utils/general";
+import { getBasePath, handleHttpError } from "@next-core/runtime";
+import { rootReducer } from "./reducers";
+import type { ConversationPatch, RequestStore } from "../shared/interfaces";
+
+const MINIMAL_DELAY = 500;
+
+export function useConversationDetail(
+  conversationId: string,
+  initialRequest?: RequestStore | null,
+  replay?: boolean,
+  replayDelay?: number
+) {
+  const [{ conversation, tasks, error }, dispatch] = useReducer(
+    rootReducer,
+    null,
+    () => ({
+      conversation: null,
+      tasks: [],
+      error: null,
+    })
+  );
+
+  const humanInputRef = useRef<(jobId: string, input: string) => void>();
+
+  const replayListRef = useRef<ConversationPatch[]>([]);
+  const replayRef = useRef(replay);
+  const replayDelayRef = useRef((replayDelay ?? 2) * 1000);
+  const replayResolveRef = useRef<(() => void) | null>(null);
+
+  const skipToResults = useCallback(() => {
+    replayRef.current = false;
+    if (replayResolveRef.current) {
+      replayResolveRef.current();
+      replayResolveRef.current = null;
+    }
+  }, []);
+
+  const watchAgain = useCallback(async () => {
+    replayRef.current = true;
+
+    let isInitial = true;
+    let previousTime: number | undefined;
+    for (const value of replayListRef.current) {
+      if (replayRef.current) {
+        let delay = replayDelayRef.current;
+        if (value.time && previousTime) {
+          delay = Math.min(
+            Math.max(MINIMAL_DELAY, (value.time - previousTime) * 1000),
+            delay
+          );
+        }
+        previousTime = value.time;
+        if (!isInitial) {
+          await new Promise<void>((resolve) => {
+            replayResolveRef.current = resolve;
+            setTimeout(resolve, delay);
+          });
+          replayResolveRef.current = null;
+        }
+      }
+
+      dispatch({ type: "sse", payload: value });
+      isInitial = false;
+    }
+  }, []);
+
+  useEffect(() => {
+    dispatch({ type: "reset" });
+    replayListRef.current = [];
+    humanInputRef.current = undefined;
+
+    let ignore = false;
+    let requesting = false;
+    let ctrl: AbortController | undefined;
+
+    const makeRequest = async (content: string | null) => {
+      if (requesting) {
+        return;
+      }
+
+      requesting = true;
+      ctrl = new AbortController();
+      try {
+        const sseRequest = await (content === null
+          ? createSSEStream<ConversationPatch>(
+              `${getBasePath()}api/gateway/logic.llm.aiops_service/api/v1/elevo/conversations/${conversationId}/stream`,
+              {
+                signal: ctrl.signal,
+              }
+            )
+          : createSSEStream<ConversationPatch>(
+              `${getBasePath()}api/gateway/logic.llm.aiops_service/api/v1/elevo/conversations/${conversationId}/messages`,
+              {
+                signal: ctrl.signal,
+                method: "POST",
+                body: JSON.stringify({ content }),
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            ));
+        const stream = await sseRequest;
+        let isInitial = true;
+        let previousTime: number | undefined;
+        for await (const value of stream) {
+          if (ignore) {
+            requesting = false;
+            return;
+          }
+
+          if (replayRef.current) {
+            let delay = replayDelayRef.current;
+            if (value.time && previousTime) {
+              delay = Math.min(
+                Math.max(MINIMAL_DELAY, (value.time - previousTime) * 1000),
+                delay
+              );
+            }
+            previousTime = value.time;
+
+            if (!isInitial) {
+              await new Promise<void>((resolve) => {
+                replayResolveRef.current = resolve;
+                setTimeout(resolve, delay);
+              });
+              replayResolveRef.current = null;
+            }
+          }
+
+          replayListRef.current.push(value);
+          dispatch({ type: "sse", payload: value });
+          isInitial = false;
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error("sse failed", e);
+        handleHttpError(e);
+      } finally {
+        requesting = false;
+      }
+    };
+
+    humanInputRef.current = async (jobId: string, content: string) => {
+      makeRequest(content);
+    };
+
+    makeRequest(
+      initialRequest?.conversationId === conversationId
+        ? initialRequest.content
+        : null
+    );
+
+    return () => {
+      ignore = true;
+      ctrl?.abort();
+    };
+  }, [conversationId, initialRequest]);
+
+  return {
+    conversation,
+    tasks,
+    error,
+    humanInputRef,
+    skipToResults,
+    watchAgain,
+  };
+}

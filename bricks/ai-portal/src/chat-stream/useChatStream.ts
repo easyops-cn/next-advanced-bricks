@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import type { Job, TaskBaseDetail } from "../cruise-canvas/interfaces.js";
 import type { ChatMessage } from "./interfaces.js";
-import { getOrderedJobs } from "../cruise-canvas/getOrderedJobs.js";
+import { getOrderedNodes } from "../cruise-canvas/getOrderedNodes.js";
 
 export function useChatStream(
   task: TaskBaseDetail | null | undefined,
@@ -23,7 +23,7 @@ export function useChatStream(
       },
     ];
 
-    const { list, jobMap } = getOrderedJobs(jobs);
+    const { list, map: jobMap } = getOrderedNodes(jobs);
 
     let prevAssistantMessage: ChatMessage = {
       role: "assistant",

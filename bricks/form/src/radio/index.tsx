@@ -335,13 +335,25 @@ export function RadioComponent(props: RadioComponentProps) {
                 </div>
               ) : type === "button" ? (
                 <div className="content">
+                  {item.emoji && (
+                    <span
+                      style={{
+                        fontSize: size === "large" ? "22px" : "20px",
+                        lineHeight: "22px",
+                        marginRight: icon || item.label ? "8px" : 0,
+                        verticalAlign: size === "large" ? "-3.5px" : "-2.5px",
+                      }}
+                    >
+                      {item.emoji}
+                    </span>
+                  )}
                   <span>
                     {icon && (
                       <WrappedGeneralIcon
                         {...icon}
                         style={{
                           fontSize: "22px",
-                          marginRight: "4px",
+                          marginRight: item.label ? "4px" : "0",
                           verticalAlign: "-0.25em",
                           ...iconStyle,
                         }}

@@ -72,12 +72,6 @@
   max-width: 804px;
 }
 
-.close {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-}
-
 .loading {
   position: absolute;
   top: 50%;
@@ -85,4 +79,12 @@
   transform: translate(-50%, -50%);
   font-size: 48px;
   color: #fff;
+}
+
+.buttons {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  display: flex;
+  gap: 12px;
 }

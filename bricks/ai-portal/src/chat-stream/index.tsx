@@ -49,6 +49,7 @@ export interface ChatStreamProps {
   replayDelay?: number;
   supports?: Record<string, boolean>;
   showFeedback?: boolean;
+  showFeedbackOnView?: boolean;
   showUiSwitch?: boolean;
 }
 
@@ -85,6 +86,9 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
   accessor showFeedback: boolean | undefined;
 
   @property({ type: Boolean })
+  accessor showFeedbackOnView: boolean | undefined;
+
+  @property({ type: Boolean })
   accessor showUiSwitch: boolean | undefined;
 
   @property({ type: Boolean, render: false })
@@ -97,25 +101,11 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
     this.#shareEvent.emit();
   };
 
-  @event({ type: "pause" })
-  accessor #pauseEvent!: EventEmitter<void>;
+  @event({ type: "terminate" })
+  accessor #terminateEvent!: EventEmitter<void>;
 
-  #onPause = () => {
-    this.#pauseEvent.emit();
-  };
-
-  @event({ type: "resume" })
-  accessor #resumeEvent!: EventEmitter<void>;
-
-  #onResume = () => {
-    this.#resumeEvent.emit();
-  };
-
-  @event({ type: "cancel" })
-  accessor #cancelEvent!: EventEmitter<void>;
-
-  #onCancel = () => {
-    this.#cancelEvent.emit();
+  #onTerminate = () => {
+    this.#terminateEvent.emit();
   };
 
   @event({ type: "feedback.submit" })
@@ -123,6 +113,13 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
 
   #onSubmitFeedback = (detail: FeedbackDetail) => {
     this.#feedbackSubmitEvent.emit(detail);
+  };
+
+  @event({ type: "feedback.on.view" })
+  accessor #feedbackOnViewEvent!: EventEmitter<string>;
+
+  #onFeedbackOnView = (viewId: string) => {
+    this.#feedbackOnViewEvent.emit(viewId);
   };
 
   @event({ type: "ui.switch" })
@@ -149,6 +146,11 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
     this.#ref.current?.feedbackSubmitFailed();
   }
 
+  @method()
+  feedbackOnViewDone(viewId: string) {
+    this.#ref.current?.feedbackOnViewDone(viewId);
+  }
+
   render() {
     return (
       <ChatStreamComponent
@@ -157,13 +159,13 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
         replayDelay={this.replayDelay}
         supports={this.supports}
         showFeedback={this.showFeedback}
+        showFeedbackOnView={this.showFeedbackOnView}
         showUiSwitch={this.showUiSwitch}
         onShare={this.#onShare}
-        onPause={this.#onPause}
-        onResume={this.#onResume}
-        onCancel={this.#onCancel}
+        onTerminate={this.#onTerminate}
         onSubmitFeedback={this.#onSubmitFeedback}
         onSwitchToCanvas={this.#onSwitchToCanvas}
+        onFeedbackOnView={this.#onFeedbackOnView}
       />
     );
   }
@@ -171,17 +173,17 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
 
 interface ChatStreamComponentProps extends ChatStreamProps {
   onShare: () => void;
-  onPause: () => void;
-  onResume: () => void;
-  onCancel: () => void;
+  onTerminate: () => void;
   onSubmitFeedback: (detail: FeedbackDetail) => void;
   onSwitchToCanvas: () => void;
+  onFeedbackOnView: (viewId: string) => void;
 }
 
 interface ChatStreamRef {
   resumed: () => void;
   feedbackSubmitDone: () => void;
   feedbackSubmitFailed: () => void;
+  feedbackOnViewDone: (viewId: string) => void;
 }
 
 function LegacyChatStreamComponent(
@@ -191,13 +193,13 @@ function LegacyChatStreamComponent(
     replayDelay,
     supports,
     showFeedback: propShowFeedback,
+    showFeedbackOnView,
     showUiSwitch,
     onShare,
-    onPause,
-    onResume,
-    onCancel,
+    onTerminate,
     onSubmitFeedback,
     onSwitchToCanvas,
+    onFeedbackOnView,
   }: ChatStreamComponentProps,
   ref: React.Ref<ChatStreamRef>
 ) {
@@ -235,6 +237,9 @@ function LegacyChatStreamComponent(
   useEffect(() => {
     setShowFeedback(!!propShowFeedback);
   }, [propShowFeedback]);
+  const [feedbackDoneViews, setFeedbackDoneViews] = useState<
+    Set<string> | undefined
+  >();
 
   const handleSubmitFeedback = useCallback(
     (detail: FeedbackDetail) => {
@@ -256,6 +261,13 @@ function LegacyChatStreamComponent(
       },
       feedbackSubmitFailed: () => {
         setSubmittingFeedback(false);
+      },
+      feedbackOnViewDone: (viewId: string) => {
+        setFeedbackDoneViews((prev) => {
+          const newSet = new Set(prev);
+          newSet.add(viewId);
+          return newSet;
+        });
       },
     }),
     [resumedRef]
@@ -311,9 +323,7 @@ function LegacyChatStreamComponent(
     () => ({
       humanInput,
       onShare,
-      onPause,
-      onResume,
-      onCancel,
+      onTerminate,
       supports,
 
       activeExpandedViewJobId,
@@ -325,13 +335,14 @@ function LegacyChatStreamComponent(
       submittedFeedback,
       onSubmitFeedback: handleSubmitFeedback,
       setShowFeedback,
+      showFeedbackOnView,
+      onFeedbackOnView,
+      feedbackDoneViews,
     }),
     [
       humanInput,
       onShare,
-      onPause,
-      onResume,
-      onCancel,
+      onTerminate,
       supports,
 
       activeExpandedViewJobId,
@@ -340,6 +351,9 @@ function LegacyChatStreamComponent(
       submittingFeedback,
       submittedFeedback,
       handleSubmitFeedback,
+      showFeedbackOnView,
+      onFeedbackOnView,
+      feedbackDoneViews,
     ]
   );
 
@@ -492,8 +506,8 @@ function LegacyChatStreamComponent(
                   />
                 ) : (
                   <ChatBox
-                    taskState={taskState}
-                    taskDone={taskDone}
+                    state={taskState}
+                    canChat={taskDone && !!inputRequiredJobId}
                     inputRequiredJobId={inputRequiredJobId}
                   />
                 )}

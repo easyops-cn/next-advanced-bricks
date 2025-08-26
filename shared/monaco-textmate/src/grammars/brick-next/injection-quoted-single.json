@@ -1,0 +1,228 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "scopeName": "placeholder.injection.string.quoted.single",
+  "injectionSelector": "L:string.quoted.single",
+  "patterns": [
+    {
+      "include": "#placeholder"
+    },
+    {
+      "include": "#transform"
+    }
+  ],
+  "repository": {
+    "placeholder": {
+      "name": "expression.placeholder.injection",
+      "begin": "(<%[~=]?)\\s",
+      "end": "\\s(%>)([^']*)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.section.embedded.begin.yaml" }
+      },
+      "endCaptures": {
+        "1": { "name": "punctuation.section.embedded.end.yaml" },
+        "2": { "name": "invalid.illegal.trailing" }
+      },
+      "patterns": [
+        {
+          "include": "source.js#expression"
+        }
+      ],
+      "contentName": "keyword.operator.injection"
+    },
+    "transform": {
+      "name": "transform.placeholder.injection",
+      "begin": "(@)(\\{)",
+      "end": "\\}",
+      "beginCaptures": {
+        "1": { "name": "keyword.control" },
+        "2": { "name": "punctuation.section.embedded.begin.yaml" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.section.embedded.end.yaml" }
+      },
+      "patterns": [
+        {
+          "include": "#field"
+        },
+        {
+          "include": "#assign-default"
+        },
+        {
+          "include": "#pipe"
+        },
+        {
+          "name": "invalid.illegal.expected-placeholder-separator.json",
+          "match": "[^\\s\\}]"
+        }
+      ]
+    },
+    "field": {
+      "name": "support.variable.field",
+      "match": "(?:[a-zA-Z_\\-0-9\\.\\*\\[\\]\\x{80}-\\x{10FFFF}]+)"
+    },
+    "assign-default": {
+      "name": "expression.assign-default.placeholder",
+      "begin": "=",
+      "beginCaptures": {
+        "0": { "name": "keyword.operator" }
+      },
+      "end": "(?=[\\|\\}])",
+      "patterns": [
+        { "include": "#value" },
+        { "include": "#literal" },
+        {
+          "name": "invalid.illegal.expected-placeholder-separator.json",
+          "match": "[^\\s\\|\\}]"
+        }
+      ]
+    },
+    "literal": {
+      "name": "string",
+      "match": "[a-zA-Z_\\-0-9\\x{80}-\\x{10FFFF}]+"
+    },
+    "pipe": {
+      "name": "expression.pipe.placeholder",
+      "begin": "\\|",
+      "beginCaptures": {
+        "0": { "name": "keyword.operator" }
+      },
+      "end": "(?=\\})",
+      "patterns": [
+        { "include": "#identifier" },
+        { "include": "#pipe-parameter" },
+        { "include": "#pipe" },
+        {
+          "name": "invalid.illegal.expected-placeholder-separator.json",
+          "match": "[^\\s\\}]"
+        }
+      ]
+    },
+    "identifier": {
+      "name": "entity.name.function",
+      "match": "[a-zA-Z]\\w*"
+    },
+    "pipe-parameter": {
+      "name": "expression.pipe-parameter.placeholder",
+      "begin": ":",
+      "beginCaptures": {
+        "0": { "name": "keyword.operator" }
+      },
+      "end": "(?=[\\|\\}])",
+      "patterns": [
+        { "include": "#value" },
+        { "include": "#literal" },
+        { "include": "#pipe-parameter" },
+        {
+          "name": "invalid.illegal.expected-placeholder-separator.json",
+          "match": "[^\\s\\|\\}]"
+        }
+      ]
+    },
+    "value": {
+      "patterns": [
+        { "include": "#constant" },
+        { "include": "#number" },
+        { "include": "#string" },
+        { "include": "#array" },
+        { "include": "#object" }
+      ]
+    },
+    "constant": {
+      "name": "constant.language.json",
+      "match": "\\b(?:true|false|null)\\b"
+    },
+    "number": {
+      "name": "constant.numeric.json",
+      "match": "-?(?:0|[1-9]\\d*)(?:(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)?"
+    },
+    "string": {
+      "name": "string.quoted.double.json",
+      "begin": "\"",
+      "end": "\"",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.string.begin.json" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.string.begin.json" }
+      },
+      "patterns": [
+        {
+          "name": "constant.character.escape.json",
+          "match": "\\\\\\\\(?:['/bfnrt]|u[0-9a-fA-F]{4}|\\\\\\\\)"
+        },
+        {
+          "name": "invalid.illegal.unrecognized-string-escape.json",
+          "match": "\\\\\\\\."
+        }
+      ]
+    },
+    "array": {
+      "name": "meta.structure.array.json",
+      "begin": "\\[",
+      "end": "(,)?[\\s]*(\\])",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.array.begin.json" }
+      },
+      "endCaptures": {
+        "1": { "name": "invalid.illegal.trailing-array-separator.json" },
+        "2": { "name": "punctuation.definition.array.end.json" }
+      },
+      "patterns": [
+        {
+          "include": "#value"
+        },
+        {
+          "name": "punctuation.separator.array.json",
+          "match": ","
+        },
+        {
+          "name": "invalid.illegal.expected-array-separator.json",
+          "match": "[^\\s\\]]"
+        }
+      ]
+    },
+    "object": {
+      "name": "meta.structure.dictionary.json",
+      "begin": "\\{",
+      "end": "\\}",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.dictionary.begin.json" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.dictionary.end.json" }
+      },
+      "patterns": [
+        {
+          "include": "#string"
+        },
+        {
+          "name": "meta.structure.dictionary.value.json",
+          "begin": ":",
+          "beginCaptures": {
+            "0": { "name": "punctuation.separator.dictionary.key-value.json" }
+          },
+          "end": "(,)(?=[\\s]*\\})|(,)|(?=\\})",
+          "endCaptures": {
+            "1": {
+              "name": "invalid.illegal.trailing-dictionary-separator.json"
+            },
+            "2": { "name": "punctuation.separator.dictionary.pair.json" }
+          },
+          "patterns": [
+            {
+              "include": "#value"
+            },
+            {
+              "name": "invalid.illegal.expected-dictionary-separator.json",
+              "match": "[^\\s,]"
+            }
+          ]
+        },
+        {
+          "name": "invalid.illegal.expected-dictionary-separator.json",
+          "match": "[^\\s\\}]"
+        }
+      ]
+    }
+  }
+}

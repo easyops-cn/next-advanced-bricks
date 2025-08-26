@@ -146,7 +146,8 @@ export interface Job {
   endTime?: number;
 
   componentGraph?: ComponentGraph;
-  generatedView?: ConstructResult | ViewWithInfo;
+  generatedView?: ConstructedView | ViewWithInfo;
+  staticDataView?: ConstructedView;
   level?: number;
 }
 
@@ -252,7 +253,7 @@ export interface GraphNavItem {
 
 export interface GraphGeneratedView {
   id: string;
-  view: ConstructResult | ViewWithInfo;
+  view: ConstructedView | ViewWithInfo;
 }
 
 export interface CmdbInstanceDetailData {
@@ -284,4 +285,9 @@ export interface FeedbackDetail {
   plan: string[];
   result: string[];
   feedback: string;
+}
+
+export interface ConstructedView extends ConstructResult {
+  viewId: string;
+  withContexts?: Record<string, unknown>;
 }

@@ -1,19 +1,24 @@
-import type { Job, TaskBaseDetail, TaskPatch } from "../interfaces";
+import type {
+  ConversationBaseDetail,
+  ConversationPatch,
+  Task,
+} from "../../shared/interfaces";
 
 export interface CruiseCanvasState {
-  task: TaskBaseDetail | null;
-  jobs: Job[];
+  conversation: ConversationBaseDetail | null;
+  tasks: Task[];
   error: string | null;
 }
 
-export type CruiseCanvasAction = TaskSSEAction | TaskResetAction;
+export type CruiseCanvasAction =
+  | ConversationSSEAction
+  | ConversationResetAction;
 
-export interface TaskSSEAction {
+export interface ConversationSSEAction {
   type: "sse";
-  payload: TaskPatch;
-  isInitial?: boolean;
+  payload: ConversationPatch;
 }
 
-export interface TaskResetAction {
+export interface ConversationResetAction {
   type: "reset";
 }

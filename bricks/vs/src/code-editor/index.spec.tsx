@@ -3,7 +3,7 @@ import { act } from "react-dom/test-utils";
 import ResizeObserver from "resize-observer-polyfill";
 import "./";
 import { CodeEditor } from "./index.js";
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
+import * as monaco from "monaco-editor";
 
 jest.mock("@next-core/theme", () => ({}));
 jest.mock("@next-core/runtime", () => ({
@@ -15,6 +15,12 @@ jest.mock("@next-core/runtime", () => ({
   },
 }));
 jest.mock("@next-core/react-runtime");
+jest.mock("monaco-editor");
+jest.mock("@next-shared/monaco-textmate", () => ({
+  initializeTokensProvider: jest.fn(),
+  languages: ["javascript", "typescript"],
+}));
+jest.mock("@next-shared/monaco-textmate/workers.js", () => ({}));
 jest.mock("./workers/yamlLinter.js", () => ({}));
 jest.mock("./workers/spellCheckRemoteWorker.js", () => ({}));
 
@@ -24,6 +30,7 @@ describe("vs.code-editor", () => {
   test("basic usage", async () => {
     const element = document.createElement("vs.code-editor") as CodeEditor;
     element.value = "Hi";
+    element.language = "cel";
 
     expect(element.childNodes.length).toBe(0);
 
@@ -51,6 +58,7 @@ describe("vs.code-editor", () => {
     element.value = "Hi";
     element.theme = "vs-dark";
     element.automaticLayout = "fit-content";
+    element.language = "cel";
 
     expect(element.childNodes.length).toBe(0);
 

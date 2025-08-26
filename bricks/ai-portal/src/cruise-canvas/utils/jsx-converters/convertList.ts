@@ -1,12 +1,11 @@
 import type { BrickConf } from "@next-core/types";
 import type { Component } from "@next-shared/jsx-storyboard";
+import type { ListProps } from "@next-shared/jsx-storyboard/lib/components.js";
 import { parseDataSource } from "../converters/expressions";
 
 export default function convertList({ properties }: Component): BrickConf {
-  const props = properties as {
+  const props = properties as Omit<ListProps, "dataSource"> & {
     dataSource: string | object;
-    fields: unknown;
-    variant?: string;
   };
 
   const { dataSource, fields, variant } = props;

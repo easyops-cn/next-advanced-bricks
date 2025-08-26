@@ -1,5 +1,5 @@
 // https://github.com/google/cel-spec/blob/master/doc/langdef.md#syntax
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
+import * as monaco from "monaco-editor";
 
 export const conf: monaco.languages.LanguageConfiguration = {
   comments: {

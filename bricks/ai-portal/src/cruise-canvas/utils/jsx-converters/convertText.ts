@@ -8,7 +8,6 @@ export default function convertText(component: Component): BrickConf {
   };
   return {
     brick: "span",
-    portal: true,
     properties: {
       textContent,
     },

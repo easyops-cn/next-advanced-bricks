@@ -1,5 +1,5 @@
 import type { BrickConf, ContextConf } from "@next-core/types";
-import type { Component, ConstructResult } from "@next-shared/jsx-storyboard";
+import type { Component } from "@next-shared/jsx-storyboard";
 import { pipes } from "@easyops-cn/brick-next-pipes";
 import convertList from "./convertList";
 import type { ConvertViewOptions } from "../converters/interfaces";
@@ -16,12 +16,17 @@ import convertFormItem from "./convertFormItem";
 import convertModal from "./convertModal";
 import convertToolbar from "./convertToolbar";
 import convertText from "./convertText";
+import type { ConstructedView } from "../../interfaces";
+import convertCard from "./convertCard";
+import convertForEach from "./convertForEach";
 
 export async function convertJsx(
-  result: ConstructResult,
+  result: ConstructedView,
   options: ConvertViewOptions
 ) {
-  const convert = async (component: Component) => {
+  const convert = async (
+    component: Component
+  ): Promise<BrickConf | BrickConf[]> => {
     let brick: BrickConf | null = null;
     switch (component.name) {
       case "List":
@@ -35,6 +40,9 @@ export async function convertJsx(
       case "Descriptions":
       case "eo-descriptions":
         brick = await convertDescriptions(component, result, options);
+        break;
+      case "Card":
+        brick = await convertCard(component);
         break;
       case "Dashboard":
       case "eo-dashboard":
@@ -85,10 +93,16 @@ export async function convertJsx(
           convertComponentName(component.name)
         );
         break;
+      case "ForEach":
+        brick = await convertForEach(component);
+        break;
+      default:
+        // eslint-disable-next-line no-console
+        console.error("Unsupported component:", component.name);
     }
 
     if (!brick) {
-      return null;
+      return [];
     }
 
     // Set [data-component-id] for the brick
@@ -104,7 +118,16 @@ export async function convertJsx(
     if (component.children?.length) {
       brick.children = (
         await Promise.all(component.children.map(convert))
-      ).filter(Boolean) as BrickConf[];
+      ).flat();
+
+      if (component.name === "Card" && brick.children.length > 1) {
+        brick.children = [
+          {
+            brick: "eo-content-layout",
+            children: brick.children,
+          },
+        ];
+      }
     }
 
     return brick;
@@ -113,6 +136,12 @@ export async function convertJsx(
   const context: ContextConf[] = [
     ...convertDataSources(result.dataSources ?? []),
     ...convertVariables(result.variables ?? []),
+    ...(result.withContexts
+      ? Object.entries(result.withContexts).map(([name, value]) => ({
+          name,
+          value,
+        }))
+      : []),
     {
       name: "__builtin_fn_mergeTexts",
       value: mergeTexts,
@@ -135,9 +164,7 @@ export async function convertJsx(
     },
   ];
 
-  const children = (await Promise.all(result.components.map(convert))).filter(
-    Boolean
-  ) as BrickConf[];
+  const children = (await Promise.all(result.components.map(convert))).flat();
 
   const needBox = result.components.every((component) =>
     [
@@ -161,7 +188,7 @@ export async function convertJsx(
 }
 
 function mergeTexts(
-  items: (
+  ...items: (
     | { type: "text"; text: string }
     | { type: "expression"; value: unknown }
   )[]

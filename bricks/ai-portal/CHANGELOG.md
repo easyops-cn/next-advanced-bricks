@@ -3,6 +3,85 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.28.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.28.0...@next-bricks/ai-portal@0.28.1) (2025-08-26)
+
+
+### Bug Fixes
+
+* add loading nodes ([eedbe55](https://github.com/easyops-cn/next-advanced-bricks/commit/eedbe55059376bc6642ff32846eafa360af9f5ea))
+
+
+
+
+
+# [0.28.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.27.4...@next-bricks/ai-portal@0.28.0) (2025-08-25)
+
+
+### Features
+
+* support fragment and :forEach ([11db4f2](https://github.com/easyops-cn/next-advanced-bricks/commit/11db4f2450eaf8f209b75ad622fc51d83c547518))
+
+
+
+
+
+## [0.27.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.27.3...@next-bricks/ai-portal@0.27.4) (2025-08-25)
+
+
+### Bug Fixes
+
+* override theme ([902912e](https://github.com/easyops-cn/next-advanced-bricks/commit/902912ef6ddae3675b8249bc9bb19c275513ab42))
+
+
+
+
+
+## [0.27.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.27.2...@next-bricks/ai-portal@0.27.3) (2025-08-25)
+
+
+### Bug Fixes
+
+* add libs for jsx editor ([924da1c](https://github.com/easyops-cn/next-advanced-bricks/commit/924da1cdf7e3430ae411e508866d534ae2a8ded1))
+
+
+
+
+
+## [0.27.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.27.1...@next-bricks/ai-portal@0.27.2) (2025-08-23)
+
+
+### Bug Fixes
+
+* fix conversation content ([14aae40](https://github.com/easyops-cn/next-advanced-bricks/commit/14aae400711ae89cbe24491b5eae00f2120f066e))
+
+
+
+
+
+## [0.27.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.27.0...@next-bricks/ai-portal@0.27.1) (2025-08-23)
+
+
+### Bug Fixes
+
+* fix static data view ([673f769](https://github.com/easyops-cn/next-advanced-bricks/commit/673f769f7d558ecaa8e1dcce1bf895f0195e3db2))
+
+
+
+
+
+# [0.27.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.26.3...@next-bricks/ai-portal@0.27.0) (2025-08-22)
+
+
+### Features
+
+* cruise canvas v2 ([1d89009](https://github.com/easyops-cn/next-advanced-bricks/commit/1d8900926f7abd09a4ad6ba991afc71538f05562))
+* support feedback on views ([721bd75](https://github.com/easyops-cn/next-advanced-bricks/commit/721bd75ba435a94826fa4debb7cfdbd6c33ed5ff))
+* support static data view ([74486c5](https://github.com/easyops-cn/next-advanced-bricks/commit/74486c578411d1ab286714729858b93009433e36))
+
+
+
+
+
 ## [0.26.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.26.2...@next-bricks/ai-portal@0.26.3) (2025-08-20)
 
 

@@ -3,14 +3,18 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 import webpack from "webpack";
-import MonacoWebpackPlugin from "monaco-editor-webpack-plugin";
+// import MonacoWebpackPlugin from "monaco-editor-webpack-plugin";
 import _ from "lodash";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
-const originalFilePath = path.resolve(
+const monacoEditorPath = path.resolve(
   require.resolve("monaco-editor/package.json"),
-  "../esm/vs/editor/common/services/findSectionHeaders.js"
+  ".."
+);
+const originalFilePath = path.join(
+  monacoEditorPath,
+  "esm/vs/editor/common/services/findSectionHeaders.js"
 );
 
 /** @type {import("@next-core/build-next-bricks").BuildNextBricksConfig} */
@@ -28,36 +32,20 @@ export default {
       test: /\.txt$/,
       type: "asset/source",
     },
+    {
+      test: /\.wasm$/,
+      type: "asset/resource",
+      generator: {
+        filename: "[name].[hash][ext]",
+      },
+    },
   ],
+  resolve: {
+    fallback: {
+      path: false,
+    },
+  },
   plugins: [
-    new MonacoWebpackPlugin({
-      languages: [
-        "javascript",
-        "typescript",
-        "json",
-        "shell",
-        "powershell",
-        "yaml",
-        "markdown",
-        "python",
-        "java",
-        "xml",
-        "mysql",
-        "go",
-      ],
-      features: [
-        // "!accessibilityHelp",
-        "!codelens",
-        "!colorPicker",
-        "!documentSymbols",
-        "!fontZoom",
-        "!iPadShowKeyboard",
-        "!inspectTokens",
-      ],
-      filename: `workers/[name].${
-        process.env.NODE_ENV === "development" ? "bundle" : "[contenthash:8]"
-      }.worker.js`,
-    }),
     new webpack.NormalModuleReplacementPlugin(
       new RegExp(`^${_.escapeRegExp(originalFilePath)}$`),
       // Refactor without 'd' flag of RegExp

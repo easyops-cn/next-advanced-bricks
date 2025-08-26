@@ -1,17 +1,11 @@
 import type { BrickConf } from "@next-core/types";
 import type { Component, ConstructResult } from "@next-shared/jsx-storyboard";
+import type { TableProps } from "@next-shared/jsx-storyboard/lib/components.js";
 import type { ConvertViewOptions } from "../converters/interfaces.js";
 import { lowLevelConvertToStoryboard } from "../converters/raw-data-generate/convert.js";
 import { parseDataSource } from "../converters/expressions.js";
 import { getPreGeneratedAttrViews } from "../converters/getPreGeneratedAttrViews.js";
 import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
-
-interface TableColumn {
-  key: string;
-  dataIndex: string;
-  title: string;
-  sortable?: boolean;
-}
 
 export default async function convertTable(
   component: Component,
@@ -20,10 +14,8 @@ export default async function convertTable(
 ): Promise<BrickConf> {
   const { properties } = component;
   const { dataSource, size, columns, rowKey, pagination, ...restProps } =
-    properties as {
-      dataSource: string;
-      columns: Array<TableColumn>;
-      rowKey?: string;
+    properties as Omit<TableProps<any>, "dataSource"> & {
+      dataSource: string | object;
       size?: "small" | "medium" | "large";
       pagination?: boolean;
     };

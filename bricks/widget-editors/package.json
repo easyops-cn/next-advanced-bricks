@@ -1,6 +1,6 @@
 {
   "name": "@next-bricks/widget-editors",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "homepage": "https://github.com/easyops-cn/next-advanced-bricks/tree/master/bricks/widget-editors",
   "repository": {
     "type": "git",
@@ -34,13 +34,13 @@
   },
   "dependencies": {
     "@next-core/element": "^1.2.18",
-    "@next-core/i18n": "^1.0.81",
+    "@next-core/i18n": "^1.0.83",
     "@next-core/react-element": "^1.0.37",
     "@next-core/theme": "^1.6.0",
     "react": "0.0.0-experimental-ee8509801-20230117"
   },
   "devDependencies": {
-    "@next-core/build-next-bricks": "^1.23.13",
+    "@next-core/build-next-bricks": "^1.23.14",
     "@next-core/test-next": "^2.0.0"
   }
 }

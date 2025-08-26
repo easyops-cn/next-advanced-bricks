@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.4.1...@next-shared/jsx-storyboard@0.5.0) (2025-08-25)
+
+
+### Features
+
+* support fragment and :forEach ([11db4f2](https://github.com/easyops-cn/next-advanced-bricks/commit/11db4f2450eaf8f209b75ad622fc51d83c547518))
+
+
+
+
+
+## [0.4.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.4.0...@next-shared/jsx-storyboard@0.4.1) (2025-08-25)
+
+
+### Bug Fixes
+
+* export types of components/actions ([2c061de](https://github.com/easyops-cn/next-advanced-bricks/commit/2c061de4cb1ced188484c250d3d12aa02548e2a8))
+
+
+
+
+
+# [0.4.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.3.0...@next-shared/jsx-storyboard@0.4.0) (2025-08-22)
+
+
+### Features
+
+* support static data view ([74486c5](https://github.com/easyops-cn/next-advanced-bricks/commit/74486c578411d1ab286714729858b93009433e36))
+
+
+
+
+
 # [0.3.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.2.2...@next-shared/jsx-storyboard@0.3.0) (2025-08-19)
 
 

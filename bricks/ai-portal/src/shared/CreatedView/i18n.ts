@@ -2,14 +2,17 @@ import { i18n } from "@next-core/i18n";
 
 export enum K {
   FULLSCREEN = "FULLSCREEN",
+  FEEDBACK = "FEEDBACK",
 }
 
 const en: Locale = {
   FULLSCREEN: "Fullscreen",
+  FEEDBACK: "Feedback",
 };
 
 const zh: Locale = {
   FULLSCREEN: "全屏",
+  FEEDBACK: "反馈",
 };
 
 export const NS = "bricks/ai-portal/CreatedView";

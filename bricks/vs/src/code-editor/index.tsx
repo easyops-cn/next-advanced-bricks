@@ -14,11 +14,14 @@ import { getRuntime } from "@next-core/runtime";
 import { HttpAbortError } from "@next-core/http";
 import { FormItemElementBase } from "@next-shared/form";
 import type { FormItem, FormItemProps } from "@next-bricks/form/form-item";
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
-import { register as registerJavaScript } from "@next-core/monaco-contributions/javascript";
-import { register as registerTypeScript } from "@next-core/monaco-contributions/typescript";
-import { register as registerYaml } from "@next-core/monaco-contributions/yaml";
-import { register as registerHtml } from "@next-core/monaco-contributions/html";
+import * as monaco from "monaco-editor";
+import {
+  initializeTokensProvider,
+  languages as textmateLanguages,
+} from "@next-shared/monaco-textmate";
+import "@next-shared/monaco-textmate/workers.js";
+import tmVsLight from "@next-shared/monaco-textmate/themes/light-modern.json";
+import tmVsDark from "@next-shared/monaco-textmate/themes/dark-modern.json";
 import yaml from "js-yaml";
 import "@next-core/theme";
 import { uniqueId, debounce } from "lodash";
@@ -77,10 +80,18 @@ import { setExtraLibs } from "./utils/setExtraLibs.js";
 
 initializeReactI18n(NS, locales);
 
-registerJavaScript(monaco);
-registerTypeScript(monaco);
-registerYaml(monaco, "brick_next_yaml");
-registerHtml(monaco);
+monaco.editor.defineTheme(
+  "tm-vs-light",
+  tmVsLight as monaco.editor.IStandaloneThemeData
+);
+monaco.editor.defineTheme(
+  "tm-vs-dark",
+  tmVsDark as monaco.editor.IStandaloneThemeData
+);
+
+const TEXTMATE_THEMES = ["tm-vs-light", "tm-vs-dark"];
+const DARK_THEMES = ["vs-dark", "hc-black", "tm-vs-dark"];
+
 registerCel(monaco);
 registerCelYaml(monaco);
 registerCelStr(monaco);
@@ -538,16 +549,27 @@ export function CodeEditorComponent({
   const automaticLayoutRef = useRef(automaticLayout);
   const systemTheme = useCurrentTheme();
 
-  const computedTheme =
-    theme === "auto"
-      ? systemTheme === "dark" || systemTheme === "dark-v2"
-        ? "vs-dark"
-        : "vs"
-      : theme;
-  const isDarkTheme =
-    computedTheme === "vs-dark" || computedTheme === "hc-black";
+  const useTextmateTheme = textmateLanguages.includes(language);
+  const computedTheme = useMemo(() => {
+    const candidateTheme =
+      theme === "auto"
+        ? systemTheme === "dark" || systemTheme === "dark-v2"
+          ? "vs-dark"
+          : "vs"
+        : theme;
+    if (useTextmateTheme && !TEXTMATE_THEMES.includes(candidateTheme)) {
+      return DARK_THEMES.includes(candidateTheme)
+        ? "tm-vs-dark"
+        : "tm-vs-light";
+    }
+    return candidateTheme;
+  }, [systemTheme, theme, useTextmateTheme]);
+  const isDarkTheme = DARK_THEMES.includes(computedTheme);
 
   useEffect(() => {
+    if (TEXTMATE_THEMES.includes(computedTheme)) {
+      return;
+    }
     const lineHighlightBackground = isDarkTheme ? "#FFFFFF0F" : "#0000000A";
     monaco.editor.defineTheme("custom-theme", {
       base: computedTheme as "vs-dark" | "vs",
@@ -563,10 +585,15 @@ export function CodeEditorComponent({
   }, [computedTheme, isDarkTheme]);
 
   useEffect(() => {
+    monaco.editor.setTheme(computedTheme);
+  }, [computedTheme]);
+
+  useEffect(() => {
     if (editorRef.current) {
       const currentModel = editorRef.current.getModel()!;
       monaco.editor.setModelLanguage(currentModel, language);
     }
+    initializeTokensProvider(language);
   }, [language]);
 
   useEffect(() => {
@@ -708,67 +735,83 @@ export function CodeEditorComponent({
       language,
       uri ? monaco.Uri.parse(uri) : undefined
     );
+    let embeddedModel: monaco.editor.ITextModel | undefined;
     if (language === "brick_next_yaml") {
       // 注册嵌套的 model， language 为 js
-      const uri = getEmbeddedJavascriptUri(model.uri);
-      monaco.editor.createModel(value, "javascript", uri);
+      const embeddedUri = getEmbeddedJavascriptUri(model.uri);
+      embeddedModel = monaco.editor.createModel(
+        value,
+        "javascript",
+        embeddedUri
+      );
       monaco.languages.typescript.javascriptDefaults.addExtraLib(
         getBrickYamlBuiltInDeclare(),
         model.uri.toString() + "d.ts"
       );
     }
 
-    editorRef.current = monaco.editor.create(containerRef.current, {
-      extraEditorClassName: "monaco-editor-v3",
-      model,
-      minimap: {
-        enabled: false,
-        showRegionSectionHeaders: false,
-        showMarkSectionHeaders: false,
-      },
-      scrollBeyondLastLine: false,
-      tabSize: 2,
-      insertSpaces: true,
-      automaticLayout: automaticLayoutRef.current !== "fit-content",
-      fontSize: EDITOR_FONT_SIZE,
-      lineHeight: EDITOR_LINE_HEIGHT,
-      scrollbar: {
-        horizontalScrollbarSize: EDITOR_SCROLLBAR_SIZE,
-        verticalScrollbarSize: EDITOR_SCROLLBAR_SIZE,
-        horizontalSliderSize: 8,
-        verticalSliderSize: 8,
-        alwaysConsumeMouseWheel: false,
-      },
-      padding: {
-        top: EDITOR_PADDING_VERTICAL,
-        // When use `fit-content`, we always plus the height with the vertical padding.
-        // Thus the possible x-scrollbar will not take extra space at the bottom.
-        bottom:
-          automaticLayoutRef.current == "fit-content"
-            ? undefined
-            : EDITOR_PADDING_VERTICAL,
-      },
-      overviewRulerBorder: false,
-      mouseWheelScrollSensitivity: 0.5,
-      fixedOverflowWidgets,
-      lineNumbers: lineNumbers,
-      lineNumbersMinChars: 3,
-      glyphMargin,
-      folding: lineNumbers !== "off",
-      suggest: {
-        insertMode: "insert",
-        preview: true,
-      },
-      readOnly: readOnly,
-      quickSuggestions: { strings: true, other: true, comments: true },
-      renderLineHighlightOnlyWhenFocus: true,
-      unicodeHighlight: {
-        ambiguousCharacters: false,
-      },
-    });
+    const editor = (editorRef.current = monaco.editor.create(
+      containerRef.current,
+      {
+        extraEditorClassName: "monaco-editor-v3",
+        model,
+        minimap: {
+          enabled: false,
+          showRegionSectionHeaders: false,
+          showMarkSectionHeaders: false,
+        },
+        scrollBeyondLastLine: false,
+        tabSize: 2,
+        insertSpaces: true,
+        automaticLayout: automaticLayoutRef.current !== "fit-content",
+        fontSize: EDITOR_FONT_SIZE,
+        lineHeight: EDITOR_LINE_HEIGHT,
+        scrollbar: {
+          horizontalScrollbarSize: EDITOR_SCROLLBAR_SIZE,
+          verticalScrollbarSize: EDITOR_SCROLLBAR_SIZE,
+          horizontalSliderSize: 8,
+          verticalSliderSize: 8,
+          alwaysConsumeMouseWheel: false,
+        },
+        padding: {
+          top: EDITOR_PADDING_VERTICAL,
+          // When use `fit-content`, we always plus the height with the vertical padding.
+          // Thus the possible x-scrollbar will not take extra space at the bottom.
+          bottom:
+            automaticLayoutRef.current == "fit-content"
+              ? undefined
+              : EDITOR_PADDING_VERTICAL,
+        },
+        overviewRulerBorder: false,
+        mouseWheelScrollSensitivity: 0.5,
+        fixedOverflowWidgets,
+        lineNumbers: lineNumbers,
+        lineNumbersMinChars: 3,
+        glyphMargin,
+        folding: lineNumbers !== "off",
+        suggest: {
+          insertMode: "insert",
+          preview: true,
+        },
+        readOnly: readOnly,
+        quickSuggestions: { strings: true, other: true, comments: true },
+        renderLineHighlightOnlyWhenFocus: true,
+        unicodeHighlight: {
+          ambiguousCharacters: false,
+        },
+      }
+    ));
 
     decorationsCollection.current =
       editorRef.current.createDecorationsCollection();
+
+    switchEditor(editor);
+
+    return () => {
+      model.dispose();
+      editor.dispose();
+      embeddedModel?.dispose();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -785,8 +828,10 @@ export function CodeEditorComponent({
         allowNonTsExtensions: true,
         lib: domLibsEnabled ? undefined : ["esnext"],
         target: monaco.languages.typescript.ScriptTarget.ESNext,
-        moduleResolution:
-          monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+        module: monaco.languages.typescript.ModuleKind.ESNext,
+        jsx: monaco.languages.typescript.JsxEmit.Preserve,
+        skipLibCheck: true,
+        skipDefaultLibCheck: true,
       });
     }
   }, [language, domLibsEnabled, languageDefaults]);
@@ -819,8 +864,10 @@ export function CodeEditorComponent({
           allowNonTsExtensions: true,
           lib: domLibsEnabled ? undefined : ["esnext"],
           target: monaco.languages.typescript.ScriptTarget.ESNext,
-          moduleResolution:
-            monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+          module: monaco.languages.typescript.ModuleKind.ESNext,
+          jsx: monaco.languages.typescript.JsxEmit.Preserve,
+          skipLibCheck: true,
+          skipDefaultLibCheck: true,
         });
       }
     };

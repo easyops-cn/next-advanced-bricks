@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.18.4...@next-bricks/form@1.18.5) (2025-08-25)
+
+**Note:** Version bump only for package @next-bricks/form
+
+
+
+
+
+## [1.18.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.18.3...@next-bricks/form@1.18.4) (2025-08-22)
+
+
+### Bug Fixes
+
+* support setting emoji on radio options ([6916784](https://github.com/easyops-cn/next-advanced-bricks/commit/6916784af00ec55150e0e06b2d9b526d618f5447))
+
+
+
+
+
 ## [1.18.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.18.2...@next-bricks/form@1.18.3) (2025-07-16)
 
 

@@ -13,34 +13,51 @@ class MockEoMiniActions extends HTMLElement {
 customElements.define("eo-mini-actions", MockEoMiniActions);
 
 describe("eo-card-item", () => {
-  test("basic usage", async () => {
-    const element = document.createElement("eo-card-item") as EoCardItem;
-    const onActionClick = jest.fn();
-    const onTagClick = jest.fn();
-    element.hasHeader = true;
-    element.avatar = {
-      icon: {
-        lib: "easyops",
-        category: "default",
-        icon: "monitor",
-      },
-    };
+  let element: EoCardItem;
 
-    element.tagConfig = {
-      text: "蓝色",
-      bgColor: "blue",
-      icon: {
-        lib: "antd",
-        icon: "edit",
-      },
-    };
+  beforeEach(() => {
+    element = document.createElement("eo-card-item") as EoCardItem;
 
     expect(element.shadowRoot).toBeFalsy();
 
     act(() => {
-      document.body.appendChild(element);
+      document.body.appendChild(element as any);
     });
+
     expect(element.shadowRoot?.childNodes.length).toBeGreaterThan(1);
+  });
+
+  afterEach(() => {
+    act(() => {
+      document.body.removeChild(element);
+    });
+
+    expect(element.shadowRoot?.childNodes.length).toBe(0);
+  });
+
+  test("basic usage", async () => {
+    const onActionClick = jest.fn();
+    const onTagClick = jest.fn();
+
+    await act(async () => {
+      element.hasHeader = true;
+      element.avatar = {
+        icon: {
+          lib: "easyops",
+          category: "default",
+          icon: "monitor",
+        },
+      };
+
+      element.tagConfig = {
+        text: "蓝色",
+        bgColor: "blue",
+        icon: {
+          lib: "antd",
+          icon: "edit",
+        },
+      };
+    });
 
     expect(element.shadowRoot?.querySelector(".card-header")).toBeTruthy();
     expect(
@@ -151,21 +168,6 @@ describe("eo-card-item", () => {
       element.shadowRoot.querySelector(".card-tag").querySelector("eo-icon")
     ).toBeTruthy();
 
-    // selected
-    expect(
-      element.shadowRoot
-        ?.querySelector(".card-wrapper")
-        .classList.contains("selected")
-    ).toBeFalsy();
-    await act(async () => {
-      element.selected = true;
-    });
-    expect(
-      element.shadowRoot
-        ?.querySelector(".card-wrapper")
-        .classList.contains("selected")
-    ).toBeTruthy();
-
     await act(async () => {
       element.styleType = "grayish";
     });
@@ -206,10 +208,64 @@ describe("eo-card-item", () => {
         ?.querySelector(".card-wrapper")
         ?.classList.contains("show-actions-hover")
     ).toBe(true);
+  });
 
+  test("selected", async () => {
     act(() => {
-      document.body.removeChild(element);
+      document.body.appendChild(element);
     });
-    expect(element.shadowRoot?.childNodes.length).toBe(0);
+
+    expect(
+      element.shadowRoot
+        ?.querySelector(".card-wrapper")
+        .classList.contains("selected")
+    ).toBeFalsy();
+
+    await act(async () => {
+      element.selected = true;
+    });
+
+    expect(
+      element.shadowRoot
+        ?.querySelector(".card-wrapper")
+        .classList.contains("selected")
+    ).toBeTruthy();
+  });
+
+  test("borderColor", async () => {
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    const cardWrapper = element.shadowRoot?.querySelector(
+      ".card-wrapper"
+    ) as HTMLElement;
+
+    expect(
+      [...cardWrapper.classList].some((className) =>
+        className.startsWith("border-color-")
+      )
+    ).toBeFalsy();
+    expect(cardWrapper.style.borderColor).toBe("");
+
+    await act(async () => {
+      element.borderColor = "blue";
+    });
+
+    expect(cardWrapper.classList.contains("border-color-blue")).toBeTruthy();
+    expect(cardWrapper.style.borderColor).toBe("");
+
+    const color = "rgb(var(--palette-blue-3-channel))";
+
+    await act(async () => {
+      element.borderColor = color;
+    });
+
+    expect(
+      [...cardWrapper.classList].some((className) =>
+        className.startsWith("border-color-")
+      )
+    ).toBeFalsy();
+    expect(cardWrapper.style.borderColor).toBe(color);
   });
 });

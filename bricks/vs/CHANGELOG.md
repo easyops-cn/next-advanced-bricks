@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.17.2...@next-bricks/vs@1.17.3) (2025-08-25)
+
+
+### Bug Fixes
+
+* no outer background ([d192578](https://github.com/easyops-cn/next-advanced-bricks/commit/d1925784f8abb91de5ca5ba386054c17bbb29a1c))
+
+
+
+
+
+## [1.17.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.17.1...@next-bricks/vs@1.17.2) (2025-08-25)
+
+
+### Bug Fixes
+
+* set current editor when brick created ([31bc4d4](https://github.com/easyops-cn/next-advanced-bricks/commit/31bc4d4a24ce26a5c0adbaa6430ede152daa6eac))
+
+
+
+
+
+## [1.17.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.17.0...@next-bricks/vs@1.17.1) (2025-08-24)
+
+
+### Bug Fixes
+
+* expose textmate languages ([55c48c6](https://github.com/easyops-cn/next-advanced-bricks/commit/55c48c69e114667eb6381be018d15828d980b216))
+
+
+
+
+
+# [1.17.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.16.12...@next-bricks/vs@1.17.0) (2025-08-24)
+
+
+### Features
+
+* **vs:** using textmate ([8389094](https://github.com/easyops-cn/next-advanced-bricks/commit/83890947e50c2daf509740071ebdca0de7ebd69d))
+
+
+
+
+
 ## [1.16.12](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.16.11...@next-bricks/vs@1.16.12) (2025-08-20)
 
 

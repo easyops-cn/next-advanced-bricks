@@ -1,4 +1,4 @@
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
+import * as monaco from "monaco-editor";
 
 export function isInEmbedded(
   model: monaco.editor.ITextModel,

@@ -1,5 +1,5 @@
 // istanbul ignore file: experimental
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api.js";
+import * as monaco from "monaco-editor";
 import { DEFAULT_SYSTEM_PROMPT } from "./prompt.js";
 import { postProcessByDiff } from "./postProcessByDiff.js";
 

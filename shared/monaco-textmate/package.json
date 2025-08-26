@@ -1,0 +1,52 @@
+{
+  "name": "@next-shared/monaco-textmate",
+  "version": "0.1.2",
+  "homepage": "https://github.com/easyops-cn/next-advanced-bricks/tree/master/shared/monaco-textmate",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:easyops-cn/next-advanced-bricks.git",
+    "directory": "shared/monaco-textmate"
+  },
+  "license": "GPL-3.0",
+  "sideEffects": true,
+  "type": "module",
+  "main": "./dist/esm/index.js",
+  "types": "./dist/types/TokensProvider.d.ts",
+  "files": [
+    "dist",
+    "themes"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    },
+    "./workers.js": "./dist/esm/workers.js",
+    "./themes/dark-modern.json": "./themes/dark-modern.json",
+    "./themes/light-modern.json": "./themes/light-modern.json",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "prestart": "npm run clean",
+    "start": "concurrently -k -n types,main \"npm run start:types\" \"npm run start:main\"",
+    "start:main": "cross-env NODE_ENV=development build-next-libs --watch",
+    "start:types": "tsc --emitDeclarationOnly --declaration --declarationDir dist/types --project tsconfig.build.json --watch",
+    "prebuild": "npm run clean",
+    "build": "npm run build:types && npm run build:main",
+    "build:main": "cross-env NODE_ENV=production build-next-libs",
+    "build:types": "tsc --emitDeclarationOnly --declaration --declarationDir dist/types --project tsconfig.build.json"
+  },
+  "dependencies": {
+    "vscode-oniguruma": "^2.0.1",
+    "vscode-textmate": "^9.2.0"
+  },
+  "devDependencies": {
+    "@next-core/build-next-libs": "^1.0.25",
+    "monaco-editor": "^0.50.0"
+  },
+  "peerDependencies": {
+    "monaco-editor": "*"
+  }
+}

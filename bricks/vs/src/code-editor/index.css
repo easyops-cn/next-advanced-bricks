@@ -8,6 +8,7 @@
 
 .monaco-editor {
   outline-width: 0;
+  background: none;
 }
 
 .monaco-editor .overflow-guard {

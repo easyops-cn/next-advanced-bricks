@@ -53,6 +53,7 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
               continue;
             case "markdown":
             case "cmdb_instance_detail":
+            case "static_data_view":
               continue;
             default:
               intermediateParts.push(part);
