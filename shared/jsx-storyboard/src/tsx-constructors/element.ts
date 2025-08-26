@@ -8,7 +8,11 @@ import type {
   ParseJsxOptions,
 } from "../interfaces.js";
 import { constructJsValue, constructPropValue } from "./values.js";
-import { convertJsxEventAttr, validateExpression } from "../utils.js";
+import {
+  containsJsxNode,
+  convertJsxEventAttr,
+  validateExpression,
+} from "../utils.js";
 import { constructTsxEvent } from "./events.js";
 import { constructChildren } from "./children.js";
 import { constructComponents } from "./components.js";
@@ -217,168 +221,150 @@ export function constructTsxElement(
     }
     return null;
   }
-  if (t.isJSXExpressionContainer(node)) {
-    if (t.isJSXEmptyExpression(node.expression)) {
-      result.errors.push({
-        message: "Empty expression in JSX is not allowed",
-        node,
-        severity: "warning",
-      });
-      return null;
-    }
 
-    // Convert `{list.map((item) => (<X>...</X>))}`
-    // to `brick: :forEach`
-    if (t.isCallExpression(node.expression)) {
-      const callee = node.expression.callee;
-      if (t.isMemberExpression(callee)) {
-        if (
-          t.isIdentifier(callee.property) &&
-          !callee.computed &&
-          callee.property.name === "map"
-        ) {
-          const args = node.expression.arguments;
-          if (args.length > 0) {
-            if (args.length > 1) {
+  if (t.isJSXExpressionContainer(node)) {
+    return constructTsxElement(node.expression, result, options, valueOptions);
+  }
+
+  if (t.isJSXEmptyExpression(node)) {
+    return null;
+  }
+
+  // Convert `{list.map((item) => (<X>...</X>))}`
+  // to `brick: :forEach`
+  if (t.isCallExpression(node)) {
+    const callee = node.callee;
+    if (t.isMemberExpression(callee)) {
+      if (
+        t.isIdentifier(callee.property) &&
+        !callee.computed &&
+        callee.property.name === "map"
+      ) {
+        const args = node.arguments;
+        if (args.length > 0) {
+          if (args.length > 1) {
+            result.errors.push({
+              message: "Only one argument is allowed for map function",
+              node: args[1],
+              severity: "error",
+            });
+          }
+          const [func] = args;
+          if (t.isArrowFunctionExpression(func)) {
+            if (t.isBlockStatement(func.body)) {
               result.errors.push({
-                message: "Only one argument is allowed for map function",
-                node: args[1],
+                message: "Block statement is not allowed in map function",
+                node: func.body,
                 severity: "error",
               });
+              return null;
             }
-            const [func] = args;
-            if (t.isArrowFunctionExpression(func)) {
-              if (t.isBlockStatement(func.body)) {
+            if (containsJsxNode(func.body)) {
+              const invalidNode = validateExpression(callee.object);
+              if (invalidNode) {
                 result.errors.push({
-                  message: "Block statement is not allowed in map function",
-                  node: func.body,
+                  message: `Unsupported node type as the object of a map function with JSX element: ${invalidNode.type}`,
+                  node: invalidNode,
                   severity: "error",
                 });
                 return null;
               }
-              if (t.isJSXElement(func.body) || t.isJSXFragment(func.body)) {
-                const invalidNode = validateExpression(callee.object);
-                if (invalidNode) {
-                  result.errors.push({
-                    message: `Unsupported node type as the object of a map function with JSX element: ${invalidNode.type}`,
-                    node: invalidNode,
-                    severity: "error",
-                  });
-                  return null;
-                }
 
-                if (func.params.length > 2) {
-                  result.errors.push({
-                    message: `Only up to 2 parameters are allowed in map function with JSX element`,
-                    node: func,
-                    severity: "error",
-                  });
-                  return null;
-                }
-                const invalidParam = func.params.find(
-                  (param) => !t.isIdentifier(param)
-                );
-                if (invalidParam) {
-                  result.errors.push({
-                    message: `Only identifier parameters are allowed in map function with JSX element`,
-                    node: invalidParam,
-                    severity: "error",
-                  });
-                  return null;
-                }
-
-                const replacePatterns = new Map<string, string>(
-                  valueOptions?.replacePatterns ?? []
-                );
-                if (func.params.length > 0) {
-                  const [itemArg, indexArg] = func.params;
-                  replacePatterns.set((itemArg as t.Identifier).name, "ITEM");
-                  if (indexArg) {
-                    replacePatterns.set(
-                      (indexArg as t.Identifier).name,
-                      "INDEX"
-                    );
-                  }
-                }
-
-                return {
-                  type: "component",
-                  component: {
-                    name: "ForEach",
-                    properties: {
-                      dataSource: constructPropValue(callee.object, result, {
-                        ...valueOptions,
-                        modifier: "=",
-                        allowExpression: true,
-                      }),
-                    },
-                    children: constructComponents(
-                      [func.body],
-                      result,
-                      options,
-                      {
-                        ...valueOptions,
-                        replacePatterns,
-                      }
-                    ),
-                  },
-                };
+              if (func.params.length > 2) {
+                result.errors.push({
+                  message: `Only up to 2 parameters are allowed in map function with JSX element`,
+                  node: func,
+                  severity: "error",
+                });
+                return null;
               }
+              const invalidParam = func.params.find(
+                (param) => !t.isIdentifier(param)
+              );
+              if (invalidParam) {
+                result.errors.push({
+                  message: `Only identifier parameters are allowed in map function with JSX element`,
+                  node: invalidParam,
+                  severity: "error",
+                });
+                return null;
+              }
+
+              const replacePatterns = new Map<string, string>(
+                valueOptions?.replacePatterns ?? []
+              );
+              if (func.params.length > 0) {
+                const [itemArg, indexArg] = func.params;
+                replacePatterns.set((itemArg as t.Identifier).name, "ITEM");
+                if (indexArg) {
+                  replacePatterns.set((indexArg as t.Identifier).name, "INDEX");
+                }
+              }
+
+              return {
+                type: "component",
+                component: {
+                  name: "ForEach",
+                  properties: {
+                    dataSource: constructPropValue(callee.object, result, {
+                      ...valueOptions,
+                      modifier: "=",
+                      allowExpression: true,
+                    }),
+                  },
+                  children: constructComponents([func.body], result, options, {
+                    ...valueOptions,
+                    replacePatterns,
+                  }),
+                },
+              };
             }
           }
         }
       }
-    } else if (t.isConditionalExpression(node.expression)) {
-      const { test, consequent, alternate } = node.expression;
-      const invalidNodeInTest = validateExpression(test);
-      if (invalidNodeInTest) {
-        result.errors.push({
-          message: `Unsupported node type in conditional expression test: ${invalidNodeInTest.type}`,
-          node: invalidNodeInTest,
-          severity: "error",
-        });
-        return null;
-      }
-      if (
-        t.isJSXElement(consequent) ||
-        t.isJSXFragment(consequent) ||
-        t.isJSXElement(alternate) ||
-        t.isJSXFragment(alternate)
-      ) {
-        return {
-          type: "component",
-          component: {
-            name: "If",
-            properties: {
-              dataSource: constructPropValue(test, result, {
-                ...valueOptions,
-                modifier: "=",
-                allowExpression: true,
-              }),
-            },
-            children: [
-              ...constructComponents(
-                [consequent],
-                result,
-                options,
-                valueOptions
-              ),
-              ...constructComponents(
-                [alternate],
-                result,
-                options,
-                valueOptions
-              ).map((component) => ({
-                ...component,
-                slot: "else",
-              })),
-            ],
-          },
-        };
-      }
     }
+  } else if (t.isConditionalExpression(node)) {
+    const { test, consequent, alternate } = node;
+    const invalidNodeInTest = validateExpression(test);
+    if (invalidNodeInTest) {
+      result.errors.push({
+        message: `Unsupported node type in conditional expression test: ${invalidNodeInTest.type}`,
+        node: invalidNodeInTest,
+        severity: "error",
+      });
+      return null;
+    }
+    if (containsJsxNode(consequent) || containsJsxNode(alternate)) {
+      return {
+        type: "component",
+        component: {
+          name: "If",
+          properties: {
+            dataSource: constructPropValue(test, result, {
+              ...valueOptions,
+              modifier: "=",
+              allowExpression: true,
+            }),
+          },
+          children: [
+            ...constructComponents([consequent], result, options, valueOptions),
+            ...constructComponents(
+              [alternate],
+              result,
+              options,
+              valueOptions
+            ).map((component) => ({
+              ...component,
+              slot: "else",
+            })),
+          ],
+        },
+      };
+    }
+  }
 
-    const invalidNode = validateExpression(node.expression);
+  if (t.isExpression(node)) {
+    const invalidNode = validateExpression(node);
     if (invalidNode) {
       result.errors.push({
         message: `Unsupported node type in expression: ${invalidNode.type}`,
@@ -387,9 +373,10 @@ export function constructTsxElement(
       });
       return null;
     }
+
     return {
       type: "expression",
-      expression: node.expression,
+      expression: node,
     };
   }
 
