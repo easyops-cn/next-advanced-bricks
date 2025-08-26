@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.6.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.5.0...@next-shared/jsx-storyboard@0.6.0) (2025-08-26)
+
+
+### Bug Fixes
+
+* refine regexp for checking expression string ([2a8ae2d](https://github.com/easyops-cn/next-advanced-bricks/commit/2a8ae2d7b6074b447dd837d15c2995131137e0a1))
+
+
+### Features
+
+* support conditional expression with jsx elements ([31fbe70](https://github.com/easyops-cn/next-advanced-bricks/commit/31fbe703912dd4c74d0b5c7a7069253418b93b7c))
+
+
+
+
+
 # [0.5.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.4.1...@next-shared/jsx-storyboard@0.5.0) (2025-08-25)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.17.2...@next-bricks/presentational@1.18.0) (2025-08-26)
+
+
+### Features
+
+* **descriptions:** support templateColumns ([3953a3e](https://github.com/easyops-cn/next-advanced-bricks/commit/3953a3ee9048c87980201a1d77677333394d7aaf))
+
+
+
+
+
 ## [1.17.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.17.1...@next-bricks/presentational@1.17.2) (2025-08-25)
 
 
