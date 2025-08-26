@@ -5,11 +5,13 @@ import type { TaskState } from "./interfaces.js";
 export const DONE_STATES = ["completed", "failed", "canceled"] as (
   | TaskState
   | LegacyTaskState
+  | undefined
 )[];
 
 export const GENERAL_DONE_STATES = [...DONE_STATES, "paused"] as (
   | TaskState
   | LegacyTaskState
+  | undefined
 )[];
 
 export const NON_WORKING_STATES = [...GENERAL_DONE_STATES, "input-required"];

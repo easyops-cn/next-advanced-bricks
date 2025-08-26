@@ -7,6 +7,7 @@ export interface ViewProps {
 
 export interface BaseProps {
   componentId?: string;
+  key?: string | number;
 }
 
 export interface TableProps<T extends object> extends BaseProps {
@@ -170,3 +171,4 @@ declare const Dashboard: (props: DashboardProps) => any;
 declare const Modal: (props: ModalProps) => any;
 declare const Card: (props: CardProps) => any;
 declare const Plaintext: (props: BaseProps) => any;
+declare const Fragment: (props: { key?: string | number }) => any;

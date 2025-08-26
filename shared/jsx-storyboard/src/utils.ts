@@ -35,6 +35,18 @@ export function isNilNode(node: t.Node) {
   );
 }
 
+export function containsJsxNode(expr: t.Expression): boolean {
+  let found = false;
+  t.traverse(expr, {
+    enter(node) {
+      if (!found && (t.isJSXElement(node) || t.isJSXFragment(node))) {
+        found = true;
+      }
+    },
+  });
+  return found;
+}
+
 export function convertJsxEventAttr(attr: string): string {
   return attr
     .slice(2)
