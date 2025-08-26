@@ -32,6 +32,10 @@ import {
   type ActionClickDetail,
   type ChatHistoryRef,
 } from "./ChatHistory.js";
+import {
+  LegacyChatHistory,
+  type LegacyActionClickDetail,
+} from "./LegacyChatHistory.js";
 
 initializeI18n(NS, locales);
 
@@ -43,6 +47,9 @@ const SIDEBAR_ICON: GeneralIconProps = {
 const { defineElement, property, event, method } = createDecorators();
 
 export interface ElevoSidebarProps {
+  /** @deprecated */
+  legacy?: boolean;
+  username?: string;
   userInstanceId?: string;
   behavior?: "default" | "drawer";
   logoUrl?: string;
@@ -73,6 +80,13 @@ export
   styleTexts: [styleText],
 })
 class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
+  /** @deprecated */
+  @property({ type: Boolean })
+  accessor legacy = true;
+
+  @property()
+  accessor username: string | undefined;
+
   @property()
   accessor userInstanceId: string | undefined;
 
@@ -105,9 +119,15 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
   };
 
   @event({ type: "action.click" })
-  accessor #actionClick!: EventEmitter<ActionClickDetail>;
+  accessor #actionClick!: EventEmitter<
+    ActionClickDetail | LegacyActionClickDetail
+  >;
 
   #handleActionClick = (detail: ActionClickDetail) => {
+    this.#actionClick.emit(detail);
+  };
+
+  #handleLegacyActionClick = (detail: LegacyActionClickDetail) => {
     this.#actionClick.emit(detail);
   };
 
@@ -133,6 +153,8 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
     return (
       <ElevoSidebarComponent
         ref={this.#ref}
+        legacy={this.legacy}
+        username={this.username}
         userInstanceId={this.userInstanceId}
         behavior={this.behavior}
         logoUrl={this.logoUrl}
@@ -142,6 +164,7 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
         historyActions={this.historyActions}
         links={this.links}
         onLogout={this.#handleLogout}
+        onLegacyActionClick={this.#handleLegacyActionClick}
         onActionClick={this.#handleActionClick}
       />
     );
@@ -151,10 +174,13 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
 interface ElevoSidebarComponentProps extends ElevoSidebarProps {
   onLogout: () => void;
   onActionClick: (detail: ActionClickDetail) => void;
+  onLegacyActionClick: (detail: LegacyActionClickDetail) => void;
 }
 
 function LegacyElevoSidebarComponent(
   {
+    legacy,
+    username,
     userInstanceId,
     behavior,
     logoUrl,
@@ -165,6 +191,7 @@ function LegacyElevoSidebarComponent(
     links,
     onLogout,
     onActionClick,
+    onLegacyActionClick,
   }: ElevoSidebarComponentProps,
   ref: React.Ref<ElevoSidebarRef>
 ) {
@@ -285,14 +312,26 @@ function LegacyElevoSidebarComponent(
             ))}
           </div>
         ) : null}
-        <ChatHistory
-          ref={historyRef}
-          activeId={historyActiveId}
-          urlTemplate={historyUrlTemplate}
-          actions={historyActions}
-          onActionClick={onActionClick}
-          onHistoryClick={handleHistoryClick}
-        />
+        {legacy ? (
+          <LegacyChatHistory
+            ref={historyRef}
+            activeId={historyActiveId}
+            urlTemplate={historyUrlTemplate}
+            actions={historyActions}
+            onActionClick={onLegacyActionClick}
+            onHistoryClick={handleHistoryClick}
+          />
+        ) : (
+          <ChatHistory
+            ref={historyRef}
+            username={username}
+            activeId={historyActiveId}
+            urlTemplate={historyUrlTemplate}
+            actions={historyActions}
+            onActionClick={onActionClick}
+            onHistoryClick={handleHistoryClick}
+          />
+        )}
         <div className="footer">
           <WrappedDropdownActions
             className="dropdown"

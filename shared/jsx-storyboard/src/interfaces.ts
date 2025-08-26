@@ -1,4 +1,5 @@
 import * as t from "@babel/types";
+import type { BrickConf, ContextConf } from "@next-core/types";
 
 export interface Variable {
   name: string;
@@ -146,4 +147,9 @@ export interface ConstructedView extends ConstructResult {
 export interface ConvertViewOptions {
   rootId: string;
   expanded?: boolean;
+}
+
+export interface ConvertResult {
+  brick: BrickConf;
+  context?: ContextConf[];
 }

@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import moment from "moment";
 import classNames from "classnames";
-import { ElevoApi_listElevoConversations } from "@next-api-sdk/llm-sdk";
+import { AgentFlowApi_searchTaskForAgentFlow } from "@next-api-sdk/llm-sdk";
 import type {
   ActionType,
   SimpleActionType,
@@ -19,68 +19,54 @@ import { K, t } from "./i18n.js";
 import type { TaskState } from "../cruise-canvas/interfaces.js";
 import { WrappedIcon, WrappedLink, WrappedMiniActions } from "./bricks.js";
 import { DONE_STATES } from "../shared/constants.js";
+import type { ChatHistoryRef } from "./ChatHistory.js";
 
-export interface HistoryItem {
-  conversationId: string;
+interface LegacyHistoryItem {
+  id: string;
   title: string;
-  time: number;
+  startTime: number;
   state?: TaskState;
 }
 
-export interface GroupedHistory {
+interface LegacyGroupedHistory {
   title: string;
-  items: HistoryItem[];
+  items: LegacyHistoryItem[];
 }
 
-export interface ActionClickDetail {
+export interface LegacyActionClickDetail {
   action: SimpleActionType;
-  item: HistoryItem;
+  item: LegacyHistoryItem;
 }
 
-export interface ChatHistoryProps {
-  username?: string;
+export interface LegacyChatHistoryProps {
   activeId?: string;
   urlTemplate?: string;
   actions?: ActionType[];
-  onActionClick: (detail: ActionClickDetail) => void;
+  onActionClick: (detail: LegacyActionClickDetail) => void;
   onHistoryClick: () => void;
 }
 
-export interface ChatHistoryRef {
-  pull: () => void;
-}
-
-export const ChatHistory = forwardRef(LowLevelChatHistory);
+export const LegacyChatHistory = forwardRef(LowLevelChatHistory);
 
 export function LowLevelChatHistory(
   {
-    username,
     activeId,
     actions,
     urlTemplate,
     onActionClick,
     onHistoryClick,
-  }: ChatHistoryProps,
+  }: LegacyChatHistoryProps,
   ref: React.Ref<ChatHistoryRef>
 ) {
   const rootRef = useRef<HTMLDivElement | null>(null);
-  const [list, setList] = useState<HistoryItem[] | null>(null);
+  const [list, setList] = useState<LegacyHistoryItem[] | null>(null);
   const [nextToken, setNextToken] = useState<string | undefined>();
   const [loadNextToken, setLoadNextToken] = useState<string | undefined>();
 
   useEffect(() => {
-    setNextToken(undefined);
-    setLoadNextToken(undefined);
-    setList(null);
-  }, [username]);
-
-  useEffect(() => {
     Promise.all([
-      ElevoApi_listElevoConversations(
-        {
-          token: loadNextToken,
-          username,
-        },
+      AgentFlowApi_searchTaskForAgentFlow(
+        { next_token: loadNextToken },
         {
           interceptorParams: {
             ignoreLoadingBar: true,
@@ -92,9 +78,9 @@ export function LowLevelChatHistory(
       .then(([data]) => {
         setList((prev) => [
           ...(prev ?? []),
-          ...(data.conversations as HistoryItem[]),
+          ...(data.data as LegacyHistoryItem[]),
         ]);
-        setNextToken(data.nextToken);
+        setNextToken(data.next_token);
       })
       .catch((error) => {
         if (process.env.NODE_ENV !== "test") {
@@ -102,10 +88,10 @@ export function LowLevelChatHistory(
           console.error("Error loading chat history:", error);
         }
       });
-  }, [loadNextToken, username]);
+  }, [loadNextToken]);
 
   const groups = useMemo(() => {
-    const groupMap = new Map<string, GroupedHistory>();
+    const groupMap = new Map<string, LegacyGroupedHistory>();
     // Group history by
     //   - today
     //   - yesterday
@@ -129,18 +115,18 @@ export function LowLevelChatHistory(
     };
     for (const item of list ?? []) {
       let groupKey: string;
-      if (item.time >= timestamps.startOfDay) {
+      if (item.startTime >= timestamps.startOfDay) {
         groupKey = t(K.TODAY);
-      } else if (item.time >= timestamps.yesterday) {
+      } else if (item.startTime >= timestamps.yesterday) {
         groupKey = t(K.YESTERDAY);
-      } else if (item.time >= timestamps.sevenDaysAgo) {
+      } else if (item.startTime >= timestamps.sevenDaysAgo) {
         groupKey = t(K.PREVIOUS_7_DAYS);
-      } else if (item.time >= timestamps.thirtyDaysAgo) {
+      } else if (item.startTime >= timestamps.thirtyDaysAgo) {
         groupKey = t(K.PREVIOUS_30_DAYS);
-      } else if (item.time >= timestamps.thisYear) {
-        groupKey = moment(item.time * 1000).format("MMMM");
+      } else if (item.startTime >= timestamps.thisYear) {
+        groupKey = moment(item.startTime * 1000).format("MMMM");
       } else {
-        groupKey = moment(item.time * 1000).format("YYYY");
+        groupKey = moment(item.startTime * 1000).format("YYYY");
       }
       let group = groupMap.get(groupKey);
       if (!group) {
@@ -183,8 +169,8 @@ export function LowLevelChatHistory(
   const pull = useCallback(async () => {
     try {
       const pullId = ++pullIdRef.current;
-      const tempList = await ElevoApi_listElevoConversations(
-        { username },
+      const tempList = await AgentFlowApi_searchTaskForAgentFlow(
+        {},
         {
           interceptorParams: {
             ignoreLoadingBar: true,
@@ -197,17 +183,15 @@ export function LowLevelChatHistory(
       }
       setList((prev) => {
         const prevList = prev ?? [];
-        const newList = tempList.conversations as HistoryItem[];
-        const newIds = new Set(newList.map((item) => item.conversationId));
-        const newItemsMap = new Map(
-          newList.map((item) => [item.conversationId, item])
-        );
+        const newList = tempList.data as LegacyHistoryItem[];
+        const newIds = new Set(newList.map((item) => item.id));
+        const newItemsMap = new Map(newList.map((item) => [item.id, item]));
 
         let foundIntersection = false;
         let foundChanged = false;
         let isFirst = true;
         for (const item of prevList) {
-          const newItem = newItemsMap.get(item.conversationId);
+          const newItem = newItemsMap.get(item.id);
           if (newItem) {
             foundIntersection = true;
             foundChanged =
@@ -222,14 +206,14 @@ export function LowLevelChatHistory(
         }
 
         if (!foundIntersection) {
-          setNextToken(tempList.nextToken);
+          setNextToken(tempList.next_token);
           return newList;
         }
 
         if (foundChanged) {
           return [
             ...newList,
-            ...prevList.filter((item) => !newIds.has(item.conversationId)),
+            ...prevList.filter((item) => !newIds.has(item.id)),
           ];
         }
 
@@ -239,7 +223,7 @@ export function LowLevelChatHistory(
       // eslint-disable-next-line no-console
       console.error("Error pulling chat history:", error);
     }
-  }, [username]);
+  }, []);
 
   useImperativeHandle(
     ref,
@@ -272,11 +256,11 @@ export function LowLevelChatHistory(
             <div className="group-title">{group.title}</div>
             <ul className="items">
               {group.items.map((item) => (
-                <li key={item.conversationId}>
+                <li key={item.id}>
                   <WrappedLink
                     className={classNames("item", {
-                      "actions-active": item.conversationId === actionsVisible,
-                      active: item.conversationId === activeId,
+                      "actions-active": item.id === actionsVisible,
+                      active: item.id === activeId,
                     })}
                     onClick={onHistoryClick}
                     {...(urlTemplate
@@ -293,9 +277,7 @@ export function LowLevelChatHistory(
                         onActionClick({ action: e.detail, item });
                       }}
                       onVisibleChange={(e) => {
-                        setActionsVisible(
-                          e.detail ? item.conversationId : null
-                        );
+                        setActionsVisible(e.detail ? item.id : null);
                       }}
                     />
                     {!DONE_STATES.includes(item.state!) && (
