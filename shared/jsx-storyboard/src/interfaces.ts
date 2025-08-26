@@ -13,6 +13,7 @@ export interface DataSource {
   params?: string | Record<string, unknown>;
   ambiguousParams?: unknown;
   transform?: string;
+  rejectTransform?: string;
 }
 
 export interface Component {
