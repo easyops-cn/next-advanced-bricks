@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.6.0...@next-shared/jsx-storyboard@0.6.1) (2025-08-26)
+
+
+### Bug Fixes
+
+* refine tsx parsing ([7fffc4c](https://github.com/easyops-cn/next-advanced-bricks/commit/7fffc4cc90d6e899c5eac6b8bec592925f19692c))
+
+
+
+
+
 # [0.6.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.5.0...@next-shared/jsx-storyboard@0.6.0) (2025-08-26)
 
 
