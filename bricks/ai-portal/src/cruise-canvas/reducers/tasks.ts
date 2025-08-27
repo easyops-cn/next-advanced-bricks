@@ -266,7 +266,11 @@ function getJobStaticDataView(
               // eslint-disable-next-line no-console
               console.warn("Parsed static data view with errors:", view.errors);
             }
-            return { viewId: part.data.viewId, ...view };
+            return {
+              ...view,
+              viewId: part.data.viewId,
+              from: part.data.from,
+            };
           } catch (e) {
             // eslint-disable-next-line no-console
             console.error("Failed to parse static data view:", e);

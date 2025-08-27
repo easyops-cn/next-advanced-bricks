@@ -56,6 +56,7 @@ export function CreatedView({
   const feedbackDone =
     useViewFeedbackDone(view.viewId, showFeedbackOnView) ||
     feedbackDoneViews?.has(view.viewId);
+  const canFeedback = !!view.viewId && view.from !== "config";
 
   useEffect(() => {
     const container = ref.current;
@@ -176,7 +177,7 @@ export function CreatedView({
               <WrappedIcon lib="antd" icon="bug" />
             </button>
           )}
-          {showFeedbackOnView && !feedbackDone && (
+          {showFeedbackOnView && !feedbackDone && canFeedback && (
             <button
               className={styles.button}
               title={t(K.FEEDBACK)}

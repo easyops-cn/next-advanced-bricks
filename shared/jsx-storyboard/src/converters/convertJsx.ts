@@ -20,6 +20,7 @@ import type { ConstructedView } from "../interfaces.js";
 import convertCard from "./convertCard.js";
 import convertForEach from "./convertForEach.js";
 import convertIf from "./convertIf.js";
+import convertOutput from "./convertOutput.js";
 
 const BUILTIN_FUNCTIONS: ContextConf[] = [
   {
@@ -91,6 +92,9 @@ export async function convertJsx(
       case "Plaintext":
       case "eo-text":
         brick = await convertText(component);
+        break;
+      case "Output":
+        brick = await convertOutput(component);
         break;
       case "eo-search":
       case "eo-input":
