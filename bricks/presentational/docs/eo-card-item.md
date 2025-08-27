@@ -321,7 +321,6 @@ properties:
 - brick: eo-card-item
   properties:
     borderColor: blue
-    selected: true
     style:
       width: 300px
     cardTitle: 资源监控微应用
@@ -337,6 +336,7 @@ properties:
     borderColor: blue
     selected: true
     style:
+      marginTop: 8px
       width: 300px
     cardTitle: 资源监控微应用
     description: 资源监控微应用相关前后台
@@ -512,19 +512,6 @@ properties:
         target: _blank
 ```
 
-### cardStyle
-
-```yaml preview
-- brick: eo-card-item
-  properties:
-    style:
-      width: 280px
-    cardStyle:
-      backgroundColor: var(--palette-gray-blue-6)
-    cardTitle: 信息卡片
-    description: 这是一只可爱的北极熊
-```
-
 ### Style type
 
 ```yaml preview
@@ -543,4 +530,65 @@ properties:
       category: default
       icon: monitor
     size: 20
+```
+
+### stacked
+
+```yaml preview
+- brick: eo-card-item
+  properties:
+    stacked: true
+    style:
+      width: 300px
+    cardTitle: 资源监控微应用
+    description: 资源监控微应用相关前后台
+    avatar:
+      icon:
+        lib: easyops
+        category: default
+        icon: monitor
+      size: 20
+- brick: eo-card-item
+  properties:
+    stacked: true
+    styleType: grayish
+    style:
+      marginTop: 18px
+      width: 300px
+    cardTitle: 资源监控微应用
+    description: 资源监控微应用相关前后台
+    avatar:
+      icon:
+        lib: easyops
+        category: default
+        icon: monitor
+      size: 20
+- brick: eo-card-item
+  properties:
+    stacked: true
+    borderColor: blue
+    style:
+      marginTop: 18px
+      width: 300px
+    cardTitle: 资源监控微应用
+    description: 资源监控微应用相关前后台
+    avatar:
+      icon:
+        lib: easyops
+        category: default
+        icon: monitor
+      size: 20
+```
+
+### cardStyle
+
+```yaml preview
+- brick: eo-card-item
+  properties:
+    style:
+      width: 280px
+    cardStyle:
+      backgroundColor: var(--palette-gray-blue-6)
+    cardTitle: 信息卡片
+    description: 这是一只可爱的北极熊
 ```
