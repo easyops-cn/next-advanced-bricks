@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { uniqueId, upperFirst } from "lodash";
 import { unstable_createRoot } from "@next-core/runtime";
 import {
-  UseBrickConf,
+  // UseBrickConf,
   type BrickConf,
   type BrickEventHandler,
   type ContextConf,
@@ -11,8 +11,8 @@ import {
 import { hasOwnProperty, isObject } from "@next-core/utils/general";
 import type { DescriptionItem } from "@next-bricks/presentational/descriptions";
 import type { CmdbInstanceDetailData } from "../interfaces";
-import { getPreGeneratedAttrViews } from "../utils/converters/getPreGeneratedAttrViews";
-import { convertToStoryboard } from "../utils/converters/raw-data-generate/convert";
+// import { getPreGeneratedAttrViews } from "../utils/converters/getPreGeneratedAttrViews";
+// import { convertToStoryboard } from "../utils/converters/raw-data-generate/convert";
 import type { JSONSchema, JSONSchemaObject } from "../json-schema";
 import styles from "./CmdbInstanceDetail.module.css";
 import { createPortal } from "../utils/createPortal";
@@ -119,7 +119,7 @@ async function convertCmdbInstanceDetail(
   outputSchema: JSONSchema | string | undefined,
   rootId: string
 ): Promise<{ bricks: BrickConf[]; context: ContextConf[] }> {
-  const attrViews = await getPreGeneratedAttrViews(objectId, 1);
+  // const attrViews = await getPreGeneratedAttrViews(objectId, 1);
 
   let schema: JSONSchema | undefined;
   if (typeof outputSchema === "string") {
@@ -456,18 +456,18 @@ async function convertCmdbInstanceDetail(
         };
       }
 
-      const candidate = attrViews?.get(key);
-      if (candidate) {
-        const brick = convertToStoryboard(candidate, key, {
-          ignoreStyle: true,
-        });
-        if (brick) {
-          return {
-            label,
-            useBrick: brick as UseBrickConf,
-          };
-        }
-      }
+      // const candidate = attrViews?.get(key);
+      // if (candidate) {
+      //   const brick = convertToStoryboard(candidate, key, {
+      //     ignoreStyle: true,
+      //   });
+      //   if (brick) {
+      //     return {
+      //       label,
+      //       useBrick: brick as UseBrickConf,
+      //     };
+      //   }
+      // }
 
       return {
         label,
