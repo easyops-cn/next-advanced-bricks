@@ -59,10 +59,54 @@ export function parseTsx(source: string, options?: ParseTsxOptions) {
     }
   }
 
+  function parsePromiseCallback(
+    callback: t.ArgumentPlaceholder | t.SpreadElement | t.Expression
+  ): string | null {
+    if (!t.isArrowFunctionExpression(callback)) {
+      errors.push({
+        message: `"callApi().then()" callback expects an arrow function, but got ${callback.type}`,
+        node: callback,
+        severity: "error",
+      });
+      return null;
+    }
+    if (!t.isExpression(callback.body)) {
+      errors.push({
+        message: `"callApi().then()" callback function body expects an expression, but got ${callback.body.type}`,
+        node: callback.body,
+        severity: "error",
+      });
+      return null;
+    }
+    if (callback.params.length > 1) {
+      errors.push({
+        message: `"callApi().then()" callback function expects exactly 0 or 1 parameter, but got ${callback.params.length}`,
+        node: callback.params[1] ?? callback,
+        severity: "error",
+      });
+      return null;
+    }
+    const expr = `<% ${source.substring(callback.body.start!, callback.body.end!)} %>`;
+    if (callback.params.length === 0) {
+      return expr;
+    }
+    const arg = callback.params[0];
+    if (!t.isIdentifier(arg)) {
+      errors.push({
+        message: `"callApi().then()" callback function parameter expects an identifier, but got ${arg.type}`,
+        node: arg,
+        severity: "error",
+      });
+      return null;
+    }
+    return replaceVariables(expr, new Map([[arg.name, "DATA"]]));
+  }
+
   function parseDataSourceCall(
     call: t.Expression,
     name: string,
-    transformArgs?: t.CallExpression["arguments"]
+    transformArgs?: t.CallExpression["arguments"],
+    method?: "then" | "catch"
   ) {
     const payload = parseTsxCallApi(call, result, options);
     if (!payload) {
@@ -75,53 +119,27 @@ export function parseTsx(source: string, options?: ParseTsxOptions) {
     };
 
     if (transformArgs) {
-      if (transformArgs.length !== 1) {
+      if (transformArgs.length > (method === "catch" ? 1 : 2)) {
         errors.push({
-          message: `"callApi().then()" expects exactly 1 argument, but got ${transformArgs.length}`,
-          node: call,
+          message: `"callApi().${method}()" expects no more than 2 arguments, but got ${transformArgs.length}`,
+          node: transformArgs[1],
           severity: "error",
         });
         return false;
       }
-      const transform = transformArgs[0];
-      if (!t.isArrowFunctionExpression(transform)) {
-        errors.push({
-          message: `"callApi().then()" expects an arrow function, but got ${transform.type}`,
-          node: transform,
-          severity: "error",
-        });
-        return false;
+      if (transformArgs.length > 0) {
+        const transform = parsePromiseCallback(transformArgs[0]);
+        if (transform) {
+          dataSource[method === "catch" ? "rejectTransform" : "transform"] =
+            transform;
+        }
       }
-      if (!t.isExpression(transform.body)) {
-        errors.push({
-          message: `"callApi().then()" function body expects an expression, but got ${transform.body.type}`,
-          node: transform.body,
-          severity: "error",
-        });
-        return false;
+      if (method !== "catch" && transformArgs.length > 1) {
+        const transform = parsePromiseCallback(transformArgs[1]);
+        if (transform) {
+          dataSource.rejectTransform = transform;
+        }
       }
-      if (transform.params.length !== 1) {
-        errors.push({
-          message: `"callApi().then()" function expects exactly one parameter, but got ${transform.params.length}`,
-          node: transform.params[1] ?? transform,
-          severity: "error",
-        });
-        return false;
-      }
-      const arg = transform.params[0];
-      if (!t.isIdentifier(arg)) {
-        errors.push({
-          message: `"callApi().then()" function parameter expects an identifier, but got ${arg.type}`,
-          node: arg,
-          severity: "error",
-        });
-        return false;
-      }
-      const expr = `<% ${source.substring(transform.body.start!, transform.body.end!)} %>`;
-      dataSource.transform = replaceVariables(
-        expr,
-        new Map([[arg.name, "DATA"]])
-      );
     }
 
     dataSources.push(dataSource);
@@ -204,7 +222,6 @@ export function parseTsx(source: string, options?: ParseTsxOptions) {
             severity: "error",
           });
         }
-
         variables.push({ name });
       } else if (t.isAwaitExpression(dec.init)) {
         const call = dec.init.argument;
@@ -229,15 +246,22 @@ export function parseTsx(source: string, options?: ParseTsxOptions) {
           if (
             !t.isIdentifier(callee.property) ||
             callee.computed ||
-            callee.property.name !== "then"
+            (callee.property.name !== "then" &&
+              callee.property.name !== "catch")
           ) {
             errors.push({
               message: `Unexpected awaited expression`,
               node: callee.property,
               severity: "error",
             });
+            continue;
           }
-          parseDataSourceCall(callee.object, name, call.arguments);
+          parseDataSourceCall(
+            callee.object,
+            name,
+            call.arguments,
+            callee.property.name
+          );
         } else {
           parseDataSourceCall(call, name);
         }

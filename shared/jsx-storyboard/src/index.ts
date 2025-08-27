@@ -13,6 +13,7 @@ export type {
   Events,
   EventHandler,
   ParseJsxOptions,
+  ParseTsxOptions,
   ConstructedView,
   ConvertViewOptions,
   ConvertResult,

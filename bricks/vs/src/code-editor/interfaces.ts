@@ -43,6 +43,11 @@ export interface ExtraLib {
   content: string;
 }
 
+export interface ExtraMarker
+  extends Omit<monaco.editor.IMarkerData, "severity"> {
+  severity: "Hint" | "Info" | "Warning" | "Error";
+}
+
 export type MixedCompleter = MembersCompleter;
 
 export interface MembersCompleter {

@@ -8,6 +8,7 @@ export function convertDataSources(dataSources: DataSource[]): ContextConf[] {
     resolve: {
       useProvider: `${dataSource.api}:*`,
       params: dataSource.params as Record<string, unknown> | undefined,
+      // TODO: remove the temporary workaround below
       ...(dataSource.api === "easyops.api.data_exchange.olap@Query" &&
       isObject(dataSource.params)
         ? {
@@ -20,9 +21,13 @@ export function convertDataSources(dataSources: DataSource[]): ContextConf[] {
               displayName: true,
             },
           }
-        : dataSource.transform
-          ? { transform: { value: dataSource.transform } }
-          : null),
+        : null),
+      ...(dataSource.transform
+        ? { transform: { value: dataSource.transform } }
+        : null),
+      ...(dataSource.rejectTransform
+        ? { onReject: { transform: { value: dataSource.rejectTransform } } }
+        : null),
     },
     track: true,
   }));
