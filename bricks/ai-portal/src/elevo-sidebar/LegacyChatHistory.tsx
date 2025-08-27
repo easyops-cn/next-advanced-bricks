@@ -14,12 +14,13 @@ import type {
   ActionType,
   SimpleActionType,
 } from "@next-bricks/basic/mini-actions";
-import { get, isEqual } from "lodash";
+import { isEqual } from "lodash";
 import { K, t } from "./i18n.js";
 import type { TaskState } from "../cruise-canvas/interfaces.js";
 import { WrappedIcon, WrappedLink, WrappedMiniActions } from "./bricks.js";
 import { DONE_STATES } from "../shared/constants.js";
 import type { ChatHistoryRef } from "./ChatHistory.js";
+import { parseTemplate } from "../shared/parseTemplate.js";
 
 interface LegacyHistoryItem {
   id: string;
@@ -297,14 +298,4 @@ export function LowLevelChatHistory(
       )}
     </div>
   );
-}
-
-function parseTemplate(
-  template: string | undefined,
-  context: Record<string, any>
-) {
-  return template?.replace(/{{(.*?)}}/g, (_match: string, key: string) => {
-    const value = get(context, key);
-    return value;
-  });
 }

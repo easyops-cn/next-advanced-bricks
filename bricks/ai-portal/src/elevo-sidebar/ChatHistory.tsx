@@ -18,7 +18,7 @@ import type {
   SimpleActionType,
 } from "@next-bricks/basic/mini-actions";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
-import { get, isEqual } from "lodash";
+import { isEqual } from "lodash";
 import { K, t } from "./i18n.js";
 import type { TaskState } from "../cruise-canvas/interfaces.js";
 import {
@@ -28,6 +28,7 @@ import {
   WrappedIconButton,
 } from "./bricks.js";
 import { DONE_STATES } from "../shared/constants.js";
+import { parseTemplate } from "../shared/parseTemplate.js";
 
 const ADD_ICON: GeneralIconProps = {
   lib: "antd",
@@ -465,14 +466,4 @@ export function LowLevelChatHistory(
       </div>
     </div>
   );
-}
-
-function parseTemplate(
-  template: string | undefined,
-  context: Record<string, any>
-) {
-  return template?.replace(/{{(.*?)}}/g, (_match: string, key: string) => {
-    const value = get(context, key);
-    return value;
-  });
 }

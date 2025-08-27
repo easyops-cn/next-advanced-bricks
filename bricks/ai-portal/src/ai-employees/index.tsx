@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from "react";
 import { createDecorators } from "@next-core/element";
-import { ReactNextElement } from "@next-core/react-element";
+import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
+import type { Link, LinkProps } from "@next-bricks/basic/link";
 import classNames from "classnames";
 import Avatar1 from "./images/avatar-1@2x.png";
 import Avatar2 from "./images/avatar-2@2x.png";
@@ -14,6 +15,7 @@ import Avatar7 from "./images/avatar-7@2x.png";
 import Avatar8 from "./images/avatar-8@2x.png";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
+import { parseTemplate } from "../shared/parseTemplate";
 
 initializeI18n(NS, locales);
 
@@ -28,12 +30,17 @@ const AVATARS = [
   Avatar8,
 ];
 
+const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
+
 const { defineElement, property } = createDecorators();
 
 export interface AIEmployeesProps {
   list?: Employee[];
   industries?: string[];
   // roles?: string[];
+  urlTemplate?: string;
+  /** @deprecated */
+  withContainer?: boolean;
 }
 
 export interface Employee {
@@ -60,9 +67,21 @@ class AIEmployees extends ReactNextElement implements AIEmployeesProps {
   // @property({ attribute: false })
   // accessor roles: string[] | undefined;
 
+  @property()
+  accessor urlTemplate: string | undefined;
+
+  /** @deprecated */
+  @property({ type: Boolean })
+  accessor withContainer = true;
+
   render() {
     return (
-      <AIEmployeesComponent list={this.list} industries={this.industries} />
+      <AIEmployeesComponent
+        list={this.list}
+        industries={this.industries}
+        urlTemplate={this.urlTemplate}
+        withContainer={this.withContainer}
+      />
     );
   }
 }
@@ -70,6 +89,8 @@ class AIEmployees extends ReactNextElement implements AIEmployeesProps {
 function AIEmployeesComponent({
   list,
   industries: _industries,
+  urlTemplate,
+  withContainer,
 }: AIEmployeesProps) {
   const industries = useMemo(() => {
     return [
@@ -100,9 +121,8 @@ function AIEmployeesComponent({
 
   const industryIndex = industries.indexOf(activeIndustry);
 
-  return (
-    <div className="container">
-      <h1>{t(K.AI_EMPLOYEES)}</h1>
+  const node = (
+    <>
       <ul className="nav">
         {industries.map((industry) => (
           <li key={industry} className="item">
@@ -121,27 +141,45 @@ function AIEmployeesComponent({
             <h2>{groupName}</h2>
             <ul className="list">
               {items.map((item, index) => (
-                <li key={index} className="item">
-                  <div className="heading">
-                    <div className="avatar">
-                      <img
-                        src={
-                          AVATARS[
-                            (index + groupIndex + industryIndex) %
-                              AVATARS.length
-                          ]
-                        }
-                      />
+                <li key={index}>
+                  <WrappedLink
+                    className={classNames("link", { clickable: !!urlTemplate })}
+                    {...(urlTemplate
+                      ? { url: parseTemplate(urlTemplate, item) }
+                      : null)}
+                  >
+                    <div className="heading">
+                      <div className="avatar">
+                        <img
+                          src={
+                            AVATARS[
+                              (index + groupIndex + industryIndex) %
+                                AVATARS.length
+                            ]
+                          }
+                        />
+                      </div>
+                      <div className="title">{item.name}</div>
                     </div>
-                    <div className="title">{item.name}</div>
-                  </div>
-                  <div className="description">{item.description}</div>
+                    <div className="description">{item.description}</div>
+                  </WrappedLink>
                 </li>
               ))}
             </ul>
           </li>
         ))}
       </ul>
+    </>
+  );
+
+  if (!withContainer) {
+    return node;
+  }
+
+  return (
+    <div className="container">
+      <h1>{t(K.AI_EMPLOYEES)}</h1>
+      {node}
     </div>
   );
 }

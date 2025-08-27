@@ -1,11 +1,18 @@
 :host {
   display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+:host([with-container]) {
   position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;
   background-color: rgb(205, 206, 207);
-  background-image: url("../mcp-tools/images/background.png");
+  background-image: url("../page-container/images/background.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -15,10 +22,6 @@
   overflow-y: auto;
 }
 
-:host([hidden]) {
-  display: none;
-}
-
 * {
   box-sizing: border-box;
 }
@@ -26,6 +29,7 @@
 .container {
   max-width: 1400px;
   margin: 0 auto;
+  margin-bottom: 17px;
 }
 
 h1,
@@ -37,6 +41,7 @@ h2 {
 h1 {
   font-size: 20px;
   line-height: 28px;
+  margin-bottom: 17px;
 }
 
 h2 {
@@ -55,7 +60,6 @@ h2 {
 .nav {
   display: flex;
   font-size: 16px;
-  margin-top: 17px;
 
   .item + .item {
     margin-left: 32px;
@@ -94,13 +98,30 @@ h2 {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px;
+}
 
-  .item {
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.08);
-    border-radius: 12px;
-    padding: 20px 26px;
-  }
+.link {
+  display: block;
+  height: 100%;
+}
+
+.link::part(link) {
+  display: block;
+  height: 100%;
+  color: #262626;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 20px 26px;
+  box-sizing: border-box;
+}
+
+.link:not(.clickable)::part(link) {
+  cursor: auto;
+}
+
+.clickable::part(link):hover {
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
 }
 
 .heading {
@@ -122,6 +143,10 @@ h2 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.clickable::part(link):hover .title {
+  color: var(--elevo-color-brand);
 }
 
 .description {
