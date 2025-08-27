@@ -283,6 +283,25 @@ properties:
         event: download
 ```
 
+### avatarPlacement
+
+```yaml preview
+brick: eo-card-item
+properties:
+  avatarPlacement: title-left
+  style:
+    width: 300px
+  cardTitle: 资源监控微应用
+  description: 资源监控微应用相关前后台
+  url: /test
+  target: _blank
+  avatar:
+    icon:
+      lib: easyops
+      category: default
+      icon: monitor
+```
+
 ### selected
 
 ```yaml preview

@@ -93,6 +93,7 @@ export interface EoCardItemProps {
   coverColor?: string;
   tagConfig?: TagConfig;
   avatarPosition?: "content" | "cover";
+  avatarPlacement?: "left" | "title-left";
   coverImageSize?: React.CSSProperties["backgroundSize"];
   borderColor?: string;
   stacked?: boolean;
@@ -231,6 +232,12 @@ class EoCardItem extends ReactNextElement implements EoCardItemProps {
   @property()
   accessor avatarPosition: "content" | "cover";
 
+  /**
+   * 图标位置，在 avatarPosition 不为 cover 时有效
+   */
+  @property()
+  accessor avatarPlacement: "left" | "title-left" = "left";
+
   @property({
     attribute: false,
   })
@@ -352,6 +359,7 @@ class EoCardItem extends ReactNextElement implements EoCardItemProps {
         coverColor={this.coverColor}
         tagConfig={this.tagConfig}
         avatarPosition={this.avatarPosition}
+        avatarPlacement={this.avatarPlacement}
         onActionClick={this.#handleActionClick}
         onTagClick={this.#handleTagClick}
         coverImageSize={this.coverImageSize}
@@ -395,6 +403,7 @@ export function EoCardItemComponent(props: EoCardItemComponentProps) {
     coverImage,
     coverColor,
     avatarPosition,
+    avatarPlacement = "left",
     tagConfig,
     styleType,
     onActionClick,
@@ -441,14 +450,18 @@ export function EoCardItemComponent(props: EoCardItemComponentProps) {
 
   const Avatar = useMemo(() => {
     if (!avatar) return;
+
+    const isCover = avatarPosition === "cover";
+    const isInTitle = avatarPlacement.startsWith("title-");
+    const { containerSize = isCover ? 90 : isInTitle ? 22 : 40 } = avatar;
+
     if ("icon" in avatar && avatar.icon) {
       const {
         icon,
         shape = "round-square",
         bgColor,
         color,
-        size = avatarPosition === "cover" ? 68 : 40,
-        containerSize = avatarPosition === "cover" ? 90 : 40,
+        size = isCover ? 68 : isInTitle ? 14 : 40,
       } = avatar;
       return (
         <div
@@ -463,13 +476,7 @@ export function EoCardItemComponent(props: EoCardItemComponentProps) {
         </div>
       );
     } else if ("imgSrc" in avatar && avatar.imgSrc) {
-      const {
-        imgSrc,
-        shape = "round-square",
-        bgColor,
-        imgStyle,
-        containerSize = avatarPosition === "cover" ? 90 : 40,
-      } = avatar;
+      const { imgSrc, shape = "round-square", bgColor, imgStyle } = avatar;
       return (
         <div
           className={classNames("card-avatar", shape && `card-avatar-${shape}`)}
@@ -557,9 +564,12 @@ export function EoCardItemComponent(props: EoCardItemComponentProps) {
           !hasCover && MiniActions
         )}
         <div className="card-body" style={cardBodyStyle}>
-          {avatarPosition !== "cover" && Avatar}
+          {avatarPosition !== "cover" && avatarPlacement === "left" && Avatar}
           <div className="card-content">
             <div className="card-title-wrapper">
+              {avatarPosition !== "cover" &&
+                avatarPlacement === "title-left" &&
+                Avatar}
               <div
                 className="card-title"
                 title={cardTitle}
