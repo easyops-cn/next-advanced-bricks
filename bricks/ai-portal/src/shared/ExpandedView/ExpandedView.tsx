@@ -46,6 +46,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
   const feedbackDone =
     useViewFeedbackDone(view?.viewId, showFeedbackOnView) ||
     (view && feedbackDoneViews?.has(view.viewId));
+  const canFeedback = !!view?.viewId && view.from !== "config";
 
   const sizeSmall = useMemo(() => {
     let hasForm = false;
@@ -182,7 +183,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
         ))}
       </ul>
       <div className={styles.buttons}>
-        {showFeedbackOnView && !!view && !feedbackDone && (
+        {showFeedbackOnView && !feedbackDone && canFeedback && (
           <WrappedIconButton
             icon={ICON_FEEDBACK}
             onClick={() => onFeedbackOnView?.(view.viewId)}

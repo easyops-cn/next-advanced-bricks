@@ -170,5 +170,6 @@ declare const TimePicker: (props: TimePickerProps) => any;
 declare const Dashboard: (props: DashboardProps) => any;
 declare const Modal: (props: ModalProps) => any;
 declare const Card: (props: CardProps) => any;
+declare const Output: (props: BaseProps) => any;
 declare const Plaintext: (props: BaseProps) => any;
 declare const Fragment: (props: { key?: string | number }) => any;

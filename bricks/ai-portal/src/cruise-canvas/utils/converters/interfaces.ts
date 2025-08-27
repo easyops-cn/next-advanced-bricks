@@ -9,6 +9,7 @@ export interface ViewWithInfo extends View {
   variables: Variable[];
   components: Component[];
   eventListeners: EventListener[];
+  from?: "generate" | "config";
 }
 
 export interface DataSource {
