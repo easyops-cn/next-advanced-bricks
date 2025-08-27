@@ -75,6 +75,8 @@ const { defineElement, property } = createDecorators();
 
 export interface McpToolsProps {
   list?: McpTool[];
+  /** @deprecated */
+  withContainer?: boolean;
 }
 
 export interface McpTool {
@@ -101,12 +103,18 @@ class McpTools extends ReactNextElement implements McpToolsProps {
   @property({ attribute: false })
   accessor list: McpTool[] | undefined;
 
+  /** @deprecated */
+  @property({ type: Boolean })
+  accessor withContainer = true;
+
   render() {
-    return <McpToolsComponent list={this.list} />;
+    return (
+      <McpToolsComponent list={this.list} withContainer={this.withContainer} />
+    );
   }
 }
 
-function McpToolsComponent({ list }: McpToolsProps) {
+function McpToolsComponent({ list, withContainer }: McpToolsProps) {
   // Grouping the list by server name
   const [groupMap, platformMap] = useMemo(() => {
     const map = new Map<string, McpTool[]>();
@@ -173,9 +181,8 @@ function McpToolsComponent({ list }: McpToolsProps) {
     return groupedList.filter(([group]) => platformGroups?.includes(group));
   }, [activePlatform, groupMap, platformMap]);
 
-  return (
-    <div className="container">
-      <h1>{t(K.MCP_HUB)}</h1>
+  const node = (
+    <>
       <ul className="nav">
         {platforms?.map((platform) => (
           <li key={platform} className="item">
@@ -210,6 +217,17 @@ function McpToolsComponent({ list }: McpToolsProps) {
           </li>
         ))}
       </ul>
+    </>
+  );
+
+  if (!withContainer) {
+    return node;
+  }
+
+  return (
+    <div className="container">
+      <h1>{t(K.MCP_HUB)}</h1>
+      {node}
     </div>
   );
 }
