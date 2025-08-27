@@ -321,7 +321,6 @@ properties:
 - brick: eo-card-item
   properties:
     borderColor: blue
-    selected: true
     style:
       width: 300px
     cardTitle: 资源监控微应用
@@ -337,6 +336,7 @@ properties:
     borderColor: blue
     selected: true
     style:
+      marginTop: 8px
       width: 300px
     cardTitle: 资源监控微应用
     description: 资源监控微应用相关前后台
