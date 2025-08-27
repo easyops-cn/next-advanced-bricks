@@ -133,16 +133,16 @@ eo-link {
   }
 
   &[class*="border-color-"] {
-    border-width: 1px 1px 1px 7px;
     padding: 1px;
+    border-width: 1px 1px 1px 7px;
+    border-color: var(--card-item-border-color);
 
     &.selected {
-      border-width: 2px 2px 2px 8px;
       padding: 0;
+      border-width: 2px 2px 2px 8px;
     }
 
     &:hover {
-      border-color: var(--card-item-border-color);
       box-shadow: 0px 0px 8px 0px var(--card-item-border-color);
     }
   }
