@@ -299,7 +299,6 @@ eo-tooltip::part(popup) {
 }
 
 .card-title {
-  margin-bottom: 3px;
   font-size: var(--normal-font-size);
   font-weight: var(--font-weight-500);
   color: var(--local-card-title-color);
@@ -309,13 +308,18 @@ eo-tooltip::part(popup) {
 }
 
 .card-title-wrapper {
+  margin-bottom: 3px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--toolbar-button-gap);
 }
 
 .card-wrapper:hover .card-title {
   color: var(--local-card-hovered-title-color);
+}
+
+.title-suffix {
+  margin-left: auto;
 }
 
 .card-description {
