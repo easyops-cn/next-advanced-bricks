@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.18.0...@next-bricks/presentational@1.19.0) (2025-08-27)
+
+
+### Bug Fixes
+
+* **card-item:** Adjust style of colored border ([887208b](https://github.com/easyops-cn/next-advanced-bricks/commit/887208bb5f18d16f1e19cbd12804f99323e02d65))
+
+
+### Features
+
+* **card-item:** add stacked property ([d15a143](https://github.com/easyops-cn/next-advanced-bricks/commit/d15a1431c58579ae320f4b3a3f67da39f5f92e6b))
+
+
+
+
+
 # [1.18.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.17.2...@next-bricks/presentational@1.18.0) (2025-08-26)
 
 
