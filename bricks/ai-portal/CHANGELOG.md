@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.29.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.28.6...@next-bricks/ai-portal@0.29.0) (2025-08-27)
+
+
+### Features
+
+* show projects in sidebar ([d389acd](https://github.com/easyops-cn/next-advanced-bricks/commit/d389acd124781a3fb19d02ddd052faef881071e4))
+
+
+
+
+
 ## [0.28.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.28.5...@next-bricks/ai-portal@0.28.6) (2025-08-27)
 
 
