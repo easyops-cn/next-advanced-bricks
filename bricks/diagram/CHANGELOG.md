@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.68.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.67.1...@next-bricks/diagram@0.68.0) (2025-08-27)
+
+
+### Features
+
+* 拆分聚合点之后的点布局排列 ([ba8df1e](https://github.com/easyops-cn/next-advanced-bricks/commit/ba8df1e42e1f86f3d4c03d46509a71060a7e47b6))
+
+
+
+
+
 ## [0.67.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.67.0...@next-bricks/diagram@0.67.1) (2025-08-25)
 
 **Note:** Version bump only for package @next-bricks/diagram
