@@ -31,6 +31,8 @@ import {
   ChatHistory,
   type ActionClickDetail,
   type ChatHistoryRef,
+  type Project,
+  type ProjectActionClickDetail,
 } from "./ChatHistory.js";
 import {
   LegacyChatHistory,
@@ -54,9 +56,13 @@ export interface ElevoSidebarProps {
   behavior?: "default" | "drawer";
   logoUrl?: string;
   newChatUrl?: string;
+  newChatLinkWhenCollapsed?: boolean;
   historyActiveId?: string;
   historyUrlTemplate?: string;
   historyActions?: ActionType[];
+  projectActiveId?: string;
+  projectUrlTemplate?: string;
+  projectActions?: ActionType[];
   links?: SidebarLink[];
 }
 
@@ -99,6 +105,9 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
   @property()
   accessor newChatUrl: string | undefined;
 
+  @property({ type: Boolean })
+  accessor newChatLinkWhenCollapsed: boolean | undefined;
+
   @property()
   accessor historyActiveId: string | undefined;
 
@@ -107,6 +116,15 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
 
   @property({ attribute: false })
   accessor historyActions: ActionType[] | undefined;
+
+  @property()
+  accessor projectActiveId: string | undefined;
+
+  @property()
+  accessor projectUrlTemplate: string | undefined;
+
+  @property({ attribute: false })
+  accessor projectActions: ActionType[] | undefined;
 
   @property({ attribute: false })
   accessor links: SidebarLink[] | undefined;
@@ -131,6 +149,20 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
     this.#actionClick.emit(detail);
   };
 
+  @event({ type: "project.action.click" })
+  accessor #projectActionClick!: EventEmitter<ProjectActionClickDetail>;
+
+  #handleProjectActionClick = (detail: ProjectActionClickDetail) => {
+    this.#projectActionClick.emit(detail);
+  };
+
+  @event({ type: "add.project" })
+  accessor #addProject!: EventEmitter<void>;
+
+  #handleAddProject = () => {
+    this.#addProject.emit();
+  };
+
   #ref = createRef<ElevoSidebarRef>();
 
   /**
@@ -149,6 +181,16 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
     this.#ref.current?.close();
   }
 
+  @method()
+  removeProject(projectId: string) {
+    this.#ref.current?.removeProject?.(projectId);
+  }
+
+  @method()
+  addProject(project: Project) {
+    this.#ref.current?.addProject?.(project);
+  }
+
   render() {
     return (
       <ElevoSidebarComponent
@@ -159,13 +201,19 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
         behavior={this.behavior}
         logoUrl={this.logoUrl}
         newChatUrl={this.newChatUrl}
+        newChatLinkWhenCollapsed={this.newChatLinkWhenCollapsed}
         historyActiveId={this.historyActiveId}
         historyUrlTemplate={this.historyUrlTemplate}
         historyActions={this.historyActions}
+        projectActiveId={this.projectActiveId}
+        projectUrlTemplate={this.projectUrlTemplate}
+        projectActions={this.projectActions}
         links={this.links}
         onLogout={this.#handleLogout}
         onLegacyActionClick={this.#handleLegacyActionClick}
         onActionClick={this.#handleActionClick}
+        onProjectActionClick={this.#handleProjectActionClick}
+        onAddProject={this.#handleAddProject}
       />
     );
   }
@@ -175,6 +223,8 @@ interface ElevoSidebarComponentProps extends ElevoSidebarProps {
   onLogout: () => void;
   onActionClick: (detail: ActionClickDetail) => void;
   onLegacyActionClick: (detail: LegacyActionClickDetail) => void;
+  onProjectActionClick: (detail: ProjectActionClickDetail) => void;
+  onAddProject: () => void;
 }
 
 function LegacyElevoSidebarComponent(
@@ -185,13 +235,19 @@ function LegacyElevoSidebarComponent(
     behavior,
     logoUrl,
     newChatUrl,
+    newChatLinkWhenCollapsed,
     historyActiveId,
     historyUrlTemplate,
     historyActions,
+    projectActiveId,
+    projectUrlTemplate,
+    projectActions,
     links,
     onLogout,
     onActionClick,
     onLegacyActionClick,
+    onProjectActionClick,
+    onAddProject,
   }: ElevoSidebarComponentProps,
   ref: React.Ref<ElevoSidebarRef>
 ) {
@@ -253,6 +309,12 @@ function LegacyElevoSidebarComponent(
       pull: () => {
         historyRef.current?.pull();
       },
+      removeProject: (projectId: string) => {
+        historyRef.current?.removeProject?.(projectId);
+      },
+      addProject: (project: Project) => {
+        historyRef.current?.addProject?.(project);
+      },
     }),
     []
   );
@@ -268,14 +330,16 @@ function LegacyElevoSidebarComponent(
           variant="light"
           onClick={handleExpand}
         />
-        <WrappedLink className="new-chat" url={newChatUrl}>
-          <WrappedIcon
-            className="new-chat-icon"
-            lib="easyops"
-            icon="new-chat"
-          />
-          {t(K.NEW_CHAT)}
-        </WrappedLink>
+        {newChatLinkWhenCollapsed && (
+          <WrappedLink className="new-chat" url={newChatUrl}>
+            <WrappedIcon
+              className="new-chat-icon"
+              lib="easyops"
+              icon="new-chat"
+            />
+            {t(K.NEW_CHAT)}
+          </WrappedLink>
+        )}
       </div>
       <div className="sidebar">
         <div className="logo-bar">
@@ -325,11 +389,16 @@ function LegacyElevoSidebarComponent(
           <ChatHistory
             ref={historyRef}
             username={username}
-            activeId={historyActiveId}
-            urlTemplate={historyUrlTemplate}
-            actions={historyActions}
+            historyActiveId={historyActiveId}
+            historyUrlTemplate={historyUrlTemplate}
+            historyActions={historyActions}
+            projectActiveId={projectActiveId}
+            projectUrlTemplate={projectUrlTemplate}
+            projectActions={projectActions}
             onActionClick={onActionClick}
             onHistoryClick={handleHistoryClick}
+            onProjectActionClick={onProjectActionClick}
+            onAddProject={onAddProject}
           />
         )}
         <div className="footer">

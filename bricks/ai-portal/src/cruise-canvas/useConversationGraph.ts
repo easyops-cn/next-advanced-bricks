@@ -35,7 +35,9 @@ export function useConversationGraph(
       downstreamMap,
     } = getFlatOrderedJobs(tasks, options);
 
+    // Make sure every job in the list has at least one corresponding node
     const jobNodesMap = new Map<string, string[]>();
+    const userInputNodes: string[] = [];
 
     for (const jobId of list) {
       const job = jobMap.get(jobId)!;
@@ -45,10 +47,11 @@ export function useConversationGraph(
 
       const nodeIds: string[] = [];
 
+      const userInput = messages
+        ?.find((msg) => msg.role === "user")
+        ?.parts?.find((part) => part.type === "text")?.text;
+
       if (jobRoots.includes(jobId)) {
-        const userInput = messages
-          ?.find((msg) => msg.role === "user")
-          ?.parts?.find((part) => part.type === "text")?.text;
         if (userInput !== undefined) {
           const requirementId = `requirement:${jobId}`;
           nodes.push({
@@ -58,6 +61,7 @@ export function useConversationGraph(
           });
           nodeIds.push(requirementId);
           jobNodesMap.set(jobId, nodeIds);
+          userInputNodes.push(requirementId);
           continue;
         }
       }
@@ -116,6 +120,9 @@ export function useConversationGraph(
       }
 
       jobNodesMap.set(jobId, nodeIds);
+      if (userInput !== undefined && job.state === "completed") {
+        userInputNodes.push(nodeIds[nodeIds.length - 1]);
+      }
     }
 
     for (const jobId of list) {
@@ -140,19 +147,16 @@ export function useConversationGraph(
         id: LOADING_NODE_ID,
       });
     } else {
-      const requirementNodes = nodes.filter(
-        (node) => node.type === "requirement"
-      );
       let counter = 0;
-      for (const node of requirementNodes) {
-        if (!edges.some((edge) => edge.source === node.id)) {
+      for (const nodeId of userInputNodes) {
+        if (!edges.some((edge) => edge.source === nodeId)) {
           const loadingId = `${LOADING_NODE_ID}:${counter++}`;
           nodes.push({
             type: "loading",
             id: loadingId,
           });
           edges.push({
-            source: node.id,
+            source: nodeId,
             target: loadingId,
           });
         }
