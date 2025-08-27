@@ -95,6 +95,7 @@ export interface EoCardItemProps {
   avatarPosition?: "content" | "cover";
   coverImageSize?: React.CSSProperties["backgroundSize"];
   borderColor?: string;
+  stacked?: boolean;
   cardStyle?: React.CSSProperties;
   cardBodyStyle?: React.CSSProperties;
   cardTitleStyle?: React.CSSProperties;
@@ -242,6 +243,14 @@ class EoCardItem extends ReactNextElement implements EoCardItemProps {
   accessor borderColor: string | undefined;
 
   /**
+   * 是否堆叠
+   */
+  @property({
+    type: Boolean,
+  })
+  accessor stacked: boolean | undefined;
+
+  /**
    * 卡片样式
    */
   @property({
@@ -348,6 +357,7 @@ class EoCardItem extends ReactNextElement implements EoCardItemProps {
         coverImageSize={this.coverImageSize}
         styleType={this.styleType}
         borderColor={this.borderColor}
+        stacked={this.stacked}
         cardStyle={this.cardStyle}
         cardBodyStyle={this.cardBodyStyle}
         cardTitleStyle={this.cardTitleStyle}
@@ -391,7 +401,8 @@ export function EoCardItemComponent(props: EoCardItemComponentProps) {
     onTagClick,
     coverImageSize,
     borderColor,
-    cardStyle,
+    stacked,
+    cardStyle: _cardStyle,
     cardBodyStyle,
     cardTitleStyle,
   } = props;
@@ -492,27 +503,34 @@ export function EoCardItemComponent(props: EoCardItemComponentProps) {
   //   return coverColor || coverImage;
   // }, [coverColor, coverImage]);
 
-  return (
+  const cardStyleClassNames = useMemo(
+    () =>
+      classNames(
+        "card-wrapper",
+        theme,
+        ALLOWED_STYLE_TYPES.includes(styleType) ? styleType : null,
+        borderUseDefineColor ? `border-color-${borderColor}` : null,
+        { selected }
+      ),
+    [theme, styleType, borderUseDefineColor, borderColor, selected]
+  );
+  const cardStyle = useMemo(
+    () => ({
+      ...(borderUseDefineColor ? {} : { borderColor: borderColor }),
+      ..._cardStyle,
+    }),
+    [_cardStyle, borderUseDefineColor, borderColor]
+  );
+  const cardElement = (
     <WrappedLink type="plain" url={url} target={target} href={href}>
       <div
         className={classNames(
-          "card-wrapper",
-          theme,
-          ALLOWED_STYLE_TYPES.includes(styleType) ? styleType : null,
+          cardStyleClassNames,
           ALLOWED_SHOW_ACTIONS.includes(showActions)
             ? `show-actions-${showActions}`
-            : null,
-          borderUseDefineColor ? `border-color-${borderColor}` : null,
-          { selected }
+            : null
         )}
-        style={{
-          ...(borderUseDefineColor
-            ? {}
-            : {
-                borderColor: borderColor,
-              }),
-          ...cardStyle,
-        }}
+        style={cardStyle}
         ref={callback}
       >
         {hasCover && (
@@ -589,5 +607,29 @@ export function EoCardItemComponent(props: EoCardItemComponentProps) {
         </div>
       </div>
     </WrappedLink>
+  );
+
+  return stacked ? (
+    <div className="stacked-card-wrapper">
+      {cardElement}
+      <div
+        className={classNames(
+          cardStyleClassNames,
+          "stacked-card",
+          "stacked-card-1"
+        )}
+        style={cardStyle}
+      />
+      <div
+        className={classNames(
+          cardStyleClassNames,
+          "stacked-card",
+          "stacked-card-2"
+        )}
+        style={cardStyle}
+      />
+    </div>
+  ) : (
+    cardElement
   );
 }
