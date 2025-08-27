@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.0.50...@next-bricks/vb-experiment@1.1.0) (2025-08-27)
+
+
+### Features
+
+* new brick: tsx-playground ([6b04dff](https://github.com/easyops-cn/next-advanced-bricks/commit/6b04dff075b1c925cb7e82adfc02909d63a30d46))
+
+
+
+
+
 ## [1.0.50](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.0.49...@next-bricks/vb-experiment@1.0.50) (2025-08-25)
 
 **Note:** Version bump only for package @next-bricks/vb-experiment

@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.17.4...@next-bricks/vs@1.18.0) (2025-08-27)
+
+
+### Bug Fixes
+
+* export types ([fb5f502](https://github.com/easyops-cn/next-advanced-bricks/commit/fb5f50264fff6d3e41abdca9735a992aac21037d))
+* fit width ([4d2670e](https://github.com/easyops-cn/next-advanced-bricks/commit/4d2670e794294ccaaae02fa2b264705d24d20fdc))
+* refine resize observer ([96aef93](https://github.com/easyops-cn/next-advanced-bricks/commit/96aef93d6dc5087d0b470fdffbd921a6b935fb7f))
+
+
+### Features
+
+* **code-editor:** new prop: extraMarkers ([8e1b8dc](https://github.com/easyops-cn/next-advanced-bricks/commit/8e1b8dcb21800890398c4ea4c884fa21d13429cd))
+
+
+
+
+
 ## [1.17.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.17.3...@next-bricks/vs@1.17.4) (2025-08-26)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.28.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.28.5...@next-bricks/ai-portal@0.28.6) (2025-08-27)
+
+
+### Bug Fixes
+
+* fix canvas edges ([3e91a62](https://github.com/easyops-cn/next-advanced-bricks/commit/3e91a62989f089ad09cac6e039e8fdb6dad059fc))
+
+
+
+
+
 ## [0.28.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.28.4...@next-bricks/ai-portal@0.28.5) (2025-08-26)
 
 
