@@ -180,7 +180,10 @@ export interface AddEdgeInfo {
 
 export interface UpdateCellsContext {
   reason: "add-related-nodes";
-  parent: NodeId;
+  //基于父节点添加
+  parent?: NodeId;
+  //基于某个点（可能当前添加时被删除：拆分集合点）的位置添加
+  parentNode?: NodeCell;
 }
 
 export interface AddNodesContext {

@@ -19,7 +19,9 @@ export function isNodeCell(cell: Cell | MoveCellPayload): cell is NodeCell {
   return cell.type === "node";
 }
 
-export function isDecoratorCell(cell: Cell): cell is DecoratorCell {
+export function isDecoratorCell(
+  cell: Cell | InitialCell
+): cell is DecoratorCell {
   return cell.type === "decorator";
 }
 

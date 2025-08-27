@@ -47,6 +47,7 @@ export function updateCells({
   transform,
   reason,
   parent,
+  parentNode,
   allowEdgeToArea,
   layoutOptions,
 }: {
@@ -60,6 +61,7 @@ export function updateCells({
   transform: TransformLiteral;
   reason?: "add-related-nodes";
   parent?: NodeId;
+  parentNode?: NodeCell;
   allowEdgeToArea?: boolean;
   layoutOptions?: LayoutOptions;
 }): {
@@ -104,78 +106,97 @@ export function updateCells({
 
   let handled = false;
 
-  if (reason === "add-related-nodes" && parent) {
+  if (reason === "add-related-nodes") {
     // Place these unpositioned downstream nodes below the parent node, and
     // on the right side of the positioned siblings.
-    const downstreamNodeIds = new Set<string>();
-    for (const cell of newCells) {
-      if (
-        isEdgeCell(cell) &&
-        cell.source === parent &&
-        cell.target !== parent
-      ) {
-        downstreamNodeIds.add(cell.target);
-      }
+    let parentNodeCell: NodeCell | undefined;
+    if (parent) {
+      parentNodeCell = nodesMap.get(parent);
+    } else if (parentNode) {
+      //基于某个点位置去添加节点
+      parentNodeCell = parentNode;
     }
-    const parentNode = nodesMap.get(parent);
-    if (parentNode?.view.x !== undefined && parentNode.view.y !== undefined) {
-      handled = true;
-      /**
-       * 临时解决一次性添加多层的节点手工布局报错
-       */
-      if (isManualLayout) {
-        for (const cell of newCells) {
-          if (
-            (isNodeCell(cell) && cell.view.x === undefined) ||
-            (isNodeCell(cell) && cell.view.y === undefined)
-          ) {
-            downstreamNodeIds.add(cell.id);
-          }
+    if (parentNodeCell) {
+      const downstreamNodeIds = new Set<string>();
+      for (const cell of newCells) {
+        if (
+          isEdgeCell(cell) &&
+          cell.source === parent &&
+          cell.target !== parent
+        ) {
+          downstreamNodeIds.add(cell.target);
         }
       }
-      const downstreamNodes = [...downstreamNodeIds]
-        .map((id) => nodesMap.get(id))
-        .filter(Boolean) as NodeCell[];
-      let rightMostNode: NodeCell | undefined = undefined;
-      for (const node of downstreamNodes) {
-        if (node.view.x !== undefined && node.view.y !== undefined) {
-          // Find the rightmost node that is below the parent node.
-          if (
-            (!rightMostNode || node.view.x > rightMostNode.view.x) &&
-            node.view.y > parentNode.view.y
-          ) {
-            rightMostNode = node;
+      if (
+        parentNodeCell?.view.x !== undefined &&
+        parentNodeCell.view.y !== undefined
+      ) {
+        handled = true;
+        /**
+         * 临时解决一次性添加多层的节点手工布局报错
+         */
+        if (isManualLayout) {
+          for (const cell of newCells) {
+            if (
+              (isNodeCell(cell) && cell.view.x === undefined) ||
+              (isNodeCell(cell) && cell.view.y === undefined)
+            ) {
+              downstreamNodeIds.add(cell.id);
+            }
           }
-        } else {
-          // Unpositioned nodes
-          updateCandidates.push(node);
         }
-      }
-      if (updateCandidates.length > 0 && isManualLayout) {
-        let nextX: number;
-        let nextY: number;
-        if (rightMostNode) {
-          // Place unpositioned nodes on the right side of the rightmost positioned siblings.
-          nextX =
-            rightMostNode.view.x +
-            rightMostNode.view.width +
-            DEFAULT_NODE_GAP_H;
-          nextY = rightMostNode.view.y;
-        } else {
-          // If there are no positioned siblings, just place them below the parent.
-          const totalWidth = updateCandidates.reduce(
-            (acc, node) => acc + node.view.width + DEFAULT_NODE_GAP_H,
-            -DEFAULT_NODE_GAP_H
+        const downstreamNodes = [...downstreamNodeIds]
+          .map((id) => nodesMap.get(id))
+          .filter(Boolean) as NodeCell[];
+        let rightMostNode: NodeCell | undefined = undefined;
+        for (const node of downstreamNodes) {
+          if (node.view.x !== undefined && node.view.y !== undefined) {
+            // Find the rightmost node that is below the parent node.
+            if (
+              (!rightMostNode || node.view.x > rightMostNode.view.x) &&
+              node.view.y > parentNodeCell.view.y
+            ) {
+              rightMostNode = node;
+            }
+          } else {
+            // Unpositioned nodes
+            updateCandidates.push(node);
+          }
+        }
+        if (updateCandidates.length > 0 && isManualLayout) {
+          let nextX: number;
+          let nextY: number;
+          if (rightMostNode) {
+            // Place unpositioned nodes on the right side of the rightmost positioned siblings.
+            nextX =
+              rightMostNode.view.x +
+              rightMostNode.view.width +
+              DEFAULT_NODE_GAP_H;
+            nextY = rightMostNode.view.y;
+          } else {
+            // If there are no positioned siblings, just place them below the parent.
+            const totalWidth = updateCandidates.reduce(
+              (acc, node) => acc + node.view.width + DEFAULT_NODE_GAP_H,
+              -DEFAULT_NODE_GAP_H
+            );
+            nextX =
+              parentNodeCell.view.x -
+              totalWidth / 2 +
+              parentNodeCell.view.width / 2;
+            nextY =
+              parentNodeCell.view.y +
+              parentNodeCell.view.height +
+              DEFAULT_NODE_GAP_V;
+          }
+          for (const node of updateCandidates) {
+            node.view.x = nextX;
+            node.view.y = nextY;
+            nextX += node.view.width + DEFAULT_NODE_GAP_H;
+          }
+          // 后续处理容器、分组的大小位置
+          handled = !newCells.some(
+            (c) => c.type === "decorator" && isNoPoint(c.view)
           );
-          nextX =
-            parentNode.view.x - totalWidth / 2 + parentNode.view.width / 2;
-          nextY =
-            parentNode.view.y + parentNode.view.height + DEFAULT_NODE_GAP_V;
-        }
-        for (const node of updateCandidates) {
-          node.view.x = nextX;
-          node.view.y = nextY;
-          nextX += node.view.width + DEFAULT_NODE_GAP_H;
         }
       }
     }
