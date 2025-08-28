@@ -21,7 +21,7 @@ export interface IconButtonProps {
   variant?: IconButtonVariant;
 }
 
-export type IconButtonVariant = "default" | "light" | "mini";
+export type IconButtonVariant = "default" | "light" | "mini" | "mini-light";
 
 /**
  * 构件 `ai-portal.icon-button`

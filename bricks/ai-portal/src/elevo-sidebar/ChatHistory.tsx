@@ -31,8 +31,8 @@ import { DONE_STATES } from "../shared/constants.js";
 import { parseTemplate } from "../shared/parseTemplate.js";
 
 const ADD_ICON: GeneralIconProps = {
-  lib: "antd",
-  icon: "plus-circle",
+  lib: "fa",
+  icon: "plus",
 };
 
 export interface HistoryItem {
@@ -344,11 +344,12 @@ export function LowLevelChatHistory(
             onClick={() => setProjectsCollapsed((prev) => !prev)}
           >
             {t(K.PROJECTS)}
-            <WrappedIcon lib="fa" icon="caret-down" />
+            <WrappedIcon lib="fa" icon="angle-down" />
           </div>
           <WrappedIconButton
             icon={ADD_ICON}
-            variant="mini"
+            variant="mini-light"
+            tooltip={t(K.CREATE_PROJECT)}
             onClick={onAddProject}
           />
         </div>
@@ -401,7 +402,7 @@ export function LowLevelChatHistory(
             onClick={() => setHistoryCollapsed((prev) => !prev)}
           >
             {t(K.HISTORY)}
-            <WrappedIcon lib="fa" icon="caret-down" />
+            <WrappedIcon lib="fa" icon="angle-down" />
           </div>
         </div>
         <ul>
