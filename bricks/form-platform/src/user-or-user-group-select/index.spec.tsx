@@ -1,12 +1,8 @@
 import { describe, test, expect, jest } from "@jest/globals";
-import { render, act, createEvent, fireEvent } from "@testing-library/react";
+import { act, fireEvent } from "@testing-library/react";
 import "./";
 import { EoUserOrUserGroupSelect } from "./index.js";
-import {
-  InstanceApi_postSearch,
-  CmdbModels,
-  CmdbObjectApi_getObjectRef,
-} from "@next-api-sdk/cmdb-sdk";
+import { InstanceApi_postSearch } from "@next-api-sdk/cmdb-sdk";
 
 const mockPostSearch = InstanceApi_postSearch as jest.Mock;
 jest.mock("@next-api-sdk/cmdb-sdk");
@@ -18,6 +14,21 @@ jest.mock("@next-core/runtime", () => {
     getV2RuntimeFromDll: jest.fn(),
   };
 });
+
+const OBJECT_LIST = [
+  {
+    objectId: "USER",
+    view: {
+      show_key: ["name", "nickname"],
+    },
+  },
+  {
+    objectId: "USER_GROUP",
+    view: {
+      show_key: ["name"],
+    },
+  },
+];
 
 describe("eo-user-or-user-group-select", () => {
   test("basic usage", async () => {
@@ -35,22 +46,6 @@ describe("eo-user-or-user-group-select", () => {
         },
       ],
     } as never);
-    (CmdbObjectApi_getObjectRef as jest.Mock).mockResolvedValue({
-      data: [
-        {
-          objectId: "USER",
-          view: {
-            show_key: ["name", "nickname"],
-          },
-        },
-        {
-          objectId: "USER_GROUP",
-          view: {
-            show_key: ["name"],
-          },
-        },
-      ],
-    } as never);
     const element = document.createElement(
       "eo-user-or-user-group-select"
     ) as EoUserOrUserGroupSelect;
@@ -61,6 +56,7 @@ describe("eo-user-or-user-group-select", () => {
       query: {
         instanceId: { $in: ["59eea4ad40bf8", "59eea4ad40bw2"] },
       },
+      objectList: OBJECT_LIST,
     });
 
     expect(element.shadowRoot).toBeFalsy();
@@ -180,22 +176,6 @@ describe("eo-user-or-user-group-select", () => {
         },
       ],
     } as never);
-    (CmdbObjectApi_getObjectRef as jest.Mock).mockResolvedValue({
-      data: [
-        {
-          objectId: "USER",
-          view: {
-            show_key: ["name", "nickname"],
-          },
-        },
-        {
-          objectId: "USER_GROUP",
-          view: {
-            show_key: ["name"],
-          },
-        },
-      ],
-    } as never);
     const element = document.createElement(
       "eo-user-or-user-group-select"
     ) as EoUserOrUserGroupSelect;
@@ -204,6 +184,7 @@ describe("eo-user-or-user-group-select", () => {
       name: "user",
       label: "用户",
       hideAddMeQuickly: false,
+      objectList: OBJECT_LIST,
     });
 
     expect(element.shadowRoot).toBeFalsy();
@@ -214,7 +195,7 @@ describe("eo-user-or-user-group-select", () => {
     act(() => {
       document.body.appendChild(element);
     });
-    const select = element.shadowRoot?.querySelector("eo-select");
+    // const select = element.shadowRoot?.querySelector("eo-select");
     const addMeBtn = element.shadowRoot?.querySelector("eo-button");
 
     await act(async () => {

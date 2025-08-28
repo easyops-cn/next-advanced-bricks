@@ -7,18 +7,13 @@ import React, {
 } from "react";
 import { createDecorators, EventEmitter } from "@next-core/element";
 import { wrapBrick } from "@next-core/react-element";
-import { handleHttpError } from "@next-core/runtime";
 import { auth } from "@next-core/easyops-runtime";
 import "@next-core/theme";
 import styleText from "./styles.shadow.css";
 import { FormItem, FormItemProps } from "@next-bricks/form/form-item";
 import { Select, SelectProps } from "@next-bricks/form/select";
 import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
-import {
-  InstanceApi_postSearch,
-  CmdbModels,
-  CmdbObjectApi_getObjectRef,
-} from "@next-api-sdk/cmdb-sdk";
+import { InstanceApi_postSearch, CmdbModels } from "@next-api-sdk/cmdb-sdk";
 
 import {
   zipObject,
@@ -57,7 +52,6 @@ const WrappedSelect = wrapBrick<
     onsearch: DebouncedFunc<(e: any) => void>;
   }
 >("eo-select");
-let objectListCache: ModelObjectItem[];
 
 export type UserOrUserGroupSelectValue = {
   selectedUser: string[];
@@ -80,6 +74,7 @@ export interface EoUserOrUserGroupSelectProps extends FormItemProps {
   staticList?: string[];
   isMultiple?: boolean;
   hideAddMeQuickly?: boolean;
+  themeVariant?: "default" | "elevo";
 }
 
 /**
@@ -122,8 +117,9 @@ class EoUserOrUserGroupSelect extends FormItemElementBase {
   accessor value: string[] | UserOrUserGroupSelectValue | undefined;
 
   /**
-   *  模型列表，不传该属性构件内部会发请求获取该列表，如果需要传该属性则优先使用外部传进来的数据，该数据来自"providers-of-cmdb.cmdb-object-api-get-object-ref" 如 demo 所示
-   * advanced
+   * 模型列表（按需传递 USER/USER_GROUP 的模型定义，用于显示对应实例名称）
+   *
+   * 注：get object ref 被滥用，这里先暂不支持自动拉取。
    */
   @property({
     attribute: false,
@@ -235,6 +231,10 @@ class EoUserOrUserGroupSelect extends FormItemElementBase {
   })
   accessor hideAddMeQuickly: boolean = true;
 
+  /** 主题变体 */
+  @property()
+  accessor themeVariant: "default" | "elevo" | undefined;
+
   @event({ type: "change" })
   accessor #changeEvent!: EventEmitter<string[] | UserOrUserGroupSelectValue>;
 
@@ -302,6 +302,7 @@ class EoUserOrUserGroupSelect extends FormItemElementBase {
         isMultiple={this.isMultiple}
         disabled={this.disabled}
         hideAddMeQuickly={this.hideAddMeQuickly}
+        themeVariant={this.themeVariant}
       />
     );
   }
@@ -312,9 +313,7 @@ export function EoUserOrUserGroupSelectComponent(
 ) {
   // const { t } = useTranslation(NS);
   // const hello = t(K.HELLO);
-  const [objectList, setObjectList] = useState<ModelObjectItem[]>(
-    props.objectList ?? []
-  );
+  const objectList = props.objectList;
   const [searchValue, setSearchValue] = useState<string>();
   const [userList, setUserList] = useState<any[]>([]);
   const [userGroupList, setUserGroupList] = useState<any[]>([]);
@@ -489,31 +488,6 @@ export function EoUserOrUserGroupSelectComponent(
     );
   };
 
-  useEffect(() => {
-    (async () => {
-      if (!props.objectList) {
-        if (objectListCache) {
-          setObjectList(objectListCache);
-        } else {
-          try {
-            const list = (
-              await CmdbObjectApi_getObjectRef({
-                ref_object: "USER,USER_GROUP",
-              })
-            ).data;
-            setObjectList(list);
-            objectListCache = list;
-          } catch (e) {
-            // istanbul ignore next
-            handleHttpError(e);
-          }
-        }
-      } else {
-        setObjectList(props.objectList);
-      }
-    })();
-  }, [props.objectList, props.notRender]);
-
   const initializeStaticList = () => {
     return groupBy(props.staticList, (v) =>
       startsWith(v, ":") ? "userGroup" : "user"
@@ -673,28 +647,20 @@ export function EoUserOrUserGroupSelectComponent(
     let userListOptions: any = [];
     let userGroupListOptions: any = [];
     if (userList.length) {
-      userListOptions = [
-        {
-          label: "用户(仅显示前20项，更多结果请搜索)",
-          options: userList.map((user) => ({
-            label: getLabel("USER", user),
-            value: user.name,
-            closeable: !props?.staticList?.includes(user.name),
-          })),
-        },
-      ];
+      userListOptions = userList.map((user) => ({
+        label: getLabel("USER", user),
+        value: user.name,
+        closeable: !props?.staticList?.includes(user.name),
+        tag: "用户(仅显示前20项，更多结果请搜索)",
+      }));
     }
     if (userGroupList.length) {
-      userGroupListOptions = [
-        {
-          label: "用户组(仅显示前20项，更多结果请搜索",
-          options: userGroupList.map((group) => ({
-            label: getLabel("USER_GROUP", group),
-            value: group.instanceId,
-            closeable: !props?.staticList?.includes(group.instanceId),
-          })),
-        },
-      ];
+      userGroupListOptions = userGroupList.map((group) => ({
+        label: getLabel("USER_GROUP", group),
+        value: group.instanceId,
+        closeable: !props?.staticList?.includes(group.instanceId),
+        tag: "用户组(仅显示前20项，更多结果请搜索)",
+      }));
     }
 
     return props.optionsMode === "user"
@@ -750,7 +716,9 @@ export function EoUserOrUserGroupSelectComponent(
           }, 500)}
           options={selectOptions as any}
           disabled={props.disabled}
-        ></WrappedSelect>
+          groupBy="tag"
+          themeVariant={props.themeVariant}
+        />
         {!props.hideAddMeQuickly && props.optionsMode !== "group" && (
           <WrappedButton
             onClick={addMeQuickly}
@@ -761,7 +729,7 @@ export function EoUserOrUserGroupSelectComponent(
               lib: "easyops",
               icon: "quick-add-me",
             }}
-          ></WrappedButton>
+          />
         )}
       </div>
     </WrappedFormItem>
