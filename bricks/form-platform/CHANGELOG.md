@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.36](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form-platform@0.4.35...@next-bricks/form-platform@0.4.36) (2025-08-28)
+
+
+### Bug Fixes
+
+* fix user/group select options ([c0d7167](https://github.com/easyops-cn/next-advanced-bricks/commit/c0d7167a46df2d33d74a003f64edf4742d8d72e7))
+
+
+
+
+
 ## [0.4.35](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form-platform@0.4.34...@next-bricks/form-platform@0.4.35) (2025-08-25)
 
 **Note:** Version bump only for package @next-bricks/form-platform
