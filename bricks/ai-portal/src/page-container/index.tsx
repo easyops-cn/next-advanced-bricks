@@ -25,6 +25,7 @@ export interface Breadcrumb {
  * 构件 `ai-portal.page-container`
  *
  * @slot - 内容
+ * @slot toolbar - 工具栏
  */
 export
 @defineElement("ai-portal.page-container", {
@@ -63,18 +64,21 @@ function PageContainerComponent({
   return (
     <div className="container">
       {pageTitle || breadcrumbs?.length ? (
-        <nav>
-          {breadcrumbs?.length ? (
-            <ul className="breadcrumbs">
-              {breadcrumbs.map((item, index) => (
-                <li key={index}>
-                  <WrappedLink url={item.url}>{item.text}</WrappedLink>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-          {pageTitle ? <h1>{pageTitle}</h1> : null}
-        </nav>
+        <div className="header">
+          <nav>
+            {breadcrumbs?.length ? (
+              <ul className="breadcrumbs">
+                {breadcrumbs.map((item, index) => (
+                  <li key={index}>
+                    <WrappedLink url={item.url}>{item.text}</WrappedLink>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            {pageTitle ? <h1>{pageTitle}</h1> : null}
+          </nav>
+          <slot name="toolbar" />
+        </div>
       ) : null}
       <slot />
     </div>
