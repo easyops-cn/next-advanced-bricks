@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.49.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.49.7...@next-bricks/advanced@0.49.8) (2025-08-29)
+
+
+### Bug Fixes
+
+* CMDB_MODEL-501 dashboard的边框宽度设置为20，编辑按钮看不见了  ref CMDB_MODEL-501 ([53c7760](https://github.com/easyops-cn/next-advanced-bricks/commit/53c776068477cd2e1fb5c00f4ca852d1b533f9a4))
+
+
+
+
+
 ## [0.49.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.49.6...@next-bricks/advanced@0.49.7) (2025-08-25)
 
 **Note:** Version bump only for package @next-bricks/advanced
