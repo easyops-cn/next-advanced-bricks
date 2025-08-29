@@ -191,6 +191,11 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
     this.#ref.current?.addProject?.(project);
   }
 
+  @method()
+  moveConversation(conversationId: string) {
+    this.#ref.current?.moveConversation?.(conversationId);
+  }
+
   render() {
     return (
       <ElevoSidebarComponent
@@ -314,6 +319,9 @@ function LegacyElevoSidebarComponent(
       },
       addProject: (project: Project) => {
         historyRef.current?.addProject?.(project);
+      },
+      moveConversation: (conversationId: string) => {
+        historyRef.current?.moveConversation?.(conversationId);
       },
     }),
     []

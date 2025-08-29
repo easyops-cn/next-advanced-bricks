@@ -4,15 +4,30 @@ import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import type { Link, LinkProps } from "@next-bricks/basic/link";
-import classNames from "classnames";
 import { getBasePath } from "@next-core/runtime";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
 import { parseTemplate } from "../shared/parseTemplate.js";
+import type {
+  Tab,
+  TabList,
+  TabListEvents,
+  TabListMapping,
+  TabListProps,
+} from "../tab-list/index.js";
+import bg from "./images/bg.png";
 
 initializeI18n(NS, locales);
 
 const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
+const WrappedTabList = wrapBrick<
+  TabList,
+  TabListProps,
+  TabListEvents,
+  TabListMapping
+>("ai-portal.tab-list", {
+  onTabClick: "tab.click",
+});
 
 const { defineElement, property } = createDecorators();
 
@@ -55,14 +70,11 @@ class ShowCases extends ReactNextElement implements ShowCasesProps {
 
 function ShowCasesComponent({ list, taskUrlTemplate }: ShowCasesProps) {
   // Grouping the list by scenario
-  const groups = useMemo<(string | null)[]>(() => {
-    return [
-      null,
-      ...new Set(list?.map((item) => item.scenario).filter(Boolean)),
-    ];
+  const groups = useMemo<string[]>(() => {
+    return ["", ...new Set(list?.map((item) => item.scenario).filter(Boolean))];
   }, [list]);
 
-  const [activeGroup, setActiveGroup] = useState<string | null>(null);
+  const [activeGroup, setActiveGroup] = useState("");
 
   const filteredList = useMemo(() => {
     if (!activeGroup) {
@@ -71,24 +83,25 @@ function ShowCasesComponent({ list, taskUrlTemplate }: ShowCasesProps) {
     return list?.filter((item) => item.scenario === activeGroup);
   }, [activeGroup, list]);
 
+  const tabs = useMemo<Tab[]>(() => {
+    return groups.map((group) => ({
+      id: group,
+      label: group === "" ? t(K.ALL) : group,
+    }));
+  }, [groups]);
+
   if (!list?.length) {
     return null;
   }
 
   return (
     <>
-      <ul className="nav">
-        {groups?.map((group) => (
-          <li key={group} className="item">
-            <a
-              className={classNames({ active: activeGroup === group })}
-              onClick={() => setActiveGroup(group)}
-            >
-              {group === null ? t(K.ALL) : group}
-            </a>
-          </li>
-        ))}
-      </ul>
+      <div className="tips">{`${t(K.EXPLORE_EXCELLENT_CASES)} ↓`}</div>
+      <WrappedTabList
+        tabs={tabs}
+        activeTab={activeGroup}
+        onTabClick={(event) => setActiveGroup(event.detail.id)}
+      />
       <ul className="cases">
         {filteredList?.map((item) => (
           <li key={item.taskId} className="item">
@@ -97,23 +110,21 @@ function ShowCasesComponent({ list, taskUrlTemplate }: ShowCasesProps) {
               url={parseTemplate(taskUrlTemplate, item)}
             >
               <span
-                className={classNames(
-                  "placeholder",
-                  item.thumbUrl ? "thumbnail" : "summary"
-                )}
+                className="thumbnail"
+                style={{
+                  backgroundImage: [
+                    ...(item.thumbUrl
+                      ? [`url(${getBasePath()}${item.thumbUrl})`]
+                      : []),
+                    `url(${bg})`,
+                  ].join(", "),
+                }}
               >
-                {item.thumbUrl ? (
-                  <span
-                    style={{
-                      backgroundImage: `url(${getBasePath()}${item.thumbUrl})`,
-                    }}
-                  />
-                ) : (
-                  <span className="summary-1">
-                    <span className="summary-2">
-                      <span>{item.summary}</span>
-                    </span>
-                  </span>
+                {!item.thumbUrl && (
+                  <>
+                    <span className="quote" />
+                    <span className="text">{item.summary}</span>
+                  </>
                 )}
               </span>
               <span className="title">

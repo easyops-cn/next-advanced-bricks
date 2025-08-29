@@ -49,6 +49,7 @@ export interface ChatStreamProps {
   replayDelay?: number;
   supports?: Record<string, boolean>;
   showFeedback?: boolean;
+  showFeedbackAfterFailed?: boolean;
   showFeedbackOnView?: boolean;
   showUiSwitch?: boolean;
 }
@@ -84,6 +85,9 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
 
   @property({ type: Boolean })
   accessor showFeedback: boolean | undefined;
+
+  @property({ type: Boolean })
+  accessor showFeedbackAfterFailed: boolean | undefined;
 
   @property({ type: Boolean })
   accessor showFeedbackOnView: boolean | undefined;
@@ -159,6 +163,7 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
         replayDelay={this.replayDelay}
         supports={this.supports}
         showFeedback={this.showFeedback}
+        showFeedbackAfterFailed={this.showFeedbackAfterFailed}
         showFeedbackOnView={this.showFeedbackOnView}
         showUiSwitch={this.showUiSwitch}
         onShare={this.#onShare}
@@ -193,6 +198,7 @@ function LegacyChatStreamComponent(
     replayDelay,
     supports,
     showFeedback: propShowFeedback,
+    showFeedbackAfterFailed,
     showFeedbackOnView,
     showUiSwitch,
     onShare,
@@ -472,9 +478,11 @@ function LegacyChatStreamComponent(
                       )}
                     </div>
                   ))}
-                  {showFeedback && taskState === "completed" && (
-                    <NodeFeedback className={styles.feedback} />
-                  )}
+                  {showFeedback &&
+                    (taskState === "completed" ||
+                      (taskState === "failed" && showFeedbackAfterFailed)) && (
+                      <NodeFeedback className={styles.feedback} />
+                    )}
                 </div>
               </div>
               <div

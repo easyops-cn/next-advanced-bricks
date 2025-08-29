@@ -7,11 +7,11 @@ import React, {
   useRef,
   useState,
 } from "react";
-import moment from "moment";
 import classNames from "classnames";
 import {
   ElevoApi_listElevoConversations,
   ElevoApi_getElevoProjects,
+  type ElevoApi_ListElevoConversationsRequestParams,
 } from "@next-api-sdk/llm-sdk";
 import type {
   ActionType,
@@ -31,8 +31,8 @@ import { DONE_STATES } from "../shared/constants.js";
 import { parseTemplate } from "../shared/parseTemplate.js";
 
 const ADD_ICON: GeneralIconProps = {
-  lib: "antd",
-  icon: "plus-circle",
+  lib: "fa",
+  icon: "plus",
 };
 
 export interface HistoryItem {
@@ -50,6 +50,7 @@ export interface GroupedHistory {
 export interface ActionClickDetail {
   action: SimpleActionType;
   item: HistoryItem;
+  project?: Project;
 }
 
 export interface ProjectActionClickDetail {
@@ -96,6 +97,7 @@ export interface ChatHistoryRef {
   pull: () => void;
   removeProject?: (projectId: string) => void;
   addProject?: (project: Project) => void;
+  moveConversation?: (conversationId: string) => void;
 }
 
 export const ChatHistory = forwardRef(LowLevelChatHistory);
@@ -124,6 +126,26 @@ export function LowLevelChatHistory(
   const [nextToken, setNextToken] = useState<string | undefined>();
   const [loadNextToken, setLoadNextToken] = useState<string | undefined>();
   const initialRef = useRef(true);
+  const [movedConversations, setMovedConversations] = useState<string[]>([]);
+
+  const mergedHistoryActions = useMemo(
+    () =>
+      [
+        ...(historyActions ?? []),
+        {
+          isDropdown: true,
+          text: t(K.MOVE_TO_PROJECT),
+          disabled: !projects?.length,
+          items: projects?.map((project) => ({
+            event: "move",
+            key: project.instanceId,
+            text: project.name,
+            project,
+          })),
+        },
+      ] as ActionType[],
+    [historyActions, projects]
+  );
 
   useEffect(() => {
     (async () => {
@@ -152,9 +174,11 @@ export function LowLevelChatHistory(
       ElevoApi_listElevoConversations(
         {
           token: loadNextToken,
-          username,
+          // username,
           limit: 30,
-        },
+          onlyOwner: true,
+          onlyRelatedProject: true,
+        } as ElevoApi_ListElevoConversationsRequestParams,
         {
           interceptorParams: {
             ignoreLoadingBar: true,
@@ -181,54 +205,6 @@ export function LowLevelChatHistory(
         setHistoryList([]);
       });
   }, [loadNextToken, username]);
-
-  const groups = useMemo(() => {
-    const groupMap = new Map<string, GroupedHistory>();
-    // Group history by
-    //   - today
-    //   - yesterday
-    //   - previous 7 days
-    //   - previous 30 days
-    //   - each month this year
-    //   - each year before.
-    const now = moment();
-    const startOfDay = now.clone().startOf("day");
-    const yesterday = startOfDay.clone().subtract(1, "day");
-    const sevenDaysAgo = startOfDay.clone().subtract(7, "days");
-    const thirtyDaysAgo = startOfDay.clone().subtract(30, "days");
-    const thisYear = now.clone().startOf("year");
-
-    const timestamps = {
-      startOfDay: +startOfDay / 1000,
-      yesterday: +yesterday / 1000,
-      sevenDaysAgo: +sevenDaysAgo / 1000,
-      thirtyDaysAgo: +thirtyDaysAgo / 1000,
-      thisYear: +thisYear / 1000,
-    };
-    for (const item of historyList ?? []) {
-      let groupKey: string;
-      if (item.startTime >= timestamps.startOfDay) {
-        groupKey = t(K.TODAY);
-      } else if (item.startTime >= timestamps.yesterday) {
-        groupKey = t(K.YESTERDAY);
-      } else if (item.startTime >= timestamps.sevenDaysAgo) {
-        groupKey = t(K.PREVIOUS_7_DAYS);
-      } else if (item.startTime >= timestamps.thirtyDaysAgo) {
-        groupKey = t(K.PREVIOUS_30_DAYS);
-      } else if (item.startTime >= timestamps.thisYear) {
-        groupKey = moment(item.startTime * 1000).format("MMMM");
-      } else {
-        groupKey = moment(item.startTime * 1000).format("YYYY");
-      }
-      let group = groupMap.get(groupKey);
-      if (!group) {
-        groupMap.set(groupKey, (group = { title: groupKey, items: [] }));
-      }
-      group.items.push(item);
-    }
-
-    return [...groupMap.values()];
-  }, [historyList]);
 
   const [actionsVisible, setActionsVisible] = useState<string | null>(null);
 
@@ -331,9 +307,21 @@ export function LowLevelChatHistory(
       addProject: (project: Project) => {
         setProjects((prev) => (prev ? [...prev, project] : [project]));
       },
+      moveConversation: (conversationId: string) => {
+        setMovedConversations((prev) => [...prev, conversationId]);
+      },
     }),
     [pull]
   );
+
+  const filteredHistoryList = useMemo(() => {
+    if (!historyList || !historyList.length) {
+      return historyList;
+    }
+    return historyList.filter(
+      (item) => !movedConversations.includes(item.conversationId)
+    );
+  }, [historyList, movedConversations]);
 
   return (
     <div className="history" ref={rootRef}>
@@ -344,11 +332,12 @@ export function LowLevelChatHistory(
             onClick={() => setProjectsCollapsed((prev) => !prev)}
           >
             {t(K.PROJECTS)}
-            <WrappedIcon lib="fa" icon="caret-down" />
+            <WrappedIcon lib="fa" icon="angle-down" />
           </div>
           <WrappedIconButton
             icon={ADD_ICON}
-            variant="mini"
+            variant="mini-light"
+            tooltip={t(K.CREATE_PROJECT)}
             onClick={onAddProject}
           />
         </div>
@@ -401,50 +390,40 @@ export function LowLevelChatHistory(
             onClick={() => setHistoryCollapsed((prev) => !prev)}
           >
             {t(K.HISTORY)}
-            <WrappedIcon lib="fa" icon="caret-down" />
+            <WrappedIcon lib="fa" icon="angle-down" />
           </div>
         </div>
-        <ul>
-          {historyList ? (
-            groups.map((group) => (
-              <li key={group.title} className="group">
-                <div className="group-title">{group.title}</div>
-                <ul className="items">
-                  {group.items.map((item) => (
-                    <li key={item.conversationId}>
-                      <WrappedLink
-                        className={classNames("item", {
-                          "actions-active":
-                            item.conversationId === actionsVisible,
-                          active: item.conversationId === historyActiveId,
-                        })}
-                        onClick={onHistoryClick}
-                        {...(historyUrlTemplate
-                          ? { url: parseTemplate(historyUrlTemplate, item) }
-                          : null)}
-                      >
-                        <div className="item-title" title={item.title}>
-                          {item.title}
-                        </div>
-                        <WrappedMiniActions
-                          className="actions"
-                          actions={historyActions}
-                          onActionClick={(e) => {
-                            onActionClick({ action: e.detail, item });
-                          }}
-                          onVisibleChange={(e) => {
-                            setActionsVisible(
-                              e.detail ? item.conversationId : null
-                            );
-                          }}
-                        />
-                        {!DONE_STATES.includes(item.state!) && (
-                          <div className="working"></div>
-                        )}
-                      </WrappedLink>
-                    </li>
-                  ))}
-                </ul>
+        <ul className="items">
+          {filteredHistoryList ? (
+            filteredHistoryList.map((item) => (
+              <li key={item.conversationId}>
+                <WrappedLink
+                  className={classNames("item", {
+                    "actions-active": item.conversationId === actionsVisible,
+                    active: item.conversationId === historyActiveId,
+                  })}
+                  onClick={onHistoryClick}
+                  {...(historyUrlTemplate
+                    ? { url: parseTemplate(historyUrlTemplate, item) }
+                    : null)}
+                >
+                  <div className="item-title" title={item.title}>
+                    {item.title}
+                  </div>
+                  <WrappedMiniActions
+                    className="actions"
+                    actions={mergedHistoryActions}
+                    onActionClick={(e) => {
+                      onActionClick({ action: e.detail, item });
+                    }}
+                    onVisibleChange={(e) => {
+                      setActionsVisible(e.detail ? item.conversationId : null);
+                    }}
+                  />
+                  {!DONE_STATES.includes(item.state!) && (
+                    <div className="working"></div>
+                  )}
+                </WrappedLink>
               </li>
             ))
           ) : (

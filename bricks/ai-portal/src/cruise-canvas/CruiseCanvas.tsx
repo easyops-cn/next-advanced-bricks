@@ -46,6 +46,7 @@ import {
   CANVAS_PADDING_RIGHT,
   CANVAS_PADDING_TOP,
   END_NODE_ID,
+  FEEDBACK_NODE_ID,
 } from "./constants.js";
 import { DONE_STATES, GENERAL_DONE_STATES } from "../shared/constants.js";
 import { WrappedIcon } from "../shared/bricks";
@@ -761,8 +762,8 @@ export function CruiseCanvasComponent(
           >
             <svg className={styles.edges}>
               {edges.map((edge) =>
-                edge.source === END_NODE_ID ||
-                edge.target === END_NODE_ID ? null : (
+                edge.target === END_NODE_ID ||
+                edge.target === FEEDBACK_NODE_ID ? null : (
                   <path
                     className={styles.edge}
                     key={`${edge.source}-${edge.target}`}

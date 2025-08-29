@@ -1,21 +1,21 @@
 import { i18n } from "@next-core/i18n";
 
 export enum K {
-  ALL = "ALL",
-  EXPLORE_EXCELLENT_CASES = "EXPLORE_EXCELLENT_CASES",
+  CHATS = "CHATS",
+  GOALS = "GOALS",
 }
 
 const en: Locale = {
-  [K.ALL]: "All",
-  [K.EXPLORE_EXCELLENT_CASES]: "Explore excellent cases",
+  [K.CHATS]: "Chat history",
+  [K.GOALS]: "Project goals",
 };
 
 const zh: Locale = {
-  [K.ALL]: "全部",
-  [K.EXPLORE_EXCELLENT_CASES]: "探索优秀案例",
+  [K.CHATS]: "历史对话",
+  [K.GOALS]: "项目目标",
 };
 
-export const NS = "bricks/ai-portal/show-cases";
+export const NS = "bricks/ai-portal/project-summary";
 
 export const locales = { en, zh };
 

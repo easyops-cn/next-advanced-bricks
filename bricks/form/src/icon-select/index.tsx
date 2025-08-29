@@ -56,15 +56,19 @@ const WrappedGeneralRadio = wrapBrick<
   onOptionsChange: "optionsChange",
 });
 const WrappedGeneralIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
-const WrappedModal = wrapBrick<Modal, ModalProps, ModalEvents, ModalMapEvents>(
-  "eo-modal",
-  {
-    onClose: "close",
-    onConfirm: "confirm",
-    onCancel: "cancel",
-    onOpen: "open",
-  }
-);
+const WrappedModal = wrapBrick<
+  Modal,
+  ModalProps & {
+    themeVariant?: "default" | "elevo";
+  },
+  ModalEvents,
+  ModalMapEvents
+>("eo-modal", {
+  onClose: "close",
+  onConfirm: "confirm",
+  onCancel: "cancel",
+  onOpen: "open",
+});
 const WrappedSearch = wrapBrick<
   GeneralSearch,
   SearchProps,
@@ -85,6 +89,7 @@ export interface IconSelectProps {
   disabled?: boolean;
   required?: boolean;
   message?: Record<string, string>;
+  themeVariant?: "default" | "elevo";
 }
 
 /**
@@ -142,6 +147,10 @@ class IconSelect extends FormItemElementBase implements IconSelectProps {
   })
   accessor message: Record<string, string> | undefined;
 
+  /** 主题变体 */
+  @property()
+  accessor themeVariant: "default" | "elevo" | undefined;
+
   /**
    * 值变化时触发
    */
@@ -163,6 +172,7 @@ class IconSelect extends FormItemElementBase implements IconSelectProps {
         required={this.required}
         disabled={this.disabled}
         message={this.message}
+        themeVariant={this.themeVariant}
         notRender={this.notRender}
         helpBrick={this.helpBrick}
         labelBrick={this.labelBrick}
@@ -273,6 +283,7 @@ export function IconSelectComponent(props: IconSelectComponentProps) {
         width="778px"
         maskClosable={false}
         closeWhenConfirm={false}
+        themeVariant={props.themeVariant}
         onConfirm={handleModalConfirm}
         onClose={handleModalClose}
         onOpen={handleModalOpen}
@@ -331,6 +342,7 @@ export function IconSelectComponent(props: IconSelectComponentProps) {
               <WrappedSearch
                 value={searchParams.q}
                 placeholder={t(K.SEARCH_PLACEHOLDER)!}
+                themeVariant={props.themeVariant}
                 onSearch={(e) => {
                   const newSearchParams = { ...searchParams, q: e.detail };
                   setSearchParams(newSearchParams);
@@ -345,6 +357,7 @@ export function IconSelectComponent(props: IconSelectComponentProps) {
                   };
                 })}
                 value={searchParams.lib}
+                themeVariant={props.themeVariant}
                 onValueChange={(e) => {
                   const newSearchParams = {
                     ...searchParams,

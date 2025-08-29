@@ -54,3 +54,25 @@ button:not(:disabled):active {
   font-size: 16px;
   border-radius: 4px;
 }
+
+:host([variant="mini-light"]) button {
+  color: #8c8c8c;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+:host([variant="bordered"]) button {
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #595959;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+}
+
+:host([variant="bordered"]) button:not(:disabled):hover {
+  background: rgba(0, 0, 0, 0.04);
+}

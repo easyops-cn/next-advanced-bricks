@@ -37,6 +37,8 @@ export interface UploadImageProps {
   maxCount?: number;
   multiple?: boolean;
   limitSize?: number;
+  variant?: "default" | "avatar";
+  themeVariant?: "default" | "elevo";
 }
 
 /**
@@ -116,6 +118,14 @@ class UploadImage extends FormItemElementBase implements UploadImageProps {
   })
   accessor message: Record<string, string> | undefined;
 
+  /** 变体 */
+  @property()
+  accessor variant: "default" | "avatar" | undefined;
+
+  /** 主题变体 */
+  @property()
+  accessor themeVariant: "default" | "elevo" | undefined;
+
   /**
    * 值变化时触发
    */
@@ -142,6 +152,8 @@ class UploadImage extends FormItemElementBase implements UploadImageProps {
         limitSize={this.limitSize}
         notRender={this.notRender}
         helpBrick={this.helpBrick}
+        variant={this.variant}
+        themeVariant={this.themeVariant}
         onChange={this.handleChange}
         trigger="handleChange"
       />
@@ -172,7 +184,19 @@ interface UploadImageComponentProps extends UploadImageProps, FormItemProps {
 }
 
 export function UploadImageComponent(props: UploadImageComponentProps) {
-  const { value, bucketName, multiple, maxCount, onChange, limitSize } = props;
+  const {
+    value,
+    bucketName,
+    multiple: _multiple,
+    maxCount: _maxCount,
+    onChange,
+    limitSize,
+    variant,
+    themeVariant,
+  } = props;
+  const maxCount = variant === "avatar" ? 1 : _maxCount;
+  const multiple = variant === "avatar" ? false : _multiple;
+
   const { t } = useTranslation(NS);
   const wrapBrickImageRef = useRef<Image>(null);
 
@@ -275,6 +299,7 @@ export function UploadImageComponent(props: UploadImageComponentProps) {
         maxCount={maxCount}
         multiple={multiple}
         limitSize={limitSize}
+        variant={variant}
         beforeUploadValidators={[(file) => imageValidator(file)]}
         beforeUploadUserDataProcessor={userDataProcessor}
         onChange={handleChange}
@@ -284,17 +309,20 @@ export function UploadImageComponent(props: UploadImageComponentProps) {
             <>
               <WrappedButton
                 icon={defaultUploadIcon}
+                themeVariant={themeVariant}
                 onClick={uploadActions.upload}
               >
                 {t(K.UPLOAD)}
               </WrappedButton>
-              <WrappedImage
-                ref={wrapBrickImageRef}
-                onlyPreview={true}
-                imgList={fileDataList.map((item) => ({
-                  src: item.url || item.userData?.url,
-                }))}
-              />
+              {variant !== "avatar" && (
+                <WrappedImage
+                  ref={wrapBrickImageRef}
+                  onlyPreview={true}
+                  imgList={fileDataList.map((item) => ({
+                    src: item.url || item.userData?.url,
+                  }))}
+                />
+              )}
             </>
           );
         }}
