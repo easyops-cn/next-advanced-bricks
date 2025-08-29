@@ -5,6 +5,7 @@ import type {
 } from "../interfaces.js";
 import { validateExpression } from "../utils.js";
 import { replaceCTX, replaceVariables } from "./replaceVariables.js";
+import { constructComponents } from "./components.js";
 
 const ambiguousSymbol = Symbol("ambiguous");
 
@@ -35,6 +36,35 @@ export function constructJsValue(
 
   if (t.isIdentifier(node) && node.name === "undefined") {
     return undefined;
+  }
+
+  if (options.allowUseBrick && t.isArrowFunctionExpression(node)) {
+    const expr = node.body;
+    if (t.isBlockStatement(expr)) {
+      state.errors.push({
+        message: "Block statements are not supported in render callback",
+        node: expr,
+        severity: "error",
+      });
+      return null;
+    }
+    const paramNames: string[] = [];
+    for (const param of node.params) {
+      if (t.isIdentifier(param)) {
+        paramNames.push(param.name);
+      } else {
+        state.errors.push({
+          message: `Unsupported parameter type: ${param.type}`,
+          node: param,
+          severity: "error",
+        });
+        return null;
+      }
+    }
+    return {
+      params: paramNames,
+      children: constructComponents([expr], state, undefined, options),
+    };
   }
 
   if (t.isExpression(node) && options.allowExpression) {

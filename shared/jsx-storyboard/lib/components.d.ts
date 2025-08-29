@@ -17,12 +17,7 @@ export interface TableProps<T extends object> extends BaseProps {
     pageSize?: number;
     total?: number;
   };
-  columns: Array<{
-    key: string;
-    dataIndex: string;
-    title: string;
-    sortable?: boolean;
-  }>;
+  columns: TableColumn<T>[];
   rowKey: string;
   rowSelection?: boolean;
   sort?: TableSort | null;
@@ -143,6 +138,14 @@ export interface IconProps {
   lib: "fa";
   prefix: "fas" | "far";
   icon: string;
+}
+
+export interface TableColumn<T extends object> {
+  key: string;
+  dataIndex: string;
+  title: string;
+  sortable?: boolean;
+  render?: (value: any, record: T) => any;
 }
 
 export interface TableSort {
