@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.31.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.31.1...@next-bricks/ai-portal@0.31.2) (2025-08-29)
+
+
+### Bug Fixes
+
+* fix replay watch again ([4e48e54](https://github.com/easyops-cn/next-advanced-bricks/commit/4e48e5427a3a8223d14c2f2e9dfc04099e7216e4))
+
+
+
+
+
 ## [0.31.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.31.0...@next-bricks/ai-portal@0.31.1) (2025-08-29)
 
 
