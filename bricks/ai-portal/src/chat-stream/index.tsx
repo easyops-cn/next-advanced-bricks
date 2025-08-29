@@ -525,10 +525,10 @@ function LegacyChatStreamComponent(
         </div>
         <div
           className={classNames(styles.aside, {
-            [styles.expanded]: !!activeToolCallJobId,
+            [styles.expanded]: !!activeToolCallJob,
           })}
         >
-          {activeToolCallJobId && <Aside job={activeToolCallJob!} />}
+          {activeToolCallJob && <Aside job={activeToolCallJob!} />}
         </div>
         {activeExpandedViewJobId && <ExpandedView views={views!} />}
       </StreamContext.Provider>
