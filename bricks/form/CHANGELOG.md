@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.18.6...@next-bricks/form@1.18.7) (2025-08-29)
+
+
+### Bug Fixes
+
+* **eo-upload-image:** support avatar variant ([c414ce0](https://github.com/easyops-cn/next-advanced-bricks/commit/c414ce03647dbecaecfd09f0cd07a6ceb28903cd))
+
+
+
+
+
 ## [1.18.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.18.5...@next-bricks/form@1.18.6) (2025-08-26)
 
 
