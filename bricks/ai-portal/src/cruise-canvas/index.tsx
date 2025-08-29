@@ -25,6 +25,7 @@ export interface CruiseCanvasProps {
   supports?: Record<string, boolean>;
   showHiddenJobs?: boolean;
   showFeedback?: boolean;
+  showFeedbackAfterFailed?: boolean;
   showUiSwitch?: boolean;
   showFeedbackOnView?: boolean;
   showJsxEditor?: boolean;
@@ -81,6 +82,9 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
 
   @property({ type: Boolean })
   accessor showFeedback: boolean | undefined;
+
+  @property({ type: Boolean })
+  accessor showFeedbackAfterFailed: boolean | undefined;
 
   @property({ type: Boolean })
   accessor showFeedbackOnView: boolean | undefined;
@@ -167,6 +171,7 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         supports={this.supports}
         showHiddenJobs={this.showHiddenJobs}
         showFeedback={this.showFeedback}
+        showFeedbackAfterFailed={this.showFeedbackAfterFailed}
         showUiSwitch={this.showUiSwitch}
         showFeedbackOnView={this.showFeedbackOnView}
         showJsxEditor={this.showJsxEditor}

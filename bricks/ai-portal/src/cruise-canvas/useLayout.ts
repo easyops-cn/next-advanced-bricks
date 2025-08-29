@@ -21,7 +21,9 @@ export interface UseLayoutOptions {
   rawEdges: GraphEdge[] | undefined;
   sizeMap: Map<string, SizeTuple> | null;
   completed?: boolean;
+  failed?: boolean;
   showFeedback?: boolean;
+  showFeedbackAfterFailed?: boolean;
 }
 
 export function useLayout({
@@ -29,7 +31,9 @@ export function useLayout({
   rawEdges: _rawEdges,
   sizeMap,
   completed,
+  failed,
   showFeedback,
+  showFeedbackAfterFailed,
 }: UseLayoutOptions) {
   const memoizedPositionsRef = useRef<Map<string, NodePosition> | null>(null);
 
@@ -46,7 +50,9 @@ export function useLayout({
     const rawEdges = _rawEdges ?? [];
 
     const hasSource = new Set<string>(rawEdges.map((edge) => edge.target));
-    const hasTarget = completed
+    const shouldAppend =
+      completed || (failed && showFeedback && showFeedbackAfterFailed);
+    const hasTarget = shouldAppend
       ? new Set<string>(rawEdges.map((edge) => edge.source))
       : null;
 
@@ -58,7 +64,7 @@ export function useLayout({
         });
       }
 
-      if (completed && !hasTarget!.has(node.id)) {
+      if (shouldAppend && !hasTarget!.has(node.id)) {
         finishedNodeIds.push(node.id);
       }
     }
@@ -67,25 +73,38 @@ export function useLayout({
     initialEdges.push(...rawEdges);
 
     if (finishedNodeIds.length > 0) {
-      initialNodes.push({
-        id: END_NODE_ID,
-        type: "end",
-      });
-      initialEdges.push(
-        ...finishedNodeIds.map((id) => ({
-          source: id,
-          target: END_NODE_ID,
-        }))
-      );
-      if (showFeedback) {
+      if (completed) {
+        initialNodes.push({
+          id: END_NODE_ID,
+          type: "end",
+        });
+        initialEdges.push(
+          ...finishedNodeIds.map((id) => ({
+            source: id,
+            target: END_NODE_ID,
+          }))
+        );
+        if (showFeedback) {
+          initialNodes.push({
+            id: FEEDBACK_NODE_ID,
+            type: "feedback",
+          });
+          initialEdges.push({
+            source: END_NODE_ID,
+            target: FEEDBACK_NODE_ID,
+          });
+        }
+      } else {
         initialNodes.push({
           id: FEEDBACK_NODE_ID,
           type: "feedback",
         });
-        initialEdges.push({
-          source: END_NODE_ID,
-          target: FEEDBACK_NODE_ID,
-        });
+        for (const id of finishedNodeIds) {
+          initialEdges.push({
+            source: id,
+            target: FEEDBACK_NODE_ID,
+          });
+        }
       }
     }
 
@@ -100,7 +119,14 @@ export function useLayout({
     }
 
     return { initialNodes, initialEdges };
-  }, [completed, showFeedback, _rawEdges, _rawNodes]);
+  }, [
+    _rawNodes,
+    _rawEdges,
+    completed,
+    failed,
+    showFeedback,
+    showFeedbackAfterFailed,
+  ]);
 
   const startNodePositionRef = useRef<NodePosition | null>(null);
 

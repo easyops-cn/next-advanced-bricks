@@ -11,7 +11,7 @@
   background-position: center;
   background-attachment: fixed;
   color: #262626;
-  padding: 48px 24px;
+  padding: 17px 54px 48px;
   overflow-y: auto;
 }
 
@@ -28,14 +28,40 @@
   margin: 0 auto;
 }
 
-h1 {
+:host([size="small"]) .container {
+  max-width: 1000px;
+}
+
+nav {
   font-weight: 500;
-  margin: 0;
   font-size: 20px;
   line-height: 28px;
+  display: flex;
   margin-bottom: 17px;
 }
 
-:host([size="small"]) .container {
-  max-width: 908px;
+h1 {
+  margin: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.breadcrumbs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #bfbfbf;
+
+  eo-link::part(link) {
+    color: inherit;
+  }
+
+  eo-link::part(link):hover {
+    color: #595959;
+  }
+
+  li::after {
+    content: "/";
+    margin: 0 8px;
+  }
 }

@@ -4,7 +4,6 @@ import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import type { Link, LinkProps } from "@next-bricks/basic/link";
-import classNames from "classnames";
 import { getBasePath } from "@next-core/runtime";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
@@ -16,6 +15,7 @@ import type {
   TabListMapping,
   TabListProps,
 } from "../tab-list/index.js";
+import bg from "./images/bg.png";
 
 initializeI18n(NS, locales);
 
@@ -96,6 +96,7 @@ function ShowCasesComponent({ list, taskUrlTemplate }: ShowCasesProps) {
 
   return (
     <>
+      <div className="tips">{`${t(K.EXPLORE_EXCELLENT_CASES)} ↓`}</div>
       <WrappedTabList
         tabs={tabs}
         activeTab={activeGroup}
@@ -109,23 +110,21 @@ function ShowCasesComponent({ list, taskUrlTemplate }: ShowCasesProps) {
               url={parseTemplate(taskUrlTemplate, item)}
             >
               <span
-                className={classNames(
-                  "placeholder",
-                  item.thumbUrl ? "thumbnail" : "summary"
-                )}
+                className="thumbnail"
+                style={{
+                  backgroundImage: [
+                    ...(item.thumbUrl
+                      ? [`url(${getBasePath()}${item.thumbUrl})`]
+                      : []),
+                    `url(${bg})`,
+                  ].join(", "),
+                }}
               >
-                {item.thumbUrl ? (
-                  <span
-                    style={{
-                      backgroundImage: `url(${getBasePath()}${item.thumbUrl})`,
-                    }}
-                  />
-                ) : (
-                  <span className="summary-1">
-                    <span className="summary-2">
-                      <span>{item.summary}</span>
-                    </span>
-                  </span>
+                {!item.thumbUrl && (
+                  <>
+                    <span className="quote" />
+                    <span className="text">{item.summary}</span>
+                  </>
                 )}
               </span>
               <span className="title">

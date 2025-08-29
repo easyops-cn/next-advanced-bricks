@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -10,6 +11,7 @@ import classNames from "classnames";
 import {
   ElevoApi_listElevoConversations,
   ElevoApi_getElevoProjects,
+  type ElevoApi_ListElevoConversationsRequestParams,
 } from "@next-api-sdk/llm-sdk";
 import type {
   ActionType,
@@ -48,6 +50,7 @@ export interface GroupedHistory {
 export interface ActionClickDetail {
   action: SimpleActionType;
   item: HistoryItem;
+  project?: Project;
 }
 
 export interface ProjectActionClickDetail {
@@ -94,6 +97,7 @@ export interface ChatHistoryRef {
   pull: () => void;
   removeProject?: (projectId: string) => void;
   addProject?: (project: Project) => void;
+  moveConversation?: (conversationId: string) => void;
 }
 
 export const ChatHistory = forwardRef(LowLevelChatHistory);
@@ -122,6 +126,26 @@ export function LowLevelChatHistory(
   const [nextToken, setNextToken] = useState<string | undefined>();
   const [loadNextToken, setLoadNextToken] = useState<string | undefined>();
   const initialRef = useRef(true);
+  const [movedConversations, setMovedConversations] = useState<string[]>([]);
+
+  const mergedHistoryActions = useMemo(
+    () =>
+      [
+        ...(historyActions ?? []),
+        {
+          isDropdown: true,
+          text: t(K.MOVE_TO_PROJECT),
+          disabled: !projects?.length,
+          items: projects?.map((project) => ({
+            event: "move",
+            key: project.instanceId,
+            text: project.name,
+            project,
+          })),
+        },
+      ] as ActionType[],
+    [historyActions, projects]
+  );
 
   useEffect(() => {
     (async () => {
@@ -150,9 +174,11 @@ export function LowLevelChatHistory(
       ElevoApi_listElevoConversations(
         {
           token: loadNextToken,
-          username,
+          // username,
           limit: 30,
-        },
+          onlyOwner: true,
+          onlyRelatedProject: true,
+        } as ElevoApi_ListElevoConversationsRequestParams,
         {
           interceptorParams: {
             ignoreLoadingBar: true,
@@ -281,9 +307,21 @@ export function LowLevelChatHistory(
       addProject: (project: Project) => {
         setProjects((prev) => (prev ? [...prev, project] : [project]));
       },
+      moveConversation: (conversationId: string) => {
+        setMovedConversations((prev) => [...prev, conversationId]);
+      },
     }),
     [pull]
   );
+
+  const filteredHistoryList = useMemo(() => {
+    if (!historyList || !historyList.length) {
+      return historyList;
+    }
+    return historyList.filter(
+      (item) => !movedConversations.includes(item.conversationId)
+    );
+  }, [historyList, movedConversations]);
 
   return (
     <div className="history" ref={rootRef}>
@@ -356,8 +394,8 @@ export function LowLevelChatHistory(
           </div>
         </div>
         <ul className="items">
-          {historyList ? (
-            historyList.map((item) => (
+          {filteredHistoryList ? (
+            filteredHistoryList.map((item) => (
               <li key={item.conversationId}>
                 <WrappedLink
                   className={classNames("item", {
@@ -374,7 +412,7 @@ export function LowLevelChatHistory(
                   </div>
                   <WrappedMiniActions
                     className="actions"
-                    actions={historyActions}
+                    actions={mergedHistoryActions}
                     onActionClick={(e) => {
                       onActionClick({ action: e.detail, item });
                     }}
