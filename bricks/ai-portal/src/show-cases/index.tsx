@@ -9,10 +9,25 @@ import { getBasePath } from "@next-core/runtime";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
 import { parseTemplate } from "../shared/parseTemplate.js";
+import type {
+  Tab,
+  TabList,
+  TabListEvents,
+  TabListMapping,
+  TabListProps,
+} from "../tab-list/index.js";
 
 initializeI18n(NS, locales);
 
 const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
+const WrappedTabList = wrapBrick<
+  TabList,
+  TabListProps,
+  TabListEvents,
+  TabListMapping
+>("ai-portal.tab-list", {
+  onTabClick: "tab.click",
+});
 
 const { defineElement, property } = createDecorators();
 
@@ -55,14 +70,11 @@ class ShowCases extends ReactNextElement implements ShowCasesProps {
 
 function ShowCasesComponent({ list, taskUrlTemplate }: ShowCasesProps) {
   // Grouping the list by scenario
-  const groups = useMemo<(string | null)[]>(() => {
-    return [
-      null,
-      ...new Set(list?.map((item) => item.scenario).filter(Boolean)),
-    ];
+  const groups = useMemo<string[]>(() => {
+    return ["", ...new Set(list?.map((item) => item.scenario).filter(Boolean))];
   }, [list]);
 
-  const [activeGroup, setActiveGroup] = useState<string | null>(null);
+  const [activeGroup, setActiveGroup] = useState("");
 
   const filteredList = useMemo(() => {
     if (!activeGroup) {
@@ -71,24 +83,24 @@ function ShowCasesComponent({ list, taskUrlTemplate }: ShowCasesProps) {
     return list?.filter((item) => item.scenario === activeGroup);
   }, [activeGroup, list]);
 
+  const tabs = useMemo<Tab[]>(() => {
+    return groups.map((group) => ({
+      id: group,
+      label: group === "" ? t(K.ALL) : group,
+    }));
+  }, [groups]);
+
   if (!list?.length) {
     return null;
   }
 
   return (
     <>
-      <ul className="nav">
-        {groups?.map((group) => (
-          <li key={group} className="item">
-            <a
-              className={classNames({ active: activeGroup === group })}
-              onClick={() => setActiveGroup(group)}
-            >
-              {group === null ? t(K.ALL) : group}
-            </a>
-          </li>
-        ))}
-      </ul>
+      <WrappedTabList
+        tabs={tabs}
+        activeTab={activeGroup}
+        onTabClick={(event) => setActiveGroup(event.detail.id)}
+      />
       <ul className="cases">
         {filteredList?.map((item) => (
           <li key={item.taskId} className="item">

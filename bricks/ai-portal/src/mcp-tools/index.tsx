@@ -7,9 +7,15 @@ import type {
   GeneralIcon,
   GeneralIconProps,
 } from "@next-bricks/icons/general-icon";
-import classNames from "classnames";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
+import type {
+  Tab,
+  TabList,
+  TabListEvents,
+  TabListMapping,
+  TabListProps,
+} from "../tab-list/index.js";
 
 initializeI18n(NS, locales);
 
@@ -70,6 +76,14 @@ const PLATFORM_CONFIG = new Map([
 ]);
 
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
+const WrappedTabList = wrapBrick<
+  TabList,
+  TabListProps,
+  TabListEvents,
+  TabListMapping
+>("ai-portal.tab-list", {
+  onTabClick: "tab.click",
+});
 
 const { defineElement, property } = createDecorators();
 
@@ -167,34 +181,34 @@ function McpToolsComponent({ list, withContainer }: McpToolsProps) {
         (bIndex < 0 ? orderedNames.length : bIndex)
       );
     });
-    return [null, ...names];
+    return ["", ...names];
   }, [platformMap]);
 
-  const [activePlatform, setActivePlatform] = useState<string | null>(null);
+  const [activePlatform, setActivePlatform] = useState("");
 
   const filteredGroups = useMemo(() => {
     const groupedList = [...groupMap];
-    if (activePlatform === null) {
+    if (!activePlatform) {
       return groupedList;
     }
     const platformGroups = platformMap.get(activePlatform);
     return groupedList.filter(([group]) => platformGroups?.includes(group));
   }, [activePlatform, groupMap, platformMap]);
 
+  const tabs = useMemo<Tab[]>(() => {
+    return platforms.map((platform) => ({
+      id: platform,
+      label: platform === "" ? t(K.ALL) : platform,
+    }));
+  }, [platforms]);
+
   const node = (
     <>
-      <ul className="nav">
-        {platforms?.map((platform) => (
-          <li key={platform} className="item">
-            <a
-              className={classNames({ active: activePlatform === platform })}
-              onClick={() => setActivePlatform(platform)}
-            >
-              {platform === null ? t(K.ALL) : platform}
-            </a>
-          </li>
-        ))}
-      </ul>
+      <WrappedTabList
+        tabs={tabs}
+        activeTab={activePlatform}
+        onTabClick={(event) => setActivePlatform(event.detail.id)}
+      />
       <ul className="groups">
         {filteredGroups?.map(([groupName, items]) => (
           <li key={groupName} className="group">

@@ -4,33 +4,34 @@ import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import type { Link, LinkProps } from "@next-bricks/basic/link";
+import type {
+  GeneralIcon,
+  GeneralIconProps,
+} from "@next-bricks/icons/general-icon";
 import classNames from "classnames";
-import Avatar1 from "./images/avatar-1@2x.png";
-import Avatar2 from "./images/avatar-2@2x.png";
-import Avatar3 from "./images/avatar-3@2x.png";
-import Avatar4 from "./images/avatar-4@2x.png";
-import Avatar5 from "./images/avatar-5@2x.png";
-import Avatar6 from "./images/avatar-6@2x.png";
-import Avatar7 from "./images/avatar-7@2x.png";
-import Avatar8 from "./images/avatar-8@2x.png";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
-import { parseTemplate } from "../shared/parseTemplate";
+import { parseTemplate } from "../shared/parseTemplate.js";
+import type {
+  Tab,
+  TabList,
+  TabListEvents,
+  TabListMapping,
+  TabListProps,
+} from "../tab-list/index.js";
 
 initializeI18n(NS, locales);
 
-const AVATARS = [
-  Avatar1,
-  Avatar2,
-  Avatar3,
-  Avatar4,
-  Avatar5,
-  Avatar6,
-  Avatar7,
-  Avatar8,
-];
-
 const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
+const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
+const WrappedTabList = wrapBrick<
+  TabList,
+  TabListProps,
+  TabListEvents,
+  TabListMapping
+>("ai-portal.tab-list", {
+  onTabClick: "tab.click",
+});
 
 const { defineElement, property } = createDecorators();
 
@@ -48,6 +49,7 @@ export interface Employee {
   industry: string;
   role: string;
   description: string;
+  avatar?: string;
 }
 
 /**
@@ -119,24 +121,22 @@ function AIEmployeesComponent({
     return [...map.entries()];
   }, [activeIndustry, list]);
 
-  const industryIndex = industries.indexOf(activeIndustry);
+  const tabs = useMemo<Tab[]>(() => {
+    return industries.map((industry) => ({
+      id: industry,
+      label: industry || t(K.UNTITLED),
+    }));
+  }, [industries]);
 
   const node = (
     <>
-      <ul className="nav">
-        {industries.map((industry) => (
-          <li key={industry} className="item">
-            <a
-              className={classNames({ active: industry === activeIndustry })}
-              onClick={() => setActiveIndustry(industry)}
-            >
-              {industry}
-            </a>
-          </li>
-        ))}
-      </ul>
+      <WrappedTabList
+        tabs={tabs}
+        activeTab={activeIndustry}
+        onTabClick={(event) => setActiveIndustry(event.detail.id)}
+      />
       <ul className="groups">
-        {groups.map(([groupName, items], groupIndex) => (
+        {groups.map(([groupName, items]) => (
           <li key={groupName} className="group">
             <h2>{groupName}</h2>
             <ul className="list">
@@ -150,14 +150,11 @@ function AIEmployeesComponent({
                   >
                     <div className="heading">
                       <div className="avatar">
-                        <img
-                          src={
-                            AVATARS[
-                              (index + groupIndex + industryIndex) %
-                                AVATARS.length
-                            ]
-                          }
-                        />
+                        {item.avatar ? (
+                          <img src={item.avatar} />
+                        ) : (
+                          <WrappedIcon lib="antd" icon="user" />
+                        )}
                       </div>
                       <div className="title">{item.name}</div>
                     </div>

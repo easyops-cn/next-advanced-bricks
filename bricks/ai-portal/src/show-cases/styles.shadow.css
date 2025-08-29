@@ -14,42 +14,10 @@
   box-sizing: border-box;
 }
 
-.nav,
 .cases {
   list-style: none;
   padding: 0;
   margin: 0;
-}
-
-.nav {
-  display: flex;
-  font-size: 16px;
-
-  .item + .item {
-    margin-left: 32px;
-  }
-
-  .item a {
-    color: rgba(38, 38, 38, 0.65);
-    cursor: pointer;
-
-    &.active {
-      color: #262626;
-      font-weight: 500;
-
-      &::after {
-        content: "";
-        display: block;
-        width: 100%;
-        height: 4px;
-        background-color: currentColor;
-        border-radius: 2px;
-      }
-    }
-  }
-}
-
-.cases {
   display: grid;
   width: 100%;
   grid-template-columns: repeat(auto-fill, minmax(276px, 1fr));
