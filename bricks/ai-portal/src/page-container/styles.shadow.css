@@ -32,12 +32,19 @@
   max-width: 1000px;
 }
 
+.header {
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 nav {
   font-weight: 500;
   font-size: 20px;
   line-height: 28px;
   display: flex;
-  margin-bottom: 17px;
+  min-width: 0;
 }
 
 h1 {
