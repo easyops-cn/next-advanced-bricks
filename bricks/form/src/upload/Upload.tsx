@@ -1,6 +1,12 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import "@next-core/theme";
 import { http } from "@next-core/http";
+import classNames from "classnames";
+import { wrapBrick } from "@next-core/react-element";
+import type {
+  GeneralIcon,
+  GeneralIconProps,
+} from "@next-bricks/icons/general-icon";
 import {
   getUid,
   type FileData,
@@ -9,6 +15,9 @@ import {
   sizeValidator,
   UploadStatus,
 } from "./utils.js";
+import type { ImageData } from "./upload-image/utils.js";
+
+const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
 export interface UploadActions {
   upload: () => void;
@@ -39,6 +48,7 @@ export interface UploadProps {
   multiple?: boolean;
   maxCount?: number;
   limitSize?: number;
+  variant?: "default" | "avatar";
   overMaxCountMode?: "ignore" | "replace";
   beforeUploadValidators?: ((file: File, files: File[]) => Promise<unknown>)[];
   beforeUploadUserDataProcessor?: (
@@ -64,6 +74,7 @@ export function Upload(props: UploadProps) {
     beforeUploadValidators = [],
     beforeUploadUserDataProcessor,
     multiple,
+    variant,
   } = props;
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -121,8 +132,8 @@ export function Upload(props: UploadProps) {
           const status: UploadStatus = errors.length
             ? "error"
             : autoUpload
-            ? "uploading"
-            : "done";
+              ? "uploading"
+              : "done";
 
           const userData = await beforeUploadUserDataProcessor?.(
             file,
@@ -268,23 +279,45 @@ export function Upload(props: UploadProps) {
         hidden
         onChange={handleInputChange}
       />
-      <div className="upload-wrapper">
-        {children(internalFileDataList, {
-          upload: () => inputRef.current?.click(),
-          uploadFiles: (files) => handleFileUpload(files),
+      <div
+        className={classNames("upload-wrapper", {
+          "upload-wrapper-avatar": variant === "avatar",
         })}
-        <div className="file-list">
-          {internalFileDataList.map((fileData, index) => {
-            const actions = {
-              remove: () => handleRemove(fileData),
-            };
-            return (
-              <React.Fragment key={fileData.uid}>
-                {itemRender(fileData, internalFileDataList, actions, index)}
-              </React.Fragment>
-            );
-          })}
-        </div>
+      >
+        {variant === "avatar" ? (
+          <>
+            <div className="avatar">
+              {internalFileDataList.length > 0 ? (
+                <img src={(internalFileDataList[0] as ImageData).url} />
+              ) : (
+                <WrappedIcon lib="antd" icon="user" />
+              )}
+            </div>
+            {children(internalFileDataList, {
+              upload: () => inputRef.current?.click(),
+              uploadFiles: (files) => handleFileUpload(files),
+            })}
+          </>
+        ) : (
+          <>
+            {children(internalFileDataList, {
+              upload: () => inputRef.current?.click(),
+              uploadFiles: (files) => handleFileUpload(files),
+            })}
+            <div className="file-list">
+              {internalFileDataList.map((fileData, index) => {
+                const actions = {
+                  remove: () => handleRemove(fileData),
+                };
+                return (
+                  <React.Fragment key={fileData.uid}>
+                    {itemRender(fileData, internalFileDataList, actions, index)}
+                  </React.Fragment>
+                );
+              })}
+            </div>
+          </>
+        )}
       </div>
     </>
   );
