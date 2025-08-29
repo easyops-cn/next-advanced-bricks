@@ -480,7 +480,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
 });
 
 /**
- * 工作台布局V2,未使用shadow dom
+ * 工作台布局V2, 未使用shadow dom
  */
 export
 @defineElement("eo-workbench-layout-v2", { shadowOptions: false })
