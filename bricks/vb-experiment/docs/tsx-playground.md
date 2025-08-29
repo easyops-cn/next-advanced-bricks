@@ -131,7 +131,13 @@
                   { dataIndex: "total_inodes", key: "total_inodes", title: "Inode 总数" },
                   { dataIndex: "used_inodes", key: "used_inodes", title: "已用 Inode" },
                   { dataIndex: "free_inodes", key: "free_inodes", title: "空闲 Inode" },
-                  { dataIndex: "percent", key: "percent", title: "使用率" }
+                  {
+                    dataIndex: "percent", key: "percent", title: "使用率",
+                    render: (cell, record) => (
+                      // <Plaintext>{record.percent}%</Plaintext>
+                      `~${record.percent}`
+                    )
+                  }
                 ]}
                 rowKey="device"
                 pagination={false}

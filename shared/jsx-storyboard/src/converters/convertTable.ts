@@ -1,23 +1,38 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component, ConstructResult } from "../interfaces.js";
-import type { TableProps } from "../../lib/components.js";
+import type {
+  Component,
+  ConstructedView,
+  RenderUseBrick,
+} from "../interfaces.js";
+import type { TableColumn, TableProps } from "../../lib/components.js";
 import type { ConvertViewOptions } from "../interfaces.js";
 import { lowLevelConvertToStoryboard } from "../converters/raw-data-generate/convert.js";
 import { parseDataSource } from "./expressions.js";
 import { getPreGeneratedAttrViews } from "./getPreGeneratedAttrViews.js";
 import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
+import { convertComponent } from "./convertComponent.js";
+import { deepReplaceVariables } from "../tsx-constructors/replaceVariables.js";
+
+const columnUseBrickParams = ["cellData", "rowData"];
 
 export default async function convertTable(
   component: Component,
-  view: ConstructResult,
+  view: ConstructedView,
   options: ConvertViewOptions
 ): Promise<BrickConf> {
   const { properties } = component;
   const { dataSource, size, columns, rowKey, pagination, ...restProps } =
-    properties as Omit<TableProps<any>, "dataSource"> & {
+    properties as Omit<TableProps<object>, "dataSource" | "columns"> & {
       dataSource: string | object;
       size?: "small" | "medium" | "large";
       pagination?: boolean;
+      columns:
+        | string
+        | Array<
+            Omit<TableColumn<object>, "render"> & {
+              render?: RenderUseBrick;
+            }
+          >;
     };
 
   const parsedDataSource = parseDataSource(dataSource);
@@ -32,10 +47,13 @@ export default async function convertTable(
     ? await getPreGeneratedAttrViews(objectId)
     : undefined;
 
-  const configuredColumns = new Map<string, any>();
+  const configuredColumns = new Map<string, BrickConf>();
 
-  if (attrViews?.size) {
+  if (attrViews?.size && Array.isArray(columns)) {
     for (const column of columns) {
+      if (column.render) {
+        continue;
+      }
       const candidate = attrViews.get(column.dataIndex);
       if (candidate) {
         const brick = lowLevelConvertToStoryboard(candidate, ".cellData");
@@ -47,6 +65,43 @@ export default async function convertTable(
     }
   }
 
+  const convertedColumns = Array.isArray(columns)
+    ? await Promise.all(
+        columns.map(async ({ render, ...column }) => {
+          if (render) {
+            const patterns = new Map<string, string>();
+            for (
+              let i = 0;
+              i < render.params.length && i < columnUseBrickParams.length;
+              i++
+            ) {
+              patterns.set(render.params[i], `DATA.${columnUseBrickParams[i]}`);
+            }
+
+            const useBrick = (
+              await Promise.all(
+                render.children.map((child) =>
+                  convertComponent(child, view, options)
+                )
+              )
+            ).flatMap((child) => deepReplaceVariables(child, patterns));
+
+            return {
+              ...column,
+              useBrick,
+            };
+          }
+          const brick = configuredColumns.get(column.dataIndex);
+          return brick
+            ? {
+                ...column,
+                useChildren: `[${column.dataIndex}]`,
+              }
+            : column;
+        })
+      )
+    : columns;
+
   return {
     brick: "eo-next-table",
     properties: {
@@ -54,16 +109,8 @@ export default async function convertTable(
         ? parsedDataSource.embedded
         : dataSource,
       ...restProps,
-      rowKey: rowKey ?? columns[0]?.key,
-      columns: columns.map((column) => {
-        const brick = configuredColumns.get(column.dataIndex);
-        return brick
-          ? {
-              ...column,
-              useChildren: `[${column.dataIndex}]`,
-            }
-          : column;
-      }),
+      rowKey: rowKey ?? (Array.isArray(columns) ? columns[0]?.key : undefined),
+      columns: convertedColumns,
       themeVariant: "elevo",
       scrollConfig: {
         x: "max-content",

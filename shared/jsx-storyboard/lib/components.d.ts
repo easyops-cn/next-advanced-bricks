@@ -17,12 +17,7 @@ export interface TableProps<T extends object> extends BaseProps {
     pageSize?: number;
     total?: number;
   };
-  columns: Array<{
-    key: string;
-    dataIndex: string;
-    title: string;
-    sortable?: boolean;
-  }>;
+  columns: TableColumn<T>[];
   rowKey: string;
   rowSelection?: boolean;
   sort?: TableSort | null;
@@ -42,9 +37,9 @@ export interface ListProps extends BaseProps {
   variant?: "default" | "navigation" | "ranking";
 }
 
-export interface DescriptionsProps extends BaseProps {
+export interface DescriptionsProps<T extends object> extends BaseProps {
   title?: string;
-  dataSource?: object;
+  dataSource?: T;
   list: Array<
     | {
         label: string;
@@ -53,6 +48,10 @@ export interface DescriptionsProps extends BaseProps {
     | {
         label: string;
         field: string;
+      }
+    | {
+        label: string;
+        render: (record: T) => any;
       }
   >;
 }
@@ -145,6 +144,14 @@ export interface IconProps {
   icon: string;
 }
 
+export interface TableColumn<T extends object> {
+  key: string;
+  dataIndex: keyof T;
+  title: string;
+  sortable?: boolean;
+  render?: (value: T[keyof T], record: T) => any;
+}
+
 export interface TableSort {
   columnKey: string | number;
   order: "ascend" | "descend";
@@ -153,7 +160,9 @@ export interface TableSort {
 declare const View: (props: ViewProps) => any;
 declare const Table: <T extends object>(props: TableProps<T>) => any;
 declare const List: (props: ListProps) => any;
-declare const Descriptions: (props: DescriptionsProps) => any;
+declare const Descriptions: <T extends object>(
+  props: DescriptionsProps<T>
+) => any;
 declare const Button: (props: ButtonProps) => any;
 declare const Toolbar: (props: BaseProps) => any;
 declare const Search: (props: SearchProps) => any;

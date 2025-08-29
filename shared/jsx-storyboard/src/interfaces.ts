@@ -115,6 +115,7 @@ export type ChildMerged = {
 
 export interface ConstructJsValueOptions {
   allowExpression?: boolean;
+  allowUseBrick?: boolean;
   ambiguous?: boolean;
   modifier?: string;
   replacePatterns?: Map<string, string>;
@@ -130,6 +131,7 @@ export interface ConstructResult {
   contracts: Set<string>;
   errors: ParseError[];
   contexts: string[];
+  randomId: string;
 }
 
 export interface ParseJsxOptions {
@@ -153,4 +155,9 @@ export interface ConvertViewOptions {
 export interface ConvertResult {
   brick: BrickConf;
   context?: ContextConf[];
+}
+
+export interface RenderUseBrick {
+  params: string[];
+  children: Component[];
 }
