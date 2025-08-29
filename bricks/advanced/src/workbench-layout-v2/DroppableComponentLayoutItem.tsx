@@ -83,12 +83,12 @@ export function DroppableComponentLayoutItemElement(
   }, [layout]);
 
   const deleteIconPosition = useMemo(() => {
-    const top = 15 + cardBorderWidth;
+    const top = 15;
     return {
       top: !noPadding ? top : 0,
       right: top,
     };
-  }, [cardBorderWidth, noPadding]);
+  }, [noPadding]);
 
   return (
     <div className={styles.itemWrapper}>
