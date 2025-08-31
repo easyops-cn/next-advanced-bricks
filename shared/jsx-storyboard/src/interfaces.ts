@@ -9,6 +9,7 @@ export interface Variable {
 export interface DataSource {
   name: string;
   api: string;
+  http?: boolean;
   objectId?: string;
   params?: string | Record<string, unknown>;
   ambiguousParams?: unknown;
@@ -73,6 +74,7 @@ export interface TypeEventHandlerOfCallAPI {
   action: "call_api";
   payload: {
     api: string;
+    http?: boolean;
     params?: any;
     objectId?: string;
   };

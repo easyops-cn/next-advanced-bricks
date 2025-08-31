@@ -6,22 +6,29 @@ export function convertDataSources(dataSources: DataSource[]): ContextConf[] {
   return dataSources.map((dataSource) => ({
     name: dataSource.name,
     resolve: {
-      useProvider: `${dataSource.api}:*`,
-      params: dataSource.params as Record<string, unknown> | undefined,
-      // TODO: remove the temporary workaround below
-      ...(dataSource.api === "easyops.api.data_exchange.olap@Query" &&
-      isObject(dataSource.params)
+      ...(dataSource.http
         ? {
-            params: {
-              ...dataSource.params,
-              translate: ["#showKey"],
-              limit: undefined,
-              limitBy: undefined,
-              order: undefined,
-              displayName: true,
-            },
+            useProvider: "basic.http-request",
+            args: [dataSource.api, dataSource.params],
           }
-        : null),
+        : {
+            useProvider: `${dataSource.api}:*`,
+            params: dataSource.params as Record<string, unknown> | undefined,
+            // TODO: remove the temporary workaround below
+            ...(dataSource.api === "easyops.api.data_exchange.olap@Query" &&
+            isObject(dataSource.params)
+              ? {
+                  params: {
+                    ...dataSource.params,
+                    translate: ["#showKey"],
+                    limit: undefined,
+                    limitBy: undefined,
+                    order: undefined,
+                    displayName: true,
+                  },
+                }
+              : null),
+          }),
       ...(dataSource.transform
         ? { transform: { value: dataSource.transform } }
         : null),
