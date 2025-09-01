@@ -17,6 +17,7 @@ import convertCard from "./convertCard.js";
 import convertForEach from "./convertForEach.js";
 import convertIf from "./convertIf.js";
 import convertOutput from "./convertOutput.js";
+import convertLink from "./convertLink.js";
 
 export async function convertComponent(
   component: Component,
@@ -63,6 +64,9 @@ export async function convertComponent(
     case "Plaintext":
     case "eo-text":
       brick = await convertText(component);
+      break;
+    case "Link":
+      brick = await convertLink(component);
       break;
     case "Output":
       brick = await convertOutput(component);

@@ -115,6 +115,16 @@ export interface CardProps extends BaseProps {
   title?: string;
 }
 
+export interface LinkProps extends BaseProps {
+  /** 站外链接 */
+  href?: string;
+
+  /** 站内链接 */
+  url?: string;
+
+  target?: "_blank" | "_self";
+}
+
 export interface DashboardWidget {
   widget: "chart";
   type: "line" | "area";
@@ -180,5 +190,6 @@ declare const Dashboard: (props: DashboardProps) => any;
 declare const Modal: (props: ModalProps) => any;
 declare const Card: (props: CardProps) => any;
 declare const Output: (props: BaseProps) => any;
+declare const Link: (props: LinkProps) => any;
 declare const Plaintext: (props: BaseProps) => any;
 declare const Fragment: (props: { key?: string | number }) => any;

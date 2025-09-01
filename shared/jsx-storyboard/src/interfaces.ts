@@ -133,7 +133,6 @@ export interface ConstructResult {
   contracts: Set<string>;
   errors: ParseError[];
   contexts: string[];
-  randomId: string;
 }
 
 export interface ParseJsxOptions {

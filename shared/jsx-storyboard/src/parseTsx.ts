@@ -12,7 +12,6 @@ import { constructJsValue } from "./tsx-constructors/values.js";
 import { constructTsxView } from "./tsx-constructors/view.js";
 import { parseTsxCallApi } from "./tsx-constructors/api.js";
 import { replaceVariables } from "./tsx-constructors/replaceVariables.js";
-import { getRandomId } from "./utils.js";
 
 export function parseTsx(source: string, options?: ParseTsxOptions) {
   const dataSources: DataSource[] = [];
@@ -33,7 +32,6 @@ export function parseTsx(source: string, options?: ParseTsxOptions) {
     errors,
     contexts,
     contracts,
-    randomId: getRandomId(),
   };
 
   let ast: ParseResult<t.File> | undefined;

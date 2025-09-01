@@ -57,17 +57,3 @@ export function convertJsxEventAttr(attr: string): string {
     .replace(/([a-z])([A-Z])/g, "$1.$2")
     .toLowerCase();
 }
-
-const START_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const FOLLOWING_CHARS = `${START_CHARS}0123456789`;
-
-export function getRandomId(length = 16) {
-  const chars: string[] = [];
-  for (let i = 0; i < length; i++) {
-    const candidates = i === 0 ? START_CHARS : FOLLOWING_CHARS;
-    chars.push(
-      candidates.charAt(Math.floor(Math.random() * candidates.length))
-    );
-  }
-  return chars.join("");
-}
