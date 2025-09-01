@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.31.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.31.3...@next-bricks/ai-portal@0.31.4) (2025-09-01)
+
+
+### Bug Fixes
+
+* refine schema props order ([1196514](https://github.com/easyops-cn/next-advanced-bricks/commit/1196514c78ffc0aaaa62fb8b9dac626aa70daab6))
+
+
+
+
+
 ## [0.31.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.31.2...@next-bricks/ai-portal@0.31.3) (2025-09-01)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.7.0...@next-shared/jsx-storyboard@0.7.1) (2025-09-01)
+
+
+### Bug Fixes
+
+* refine schema props order ([1196514](https://github.com/easyops-cn/next-advanced-bricks/commit/1196514c78ffc0aaaa62fb8b9dac626aa70daab6))
+
+
+
+
+
 # [0.7.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.6.5...@next-shared/jsx-storyboard@0.7.0) (2025-09-01)
 
 
