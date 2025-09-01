@@ -362,7 +362,7 @@ export function LowLevelChatHistory(
                     : null)}
                 >
                   <div className="item-title" title={project.name}>
-                    {project.name}
+                    {project.name || t(K.UNNAMED)}
                   </div>
                   <WrappedMiniActions
                     className="actions"
@@ -414,7 +414,7 @@ export function LowLevelChatHistory(
                     : null)}
                 >
                   <div className="item-title" title={item.title}>
-                    {item.title}
+                    {item.title || t(K.UNTITLED)}
                   </div>
                   <WrappedMiniActions
                     className="actions"
