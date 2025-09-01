@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.7.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.6.5...@next-shared/jsx-storyboard@0.7.0) (2025-09-01)
+
+
+### Features
+
+* support callHttp ([45b37b4](https://github.com/easyops-cn/next-advanced-bricks/commit/45b37b48cc869ba426f4f7a72db5de970d956e5b))
+* support Link component ([de828e6](https://github.com/easyops-cn/next-advanced-bricks/commit/de828e6764b6c982473ab4d1b8872ef89796fc12))
+* support render callback in JSX ([9cb6e11](https://github.com/easyops-cn/next-advanced-bricks/commit/9cb6e116dcdfdb8952b409c9948a2706859cf497))
+* support title attr in Plaintext ([80a34b4](https://github.com/easyops-cn/next-advanced-bricks/commit/80a34b40a7b4edb6fed489d5979d6adb6b5ab3fe))
+
+
+
+
+
 ## [0.6.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.6.4...@next-shared/jsx-storyboard@0.6.5) (2025-08-27)
 
 

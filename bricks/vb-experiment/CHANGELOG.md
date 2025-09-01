@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.1.1...@next-bricks/vb-experiment@1.2.0) (2025-09-01)
+
+
+### Features
+
+* support render callback in JSX ([9cb6e11](https://github.com/easyops-cn/next-advanced-bricks/commit/9cb6e116dcdfdb8952b409c9948a2706859cf497))
+
+
+
+
+
 ## [1.1.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.1.0...@next-bricks/vb-experiment@1.1.1) (2025-08-27)
 
 **Note:** Version bump only for package @next-bricks/vb-experiment
