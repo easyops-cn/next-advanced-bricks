@@ -125,6 +125,11 @@ export interface LinkProps extends BaseProps {
   target?: "_blank" | "_self";
 }
 
+export interface PlaintextProps extends BaseProps {
+  /** Related advisory information */
+  title?: string;
+}
+
 export interface DashboardWidget {
   widget: "chart";
   type: "line" | "area";
@@ -191,5 +196,5 @@ declare const Modal: (props: ModalProps) => any;
 declare const Card: (props: CardProps) => any;
 declare const Output: (props: BaseProps) => any;
 declare const Link: (props: LinkProps) => any;
-declare const Plaintext: (props: BaseProps) => any;
+declare const Plaintext: (props: PlaintextProps) => any;
 declare const Fragment: (props: { key?: string | number }) => any;

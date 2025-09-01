@@ -3,13 +3,13 @@ import type { Component } from "../interfaces.js";
 
 export default function convertText(component: Component): BrickConf {
   const { properties } = component;
-  const { textContent } = properties as {
+  const props = properties as {
     textContent?: string;
   };
   return {
     brick: "span",
     properties: {
-      textContent,
+      ...props,
     },
   };
 }
