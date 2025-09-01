@@ -121,10 +121,12 @@ export function LowLevelChatHistory(
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [projects, setProjects] = useState<Project[] | null>(null);
   const [projectsCollapsed, setProjectsCollapsed] = useState(false);
+  const [projectsError, setProjectsError] = useState(false);
   const [historyList, setHistoryList] = useState<HistoryItem[] | null>(null);
   const [historyCollapsed, setHistoryCollapsed] = useState(false);
   const [nextToken, setNextToken] = useState<string | undefined>();
   const [loadNextToken, setLoadNextToken] = useState<string | undefined>();
+  const [historyError, setHistoryError] = useState(false);
   const initialRef = useRef(true);
   const [movedConversations, setMovedConversations] = useState<string[]>([]);
 
@@ -158,6 +160,7 @@ export function LowLevelChatHistory(
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Error loading projects:", error);
+        setProjectsError(true);
         setProjects([]);
       }
     })();
@@ -203,6 +206,7 @@ export function LowLevelChatHistory(
         // eslint-disable-next-line no-console
         console.error("Error loading chat history:", error);
         setHistoryList([]);
+        setHistoryError(true);
       });
   }, [loadNextToken, username]);
 
@@ -342,7 +346,9 @@ export function LowLevelChatHistory(
           />
         </div>
         <ul className="items">
-          {projects ? (
+          {projectsError ? (
+            <li className="error">Failed to load project</li>
+          ) : projects ? (
             projects.map((project) => (
               <li key={project.instanceId}>
                 <WrappedLink
@@ -436,6 +442,9 @@ export function LowLevelChatHistory(
               />
             </li>
           )}
+          {historyError ? (
+            <li className="error">Failed to load chat history</li>
+          ) : null}
         </ul>
         {!historyCollapsed && nextToken && (
           <div className="load-more" ref={nextRef}>
