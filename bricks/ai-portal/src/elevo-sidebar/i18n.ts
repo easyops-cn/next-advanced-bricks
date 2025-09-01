@@ -12,6 +12,8 @@ export enum K {
   HISTORY = "HISTORY",
   CREATE_PROJECT = "CREATE_PROJECT",
   MOVE_TO_PROJECT = "MOVE_TO_PROJECT",
+  UNTITLED = "UNTITLED",
+  UNNAMED = "UNNAMED",
 }
 
 const en: Locale = {
@@ -26,6 +28,8 @@ const en: Locale = {
   [K.HISTORY]: "Chat history",
   [K.CREATE_PROJECT]: "Create project",
   [K.MOVE_TO_PROJECT]: "Move to project",
+  [K.UNTITLED]: "Untitled",
+  [K.UNNAMED]: "Unnamed",
 };
 
 const zh: Locale = {
@@ -40,6 +44,8 @@ const zh: Locale = {
   [K.HISTORY]: "历史对话",
   [K.CREATE_PROJECT]: "创建项目",
   [K.MOVE_TO_PROJECT]: "移动到项目",
+  [K.UNTITLED]: "无标题",
+  [K.UNNAMED]: "未命名",
 };
 
 export const NS = "bricks/ai-portal/elevo-sidebar";

@@ -51,7 +51,7 @@ export default async function convertTable(
 
   if (attrViews?.size && Array.isArray(columns)) {
     for (const column of columns) {
-      if (column.render) {
+      if (column.render || typeof column.dataIndex !== "string") {
         continue;
       }
       const candidate = attrViews.get(column.dataIndex);
@@ -91,8 +91,8 @@ export default async function convertTable(
               useBrick,
             };
           }
-          const brick = configuredColumns.get(column.dataIndex);
-          return brick
+          return typeof column.dataIndex === "string" &&
+            configuredColumns.has(column.dataIndex)
             ? {
                 ...column,
                 useChildren: `[${column.dataIndex}]`,

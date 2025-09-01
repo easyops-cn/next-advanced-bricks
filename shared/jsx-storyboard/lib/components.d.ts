@@ -47,6 +47,7 @@ export interface DescriptionsProps<T extends object> extends BaseProps {
       }
     | {
         label: string;
+        /** 数据字段，多级字段使用点号分隔 */
         field: string;
       }
     | {
@@ -161,10 +162,11 @@ export interface IconProps {
 
 export interface TableColumn<T extends object> {
   key: string;
-  dataIndex: keyof T;
+  /** 数据索引，多级索引使用数组 */
+  dataIndex: string | string[];
   title: string;
   sortable?: boolean;
-  render?: (value: T[keyof T], record: T) => any;
+  render?: (value: any, record: T) => any;
 }
 
 export interface TableSort {

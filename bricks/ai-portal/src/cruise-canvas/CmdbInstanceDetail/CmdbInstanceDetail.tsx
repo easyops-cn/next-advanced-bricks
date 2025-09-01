@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { uniqueId, upperFirst } from "lodash";
+import { orderBy, uniqueId, upperFirst } from "lodash";
 import { unstable_createRoot } from "@next-core/runtime";
 import {
   // UseBrickConf,
@@ -149,7 +149,7 @@ async function convertCmdbInstanceDetail(
     idPrefix: string,
     needContext?: boolean
   ): UseSingleBrickConf {
-    const props = Object.entries(schema.properties);
+    const props = getOrderedProps(schema);
     const key = props.length > 0 ? props[0][0] : null;
     const modalId = normalizeIdentifier(`modal__${idPrefix}`);
     const contextId = normalizeIdentifier(`context__${idPrefix}`);
@@ -308,7 +308,7 @@ async function convertCmdbInstanceDetail(
     idPrefix: string,
     needContext?: boolean
   ): UseSingleBrickConf {
-    const props = Object.entries(schema.properties);
+    const props = getOrderedProps(schema);
     const key = props.length > 0 ? props[0][0] : null;
     const modalId = normalizeIdentifier(`modal__${idPrefix}`);
     const contextId = normalizeIdentifier(`context__${idPrefix}`);
@@ -515,4 +515,25 @@ function builtinFnStringify(
     return JSON.stringify(v, null, 2);
   }
   return String(v);
+}
+
+function getOrderedProps(schema: JSONSchemaObject) {
+  const props = Object.entries(schema.properties);
+  if (!schema.required?.length) {
+    return props;
+  }
+  const propKeys = Object.keys(schema.properties);
+  return orderBy(
+    props,
+    [
+      ([k]) => {
+        const requiredIndex = schema.required!.indexOf(k);
+        if (requiredIndex === -1) {
+          return schema.required!.length + propKeys.indexOf(k);
+        }
+        return requiredIndex;
+      },
+    ],
+    ["asc"]
+  );
 }
