@@ -9,6 +9,7 @@ export interface Variable {
 export interface DataSource {
   name: string;
   api: string;
+  http?: boolean;
   objectId?: string;
   params?: string | Record<string, unknown>;
   ambiguousParams?: unknown;
@@ -73,6 +74,7 @@ export interface TypeEventHandlerOfCallAPI {
   action: "call_api";
   payload: {
     api: string;
+    http?: boolean;
     params?: any;
     objectId?: string;
   };
@@ -115,6 +117,7 @@ export type ChildMerged = {
 
 export interface ConstructJsValueOptions {
   allowExpression?: boolean;
+  allowUseBrick?: boolean;
   ambiguous?: boolean;
   modifier?: string;
   replacePatterns?: Map<string, string>;
@@ -153,4 +156,9 @@ export interface ConvertViewOptions {
 export interface ConvertResult {
   brick: BrickConf;
   context?: ContextConf[];
+}
+
+export interface RenderUseBrick {
+  params: string[];
+  children: Component[];
 }

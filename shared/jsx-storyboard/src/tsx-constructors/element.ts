@@ -137,6 +137,7 @@ export function constructTsxElement(
             {
               ...valueOptions,
               allowExpression: true,
+              allowUseBrick: true,
               modifier: "=",
             }
           );

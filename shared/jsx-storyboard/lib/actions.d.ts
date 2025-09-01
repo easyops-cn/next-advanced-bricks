@@ -7,12 +7,18 @@ declare const showMessage: (options: {
 /** 刷新指定的数据源 */
 declare const refresh: (dataSource: unknown) => void;
 
-/** 调用指定的接口 */
+/** 调用指定的 Provider 接口 */
 declare const callApi: <T extends keyof ContractMap>(
   api: T,
   params: Parameters<ContractMap[T]>[0],
   metadata?: { objectId?: string | null }
 ) => Promise<ReturnType<ContractMap[T]>>;
+
+/** 调用指定的 HTTP 接口 */
+declare const callHttp: <T = unknown>(
+  url: string,
+  init?: RequestInit
+) => Promise<T>;
 
 /** 获取指定的组件 */
 declare const getComponent: <T extends keyof ComponentInstanceMap>(

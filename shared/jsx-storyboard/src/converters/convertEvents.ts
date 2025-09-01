@@ -102,7 +102,7 @@ function convertEventHandler(
         args: [handler.payload.name],
       };
     case "call_api": {
-      const { api, params } = handler.payload;
+      const { api, http, params } = handler.payload;
 
       const success = handler.callback?.success
         ? convertEventHandlers(
@@ -112,8 +112,15 @@ function convertEventHandler(
         : undefined;
 
       return {
-        useProvider: `${api}:*`,
-        params,
+        ...(http
+          ? {
+              useProvider: "basic.http-request",
+              args: [api, params],
+            }
+          : {
+              useProvider: `${api}:*`,
+              params,
+            }),
         callback: {
           ...(success && { success }),
           error: {

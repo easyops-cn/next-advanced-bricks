@@ -253,11 +253,20 @@
     transform: rotate(-90deg);
   }
 
+  .error,
   .loading {
     display: flex;
     align-items: center;
-    justify-content: center;
     height: 36px;
+    padding: 0 8px;
+  }
+
+  .loading {
+    justify-content: center;
+  }
+
+  .error {
+    color: var(--color-error);
   }
 
   .group + .group {
