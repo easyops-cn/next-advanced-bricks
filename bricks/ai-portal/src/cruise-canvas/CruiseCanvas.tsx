@@ -333,7 +333,7 @@ export function CruiseCanvasComponent(
     pushZoomTransition,
   });
 
-  const taskDone = DONE_STATES.includes(conversationState);
+  const conversationDone = DONE_STATES.includes(conversationState);
 
   const nonLeafNodes = useMemo(() => {
     return new Set<string>(edges.map((edge) => edge.source));
@@ -822,7 +822,7 @@ export function CruiseCanvasComponent(
           {replay ? (
             <div className={styles["footer-container"]}>
               <ReplayToolbar
-                taskDone={taskDone}
+                taskDone={conversationDone}
                 skipToResults={skipToResults}
                 watchAgain={() => {
                   watchAgain();
@@ -832,7 +832,7 @@ export function CruiseCanvasComponent(
             </div>
           ) : supports?.chat ? (
             <div className={styles["footer-container"]}>
-              <ChatBox state={conversationState} canChat={taskDone} />
+              <ChatBox state={conversationState} canChat={conversationDone} />
             </div>
           ) : null}
         </div>
