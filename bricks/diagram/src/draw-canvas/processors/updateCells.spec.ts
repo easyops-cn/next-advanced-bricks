@@ -1,7 +1,7 @@
 import { describe, test, expect } from "@jest/globals";
 import { updateCells } from "./updateCells";
 import { SYMBOL_FOR_SIZE_INITIALIZED } from "../constants";
-import { DecoratorView } from "../interfaces";
+import { Cell, DecoratorView } from "../interfaces";
 
 describe("updateCells", () => {
   test("add related nodes on right side of siblings", () => {
@@ -134,8 +134,8 @@ describe("updateCells", () => {
           id: "4",
           type: "node",
           view: {
-            x: 316,
-            y: 100,
+            x: 256,
+            y: 160,
             height: 80,
             width: 120,
           },
@@ -146,8 +146,8 @@ describe("updateCells", () => {
           id: "4",
           type: "node",
           view: {
-            x: 316,
-            y: 100,
+            x: 256,
+            y: 160,
             height: 80,
             width: 120,
           },
@@ -861,5 +861,74 @@ describe("updateCells", () => {
       ],
       shouldReCenter: false,
     });
+  });
+
+  test("siblings alternate left-right placement", () => {
+    const result = updateCells({
+      cells: [
+        { type: "edge", source: "1", target: "2" },
+        { type: "edge", source: "1", target: "3" },
+        { type: "edge", source: "1", target: "4" },
+        { type: "edge", source: "1", target: "5" },
+        { type: "edge", source: "2", target: "6" },
+        { type: "edge", source: "2", target: "7" },
+        {
+          id: "1",
+          type: "node",
+          view: { x: 200, y: 50, height: 100, width: 60 },
+        },
+        { id: "2", type: "node" },
+        { id: "3", type: "node" },
+        { id: "4", type: "node" },
+        { id: "5", type: "node" },
+        { id: "6", type: "node" },
+      ],
+      previousCells: [],
+      defaultNodeSize: [100, 60],
+      canvasWidth: 800,
+      canvasHeight: 600,
+      scaleRange: [0.5, 2],
+      transform: { k: 1, x: 0, y: 0 },
+      layoutOptions: {
+        initialLayout: "layered-staggered",
+      },
+      reason: "add-related-nodes",
+      parentNode: {
+        id: "1",
+        type: "node",
+        view: { x: 200, y: 50, height: 100, width: 60 },
+      },
+    });
+    const views = result.updated.map((n) => n?.view?.x);
+    expect(new Set(views).size).toBe(4);
+  });
+
+  test("missing parent falls back to default layout", () => {
+    const result = updateCells({
+      cells: [
+        {
+          id: "1",
+          type: "node",
+          view: { x: 200, y: 50, height: 100, width: 60 },
+        },
+        { id: "2", type: "node" },
+      ],
+      previousCells: [
+        {
+          id: "1",
+          type: "node",
+          view: { x: 200, y: 50, height: 100, width: 60 },
+        },
+        { id: "2", type: "node" } as Cell,
+      ],
+      defaultNodeSize: [120, 80],
+      canvasWidth: 800,
+      canvasHeight: 600,
+      scaleRange: [0.5, 2],
+      transform: { k: 1, x: 0, y: 0 },
+      reason: "add-related-nodes",
+    });
+    expect(result.updated.length).toBeGreaterThan(0);
+    expect(result.shouldReCenter).toBe(true);
   });
 });
