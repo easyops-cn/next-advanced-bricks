@@ -298,9 +298,6 @@ export function LegacyChatStreamComponent(
                 <WrappedIconButton
                   icon={ICON_CANVAS}
                   variant="mini"
-                  style={{
-                    transform: "rotate(90deg)",
-                  }}
                   onClick={onSwitchToCanvas}
                 />
               )}

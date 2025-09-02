@@ -28,14 +28,14 @@ export const ICON_LOADING: GeneralIconProps = {
 };
 
 export const ICON_CANVAS: GeneralIconProps = {
-  lib: "antd",
-  icon: "partition",
-};
+  lib: "lucide",
+  icon: "network",
+} as GeneralIconProps;
 
 export const ICON_CHAT: GeneralIconProps = {
-  lib: "antd",
-  icon: "message",
-};
+  lib: "lucide",
+  icon: "messages-square",
+} as GeneralIconProps;
 
 export const ICON_FEEDBACK: GeneralIconProps = {
   lib: "fa",

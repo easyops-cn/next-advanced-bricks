@@ -16,6 +16,7 @@ import ResizeObserver from "resize-observer-polyfill";
 import { select, type Selection, type TransitionLike } from "d3-selection";
 import { ZoomTransform } from "d3-zoom";
 import { mergeRects } from "@next-shared/diagram";
+import type { ConstructedView } from "@next-shared/jsx-storyboard";
 import styles from "./styles.module.css";
 import { useZoom } from "./useZoom.js";
 import type {
@@ -64,7 +65,6 @@ import { TaskContext } from "../shared/TaskContext.js";
 import { NodeLoading } from "./NodeLoading/NodeLoading.js";
 import { JsxEditor } from "../shared/JsxEditor/JsxEditor.js";
 import type { CruiseCanvasProps } from ".";
-import type { ConstructedView } from "../shared/interfaces";
 
 const MemoizedNodeComponent = memo(NodeComponent);
 
