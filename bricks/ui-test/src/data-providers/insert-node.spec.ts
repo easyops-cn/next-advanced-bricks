@@ -1,12 +1,12 @@
 import { describe, test, expect } from "@jest/globals";
 import { insertNode } from "./insert-node.js";
 import {
-  InstanceApi_createInstance,
-  InstanceApi_importInstance,
-} from "@next-api-sdk/cmdb-sdk";
+  StoryboardApi_addNode,
+  StoryboardApi_batchImportNodes,
+} from "@next-api-sdk/next-builder-sdk";
 import { TestTreeData, TreeNodeItemData } from "../interface.js";
 
-jest.mock("@next-api-sdk/cmdb-sdk");
+jest.mock("@next-api-sdk/next-builder-sdk");
 describe("insertNode", () => {
   test("should work", async () => {
     const TestTreeData = [
@@ -365,19 +365,27 @@ describe("insertNode", () => {
     await insertNode(
       TestTreeData as unknown as TestTreeData[],
       itemNode as unknown as TreeNodeItemData,
-      formData
+      formData,
+      "down",
+      { appId: "test-app" }
     );
 
-    expect(InstanceApi_createInstance).toHaveBeenLastCalledWith(
-      "UI_TEST_NODE@EASYOPS",
-      { name: "find", params: [".header"], parent: "608744d9ede46", sort: 1 }
-    );
+    expect(StoryboardApi_addNode).toHaveBeenLastCalledWith("test-app", {
+      objectId: "UI_TEST_NODE@EASYOPS",
+      instance: {
+        name: "find",
+        params: [".header"],
+        parent: "608744d9ede46",
+        sort: 1,
+      },
+    });
 
-    expect(InstanceApi_importInstance).toHaveBeenLastCalledWith(
-      "UI_TEST_NODE@EASYOPS",
+    expect(StoryboardApi_batchImportNodes).toHaveBeenLastCalledWith(
+      "test-app",
       {
-        datas: [{ instanceId: "60874512bc785", sort: 2 }],
+        objectId: "UI_TEST_NODE@EASYOPS",
         keys: ["instanceId"],
+        datas: [{ instanceId: "60874512bc785", sort: 2 }],
       }
     );
 
@@ -385,22 +393,29 @@ describe("insertNode", () => {
       TestTreeData as unknown as TestTreeData[],
       itemNode as unknown as TreeNodeItemData,
       formData,
-      "up"
+      "up",
+      { appId: "test-app" }
     );
 
-    expect(InstanceApi_createInstance).toHaveBeenLastCalledWith(
-      "UI_TEST_NODE@EASYOPS",
-      { name: "find", params: [".header"], parent: "608744d9ede46", sort: 0 }
-    );
+    expect(StoryboardApi_addNode).toHaveBeenLastCalledWith("test-app", {
+      objectId: "UI_TEST_NODE@EASYOPS",
+      instance: {
+        name: "find",
+        params: [".header"],
+        parent: "608744d9ede46",
+        sort: 0,
+      },
+    });
 
-    expect(InstanceApi_importInstance).toHaveBeenLastCalledWith(
-      "UI_TEST_NODE@EASYOPS",
+    expect(StoryboardApi_batchImportNodes).toHaveBeenLastCalledWith(
+      "test-app",
       {
+        objectId: "UI_TEST_NODE@EASYOPS",
+        keys: ["instanceId"],
         datas: [
           { instanceId: "608744ec6d575", sort: 1 },
           { instanceId: "60874512bc785", sort: 2 },
         ],
-        keys: ["instanceId"],
       }
     );
   });

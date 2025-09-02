@@ -1,22 +1,32 @@
 import { createProviderClass } from "@next-core/utils/general";
 import { NodeGraphData, TreeNodeItemData, TestTreeData } from "../interface.js";
 import { findNodeData } from "./sort-test-tree-node.js";
-import { InstanceApi_createInstance } from "@next-api-sdk/cmdb-sdk";
 import { isEmpty, pick } from "lodash";
+import { StoryboardApi_addNode } from "@next-api-sdk/next-builder-sdk";
 
 const basicFields = ["name", "label", "sort", "type", "params"];
+
+interface Option {
+  appId: string;
+}
 
 async function createChildrenNode(
   parentData: TreeNodeItemData,
   nodes: NodeGraphData[],
-  treeData: TestTreeData[]
+  treeData: TestTreeData[],
+  options?: Option
 ): Promise<void> {
+  const { appId } = options || {};
+
   const responseNodes = (await Promise.all(
     nodes.map((node) =>
-      InstanceApi_createInstance("UI_TEST_NODE@EASYOPS", {
-        ...pick(node, basicFields),
-        parent: parentData?.instanceId,
-      })
+      StoryboardApi_addNode(appId!, {
+        objectId: "UI_TEST_NODE@EASYOPS",
+        instance: {
+          ...pick(node, basicFields),
+          parent: parentData?.instanceId,
+        },
+      }).then((r) => r.instance)
     )
   )) as TreeNodeItemData[];
 
@@ -28,7 +38,8 @@ async function createChildrenNode(
       await createChildrenNode(
         responseNodes[index],
         findNode!.children as NodeGraphData[],
-        treeData
+        treeData,
+        options
       );
     }
     index += 1;
@@ -38,24 +49,31 @@ async function createChildrenNode(
 export async function cloneNodes(
   clonedData: TreeNodeItemData,
   parentData: TreeNodeItemData,
-  treeData: TestTreeData[]
+  treeData: TestTreeData[],
+  options?: Option
 ): Promise<void> {
-  const instanceData = await InstanceApi_createInstance(
-    "UI_TEST_NODE@EASYOPS",
-    {
-      ...pick(clonedData, basicFields),
-      sort: parentData.children?.length
-        ? (parentData.children[parentData.children.length - 1].sort ?? 0) + 1
-        : 0,
-      parent: parentData.instanceId,
-    }
-  );
+  const { appId } = options || {};
+
+  const instanceData = (
+    await StoryboardApi_addNode(appId!, {
+      objectId: "UI_TEST_NODE@EASYOPS",
+      instance: {
+        ...pick(clonedData, basicFields),
+        sort: parentData.children?.length
+          ? (parentData.children[parentData.children.length - 1].sort ?? 0) + 1
+          : 0,
+        parent: parentData.instanceId,
+      },
+    })
+  ).instance;
+
   // istanbul ignore else
   if (!isEmpty(clonedData.children)) {
     await createChildrenNode(
       instanceData as TreeNodeItemData,
       clonedData.children as NodeGraphData[],
-      treeData
+      treeData,
+      options
     );
   }
 }

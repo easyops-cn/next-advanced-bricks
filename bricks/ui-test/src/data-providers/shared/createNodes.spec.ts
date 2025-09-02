@@ -1,13 +1,13 @@
 import { describe, test, expect } from "@jest/globals";
-import { InstanceApi_createInstance } from "@next-api-sdk/cmdb-sdk";
+import { StoryboardApi_addNode } from "@next-api-sdk/next-builder-sdk";
 import { createNodes } from "./createNodes.js";
 import { NodeType } from "../../interface.js";
 
-jest.mock("@next-api-sdk/cmdb-sdk");
+jest.mock("@next-api-sdk/next-builder-sdk");
 
 let counter = 1;
-(InstanceApi_createInstance as jest.Mock).mockImplementation(() => ({
-  instanceId: `n_${counter++}`,
+(StoryboardApi_addNode as jest.Mock).mockImplementation(() => ({
+  instance: { instanceId: `n_${counter++}` },
 }));
 
 describe("createNodes", () => {
@@ -42,53 +42,70 @@ describe("createNodes", () => {
           ],
         },
       ],
-      "p_0"
+      "p_0",
+      0,
+      { appId: "test-app-id" }
     );
-    expect(InstanceApi_createInstance).toHaveBeenCalledTimes(5);
+    expect(StoryboardApi_addNode).toHaveBeenCalledTimes(5);
 
-    expect(InstanceApi_createInstance).toHaveBeenNthCalledWith(
+    expect(StoryboardApi_addNode).toHaveBeenNthCalledWith(
       1,
-      "UI_TEST_NODE@EASYOPS",
+      "test-app-id",
       expect.objectContaining({
-        name: "get",
-        parent: "p_0",
-        sort: 0,
+        objectId: "UI_TEST_NODE@EASYOPS",
+        instance: expect.objectContaining({
+          name: "get",
+          parent: "p_0",
+          sort: 0,
+        }),
       })
     );
-    expect(InstanceApi_createInstance).toHaveBeenNthCalledWith(
+    expect(StoryboardApi_addNode).toHaveBeenNthCalledWith(
       2,
-      "UI_TEST_NODE@EASYOPS",
+      "test-app-id",
       expect.objectContaining({
-        name: "click",
-        parent: "n_1",
-        sort: 0,
+        objectId: "UI_TEST_NODE@EASYOPS",
+        instance: expect.objectContaining({
+          name: "click",
+          parent: "n_1",
+          sort: 0,
+        }),
       })
     );
-    expect(InstanceApi_createInstance).toHaveBeenNthCalledWith(
+    expect(StoryboardApi_addNode).toHaveBeenNthCalledWith(
       3,
-      "UI_TEST_NODE@EASYOPS",
+      "test-app-id",
       expect.objectContaining({
-        name: "findByTestId",
-        parent: "p_0",
-        sort: 1,
+        objectId: "UI_TEST_NODE@EASYOPS",
+        instance: expect.objectContaining({
+          name: "findByTestId",
+          parent: "p_0",
+          sort: 1,
+        }),
       })
     );
-    expect(InstanceApi_createInstance).toHaveBeenNthCalledWith(
+    expect(StoryboardApi_addNode).toHaveBeenNthCalledWith(
       4,
-      "UI_TEST_NODE@EASYOPS",
+      "test-app-id",
       expect.objectContaining({
-        name: "dblclick",
-        parent: "n_3",
-        sort: 0,
+        objectId: "UI_TEST_NODE@EASYOPS",
+        instance: expect.objectContaining({
+          name: "dblclick",
+          parent: "n_3",
+          sort: 0,
+        }),
       })
     );
-    expect(InstanceApi_createInstance).toHaveBeenNthCalledWith(
+    expect(StoryboardApi_addNode).toHaveBeenNthCalledWith(
       5,
-      "UI_TEST_NODE@EASYOPS",
+      "test-app-id",
       expect.objectContaining({
-        name: "type",
-        parent: "n_3",
-        sort: 1,
+        objectId: "UI_TEST_NODE@EASYOPS",
+        instance: expect.objectContaining({
+          name: "type",
+          parent: "n_3",
+          sort: 1,
+        }),
       })
     );
   });
