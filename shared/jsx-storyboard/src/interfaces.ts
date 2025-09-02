@@ -145,6 +145,7 @@ export interface ParseTsxOptions extends ParseJsxOptions {
 
 export interface ConstructedView extends ConstructResult {
   viewId: string;
+  from?: "generate" | "config";
   withContexts?: Record<string, unknown>;
 }
 
