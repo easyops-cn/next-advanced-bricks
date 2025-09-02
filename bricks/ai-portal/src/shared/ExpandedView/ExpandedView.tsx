@@ -176,6 +176,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
               className={classNames(styles["nav-button"], {
                 [styles.active]: activeExpandedViewJobId === view.id,
               })}
+              onClick={() => setActiveExpandedViewJobId(view.id)}
             >
               {view.view.title}
             </button>
