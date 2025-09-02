@@ -1,4 +1,3 @@
-// istanbul ignore file
 import { useMemo } from "react";
 import type {
   GraphEdge,

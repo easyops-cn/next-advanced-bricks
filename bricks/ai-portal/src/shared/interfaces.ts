@@ -1,4 +1,4 @@
-import type { ConstructResult } from "@next-shared/jsx-storyboard";
+import type { ConstructedView } from "@next-shared/jsx-storyboard";
 
 export interface Conversation {
   // Conversation ID
@@ -163,10 +163,4 @@ export interface JobPatch extends Partial<Job> {
 export interface RequestStore {
   conversationId: string;
   content: string;
-}
-
-export interface ConstructedView extends ConstructResult {
-  viewId: string;
-  from?: "generate" | "config";
-  withContexts?: Record<string, unknown>;
 }

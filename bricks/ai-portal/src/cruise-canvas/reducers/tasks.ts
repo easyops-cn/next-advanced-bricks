@@ -1,8 +1,11 @@
 import type { Reducer } from "react";
 import { isMatch, pick } from "lodash";
-import { parseJsx, parseTsx } from "@next-shared/jsx-storyboard";
+import {
+  parseJsx,
+  parseTsx,
+  type ConstructedView,
+} from "@next-shared/jsx-storyboard";
 import type {
-  ConstructedView,
   DataPart,
   Job,
   JobPatch,
