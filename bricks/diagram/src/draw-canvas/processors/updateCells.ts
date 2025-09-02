@@ -70,6 +70,8 @@ export function updateCells({
   shouldReCenter: boolean;
 } {
   const isManualLayout = layout !== "force" && layout !== "dagre";
+
+  // --- Step 1: 初始化 ---
   const newCells = initializeCells(cells, {
     defaultNodeSize,
     layoutOptions,
@@ -78,149 +80,65 @@ export function updateCells({
   const updateCandidates: (NodeCell | DecoratorCell)[] = [];
   let shouldReCenter = false;
 
-  const previousSizeInitializedNodes = new Map<string, NodeCell>();
-  let previousShouldCentered = false;
-  for (const cell of previousCells) {
-    if (isDecoratorCell(cell)) {
-      previousShouldCentered = true;
-    } else if (isNodeCell(cell)) {
-      previousShouldCentered = true;
-      if (cell[SYMBOL_FOR_SIZE_INITIALIZED]) {
-        previousSizeInitializedNodes.set(cell.id, cell);
+  // 记录已存在的节点尺寸，避免丢失
+  const prevSizeNodes = new Map<string, NodeCell>();
+  let prevShouldCentered = false;
+  for (const c of previousCells) {
+    if (isDecoratorCell(c) || isNodeCell(c)) {
+      prevShouldCentered = true;
+      if (isNodeCell(c) && c[SYMBOL_FOR_SIZE_INITIALIZED]) {
+        prevSizeNodes.set(c.id, c);
       }
     }
   }
 
+  // 构建 id -> node 映射，复用尺寸
   const nodesMap = new Map<string, NodeCell>();
-  for (const cell of newCells) {
-    if (isNodeCell(cell)) {
-      nodesMap.set(cell.id, cell);
-      const previousNode = previousSizeInitializedNodes.get(cell.id);
-      if (previousNode) {
-        cell.view.width = previousNode.view.width;
-        cell.view.height = previousNode.view.height;
-        cell[SYMBOL_FOR_SIZE_INITIALIZED] = true;
+  for (const c of newCells) {
+    if (isNodeCell(c)) {
+      nodesMap.set(c.id, c);
+      const prevNode = prevSizeNodes.get(c.id);
+      if (prevNode) {
+        Object.assign(c.view, {
+          width: prevNode.view.width,
+          height: prevNode.view.height,
+        });
+        c[SYMBOL_FOR_SIZE_INITIALIZED] = true;
       }
     }
   }
 
+  // --- Step 2: 特殊场景 - add-related-nodes ---
   let handled = false;
-
   if (reason === "add-related-nodes") {
-    // Place these unpositioned downstream nodes below the parent node, and
-    // on the right side of the positioned siblings.
-    let parentNodeCell: NodeCell | undefined;
-    if (parent) {
-      parentNodeCell = nodesMap.get(parent);
-    } else if (parentNode) {
-      //基于某个点位置去添加节点
-      parentNodeCell = parentNode;
-    }
-    if (parentNodeCell) {
-      const downstreamNodeIds = new Set<string>();
-      for (const cell of newCells) {
-        if (
-          isEdgeCell(cell) &&
-          cell.source === parent &&
-          cell.target !== parent
-        ) {
-          downstreamNodeIds.add(cell.target);
-        }
-      }
-      if (
-        parentNodeCell?.view.x !== undefined &&
-        parentNodeCell.view.y !== undefined
-      ) {
-        handled = true;
-        /**
-         * 临时解决一次性添加多层的节点手工布局报错
-         */
-        if (isManualLayout) {
-          for (const cell of newCells) {
-            if (
-              (isNodeCell(cell) && cell.view.x === undefined) ||
-              (isNodeCell(cell) && cell.view.y === undefined)
-            ) {
-              downstreamNodeIds.add(cell.id);
-            }
-          }
-        }
-        const downstreamNodes = [...downstreamNodeIds]
-          .map((id) => nodesMap.get(id))
-          .filter(Boolean) as NodeCell[];
-        let rightMostNode: NodeCell | undefined = undefined;
-        for (const node of downstreamNodes) {
-          if (node.view.x !== undefined && node.view.y !== undefined) {
-            // Find the rightmost node that is below the parent node.
-            if (
-              (!rightMostNode || node.view.x > rightMostNode.view.x) &&
-              node.view.y > parentNodeCell.view.y
-            ) {
-              rightMostNode = node;
-            }
-          } else {
-            // Unpositioned nodes
-            updateCandidates.push(node);
-          }
-        }
-        if (updateCandidates.length > 0 && isManualLayout) {
-          let nextX: number;
-          let nextY: number;
-          if (rightMostNode) {
-            // Place unpositioned nodes on the right side of the rightmost positioned siblings.
-            nextX =
-              rightMostNode.view.x +
-              rightMostNode.view.width +
-              DEFAULT_NODE_GAP_H;
-            nextY = rightMostNode.view.y;
-          } else {
-            // If there are no positioned siblings, just place them below the parent.
-            const totalWidth = updateCandidates.reduce(
-              (acc, node) => acc + node.view.width + DEFAULT_NODE_GAP_H,
-              -DEFAULT_NODE_GAP_H
-            );
-            nextX =
-              parentNodeCell.view.x -
-              totalWidth / 2 +
-              parentNodeCell.view.width / 2;
-            nextY =
-              parentNodeCell.view.y +
-              parentNodeCell.view.height +
-              DEFAULT_NODE_GAP_V;
-          }
-          for (const node of updateCandidates) {
-            node.view.x = nextX;
-            node.view.y = nextY;
-            nextX += node.view.width + DEFAULT_NODE_GAP_H;
-          }
-          // 后续处理容器、分组的大小位置
-          handled = !newCells.some(
-            (c) => c.type === "decorator" && isNoPoint(c.view)
-          );
-        }
-      }
-    }
+    handled = layoutRelatedNodes({
+      newCells,
+      nodesMap,
+      parent,
+      parentNode,
+      isManualLayout,
+      updateCandidates,
+      handled,
+    });
   }
 
+  // --- Step 3: 常规布局 ---
   if (!handled) {
-    // By default, place unpositioned nodes in a grid.
-    const positionedNodes: NodeCell[] = [];
+    const positioned: NodeCell[] = [];
     let hasDecorators = false;
-    for (const cell of newCells) {
-      if (isNodeCell(cell)) {
-        if (isNoPoint(cell.view)) {
-          updateCandidates.push(cell);
-        } else {
-          positionedNodes.push(cell);
-        }
-      } else if (isDecoratorCell(cell)) {
+
+    for (const c of newCells) {
+      if (isNodeCell(c)) {
+        if (isNoPoint(c.view)) updateCandidates.push(c);
+        else positioned.push(c);
+      } else if (isDecoratorCell(c)) {
         hasDecorators = true;
       }
     }
 
     if (isManualLayout) {
-      if (!previousShouldCentered) {
-        // If the previous cells are not centered, use the centered transform instead.
+      // 没有居中过，执行一次居中变换
+      if (!prevShouldCentered) {
         transform = transformToCenter(without(newCells, ...updateCandidates), {
           canvasWidth,
           canvasHeight,
@@ -229,28 +147,21 @@ export function updateCells({
       }
 
       let getNodeView: (id: NodeId) => NodeView;
-
-      // If there is no positioned nodes, or only one while without decorators and unpositioned nodes exist,
-      // then there is no relative positions, we can place the nodes with dagre layout.
-      // Otherwise, use the force layout.
       if (
-        positionedNodes.length === 0 ||
-        (positionedNodes.length === 1 &&
+        positioned.length === 0 ||
+        (positioned.length === 1 &&
           !hasDecorators &&
           updateCandidates.length > 0)
       ) {
-        // The positioned node (if exists) will be updated.
-        updateCandidates.push(...positionedNodes);
+        // 使用 dagre 初始布局
+        updateCandidates.push(...positioned);
         ({ getNodeView } = dagreLayout({ cells: newCells, allowEdgeToArea }));
-        // Only re-center when there is no cells previous,
-        // or the cell ids are not changed (this happens when updateCells called by backend right after dropNode).
         shouldReCenter =
           previousCells.length === 0 ||
           (previousCells.length === newCells.length &&
-            previousCells.every((cell, index) =>
-              sameTarget(cell, newCells[index])
-            ));
+            previousCells.every((cell, i) => sameTarget(cell, newCells[i])));
       } else {
+        // 使用 force layout 固定已存在位置
         ({ getNodeView } = forceLayout({
           cells: newCells,
           fixedPosition: true,
@@ -261,9 +172,8 @@ export function updateCells({
           ],
         }));
       }
-      /**
-       * 首次通过updateCells渲染时，才会存在容器，节点都没有位置大小，
-       */
+
+      // --- Step 4: 容器、分组布局 ---
       const containerCells = newCells.filter(
         (cell) => isContainerDecoratorCell(cell) && isNoSize(cell.view)
       ) as DecoratorCell[];
@@ -283,14 +193,88 @@ export function updateCells({
         generateNewPointsWithLayout(newCells, { defaultNodeSize });
       }
 
-      for (const cell of newCells) {
-        if (isNodeCell(cell) && isNoPoint(cell.view)) {
-          const view = getNodeView(cell.id);
-          cell.view.x = view.x;
-          cell.view.y = view.y;
+      // --- Step 5: 更新未定位节点 ---
+      for (const c of newCells) {
+        if (isNodeCell(c) && isNoPoint(c.view)) {
+          const v = getNodeView(c.id);
+          c.view.x = v.x;
+          c.view.y = v.y;
         }
       }
     }
   }
+
   return { cells: newCells, updated: updateCandidates, shouldReCenter };
+}
+
+/**
+ * 布局 add-related-nodes 的子节点
+ */
+function layoutRelatedNodes({
+  newCells,
+  nodesMap,
+  parent,
+  parentNode,
+  isManualLayout,
+  updateCandidates,
+  handled,
+}: {
+  newCells: Cell[];
+  nodesMap: Map<string, NodeCell>;
+  parent?: NodeId;
+  parentNode?: NodeCell;
+  isManualLayout: boolean;
+  updateCandidates: (NodeCell | DecoratorCell)[];
+  handled: boolean;
+}): boolean {
+  const parentNodeCell = parent ? nodesMap.get(parent) : parentNode;
+
+  if (!parentNodeCell || isNoPoint(parentNodeCell.view)) return handled;
+
+  // 构建父->子[]
+  const adjacency = new Map<string, string[]>();
+  const queue: { id: string; parentId: string }[] = [];
+
+  for (const c of newCells) {
+    if (isEdgeCell(c) && c.source && c.target) {
+      if (!adjacency.has(c.source)) adjacency.set(c.source, []);
+      adjacency.get(c.source)!.push(c.target);
+      queue.push({ id: c.target, parentId: c.source });
+    }
+  }
+
+  while (queue.length > 0) {
+    const { id, parentId } = queue.shift()!;
+    const node = nodesMap.get(id);
+    const parent = nodesMap.get(parentId);
+    if (!node || !parent) continue;
+
+    if (isNoPoint(node.view)) {
+      if (isManualLayout) {
+        const siblings = adjacency.get(parentId)!;
+        const index = siblings.indexOf(id);
+        const baseX =
+          parent.view.x + parent.view.width / 2 - node.view.width / 2;
+        const baseY = parent.view.y + parent.view.height + DEFAULT_NODE_GAP_V;
+
+        let offsetX = 0;
+        if (index > 0) {
+          const step = Math.ceil(index / 2);
+          const dir = 1 - 2 * (index % 2);
+          offsetX = dir * step * (node.view.width + DEFAULT_NODE_GAP_H);
+        }
+
+        node.view.x = baseX + offsetX;
+        node.view.y = baseY;
+      }
+
+      updateCandidates.push(node);
+    }
+
+    (adjacency.get(id) || []).forEach((cid) =>
+      queue.push({ id: cid, parentId: id })
+    );
+  }
+
+  return !newCells.some((c) => c.type === "decorator" && isNoPoint(c.view));
 }
