@@ -1,13 +1,17 @@
 import { describe, test, expect } from "@jest/globals";
 import { cloneNodes } from "./clone-nodes.js";
-import { InstanceApi_createInstance } from "@next-api-sdk/cmdb-sdk";
+import { StoryboardApi_addNode } from "@next-api-sdk/next-builder-sdk";
 import { TreeNodeItemData, TestTreeData } from "../interface.js";
 
-jest.mock("@next-api-sdk/cmdb-sdk");
+jest.mock("@next-api-sdk/next-builder-sdk");
 
 describe("cloneNodes", () => {
   test("should work", async () => {
-    const createInstanceSdk = InstanceApi_createInstance as jest.Mock;
+    const addNodeSdk = StoryboardApi_addNode as jest.Mock;
+    // Mock the API responses
+    addNodeSdk.mockResolvedValue({
+      instance: { instanceId: "mock-id" },
+    });
 
     const clonedData = {
       instanceId: "604979fcf4e66",
@@ -469,24 +473,40 @@ describe("cloneNodes", () => {
       },
     ] as TestTreeData[];
 
-    await cloneNodes(clonedData, parentData, treeData);
-
-    expect(createInstanceSdk).toHaveBeenCalledTimes(4);
-
-    expect(createInstanceSdk.mock.calls[0][1]).toEqual({
-      name: "beforeEach",
-      params: null,
-      parent: "604979fc8fdff",
-      sort: 0,
-      type: "block",
+    await cloneNodes(clonedData, parentData, treeData, {
+      appId: "test-app-id",
     });
 
-    expect(createInstanceSdk.mock.calls[1][1]).toEqual({
-      name: "visit",
-      params: ["/visual-builder"],
-      parent: undefined,
-      sort: 0,
-      type: "command",
-    });
+    expect(addNodeSdk).toHaveBeenCalledTimes(4);
+
+    // First call: creating the main cloned node (beforeEach)
+    expect(addNodeSdk.mock.calls[0]).toEqual([
+      "test-app-id",
+      {
+        objectId: "UI_TEST_NODE@EASYOPS",
+        instance: {
+          name: "beforeEach",
+          params: null,
+          sort: 0,
+          type: "block",
+          parent: "604979fc8fdff",
+        },
+      },
+    ]);
+
+    // Second call: creating the visit child node
+    expect(addNodeSdk.mock.calls[1]).toEqual([
+      "test-app-id",
+      {
+        objectId: "UI_TEST_NODE@EASYOPS",
+        instance: {
+          name: "visit",
+          params: ["/visual-builder"],
+          sort: 0,
+          type: "command",
+          parent: "mock-id",
+        },
+      },
+    ]);
   });
 });
