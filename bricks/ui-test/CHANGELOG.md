@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.19](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.1.18...@next-bricks/ui-test@1.1.19) (2025-09-02)
+
+
+### Bug Fixes
+
+* 调整测试用例接口为业务接口，以便在review 看到相关记录变更 ([7aa6cd8](https://github.com/easyops-cn/next-advanced-bricks/commit/7aa6cd868a7259816ac0ec62f1b0284a3382ab42))
+
+
+
+
+
 ## [1.1.18](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.1.17...@next-bricks/ui-test@1.1.18) (2025-08-25)
 
 **Note:** Version bump only for package @next-bricks/ui-test
