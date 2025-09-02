@@ -1,5 +1,5 @@
 import { createProviderClass } from "@next-core/utils/general";
-import { createNodes } from "./shared/createNodes.js";
+import { createNodes, Option } from "./shared/createNodes.js";
 import type { NodeItem } from "../interface.js";
 
 export interface ApplySnippetParams {
@@ -8,15 +8,14 @@ export interface ApplySnippetParams {
   initialSort?: number;
 }
 
-export async function applySnippet({
-  nodes,
-  parent,
-  initialSort,
-}: ApplySnippetParams): Promise<void> {
-  await createNodes(nodes, parent, initialSort);
+export async function applySnippet(
+  { nodes, parent, initialSort }: ApplySnippetParams,
+  options: Option
+): Promise<void> {
+  await createNodes(nodes, parent, initialSort, options);
 }
 
 customElements.define(
   "ui-test.apply-snippet",
-  createProviderClass(applySnippet),
+  createProviderClass(applySnippet)
 );

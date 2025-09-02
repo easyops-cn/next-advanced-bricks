@@ -6,7 +6,9 @@ jest.mock("./shared/createNodes.js");
 
 describe("applySnippet", () => {
   test("should work", async () => {
-    await applySnippet({ nodes: [], parent: "p_0" });
-    expect(createNodes).toHaveBeenCalledWith([], "p_0", undefined);
+    await applySnippet({ nodes: [], parent: "p_0" }, { appId: "test-app-id" });
+    expect(createNodes).toHaveBeenCalledWith([], "p_0", undefined, {
+      appId: "test-app-id",
+    });
   });
 });

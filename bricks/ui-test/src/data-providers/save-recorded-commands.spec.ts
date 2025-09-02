@@ -43,6 +43,7 @@ describe("saveRecordedCommands", () => {
       ],
       parent: "p_0",
       initialSort: 1,
+      appId: "test-app-id",
     });
     expect(createNodes).toHaveBeenCalledWith(
       [
@@ -75,7 +76,8 @@ describe("saveRecordedCommands", () => {
         },
       ],
       "p_0",
-      1
+      1,
+      { appId: "test-app-id" }
     );
   });
 
@@ -134,6 +136,7 @@ describe("saveRecordedCommands", () => {
       ],
       parent: "p_0",
       initialSort: 1,
+      appId: "test-app-id",
     });
 
     expect(createNodes).toHaveBeenCalledWith(
@@ -149,7 +152,11 @@ describe("saveRecordedCommands", () => {
         },
         {
           children: [
-            { name: "find", params: [".ant-radio-wrapper"], type: NodeType.Command },
+            {
+              name: "find",
+              params: [".ant-radio-wrapper"],
+              type: NodeType.Command,
+            },
             { name: "eq", params: [1], type: NodeType.Command },
             { name: "click", type: NodeType.Command },
           ],
@@ -159,7 +166,11 @@ describe("saveRecordedCommands", () => {
         },
         {
           children: [
-            { name: "find", params: [".ant-select-item"], type: NodeType.Command },
+            {
+              name: "find",
+              params: [".ant-select-item"],
+              type: NodeType.Command,
+            },
             { name: "eq", params: [2], type: NodeType.Command },
             { name: "click", type: NodeType.Command },
           ],
@@ -169,7 +180,8 @@ describe("saveRecordedCommands", () => {
         },
       ],
       "p_0",
-      1
+      1,
+      { appId: "test-app-id" }
     );
   });
 });

@@ -11,15 +11,17 @@ export interface SaveRecordedCommandsParams {
   steps: SelectedRecordStep[];
   parent: string;
   initialSort?: number;
+  appId: string;
 }
 
 export async function saveRecordedCommands({
   steps,
   parent,
   initialSort,
+  appId,
 }: SaveRecordedCommandsParams): Promise<void> {
   const commands = transformRecordedCommands(steps);
-  await createNodes(commands, parent, initialSort);
+  await createNodes(commands, parent, initialSort, { appId });
 }
 
 export function transformRecordedCommands(
