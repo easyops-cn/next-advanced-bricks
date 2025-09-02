@@ -1,14 +1,14 @@
 import { useMemo } from "react";
-import type { Job, TaskBaseDetail } from "../cruise-canvas/interfaces.js";
 import type { ChatMessage } from "./interfaces.js";
-import { getOrderedNodes } from "../cruise-canvas/getOrderedNodes.js";
+import type { ConversationBaseDetail, Task } from "../shared/interfaces.js";
+import { getFlatOrderedJobs } from "../cruise-canvas/getFlatOrderedJobs.js";
 
-export function useChatStream(
-  task: TaskBaseDetail | null | undefined,
-  jobs: Job[] | null | undefined
+export function useConversationStream(
+  conversation: ConversationBaseDetail | null | undefined,
+  tasks: Task[]
 ) {
   return useMemo(() => {
-    if (!task) {
+    if (!conversation) {
       return {
         messages: [],
         inputRequiredJobId: null,
@@ -16,14 +16,15 @@ export function useChatStream(
       };
     }
 
-    const messages: ChatMessage[] = [
-      {
-        role: "user",
-        content: task.requirement,
-      },
-    ];
+    const messages: ChatMessage[] = [];
 
-    const { list, map: jobMap } = getOrderedNodes(jobs);
+    const {
+      list,
+      // roots: jobRoots,
+      map: jobMap,
+      // levels: jobLevels,
+      // downstreamMap,
+    } = getFlatOrderedJobs(tasks);
 
     let prevAssistantMessage: ChatMessage = {
       role: "assistant",
@@ -101,6 +102,6 @@ export function useChatStream(
 
     messages.push(prevAssistantMessage);
 
-    return { messages, inputRequiredJobId, lastToolCallJobId };
-  }, [task, jobs]);
+    return { messages, jobMap, inputRequiredJobId, lastToolCallJobId };
+  }, [conversation, tasks]);
 }

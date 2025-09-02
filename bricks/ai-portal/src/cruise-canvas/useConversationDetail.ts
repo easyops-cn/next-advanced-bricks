@@ -40,6 +40,7 @@ export function useConversationDetail(
 
   const watchAgain = useCallback(async () => {
     replayRef.current = true;
+    dispatch({ type: "reset" });
 
     let isInitial = true;
     let previousTime: number | undefined;
