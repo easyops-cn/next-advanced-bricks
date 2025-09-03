@@ -399,6 +399,7 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
                   headerSortHoverBg: "none",
                   bodySortBg: "none",
                   rowHoverBg: "rgba(189, 191, 212, 0.1)",
+                  borderColor: "#f0f0f0",
                 }
               : {
                   headerBg: "var(--antd-table-header-bg)",
