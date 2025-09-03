@@ -1,7 +1,7 @@
 import {
   getTestDirHandle,
-  getAppDirHandle,
   getCaseFileHandle,
+  getDirHandleByPath,
 } from "./fileAccess.js";
 
 import { get } from "idb-keyval";
@@ -41,34 +41,129 @@ describe("fileAccess", () => {
     });
   });
 
-  describe("getAppDirHandle", () => {
-    it("should return a directory handle", async () => {
-      const mockE2eDirectory = jest.fn((name) => ({
-        name: name,
+  describe("getDirHandleByPath", () => {
+    it("should return the current directory handle when path is empty", async () => {
+      const mockDirHandle = {
+        name: "root",
         kind: "directory",
-        getDirectoryHandle: jest.fn().mockResolvedValue({
-          name: "visual-builder",
-          kind: "directory",
-        }),
-      }));
-
-      const mockGetCypressDir = jest.fn((name) => ({
-        name: name,
-        kind: "directory",
-        getDirectoryHandle: mockE2eDirectory,
-      }));
-
-      const testDirHandle = {
-        name: "ui-test",
-        kind: "directory",
-        getDirectoryHandle: mockGetCypressDir,
       };
 
-      const dirHandle = await getAppDirHandle(testDirHandle, {
-        appId: "myAppId",
-      });
+      const result = await getDirHandleByPath(mockDirHandle, "");
+      expect(result).toBe(mockDirHandle);
+    });
 
-      expect(dirHandle).toEqual({ kind: "directory", name: "visual-builder" });
+    it("should return the current directory handle when path only contains whitespace", async () => {
+      const mockDirHandle = {
+        name: "root",
+        kind: "directory",
+      };
+
+      const result = await getDirHandleByPath(mockDirHandle, "   ");
+      expect(result).toBe(mockDirHandle);
+    });
+
+    it("should create and return directory handle for single path", async () => {
+      const mockSubDirHandle = {
+        name: "cypress",
+        kind: "directory",
+      };
+
+      const mockDirHandle = {
+        name: "root",
+        kind: "directory",
+        getDirectoryHandle: jest.fn().mockResolvedValue(mockSubDirHandle),
+      };
+
+      const result = await getDirHandleByPath(mockDirHandle, "cypress");
+
+      expect(mockDirHandle.getDirectoryHandle).toHaveBeenCalledWith("cypress", {
+        create: true,
+      });
+      expect(result).toBe(mockSubDirHandle);
+    });
+
+    it("should create and return directory handle for nested path", async () => {
+      const mockAppIdDirHandle = {
+        name: "myAppId",
+        kind: "directory",
+      };
+
+      const mockE2eDirHandle = {
+        name: "e2e",
+        kind: "directory",
+        getDirectoryHandle: jest.fn().mockResolvedValue(mockAppIdDirHandle),
+      };
+
+      const mockCypressDirHandle = {
+        name: "cypress",
+        kind: "directory",
+        getDirectoryHandle: jest.fn().mockResolvedValue(mockE2eDirHandle),
+      };
+
+      const mockRootDirHandle = {
+        name: "root",
+        kind: "directory",
+        getDirectoryHandle: jest.fn().mockResolvedValue(mockCypressDirHandle),
+      };
+
+      const result = await getDirHandleByPath(
+        mockRootDirHandle,
+        "cypress/e2e/myAppId"
+      );
+
+      expect(mockRootDirHandle.getDirectoryHandle).toHaveBeenCalledWith(
+        "cypress",
+        { create: true }
+      );
+      expect(mockCypressDirHandle.getDirectoryHandle).toHaveBeenCalledWith(
+        "e2e",
+        { create: true }
+      );
+      expect(mockE2eDirHandle.getDirectoryHandle).toHaveBeenCalledWith(
+        "myAppId",
+        { create: true }
+      );
+      expect(result).toBe(mockAppIdDirHandle);
+    });
+
+    it("should handle path with trailing slashes", async () => {
+      const mockSubDirHandle = {
+        name: "cypress",
+        kind: "directory",
+      };
+
+      const mockDirHandle = {
+        name: "root",
+        kind: "directory",
+        getDirectoryHandle: jest.fn().mockResolvedValue(mockSubDirHandle),
+      };
+
+      const result = await getDirHandleByPath(mockDirHandle, "cypress/");
+
+      expect(mockDirHandle.getDirectoryHandle).toHaveBeenCalledWith("cypress", {
+        create: true,
+      });
+      expect(result).toBe(mockSubDirHandle);
+    });
+
+    it("should handle path with leading slashes", async () => {
+      const mockSubDirHandle = {
+        name: "cypress",
+        kind: "directory",
+      };
+
+      const mockDirHandle = {
+        name: "root",
+        kind: "directory",
+        getDirectoryHandle: jest.fn().mockResolvedValue(mockSubDirHandle),
+      };
+
+      const result = await getDirHandleByPath(mockDirHandle, "/cypress");
+
+      expect(mockDirHandle.getDirectoryHandle).toHaveBeenCalledWith("cypress", {
+        create: true,
+      });
+      expect(result).toBe(mockSubDirHandle);
     });
   });
 
