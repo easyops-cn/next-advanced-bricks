@@ -12,7 +12,8 @@ export default function convertCard(component: Component): BrickConf {
     properties: {
       themeVariant: "elevo",
       cardTitle: title,
-      background: false,
+      background: "#fff",
+      outline: "background",
       ...(textContent ? { textContent } : null),
     },
   };
