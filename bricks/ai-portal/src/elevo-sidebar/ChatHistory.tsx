@@ -171,7 +171,7 @@ export function LowLevelChatHistory(
           token: loadNextToken,
           limit: 30,
           onlyOwner: true,
-          onlyRelatedProject: true,
+          onlyUnrelatedProject: true,
         } as ElevoApi_ListElevoConversationsRequestParams,
         {
           interceptorParams: {
@@ -236,7 +236,7 @@ export function LowLevelChatHistory(
         {
           limit: 30,
           onlyOwner: true,
-          onlyRelatedProject: true,
+          onlyUnrelatedProject: true,
         } as ElevoApi_ListElevoConversationsRequestParams,
         {
           interceptorParams: {
