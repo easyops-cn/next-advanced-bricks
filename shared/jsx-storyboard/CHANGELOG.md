@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.7.2...@next-shared/jsx-storyboard@0.7.3) (2025-09-03)
+
+
+### Bug Fixes
+
+* refine card style ([fab9183](https://github.com/easyops-cn/next-advanced-bricks/commit/fab9183df8e7d8cd1bfda281d12dc6d12af86c09))
+
+
+
+
+
 ## [0.7.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.7.1...@next-shared/jsx-storyboard@0.7.2) (2025-09-02)
 
 

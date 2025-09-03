@@ -1,6 +1,6 @@
 {
   "name": "@next-bricks/vb-experiment",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "homepage": "https://github.com/easyops-cn/next-advanced-bricks/tree/master/bricks/vb-experiment",
   "repository": {
     "type": "git",
@@ -42,7 +42,7 @@
     "@next-core/theme": "^1.6.0",
     "@next-core/types": "^1.17.0",
     "@next-core/utils": "^1.8.4",
-    "@next-shared/jsx-storyboard": "^0.7.2",
+    "@next-shared/jsx-storyboard": "^0.7.3",
     "comlink": "^4.4.2",
     "file-saver": "^2.0.5",
     "jszip": "^3.10.1",
