@@ -18,6 +18,7 @@ import convertForEach from "./convertForEach.js";
 import convertIf from "./convertIf.js";
 import convertOutput from "./convertOutput.js";
 import convertLink from "./convertLink.js";
+import convertTag from "./convertTag.js";
 
 export async function convertComponent(
   component: Component,
@@ -70,6 +71,9 @@ export async function convertComponent(
       break;
     case "Output":
       brick = await convertOutput(component);
+      break;
+    case "Tag":
+      brick = await convertTag(component);
       break;
     case "eo-search":
     case "eo-input":
