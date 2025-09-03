@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.32.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.32.2...@next-bricks/ai-portal@0.32.3) (2025-09-03)
+
+
+### Bug Fixes
+
+* fix chat history ([e14f37b](https://github.com/easyops-cn/next-advanced-bricks/commit/e14f37b2379c4affbbf848f77c47d9d89c8dc9b7))
+
+
+
+
+
 ## [0.32.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.32.1...@next-bricks/ai-portal@0.32.2) (2025-09-02)
 
 
