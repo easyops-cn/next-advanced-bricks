@@ -45,7 +45,12 @@ export interface Task {
 
 export type ConversationState = "working" | "completed";
 
-export type TaskState = "free" | "confirming" | "executing" | "completed";
+export type TaskState =
+  | "free"
+  | "confirming"
+  | "executing"
+  | "completed"
+  | "failed";
 
 export type JobState =
   | "submitted"
@@ -86,6 +91,24 @@ export interface Job {
   generatedView?: ConstructedView;
   staticDataView?: ConstructedView;
   level?: number;
+
+  // 要求用户选择动作
+  requestHumanAction?: HumanAction;
+
+  // 用户选择的动作
+  humanAction?: string;
+}
+
+export type HumanAction = HumanActionConfirmPlan | HumanActionSelect;
+
+export interface HumanActionConfirmPlan {
+  type: "confirm-plan";
+  confirmText: string;
+}
+
+export interface HumanActionSelect {
+  type: "select";
+  options: string[];
 }
 
 export interface Step {
