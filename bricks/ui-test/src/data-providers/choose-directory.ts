@@ -5,18 +5,20 @@ import { dirHandleStorageKey } from "../constants.js";
 
 interface Params {
   action: "get" | "set";
+  key?: string;
 }
 
 export async function chooseDirectory(params: Params): Promise<unknown> {
+  const key = params?.key || dirHandleStorageKey;
   if (params?.action === "get") {
-    return get(dirHandleStorageKey);
+    return get(key);
   }
 
   const directoryHandle = await window.showDirectoryPicker?.({
     mode: "readwrite",
   });
 
-  set(dirHandleStorageKey, directoryHandle);
+  set(key, directoryHandle);
 
   return directoryHandle;
 }

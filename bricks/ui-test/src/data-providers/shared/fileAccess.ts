@@ -15,23 +15,44 @@ export async function getTestDirHandle() {
   return dirHandle;
 }
 
+/**
+ * 递归获取目录句柄，根据给定的路径创建或获取目录
+ * @param dirHandle 根目录句柄
+ * @param path 目录路径，如 "cypress/e2e/appId"
+ * @returns 目标目录句柄
+ */
+export async function getDirHandleByPath(
+  dirHandle: any,
+  path: string
+): Promise<any> {
+  // 将路径按 "/" 分割成数组
+  const pathParts = path.split("/").filter((part) => part.trim() !== "");
+
+  // 如果路径为空，返回当前目录句柄
+  if (pathParts.length === 0) {
+    return dirHandle;
+  }
+
+  // 获取第一个路径部分
+  const [currentDir, ...remainingPath] = pathParts;
+
+  // 获取或创建当前目录
+  const currentDirHandle = await dirHandle.getDirectoryHandle(currentDir, {
+    create: true,
+  });
+
+  if (remainingPath.length > 0) {
+    return getDirHandleByPath(currentDirHandle, remainingPath.join("/"));
+  }
+
+  return currentDirHandle;
+}
+
 export async function getAppDirHandle(
   dirHandle: any,
   { appId }: { appId: string }
-) {
-  const cypressDirectory = await dirHandle.getDirectoryHandle("cypress", {
-    create: true,
-  });
-
-  const e2eDirectory = await cypressDirectory.getDirectoryHandle("e2e", {
-    create: true,
-  });
-
-  const appIdDirectory = await e2eDirectory.getDirectoryHandle(`${appId}`, {
-    create: true,
-  });
-
-  return appIdDirectory;
+): Promise<any> {
+  return getDirHandleByPath(dirHandle, `cypress/e2e/${appId}`);
 }
 
 export async function getCaseFileHandle(

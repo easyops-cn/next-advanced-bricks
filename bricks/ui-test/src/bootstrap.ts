@@ -15,3 +15,4 @@ import "./data-providers/insert-node.js";
 import "./data-providers/get-brick-custom-commands.js";
 import "./data-providers/get-source-code-by-suites.js";
 import "./data-providers/prettier-code.js";
+import "./data-providers/export-api-test-file.js";
