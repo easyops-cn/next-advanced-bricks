@@ -80,7 +80,6 @@ export interface Project {
 }
 
 export interface ChatHistoryProps {
-  username?: string;
   historyActiveId?: string;
   historyUrlTemplate?: string;
   historyActions?: ActionType[];
@@ -104,7 +103,6 @@ export const ChatHistory = forwardRef(LowLevelChatHistory);
 
 export function LowLevelChatHistory(
   {
-    username,
     historyActiveId,
     historyActions,
     historyUrlTemplate,
@@ -167,17 +165,10 @@ export function LowLevelChatHistory(
   }, []);
 
   useEffect(() => {
-    setNextToken(undefined);
-    setLoadNextToken(undefined);
-    setHistoryList(null);
-  }, [username]);
-
-  useEffect(() => {
     Promise.all([
       ElevoApi_listElevoConversations(
         {
           token: loadNextToken,
-          // username,
           limit: 30,
           onlyOwner: true,
           onlyRelatedProject: true,
@@ -208,7 +199,7 @@ export function LowLevelChatHistory(
         setHistoryList([]);
         setHistoryError(true);
       });
-  }, [loadNextToken, username]);
+  }, [loadNextToken]);
 
   const [actionsVisible, setActionsVisible] = useState<string | null>(null);
 
@@ -242,7 +233,11 @@ export function LowLevelChatHistory(
     try {
       const pullId = ++pullIdRef.current;
       const tempList = await ElevoApi_listElevoConversations(
-        { username, limit: 30 },
+        {
+          limit: 30,
+          onlyOwner: true,
+          onlyRelatedProject: true,
+        } as ElevoApi_ListElevoConversationsRequestParams,
         {
           interceptorParams: {
             ignoreLoadingBar: true,
@@ -297,7 +292,7 @@ export function LowLevelChatHistory(
       // eslint-disable-next-line no-console
       console.error("Error pulling chat history:", error);
     }
-  }, [username]);
+  }, []);
 
   useImperativeHandle(
     ref,

@@ -51,7 +51,6 @@ const { defineElement, property, event, method } = createDecorators();
 export interface ElevoSidebarProps {
   /** @deprecated */
   legacy?: boolean;
-  username?: string;
   userInstanceId?: string;
   behavior?: "default" | "drawer";
   logoUrl?: string;
@@ -89,9 +88,6 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
   /** @deprecated */
   @property({ type: Boolean })
   accessor legacy = true;
-
-  @property()
-  accessor username: string | undefined;
 
   @property()
   accessor userInstanceId: string | undefined;
@@ -201,7 +197,6 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
       <ElevoSidebarComponent
         ref={this.#ref}
         legacy={this.legacy}
-        username={this.username}
         userInstanceId={this.userInstanceId}
         behavior={this.behavior}
         logoUrl={this.logoUrl}
@@ -235,7 +230,6 @@ interface ElevoSidebarComponentProps extends ElevoSidebarProps {
 function LegacyElevoSidebarComponent(
   {
     legacy,
-    username,
     userInstanceId,
     behavior,
     logoUrl,
@@ -396,7 +390,6 @@ function LegacyElevoSidebarComponent(
         ) : (
           <ChatHistory
             ref={historyRef}
-            username={username}
             historyActiveId={historyActiveId}
             historyUrlTemplate={historyUrlTemplate}
             historyActions={historyActions}
