@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.20](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.1.19...@next-bricks/ui-test@1.1.20) (2025-09-03)
+
+
+### Bug Fixes
+
+* export api test file provider ([11ae49e](https://github.com/easyops-cn/next-advanced-bricks/commit/11ae49edc961c053283be6a6716e37b447b92b4c))
+
+
+
+
+
 ## [1.1.19](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.1.18...@next-bricks/ui-test@1.1.19) (2025-09-02)
 
 
