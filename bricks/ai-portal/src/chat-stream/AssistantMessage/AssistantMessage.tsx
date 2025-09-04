@@ -4,10 +4,11 @@ import styles from "./AssistantMessage.module.css";
 import Avatar from "../images/avatar@2x.png";
 import { NodeJob } from "../NodeJob/NodeJob.js";
 import { NON_WORKING_STATES } from "../../shared/constants.js";
+import type { ConversationState } from "../../shared/interfaces.js";
 
 export interface AssistantMessageProps {
   jobs: Job[];
-  taskState: TaskState | undefined;
+  taskState: TaskState | ConversationState | undefined;
   isLatest?: boolean;
 }
 

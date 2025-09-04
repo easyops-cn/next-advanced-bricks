@@ -19,7 +19,7 @@ import type { ActionType } from "@next-bricks/basic/mini-actions";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
-import ElevoLogo from "../elevo-logo/images/logo@2x.png";
+import ElevoLogo from "./images/logo@2x.png";
 import {
   WrappedDropdownActions,
   WrappedEasyopsAvatar,

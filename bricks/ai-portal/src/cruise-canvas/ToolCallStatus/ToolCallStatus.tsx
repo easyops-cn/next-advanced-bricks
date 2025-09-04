@@ -7,6 +7,7 @@ import { WrappedIcon } from "../../shared/bricks";
 import { TaskContext } from "../../shared/TaskContext";
 import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
 import { getToolDataProgress } from "../utils/getToolDataProgress";
+import type { JobState } from "../../shared/interfaces";
 
 export interface NodeJobToolCallProps {
   job: Job;
@@ -97,7 +98,8 @@ export function ToolCallStatus({
             prefix="far"
             icon="circle-user"
           />
-        ) : toolState === "canceled" ? (
+        ) : toolState === "canceled" ||
+          toolState === ("terminated" as JobState) ? (
           <WrappedIcon
             className={styles.icon}
             lib="fa"

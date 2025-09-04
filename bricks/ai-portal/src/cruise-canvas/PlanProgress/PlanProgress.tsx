@@ -85,7 +85,8 @@ export function PlanProgress({
       await showDialog({
         type: "confirm",
         title: t(K.CONFIRM_TO_TERMINATE_THE_TASK_TITLE),
-        content: t(K.CONFIRM_TO_TERMINATE_THE_TASK_CONTENT),
+        content: "",
+        // content: t(K.CONFIRM_TO_TERMINATE_THE_TASK_CONTENT),
       });
     } catch {
       return;
@@ -135,7 +136,7 @@ export function PlanProgress({
               </WrappedTooltip>
             ) : (
               <WrappedTooltip
-                content={actionBeingTaken ? undefined : t(K.CANCEL_THE_TASK)}
+                content={actionBeingTaken ? undefined : t(K.TERMINATE_THE_TASK)}
                 onClick={handleTerminate}
               >
                 <button disabled={!!actionBeingTaken} className={styles.action}>

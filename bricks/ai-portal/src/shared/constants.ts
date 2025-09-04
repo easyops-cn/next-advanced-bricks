@@ -1,14 +1,16 @@
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import type { TaskState as LegacyTaskState } from "../cruise-canvas/interfaces.js";
-import type { TaskState } from "./interfaces.js";
+import type { ConversationState, TaskState } from "./interfaces.js";
 
-export const DONE_STATES = ["completed", "failed", "canceled"] as (
-  | TaskState
-  | LegacyTaskState
-  | undefined
-)[];
+export const DONE_STATES = [
+  "completed",
+  "failed",
+  "canceled",
+  "terminated",
+] as (ConversationState | TaskState | LegacyTaskState | undefined)[];
 
 export const GENERAL_DONE_STATES = [...DONE_STATES, "paused"] as (
+  | ConversationState
   | TaskState
   | LegacyTaskState
   | undefined

@@ -142,24 +142,26 @@ export function useConversationGraph(
       }
     }
 
-    if (nodes.length === 0) {
-      nodes.push({
-        type: "loading",
-        id: LOADING_NODE_ID,
-      });
-    } else {
-      let counter = 0;
-      for (const nodeId of userInputNodes) {
-        if (!edges.some((edge) => edge.source === nodeId)) {
-          const loadingId = `${LOADING_NODE_ID}:${counter++}`;
-          nodes.push({
-            type: "loading",
-            id: loadingId,
-          });
-          edges.push({
-            source: nodeId,
-            target: loadingId,
-          });
+    if (conversation.state !== "terminated") {
+      if (nodes.length === 0) {
+        nodes.push({
+          type: "loading",
+          id: LOADING_NODE_ID,
+        });
+      } else {
+        let counter = 0;
+        for (const nodeId of userInputNodes) {
+          if (!edges.some((edge) => edge.source === nodeId)) {
+            const loadingId = `${LOADING_NODE_ID}:${counter++}`;
+            nodes.push({
+              type: "loading",
+              id: loadingId,
+            });
+            edges.push({
+              source: nodeId,
+              target: loadingId,
+            });
+          }
         }
       }
     }
