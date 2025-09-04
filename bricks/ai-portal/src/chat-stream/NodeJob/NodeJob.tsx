@@ -19,10 +19,11 @@ import { HumanAdjustPlan } from "../../shared/HumanAdjustPlan/HumanAdjustPlan.js
 import { NodeView } from "../NodeView/NodeView.js";
 import { TaskContext } from "../../shared/TaskContext.js";
 import { StreamContext } from "../StreamContext.js";
+import type { ConversationState } from "../../shared/interfaces.js";
 
 export interface NodeJobProps {
   job: Job;
-  taskState: TaskState | undefined;
+  taskState: TaskState | ConversationState | undefined;
 }
 
 const ICON_UP: GeneralIconProps = {
@@ -195,7 +196,7 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
 
 function getClassNameAndIconProps(
   state: JobState | undefined,
-  taskState: TaskState | undefined
+  taskState: TaskState | ConversationState | undefined
 ) {
   switch (state) {
     case "completed":
@@ -209,7 +210,11 @@ function getClassNameAndIconProps(
       };
     case "submitted":
     case "working":
-      if (taskState === "paused" || taskState === "canceled") {
+      if (
+        taskState === "paused" ||
+        taskState === "canceled" ||
+        taskState === "terminated"
+      ) {
         return {
           icon: {
             lib: "fa",
@@ -246,6 +251,7 @@ function getClassNameAndIconProps(
         },
       };
     case "canceled":
+    case "terminated" as JobState:
       return {
         className: styles.canceled,
         icon: {

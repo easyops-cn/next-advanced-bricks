@@ -27,6 +27,8 @@ import type { FeedbackDetail } from "../cruise-canvas/interfaces.js";
 import { NodeFeedback } from "../shared/NodeFeedback/NodeFeedback.js";
 import type { ChatStreamProps, ChatStreamRef } from ".";
 import styles from "./styles.module.css";
+import toolbarStyles from "../cruise-canvas/toolbar.module.css";
+import { K, t } from "./i18n.js";
 
 const ICON_SHARE: GeneralIconProps = {
   lib: "easyops",
@@ -304,8 +306,10 @@ export function ChatStreamComponent(
             <div className={styles.right}>
               {showUiSwitch && (
                 <WrappedIconButton
+                  className={styles["navbar-switch-ui"]}
                   icon={ICON_CANVAS}
                   variant="mini"
+                  title={t(K.SWITCH_TO_CANVAS)}
                   onClick={onSwitchToCanvas}
                 />
               )}
@@ -385,6 +389,16 @@ export function ChatStreamComponent(
           {activeToolCallJob && <Aside job={activeToolCallJob!} />}
         </div>
         {activeExpandedViewJobId && <ExpandedView views={views!} />}
+        {showUiSwitch && (
+          <div className={classNames(toolbarStyles.toolbar, styles.toolbar)}>
+            <WrappedIconButton
+              icon={ICON_CANVAS}
+              variant="mini"
+              title={t(K.SWITCH_TO_CANVAS)}
+              onClick={onSwitchToCanvas}
+            />
+          </div>
+        )}
       </StreamContext.Provider>
     </TaskContext.Provider>
   );

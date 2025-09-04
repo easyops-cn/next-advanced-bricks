@@ -10,6 +10,7 @@ import type {
 } from "../interfaces";
 import { WrappedIcon } from "../../shared/bricks";
 import { DONE_STATES } from "../../shared/constants";
+import type { ConversationState } from "../../shared/interfaces";
 
 export interface NavProps {
   nav: GraphNavItem[] | undefined;
@@ -17,7 +18,7 @@ export interface NavProps {
   jobMap: Map<string, Job> | undefined;
   jobLevels: Map<string, number> | undefined;
   currentNavId: string | null;
-  taskState: TaskState | undefined;
+  taskState: TaskState | ConversationState | undefined;
   onClick: (jobId: string) => void;
 }
 
@@ -147,7 +148,7 @@ export function Nav({
 
 interface NavItemProps extends MergedNavItem {
   currentNavId: string | null;
-  taskState: TaskState | undefined;
+  taskState: TaskState | ConversationState | undefined;
   onClick: (jobId: string) => void;
 }
 
@@ -193,7 +194,7 @@ function NavItem({
 
 function getClassNameAndIconProps(
   state: JobState | undefined,
-  taskState: TaskState | undefined
+  taskState: TaskState | ConversationState | undefined
 ) {
   switch (state) {
     case "completed":
@@ -207,7 +208,11 @@ function getClassNameAndIconProps(
       };
     case "submitted":
     case "working":
-      if (taskState === "paused" || taskState === "canceled") {
+      if (
+        taskState === "paused" ||
+        taskState === "canceled" ||
+        taskState === "terminated"
+      ) {
         return {
           icon: {
             lib: "fa",
@@ -244,6 +249,7 @@ function getClassNameAndIconProps(
         },
       };
     case "canceled":
+    case "terminated" as JobState:
       return {
         className: styles.canceled,
         icon: {

@@ -19,6 +19,7 @@ import type { TaskState } from "../../cruise-canvas/interfaces";
 import { K, locales, NS, t } from "./i18n";
 import { ICON_LOADING } from "../constants";
 import { TaskContext } from "../TaskContext";
+import type { ConversationState } from "../interfaces";
 
 initializeI18n(NS, locales);
 
@@ -29,7 +30,7 @@ const ICON_STOP: GeneralIconProps = {
 };
 
 export interface ChatBoxProps {
-  state: TaskState | undefined;
+  state: TaskState | ConversationState | undefined;
   canChat: boolean;
   inputRequiredJobId?: string | null;
 }
@@ -56,7 +57,8 @@ export function ChatBox({
       await showDialog({
         type: "confirm",
         title: t(K.CONFIRM_TO_TERMINATE_THE_TASK_TITLE),
-        content: t(K.CONFIRM_TO_TERMINATE_THE_TASK_CONTENT),
+        content: "",
+        // content: t(K.CONFIRM_TO_TERMINATE_THE_TASK_CONTENT),
       });
     } catch {
       return;
@@ -190,7 +192,9 @@ export function ChatBox({
                 <WrappedIconButton
                   icon={ICON_STOP}
                   disabled={!!actionBeingTaken}
-                  tooltip={actionBeingTaken ? undefined : t(K.CANCEL_THE_TASK)}
+                  tooltip={
+                    actionBeingTaken ? undefined : t(K.TERMINATE_THE_TASK)
+                  }
                   onClick={handleTerminate}
                 />
               )}

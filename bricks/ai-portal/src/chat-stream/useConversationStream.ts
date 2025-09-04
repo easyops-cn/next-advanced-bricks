@@ -30,7 +30,6 @@ export function useConversationStream(
       role: "assistant",
       jobs: [],
     };
-    let inputRequiredJobId: string | null = null;
     let lastToolCallJobId: string | null = null;
     for (const jobId of list) {
       const job = jobMap.get(jobId)!;
@@ -63,45 +62,10 @@ export function useConversationStream(
       }
 
       prevAssistantMessage.jobs.push(job);
-
-      const toolName = job.toolCall?.name;
-      const askUser = toolName === "ask_human";
-      if (askUser && job.state === "completed") {
-        messages.push(prevAssistantMessage);
-
-        loop: for (const msg of job.messages ?? []) {
-          if (msg.role === "tool") {
-            for (const part of msg.parts) {
-              if (part.type === "text") {
-                try {
-                  const { human_answer } = JSON.parse(part.text);
-                  messages.push({
-                    role: "user",
-                    content: human_answer,
-                  });
-                } catch (error) {
-                  // eslint-disable-next-line no-console
-                  console.error("Error parsing human answer:", error);
-                }
-              }
-              break loop;
-            }
-          }
-        }
-
-        prevAssistantMessage = {
-          role: "assistant",
-          jobs: [],
-        };
-      }
-
-      if (askUser && job.state === "input-required") {
-        inputRequiredJobId = jobId;
-      }
     }
 
     messages.push(prevAssistantMessage);
 
-    return { messages, jobMap, inputRequiredJobId, lastToolCallJobId };
+    return { messages, jobMap, lastToolCallJobId };
   }, [conversation, tasks]);
 }

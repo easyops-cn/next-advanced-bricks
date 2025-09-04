@@ -43,7 +43,7 @@ export interface Task {
   endTime?: number;
 }
 
-export type ConversationState = "working" | "completed";
+export type ConversationState = "working" | "completed" | "terminated";
 
 export type TaskState =
   | "free"
