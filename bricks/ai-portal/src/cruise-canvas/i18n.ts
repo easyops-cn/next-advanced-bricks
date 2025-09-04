@@ -16,6 +16,7 @@ export enum K {
   TERMINATE_THE_TASK = "TERMINATE_THE_TASK",
   CONFIRM_TO_TERMINATE_THE_TASK_TITLE = "CONFIRM_TO_TERMINATE_THE_TASK_TITLE",
   CONFIRM_TO_TERMINATE_THE_TASK_CONTENT = "CONFIRM_TO_TERMINATE_THE_TASK_CONTENT",
+  SWITCH_TO_CHAT = "SWITCH_TO_CHAT",
   BACK_TO_CENTER = "BACK_TO_CENTER",
   ZOOM_IN = "ZOOM_IN",
   ZOOM_OUT = "ZOOM_OUT",
@@ -49,6 +50,7 @@ const en: Locale = {
   CONFIRM_TO_TERMINATE_THE_TASK_TITLE: "Are you sure to terminate the task?",
   CONFIRM_TO_TERMINATE_THE_TASK_CONTENT:
     "The task can not be resumed after been terminated.",
+  SWITCH_TO_CHAT: "Switch to chat",
   BACK_TO_CENTER: "Back to center",
   ZOOM_IN: "Zoom in",
   ZOOM_OUT: "Zoom out",
@@ -81,6 +83,7 @@ const zh: Locale = {
   TERMINATE_THE_TASK: "取消任务",
   CONFIRM_TO_TERMINATE_THE_TASK_TITLE: "确定终止任务吗？",
   CONFIRM_TO_TERMINATE_THE_TASK_CONTENT: "任务终止后将无法再恢复运行。",
+  SWITCH_TO_CHAT: "切换为聊天",
   BACK_TO_CENTER: "回中",
   ZOOM_IN: "放大",
   ZOOM_OUT: "缩小",
