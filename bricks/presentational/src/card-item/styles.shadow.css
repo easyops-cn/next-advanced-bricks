@@ -37,6 +37,11 @@ eo-link {
   --local-card-hovered-title-color: var(--color-brand);
   --local-card-description-color: var(--text-color-secondary);
 
+  &.dark,
+  &.dark-v2 {
+    --local-card-hovered-background-color: #29292d;
+  }
+
   &.grayish {
     --local-card-border: 1px solid transparent;
     --local-box-shadow: 0 0 0 1px transparent;
@@ -61,7 +66,7 @@ eo-link {
     &.dark-v2 {
       --local-card-hovered-border: 1px solid rgba(255, 255, 255, 0.12);
       --local-card-selected-border-color: transparent;
-      --local-card-background-color: rgb(255 255 255 / 8%);
+      --local-card-background-color: #313135;
       --local-card-hovered-box-shadow: none;
       --local-card-icon-box-shadow: none;
       --local-card-hovered-icon-background-color: var(--palette-blue-2);
