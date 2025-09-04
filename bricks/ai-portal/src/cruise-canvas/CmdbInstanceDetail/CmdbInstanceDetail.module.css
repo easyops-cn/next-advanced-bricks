@@ -5,6 +5,10 @@
   padding: 16px;
 }
 
+.container:not(:first-child) {
+  margin-top: 10px;
+}
+
 ai-portal\.chat-stream .container {
   background: rgba(255, 255, 255, 0.6);
   border-radius: 8px;

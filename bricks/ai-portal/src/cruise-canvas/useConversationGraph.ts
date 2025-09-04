@@ -50,19 +50,20 @@ export function useConversationGraph(
         ?.find((msg) => msg.role === "user")
         ?.parts?.find((part) => part.type === "text")?.text;
 
-      if (jobRoots.includes(jobId)) {
-        if (userInput !== undefined) {
-          const requirementId = `requirement:${jobId}`;
-          nodes.push({
-            type: "requirement",
-            id: requirementId,
-            content: userInput,
-          });
-          nodeIds.push(requirementId);
-          jobNodesMap.set(jobId, nodeIds);
-          userInputNodes.push(requirementId);
-          continue;
-        }
+      const isRequirementJob =
+        userInput !== undefined &&
+        (jobRoots.includes(jobId) || messages!.length === 1);
+      if (isRequirementJob) {
+        const requirementId = `requirement:${jobId}`;
+        nodes.push({
+          type: "requirement",
+          id: requirementId,
+          content: userInput,
+        });
+        nodeIds.push(requirementId);
+        jobNodesMap.set(jobId, nodeIds);
+        userInputNodes.push(requirementId);
+        continue;
       }
 
       if (job.instruction) {

@@ -347,6 +347,24 @@ export function ChatStreamComponent(
               >
                 <WrappedIcon lib="antd" icon="down" />
               </div>
+              {replay || supports?.chat ? (
+                <div className={styles.footer}>
+                  <div className={styles.narrow}>
+                    {replay ? (
+                      <ReplayToolbar
+                        taskDone={conversationDone}
+                        skipToResults={skipToResults}
+                        watchAgain={watchAgain}
+                      />
+                    ) : (
+                      <ChatBox
+                        state={conversationState}
+                        canChat={conversationDone}
+                      />
+                    )}
+                  </div>
+                </div>
+              ) : null}
             </>
           ) : (
             <div className={styles["loading-icon"]}>
@@ -358,24 +376,6 @@ export function ChatStreamComponent(
               />
             </div>
           )}
-          {replay || supports?.chat ? (
-            <div className={styles.footer}>
-              <div className={styles.narrow}>
-                {replay ? (
-                  <ReplayToolbar
-                    taskDone={conversationDone}
-                    skipToResults={skipToResults}
-                    watchAgain={watchAgain}
-                  />
-                ) : (
-                  <ChatBox
-                    state={conversationState}
-                    canChat={conversationDone}
-                  />
-                )}
-              </div>
-            </div>
-          ) : null}
         </div>
         <div
           className={classNames(styles.aside, {

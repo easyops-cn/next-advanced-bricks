@@ -116,6 +116,11 @@ export interface CardProps extends BaseProps {
   title?: string;
 }
 
+export interface TagProps extends BaseProps {
+  color?: string;
+  outline?: boolean;
+}
+
 export interface LinkProps extends BaseProps {
   /** 站外链接 */
   href?: string;
@@ -197,6 +202,7 @@ declare const Dashboard: (props: DashboardProps) => any;
 declare const Modal: (props: ModalProps) => any;
 declare const Card: (props: CardProps) => any;
 declare const Output: (props: BaseProps) => any;
+declare const Tag: (props: TagProps) => any;
 declare const Link: (props: LinkProps) => any;
 declare const Plaintext: (props: PlaintextProps) => any;
 declare const Fragment: (props: { key?: string | number }) => any;

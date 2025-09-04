@@ -117,6 +117,10 @@
   white-space: pre-wrap;
 }
 
+.role-user:empty {
+  display: none;
+}
+
 .human-input {
   margin-top: 1em;
   display: block;
