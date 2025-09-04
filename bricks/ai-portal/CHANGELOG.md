@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.32.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.32.6...@next-bricks/ai-portal@0.32.7) (2025-09-04)
+
+
+### Bug Fixes
+
+* bordered sidebar ([3e9138d](https://github.com/easyops-cn/next-advanced-bricks/commit/3e9138dccba747810e1b936a5eafc1fcfd64e028))
+* handle terminated conversation ([b969953](https://github.com/easyops-cn/next-advanced-bricks/commit/b96995362f2b5f48254a8b3c1b883864b44a679b))
+* refine position of ui switch button ([1720cc3](https://github.com/easyops-cn/next-advanced-bricks/commit/1720cc3aa52a04afa7d5ea16b63a78c88085e38c))
+
+
+
+
+
 ## [0.32.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.32.5...@next-bricks/ai-portal@0.32.6) (2025-09-04)
 
 
