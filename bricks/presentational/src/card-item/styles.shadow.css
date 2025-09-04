@@ -140,6 +140,7 @@ eo-link {
     &.selected {
       padding: 0;
       border-width: 2px 2px 2px 8px;
+      box-shadow: 0px 1px 3px 0px var(--card-item-border-color);
     }
 
     &:hover {
