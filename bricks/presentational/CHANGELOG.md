@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.20.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.20.0...@next-bricks/presentational@1.20.1) (2025-09-04)
+
+
+### Bug Fixes
+
+* **card-item:** add box shadow to selected style of colored border ([56b6ce1](https://github.com/easyops-cn/next-advanced-bricks/commit/56b6ce13d11432bd30e87894e541061ffd2fbbcb))
+* **card-item:** Change card background color to opaque when hovering in dark mode ([94cc9eb](https://github.com/easyops-cn/next-advanced-bricks/commit/94cc9eb1310b214354bdb8a3607ddca31e438669))
+
+
+
+
+
 # [1.20.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.19.0...@next-bricks/presentational@1.20.0) (2025-08-27)
 
 
