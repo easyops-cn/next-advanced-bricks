@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.8.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.7.3...@next-shared/jsx-storyboard@0.8.0) (2025-09-04)
+
+
+### Features
+
+* new component: tag ([d3aaada](https://github.com/easyops-cn/next-advanced-bricks/commit/d3aaadafd9ed7844dea24a5824d8d6be784e6ce2))
+
+
+
+
+
 ## [0.7.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/jsx-storyboard@0.7.2...@next-shared/jsx-storyboard@0.7.3) (2025-09-03)
 
 
