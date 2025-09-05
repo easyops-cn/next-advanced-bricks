@@ -15,7 +15,6 @@ import type {
   TabListMapping,
   TabListProps,
 } from "../tab-list/index.js";
-import bg from "./images/bg.png";
 
 initializeI18n(NS, locales);
 
@@ -104,32 +103,20 @@ function ShowCasesComponent({ list, taskUrlTemplate }: ShowCasesProps) {
       />
       <ul className="cases">
         {filteredList?.map((item) => (
-          <li key={item.taskId} className="item">
+          <li key={item.taskId}>
             <WrappedLink
               className="link"
               url={parseTemplate(taskUrlTemplate, item)}
+              style={
+                item.thumbUrl
+                  ? {
+                      backgroundImage: `url("${getBasePath()}${item.thumbUrl}")`,
+                    }
+                  : undefined
+              }
             >
-              <span
-                className="thumbnail"
-                style={{
-                  backgroundImage: [
-                    ...(item.thumbUrl
-                      ? [`url(${getBasePath()}${item.thumbUrl})`]
-                      : []),
-                    `url(${bg})`,
-                  ].join(", "),
-                }}
-              >
-                {!item.thumbUrl && (
-                  <>
-                    <span className="quote" />
-                    <span className="text">{item.summary}</span>
-                  </>
-                )}
-              </span>
-              <span className="title">
-                <span>{item.title}</span>
-              </span>
+              <div className="title">{item.title}</div>
+              <div className="description">{item.summary}</div>
             </WrappedLink>
           </li>
         ))}
