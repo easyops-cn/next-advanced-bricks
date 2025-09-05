@@ -1,6 +1,7 @@
 import type { ConstructResult } from "@next-shared/jsx-storyboard";
 import type { JSONSchema } from "./json-schema";
 import type { ViewWithInfo } from "./utils/converters/interfaces";
+import type { HumanAction } from "../shared/interfaces";
 
 export type RangeTuple = [min: number, max: number];
 export type SizeTuple = [width: number, height: number];
@@ -148,7 +149,12 @@ export interface Job {
   componentGraph?: ComponentGraph;
   generatedView?: ConstructedView | ViewWithInfo;
   staticDataView?: ConstructedView;
-  level?: number;
+
+  // 要求用户选择动作
+  requestHumanAction?: HumanAction;
+
+  // 用户选择的动作
+  humanAction?: string;
 }
 
 export interface TaskPatch extends Omit<Partial<Task>, "jobs"> {

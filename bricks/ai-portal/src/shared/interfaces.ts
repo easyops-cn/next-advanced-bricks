@@ -90,7 +90,6 @@ export interface Job {
 
   generatedView?: ConstructedView;
   staticDataView?: ConstructedView;
-  level?: number;
 
   // 要求用户选择动作
   requestHumanAction?: HumanAction;

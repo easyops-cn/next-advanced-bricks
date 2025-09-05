@@ -14,7 +14,12 @@ import moment from "moment";
 import { handleHttpError } from "@next-core/runtime";
 import styles from "./NodeJob.module.css";
 import sharedStyles from "../shared.module.css";
-import type { CmdbInstanceDetailData, FileInfo, Job } from "../interfaces";
+import type {
+  CmdbInstanceDetailData,
+  FileInfo,
+  Job,
+  JobState,
+} from "../interfaces";
 import { K, t } from "../i18n.js";
 import { AsyncWrappedCMDB } from "../cmdb.js";
 import { WrappedButton, WrappedIcon } from "../../shared/bricks";
@@ -27,17 +32,23 @@ import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
 import { CmdbInstanceDetail } from "../CmdbInstanceDetail/CmdbInstanceDetail";
 import { FileList } from "../FileList/FileList";
 import { TaskContext } from "../../shared/TaskContext";
+// import { RequestHumanAction } from "../../shared/RequestHumanAction/RequestHumanAction";
 
 // 当 markdown 中包含超过 4 列的表格时，对节点使用大尺寸样式
 const RegExpLargeTableInMarkdown = /^\s*\|(?:\s*:?-+:?\s*\|){4,}\s*$/m;
 
 export interface NodeJobProps {
   job: Job;
-  state?: string;
+  state?: JobState;
   active?: boolean;
+  isLeaf?: boolean;
 }
 
-export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
+export function NodeJob({
+  job,
+  state,
+  active /* , isLeaf */,
+}: NodeJobProps): JSX.Element {
   const toolTitle = job.toolCall?.annotations?.title;
   const toolName = job.toolCall?.name;
   const askUser = toolName === "ask_human";
@@ -249,6 +260,9 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
           />
         )}
         {files.length > 0 && <FileList files={files} large={sizeLarge} />}
+        {/* job.requestHumanAction && isLeaf && (
+          <RequestHumanAction jobId={job.id} action={job.requestHumanAction} />
+        ) */}
       </div>
     </div>
   );

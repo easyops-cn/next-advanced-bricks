@@ -25,10 +25,10 @@ import type {
   Job,
   RequirementGraphNode,
   JobGraphNode,
-  GraphEdge,
   ZoomAction,
   FileInfo,
   FeedbackDetail,
+  JobState,
 } from "./interfaces.js";
 import { useAutoCenter } from "./useAutoCenter.js";
 import { useLayout } from "./useLayout.js";
@@ -791,7 +791,7 @@ export function CruiseCanvasComponent(
                   !DONE_STATES.includes(node.state!) &&
                   !GENERAL_DONE_STATES.includes(conversationState!)
                 }
-                edges={edges}
+                isLeaf={!nonLeafNodes.has(node.id)}
                 x={node.view?.x}
                 y={node.view?.y}
                 active={activeNodeId === node.id}
@@ -848,12 +848,12 @@ export function CruiseCanvasComponent(
 interface NodeComponentProps {
   id: string;
   type: GraphNode["type"];
-  edges: GraphEdge[];
   content?: string;
   job?: Job;
-  state?: string;
+  state?: JobState;
   startTime?: number;
   instructionLoading?: boolean;
+  isLeaf?: boolean;
   x?: number;
   y?: number;
   active?: boolean;
@@ -867,6 +867,7 @@ function NodeComponent({
   content,
   startTime,
   instructionLoading,
+  isLeaf,
   x,
   y,
   active,
@@ -943,7 +944,7 @@ function NodeComponent({
       ) : type === "view" ? (
         <NodeView job={job!} active={active} />
       ) : (
-        <NodeJob state={state} job={job!} active={active} />
+        <NodeJob state={state} job={job!} active={active} isLeaf={isLeaf} />
       )}
     </div>
   );

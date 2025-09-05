@@ -34,9 +34,9 @@ export function useConversationGraph(
       downstreamMap,
     } = getFlatOrderedJobs(tasks, options);
 
-    // Make sure every job in the list has at least one corresponding node
     const jobNodesMap = new Map<string, string[]>();
     const userInputNodes: string[] = [];
+    let loadingCounter = 0;
 
     for (const jobId of list) {
       const job = jobMap.get(jobId)!;
@@ -92,7 +92,7 @@ export function useConversationGraph(
         });
       }
 
-      if (hasMessages || !job.instruction) {
+      if (hasMessages) {
         const jobNodeId = `job:${job.id}`;
         nodes.push({
           type: "job",
@@ -101,6 +101,13 @@ export function useConversationGraph(
           state: job.state,
         });
         nodeIds.push(jobNodeId);
+      } else if (!job.instruction) {
+        const loadingId = `${LOADING_NODE_ID}:${loadingCounter++}`;
+        nodes.push({
+          type: "loading",
+          id: loadingId,
+        });
+        nodeIds.push(loadingId);
       }
 
       const view = job.generatedView || job.staticDataView;
@@ -128,6 +135,9 @@ export function useConversationGraph(
 
     for (const jobId of list) {
       const nodeIds = jobNodesMap.get(jobId)!;
+      // if (nodeIds.length === 0) {
+      //   continue;
+      // }
       for (let i = 1; i < nodeIds.length; i++) {
         edges.push({
           source: nodeIds[i - 1],
@@ -138,21 +148,23 @@ export function useConversationGraph(
       const downstreams = downstreamMap.get(jobId) ?? [];
       for (const targetJobId of downstreams) {
         const targetNodeIds = jobNodesMap.get(targetJobId)!;
+        // if (targetNodeIds.length > 0) {
         edges.push({ source, target: targetNodeIds[0] });
+        // }
       }
     }
 
     if (conversation.state !== "terminated") {
       if (nodes.length === 0) {
+        const loadingId = `${LOADING_NODE_ID}:${loadingCounter++}`;
         nodes.push({
           type: "loading",
-          id: LOADING_NODE_ID,
+          id: loadingId,
         });
       } else {
-        let counter = 0;
         for (const nodeId of userInputNodes) {
           if (!edges.some((edge) => edge.source === nodeId)) {
-            const loadingId = `${LOADING_NODE_ID}:${counter++}`;
+            const loadingId = `${LOADING_NODE_ID}:${loadingCounter++}`;
             nodes.push({
               type: "loading",
               id: loadingId,

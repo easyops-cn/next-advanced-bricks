@@ -24,11 +24,11 @@ import type {
   Job,
   RequirementGraphNode,
   JobGraphNode,
-  GraphEdge,
   ZoomAction,
   FileInfo,
   FeedbackDetail,
   ConstructedView,
+  JobState,
 } from "./interfaces.js";
 import { useAutoCenter } from "./useAutoCenter.js";
 import { useLayout } from "./useLayout.js";
@@ -789,7 +789,6 @@ export function LegacyCruiseCanvasComponent(
                   !DONE_STATES.includes(node.state!) &&
                   !GENERAL_DONE_STATES.includes(taskState!)
                 }
-                edges={edges}
                 x={node.view?.x}
                 y={node.view?.y}
                 active={activeNodeId === node.id}
@@ -846,10 +845,9 @@ export function LegacyCruiseCanvasComponent(
 interface NodeComponentProps {
   id: string;
   type: GraphNode["type"];
-  edges: GraphEdge[];
   content?: string;
   job?: Job;
-  state?: string;
+  state?: JobState;
   startTime?: number;
   instructionLoading?: boolean;
   x?: number;
