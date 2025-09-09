@@ -14,7 +14,12 @@ import moment from "moment";
 import { handleHttpError } from "@next-core/runtime";
 import styles from "./NodeJob.module.css";
 import sharedStyles from "../shared.module.css";
-import type { CmdbInstanceDetailData, FileInfo, Job } from "../interfaces";
+import type {
+  CmdbInstanceDetailData,
+  FileInfo,
+  Job,
+  JobState,
+} from "../interfaces";
 import { K, t } from "../i18n.js";
 import { AsyncWrappedCMDB } from "../cmdb.js";
 import { WrappedButton, WrappedIcon } from "../../shared/bricks";
@@ -33,7 +38,7 @@ const RegExpLargeTableInMarkdown = /^\s*\|(?:\s*:?-+:?\s*\|){4,}\s*$/m;
 
 export interface NodeJobProps {
   job: Job;
-  state?: string;
+  state?: JobState;
   active?: boolean;
 }
 
