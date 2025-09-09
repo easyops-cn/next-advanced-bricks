@@ -17,6 +17,7 @@ export type CruiseCanvasAction =
 export interface ConversationSSEAction {
   type: "sse";
   payload: ConversationPatch;
+  workspace: string;
 }
 
 export interface ConversationResetAction {

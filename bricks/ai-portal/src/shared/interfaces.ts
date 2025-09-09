@@ -1,4 +1,4 @@
-import type { ConstructedView } from "@next-shared/jsx-storyboard";
+import type { ConstructResult } from "@next-shared/jsx-storyboard";
 
 export interface Conversation {
   // Conversation ID
@@ -192,5 +192,5 @@ export interface GeneratedView {
   isStaticData?: boolean;
   from?: "generate" | "config";
   withContexts?: Record<string, unknown>;
-  asyncConstructedView?: Promise<ConstructedView>;
+  asyncConstructedView?: Promise<ConstructResult | null>;
 }

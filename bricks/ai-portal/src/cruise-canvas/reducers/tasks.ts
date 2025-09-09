@@ -11,6 +11,7 @@ import type {
   TextPart,
 } from "../../shared/interfaces";
 import type { CruiseCanvasAction } from "./interfaces";
+import { getAsyncConstructedView } from "../../shared/getAsyncConstructedView";
 
 export const tasks: Reducer<Task[], CruiseCanvasAction> = (state, action) => {
   switch (action.type) {
@@ -37,7 +38,11 @@ export const tasks: Reducer<Task[], CruiseCanvasAction> = (state, action) => {
           (task) => task.id === taskPatch.id
         );
         const previousTask = tasks[previousTaskIndex];
-        taskPatch.jobs = mergeJobs(previousTask?.jobs, taskPatch.jobs);
+        taskPatch.jobs = mergeJobs(
+          previousTask?.jobs,
+          taskPatch.jobs,
+          action.workspace
+        );
 
         if (previousTaskIndex === -1) {
           tasks = [...tasks, { ...taskPatch } as Task];
@@ -65,7 +70,8 @@ export const tasks: Reducer<Task[], CruiseCanvasAction> = (state, action) => {
 
 function mergeJobs(
   previousJobs: Job[] | undefined,
-  jobsPatch: JobPatch[] | undefined
+  jobsPatch: JobPatch[] | undefined,
+  workspace: string
 ): Job[] {
   let jobs = previousJobs ?? [];
   for (const jobPatch of jobsPatch ?? []) {
@@ -93,7 +99,7 @@ function mergeJobs(
         patch.toolCall?.name === "create_view" &&
         patch.state === "completed"
       ) {
-        const generatedView = getJobGeneratedView(messagesPatch);
+        const generatedView = getJobGeneratedView(messagesPatch, workspace);
         if (generatedView) {
           patch.generatedView = generatedView;
         }
@@ -137,7 +143,7 @@ function mergeJobs(
         ) &&
         (restMessagesPatch.state ?? previousJob.state) === "completed"
       ) {
-        const generatedView = getJobGeneratedView(messagesPatch);
+        const generatedView = getJobGeneratedView(messagesPatch, workspace);
         if (generatedView) {
           restMessagesPatch.generatedView = generatedView;
         }
@@ -149,6 +155,7 @@ function mergeJobs(
           view.withContexts = {
             RESPONSE: getJobStaticDataResponse(restMessagesPatch.messages!),
           };
+          view.asyncConstructedView = getAsyncConstructedView(view, workspace);
           restMessagesPatch.generatedView = view;
         }
       }
@@ -215,7 +222,8 @@ function mergeMessageParts(parts: Part[]): Part[] {
 }
 
 function getJobGeneratedView(
-  messages: Message[] | undefined
+  messages: Message[] | undefined,
+  workspace: string
 ): GeneratedView | undefined {
   if (!messages) {
     return;
@@ -226,8 +234,12 @@ function getJobGeneratedView(
       for (const part of message.parts) {
         if (part.type === "text") {
           try {
-            const result = JSON.parse(part.text) as GeneratedView;
-            return result;
+            const view = JSON.parse(part.text) as GeneratedView;
+            view.asyncConstructedView = getAsyncConstructedView(
+              view,
+              workspace
+            );
+            return view;
           } catch {
             // Do nothing, continue to next part
           }
@@ -248,12 +260,13 @@ function getJobStaticDataView(
     if (message.role === "tool") {
       for (const part of message.parts) {
         if (part.type === "data" && part.data?.type === "static_data_view") {
-          return {
+          const view: GeneratedView = {
             viewId: part.data.viewId,
             code: part.data.code,
             from: part.data.from,
             isStaticData: true,
           };
+          return view;
         }
       }
     }

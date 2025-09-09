@@ -9,11 +9,7 @@ import React, {
 import classNames from "classnames";
 import { unstable_createRoot } from "@next-core/runtime";
 import { uniqueId } from "lodash";
-import {
-  convertJsx,
-  parseTsx,
-  type ConstructedView,
-} from "@next-shared/jsx-storyboard";
+import { convertJsx, type ConstructResult } from "@next-shared/jsx-storyboard";
 import type { GraphGeneratedView } from "../../cruise-canvas/interfaces";
 import styles from "./ExpandedView.module.css";
 import { WrappedIcon, WrappedIconButton } from "../../shared/bricks";
@@ -49,35 +45,36 @@ export function ExpandedView({ views }: ExpandedViewProps) {
   const feedbackDone =
     useViewFeedbackDone(generatedView?.viewId, showFeedbackOnView) ||
     (generatedView && feedbackDoneViews?.has(generatedView.viewId));
-  const [view, setView] = useState<ConstructedView | null>(null);
+  const [view, setView] = useState<ConstructResult | null>(null);
   const canFeedback =
     !!view && !!generatedView?.viewId && generatedView.from !== "config";
+  const [viewsWithTitle, setViewsWithTitle] = useState<
+    Array<
+      GraphGeneratedView & {
+        title?: string;
+      }
+    >
+  >(views);
 
   useEffect(() => {
-    if (!generatedView) {
-      setView(null);
-      return;
-    }
-    (async () => {
-      try {
-        const result = parseTsx(generatedView.code, {
-          workspace,
-          withContexts: generatedView.withContexts
-            ? Object.keys(generatedView.withContexts)
-            : undefined,
-        });
-        setView({
-          ...result,
-          viewId: generatedView.viewId,
-          from: generatedView.from,
-          withContexts: generatedView.withContexts,
-        });
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error("Failed to parse generated view:", error);
-      }
-    })();
+    generatedView?.asyncConstructedView?.then((view) => {
+      setView(view);
+    });
   }, [generatedView, workspace]);
+
+  useEffect(() => {
+    Promise.all(
+      views.map(async (v) => {
+        const view = await v.view.asyncConstructedView;
+        return {
+          ...v,
+          title: view?.title,
+        };
+      })
+    ).then((result) => {
+      setViewsWithTitle(result);
+    });
+  }, [views]);
 
   const sizeSmall = useMemo(() => {
     let hasForm = false;
@@ -121,7 +118,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
 
   useEffect(() => {
     setLoading(true);
-    if (!view) {
+    if (!view || !generatedView) {
       return;
     }
     let ignore = false;
@@ -131,6 +128,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
           rootId,
           workspace,
           expanded: true,
+          withContexts: generatedView.withContexts,
         });
         if (ignore) {
           return;
@@ -149,7 +147,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
     return () => {
       ignore = true;
     };
-  }, [rootId, workspace, view]);
+  }, [rootId, workspace, view, generatedView]);
 
   const handleClose = useCallback(() => {
     setActiveExpandedViewJobId(null);
@@ -191,7 +189,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
         data-root-id={rootId}
       />
       <ul className={styles.nav}>
-        {views.map((view) => (
+        {viewsWithTitle.map((view) => (
           <li key={view.id}>
             <button
               className={classNames(styles["nav-button"], {
@@ -199,7 +197,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
               })}
               onClick={() => setActiveExpandedViewJobId(view.id)}
             >
-              {view.view.viewId}
+              {view.title ?? "…"}
             </button>
           </li>
         ))}

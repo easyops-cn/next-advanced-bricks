@@ -13,9 +13,8 @@ import { uniqueId } from "lodash";
 import { initializeI18n } from "@next-core/i18n";
 import {
   convertJsx,
-  parseTsx,
   type Component,
-  type ConstructedView,
+  type ConstructResult,
 } from "@next-shared/jsx-storyboard";
 import styles from "./CreatedView.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
@@ -57,30 +56,14 @@ export function CreatedView({
   const feedbackDone =
     useViewFeedbackDone(generatedView.viewId, showFeedbackOnView) ||
     feedbackDoneViews?.has(generatedView.viewId);
-  const [view, setView] = useState<ConstructedView | null>(null);
+  const [view, setView] = useState<ConstructResult | null>(null);
   const canFeedback =
     !!view && !!generatedView.viewId && generatedView.from !== "config";
 
   useEffect(() => {
-    (async () => {
-      try {
-        const result = parseTsx(generatedView.code, {
-          workspace,
-          withContexts: generatedView.withContexts
-            ? Object.keys(generatedView.withContexts)
-            : undefined,
-        });
-        setView({
-          ...result,
-          viewId: generatedView.viewId,
-          from: generatedView.from,
-          withContexts: generatedView.withContexts,
-        });
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error("Failed to parse generated view:", error);
-      }
-    })();
+    generatedView.asyncConstructedView?.then((view) => {
+      setView(view);
+    });
   }, [generatedView, workspace]);
 
   useEffect(() => {
@@ -112,7 +95,11 @@ export function CreatedView({
     let ignore = false;
     (async () => {
       try {
-        const convertedView = await convertJsx(view, { rootId, workspace });
+        const convertedView = await convertJsx(view, {
+          rootId,
+          workspace,
+          withContexts: generatedView.withContexts,
+        });
         if (ignore) {
           return;
         }
@@ -130,7 +117,7 @@ export function CreatedView({
     return () => {
       ignore = true;
     };
-  }, [rootId, workspace, view]);
+  }, [rootId, workspace, view, generatedView]);
 
   const sizeLarge = useMemo(() => {
     let large = false;

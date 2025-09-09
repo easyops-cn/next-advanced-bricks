@@ -7,6 +7,7 @@ import styles from "./JsxEditor.module.css";
 import { WrappedButton, WrappedIconButton } from "../bricks";
 import { ICON_CLOSE } from "../constants";
 import { TaskContext } from "../TaskContext";
+import { getAsyncConstructedView } from "../getAsyncConstructedView";
 
 interface CodeEditorEvents {
   "code.change": CustomEvent<string>;
@@ -44,6 +45,7 @@ const AsyncWrappedCodeEditor = React.lazy(async () => ({
 
 export function JsxEditor() {
   const {
+    workspace,
     manuallyUpdatedViews,
     updateView,
     activeJsxEditorJob,
@@ -106,10 +108,15 @@ declare const RESPONSE: typeof RESPONSE_VALUE;`,
             themeVariant="elevo"
             type="primary"
             onClick={() => {
-              updateView?.(activeJsxEditorJob!.id, {
+              const newView = {
                 ...view,
                 code,
-              });
+              };
+              newView.asyncConstructedView = getAsyncConstructedView(
+                newView,
+                workspace
+              );
+              updateView?.(activeJsxEditorJob!.id, newView);
               setActiveJsxEditorJob?.(undefined);
             }}
           >

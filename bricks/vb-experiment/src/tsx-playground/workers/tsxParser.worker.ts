@@ -1,9 +1,9 @@
 // istanbul ignore file
-import { parseTsx, type ParseJsxOptions } from "@next-shared/jsx-storyboard";
+import { parseTsx, type ParseTsxOptions } from "@next-shared/jsx-storyboard";
 import { expose } from "comlink";
 
 class TsxParserWorker {
-  parse(source: string, options?: ParseJsxOptions) {
+  parse(source: string, options?: ParseTsxOptions) {
     return parseTsx(source, options);
   }
 }

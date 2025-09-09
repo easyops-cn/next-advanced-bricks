@@ -1,8 +1,8 @@
 import { renderHook } from "@testing-library/react";
+import type { ConstructResult } from "@next-shared/jsx-storyboard";
 import { useConversationGraph } from "./useConversationGraph";
 import { LOADING_NODE_ID } from "./constants";
 import type { ConversationBaseDetail, Job, Task } from "../shared/interfaces";
-import type { ConstructedView } from "@next-shared/jsx-storyboard";
 
 describe("useConversationGraph", () => {
   it("should return null when conversation is null", () => {
@@ -134,7 +134,7 @@ describe("useConversationGraph", () => {
           {
             id: "job-1",
             state: "completed",
-            constructedView: { viewId: "view-1" } as ConstructedView,
+            constructedView: { source: "view-1" } as ConstructResult,
             messages: [],
           } as Partial<Job>,
         ],
@@ -153,7 +153,7 @@ describe("useConversationGraph", () => {
 
     expect(result.current?.views).toContainEqual({
       id: "job-1",
-      view: { viewId: "view-1" },
+      view: { source: "view-1" },
     });
   });
 
@@ -226,7 +226,7 @@ describe("useConversationGraph", () => {
             id: "job-1",
             state: "completed",
             instruction: "Build component",
-            constructedView: { viewId: "view-2" } as ConstructedView,
+            constructedView: { source: "view-2" } as ConstructResult,
             messages: [
               {
                 role: "assistant",

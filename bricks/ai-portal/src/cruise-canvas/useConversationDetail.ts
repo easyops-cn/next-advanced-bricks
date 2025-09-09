@@ -63,10 +63,10 @@ export function useConversationDetail(
         }
       }
 
-      dispatch({ type: "sse", payload: value });
+      dispatch({ type: "sse", payload: value, workspace: conversationId });
       isInitial = false;
     }
-  }, []);
+  }, [conversationId]);
 
   useEffect(() => {
     dispatch({ type: "reset" });
@@ -132,7 +132,7 @@ export function useConversationDetail(
           }
 
           replayListRef.current.push(value);
-          dispatch({ type: "sse", payload: value });
+          dispatch({ type: "sse", payload: value, workspace: conversationId });
           isInitial = false;
         }
       } catch (e) {

@@ -1,12 +1,12 @@
 // istanbul ignore file
 import type {
   ConstructResult,
-  ParseJsxOptions,
+  ParseTsxOptions,
 } from "@next-shared/jsx-storyboard";
 import { wrap } from "comlink";
 
 export interface RemoteTsxParserWorker {
-  parse(source: string, options?: ParseJsxOptions): Promise<ConstructResult>;
+  parse(source: string, options?: ParseTsxOptions): Promise<ConstructResult>;
 }
 
 let remoteWorkerPromise: Promise<RemoteTsxParserWorker> | undefined;
