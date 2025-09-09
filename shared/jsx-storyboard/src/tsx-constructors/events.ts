@@ -3,7 +3,7 @@ import type {
   ConstructJsValueOptions,
   ConstructResult,
   EventHandler,
-  ParseJsxOptions,
+  ParseTsxOptions,
   TypeEventHandlerOfShowMessage,
 } from "../interfaces.js";
 import { constructJsValue } from "./values.js";
@@ -12,7 +12,7 @@ import { parseTsxCallApi } from "./api.js";
 export function constructTsxEvent(
   node: t.Expression | t.ArgumentPlaceholder | t.SpreadElement,
   result: ConstructResult,
-  options?: ParseJsxOptions,
+  options?: ParseTsxOptions,
   valueOptions?: ConstructJsValueOptions
 ): EventHandler[] | null {
   if (!t.isArrowFunctionExpression(node)) {

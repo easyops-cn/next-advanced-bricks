@@ -3,14 +3,14 @@ import type {
   Component,
   ConstructJsValueOptions,
   ConstructResult,
-  ParseJsxOptions,
+  ParseTsxOptions,
 } from "../interfaces.js";
 import { constructChildren } from "./children.js";
 
 export function constructComponents(
   nodes: t.Node[],
   result: ConstructResult,
-  options?: ParseJsxOptions,
+  options?: ParseTsxOptions,
   valueOptions?: ConstructJsValueOptions
 ): Component[] {
   const { textContent, children } = constructChildren(

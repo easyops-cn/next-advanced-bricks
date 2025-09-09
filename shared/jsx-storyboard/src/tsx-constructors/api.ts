@@ -3,7 +3,7 @@ import { isExpressionString, isNilNode } from "../utils.js";
 import type {
   ConstructJsValueOptions,
   ConstructResult,
-  ParseJsxOptions,
+  ParseTsxOptions,
 } from "../interfaces.js";
 import { constructJsValue } from "./values.js";
 
@@ -26,7 +26,7 @@ const EXPECTED_ARGS = {
 export function parseTsxCallApi(
   call: t.Expression,
   result: ConstructResult,
-  options?: ParseJsxOptions,
+  options?: ParseTsxOptions,
   jsValueOptions?: ConstructJsValueOptions
 ): CallApiPayload | null {
   if (!(t.isCallExpression(call) || t.isOptionalCallExpression(call))) {

@@ -1,7 +1,7 @@
 import type { BrickConf } from "@next-core/types";
 import type {
   Component,
-  ConstructedView,
+  ConstructResult,
   RenderUseBrick,
 } from "../interfaces.js";
 import type { TableColumn, TableProps } from "../../lib/components.js";
@@ -17,7 +17,7 @@ const columnUseBrickParams = ["cellData", "rowData"];
 
 export default async function convertTable(
   component: Component,
-  view: ConstructedView,
+  view: ConstructResult,
   options: ConvertViewOptions
 ): Promise<BrickConf> {
   const { properties } = component;

@@ -13,7 +13,6 @@ export function convertEvents(
   for (const [event, handler] of Object.entries(component.events ?? {})) {
     switch (component.name) {
       case "Table":
-      case "eo-table":
         switch (event) {
           case "select": {
             const action = convertEventHandlers(handler, options);
@@ -39,7 +38,6 @@ export function convertEvents(
         }
         break;
       case "Button":
-      case "eo-button":
         if (event === "click") {
           const action = convertEventHandlers(handler, options);
           if (action) {
@@ -48,7 +46,6 @@ export function convertEvents(
         }
         break;
       case "Search":
-      case "eo-search":
         if (event === "search") {
           const action = convertEventHandlers(handler, options);
           if (action) {
@@ -57,7 +54,6 @@ export function convertEvents(
         }
         break;
       case "Select":
-      case "eo-select":
         if (event === "change") {
           const action = convertEventHandlers(handler, options);
           if (action) {

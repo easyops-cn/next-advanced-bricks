@@ -1,11 +1,10 @@
 import type { ContextConf } from "@next-core/types";
 import { pipes } from "@easyops-cn/brick-next-pipes";
-import type { ConvertResult } from "../interfaces.js";
+import type { ConstructResult, ConvertResult } from "../interfaces.js";
 import type { ConvertViewOptions } from "../interfaces.js";
 import { withBox } from "./withBox.js";
 import { convertDataSources } from "./convertDataSources.js";
 import { convertVariables } from "./convertVariables.js";
-import type { ConstructedView } from "../interfaces.js";
 import { convertComponent } from "./convertComponent.js";
 
 const BUILTIN_FUNCTIONS: ContextConf[] = [
@@ -32,14 +31,14 @@ const BUILTIN_FUNCTIONS: ContextConf[] = [
 ];
 
 export async function convertJsx(
-  result: ConstructedView,
+  result: ConstructResult,
   options: ConvertViewOptions
 ): Promise<ConvertResult> {
   const context: ContextConf[] = [
     ...convertDataSources(result.dataSources ?? [], options),
     ...convertVariables(result.variables ?? []),
-    ...(result.withContexts
-      ? Object.entries(result.withContexts).map(([name, value]) => ({
+    ...(options.withContexts
+      ? Object.entries(options.withContexts).map(([name, value]) => ({
           name,
           value,
         }))
@@ -56,17 +55,7 @@ export async function convertJsx(
   ).flat();
 
   const needBox = result.components.every((component) =>
-    [
-      "Form",
-      "Descriptions",
-      "Button",
-      "eo-form",
-      "eo-descriptions",
-      "eo-button",
-      "form",
-      "descriptions",
-      "button",
-    ].includes(component.name)
+    ["Form", "Descriptions", "Button"].includes(component.name)
   );
 
   return {

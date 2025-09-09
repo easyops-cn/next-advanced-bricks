@@ -1,7 +1,7 @@
 import type { BrickConf } from "@next-core/types";
 import type {
   Component,
-  ConstructedView,
+  ConstructResult,
   RenderUseBrick,
 } from "../interfaces.js";
 import type { DescriptionsProps } from "../../lib/components.js";
@@ -22,7 +22,7 @@ interface DescriptionItem {
 
 export default async function convertDescriptions(
   { properties }: Component,
-  view: ConstructedView,
+  view: ConstructResult,
   options: ConvertViewOptions
 ): Promise<BrickConf> {
   const { dataSource, title, list, ...restProps } = properties as Partial<

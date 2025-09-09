@@ -1,4 +1,3 @@
-export * from "./parseJsx.js";
 export * from "./parseTsx.js";
 export * from "./converters/convertJsx.js";
 
@@ -12,9 +11,7 @@ export type {
   Variable,
   Events,
   EventHandler,
-  ParseJsxOptions,
   ParseTsxOptions,
-  ConstructedView,
   ConvertViewOptions,
   ConvertResult,
 } from "./interfaces.js";

@@ -5,7 +5,7 @@ import type {
   ConstructJsValueOptions,
   ConstructResult,
   Events,
-  ParseJsxOptions,
+  ParseTsxOptions,
 } from "../interfaces.js";
 import { constructJsValue, constructPropValue } from "./values.js";
 import {
@@ -20,7 +20,7 @@ import { constructComponents } from "./components.js";
 export function constructTsxElement(
   node: t.Node,
   result: ConstructResult,
-  options?: ParseJsxOptions,
+  options?: ParseTsxOptions,
   valueOptions?: ConstructJsValueOptions
 ): ChildElement | null | (ChildElement | null)[] {
   if (t.isJSXElement(node)) {

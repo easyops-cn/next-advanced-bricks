@@ -7,7 +7,7 @@ import type {
   Component,
   ConstructJsValueOptions,
   ConstructResult,
-  ParseJsxOptions,
+  ParseTsxOptions,
 } from "../interfaces.js";
 import { constructTsxElement } from "./element.js";
 import { replaceCTX, replaceVariables } from "./replaceVariables.js";
@@ -15,7 +15,7 @@ import { replaceCTX, replaceVariables } from "./replaceVariables.js";
 export function constructChildren(
   nodes: t.Node[],
   result: ConstructResult,
-  options?: ParseJsxOptions,
+  options?: ParseTsxOptions,
   valueOptions?: ConstructJsValueOptions
 ): {
   textContent?: string;

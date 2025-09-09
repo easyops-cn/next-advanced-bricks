@@ -137,25 +137,17 @@ export interface ConstructResult {
   contexts: string[];
 }
 
-export interface ParseJsxOptions {
+export interface ParseTsxOptions {
   reward?: boolean;
   workspace?: string;
-}
-
-export interface ParseTsxOptions extends ParseJsxOptions {
   withContexts?: string[];
-}
-
-export interface ConstructedView extends ConstructResult {
-  viewId: string;
-  from?: "generate" | "config";
-  withContexts?: Record<string, unknown>;
 }
 
 export interface ConvertViewOptions {
   rootId: string;
   workspace?: string;
   expanded?: boolean;
+  withContexts?: Record<string, unknown>;
 }
 
 export interface ConvertResult {

@@ -1,5 +1,5 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component } from "../interfaces.js";
+import type { Component, ConstructResult } from "../interfaces.js";
 import convertList from "./convertList.js";
 import type { ConvertViewOptions } from "../interfaces.js";
 import { convertEvents } from "./convertEvents.js";
@@ -12,7 +12,6 @@ import convertFormItem from "./convertFormItem.js";
 import convertModal from "./convertModal.js";
 import convertToolbar from "./convertToolbar.js";
 import convertText from "./convertText.js";
-import type { ConstructedView } from "../interfaces.js";
 import convertCard from "./convertCard.js";
 import convertForEach from "./convertForEach.js";
 import convertIf from "./convertIf.js";
@@ -24,48 +23,39 @@ import convertAvatarGroup from "./convertAvatarGroup.js";
 
 export async function convertComponent(
   component: Component,
-  result: ConstructedView,
+  result: ConstructResult,
   options: ConvertViewOptions
 ): Promise<BrickConf | BrickConf[]> {
   let brick: BrickConf | null = null;
   switch (component.name) {
     case "List":
-    case "eo-list":
       brick = await convertList(component);
       break;
     case "Table":
-    case "eo-table":
       brick = await convertTable(component, result, options);
       break;
     case "Descriptions":
-    case "eo-descriptions":
       brick = await convertDescriptions(component, result, options);
       break;
     case "Card":
       brick = await convertCard(component);
       break;
     case "Dashboard":
-    case "eo-dashboard":
       brick = await convertDashboard(component, result, options);
       break;
     case "Button":
-    case "eo-button":
       brick = await convertButton(component);
       break;
     case "Form":
-    case "eo-form":
       brick = await convertForm(component);
       break;
     case "Toolbar":
-    case "eo-toolbar":
       brick = await convertToolbar(component);
       break;
     case "Modal":
-    case "eo-modal":
       brick = await convertModal(component);
       break;
     case "Plaintext":
-    case "eo-text":
       brick = await convertText(component);
       break;
     case "Link":
@@ -83,16 +73,6 @@ export async function convertComponent(
     case "AvatarGroup":
       brick = await convertAvatarGroup(component);
       break;
-    case "eo-search":
-    case "eo-input":
-    case "eo-number-input":
-    case "eo-textarea":
-    case "eo-select":
-    case "eo-radio":
-    case "eo-checkbox":
-    case "eo-switch":
-    case "eo-date-picker":
-    case "eo-time-picker":
     case "Search":
     case "Input":
     case "NumberInput":
