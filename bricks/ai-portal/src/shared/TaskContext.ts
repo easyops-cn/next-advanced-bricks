@@ -6,7 +6,7 @@ import type {
 } from "../cruise-canvas/interfaces";
 
 export interface TaskContextValue {
-  humanInput: (jobId: string, input: string) => void;
+  humanInput: (jobId: string, input: string, action?: string) => void;
   onShare: () => void;
   onTerminate: () => void;
   supports?: Record<string, boolean>;

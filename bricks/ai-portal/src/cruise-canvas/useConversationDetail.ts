@@ -23,7 +23,8 @@ export function useConversationDetail(
     })
   );
 
-  const humanInputRef = useRef<(jobId: string, input: string) => void>();
+  const humanInputRef =
+    useRef<(jobId: string, input: string, action?: string) => void>();
 
   const replayListRef = useRef<ConversationPatch[]>([]);
   const replayRef = useRef(replay);
@@ -77,7 +78,7 @@ export function useConversationDetail(
     let requesting = false;
     let ctrl: AbortController | undefined;
 
-    const makeRequest = async (content: string | null) => {
+    const makeRequest = async (content: string | null, action?: string) => {
       if (requesting) {
         return;
       }
@@ -85,7 +86,7 @@ export function useConversationDetail(
       requesting = true;
       ctrl = new AbortController();
       try {
-        const sseRequest = await (content === null
+        const sseRequest = await (content === null && !action
           ? createSSEStream<ConversationPatch>(
               `${getBasePath()}api/gateway/logic.llm.aiops_service/api/v1/elevo/conversations/${conversationId}/stream`,
               {
@@ -97,7 +98,7 @@ export function useConversationDetail(
               {
                 signal: ctrl.signal,
                 method: "POST",
-                body: JSON.stringify({ content }),
+                body: JSON.stringify(action ? { action } : { content }),
                 headers: {
                   "Content-Type": "application/json",
                 },
@@ -144,8 +145,12 @@ export function useConversationDetail(
       }
     };
 
-    humanInputRef.current = async (jobId: string, content: string) => {
-      makeRequest(content);
+    humanInputRef.current = async (
+      jobId: string,
+      content: string,
+      action?: string
+    ) => {
+      makeRequest(content, action);
     };
 
     makeRequest(
