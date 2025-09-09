@@ -18,13 +18,10 @@ import type {
   ExtraLib,
   ExtraMarker,
 } from "@next-bricks/vs/code-editor";
-import actionsDefinition from "@next-shared/jsx-storyboard/lib/actions.d.ts?raw";
-import componentsDefinition from "@next-shared/jsx-storyboard/lib/components.d.ts?raw";
-import {
-  convertJsx,
-  type ConstructResult,
-  type ConvertResult,
-} from "@next-shared/jsx-storyboard";
+import actionsDefinition from "@next-shared/tsx-converter/lib/actions.d.ts?raw";
+import componentsDefinition from "@next-shared/tsx-converter/lib/components.d.ts?raw";
+import { convertJsx } from "@next-shared/tsx-converter";
+import type { ConvertResult, ConstructResult } from "@next-shared/tsx-types";
 import "@next-core/theme";
 import styles from "./styles.module.css";
 import { getRemoteTsxParserWorker } from "./workers/tsxParser";

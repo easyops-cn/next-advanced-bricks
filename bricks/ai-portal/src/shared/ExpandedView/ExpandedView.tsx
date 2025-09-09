@@ -9,7 +9,8 @@ import React, {
 import classNames from "classnames";
 import { unstable_createRoot } from "@next-core/runtime";
 import { uniqueId } from "lodash";
-import { convertJsx, type ConstructResult } from "@next-shared/jsx-storyboard";
+import { convertJsx } from "@next-shared/tsx-converter";
+import type { ConstructResult } from "@next-shared/tsx-types";
 import type { GraphGeneratedView } from "../../cruise-canvas/interfaces";
 import styles from "./ExpandedView.module.css";
 import { WrappedIcon, WrappedIconButton } from "../../shared/bricks";

@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react";
-import type { ConstructResult } from "@next-shared/jsx-storyboard";
+import type { ConstructResult } from "@next-shared/tsx-types";
 import { useConversationGraph } from "./useConversationGraph";
 import { LOADING_NODE_ID } from "./constants";
 import type { ConversationBaseDetail, Job, Task } from "../shared/interfaces";

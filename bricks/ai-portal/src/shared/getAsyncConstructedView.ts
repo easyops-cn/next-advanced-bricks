@@ -1,4 +1,4 @@
-import { parseTsx } from "@next-shared/jsx-storyboard";
+import { parseTsx } from "@next-shared/tsx-parser";
 import type { GeneratedView } from "./interfaces";
 
 export async function getAsyncConstructedView(

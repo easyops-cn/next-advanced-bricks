@@ -11,11 +11,8 @@ import { unstable_createRoot } from "@next-core/runtime";
 import classNames from "classnames";
 import { uniqueId } from "lodash";
 import { initializeI18n } from "@next-core/i18n";
-import {
-  convertJsx,
-  type Component,
-  type ConstructResult,
-} from "@next-shared/jsx-storyboard";
+import { convertJsx } from "@next-shared/tsx-converter";
+import type { Component, ConstructResult } from "@next-shared/tsx-types";
 import styles from "./CreatedView.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
 import type { Job } from "../../cruise-canvas/interfaces";

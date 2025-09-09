@@ -1,4 +1,4 @@
-import type { ConstructResult } from "@next-shared/jsx-storyboard";
+import type { ConstructResult } from "@next-shared/tsx-types";
 
 export interface Conversation {
   // Conversation ID

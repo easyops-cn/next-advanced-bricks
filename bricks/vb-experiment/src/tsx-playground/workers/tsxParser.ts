@@ -1,8 +1,5 @@
 // istanbul ignore file
-import type {
-  ConstructResult,
-  ParseTsxOptions,
-} from "@next-shared/jsx-storyboard";
+import type { ConstructResult, ParseTsxOptions } from "@next-shared/tsx-types";
 import { wrap } from "comlink";
 
 export interface RemoteTsxParserWorker {
