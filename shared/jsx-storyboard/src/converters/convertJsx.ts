@@ -36,7 +36,7 @@ export async function convertJsx(
   options: ConvertViewOptions
 ): Promise<ConvertResult> {
   const context: ContextConf[] = [
-    ...convertDataSources(result.dataSources ?? []),
+    ...convertDataSources(result.dataSources ?? [], options),
     ...convertVariables(result.variables ?? []),
     ...(result.withContexts
       ? Object.entries(result.withContexts).map(([name, value]) => ({

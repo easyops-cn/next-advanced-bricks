@@ -10,10 +10,18 @@ import { constructJsValue } from "./values.js";
 export interface CallApiPayload {
   api: string;
   http?: boolean;
+  entity?: string;
   params?: string | Record<string, unknown>;
   ambiguousParams?: unknown;
   objectId?: string;
 }
+
+const EXPECTED_ARGS = {
+  callApi: [2, 3],
+  callHttp: [1, 2],
+  "Entity.list": [1, 2],
+  "Entity.get": [2],
+};
 
 export function parseTsxCallApi(
   call: t.Expression,
@@ -30,7 +38,44 @@ export function parseTsxCallApi(
     return null;
   }
   const { callee } = call;
-  if (!t.isIdentifier(callee)) {
+  let calleeName: "callApi" | "callHttp" | "Entity.list" | "Entity.get";
+  if (t.isMemberExpression(callee)) {
+    if (!options?.workspace) {
+      result.errors.push({
+        message: `Entity SDK calls require a workspace context`,
+        node: callee,
+        severity: "error",
+      });
+      return null;
+    }
+    if (
+      !(
+        t.isIdentifier(callee.object) &&
+        callee.object.name === "Entity" &&
+        t.isIdentifier(callee.property) &&
+        !callee.computed &&
+        (callee.property.name === "list" || callee.property.name === "get")
+      )
+    ) {
+      result.errors.push({
+        message: `Unexpected awaited expression`,
+        node: callee,
+        severity: "error",
+      });
+      return null;
+    }
+    calleeName = `Entity.${callee.property.name}`;
+  } else if (t.isIdentifier(callee)) {
+    calleeName = callee.name as "callApi" | "callHttp";
+    if (calleeName !== "callApi" && calleeName !== "callHttp") {
+      result.errors.push({
+        message: `Await expression must call "callApi" or "callHttp", received "${calleeName}"`,
+        node: callee,
+        severity: "error",
+      });
+      return null;
+    }
+  } else {
     result.errors.push({
       message: `Await expression must call an identifier, received ${callee.type}`,
       node: callee,
@@ -39,51 +84,31 @@ export function parseTsxCallApi(
     return null;
   }
 
-  if (callee.name !== "callApi" && callee.name !== "callHttp") {
+  const expectedArgs = EXPECTED_ARGS[calleeName];
+
+  const missingArgs = call.arguments.length < expectedArgs[0];
+  if (missingArgs || !expectedArgs.includes(call.arguments.length)) {
     result.errors.push({
-      message: `Await expression must call "callApi" or "callHttp", received ${callee.name}`,
-      node: callee,
-      severity: "error",
+      message: `"${calleeName}()" expects ${expectedArgs.join(" or ")} arguments, but got ${call.arguments.length}`,
+      node: call,
+      severity: missingArgs ? "error" : "warning",
     });
-    return null;
-  }
-  if (callee.name === "callHttp") {
-    const missingArgs = call.arguments.length < 1;
-    if (missingArgs || call.arguments.length > 2) {
-      result.errors.push({
-        message: `"${callee.name}()" expects 1 or 2 arguments, but got ${call.arguments.length}`,
-        node: call,
-        severity: missingArgs ? "error" : "notice",
-      });
-      if (missingArgs) {
-        return null;
-      }
-    }
-  } else {
-    const missingArgs = call.arguments.length < 2;
-    if (missingArgs || call.arguments.length > 3) {
-      result.errors.push({
-        message: `"${callee.name}()" expects 2 or 3 arguments, but got ${call.arguments.length}`,
-        node: call,
-        severity: missingArgs ? "error" : "notice",
-      });
-      if (missingArgs) {
-        return null;
-      }
+    if (missingArgs) {
+      return null;
     }
   }
 
   let payload: CallApiPayload;
   const apiNode = call.arguments[0];
 
-  if (callee.name === "callHttp") {
+  if (calleeName === "callHttp") {
     const value = constructJsValue(apiNode, result, {
       ...jsValueOptions,
       allowExpression: true,
     });
     if (typeof value !== "string") {
       result.errors.push({
-        message: `"${callee.name}()" expects a string value as the first argument, but got ${typeof value}`,
+        message: `"${calleeName}()" expects a string value as the first argument, but got ${typeof value}`,
         node: apiNode,
         severity: "error",
       });
@@ -93,11 +118,11 @@ export function parseTsxCallApi(
       api: value,
       http: true,
     };
-  } else {
+  } else if (calleeName === "callApi") {
     const apiNode = call.arguments[0];
     if (!t.isStringLiteral(apiNode)) {
       result.errors.push({
-        message: `"${callee.name}()" expects a string literal as the first argument, but got ${apiNode.type}`,
+        message: `"${calleeName}()" expects a string literal as the first argument, but got ${apiNode.type}`,
         node: apiNode,
         severity: "error",
       });
@@ -106,51 +131,79 @@ export function parseTsxCallApi(
     payload = {
       api: apiNode.value,
     };
-  }
-
-  const valueNode = call.arguments[1];
-
-  if (valueNode && !isNilNode(valueNode)) {
-    if (!t.isObjectExpression(valueNode)) {
-      result.errors.push({
-        message: `Data source "params" prefers an object literal, but got ${valueNode.type}`,
-        node: valueNode,
-        severity: "notice",
-      });
-    }
-    const params = constructJsValue(valueNode, result, {
+  } else {
+    const entity = constructJsValue(apiNode, result, {
       ...jsValueOptions,
       allowExpression: true,
     });
-    if (
-      isExpressionString(params) ||
-      (typeof params === "object" && params !== null)
-    ) {
-      payload.params = params as string | Record<string, unknown>;
-    } else {
+    if (typeof entity !== "string") {
       result.errors.push({
-        message: `API params expects an object or expression, but got ${typeof params}`,
-        node: valueNode,
+        message: `"${calleeName}()" expects a string value as the first argument, but got ${typeof entity}`,
+        node: apiNode,
         severity: "error",
       });
+      return null;
     }
-    if (options?.reward) {
-      payload.ambiguousParams = constructJsValue(
-        valueNode,
-        {
-          ...result,
-          // Ignore errors in ambiguous params
-          errors: [],
-        },
-        {
-          allowExpression: true,
-          ambiguous: true,
-        }
-      );
+    const paramsNode = call.arguments[1];
+    let params: string | Record<string, unknown> | undefined;
+    if (paramsNode) {
+      params = constructJsValue(paramsNode, result, {
+        ...jsValueOptions,
+        allowExpression: true,
+      }) as string | Record<string, unknown>;
+    }
+    payload = {
+      api: calleeName,
+      entity,
+      params,
+    };
+  }
+
+  if (calleeName === "callApi" || calleeName === "callHttp") {
+    const valueNode = call.arguments[1];
+
+    if (valueNode && !isNilNode(valueNode)) {
+      if (!t.isObjectExpression(valueNode)) {
+        result.errors.push({
+          message: `Data source "params" prefers an object literal, but got ${valueNode.type}`,
+          node: valueNode,
+          severity: "notice",
+        });
+      }
+      const params = constructJsValue(valueNode, result, {
+        ...jsValueOptions,
+        allowExpression: true,
+      });
+      if (
+        isExpressionString(params) ||
+        (typeof params === "object" && params !== null)
+      ) {
+        payload.params = params as string | Record<string, unknown>;
+      } else {
+        result.errors.push({
+          message: `API params expects an object or expression, but got ${typeof params}`,
+          node: valueNode,
+          severity: "error",
+        });
+      }
+      if (options?.reward) {
+        payload.ambiguousParams = constructJsValue(
+          valueNode,
+          {
+            ...result,
+            // Ignore errors in ambiguous params
+            errors: [],
+          },
+          {
+            allowExpression: true,
+            ambiguous: true,
+          }
+        );
+      }
     }
   }
 
-  if (callee.name === "callApi") {
+  if (calleeName === "callApi") {
     const metaNode = call.arguments[2];
     if (metaNode && !isNilNode(metaNode)) {
       if (!t.isObjectExpression(metaNode)) {

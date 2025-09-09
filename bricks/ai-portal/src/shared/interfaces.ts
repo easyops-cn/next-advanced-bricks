@@ -88,8 +88,7 @@ export interface Job {
   startTime: number;
   endTime?: number;
 
-  generatedView?: ConstructedView;
-  staticDataView?: ConstructedView;
+  generatedView?: GeneratedView;
 
   // 要求用户选择动作
   requestHumanAction?: HumanAction;
@@ -185,4 +184,13 @@ export interface JobPatch extends Partial<Job> {
 export interface RequestStore {
   conversationId: string;
   content: string;
+}
+
+export interface GeneratedView {
+  viewId: string;
+  code: string;
+  isStaticData?: boolean;
+  from?: "generate" | "config";
+  withContexts?: Record<string, unknown>;
+  asyncConstructedView?: Promise<ConstructedView>;
 }

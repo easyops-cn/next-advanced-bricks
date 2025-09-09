@@ -185,7 +185,7 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
                   <CmdbInstanceDetail {...detail} />
                 </div>
               ))}
-              {job.generatedView ? <NodeView job={job} /> : null}
+              {job.constructedView ? <NodeView job={job} /> : null}
             </div>
           </div>
         </>

@@ -78,10 +78,10 @@ export function LegacyChatStreamComponent(
 
   const views = useMemo(() => {
     return jobs?.flatMap((job) =>
-      job.generatedView
+      job.constructedView
         ? {
             id: job.id,
-            view: job.generatedView,
+            view: job.constructedView,
           }
         : []
     );

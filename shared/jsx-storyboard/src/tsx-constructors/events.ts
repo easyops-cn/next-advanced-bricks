@@ -166,10 +166,10 @@ export function constructTsxEvent(
                 ),
               },
             });
-          } else if (action === "callApi") {
+          } else if (action === "callApi" || action === "callHttp") {
             if (callee.property.name !== "then") {
               result.errors.push({
-                message: `"callApi()" expects "then" as its method, but got ${callee.property.name}`,
+                message: `"${action}()" expects "then" as its method, but got ${callee.property.name}`,
                 node: callee.property,
                 severity: "error",
               });
@@ -177,7 +177,7 @@ export function constructTsxEvent(
             }
             if (args.length !== 1) {
               result.errors.push({
-                message: `"callApi().then()" expects exactly 1 argument, but got ${args.length}`,
+                message: `"${action}().then()" expects exactly 1 argument, but got ${args.length}`,
                 node: stmt.expression,
                 severity: "error",
               });
@@ -262,7 +262,7 @@ export function constructTsxEvent(
               name: args[0].name,
             },
           });
-        } else if (callee.name === "callApi") {
+        } else if (callee.name === "callApi" || callee.name === "callHttp") {
           const payload = parseTsxCallApi(stmt.expression, result, options, {
             replacePatterns,
           });

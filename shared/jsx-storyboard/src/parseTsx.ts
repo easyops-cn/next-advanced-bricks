@@ -244,24 +244,44 @@ export function parseTsx(source: string, options?: ParseTsxOptions) {
         }
         if (t.isMemberExpression(callee)) {
           if (
-            !t.isIdentifier(callee.property) ||
-            callee.computed ||
-            (callee.property.name !== "then" &&
-              callee.property.name !== "catch")
+            t.isIdentifier(callee.object) &&
+            callee.object.name === "Entity"
           ) {
-            errors.push({
-              message: `Unexpected awaited expression`,
-              node: callee.property,
-              severity: "error",
-            });
-            continue;
+            if (
+              !t.isIdentifier(callee.property) ||
+              callee.computed ||
+              (callee.property.name !== "list" &&
+                callee.property.name !== "get")
+            ) {
+              errors.push({
+                message: `Unexpected awaited expression`,
+                node: callee.property,
+                severity: "error",
+              });
+              continue;
+            }
+            parseDataSourceCall(call, name);
+          } else {
+            if (
+              !t.isIdentifier(callee.property) ||
+              callee.computed ||
+              (callee.property.name !== "then" &&
+                callee.property.name !== "catch")
+            ) {
+              errors.push({
+                message: `Unexpected awaited expression`,
+                node: callee.property,
+                severity: "error",
+              });
+              continue;
+            }
+            parseDataSourceCall(
+              callee.object,
+              name,
+              call.arguments,
+              callee.property.name
+            );
           }
-          parseDataSourceCall(
-            callee.object,
-            name,
-            call.arguments,
-            callee.property.name
-          );
         } else {
           parseDataSourceCall(call, name);
         }

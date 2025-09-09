@@ -125,7 +125,7 @@ describe("useConversationGraph", () => {
     });
   });
 
-  it("should create view node when job has generatedView", () => {
+  it("should create view node when job has constructedView", () => {
     const conversation = { id: "conv-1" } as ConversationBaseDetail;
     const tasks: Task[] = [
       {
@@ -134,7 +134,7 @@ describe("useConversationGraph", () => {
           {
             id: "job-1",
             state: "completed",
-            generatedView: { viewId: "view-1" } as ConstructedView,
+            constructedView: { viewId: "view-1" } as ConstructedView,
             messages: [],
           } as Partial<Job>,
         ],
@@ -226,7 +226,7 @@ describe("useConversationGraph", () => {
             id: "job-1",
             state: "completed",
             instruction: "Build component",
-            generatedView: { viewId: "view-2" } as ConstructedView,
+            constructedView: { viewId: "view-2" } as ConstructedView,
             messages: [
               {
                 role: "assistant",

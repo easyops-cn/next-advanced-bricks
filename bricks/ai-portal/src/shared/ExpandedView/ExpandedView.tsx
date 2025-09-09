@@ -9,14 +9,16 @@ import React, {
 import classNames from "classnames";
 import { unstable_createRoot } from "@next-core/runtime";
 import { uniqueId } from "lodash";
-import { convertJsx } from "@next-shared/jsx-storyboard";
+import {
+  convertJsx,
+  parseTsx,
+  type ConstructedView,
+} from "@next-shared/jsx-storyboard";
 import type { GraphGeneratedView } from "../../cruise-canvas/interfaces";
 import styles from "./ExpandedView.module.css";
-import { convertView } from "../../cruise-canvas/utils/converters/convertView";
 import { WrappedIcon, WrappedIconButton } from "../../shared/bricks";
 import { createPortal } from "../../cruise-canvas/utils/createPortal";
 import { ICON_CLOSE, ICON_FEEDBACK } from "../constants";
-import { isJsxView } from "../../cruise-canvas/utils/isJsxView";
 import { TaskContext } from "../TaskContext";
 import { useViewFeedbackDone } from "../useViewFeedbackDone";
 
@@ -27,6 +29,7 @@ export interface ExpandedViewProps {
 export function ExpandedView({ views }: ExpandedViewProps) {
   const rootId = useMemo(() => uniqueId(), []);
   const {
+    workspace,
     activeExpandedViewJobId,
     setActiveExpandedViewJobId,
     manuallyUpdatedViews,
@@ -39,18 +42,46 @@ export function ExpandedView({ views }: ExpandedViewProps) {
   const rootRef = useRef<Awaited<
     ReturnType<typeof unstable_createRoot>
   > | null>(null);
-  const view = activeExpandedViewJobId
+  const generatedView = activeExpandedViewJobId
     ? (manuallyUpdatedViews?.get(activeExpandedViewJobId) ??
       views.find((v) => v.id === activeExpandedViewJobId)?.view)
     : null;
   const feedbackDone =
-    useViewFeedbackDone(view?.viewId, showFeedbackOnView) ||
-    (view && feedbackDoneViews?.has(view.viewId));
-  const canFeedback = !!view?.viewId && view.from !== "config";
+    useViewFeedbackDone(generatedView?.viewId, showFeedbackOnView) ||
+    (generatedView && feedbackDoneViews?.has(generatedView.viewId));
+  const [view, setView] = useState<ConstructedView | null>(null);
+  const canFeedback =
+    !!view && !!generatedView?.viewId && generatedView.from !== "config";
+
+  useEffect(() => {
+    if (!generatedView) {
+      setView(null);
+      return;
+    }
+    (async () => {
+      try {
+        const result = parseTsx(generatedView.code, {
+          workspace,
+          withContexts: generatedView.withContexts
+            ? Object.keys(generatedView.withContexts)
+            : undefined,
+        });
+        setView({
+          ...result,
+          viewId: generatedView.viewId,
+          from: generatedView.from,
+          withContexts: generatedView.withContexts,
+        });
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to parse generated view:", error);
+      }
+    })();
+  }, [generatedView, workspace]);
 
   const sizeSmall = useMemo(() => {
     let hasForm = false;
-    if (view && isJsxView(view)) {
+    if (view) {
       for (const component of view?.components ?? []) {
         switch (component.name) {
           case "Form":
@@ -61,19 +92,6 @@ export function ExpandedView({ views }: ExpandedViewProps) {
             break;
           default:
             return false;
-        }
-      }
-    } else {
-      for (const component of view?.components ?? []) {
-        if (!component.parentComponentId) {
-          switch (component.componentName) {
-            case "form":
-            case "button":
-              hasForm = true;
-              break;
-            default:
-              return false;
-          }
         }
       }
     }
@@ -102,20 +120,23 @@ export function ExpandedView({ views }: ExpandedViewProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
+    if (!view) {
+      return;
+    }
     let ignore = false;
     (async () => {
-      setLoading(true);
       try {
-        const convertedView = view
-          ? await (isJsxView(view)
-              ? convertJsx(view, { rootId, expanded: true })
-              : convertView(view, { rootId, expanded: true }))
-          : null;
+        const convertedView = await convertJsx(view, {
+          rootId,
+          workspace,
+          expanded: true,
+        });
         if (ignore) {
           return;
         }
-        const { brick, context } = convertedView ?? {};
-        await rootRef.current?.render(brick ?? [], { context });
+        const { brick, context } = convertedView;
+        await rootRef.current?.render(brick, { context });
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to render view:", error);
@@ -128,7 +149,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
     return () => {
       ignore = true;
     };
-  }, [rootId, view]);
+  }, [rootId, workspace, view]);
 
   const handleClose = useCallback(() => {
     setActiveExpandedViewJobId(null);
@@ -178,7 +199,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
               })}
               onClick={() => setActiveExpandedViewJobId(view.id)}
             >
-              {view.view.title}
+              {view.view.viewId}
             </button>
           </li>
         ))}
@@ -187,7 +208,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
         {showFeedbackOnView && !feedbackDone && canFeedback && (
           <WrappedIconButton
             icon={ICON_FEEDBACK}
-            onClick={() => onFeedbackOnView?.(view.viewId)}
+            onClick={() => onFeedbackOnView?.(generatedView.viewId)}
           />
         )}
         <WrappedIconButton icon={ICON_CLOSE} onClick={handleClose} />

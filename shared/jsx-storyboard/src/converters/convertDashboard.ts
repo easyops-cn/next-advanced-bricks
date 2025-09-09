@@ -33,8 +33,6 @@ interface MergedWidget extends DashboardWidget {
   counterMetric?: string;
   groupTitle?: string;
   size?: "small" | "medium" | "large";
-  min?: number;
-  max?: number;
 }
 
 export default async function convertDashboard(
@@ -109,7 +107,7 @@ export default async function convertDashboard(
         },
       },
       children: mergedWidgets.map((widget) => {
-        const { title, /* type, */ metric, size, precision, min, max } = widget;
+        const { title, /* type, */ metric, size, precision } = widget;
         const colorCount =
           widget.relevantMetrics?.length ?? (groupField ? 2 : 1);
         const colors = Array.from(
@@ -167,7 +165,7 @@ export default async function convertDashboard(
                     ? { min: 0, max: 1 }
                     : unit === "percent(100)" || unit === "%"
                       ? { min: 0, max: 100 }
-                      : { min, max }),
+                      : { min: 0 }),
                 shape: "smooth",
               },
             },
@@ -279,7 +277,7 @@ export default async function convertDashboard(
                       ? { min: 0, max: 1 }
                       : metric.unit === "percent(100)" || metric.unit === "%"
                         ? { min: 0, max: 100 }
-                        : null),
+                        : { min: 0 }),
                     value: `<%= CTX.__builtin_fn_getLatestMetricValue(ITEM.list, ${JSON.stringify(
                       {
                         metric,
@@ -321,7 +319,7 @@ export default async function convertDashboard(
             ? { min: 0, max: 1 }
             : metric.unit === "percent(100)" || metric.unit === "%"
               ? { min: 0, max: 100 }
-              : null),
+              : { min: 0 }),
           value: `<%= CTX.__builtin_fn_getLatestMetricValue((${
             isString
               ? `CTX.__builtin_fn_extractList((${expression}))`

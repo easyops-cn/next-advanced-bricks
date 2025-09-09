@@ -29,7 +29,7 @@ async function doGetPreGeneratedAttrViews(
     const attrList = await getAttrList(objectId);
     if (attrList) {
       for (const attr of attrList) {
-        const candidates = attr.generatedView?.[0]?.list;
+        const candidates = attr.constructedView?.[0]?.list;
         const select = findNearestCandidate(candidates, visualWeight ?? 0);
         if (select) {
           attrViews.set(attr.id, select);
@@ -60,7 +60,7 @@ async function doGetAttrList(objectId: string) {
     return null;
   }
 
-  const fields = ["attrList.id", "attrList.generatedView.list"].join(",");
+  const fields = ["attrList.id", "attrList.constructedView.list"].join(",");
 
   const { attrList } = await InstanceApi_getDetail("MODEL_OBJECT", instanceId, {
     fields,

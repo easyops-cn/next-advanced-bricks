@@ -1,11 +1,10 @@
 import { createContext, type Dispatch } from "react";
-import type {
-  ConstructedView,
-  FeedbackDetail,
-  Job,
-} from "../cruise-canvas/interfaces";
+import type { FeedbackDetail, Job } from "../cruise-canvas/interfaces";
+import type { GeneratedView } from "./interfaces";
 
 export interface TaskContextValue {
+  workspace?: string;
+
   humanInput: (jobId: string, input: string) => void;
   onShare: () => void;
   onTerminate: () => void;
@@ -24,8 +23,8 @@ export interface TaskContextValue {
   showJsxEditor?: boolean;
   activeJsxEditorJob?: Job;
   setActiveJsxEditorJob?: Dispatch<React.SetStateAction<Job | undefined>>;
-  manuallyUpdatedViews?: Map<string, ConstructedView>;
-  updateView?: (jobId: string, view: ConstructedView) => void;
+  manuallyUpdatedViews?: Map<string, GeneratedView>;
+  updateView?: (jobId: string, view: GeneratedView) => void;
   showFeedbackOnView?: boolean;
   onFeedbackOnView?: (viewId: string) => void;
   feedbackDoneViews?: Set<string>;

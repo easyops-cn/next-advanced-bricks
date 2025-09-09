@@ -1,21 +1,14 @@
 import type { Reducer } from "react";
-import { isEqual, isMatchWith, pick, pull } from "lodash";
-import { parseJsx, parseTsx } from "@next-shared/jsx-storyboard";
+import { isEqual, isMatchWith, pick } from "lodash";
 import type {
-  ComponentGraph,
-  ComponentGraphEdge,
-  ComponentGraphNode,
-  ConstructedView,
   DataPart,
   Job,
   JobPatch,
   Message,
   Part,
-  RawComponentGraphNode,
   TextPart,
 } from "../interfaces";
 import type { CruiseCanvasAction } from "./interfaces";
-import type { ViewWithInfo } from "../utils/converters/interfaces";
 
 export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
   switch (action.type) {
@@ -26,9 +19,6 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
       if (!Array.isArray(jobsPatch) || jobsPatch.length === 0) {
         return jobs;
       }
-      const previousComponentGraph = state.findLast(
-        (job) => !!job.componentGraph
-      )?.componentGraph;
 
       for (const jobPatch of jobsPatch) {
         const previousJobIndex =
@@ -51,23 +41,6 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
           const patch = {
             ...jobPatch,
           };
-          if (
-            (patch.toolCall?.name === "get_view_with_info" ||
-              patch.toolCall?.name === "create_view") &&
-            patch.state === "completed"
-          ) {
-            const generatedView = getJobGeneratedView(messagesPatch);
-            if (generatedView) {
-              patch.generatedView = generatedView;
-            }
-          }
-          const componentGraph = getJobComponentGraph(
-            messagesPatch ?? [],
-            previousComponentGraph
-          );
-          if (componentGraph) {
-            patch.componentGraph = componentGraph;
-          }
           if (Array.isArray(messagesPatch) && messagesPatch.length > 0) {
             jobs = [
               ...jobs,
@@ -98,40 +71,6 @@ export const jobs: Reducer<Job[], CruiseCanvasAction> = (state, action) => {
               ...(previousJob.messages ?? []),
               ...messagesPatch,
             ]);
-          }
-
-          if (
-            !previousJob.generatedView &&
-            (
-              ["get_view_with_info", "create_view"] as (string | undefined)[]
-            ).includes(
-              restMessagesPatch.toolCall?.name ?? previousJob.toolCall?.name
-            ) &&
-            (restMessagesPatch.state ?? previousJob.state) === "completed"
-          ) {
-            const generatedView = getJobGeneratedView(messagesPatch);
-            if (generatedView) {
-              restMessagesPatch.generatedView = generatedView;
-            }
-          }
-
-          if (!previousJob.staticDataView) {
-            const view = getJobStaticDataView(messagesPatch);
-            if (view) {
-              view.withContexts = {
-                RESPONSE: getJobStaticDataResponse(restMessagesPatch.messages!),
-              };
-
-              restMessagesPatch.staticDataView = view;
-            }
-          }
-
-          const componentGraph = getJobComponentGraph(
-            [...(previousJob.messages ?? []), ...(messagesPatch ?? [])],
-            previousComponentGraph
-          );
-          if (componentGraph) {
-            restMessagesPatch.componentGraph = componentGraph;
           }
 
           if (!isMatchWith(previousJob, restMessagesPatch, isEqual)) {
@@ -202,175 +141,4 @@ function mergeMessageParts(parts: Part[]): Part[] {
     previousDataType = part.type === "data" ? part.data?.type : undefined;
   }
   return merged;
-}
-
-function getJobGeneratedView(
-  messages: Message[] | undefined
-): ConstructedView | ViewWithInfo | undefined {
-  if (!messages) {
-    return;
-  }
-
-  for (const message of messages) {
-    if (message.role === "tool") {
-      for (const part of message.parts) {
-        if (part.type === "text") {
-          try {
-            const result = JSON.parse(part.text) as JsxResult | ViewWithInfo;
-            if (isJsxResult(result)) {
-              const view = (
-                result.code.includes("<eo-view") ? parseJsx : parseTsx
-              )(result.code);
-              if (view.errors.length > 0) {
-                // eslint-disable-next-line no-console
-                console.warn("Parsed generated view with errors:", view.errors);
-              }
-              return { viewId: result.viewId, ...view };
-            }
-            return result;
-          } catch {
-            // Do nothing, continue to next part
-          }
-        }
-      }
-    }
-  }
-}
-
-function getJobStaticDataView(
-  messages: Message[] | undefined
-): ConstructedView | undefined {
-  if (!messages) {
-    return;
-  }
-
-  for (const message of messages) {
-    if (message.role === "tool") {
-      for (const part of message.parts) {
-        if (part.type === "data" && part.data?.type === "static_data_view") {
-          try {
-            const view = parseTsx(part.data.code, {
-              withContexts: ["RESPONSE"],
-            });
-            if (view.errors.length > 0) {
-              // eslint-disable-next-line no-console
-              console.warn("Parsed static data view with errors:", view.errors);
-            }
-            return {
-              ...view,
-              viewId: part.data.viewId,
-              from: part.data.from,
-            };
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error("Failed to parse static data view:", e);
-          }
-        }
-      }
-    }
-  }
-}
-
-function getJobStaticDataResponse(messages: Message[]) {
-  for (const message of messages) {
-    if (message.role === "tool") {
-      for (const part of message.parts) {
-        if (part.type === "text") {
-          try {
-            return JSON.parse(part.text);
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error("Failed to parse static data response as JSON:", e);
-          }
-        }
-      }
-    }
-  }
-
-  return null;
-}
-
-function getJobComponentGraph(
-  messages: Message[],
-  previousGraph: ComponentGraph | undefined
-): ComponentGraph | undefined {
-  let graph = previousGraph;
-  let hasGraph = false;
-  for (const message of messages) {
-    if (message.role === "tool") {
-      for (const part of message.parts) {
-        if (part.type === "data" && part.data?.type === "graph") {
-          const msg = part.data.message;
-          switch (msg?.type) {
-            case "component_graph": {
-              const nodes: ComponentGraphNode[] = [];
-              const edges: ComponentGraphEdge[] = [];
-              for (const node of Object.values(
-                msg.data
-              ) as RawComponentGraphNode[]) {
-                // Remove self-references
-                if (Array.isArray(node.children)) {
-                  pull(node.children, node.id);
-                }
-
-                nodes.push({
-                  type: "node",
-                  id: node.id,
-                  data: node,
-                });
-                edges.push(
-                  ...(node.children?.map<ComponentGraphEdge>((target) => ({
-                    type: "edge",
-                    source: node.id,
-                    target: target,
-                  })) ?? [])
-                );
-              }
-              graph = { nodes, edges, initial: true };
-              hasGraph = true;
-              break;
-            }
-            case "component_graph_node": {
-              if (graph) {
-                const nodeIndex = graph.nodes.findIndex(
-                  (n) => n.id === msg.data.component
-                );
-                if (nodeIndex !== -1) {
-                  const node = graph.nodes[nodeIndex];
-                  if (node.data.status !== msg.data.status) {
-                    graph = {
-                      nodes: [
-                        ...graph.nodes.slice(0, nodeIndex),
-                        {
-                          ...node,
-                          data: {
-                            ...node.data,
-                            status: msg.data.status,
-                          },
-                        },
-                        ...graph.nodes.slice(nodeIndex + 1),
-                      ],
-                      edges: graph.edges,
-                      initial: false,
-                    };
-                  }
-                }
-                hasGraph = true;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  return hasGraph ? graph : undefined;
-}
-
-interface JsxResult {
-  viewId: string;
-  code: string;
-}
-
-function isJsxResult(view: JsxResult | ViewWithInfo): view is JsxResult {
-  return !!(view as JsxResult).code;
 }

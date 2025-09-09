@@ -19,6 +19,8 @@ import convertIf from "./convertIf.js";
 import convertOutput from "./convertOutput.js";
 import convertLink from "./convertLink.js";
 import convertTag from "./convertTag.js";
+import convertAvatar from "./convertAvatar.js";
+import convertAvatarGroup from "./convertAvatarGroup.js";
 
 export async function convertComponent(
   component: Component,
@@ -74,6 +76,12 @@ export async function convertComponent(
       break;
     case "Tag":
       brick = await convertTag(component);
+      break;
+    case "Avatar":
+      brick = await convertAvatar(component);
+      break;
+    case "AvatarGroup":
+      brick = await convertAvatarGroup(component);
       break;
     case "eo-search":
     case "eo-input":

@@ -131,6 +131,16 @@ export interface LinkProps extends BaseProps {
   target?: "_blank" | "_self";
 }
 
+export interface AvatarProps extends BaseProps {
+  size?: "large" | "medium" | "small";
+  name?: string;
+  src?: string;
+}
+
+export interface AvatarGroupProps extends BaseProps {
+  size?: "large" | "medium" | "small";
+}
+
 export interface PlaintextProps extends BaseProps {
   /** Related advisory information */
   title?: string;
@@ -204,5 +214,7 @@ declare const Card: (props: CardProps) => any;
 declare const Output: (props: BaseProps) => any;
 declare const Tag: (props: TagProps) => any;
 declare const Link: (props: LinkProps) => any;
+declare const Avatar: (props: AvatarProps) => any;
+declare const AvatarGroup: (props: AvatarGroupProps) => any;
 declare const Plaintext: (props: PlaintextProps) => any;
 declare const Fragment: (props: { key?: string | number }) => any;

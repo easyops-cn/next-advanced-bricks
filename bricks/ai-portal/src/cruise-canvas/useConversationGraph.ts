@@ -103,7 +103,7 @@ export function useConversationGraph(
         nodeIds.push(jobNodeId);
       }
 
-      const view = job.generatedView || job.staticDataView;
+      const view = job.generatedView;
       if (view) {
         // Add view node for job
         const viewNodeId = `view:${job.id}`;

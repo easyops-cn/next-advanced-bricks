@@ -322,7 +322,7 @@ describe("tasks reducer", () => {
     });
   });
 
-  it("should set generatedView for completed create_view jobs", () => {
+  it("should set constructedView for completed create_view jobs", () => {
     const initialState: Task[] = [];
     const messages: Message[] = [
       {
@@ -353,8 +353,8 @@ describe("tasks reducer", () => {
     const result = tasks(initialState, action);
 
     const job = result[0].jobs[0];
-    expect(job.generatedView).toBeDefined();
-    expect(job.generatedView?.viewId).toBe("test-view");
+    expect(job.constructedView).toBeDefined();
+    expect(job.constructedView?.viewId).toBe("test-view");
   });
 
   it("should update existing jobs", () => {

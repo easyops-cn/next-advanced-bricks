@@ -102,7 +102,7 @@ function convertEventHandler(
         args: [handler.payload.name],
       };
     case "call_api": {
-      const { api, http, params } = handler.payload;
+      const { api, http, entity, params } = handler.payload;
 
       const success = handler.callback?.success
         ? convertEventHandlers(
@@ -117,10 +117,15 @@ function convertEventHandler(
               useProvider: "basic.http-request",
               args: [api, params],
             }
-          : {
-              useProvider: `${api}:*`,
-              params,
-            }),
+          : typeof entity === "string"
+            ? {
+                useProvider: `ai-portal.${api.toLowerCase().replace(".", "-sdk-")}`,
+                args: [options.workspace, entity, params],
+              }
+            : {
+                useProvider: `${api}:*`,
+                params,
+              }),
         callback: {
           ...(success && { success }),
           error: {

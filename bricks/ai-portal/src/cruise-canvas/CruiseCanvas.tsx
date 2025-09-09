@@ -16,7 +16,6 @@ import ResizeObserver from "resize-observer-polyfill";
 import { select, type Selection, type TransitionLike } from "d3-selection";
 import { ZoomTransform } from "d3-zoom";
 import { mergeRects } from "@next-shared/diagram";
-import type { ConstructedView } from "@next-shared/jsx-storyboard";
 import styles from "./styles.module.css";
 import { useZoom } from "./useZoom.js";
 import type {
@@ -64,6 +63,7 @@ import { NodeFeedback } from "../shared/NodeFeedback/NodeFeedback.js";
 import { TaskContext } from "../shared/TaskContext.js";
 import { NodeLoading } from "./NodeLoading/NodeLoading.js";
 import { JsxEditor } from "../shared/JsxEditor/JsxEditor.js";
+import type { GeneratedView } from "../shared/interfaces";
 import type { CruiseCanvasProps } from ".";
 
 const MemoizedNodeComponent = memo(NodeComponent);
@@ -559,9 +559,9 @@ export function CruiseCanvasComponent(
     Job | undefined
   >();
   const [manuallyUpdatedViews, setManuallyUpdatedViews] = useState<
-    Map<string, ConstructedView> | undefined
+    Map<string, GeneratedView> | undefined
   >();
-  const updateView = useCallback((jobId: string, view: ConstructedView) => {
+  const updateView = useCallback((jobId: string, view: GeneratedView) => {
     setManuallyUpdatedViews((prev) => {
       const next = new Map(prev);
       next.set(jobId, view);
@@ -569,8 +569,12 @@ export function CruiseCanvasComponent(
     });
   }, []);
 
+  const workspace = conversation?.id;
+
   const taskContextValue = useMemo(
     () => ({
+      workspace,
+
       humanInput,
       onShare,
       onTerminate,
@@ -596,6 +600,8 @@ export function CruiseCanvasComponent(
       feedbackDoneViews,
     }),
     [
+      workspace,
+
       humanInput,
       onTerminate,
       onShare,

@@ -10,6 +10,7 @@ export interface DataSource {
   name: string;
   api: string;
   http?: boolean;
+  entity?: string;
   objectId?: string;
   params?: string | Record<string, unknown>;
   ambiguousParams?: unknown;
@@ -75,6 +76,7 @@ export interface TypeEventHandlerOfCallAPI {
   payload: {
     api: string;
     http?: boolean;
+    entity?: string;
     params?: any;
     objectId?: string;
   };
@@ -137,6 +139,7 @@ export interface ConstructResult {
 
 export interface ParseJsxOptions {
   reward?: boolean;
+  workspace?: string;
 }
 
 export interface ParseTsxOptions extends ParseJsxOptions {
@@ -151,6 +154,7 @@ export interface ConstructedView extends ConstructResult {
 
 export interface ConvertViewOptions {
   rootId: string;
+  workspace?: string;
   expanded?: boolean;
 }
 
