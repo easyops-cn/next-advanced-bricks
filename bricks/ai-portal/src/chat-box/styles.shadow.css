@@ -51,10 +51,17 @@ textarea:focus {
   outline: none;
 }
 
-.btn-send {
+.actions-bar {
   position: absolute;
   bottom: 12px;
+  left: 14px;
   right: 14px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.btn-send {
   width: 28px;
   height: 28px;
   display: flex;
@@ -64,6 +71,7 @@ textarea:focus {
   border: none;
   border-radius: 8px;
   color: #fff;
+  flex-shrink: 0;
 }
 
 .btn-send[disabled] {
