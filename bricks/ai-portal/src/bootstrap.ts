@@ -13,5 +13,6 @@ import "./data-providers/request-store.js";
 import "./page-container/index.js";
 import "./project-summary/index.js";
 import "./tab-list/index.js";
+import "./dropdown-select/index.js";
 import "./data-providers/entity-sdk-list.js";
 import "./data-providers/entity-sdk-get.js";
