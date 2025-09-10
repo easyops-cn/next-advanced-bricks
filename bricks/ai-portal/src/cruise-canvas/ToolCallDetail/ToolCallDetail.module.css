@@ -4,28 +4,22 @@
   margin-bottom: 7px;
 }
 
-.detail .body {
-  code[class*="language-"],
-  pre[class*="language-"] {
-    background: #ffffff;
-  }
-
-  pre[class*="language-"] {
-    border-radius: 9px;
-    border: 1px solid #ccd1de;
-  }
+.detail .body :global(.shiki.light-plus) {
+  background: #fff !important;
+  border: 1px solid #ccd1de;
+  border-radius: 9px;
 }
 
-.detail .body pre.fallback {
+.detail .body :global(.shiki.light-plus).fallback {
   white-space: pre-wrap;
-  background: #fef5f3;
+  background: #fef5f3 !important;
 }
 
 .progress-container,
 .stream-message {
   border-radius: 9px;
   border: 1px solid #ccd1de;
-  background: #ffffff;
+  background: #fff;
 }
 
 .progress-container {

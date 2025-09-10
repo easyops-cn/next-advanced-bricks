@@ -75,7 +75,6 @@
   "peerDependencies": {
     "@next-bricks/basic": "*",
     "@next-bricks/form": "*",
-    "@next-bricks/icons": "*",
-    "@next-bricks/markdown": "*"
+    "@next-bricks/icons": "*"
   }
 }

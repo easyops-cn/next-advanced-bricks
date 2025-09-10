@@ -70,9 +70,8 @@
   position: static;
 }
 
-.editor .content code[class*="language-"],
-.editor .content pre[class*="language-"] {
-  background: none;
+.editor .content :global(.shiki.light-plus) {
+  background: none !important;
   padding: 0;
   margin: 0;
   border-radius: 0;

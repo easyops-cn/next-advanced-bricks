@@ -1,4 +1,5 @@
 import React, { useContext, useMemo } from "react";
+import classNames from "classnames";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import styles from "./Aside.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
@@ -11,8 +12,7 @@ import type {
 import { ToolCallStatus } from "../../cruise-canvas/ToolCallStatus/ToolCallStatus";
 import { TaskContext } from "../../shared/TaskContext";
 import { StreamContext } from "../StreamContext";
-import classNames from "classnames";
-import { EnhancedMarkdown } from "../../cruise-canvas/EnhancedMarkdown/EnhancedMarkdown";
+import { renderCodeBlock } from "../../shared/renderCodeBlock";
 
 const ICON_SHRINK: GeneralIconProps = {
   lib: "easyops",
@@ -104,15 +104,15 @@ interface EditorAppProps {
 }
 
 function EditorApp({ name, source, language }: EditorAppProps) {
+  const child = useMemo(() => {
+    return renderCodeBlock(source, language);
+  }, [language, source]);
+
   return (
     <div className={classNames(styles.app, styles.editor)}>
       <div className={styles.heading}>{`${name}.${language}`}</div>
       <div className={classNames(styles.content, sharedStyles.markdown)}>
-        <div className={styles.scroller}>
-          <EnhancedMarkdown
-            content={`\`\`\`\`${language}\n${source}\n\`\`\`\``}
-          />
-        </div>
+        <div className={styles.scroller}>{child}</div>
       </div>
     </div>
   );

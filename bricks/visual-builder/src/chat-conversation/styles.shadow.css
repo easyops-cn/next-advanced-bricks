@@ -10,8 +10,6 @@
   box-sizing: border-box;
 }
 
-@import "~@next-shared/markdown/dist/esm/prism-tomorrow.css";
-
 .message {
   display: flex;
   gap: 8px;
