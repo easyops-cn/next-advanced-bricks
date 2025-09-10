@@ -9,8 +9,8 @@ import React, {
 import classNames from "classnames";
 import { unstable_createRoot } from "@next-core/runtime";
 import { uniqueId } from "lodash";
-import { convertJsx } from "@next-shared/tsx-converter";
-import type { ConstructResult } from "@next-shared/tsx-types";
+import { convertTsx } from "@next-shared/tsx-converter";
+import type { ParseResult } from "@next-shared/tsx-parser";
 import type { GraphGeneratedView } from "../../cruise-canvas/interfaces";
 import styles from "./ExpandedView.module.css";
 import { WrappedIcon, WrappedIconButton } from "../../shared/bricks";
@@ -46,7 +46,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
   const feedbackDone =
     useViewFeedbackDone(generatedView?.viewId, showFeedbackOnView) ||
     (generatedView && feedbackDoneViews?.has(generatedView.viewId));
-  const [view, setView] = useState<ConstructResult | null>(null);
+  const [view, setView] = useState<ParseResult | null>(null);
   const canFeedback =
     !!view && !!generatedView?.viewId && generatedView.from !== "config";
   const [viewsWithTitle, setViewsWithTitle] = useState<
@@ -125,7 +125,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
     let ignore = false;
     (async () => {
       try {
-        const convertedView = await convertJsx(view, {
+        const convertedView = await convertTsx(view, {
           rootId,
           workspace,
           expanded: true,

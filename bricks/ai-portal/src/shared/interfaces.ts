@@ -1,4 +1,4 @@
-import type { ConstructResult } from "@next-shared/tsx-types";
+import type { ParseResult } from "@next-shared/tsx-parser";
 
 export interface Conversation {
   // Conversation ID
@@ -192,5 +192,5 @@ export interface GeneratedView {
   isStaticData?: boolean;
   from?: "generate" | "config";
   withContexts?: Record<string, unknown>;
-  asyncConstructedView?: Promise<ConstructResult | null>;
+  asyncConstructedView?: Promise<ParseResult | null>;
 }

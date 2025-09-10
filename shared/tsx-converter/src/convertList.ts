@@ -1,5 +1,5 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component } from "@next-shared/tsx-types";
+import type { Component } from "@next-shared/tsx-parser";
 import type { ListProps } from "../lib/components.js";
 import { parseDataSource } from "./expressions.js";
 

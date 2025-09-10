@@ -4,18 +4,16 @@ import type {
   ChildExpression,
   ChildMerged,
   ChildText,
-  Component,
   ConstructJsValueOptions,
-  ConstructResult,
-  ParseTsxOptions,
-} from "@next-shared/tsx-types";
+} from "./interfaces.js";
+import type { Component, ParseResult, ParseOptions } from "../interfaces.js";
 import { constructTsxElement } from "./element.js";
 import { replaceCTX, replaceVariables } from "./replaceVariables.js";
 
 export function constructChildren(
   nodes: t.Node[],
-  result: ConstructResult,
-  options?: ParseTsxOptions,
+  result: ParseResult,
+  options?: ParseOptions,
   valueOptions?: ConstructJsValueOptions
 ): {
   textContent?: string;

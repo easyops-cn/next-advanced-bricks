@@ -1,5 +1,5 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component } from "@next-shared/tsx-types";
+import type { Component } from "@next-shared/tsx-parser";
 
 export default function convertOutput(component: Component): BrickConf {
   const { properties } = component;

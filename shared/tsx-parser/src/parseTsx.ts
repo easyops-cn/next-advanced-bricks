@@ -1,19 +1,19 @@
-import { parse, type ParseResult } from "@babel/parser";
+import { parse, type ParseResult as BabelParseResult } from "@babel/parser";
 import * as t from "@babel/types";
 import type {
   Component,
-  ConstructResult,
+  ParseResult,
   DataSource,
   ParseError,
-  ParseTsxOptions,
+  ParseOptions,
   Variable,
-} from "@next-shared/tsx-types";
+} from "./interfaces.js";
 import { constructJsValue } from "./tsx-constructors/values.js";
 import { constructTsxView } from "./tsx-constructors/view.js";
 import { parseTsxCallApi } from "./tsx-constructors/api.js";
 import { replaceVariables } from "./tsx-constructors/replaceVariables.js";
 
-export function parseTsx(source: string, options?: ParseTsxOptions) {
+export function parseTsx(source: string, options?: ParseOptions): ParseResult {
   const dataSources: DataSource[] = [];
   const variables: Variable[] = [];
   const components: Component[] = [];
@@ -22,7 +22,7 @@ export function parseTsx(source: string, options?: ParseTsxOptions) {
   const componentsMap = new Map<string, Component>();
   const contexts: string[] = options?.withContexts ?? [];
   const contracts = new Set<string>();
-  const result: ConstructResult = {
+  const result: ParseResult = {
     source,
     title,
     dataSources,
@@ -34,7 +34,7 @@ export function parseTsx(source: string, options?: ParseTsxOptions) {
     contracts,
   };
 
-  let ast: ParseResult<t.File> | undefined;
+  let ast: BabelParseResult<t.File> | undefined;
   try {
     ast = parse(source, {
       plugins: ["jsx", "typescript"],

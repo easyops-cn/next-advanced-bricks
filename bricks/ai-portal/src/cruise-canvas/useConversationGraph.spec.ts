@@ -1,8 +1,12 @@
 import { renderHook } from "@testing-library/react";
-import type { ConstructResult } from "@next-shared/tsx-types";
 import { useConversationGraph } from "./useConversationGraph";
 import { LOADING_NODE_ID } from "./constants";
-import type { ConversationBaseDetail, Job, Task } from "../shared/interfaces";
+import type {
+  ConversationBaseDetail,
+  GeneratedView,
+  Job,
+  Task,
+} from "../shared/interfaces";
 
 describe("useConversationGraph", () => {
   it("should return null when conversation is null", () => {
@@ -125,7 +129,7 @@ describe("useConversationGraph", () => {
     });
   });
 
-  it("should create view node when job has constructedView", () => {
+  it("should create view node when job has generatedView", () => {
     const conversation = { id: "conv-1" } as ConversationBaseDetail;
     const tasks: Task[] = [
       {
@@ -134,7 +138,7 @@ describe("useConversationGraph", () => {
           {
             id: "job-1",
             state: "completed",
-            constructedView: { source: "view-1" } as ConstructResult,
+            generatedView: { viewId: "view-1" } as GeneratedView,
             messages: [],
           } as Partial<Job>,
         ],
@@ -153,7 +157,7 @@ describe("useConversationGraph", () => {
 
     expect(result.current?.views).toContainEqual({
       id: "job-1",
-      view: { source: "view-1" },
+      view: { viewId: "view-1" },
     });
   });
 
@@ -226,7 +230,7 @@ describe("useConversationGraph", () => {
             id: "job-1",
             state: "completed",
             instruction: "Build component",
-            constructedView: { source: "view-2" } as ConstructResult,
+            generatedView: { viewId: "view-2" } as GeneratedView,
             messages: [
               {
                 role: "assistant",

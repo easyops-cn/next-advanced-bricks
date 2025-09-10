@@ -1,8 +1,6 @@
 import * as t from "@babel/types";
-import type {
-  ConstructJsValueOptions,
-  ConstructResult,
-} from "@next-shared/tsx-types";
+import type { ConstructJsValueOptions } from "./interfaces.js";
+import type { ParseResult, RenderUseBrick } from "../interfaces.js";
 import { validateExpression } from "../utils.js";
 import { replaceCTX, replaceVariables } from "./replaceVariables.js";
 import { constructComponents } from "./components.js";
@@ -11,7 +9,7 @@ const ambiguousSymbol = Symbol("ambiguous");
 
 export function constructJsValue(
   node: t.Node,
-  state: ConstructResult,
+  state: ParseResult,
   options: ConstructJsValueOptions
 ): unknown {
   if (t.isObjectExpression(node)) {
@@ -64,7 +62,7 @@ export function constructJsValue(
     return {
       params: paramNames,
       children: constructComponents([expr], state, undefined, options),
-    };
+    } as RenderUseBrick;
   }
 
   if (t.isExpression(node) && options.allowExpression) {
@@ -98,7 +96,7 @@ export function constructJsValue(
 
 export function constructPropValue(
   expr: t.Expression,
-  state: ConstructResult,
+  state: ParseResult,
   options: ConstructJsValueOptions
 ) {
   let shouldCompute = false;
@@ -143,7 +141,7 @@ export function constructPropValue(
 
 function constructJsObject(
   node: t.ObjectExpression,
-  state: ConstructResult,
+  state: ParseResult,
   options: ConstructJsValueOptions
 ): string | Record<string, unknown> {
   if (node.properties.some((prop) => t.isSpreadElement(prop))) {
@@ -209,7 +207,7 @@ function constructJsObject(
 
 function constructJsArray(
   node: t.ArrayExpression,
-  state: ConstructResult,
+  state: ParseResult,
   options: ConstructJsValueOptions
 ): string | unknown[] {
   if (node.elements.some((elem) => t.isSpreadElement(elem))) {

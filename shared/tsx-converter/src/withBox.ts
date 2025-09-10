@@ -1,9 +1,9 @@
 import { BrickConf } from "@next-core/types";
-import type { ConvertViewOptions } from "@next-shared/tsx-types";
+import type { ConvertOptions } from "./interfaces.js";
 
 export function withBox(
   children: BrickConf[] | undefined,
-  options: ConvertViewOptions
+  options: ConvertOptions
 ): BrickConf {
   return {
     brick: "div",

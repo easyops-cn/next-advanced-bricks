@@ -1,5 +1,5 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component } from "@next-shared/tsx-types";
+import type { Component } from "@next-shared/tsx-parser";
 import type { ModalProps } from "../lib/components.js";
 
 export default function convertModal(component: Component): BrickConf {

@@ -11,8 +11,8 @@ import { unstable_createRoot } from "@next-core/runtime";
 import classNames from "classnames";
 import { uniqueId } from "lodash";
 import { initializeI18n } from "@next-core/i18n";
-import { convertJsx } from "@next-shared/tsx-converter";
-import type { Component, ConstructResult } from "@next-shared/tsx-types";
+import { convertTsx } from "@next-shared/tsx-converter";
+import type { Component, ParseResult } from "@next-shared/tsx-parser";
 import styles from "./CreatedView.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
 import type { Job } from "../../cruise-canvas/interfaces";
@@ -53,7 +53,7 @@ export function CreatedView({
   const feedbackDone =
     useViewFeedbackDone(generatedView.viewId, showFeedbackOnView) ||
     feedbackDoneViews?.has(generatedView.viewId);
-  const [view, setView] = useState<ConstructResult | null>(null);
+  const [view, setView] = useState<ParseResult | null>(null);
   const canFeedback =
     !!view && !!generatedView.viewId && generatedView.from !== "config";
 
@@ -92,7 +92,7 @@ export function CreatedView({
     let ignore = false;
     (async () => {
       try {
-        const convertedView = await convertJsx(view, {
+        const convertedView = await convertTsx(view, {
           rootId,
           workspace,
           withContexts: generatedView.withContexts,

@@ -1,7 +1,7 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component, ConstructResult } from "@next-shared/tsx-types";
+import type { Component, ParseResult } from "@next-shared/tsx-parser";
 import convertList from "./convertList.js";
-import type { ConvertViewOptions } from "@next-shared/tsx-types";
+import type { ConvertOptions } from "./interfaces.js";
 import { convertEvents } from "./convertEvents.js";
 import convertTable from "./convertTable.js";
 import convertDescriptions from "./convertDescriptions.js";
@@ -23,8 +23,8 @@ import convertAvatarGroup from "./convertAvatarGroup.js";
 
 export async function convertComponent(
   component: Component,
-  result: ConstructResult,
-  options: ConvertViewOptions
+  result: ParseResult,
+  options: ConvertOptions
 ): Promise<BrickConf | BrickConf[]> {
   let brick: BrickConf | null = null;
   switch (component.name) {

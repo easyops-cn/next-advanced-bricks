@@ -1,10 +1,11 @@
 import type { ContextConf } from "@next-core/types";
 import { isObject } from "@next-core/utils/general";
-import type { ConvertViewOptions, DataSource } from "@next-shared/tsx-types";
+import type { DataSource } from "@next-shared/tsx-parser";
+import type { ConvertOptions } from "./interfaces.js";
 
 export function convertDataSources(
   dataSources: DataSource[],
-  options: ConvertViewOptions
+  options: ConvertOptions
 ): ContextConf[] {
   return dataSources.map(
     ({ name, http, api, params, entity, transform, rejectTransform }) => ({

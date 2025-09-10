@@ -1,12 +1,13 @@
-import { parseTsx } from "@next-shared/tsx-parser";
-import type { GeneratedView } from "./interfaces";
+import { getRemoteTsxParserWorker } from "./workers/tsxParser.js";
+import type { GeneratedView } from "./interfaces.js";
 
 export async function getAsyncConstructedView(
   generatedView: GeneratedView,
   workspace: string | undefined
 ) {
   try {
-    const result = parseTsx(generatedView.code, {
+    const worker = await getRemoteTsxParserWorker();
+    const result = await worker.parse(generatedView.code, {
       workspace,
       withContexts: generatedView.withContexts
         ? Object.keys(generatedView.withContexts)

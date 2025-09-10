@@ -1,1 +1,2 @@
-export { convertJsx } from "./convertJsx.js";
+export { convertTsx } from "./convertTsx.js";
+export * from "./interfaces.js";

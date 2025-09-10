@@ -1,5 +1,5 @@
 import { strictCollectMemberUsage } from "@next-core/utils/storyboard";
-import type { DataSource, Variable } from "@next-shared/tsx-types";
+import type { DataSource, Variable } from "@next-shared/tsx-parser";
 
 /**
  * Find the object ID associated with the used data contexts.

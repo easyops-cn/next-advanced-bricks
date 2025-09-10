@@ -27,7 +27,6 @@ import { HumanConfirm } from "../HumanConfirm/HumanConfirm.js";
 import { HumanAdjustPlan } from "../../shared/HumanAdjustPlan/HumanAdjustPlan";
 import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus.js";
 import { HumanAdjustPlanResult } from "../HumanAdjustPlanResult/HumanAdjustPlanResult.js";
-import { Topology } from "../Topology/Topology";
 import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
 import { CmdbInstanceDetail } from "../CmdbInstanceDetail/CmdbInstanceDetail";
 import { FileList } from "../FileList/FileList";
@@ -58,7 +57,6 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
       ].includes(job.toolCall!.arguments?.command as string)) ||
     askUserPlan;
   const loading = state === "working" || state === "submitted";
-  const hasGraph = !!job.componentGraph;
 
   const [
     toolMarkdownContent,
@@ -124,7 +122,6 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
       className={classNames(styles["node-job"], {
         [styles.error]: job.isError,
         [styles["ask-user"]]: generalAskUser,
-        [styles["fit-content"]]: hasGraph,
         [styles.active]: active,
         [styles.large]: sizeLarge,
       })}
@@ -246,13 +243,6 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
         {cmdbInstanceDetails.map((detail, index) => (
           <CmdbInstanceDetail key={index} {...detail} />
         ))}
-        {hasGraph && !job.componentGraph!.initial && (
-          <Topology
-            componentGraph={job.componentGraph!}
-            filter="minimal"
-            autoSize
-          />
-        )}
         {files.length > 0 && <FileList files={files} large={sizeLarge} />}
       </div>
     </div>

@@ -1,18 +1,18 @@
 import * as t from "@babel/types";
+import type { ConstructJsValueOptions } from "./interfaces.js";
 import type {
-  ConstructJsValueOptions,
-  ConstructResult,
+  ParseResult,
   EventHandler,
-  ParseTsxOptions,
+  ParseOptions,
   TypeEventHandlerOfShowMessage,
-} from "@next-shared/tsx-types";
+} from "../interfaces.js";
 import { constructJsValue } from "./values.js";
 import { parseTsxCallApi } from "./api.js";
 
 export function constructTsxEvent(
   node: t.Expression | t.ArgumentPlaceholder | t.SpreadElement,
-  result: ConstructResult,
-  options?: ParseTsxOptions,
+  result: ParseResult,
+  options?: ParseOptions,
   valueOptions?: ConstructJsValueOptions
 ): EventHandler[] | null {
   if (!t.isArrowFunctionExpression(node)) {

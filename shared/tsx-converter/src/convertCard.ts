@@ -1,5 +1,5 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component } from "@next-shared/tsx-types";
+import type { Component } from "@next-shared/tsx-parser";
 import type { CardProps } from "../lib/components.js";
 
 export default function convertCard(component: Component): BrickConf {

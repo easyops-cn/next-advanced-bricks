@@ -1,10 +1,7 @@
 import * as t from "@babel/types";
 import { isExpressionString, isNilNode } from "../utils.js";
-import type {
-  ConstructJsValueOptions,
-  ConstructResult,
-  ParseTsxOptions,
-} from "@next-shared/tsx-types";
+import type { ConstructJsValueOptions } from "./interfaces.js";
+import type { ParseResult, ParseOptions } from "../interfaces.js";
 import { constructJsValue } from "./values.js";
 
 export interface CallApiPayload {
@@ -25,8 +22,8 @@ const EXPECTED_ARGS = {
 
 export function parseTsxCallApi(
   call: t.Expression,
-  result: ConstructResult,
-  options?: ParseTsxOptions,
+  result: ParseResult,
+  options?: ParseOptions,
   jsValueOptions?: ConstructJsValueOptions
 ): CallApiPayload | null {
   if (!(t.isCallExpression(call) || t.isOptionalCallExpression(call))) {

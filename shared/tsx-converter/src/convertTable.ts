@@ -1,11 +1,11 @@
 import type { BrickConf } from "@next-core/types";
 import type {
   Component,
-  ConstructResult,
+  ParseResult,
   RenderUseBrick,
-} from "@next-shared/tsx-types";
+} from "@next-shared/tsx-parser";
 import type { TableColumn, TableProps } from "../lib/components.js";
-import type { ConvertViewOptions } from "@next-shared/tsx-types";
+import type { ConvertOptions } from "./interfaces.js";
 import { lowLevelConvertToStoryboard } from "./raw-data-generate/convert.js";
 import { parseDataSource } from "./expressions.js";
 import { getPreGeneratedAttrViews } from "./getPreGeneratedAttrViews.js";
@@ -17,8 +17,8 @@ const columnUseBrickParams = ["cellData", "rowData"];
 
 export default async function convertTable(
   component: Component,
-  view: ConstructResult,
-  options: ConvertViewOptions
+  view: ParseResult,
+  options: ConvertOptions
 ): Promise<BrickConf> {
   const { properties } = component;
   const { dataSource, size, columns, rowKey, pagination, ...restProps } =

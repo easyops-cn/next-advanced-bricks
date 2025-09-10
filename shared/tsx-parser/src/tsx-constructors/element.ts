@@ -1,12 +1,11 @@
 import * as t from "@babel/types";
+import type { ChildElement, ConstructJsValueOptions } from "./interfaces.js";
 import type {
-  ChildElement,
   Component,
-  ConstructJsValueOptions,
-  ConstructResult,
+  ParseResult,
   Events,
-  ParseTsxOptions,
-} from "@next-shared/tsx-types";
+  ParseOptions,
+} from "../interfaces.js";
 import { constructJsValue, constructPropValue } from "./values.js";
 import {
   containsJsxNode,
@@ -19,8 +18,8 @@ import { constructComponents } from "./components.js";
 
 export function constructTsxElement(
   node: t.Node,
-  result: ConstructResult,
-  options?: ParseTsxOptions,
+  result: ParseResult,
+  options?: ParseOptions,
   valueOptions?: ConstructJsValueOptions
 ): ChildElement | null | (ChildElement | null)[] {
   if (t.isJSXElement(node)) {

@@ -1,10 +1,10 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component, ConstructResult } from "@next-shared/tsx-types";
+import type { Component, ParseResult } from "@next-shared/tsx-parser";
 import type { DashboardProps, DashboardWidget } from "../lib/components.js";
 import { parseDataSource } from "./expressions.js";
 import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
 import { getPreGeneratedMetricGroups } from "./getPreGeneratedMetricGroups.js";
-import type { ConvertViewOptions } from "@next-shared/tsx-types";
+import type { ConvertOptions } from "./interfaces.js";
 
 const COLORS = [
   "#336EF4",
@@ -37,8 +37,8 @@ interface MergedWidget extends DashboardWidget {
 
 export default async function convertDashboard(
   { properties }: Component,
-  view: ConstructResult,
-  options: ConvertViewOptions
+  view: ParseResult,
+  options: ConvertOptions
 ): Promise<BrickConf> {
   const {
     dataSource,

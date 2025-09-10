@@ -1,11 +1,11 @@
 import * as t from "@babel/types";
-import type { ConstructResult, ParseTsxOptions } from "@next-shared/tsx-types";
+import type { ParseResult, ParseOptions } from "../interfaces.js";
 import { constructComponents } from "./components.js";
 
 export function constructTsxView(
   node: t.JSXElement,
-  result: ConstructResult,
-  options?: ParseTsxOptions
+  result: ParseResult,
+  options?: ParseOptions
 ) {
   const element = node.openingElement;
   if (!t.isJSXIdentifier(element.name)) {

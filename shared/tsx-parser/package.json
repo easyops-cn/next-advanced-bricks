@@ -38,8 +38,7 @@
     "@babel/parser": "^7.27.2",
     "@babel/types": "^7.27.7",
     "@next-core/cook": "^2.5.10",
-    "@next-core/types": "^1.17.0",
-    "@next-shared/tsx-types": "^0.0.0"
+    "@next-core/types": "^1.17.0"
   },
   "devDependencies": {
     "@next-core/build-next-libs": "^1.0.25",

@@ -1,11 +1,11 @@
 import type { ContextConf } from "@next-core/types";
 import { pipes } from "@easyops-cn/brick-next-pipes";
-import type { ConstructResult, ConvertResult } from "@next-shared/tsx-types";
-import type { ConvertViewOptions } from "@next-shared/tsx-types";
+import type { ParseResult } from "@next-shared/tsx-parser";
 import { withBox } from "./withBox.js";
 import { convertDataSources } from "./convertDataSources.js";
 import { convertVariables } from "./convertVariables.js";
 import { convertComponent } from "./convertComponent.js";
+import type { ConvertOptions, ConvertResult } from "./interfaces.js";
 
 const BUILTIN_FUNCTIONS: ContextConf[] = [
   {
@@ -30,9 +30,9 @@ const BUILTIN_FUNCTIONS: ContextConf[] = [
   },
 ];
 
-export async function convertJsx(
-  result: ConstructResult,
-  options: ConvertViewOptions
+export async function convertTsx(
+  result: ParseResult,
+  options: ConvertOptions
 ): Promise<ConvertResult> {
   const context: ContextConf[] = [
     ...convertDataSources(result.dataSources ?? [], options),

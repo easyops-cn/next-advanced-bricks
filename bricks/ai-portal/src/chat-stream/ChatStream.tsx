@@ -89,10 +89,10 @@ export function ChatStreamComponent(
       return [];
     }
     return [...jobMap.values()].flatMap((job) =>
-      job.constructedView
+      job.generatedView
         ? {
             id: job.id,
-            view: job.constructedView,
+            view: job.generatedView,
           }
         : []
     );

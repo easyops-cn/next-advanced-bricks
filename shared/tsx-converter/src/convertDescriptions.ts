@@ -1,17 +1,17 @@
 import type { BrickConf } from "@next-core/types";
 import type {
   Component,
-  ConstructResult,
+  ParseResult,
   RenderUseBrick,
-} from "@next-shared/tsx-types";
+} from "@next-shared/tsx-parser";
 import type { DescriptionsProps } from "../lib/components.js";
-import type { ConvertViewOptions } from "@next-shared/tsx-types";
 import { convertToStoryboard } from "./raw-data-generate/convert.js";
 import { getPreGeneratedAttrViews } from "./getPreGeneratedAttrViews.js";
 import { parseDataSource } from "./expressions.js";
 import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
 import { convertComponent } from "./convertComponent.js";
 import { deepReplaceVariables } from "./deepReplaceVariables.js";
+import type { ConvertOptions } from "./interfaces.js";
 
 interface DescriptionItem {
   label: string;
@@ -22,8 +22,8 @@ interface DescriptionItem {
 
 export default async function convertDescriptions(
   { properties }: Component,
-  view: ConstructResult,
-  options: ConvertViewOptions
+  view: ParseResult,
+  options: ConvertOptions
 ): Promise<BrickConf> {
   const { dataSource, title, list, ...restProps } = properties as Partial<
     DescriptionsProps<object>

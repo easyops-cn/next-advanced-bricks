@@ -1,3 +1,4 @@
+// istanbul ignore file: mock
 import { createProviderClass } from "@next-core/utils/general";
 import { InstanceApi_getDetail } from "@next-api-sdk/cmdb-sdk";
 

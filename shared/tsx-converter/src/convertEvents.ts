@@ -1,14 +1,8 @@
 import type { BrickEventHandler, BrickEventsMap } from "@next-core/types";
-import type {
-  Component,
-  EventHandler,
-  ConvertViewOptions,
-} from "@next-shared/tsx-types";
+import type { Component, EventHandler } from "@next-shared/tsx-parser";
+import type { ConvertOptions } from "./interfaces.js";
 
-export function convertEvents(
-  component: Component,
-  options: ConvertViewOptions
-) {
+export function convertEvents(component: Component, options: ConvertOptions) {
   const events: BrickEventsMap = {};
   for (const [event, handler] of Object.entries(component.events ?? {})) {
     switch (component.name) {
@@ -74,7 +68,7 @@ export function convertEvents(
 
 function convertEventHandlers(
   handler: EventHandler | EventHandler[],
-  options: ConvertViewOptions
+  options: ConvertOptions
 ): BrickEventHandler[] | undefined {
   const list = (Array.isArray(handler) ? handler : [handler])
     .map((hdl) => convertEventHandler(hdl, options))
@@ -84,7 +78,7 @@ function convertEventHandlers(
 
 function convertEventHandler(
   handler: EventHandler,
-  options: ConvertViewOptions
+  options: ConvertOptions
 ): BrickEventHandler | undefined {
   switch (handler?.action) {
     case "update_variable":
