@@ -133,13 +133,18 @@ export function ChatBoxComponent({
           onSubmit={handleSubmit}
           onChange={handleChange}
         />
-        <button
-          className="btn-send"
-          disabled={!value}
-          onClick={handleSubmitClick}
-        >
-          <WrappedIcon lib="fa" prefix="fas" icon="arrow-up" />
-        </button>
+        <div className="actions-bar">
+          <div>
+            <slot name="actions"></slot>
+          </div>
+          <button
+            className="btn-send"
+            disabled={!value}
+            onClick={handleSubmitClick}
+          >
+            <WrappedIcon lib="fa" prefix="fas" icon="arrow-up" />
+          </button>
+        </div>
       </div>
     </div>
   );
