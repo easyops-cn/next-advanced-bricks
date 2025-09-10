@@ -110,6 +110,7 @@ export function CruiseCanvasComponent(
     supports,
     showHiddenJobs,
     showFeedback: propShowFeedback,
+    showFeedbackAfterFailed,
     showFeedbackOnView,
     showUiSwitch,
     showJsxEditor,
@@ -244,11 +245,11 @@ export function CruiseCanvasComponent(
   const { sizeReady, nodes, edges } = useLayout({
     rawNodes,
     rawEdges,
-    completed:
-      conversationState === "completed" &&
-      tasks.every((t) => t.state === "completed"),
+    completed: conversationState === "completed",
+    failed: conversationState === "failed",
     sizeMap,
     showFeedback,
+    showFeedbackAfterFailed,
   });
 
   // Disable auto scroll when the user manually scrolled up
