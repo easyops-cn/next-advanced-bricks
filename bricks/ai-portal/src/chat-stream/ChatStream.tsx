@@ -52,7 +52,7 @@ export function ChatStreamComponent(
     replayDelay,
     supports,
     showFeedback: propShowFeedback,
-    // showFeedbackAfterFailed,
+    showFeedbackAfterFailed,
     showFeedbackOnView,
     showUiSwitch,
     onShare,
@@ -338,8 +338,9 @@ export function ChatStreamComponent(
                     </div>
                   ))}
                   {showFeedback &&
-                    conversationState === "completed" /*  ||
-                      (conversationState === "failed" && showFeedbackAfterFailed) */ && (
+                    (conversationState === "completed" ||
+                      (conversationState === "failed" &&
+                        showFeedbackAfterFailed)) && (
                       <NodeFeedback className={styles.feedback} />
                     )}
                 </div>
