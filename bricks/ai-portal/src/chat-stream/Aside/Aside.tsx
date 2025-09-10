@@ -13,7 +13,6 @@ import { TaskContext } from "../../shared/TaskContext";
 import { StreamContext } from "../StreamContext";
 import classNames from "classnames";
 import { EnhancedMarkdown } from "../../cruise-canvas/EnhancedMarkdown/EnhancedMarkdown";
-import { isJsxView } from "../../cruise-canvas/utils/isJsxView";
 
 const ICON_SHRINK: GeneralIconProps = {
   lib: "easyops",
@@ -74,19 +73,11 @@ export function Aside({ job }: AsideProps) {
         <div className={styles.body}>
           <ToolCallStatus job={job} variant="read-only" />
           {job.generatedView ? (
-            isJsxView(job.generatedView) ? (
-              <EditorApp
-                name={job.generatedView.title || "View"}
-                source={job.generatedView.source}
-                language="jsx"
-              />
-            ) : (
-              <EditorApp
-                name={job.generatedView.title || "View"}
-                source={JSON.stringify(job.generatedView, null, 2)}
-                language="json"
-              />
-            )
+            <EditorApp
+              name="View"
+              source={job.generatedView.code}
+              language="jsx"
+            />
           ) : toolMarkdownContent ? (
             <EditorApp
               name="Content"

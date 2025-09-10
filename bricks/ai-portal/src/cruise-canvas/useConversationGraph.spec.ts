@@ -1,8 +1,12 @@
 import { renderHook } from "@testing-library/react";
 import { useConversationGraph } from "./useConversationGraph";
 import { LOADING_NODE_ID } from "./constants";
-import type { ConversationBaseDetail, Job, Task } from "../shared/interfaces";
-import type { ConstructedView } from "@next-shared/jsx-storyboard";
+import type {
+  ConversationBaseDetail,
+  GeneratedView,
+  Job,
+  Task,
+} from "../shared/interfaces";
 
 describe("useConversationGraph", () => {
   it("should return null when conversation is null", () => {
@@ -134,7 +138,7 @@ describe("useConversationGraph", () => {
           {
             id: "job-1",
             state: "completed",
-            generatedView: { viewId: "view-1" } as ConstructedView,
+            generatedView: { viewId: "view-1" } as GeneratedView,
             messages: [],
           } as Partial<Job>,
         ],
@@ -226,7 +230,7 @@ describe("useConversationGraph", () => {
             id: "job-1",
             state: "completed",
             instruction: "Build component",
-            generatedView: { viewId: "view-2" } as ConstructedView,
+            generatedView: { viewId: "view-2" } as GeneratedView,
             messages: [
               {
                 role: "assistant",

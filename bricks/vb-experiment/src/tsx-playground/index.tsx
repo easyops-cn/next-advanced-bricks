@@ -18,17 +18,14 @@ import type {
   ExtraLib,
   ExtraMarker,
 } from "@next-bricks/vs/code-editor";
-import actionsDefinition from "@next-shared/jsx-storyboard/lib/actions.d.ts?raw";
-import componentsDefinition from "@next-shared/jsx-storyboard/lib/components.d.ts?raw";
+import actionsDefinition from "@next-shared/tsx-converter/lib/actions.d.ts?raw";
+import componentsDefinition from "@next-shared/tsx-converter/lib/components.d.ts?raw";
+import { convertTsx, type ConvertResult } from "@next-shared/tsx-converter";
+import type { ParseResult } from "@next-shared/tsx-parser";
 import "@next-core/theme";
 import styles from "./styles.module.css";
-import { getRemoteTsxParserWorker } from "./workers/tsxParser";
-import { createPortal } from "./createPortal";
-import {
-  convertJsx,
-  type ConstructedView,
-  type ConvertResult,
-} from "@next-shared/jsx-storyboard";
+import { getRemoteTsxParserWorker } from "./workers/tsxParser.js";
+import { createPortal } from "./createPortal.js";
 
 interface CodeEditorEvents {
   "code.change": CustomEvent<string>;
@@ -121,7 +118,7 @@ function TsxPlaygroundComponent({
   const [code, setCode] = useState(source ?? "");
   const deferredCode = useDeferredValue(code);
   const [markers, setMarkers] = useState<ExtraMarker[] | undefined>();
-  const [view, setView] = useState<ConstructedView | undefined>();
+  const [view, setView] = useState<ParseResult | undefined>();
 
   const allLibs = useMemo(
     () => [...BUILTIN_LIBS, ...(extraLibs ?? [])],
@@ -142,7 +139,7 @@ function TsxPlaygroundComponent({
       if (ignore) {
         return;
       }
-      setView({ ...result, viewId: "playground" });
+      setView(result);
       const withNodeErrors = result.errors.filter((err) => !!err.node);
       if (withNodeErrors.length > 0) {
         setMarkers(
@@ -203,7 +200,7 @@ function TsxPlaygroundComponent({
       // setLoading(true);
       let convertedView: ConvertResult | undefined;
       try {
-        convertedView = await convertJsx(view, { rootId, expanded: true });
+        convertedView = await convertTsx(view, { rootId, expanded: true });
         if (ignore) {
           return;
         }

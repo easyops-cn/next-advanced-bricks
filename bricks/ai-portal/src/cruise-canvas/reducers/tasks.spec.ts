@@ -2,6 +2,12 @@ import { tasks } from "./tasks";
 import type { Task, Job, Message } from "../../shared/interfaces";
 import type { CruiseCanvasAction } from "./interfaces";
 
+jest.mock("../../shared/getAsyncConstructedView.js", () => ({
+  getAsyncConstructedView() {
+    return null;
+  },
+}));
+
 describe("tasks reducer", () => {
   it("should return initial state for unknown action types", () => {
     const initialState: Task[] = [];
@@ -37,6 +43,7 @@ describe("tasks reducer", () => {
     const action: CruiseCanvasAction = {
       type: "sse",
       payload: { tasks: [] },
+      workspace: "",
     };
 
     const result = tasks(initialState, action);
@@ -49,6 +56,7 @@ describe("tasks reducer", () => {
     const action: CruiseCanvasAction = {
       type: "sse",
       payload: {},
+      workspace: "",
     };
 
     const result = tasks(initialState, action);
@@ -66,6 +74,7 @@ describe("tasks reducer", () => {
     const action: CruiseCanvasAction = {
       type: "sse",
       payload: { tasks: [newTask] },
+      workspace: "",
     };
 
     const result = tasks(initialState, action);
@@ -89,6 +98,7 @@ describe("tasks reducer", () => {
     const action: CruiseCanvasAction = {
       type: "sse",
       payload: { tasks: [taskUpdate] },
+      workspace: "",
     };
 
     const result = tasks(initialState, action);
@@ -112,6 +122,7 @@ describe("tasks reducer", () => {
     const action: CruiseCanvasAction = {
       type: "sse",
       payload: { tasks: [taskUpdate] },
+      workspace: "",
     };
 
     const result = tasks(initialState, action);
@@ -144,6 +155,7 @@ describe("tasks reducer", () => {
     const action: CruiseCanvasAction = {
       type: "sse",
       payload: { tasks: [taskUpdate] },
+      workspace: "",
     };
 
     const result = tasks(initialState, action);
@@ -171,6 +183,7 @@ describe("tasks reducer", () => {
     const action: CruiseCanvasAction = {
       type: "sse",
       payload: { tasks: [taskUpdate] },
+      workspace: "",
     };
 
     const result = tasks(initialState, action);
@@ -198,6 +211,7 @@ describe("tasks reducer", () => {
     const action: CruiseCanvasAction = {
       type: "sse",
       payload: { tasks: [taskUpdate] },
+      workspace: "",
     };
 
     const result = tasks(initialState, action);
@@ -232,6 +246,7 @@ describe("tasks reducer", () => {
     const action: CruiseCanvasAction = {
       type: "sse",
       payload: { tasks: [taskUpdate] },
+      workspace: "",
     };
 
     const result = tasks(initialState, action);
@@ -275,6 +290,7 @@ describe("tasks reducer", () => {
     const action: CruiseCanvasAction = {
       type: "sse",
       payload: { tasks: [taskUpdate] },
+      workspace: "",
     };
 
     const result = tasks(initialState, action);
@@ -310,6 +326,7 @@ describe("tasks reducer", () => {
     const action: CruiseCanvasAction = {
       type: "sse",
       payload: { tasks: [taskUpdate] },
+      workspace: "",
     };
 
     const result = tasks(initialState, action);
@@ -348,6 +365,7 @@ describe("tasks reducer", () => {
     const action: CruiseCanvasAction = {
       type: "sse",
       payload: { tasks: [taskUpdate] },
+      workspace: "",
     };
 
     const result = tasks(initialState, action);
@@ -394,6 +412,7 @@ describe("tasks reducer", () => {
     const action: CruiseCanvasAction = {
       type: "sse",
       payload: { tasks: [taskUpdate] },
+      workspace: "",
     };
 
     const result = tasks(initialState, action);

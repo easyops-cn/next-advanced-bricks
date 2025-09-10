@@ -16,7 +16,6 @@ import { K, t } from "../i18n";
 import { TaskContext } from "../../shared/TaskContext";
 import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus";
 import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
-import { Topology } from "../Topology/Topology";
 import { CodeBlock } from "../CodeBlock/CodeBlock";
 import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
 
@@ -132,21 +131,6 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
                   key={partIndex}
                   content={part.data.message}
                 />
-              ) : part.data?.type === "graph" &&
-                ["component_graph", "component_graph_node"].includes(
-                  part.data.message?.type
-                ) ? (
-                job.componentGraph ? (
-                  <Topology
-                    key={partIndex}
-                    componentGraph={job.componentGraph}
-                    filter={
-                      part.data.message.type === "component_graph_node"
-                        ? "related"
-                        : "all"
-                    }
-                  />
-                ) : null
               ) : (
                 <PreComponent key={partIndex} content={JSON.stringify(part)} />
               )

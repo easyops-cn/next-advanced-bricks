@@ -1,6 +1,5 @@
-import type { ConstructResult } from "@next-shared/jsx-storyboard";
 import type { JSONSchema } from "./json-schema";
-import type { ViewWithInfo } from "./utils/converters/interfaces";
+import type { GeneratedView } from "../shared/interfaces";
 
 export type RangeTuple = [min: number, max: number];
 export type SizeTuple = [width: number, height: number];
@@ -145,9 +144,7 @@ export interface Job {
   startTime: number;
   endTime?: number;
 
-  componentGraph?: ComponentGraph;
-  generatedView?: ConstructedView | ViewWithInfo;
-  staticDataView?: ConstructedView;
+  generatedView?: GeneratedView;
   level?: number;
 }
 
@@ -253,7 +250,7 @@ export interface GraphNavItem {
 
 export interface GraphGeneratedView {
   id: string;
-  view: ConstructedView | ViewWithInfo;
+  view: GeneratedView;
 }
 
 export interface CmdbInstanceDetailData {
@@ -285,10 +282,4 @@ export interface FeedbackDetail {
   plan: string[];
   result: string[];
   feedback: string;
-}
-
-export interface ConstructedView extends ConstructResult {
-  viewId: string;
-  from?: "generate" | "config";
-  withContexts?: Record<string, unknown>;
 }

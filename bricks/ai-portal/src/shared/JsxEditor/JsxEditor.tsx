@@ -1,14 +1,13 @@
 import React, { Suspense, useContext, useMemo, useState } from "react";
 import { asyncWrapBrick } from "@next-core/react-runtime";
 import type { CodeEditor, CodeEditorProps } from "@next-bricks/vs/code-editor";
-import { parseJsx, parseTsx } from "@next-shared/jsx-storyboard";
-import actionsDefinition from "@next-shared/jsx-storyboard/lib/actions.d.ts?raw";
-import componentsDefinition from "@next-shared/jsx-storyboard/lib/components.d.ts?raw";
+import actionsDefinition from "@next-shared/tsx-converter/lib/actions.d.ts?raw";
+import componentsDefinition from "@next-shared/tsx-converter/lib/components.d.ts?raw";
 import styles from "./JsxEditor.module.css";
 import { WrappedButton, WrappedIconButton } from "../bricks";
 import { ICON_CLOSE } from "../constants";
 import { TaskContext } from "../TaskContext";
-import type { ConstructedView } from "../../cruise-canvas/interfaces";
+import { getAsyncConstructedView } from "../getAsyncConstructedView";
 
 interface CodeEditorEvents {
   "code.change": CustomEvent<string>;
@@ -46,6 +45,7 @@ const AsyncWrappedCodeEditor = React.lazy(async () => ({
 
 export function JsxEditor() {
   const {
+    workspace,
     manuallyUpdatedViews,
     updateView,
     activeJsxEditorJob,
@@ -53,9 +53,8 @@ export function JsxEditor() {
   } = useContext(TaskContext);
   const view =
     manuallyUpdatedViews?.get(activeJsxEditorJob!.id) ??
-    (activeJsxEditorJob!.generatedView as ConstructedView) ??
-    activeJsxEditorJob!.staticDataView!;
-  const source = view.source;
+    activeJsxEditorJob!.generatedView!;
+  const source = view.code;
   const [code, setCode] = useState(source);
 
   const libs = useMemo(() => {
@@ -109,24 +108,15 @@ declare const RESPONSE: typeof RESPONSE_VALUE;`,
             themeVariant="elevo"
             type="primary"
             onClick={() => {
-              const newView = (code.includes("<eo-view") ? parseJsx : parseTsx)(
+              const newView = {
+                ...view,
                 code,
-                view.withContexts
-                  ? { withContexts: Object.keys(view.withContexts) }
-                  : undefined
+              };
+              newView.asyncConstructedView = getAsyncConstructedView(
+                newView,
+                workspace
               );
-              if (newView.errors.length > 0) {
-                // eslint-disable-next-line no-console
-                console.warn(
-                  "Parsed modified view with errors:",
-                  newView.errors
-                );
-              }
-              updateView?.(activeJsxEditorJob!.id, {
-                viewId: view.viewId,
-                ...newView,
-                withContexts: view.withContexts,
-              });
+              updateView?.(activeJsxEditorJob!.id, newView);
               setActiveJsxEditorJob?.(undefined);
             }}
           >

@@ -1,12 +1,8 @@
 import type { Reducer } from "react";
 import { isMatch, pick } from "lodash";
-import {
-  parseJsx,
-  parseTsx,
-  type ConstructedView,
-} from "@next-shared/jsx-storyboard";
 import type {
   DataPart,
+  GeneratedView,
   Job,
   JobPatch,
   Message,
@@ -15,6 +11,7 @@ import type {
   TextPart,
 } from "../../shared/interfaces";
 import type { CruiseCanvasAction } from "./interfaces";
+import { getAsyncConstructedView } from "../../shared/getAsyncConstructedView";
 
 export const tasks: Reducer<Task[], CruiseCanvasAction> = (state, action) => {
   switch (action.type) {
@@ -41,7 +38,11 @@ export const tasks: Reducer<Task[], CruiseCanvasAction> = (state, action) => {
           (task) => task.id === taskPatch.id
         );
         const previousTask = tasks[previousTaskIndex];
-        taskPatch.jobs = mergeJobs(previousTask?.jobs, taskPatch.jobs);
+        taskPatch.jobs = mergeJobs(
+          previousTask?.jobs,
+          taskPatch.jobs,
+          action.workspace
+        );
 
         if (previousTaskIndex === -1) {
           tasks = [...tasks, { ...taskPatch } as Task];
@@ -69,7 +70,8 @@ export const tasks: Reducer<Task[], CruiseCanvasAction> = (state, action) => {
 
 function mergeJobs(
   previousJobs: Job[] | undefined,
-  jobsPatch: JobPatch[] | undefined
+  jobsPatch: JobPatch[] | undefined,
+  workspace: string
 ): Job[] {
   let jobs = previousJobs ?? [];
   for (const jobPatch of jobsPatch ?? []) {
@@ -94,11 +96,10 @@ function mergeJobs(
         ...jobPatch,
       };
       if (
-        (patch.toolCall?.name === "get_view_with_info" ||
-          patch.toolCall?.name === "create_view") &&
+        patch.toolCall?.name === "create_view" &&
         patch.state === "completed"
       ) {
-        const generatedView = getJobGeneratedView(messagesPatch);
+        const generatedView = getJobGeneratedView(messagesPatch, workspace);
         if (generatedView) {
           patch.generatedView = generatedView;
         }
@@ -142,20 +143,20 @@ function mergeJobs(
         ) &&
         (restMessagesPatch.state ?? previousJob.state) === "completed"
       ) {
-        const generatedView = getJobGeneratedView(messagesPatch);
+        const generatedView = getJobGeneratedView(messagesPatch, workspace);
         if (generatedView) {
           restMessagesPatch.generatedView = generatedView;
         }
       }
 
-      if (!previousJob.staticDataView) {
+      if (!previousJob.generatedView && !restMessagesPatch.generatedView) {
         const view = getJobStaticDataView(messagesPatch);
         if (view) {
           view.withContexts = {
             RESPONSE: getJobStaticDataResponse(restMessagesPatch.messages!),
           };
-
-          restMessagesPatch.staticDataView = view;
+          view.asyncConstructedView = getAsyncConstructedView(view, workspace);
+          restMessagesPatch.generatedView = view;
         }
       }
 
@@ -221,8 +222,9 @@ function mergeMessageParts(parts: Part[]): Part[] {
 }
 
 function getJobGeneratedView(
-  messages: Message[] | undefined
-): ConstructedView | undefined {
+  messages: Message[] | undefined,
+  workspace: string
+): GeneratedView | undefined {
   if (!messages) {
     return;
   }
@@ -232,15 +234,12 @@ function getJobGeneratedView(
       for (const part of message.parts) {
         if (part.type === "text") {
           try {
-            const result = JSON.parse(part.text) as JsxResult;
-            const view = (
-              result.code.includes("<eo-view") ? parseJsx : parseTsx
-            )(result.code);
-            if (view.errors.length > 0) {
-              // eslint-disable-next-line no-console
-              console.warn("Parsed generated view with errors:", view.errors);
-            }
-            return { viewId: result.viewId, ...view };
+            const view = JSON.parse(part.text) as GeneratedView;
+            view.asyncConstructedView = getAsyncConstructedView(
+              view,
+              workspace
+            );
+            return view;
           } catch {
             // Do nothing, continue to next part
           }
@@ -252,7 +251,7 @@ function getJobGeneratedView(
 
 function getJobStaticDataView(
   messages: Message[] | undefined
-): ConstructedView | undefined {
+): GeneratedView | undefined {
   if (!messages) {
     return;
   }
@@ -261,23 +260,13 @@ function getJobStaticDataView(
     if (message.role === "tool") {
       for (const part of message.parts) {
         if (part.type === "data" && part.data?.type === "static_data_view") {
-          try {
-            const view = parseTsx(part.data.code, {
-              withContexts: ["RESPONSE"],
-            });
-            if (view.errors.length > 0) {
-              // eslint-disable-next-line no-console
-              console.warn("Parsed static data view with errors:", view.errors);
-            }
-            return {
-              ...view,
-              viewId: part.data.viewId,
-              from: part.data.from,
-            };
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error("Failed to parse static data view:", e);
-          }
+          const view: GeneratedView = {
+            viewId: part.data.viewId,
+            code: part.data.code,
+            from: part.data.from,
+            isStaticData: true,
+          };
+          return view;
         }
       }
     }
@@ -301,9 +290,4 @@ function getJobStaticDataResponse(messages: Message[]) {
   }
 
   return null;
-}
-
-interface JsxResult {
-  viewId: string;
-  code: string;
 }

@@ -11,17 +11,16 @@ import { unstable_createRoot } from "@next-core/runtime";
 import classNames from "classnames";
 import { uniqueId } from "lodash";
 import { initializeI18n } from "@next-core/i18n";
-import { convertJsx, type Component } from "@next-shared/jsx-storyboard";
+import { convertTsx } from "@next-shared/tsx-converter";
+import type { Component, ParseResult } from "@next-shared/tsx-parser";
 import styles from "./CreatedView.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
 import type { Job } from "../../cruise-canvas/interfaces";
-import { convertView } from "../../cruise-canvas/utils/converters/convertView";
 import { WrappedIcon } from "../../shared/bricks";
 import { K, locales, NS, t } from "./i18n";
 import { createPortal } from "../../cruise-canvas/utils/createPortal";
-import { isJsxView } from "../../cruise-canvas/utils/isJsxView";
 import { TaskContext } from "../TaskContext";
-import { ICON_FEEDBACK } from "../constants";
+import { ICON_FEEDBACK, ICON_LOADING } from "../constants";
 import { useViewFeedbackDone } from "../useViewFeedbackDone";
 
 initializeI18n(NS, locales);
@@ -37,6 +36,7 @@ export function CreatedView({
 }: CreatedViewProps): JSX.Element {
   const rootId = useMemo(() => uniqueId(), []);
   const {
+    workspace,
     showJsxEditor,
     setActiveExpandedViewJobId,
     setActiveJsxEditorJob,
@@ -49,14 +49,19 @@ export function CreatedView({
   const rootRef = useRef<Awaited<
     ReturnType<typeof unstable_createRoot>
   > | null>(null);
-  const view =
-    manuallyUpdatedViews?.get(job.id) ??
-    job.generatedView ??
-    job.staticDataView!;
+  const generatedView = manuallyUpdatedViews?.get(job.id) ?? job.generatedView!;
   const feedbackDone =
-    useViewFeedbackDone(view.viewId, showFeedbackOnView) ||
-    feedbackDoneViews?.has(view.viewId);
-  const canFeedback = !!view.viewId && view.from !== "config";
+    useViewFeedbackDone(generatedView.viewId, showFeedbackOnView) ||
+    feedbackDoneViews?.has(generatedView.viewId);
+  const [view, setView] = useState<ParseResult | null>(null);
+  const canFeedback =
+    !!view && !!generatedView.viewId && generatedView.from !== "config";
+
+  useEffect(() => {
+    generatedView.asyncConstructedView?.then((view) => {
+      setView(view);
+    });
+  }, [generatedView, workspace]);
 
   useEffect(() => {
     const container = ref.current;
@@ -80,18 +85,23 @@ export function CreatedView({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
+    if (!view) {
+      return;
+    }
     let ignore = false;
     (async () => {
-      setLoading(true);
       try {
-        const convertedView = await (isJsxView(view)
-          ? convertJsx(view, { rootId })
-          : convertView(view, { rootId }));
+        const convertedView = await convertTsx(view, {
+          rootId,
+          workspace,
+          withContexts: generatedView.withContexts,
+        });
         if (ignore) {
           return;
         }
-        const { brick, context } = convertedView ?? {};
-        await rootRef.current?.render(brick ?? [], { context });
+        const { brick, context } = convertedView;
+        await rootRef.current?.render(brick, { context });
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to render view:", error);
@@ -104,48 +114,30 @@ export function CreatedView({
     return () => {
       ignore = true;
     };
-  }, [rootId, view]);
+  }, [rootId, workspace, view, generatedView]);
 
   const sizeLarge = useMemo(() => {
-    if (isJsxView(view)) {
-      let large = false;
-      traverseComponents(view.components ?? [], (component) => {
-        if (large) {
-          return;
-        }
-        if (component.name === "Table" || component.name === "eo-table") {
-          large = true;
-        } else if (
-          component.name === "Dashboard" ||
-          component.name === "eo-dashboard"
+    let large = false;
+    traverseComponents(view?.components ?? [], (component) => {
+      if (large) {
+        return;
+      }
+      if (component.name === "Table" || component.name === "eo-table") {
+        large = true;
+      } else if (
+        component.name === "Dashboard" ||
+        component.name === "eo-dashboard"
+      ) {
+        const widgets = component?.properties?.widgets;
+        if (
+          Array.isArray(widgets) &&
+          widgets.length >= (component.properties!.groupField ? 3 : 7)
         ) {
-          const widgets = component?.properties?.widgets;
-          if (
-            Array.isArray(widgets) &&
-            widgets.length >= (component.properties!.groupField ? 3 : 7)
-          ) {
-            large = true;
-          }
-        }
-      });
-      return large;
-    } else {
-      for (const component of view.components ?? []) {
-        if (component.componentName === "table") {
-          return true;
-        }
-        if (component.componentName === "dashboard") {
-          const widgets = component?.properties?.widgets;
-          if (
-            Array.isArray(widgets) &&
-            widgets.length >= (component.properties!.groupField ? 3 : 7)
-          ) {
-            return true;
-          }
+          large = true;
         }
       }
-    }
-    return false;
+    });
+    return large;
   }, [view]);
 
   useEffect(() => {
@@ -161,13 +153,13 @@ export function CreatedView({
       <div className={styles.heading}>
         <div
           className={classNames(styles.title, {
-            [sharedStyles["shine-text"]]: loading,
+            [sharedStyles["shine-text"]]: view && loading,
           })}
         >
-          {view.title}
+          {view ? view.title : <WrappedIcon {...ICON_LOADING} />}
         </div>
         <div className={styles.buttons}>
-          {showJsxEditor && isJsxView(view) && (
+          {showJsxEditor && (
             <button
               className={styles.button}
               onClick={() => {
@@ -181,7 +173,7 @@ export function CreatedView({
             <button
               className={styles.button}
               title={t(K.FEEDBACK)}
-              onClick={() => onFeedbackOnView?.(view.viewId)}
+              onClick={() => onFeedbackOnView?.(generatedView.viewId)}
             >
               <WrappedIcon {...ICON_FEEDBACK} />
             </button>

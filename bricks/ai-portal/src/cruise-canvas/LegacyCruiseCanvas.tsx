@@ -24,11 +24,10 @@ import type {
   Job,
   RequirementGraphNode,
   JobGraphNode,
-  GraphEdge,
   ZoomAction,
   FileInfo,
   FeedbackDetail,
-  ConstructedView,
+  JobState,
 } from "./interfaces.js";
 import { useAutoCenter } from "./useAutoCenter.js";
 import { useLayout } from "./useLayout.js";
@@ -65,6 +64,7 @@ import { TaskContext } from "../shared/TaskContext.js";
 import { NodeLoading } from "./NodeLoading/NodeLoading.js";
 import { JsxEditor } from "../shared/JsxEditor/JsxEditor.js";
 import type { CruiseCanvasProps } from ".";
+import type { GeneratedView } from "../shared/interfaces";
 
 const MemoizedNodeComponent = memo(NodeComponent);
 
@@ -559,9 +559,9 @@ export function LegacyCruiseCanvasComponent(
     Job | undefined
   >();
   const [manuallyUpdatedViews, setManuallyUpdatedViews] = useState<
-    Map<string, ConstructedView> | undefined
+    Map<string, GeneratedView> | undefined
   >();
-  const updateView = useCallback((jobId: string, view: ConstructedView) => {
+  const updateView = useCallback((jobId: string, view: GeneratedView) => {
     setManuallyUpdatedViews((prev) => {
       const next = new Map(prev);
       next.set(jobId, view);
@@ -569,8 +569,11 @@ export function LegacyCruiseCanvasComponent(
     });
   }, []);
 
+  const workspace = task?.id;
+
   const taskContextValue = useMemo(
     () => ({
+      workspace,
       humanInput,
       onShare,
       onTerminate,
@@ -596,6 +599,7 @@ export function LegacyCruiseCanvasComponent(
       feedbackDoneViews,
     }),
     [
+      workspace,
       humanInput,
       onTerminate,
       onShare,
@@ -789,7 +793,6 @@ export function LegacyCruiseCanvasComponent(
                   !DONE_STATES.includes(node.state!) &&
                   !GENERAL_DONE_STATES.includes(taskState!)
                 }
-                edges={edges}
                 x={node.view?.x}
                 y={node.view?.y}
                 active={activeNodeId === node.id}
@@ -846,10 +849,9 @@ export function LegacyCruiseCanvasComponent(
 interface NodeComponentProps {
   id: string;
   type: GraphNode["type"];
-  edges: GraphEdge[];
   content?: string;
   job?: Job;
-  state?: string;
+  state?: JobState;
   startTime?: number;
   instructionLoading?: boolean;
   x?: number;

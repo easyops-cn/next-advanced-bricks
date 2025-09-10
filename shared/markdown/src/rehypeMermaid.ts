@@ -1,22 +1,36 @@
 import { visit } from "unist-util-visit";
 import { toString } from "hast-util-to-string";
 import type { RefractorElement } from "refractor";
-import mermaid from "mermaid";
+import type Mermaid from "mermaid";
 import { fromHtmlIsomorphic } from "hast-util-from-html-isomorphic";
 import { getCodeLanguage } from "./utils.js";
 
-let count = 0;
+let mermaidPromise: Promise<typeof Mermaid> | undefined;
 
-mermaid.initialize({
-  startOnLoad: false,
-  theme: "base",
-  themeVariables: {
-    fontSize: "14px",
-    lineColor: "#979797",
-    primaryColor: "#DCD2F3",
-    primaryBorderColor: "#0000001A",
-  },
-});
+function loadMermaid() {
+  if (mermaidPromise) {
+    return mermaidPromise;
+  }
+  mermaidPromise = doLoadMermaid();
+  return mermaidPromise;
+}
+
+async function doLoadMermaid() {
+  const mermaid = (await import("mermaid")).default;
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: "base",
+    themeVariables: {
+      fontSize: "14px",
+      lineColor: "#979797",
+      primaryColor: "#DCD2F3",
+      primaryBorderColor: "#0000001A",
+    },
+  });
+  return mermaid;
+}
+
+let count = 0;
 
 const parser = new DOMParser();
 const serializer = new XMLSerializer();
@@ -46,6 +60,7 @@ export function rehypeMermaid() {
           const id = `mermaid-${count++}`;
           let svg: string;
           try {
+            const mermaid = await loadMermaid();
             const result = await mermaid.render(id, toString(node));
             svg = result.svg;
           } catch (error) {
