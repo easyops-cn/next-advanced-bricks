@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.2.4...@next-bricks/vb-experiment@1.2.5) (2025-09-10)
+
+
+### Bug Fixes
+
+* construct view async ([4f79155](https://github.com/easyops-cn/next-advanced-bricks/commit/4f791553fa4e1dcd375b86c47d7ddf517a5c9629))
+
+
+
+
+
 ## [1.2.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.2.3...@next-bricks/vb-experiment@1.2.4) (2025-09-04)
 
 **Note:** Version bump only for package @next-bricks/vb-experiment

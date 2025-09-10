@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/markdown@0.6.3...@next-shared/markdown@0.6.4) (2025-09-10)
+
+
+### Bug Fixes
+
+* **markdown:** load mermaid on demand ([8002f36](https://github.com/easyops-cn/next-advanced-bricks/commit/8002f36dc337616e1340bd7a4389c72113fdc80f))
+
+
+
+
+
 ## [0.6.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/markdown@0.6.2...@next-shared/markdown@0.6.3) (2025-08-14)
 
 

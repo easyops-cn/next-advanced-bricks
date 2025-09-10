@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.33.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.32.9...@next-bricks/ai-portal@0.33.0) (2025-09-10)
+
+
+### Bug Fixes
+
+* construct view async ([4f79155](https://github.com/easyops-cn/next-advanced-bricks/commit/4f791553fa4e1dcd375b86c47d7ddf517a5c9629))
+* fix show feedback after failed ([c94444c](https://github.com/easyops-cn/next-advanced-bricks/commit/c94444cc1d5fbd27930d4c531b99ec0115e128fe))
+* refine types ([44085db](https://github.com/easyops-cn/next-advanced-bricks/commit/44085db37710918b0f66945f17ce76ec7ec7c5e8))
+
+
+### Features
+
+* entity sdk ([2df7965](https://github.com/easyops-cn/next-advanced-bricks/commit/2df796565d2c26f1a407fce9322b50481047bb1b))
+
+
+
+
+
 ## [0.32.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.32.8...@next-bricks/ai-portal@0.32.9) (2025-09-10)
 
 
