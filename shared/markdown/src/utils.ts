@@ -1,6 +1,6 @@
-import type { RefractorElement } from "refractor";
+import type { Element } from "hast";
 
-export function getCodeLanguage(node: RefractorElement) {
+export function getCodeLanguage(node: Element) {
   const className = (node.properties.className as string[]) || [];
 
   for (const classListItem of className) {

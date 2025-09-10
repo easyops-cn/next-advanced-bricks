@@ -6,7 +6,10 @@ import remarkGfm from "remark-gfm";
 import remarkToRehype from "remark-rehype";
 import rehypeReact, { Options as RehypeReactOptions } from "rehype-react";
 import type { Components } from "hast-util-to-jsx-runtime";
-import { rehypePrism } from "./rehypePrism.js";
+import rehypeShikiFromHighlighter, {
+  type RehypeShikiCoreOptions,
+} from "@shikijs/rehype/core";
+import { highlighter } from "@next-shared/shiki";
 import { rehypeMermaid } from "./rehypeMermaid.js";
 
 const production = { Fragment, jsx, jsxs };
@@ -14,12 +17,14 @@ const production = { Fragment, jsx, jsxs };
 export interface MarkdownComponentProps {
   content?: string;
   components?: Partial<Components>;
+  shiki?: RehypeShikiCoreOptions;
 }
 
 // Reference https://github.com/remarkjs/react-remark/blob/39553e5f5c9e9b903bebf261788ff45130668de0/src/index.ts
 export function MarkdownComponent({
   content,
   components,
+  shiki,
 }: MarkdownComponentProps) {
   const [reactContent, setReactContent] = useState<JSX.Element | null>(null);
 
@@ -29,8 +34,11 @@ export function MarkdownComponent({
       .use(remarkParse)
       .use(remarkGfm)
       .use(remarkToRehype)
-      .use([rehypePrism])
       .use(rehypeMermaid)
+      .use(rehypeShikiFromHighlighter, highlighter as any, {
+        theme: "dark-plus",
+        ...shiki,
+      })
       .use(rehypeReact, {
         ...production,
         passNode: true,
@@ -52,7 +60,7 @@ export function MarkdownComponent({
     return () => {
       ignore = true;
     };
-  }, [components, content]);
+  }, [components, content, shiki]);
 
   return reactContent;
 }
