@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.39.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.39.6...@next-bricks/visual-builder@1.39.7) (2025-09-11)
+
+
+### Bug Fixes
+
+* use shiki instead of prismjs as code highlighter ([81cd327](https://github.com/easyops-cn/next-advanced-bricks/commit/81cd327008d2fced075cd6612a47a8afc6350e46))
+
+
+
+
+
 ## [1.39.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/visual-builder@1.39.5...@next-bricks/visual-builder@1.39.6) (2025-09-10)
 
 **Note:** Version bump only for package @next-bricks/visual-builder

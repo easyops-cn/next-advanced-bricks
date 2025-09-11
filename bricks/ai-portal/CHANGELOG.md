@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.34.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.34.0...@next-bricks/ai-portal@0.34.1) (2025-09-11)
+
+
+### Bug Fixes
+
+* lazy with shiki ([4bc0526](https://github.com/easyops-cn/next-advanced-bricks/commit/4bc0526e2ba555a8f5c18dc9445aa309a4d6c187))
+* use shiki instead of prismjs as code highlighter ([81cd327](https://github.com/easyops-cn/next-advanced-bricks/commit/81cd327008d2fced075cd6612a47a8afc6350e46))
+
+
+
+
+
 # [0.34.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.33.0...@next-bricks/ai-portal@0.34.0) (2025-09-11)
 
 

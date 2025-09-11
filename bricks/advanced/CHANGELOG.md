@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.49.11](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.49.10...@next-bricks/advanced@0.49.11) (2025-09-11)
+
+
+### Bug Fixes
+
+* use shiki instead of prismjs as code highlighter ([81cd327](https://github.com/easyops-cn/next-advanced-bricks/commit/81cd327008d2fced075cd6612a47a8afc6350e46))
+
+
+
+
+
 ## [0.49.10](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.49.9...@next-bricks/advanced@0.49.10) (2025-09-03)
 
 
