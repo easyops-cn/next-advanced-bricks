@@ -12,7 +12,6 @@ const components: MarkdownComponentProps["components"] = {
 
 const shikiOptions: MarkdownComponentProps["shiki"] = {
   theme: "light-plus",
-  addLanguageClass: true,
 };
 
 export interface EnhancedMarkdownProps extends MarkdownComponentProps {

@@ -18,7 +18,7 @@ import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus";
 import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
 import { CodeBlock } from "../CodeBlock/CodeBlock";
 import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
-import { renderCodeBlock } from "../../shared/renderCodeBlock";
+import { useCodeBlock } from "../../shared/useCodeBlock";
 
 export interface ToolCallDetailProps {
   job: Job;
@@ -181,12 +181,12 @@ function PreComponent({
 }: {
   content?: string;
   maybeJson?: boolean;
-}): JSX.Element {
+}): JSX.Element | null {
   const [refinedContent, fallback] = useMemo(() => {
     if (maybeJson && content) {
       try {
         const json = JSON.parse(content);
-        return [renderCodeBlock(JSON.stringify(json, null, 2), "json"), false];
+        return [JSON.stringify(json, null, 2), false];
       } catch {
         // Fallback to original content
       }
@@ -194,11 +194,17 @@ function PreComponent({
     return [content, true];
   }, [content, maybeJson]);
 
+  const refinedNode = useCodeBlock({
+    language: "json",
+    source: refinedContent!,
+    disabled: fallback,
+  });
+
   return fallback ? (
     <CodeBlock className={classNames("shiki light-plus", styles.fallback)}>
       <code>{refinedContent}</code>
     </CodeBlock>
   ) : (
-    (refinedContent as JSX.Element)
+    refinedNode
   );
 }

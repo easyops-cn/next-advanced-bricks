@@ -12,7 +12,7 @@ import type {
 import { ToolCallStatus } from "../../cruise-canvas/ToolCallStatus/ToolCallStatus";
 import { TaskContext } from "../../shared/TaskContext";
 import { StreamContext } from "../StreamContext";
-import { renderCodeBlock } from "../../shared/renderCodeBlock";
+import { useCodeBlock } from "../../shared/useCodeBlock";
 
 const ICON_SHRINK: GeneralIconProps = {
   lib: "easyops",
@@ -104,15 +104,13 @@ interface EditorAppProps {
 }
 
 function EditorApp({ name, source, language }: EditorAppProps) {
-  const child = useMemo(() => {
-    return renderCodeBlock(source, language);
-  }, [language, source]);
+  const child = useCodeBlock({ language, source });
 
   return (
     <div className={classNames(styles.app, styles.editor)}>
       <div className={styles.heading}>{`${name}.${language}`}</div>
       <div className={classNames(styles.content, sharedStyles.markdown)}>
-        <div className={styles.scroller}>{child}</div>
+        <div className={styles.scroller}>{child ?? "…"}</div>
       </div>
     </div>
   );
