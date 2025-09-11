@@ -1,0 +1,24 @@
+:host {
+  display: inline-block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.button-container {
+  display: flex;
+  gap: 6px;
+}
+
+.action {
+  &::part(button) {
+    height: 28px;
+    font-size: 13px;
+    padding: 5px 10px;
+  }
+  &.active::part(button) {
+    color: var(--elevo-color-brand);
+    background-color: rgba(var(--elevo-color-brand-rgb-channel), 0.04);
+  }
+}
