@@ -26,7 +26,7 @@ export function MarkdownComponent({
   content,
   components,
   shiki,
-}: MarkdownComponentProps) {
+}: MarkdownComponentProps): JSX.Element | null {
   const [reactContent, setReactContent] = useState<JSX.Element | null>(null);
   const theme = shiki?.theme ?? "dark-plus";
 

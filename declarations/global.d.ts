@@ -224,4 +224,6 @@ declare namespace React {
      */
     exportparts?: string;
   }
+
+  function use<T>(promise: Promise<T>): T;
 }
