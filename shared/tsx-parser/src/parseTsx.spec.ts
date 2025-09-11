@@ -32,7 +32,13 @@ export default (
       />
     </Toolbar>
     <Table
-      dataSource={hosts}
+      dataSource={
+        Object.entries(hosts).map(([key, value]: [string, object]) => ({
+          label: key,
+          desc: value.description,
+          required: RESPONSE.outputSchema.required.includes(key)
+        }))
+      }
       columns={[
         { dataIndex: "hostname", key: "hostname", title: "主机名" },
         { dataIndex: "ip", key: "ip", title: "IP" },
@@ -62,18 +68,19 @@ describe("parseTsx", () => {
     });
     // if (errors.length > 0) {
     //   for (const error of errors) {
-    //     if (!error.node) {
-    //       console.error(error.message);
-    //     } else if (error.message.includes("\n")) {
-    //       console.error(error.message);
-    //       const columns = codeFrameColumns(code, error.node.loc);
-    //       console.error(columns);
-    //     } else {
-    //       const columns = codeFrameColumns(code, error.node.loc, {
-    //         message: error.message,
-    //       });
-    //       console.error(columns);
-    //     }
+    //     console.error(error.message);
+    //     // if (!error.node) {
+    //     //   console.error(error.message);
+    //     // } else if (error.message.includes("\n")) {
+    //     //   console.error(error.message);
+    //     //   const columns = codeFrameColumns(code, error.node.loc);
+    //     //   console.error(columns);
+    //     // } else {
+    //     //   const columns = codeFrameColumns(code, error.node.loc, {
+    //     //     message: error.message,
+    //     //   });
+    //     //   console.error(columns);
+    //     // }
     //   }
     // }
     // console.dir(result, { depth: null, colors: true });

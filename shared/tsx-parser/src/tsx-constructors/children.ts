@@ -9,6 +9,7 @@ import type {
 import type { Component, ParseResult, ParseOptions } from "../interfaces.js";
 import { constructTsxElement } from "./element.js";
 import { replaceCTX, replaceVariables } from "./replaceVariables.js";
+import { removeTypeAnnotations } from "./values.js";
 
 export function constructChildren(
   nodes: t.Node[],
@@ -104,7 +105,7 @@ export function constructChildren(
                   : replaceVariables(
                       replaceCTX(
                         child.type === "expression"
-                          ? `<%= ${result.source.slice(child.expression.start!, child.expression.end!)} %>`
+                          ? `<%= ${removeTypeAnnotations(result.source, child.expression)} %>`
                           : mergeTexts(child.children, result.source),
                         result.contexts
                       ),
@@ -122,7 +123,7 @@ function mergeTexts(elements: (ChildText | ChildExpression)[], source: string) {
     .map((elem) =>
       elem.type === "text"
         ? JSON.stringify(elem)
-        : `{type:"expression",value:(${source.substring(elem.expression.start!, elem.expression.end!)})}`
+        : `{type:"expression",value:(${removeTypeAnnotations(source, elem.expression)})}`
     )
     .join(", ")}) %>`;
 }
