@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.34.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.34.1...@next-bricks/ai-portal@0.34.2) (2025-09-11)
+
+
+### Bug Fixes
+
+* handle render code block loading status ([ff1bf07](https://github.com/easyops-cn/next-advanced-bricks/commit/ff1bf073abcfb2540d3f8eb5847ca8c5741d851d))
+
+
+
+
+
 ## [0.34.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.34.0...@next-bricks/ai-portal@0.34.1) (2025-09-11)
 
 
