@@ -17,6 +17,11 @@ export interface CodeDisplayProps {
   disabled?: boolean;
 }
 
+/**
+ * NOTE: This component uses React's experimental `use` hook to handle async rendering.
+ *
+ * Ensure wrapping it with <Suspense> in the parent component.
+ */
 export function CodeDisplay({ source, language }: CodeDisplayProps) {
   const renderPromise = useMemo(
     () =>
