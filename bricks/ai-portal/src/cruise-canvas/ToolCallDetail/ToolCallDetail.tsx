@@ -8,8 +8,9 @@ import React, {
 } from "react";
 import type { Drawer } from "@next-bricks/containers/drawer";
 import classNames from "classnames";
+import { httpErrorToString } from "@next-core/runtime";
 import type { DataPart, Job, Part } from "../interfaces";
-import { WrappedDrawer } from "../../shared/bricks";
+import { WrappedDrawer, WrappedIcon } from "../../shared/bricks";
 import styles from "./ToolCallDetail.module.css";
 import sharedStyles from "../shared.module.css";
 import { K, t } from "../i18n";
@@ -19,6 +20,7 @@ import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
 import { CodeBlock } from "../CodeBlock/CodeBlock";
 import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
 import { useCodeBlock } from "../../shared/useCodeBlock";
+import { ICON_LOADING } from "../../shared/constants";
 
 export interface ToolCallDetailProps {
   job: Job;
@@ -194,7 +196,7 @@ function PreComponent({
     return [content, true];
   }, [content, maybeJson]);
 
-  const refinedNode = useCodeBlock({
+  const { status, data, error } = useCodeBlock({
     language: "json",
     source: refinedContent!,
     disabled: fallback,
@@ -204,7 +206,13 @@ function PreComponent({
     <CodeBlock className={classNames("shiki light-plus", styles.fallback)}>
       <code>{refinedContent}</code>
     </CodeBlock>
+  ) : status === "pending" ? (
+    <WrappedIcon {...ICON_LOADING} />
+  ) : status === "error" ? (
+    <div style={{ color: "var(--color-error)" }}>
+      {httpErrorToString(error)}
+    </div>
   ) : (
-    refinedNode
+    data
   );
 }

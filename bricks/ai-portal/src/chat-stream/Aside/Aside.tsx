@@ -1,9 +1,10 @@
 import React, { useContext, useMemo } from "react";
 import classNames from "classnames";
+import { httpErrorToString } from "@next-core/runtime";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import styles from "./Aside.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
-import { WrappedIconButton } from "../../shared/bricks";
+import { WrappedIcon, WrappedIconButton } from "../../shared/bricks";
 import type {
   CmdbInstanceDetailData,
   FileInfo,
@@ -13,6 +14,7 @@ import { ToolCallStatus } from "../../cruise-canvas/ToolCallStatus/ToolCallStatu
 import { TaskContext } from "../../shared/TaskContext";
 import { StreamContext } from "../StreamContext";
 import { useCodeBlock } from "../../shared/useCodeBlock";
+import { ICON_LOADING } from "../../shared/constants";
 
 const ICON_SHRINK: GeneralIconProps = {
   lib: "easyops",
@@ -104,13 +106,27 @@ interface EditorAppProps {
 }
 
 function EditorApp({ name, source, language }: EditorAppProps) {
-  const child = useCodeBlock({ language, source });
+  const { status, data, error } = useCodeBlock({ language, source });
 
   return (
     <div className={classNames(styles.app, styles.editor)}>
       <div className={styles.heading}>{`${name}.${language}`}</div>
       <div className={classNames(styles.content, sharedStyles.markdown)}>
-        <div className={styles.scroller}>{child ?? "…"}</div>
+        <div
+          className={classNames(styles.scroller, {
+            [styles.loading]: status === "pending",
+          })}
+        >
+          {status === "pending" ? (
+            <WrappedIcon {...ICON_LOADING} />
+          ) : status === "error" ? (
+            <div style={{ color: "var(--color-error)" }}>
+              {httpErrorToString(error)}
+            </div>
+          ) : (
+            data
+          )}
+        </div>
       </div>
     </div>
   );

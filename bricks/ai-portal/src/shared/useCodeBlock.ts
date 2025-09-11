@@ -5,6 +5,7 @@ import { toString } from "hast-util-to-string";
 import type { Element } from "hast";
 import { codeToHast } from "@next-shared/shiki";
 import { CodeBlock } from "../cruise-canvas/CodeBlock/CodeBlock";
+import type { AsyncResult } from "./interfaces";
 
 const production = { Fragment, jsx, jsxs } as Options;
 
@@ -20,25 +21,43 @@ export function useCodeBlock({
   language,
   source,
   disabled,
-}: UseCodeBlockOptions) {
-  const [node, setNode] = useState<JSX.Element | null>(null);
+}: UseCodeBlockOptions): AsyncResult<JSX.Element | null> {
+  const [data, setData] = useState<JSX.Element | null>(null);
+  const [status, setStatus] = useState<"pending" | "error" | "success">(
+    disabled ? "success" : "pending"
+  );
+  const [error, setError] = useState<unknown>();
   useEffect(() => {
+    setData(null);
+    setError(undefined);
     if (disabled) {
-      setNode(null);
+      setStatus("success");
       return;
     }
+    setStatus("pending");
     let ignore = false;
     (async () => {
-      const rendered = await renderCodeBlock(source, language);
-      if (!ignore) {
-        setNode(rendered);
+      try {
+        const rendered = await renderCodeBlock(source, language);
+        if (!ignore) {
+          setData(rendered);
+          setStatus("success");
+        }
+      } catch (e) {
+        if (!ignore) {
+          setError(e);
+          setStatus("error");
+          // eslint-disable-next-line no-console
+          console.error("Render code block failed:", e);
+        }
       }
     })();
     return () => {
       ignore = true;
     };
   }, [language, source, disabled]);
-  return node;
+
+  return { data, status, error };
 }
 
 async function renderCodeBlock(source: string, language: string) {

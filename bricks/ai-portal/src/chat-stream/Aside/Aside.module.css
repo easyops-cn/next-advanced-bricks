@@ -66,6 +66,12 @@
   padding: 10px;
 }
 
+.scroller.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .editor .content div[class*="code-block--"] {
   position: static;
 }
