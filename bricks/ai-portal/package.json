@@ -79,6 +79,7 @@
     "@next-bricks/diagram": "*",
     "@next-bricks/mini-chart": "*",
     "@next-bricks/presentational": "*",
-    "@next-bricks/vs": "*"
+    "@next-bricks/vs": "*",
+    "@next-bricks/form": "*"
   }
 }
