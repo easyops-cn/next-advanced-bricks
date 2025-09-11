@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.34.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.33.0...@next-bricks/ai-portal@0.34.0) (2025-09-11)
+
+
+### Features
+
+* add dropdown select ([641e955](https://github.com/easyops-cn/next-advanced-bricks/commit/641e95504e70cd8c9ffabced1b93971ef2f61edb))
+
+
+
+
+
 # [0.33.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.32.9...@next-bricks/ai-portal@0.33.0) (2025-09-10)
 
 
