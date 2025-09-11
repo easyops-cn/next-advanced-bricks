@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.35.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.34.2...@next-bricks/ai-portal@0.35.0) (2025-09-11)
+
+
+### Features
+
+* new brick: preview-container ([a83fab8](https://github.com/easyops-cn/next-advanced-bricks/commit/a83fab8d1cb38e2e812589999fe34ebb92632a5c))
+
+
+
+
+
 ## [0.34.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.34.1...@next-bricks/ai-portal@0.34.2) (2025-09-11)
 
 
