@@ -1,63 +1,34 @@
-import { useEffect, useState } from "react";
+import React, { use, useMemo } from "react";
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";
 import { toJsxRuntime, type Options } from "hast-util-to-jsx-runtime";
 import { toString } from "hast-util-to-string";
 import type { Element } from "hast";
 import { codeToHast } from "@next-shared/shiki";
+import { httpErrorToString } from "@next-core/runtime";
 import { CodeBlock } from "../cruise-canvas/CodeBlock/CodeBlock";
-import type { AsyncResult } from "./interfaces";
 
 const production = { Fragment, jsx, jsxs } as Options;
 
 const THEME = "light-plus";
 
-export interface UseCodeBlockOptions {
+export interface CodeDisplayProps {
   language: string;
   source: string;
   disabled?: boolean;
 }
 
-export function useCodeBlock({
-  language,
-  source,
-  disabled,
-}: UseCodeBlockOptions): AsyncResult<JSX.Element | null> {
-  const [data, setData] = useState<JSX.Element | null>(null);
-  const [status, setStatus] = useState<"pending" | "error" | "success">(
-    disabled ? "success" : "pending"
+export function CodeDisplay({ source, language }: CodeDisplayProps) {
+  const renderPromise = useMemo(
+    () =>
+      renderCodeBlock(source, language).catch((error) => (
+        <div style={{ color: "var(--color-error)" }}>
+          {httpErrorToString(error)}
+        </div>
+      )),
+    [language, source]
   );
-  const [error, setError] = useState<unknown>();
-  useEffect(() => {
-    setData(null);
-    setError(undefined);
-    if (disabled) {
-      setStatus("success");
-      return;
-    }
-    setStatus("pending");
-    let ignore = false;
-    (async () => {
-      try {
-        const rendered = await renderCodeBlock(source, language);
-        if (!ignore) {
-          setData(rendered);
-          setStatus("success");
-        }
-      } catch (e) {
-        if (!ignore) {
-          setError(e);
-          setStatus("error");
-          // eslint-disable-next-line no-console
-          console.error("Render code block failed:", e);
-        }
-      }
-    })();
-    return () => {
-      ignore = true;
-    };
-  }, [language, source, disabled]);
 
-  return { data, status, error };
+  return use(renderPromise);
 }
 
 async function renderCodeBlock(source: string, language: string) {

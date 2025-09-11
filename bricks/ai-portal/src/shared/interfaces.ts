@@ -198,9 +198,3 @@ export interface GeneratedView {
   withContexts?: Record<string, unknown>;
   asyncConstructedView?: Promise<ParseResult | null>;
 }
-
-export interface AsyncResult<T> {
-  data: T;
-  status: "pending" | "error" | "success";
-  error?: unknown;
-}
