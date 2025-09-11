@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@cypress/browserify-preprocessor": "^3.0.2",
-    "@next-bricks/basic": "^1.56.0",
+    "@next-bricks/basic": "^1.58.1",
     "@next-bricks/containers": "^1.15.1",
     "@next-bricks/icons": "^1.5.0",
     "@next-bricks/illustrations": "^1.4.12",

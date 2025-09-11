@@ -3170,10 +3170,10 @@
   dependencies:
     "@next-core/http" "^1.0.0"
 
-"@next-bricks/basic@^1.56.0":
-  version "1.56.0"
-  resolved "https://registry.yarnpkg.com/@next-bricks/basic/-/basic-1.56.0.tgz#53e13ad0b044e482fe7c32b0bd9568f90ca5a92a"
-  integrity sha512-TTIoAoPLDTRz32EjdB40+VS9XeF91hJgiDoqAY0voTP1GGpCSWBz6EtNNG7ADyGtrk0cZZhN2Lx91QIFcQJw3g==
+"@next-bricks/basic@^1.58.1":
+  version "1.58.1"
+  resolved "https://registry.yarnpkg.com/@next-bricks/basic/-/basic-1.58.1.tgz#94546107edb10e3ea0b70941dca8481016148345"
+  integrity sha512-bj4AOa2bVseqIKRjfSwcF2D9Q6y/6LkB5uhFo461z5QUNPlPHHMKnTD5vnzGh81n+lvQUUPUZMQZ3twazN/UZQ==
 
 "@next-bricks/containers@^1.15.1":
   version "1.15.1"
