@@ -1,0 +1,13 @@
+ai-portal\.preview-container {
+  display: block;
+  background: rgba(247, 248, 250, 1);
+}
+
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 48px;
+  color: var(--palette-gray-5);
+  margin: 0 -24px;
+}

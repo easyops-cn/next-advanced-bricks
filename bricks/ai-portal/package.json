@@ -77,6 +77,7 @@
   "peerDependencies": {
     "@next-bricks/advanced": "*",
     "@next-bricks/basic": "*",
+    "@next-bricks/containers": "*",
     "@next-bricks/diagram": "*",
     "@next-bricks/form": "*",
     "@next-bricks/mini-chart": "*",
