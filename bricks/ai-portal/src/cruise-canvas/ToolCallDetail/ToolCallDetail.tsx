@@ -18,6 +18,7 @@ import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus";
 import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
 import { CodeBlock } from "../CodeBlock/CodeBlock";
 import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
+import { useCodeBlock } from "../../shared/useCodeBlock";
 
 export interface ToolCallDetailProps {
   job: Job;
@@ -127,10 +128,15 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
           <div className={`${styles.body} ${sharedStyles.markdown}`}>
             {intermediateParts.map((part, partIndex) =>
               part.data?.type === "stream" ? (
-                <ProcessMessageComponent
+                <div
                   key={partIndex}
-                  content={part.data.message}
-                />
+                  className={classNames(
+                    styles["stream-message"],
+                    sharedStyles.markdown
+                  )}
+                >
+                  <EnhancedMarkdown content={part.data.message} />
+                </div>
               ) : (
                 <PreComponent key={partIndex} content={JSON.stringify(part)} />
               )
@@ -175,12 +181,12 @@ function PreComponent({
 }: {
   content?: string;
   maybeJson?: boolean;
-}): JSX.Element {
+}): JSX.Element | null {
   const [refinedContent, fallback] = useMemo(() => {
-    if (maybeJson) {
+    if (maybeJson && content) {
       try {
-        const json = JSON.parse(content ?? "");
-        return [`${"```json\n"}${JSON.stringify(json, null, 2)}${"\n```"}`];
+        const json = JSON.parse(content);
+        return [JSON.stringify(json, null, 2), false];
       } catch {
         // Fallback to original content
       }
@@ -188,25 +194,17 @@ function PreComponent({
     return [content, true];
   }, [content, maybeJson]);
 
+  const refinedNode = useCodeBlock({
+    language: "json",
+    source: refinedContent!,
+    disabled: fallback,
+  });
+
   return fallback ? (
-    <CodeBlock className={classNames("language-plaintext", styles.fallback)}>
+    <CodeBlock className={classNames("shiki light-plus", styles.fallback)}>
       <code>{refinedContent}</code>
     </CodeBlock>
   ) : (
-    <EnhancedMarkdown content={refinedContent} />
-  );
-}
-
-function ProcessMessageComponent({
-  content,
-}: {
-  content: string;
-}): JSX.Element {
-  return (
-    <div
-      className={classNames(styles["stream-message"], sharedStyles.markdown)}
-    >
-      <EnhancedMarkdown content={content} />
-    </div>
+    refinedNode
   );
 }

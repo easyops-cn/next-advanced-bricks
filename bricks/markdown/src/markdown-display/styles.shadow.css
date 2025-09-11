@@ -6,8 +6,6 @@
   display: none;
 }
 
-@import "~@next-shared/markdown/dist/esm/prism-tomorrow.css";
-
 pre {
   white-space: pre-wrap;
   background-color: var(--palette-gray-3);
@@ -32,4 +30,20 @@ blockquote {
 :not(blockquote) > blockquote {
   margin-left: 0;
   margin-right: 0;
+}
+
+.shiki {
+  font-family:
+    "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  line-height: 1.5;
+  tab-size: 4;
+  hyphens: none;
+  font-size: 13px;
+  padding: 1em;
+  margin: 0.5em 0;
+  overflow-x: auto;
+  border-radius: 9px;
 }

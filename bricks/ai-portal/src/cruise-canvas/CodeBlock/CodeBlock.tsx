@@ -27,7 +27,7 @@ export type CodeBlockProps = JSX.IntrinsicElements["pre"] & {
 
 export function CodeBlock({ children, node, ...props }: CodeBlockProps) {
   const ref = useRef<HTMLPreElement>(null);
-  const isCodeBlock = props.className?.includes("language-");
+  const isCodeBlock = props.className?.includes("shiki");
   const [state, setState] = useState<"idle" | "success" | "failed">("idle");
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>();
 

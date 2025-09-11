@@ -1,6 +1,6 @@
 import { visit } from "unist-util-visit";
 import { toString } from "hast-util-to-string";
-import type { RefractorElement } from "refractor";
+import type { Element } from "hast";
 import type Mermaid from "mermaid";
 import { fromHtmlIsomorphic } from "hast-util-from-html-isomorphic";
 import { getCodeLanguage } from "./utils.js";
@@ -37,15 +37,16 @@ const serializer = new XMLSerializer();
 
 // Reference https://github.com/remcohaszing/rehype-mermaid
 export function rehypeMermaid() {
-  return async (tree: RefractorElement) => {
+  return async (tree: Element) => {
     const promises: Promise<void>[] = [];
 
-    function visitor(
-      node: RefractorElement,
-      index: number | undefined,
-      parent: RefractorElement | undefined
-    ) {
-      if (!parent || parent.tagName !== "pre" || node.tagName !== "code") {
+    visit(tree, "element", (node, index, parent) => {
+      if (
+        !parent ||
+        parent.type !== "element" ||
+        parent.tagName !== "pre" ||
+        node.tagName !== "code"
+      ) {
         return;
       }
 
@@ -117,16 +118,14 @@ export function rehypeMermaid() {
 
           const replacements = fromHtmlIsomorphic(modifiedSvg, {
             fragment: true,
-          }).children as RefractorElement[];
+          }).children as Element[];
           parent.children.splice(index!, 1, ...replacements);
           parent.properties.className = (
             (parent.properties.className as string[]) || []
           ).concat("mermaid");
         })()
       );
-    }
-
-    visit(tree, "element", visitor);
+    });
 
     await Promise.all(promises);
   };

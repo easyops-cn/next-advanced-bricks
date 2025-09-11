@@ -78,7 +78,8 @@ export function constructJsValue(
       if (options.ambiguous) {
         return ambiguousSymbol;
       }
-      const value = `<%${options.modifier ?? ""} ${state.source.substring(node.start!, node.end!)} %>`;
+      const exprSource = removeTypeAnnotations(state.source, node);
+      const value = `<%${options.modifier ?? ""} ${exprSource} %>`;
       return replaceVariables(
         replaceCTX(value, state.contexts),
         options?.replacePatterns
@@ -128,7 +129,8 @@ export function constructPropValue(
   if (shouldCompute) {
     const invalidNode = validateExpression(expr);
     if (!invalidNode) {
-      const value = `<%${options.modifier ?? ""} ${state.source.substring(expr.start!, expr.end!)} %>`;
+      const exprSource = removeTypeAnnotations(state.source, expr);
+      const value = `<%${options.modifier ?? ""} ${exprSource} %>`;
       return replaceVariables(
         replaceCTX(value, state.contexts),
         options?.replacePatterns
@@ -137,6 +139,28 @@ export function constructPropValue(
   }
 
   return constructJsValue(expr, state, options);
+}
+
+export function removeTypeAnnotations(source: string, expr: t.Expression) {
+  const annotations: [start: number, end: number][] = [];
+  t.traverse(expr, {
+    enter(node) {
+      if (t.isTSTypeAnnotation(node)) {
+        annotations.push([node.start!, node.end!]);
+      }
+    },
+  });
+
+  let result = "";
+  let lastIndex = expr.start!;
+  for (const [start, end] of annotations) {
+    if (start > lastIndex) {
+      result += source.substring(lastIndex, start);
+      lastIndex = end;
+    }
+  }
+  result += source.substring(lastIndex, expr.end!);
+  return result;
 }
 
 function constructJsObject(
@@ -157,7 +181,8 @@ function constructJsObject(
         if (options.ambiguous) {
           return ambiguousSymbol as unknown as string;
         }
-        const value = `<%${options.modifier ?? ""} ${state.source.substring(node.start!, node.end!)} %>`;
+        const exprSource = removeTypeAnnotations(state.source, node);
+        const value = `<%${options.modifier ?? ""} ${exprSource} %>`;
         return replaceVariables(
           replaceCTX(value, state.contexts),
           options?.replacePatterns
@@ -223,7 +248,8 @@ function constructJsArray(
         if (options.ambiguous) {
           return ambiguousSymbol as unknown as string;
         }
-        const value = `<%${options.modifier ?? ""} ${state.source.substring(node.start!, node.end!)} %>`;
+        const exprSource = removeTypeAnnotations(state.source, node);
+        const value = `<%${options.modifier ?? ""} ${exprSource} %>`;
         return replaceVariables(
           replaceCTX(value, state.contexts),
           options?.replacePatterns

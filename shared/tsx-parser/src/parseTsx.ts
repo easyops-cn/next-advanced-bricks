@@ -8,7 +8,10 @@ import type {
   ParseOptions,
   Variable,
 } from "./interfaces.js";
-import { constructJsValue } from "./tsx-constructors/values.js";
+import {
+  constructJsValue,
+  removeTypeAnnotations,
+} from "./tsx-constructors/values.js";
 import { constructTsxView } from "./tsx-constructors/view.js";
 import { parseTsxCallApi } from "./tsx-constructors/api.js";
 import { replaceVariables } from "./tsx-constructors/replaceVariables.js";
@@ -86,7 +89,8 @@ export function parseTsx(source: string, options?: ParseOptions): ParseResult {
       });
       return null;
     }
-    const expr = `<% ${source.substring(callback.body.start!, callback.body.end!)} %>`;
+    const exprSource = removeTypeAnnotations(source, callback.body);
+    const expr = `<% ${exprSource} %>`;
     if (callback.params.length === 0) {
       return expr;
     }

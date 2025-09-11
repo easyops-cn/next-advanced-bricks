@@ -10,6 +10,10 @@ const components: MarkdownComponentProps["components"] = {
   pre: CodeBlock,
 };
 
+const shikiOptions: MarkdownComponentProps["shiki"] = {
+  theme: "light-plus",
+};
+
 export interface EnhancedMarkdownProps extends MarkdownComponentProps {
   className?: string;
 }
@@ -51,7 +55,11 @@ export function EnhancedMarkdown({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      <MarkdownComponent {...props} components={components} />
+      <MarkdownComponent
+        {...props}
+        components={components}
+        shiki={shikiOptions}
+      />
     </div>
   );
 }
