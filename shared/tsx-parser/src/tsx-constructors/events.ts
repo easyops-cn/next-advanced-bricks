@@ -13,7 +13,8 @@ export function constructTsxEvent(
   node: t.Expression | t.ArgumentPlaceholder | t.SpreadElement,
   result: ParseResult,
   options?: ParseOptions,
-  valueOptions?: ConstructJsValueOptions
+  valueOptions?: ConstructJsValueOptions,
+  isCallback?: boolean
 ): EventHandler[] | null {
   if (!t.isArrowFunctionExpression(node)) {
     result.errors.push({
@@ -47,7 +48,7 @@ export function constructTsxEvent(
       return null;
     }
     const eventParamName = param.name;
-    replacePatterns.set(eventParamName, "EVENT");
+    replacePatterns.set(eventParamName, isCallback ? "EVENT.detail" : "EVENT");
     if (result.contexts.includes(eventParamName)) {
       result.errors.push({
         message: `Event handler parameter "${eventParamName}" conflicts with existing global variables`,
@@ -194,7 +195,8 @@ export function constructTsxEvent(
               args[0],
               result,
               options,
-              valueOptions
+              valueOptions,
+              true
             );
             handlers.push({
               action: "call_api",

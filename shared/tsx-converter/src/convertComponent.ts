@@ -126,7 +126,10 @@ export async function convertComponent(
       )
     ).flat();
 
-    if (component.name === "Card" && brick.children.length > 1) {
+    if (
+      (component.name === "Card" || component.name === "Modal") &&
+      brick.children.length > 0
+    ) {
       brick.children = [
         {
           brick: "eo-content-layout",

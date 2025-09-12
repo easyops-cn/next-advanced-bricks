@@ -8,7 +8,7 @@ import type {
 } from "./interfaces.js";
 import type { Component, ParseResult, ParseOptions } from "../interfaces.js";
 import { constructTsxElement } from "./element.js";
-import { replaceCTX, replaceVariables } from "./replaceVariables.js";
+import { replaceGlobals, replaceVariables } from "./replaceVariables.js";
 import { removeTypeAnnotations } from "./values.js";
 
 export function constructChildren(
@@ -85,7 +85,7 @@ export function constructChildren(
       result.source
     );
     const textContent = replaceVariables(
-      replaceCTX(text, result.contexts),
+      replaceGlobals(text, result),
       valueOptions?.replacePatterns
     );
     return { textContent };
@@ -103,11 +103,11 @@ export function constructChildren(
                 child.type === "text"
                   ? child.text
                   : replaceVariables(
-                      replaceCTX(
+                      replaceGlobals(
                         child.type === "expression"
                           ? `<%= ${removeTypeAnnotations(result.source, child.expression)} %>`
                           : mergeTexts(child.children, result.source),
-                        result.contexts
+                        result
                       ),
                       valueOptions?.replacePatterns
                     ),

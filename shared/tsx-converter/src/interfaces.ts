@@ -1,4 +1,8 @@
-import type { BrickConf, ContextConf } from "@next-core/types";
+import type {
+  BrickConf,
+  ContextConf,
+  StoryboardFunction,
+} from "@next-core/types";
 
 export interface ConvertOptions {
   rootId: string;
@@ -10,4 +14,5 @@ export interface ConvertOptions {
 export interface ConvertResult {
   brick: BrickConf;
   context?: ContextConf[];
+  functions?: StoryboardFunction[];
 }

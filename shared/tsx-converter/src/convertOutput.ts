@@ -3,14 +3,14 @@ import type { Component } from "@next-shared/tsx-parser";
 
 export default function convertOutput(component: Component): BrickConf {
   const { properties } = component;
-  const { textContent } = properties as {
+  const { style, ...restProps } = properties as {
     textContent?: string;
+    style?: Record<string, any>;
   };
 
   return {
     brick: "pre",
     properties: {
-      textContent,
       style: {
         background: "hsl(230, 1%, 98%)",
         color: "hsl(230, 8%, 24%)",
@@ -31,7 +31,9 @@ export default function convertOutput(component: Component): BrickConf {
         margin: "0",
         overflowX: "auto",
         borderRadius: "9px",
+        ...style,
       },
+      ...restProps,
     },
   };
 }

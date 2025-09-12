@@ -4,7 +4,7 @@ import type { ModalProps } from "../lib/components.js";
 
 export default function convertModal(component: Component): BrickConf {
   const { properties } = component;
-  const { title, confirmText, cancelText, textContent } =
+  const { title, confirmText, cancelText, ...restProps } =
     properties as Partial<ModalProps> & {
       textContent?: string;
     };
@@ -17,7 +17,7 @@ export default function convertModal(component: Component): BrickConf {
       confirmText: confirmText,
       cancelText: cancelText,
       keyboard: true,
-      ...(textContent ? { textContent } : null),
+      ...restProps,
     },
   };
 }

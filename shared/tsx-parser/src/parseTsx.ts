@@ -1,5 +1,6 @@
 import { parse, type ParseResult as BabelParseResult } from "@babel/parser";
 import * as t from "@babel/types";
+import type { StoryboardFunction } from "@next-core/types";
 import type {
   Component,
   ParseResult,
@@ -14,7 +15,10 @@ import {
 } from "./tsx-constructors/values.js";
 import { constructTsxView } from "./tsx-constructors/view.js";
 import { parseTsxCallApi } from "./tsx-constructors/api.js";
-import { replaceVariables } from "./tsx-constructors/replaceVariables.js";
+import {
+  replaceGlobalsInFunction,
+  replaceVariables,
+} from "./tsx-constructors/replaceVariables.js";
 
 export function parseTsx(source: string, options?: ParseOptions): ParseResult {
   const dataSources: DataSource[] = [];
@@ -24,6 +28,8 @@ export function parseTsx(source: string, options?: ParseOptions): ParseResult {
   let title: string | undefined;
   const componentsMap = new Map<string, Component>();
   const contexts: string[] = options?.withContexts ?? [];
+  const functions: StoryboardFunction[] = [];
+  const functionNames: string[] = [];
   const contracts = new Set<string>();
   const result: ParseResult = {
     source,
@@ -34,6 +40,8 @@ export function parseTsx(source: string, options?: ParseOptions): ParseResult {
     componentsMap,
     errors,
     contexts,
+    functionNames,
+    functions,
     contracts,
   };
 
@@ -178,6 +186,10 @@ export function parseTsx(source: string, options?: ParseOptions): ParseResult {
           contexts.push(dec.id.name);
         }
       }
+    } else if (t.isFunctionDeclaration(stmt)) {
+      if (stmt.id) {
+        functionNames.push(stmt.id.name);
+      }
     }
   }
 
@@ -199,102 +211,128 @@ export function parseTsx(source: string, options?: ParseOptions): ParseResult {
         });
         continue;
       }
-      if (stmt.declarations.length !== 1) {
+      for (const dec of stmt.declarations) {
+        if (!t.isIdentifier(dec.id)) {
+          errors.push({
+            message: `Expect an identifier as the variable name, received ${dec.id.type}`,
+            node: dec.id,
+            severity: "error",
+          });
+          continue;
+        }
+
+        const name = dec.id.name;
+        if (dec.init == null) {
+          if (!dec.id.typeAnnotation) {
+            errors.push({
+              message: `Variable "${name}" with no initial value must have a type annotation`,
+              node: dec.id,
+              severity: "error",
+            });
+          }
+          variables.push({ name });
+        } else if (t.isAwaitExpression(dec.init)) {
+          const call = dec.init.argument;
+          if (!t.isCallExpression(call)) {
+            errors.push({
+              message: `Await expression must be a call expression, received ${call.type}`,
+              node: call,
+              severity: "error",
+            });
+            continue;
+          }
+          const { callee } = call;
+          if (!(t.isIdentifier(callee) || t.isMemberExpression(callee))) {
+            errors.push({
+              message: `Await expression must call an identifier or member expression, received ${callee.type}`,
+              node: callee,
+              severity: "error",
+            });
+            continue;
+          }
+          if (t.isMemberExpression(callee)) {
+            if (
+              t.isIdentifier(callee.object) &&
+              callee.object.name === "Entity"
+            ) {
+              if (
+                !t.isIdentifier(callee.property) ||
+                callee.computed ||
+                (callee.property.name !== "list" &&
+                  callee.property.name !== "get")
+              ) {
+                errors.push({
+                  message: `Unexpected awaited expression`,
+                  node: callee.property,
+                  severity: "error",
+                });
+                continue;
+              }
+              parseDataSourceCall(call, name);
+            } else {
+              if (
+                !t.isIdentifier(callee.property) ||
+                callee.computed ||
+                (callee.property.name !== "then" &&
+                  callee.property.name !== "catch")
+              ) {
+                errors.push({
+                  message: `Unexpected awaited expression`,
+                  node: callee.property,
+                  severity: "error",
+                });
+                continue;
+              }
+              parseDataSourceCall(
+                callee.object,
+                name,
+                call.arguments,
+                callee.property.name
+              );
+            }
+          } else {
+            parseDataSourceCall(call, name);
+          }
+        } else {
+          const value = constructJsValue(dec.init, result, {
+            allowExpression: true,
+          });
+          variables.push({ name, value });
+        }
+      }
+    } else if (t.isFunctionDeclaration(stmt)) {
+      if (exported) {
         errors.push({
-          message: `Expect exactly 1 declaration in a variable declaration statement, received ${stmt.declarations.length}`,
+          message: `Unexpected variable declaration after export`,
+          node: stmt,
+          severity: "error",
+        });
+      }
+      if (stmt.async || stmt.generator) {
+        errors.push({
+          message: `Function declaration cannot be async or generator`,
           node: stmt,
           severity: "error",
         });
         continue;
       }
-      const dec = stmt.declarations[0];
-      if (!t.isIdentifier(dec.id)) {
+      if (!stmt.id) {
         errors.push({
-          message: `Expect an identifier as the variable name, received ${dec.id.type}`,
-          node: dec.id,
+          message: `Function declaration must have a name`,
+          node: stmt,
           severity: "error",
         });
         continue;
       }
-
-      const name = dec.id.name;
-      if (dec.init == null) {
-        if (!dec.id.typeAnnotation) {
-          errors.push({
-            message: `Variable "${name}" with no initial value must have a type annotation`,
-            node: dec.id,
-            severity: "error",
-          });
-        }
-        variables.push({ name });
-      } else if (t.isAwaitExpression(dec.init)) {
-        const call = dec.init.argument;
-        if (!t.isCallExpression(call)) {
-          errors.push({
-            message: `Await expression must be a call expression, received ${call.type}`,
-            node: call,
-            severity: "error",
-          });
-          continue;
-        }
-        const { callee } = call;
-        if (!(t.isIdentifier(callee) || t.isMemberExpression(callee))) {
-          errors.push({
-            message: `Await expression must call an identifier or member expression, received ${callee.type}`,
-            node: callee,
-            severity: "error",
-          });
-          continue;
-        }
-        if (t.isMemberExpression(callee)) {
-          if (
-            t.isIdentifier(callee.object) &&
-            callee.object.name === "Entity"
-          ) {
-            if (
-              !t.isIdentifier(callee.property) ||
-              callee.computed ||
-              (callee.property.name !== "list" &&
-                callee.property.name !== "get")
-            ) {
-              errors.push({
-                message: `Unexpected awaited expression`,
-                node: callee.property,
-                severity: "error",
-              });
-              continue;
-            }
-            parseDataSourceCall(call, name);
-          } else {
-            if (
-              !t.isIdentifier(callee.property) ||
-              callee.computed ||
-              (callee.property.name !== "then" &&
-                callee.property.name !== "catch")
-            ) {
-              errors.push({
-                message: `Unexpected awaited expression`,
-                node: callee.property,
-                severity: "error",
-              });
-              continue;
-            }
-            parseDataSourceCall(
-              callee.object,
-              name,
-              call.arguments,
-              callee.property.name
-            );
-          }
-        } else {
-          parseDataSourceCall(call, name);
-        }
-      } else {
-        const value = constructJsValue(dec.init, result, {
-          allowExpression: true,
-        });
-        variables.push({ name, value });
-      }
+      functions.push({
+        name: stmt.id.name,
+        source: replaceGlobalsInFunction(
+          source.slice(stmt.start!, stmt.end!),
+          result,
+          stmt.id.name
+        ),
+        typescript: true,
+      });
     } else if (t.isExportDefaultDeclaration(stmt)) {
       exported = true;
       const declaration = stmt.declaration;
@@ -308,7 +346,9 @@ export function parseTsx(source: string, options?: ParseOptions): ParseResult {
       }
 
       constructTsxView(declaration, result, options);
-    } else {
+    } else if (
+      !(t.isTSInterfaceDeclaration(stmt) || t.isTSTypeAliasDeclaration(stmt))
+    ) {
       errors.push({
         message: `Unsupported top level statement type: ${stmt.type}`,
         node: stmt,

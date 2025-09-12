@@ -64,6 +64,7 @@ export async function convertTsx(
       children: needBox ? [withBox(children, options)] : children,
     },
     context,
+    functions: result.functions,
   };
 }
 
