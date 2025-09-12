@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.36.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.35.0...@next-bricks/ai-portal@0.36.0) (2025-09-12)
+
+
+### Bug Fixes
+
+* refine tsx view, support functions ([198d142](https://github.com/easyops-cn/next-advanced-bricks/commit/198d14281d282e5717745b74ad8b66b333ba1616))
+
+
+### Features
+
+* add action buttons brick ([1e88e68](https://github.com/easyops-cn/next-advanced-bricks/commit/1e88e6856f136012015d75b8079df1b42d193a5e))
+
+
+
+
+
 # [0.35.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.34.2...@next-bricks/ai-portal@0.35.0) (2025-09-11)
 
 

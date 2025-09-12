@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.2.6...@next-bricks/vb-experiment@1.2.7) (2025-09-12)
+
+
+### Bug Fixes
+
+* refine tsx view, support functions ([198d142](https://github.com/easyops-cn/next-advanced-bricks/commit/198d14281d282e5717745b74ad8b66b333ba1616))
+
+
+
+
+
 ## [1.2.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.2.5...@next-bricks/vb-experiment@1.2.6) (2025-09-11)
 
 **Note:** Version bump only for package @next-bricks/vb-experiment
