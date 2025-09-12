@@ -2,7 +2,7 @@ import * as t from "@babel/types";
 import type { ConstructJsValueOptions } from "./interfaces.js";
 import type { ParseResult, RenderUseBrick } from "../interfaces.js";
 import { validateExpression } from "../utils.js";
-import { replaceCTX, replaceVariables } from "./replaceVariables.js";
+import { replaceGlobals, replaceVariables } from "./replaceVariables.js";
 import { constructComponents } from "./components.js";
 
 const ambiguousSymbol = Symbol("ambiguous");
@@ -81,7 +81,7 @@ export function constructJsValue(
       const exprSource = removeTypeAnnotations(state.source, node);
       const value = `<%${options.modifier ?? ""} ${exprSource} %>`;
       return replaceVariables(
-        replaceCTX(value, state.contexts),
+        replaceGlobals(value, state),
         options?.replacePatterns
       );
     }
@@ -132,7 +132,7 @@ export function constructPropValue(
       const exprSource = removeTypeAnnotations(state.source, expr);
       const value = `<%${options.modifier ?? ""} ${exprSource} %>`;
       return replaceVariables(
-        replaceCTX(value, state.contexts),
+        replaceGlobals(value, state),
         options?.replacePatterns
       );
     }
@@ -145,7 +145,10 @@ export function removeTypeAnnotations(source: string, expr: t.Expression) {
   const annotations: [start: number, end: number][] = [];
   t.traverse(expr, {
     enter(node) {
-      if (t.isTSTypeAnnotation(node)) {
+      if (
+        t.isTSTypeAnnotation(node) ||
+        t.isTSTypeParameterInstantiation(node)
+      ) {
         annotations.push([node.start!, node.end!]);
       }
     },
@@ -184,7 +187,7 @@ function constructJsObject(
         const exprSource = removeTypeAnnotations(state.source, node);
         const value = `<%${options.modifier ?? ""} ${exprSource} %>`;
         return replaceVariables(
-          replaceCTX(value, state.contexts),
+          replaceGlobals(value, state),
           options?.replacePatterns
         );
       }
@@ -251,7 +254,7 @@ function constructJsArray(
         const exprSource = removeTypeAnnotations(state.source, node);
         const value = `<%${options.modifier ?? ""} ${exprSource} %>`;
         return replaceVariables(
-          replaceCTX(value, state.contexts),
+          replaceGlobals(value, state),
           options?.replacePatterns
         );
       }

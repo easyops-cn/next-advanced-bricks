@@ -88,7 +88,14 @@ export default async function convertTable(
 
             return {
               ...column,
-              useBrick,
+              useBrick: useBrick.map((item) =>
+                item.brick.startsWith(":")
+                  ? {
+                      brick: "div",
+                      children: [item],
+                    }
+                  : item
+              ),
             };
           }
           return typeof column.dataIndex === "string" &&

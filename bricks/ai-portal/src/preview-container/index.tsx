@@ -163,8 +163,8 @@ function RenderComponent({
     if (!convertedResult) {
       return;
     }
-    const { brick, context } = convertedResult;
-    rootRef.current?.render(brick, { context });
+    const { brick, context, functions } = convertedResult;
+    rootRef.current?.render(brick, { context, functions });
   }, [convertedResult]);
 
   return (

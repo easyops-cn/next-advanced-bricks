@@ -1,4 +1,5 @@
 import type * as t from "@babel/types";
+import type { StoryboardFunction } from "@next-core/types";
 
 export interface ParseOptions {
   reward?: boolean;
@@ -16,6 +17,8 @@ export interface ParseResult {
   contracts: Set<string>;
   errors: ParseError[];
   contexts: string[];
+  functionNames: string[];
+  functions: StoryboardFunction[];
 }
 
 export interface ParseError {

@@ -25,12 +25,15 @@ export default async function convertDescriptions(
   view: ParseResult,
   options: ConvertOptions
 ): Promise<BrickConf> {
-  const { dataSource, title, list, ...restProps } = properties as Partial<
-    DescriptionsProps<object>
-  > as Omit<DescriptionsProps<object>, "list"> & {
-    dataSource: string | object;
-    list: DescriptionItem[] | string;
-  };
+  const { dataSource, title, list, columns, ...restProps } =
+    properties as Partial<DescriptionsProps<object>> as Omit<
+      DescriptionsProps<object>,
+      "list"
+    > & {
+      dataSource: string | object;
+      list: DescriptionItem[] | string;
+      columns?: number;
+    };
 
   const parsedDataSource = parseDataSource(dataSource);
 
@@ -108,8 +111,14 @@ export default async function convertDescriptions(
         : dataSource,
       // descriptionTitle: title,
       list: convertedList,
-      column: options.expanded ? 3 : 1,
-      templateColumns: "repeat(auto-fill,minmax(360px,1fr))",
+      ...(columns == null
+        ? {
+            column: options.expanded ? 3 : 1,
+            templateColumns: "repeat(auto-fill,minmax(360px,1fr))",
+          }
+        : {
+            column: columns,
+          }),
       // showCard: !options.expanded,
       themeVariant: "elevo",
     },
