@@ -142,7 +142,10 @@ export function useConversationGraph(
       }
     }
 
-    if (conversation.state !== "terminated") {
+    if (
+      conversation.state !== "terminated" &&
+      conversation.state !== "failed"
+    ) {
       if (nodes.length === 0) {
         nodes.push({
           type: "loading",

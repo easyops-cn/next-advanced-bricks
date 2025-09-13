@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { unstable_createRoot } from "@next-core/runtime";
+import { getBasePath, unstable_createRoot } from "@next-core/runtime";
 import classNames from "classnames";
 import { uniqueId } from "lodash";
 import { initializeI18n } from "@next-core/i18n";
@@ -22,6 +22,7 @@ import { createPortal } from "../../cruise-canvas/utils/createPortal";
 import { TaskContext } from "../TaskContext";
 import { ICON_FEEDBACK, ICON_LOADING } from "../constants";
 import { useViewFeedbackDone } from "../useViewFeedbackDone";
+import { parseTemplate } from "../parseTemplate";
 
 initializeI18n(NS, locales);
 
@@ -37,6 +38,7 @@ export function CreatedView({
   const rootId = useMemo(() => uniqueId(), []);
   const {
     workspace,
+    previewUrlTemplate,
     showJsxEditor,
     setActiveExpandedViewJobId,
     setActiveJsxEditorJob,
@@ -171,11 +173,34 @@ export function CreatedView({
           )}
           {showFeedbackOnView && !feedbackDone && canFeedback && (
             <button
-              className={styles.button}
+              className={`${styles.button} ${styles["button-lucide"]}`}
               title={t(K.FEEDBACK)}
               onClick={() => onFeedbackOnView?.(generatedView.viewId)}
             >
               <WrappedIcon {...ICON_FEEDBACK} />
+            </button>
+          )}
+          {!!(
+            generatedView.viewId &&
+            !generatedView.withContexts &&
+            previewUrlTemplate
+          ) && (
+            <button
+              className={`${styles.button} ${styles["button-lucide"]}`}
+              title={t(K.OPEN_PREVIEW)}
+              onClick={() => {
+                window.open(
+                  `${getBasePath().slice(0, -1)}${parseTemplate(
+                    previewUrlTemplate,
+                    {
+                      viewId: generatedView.viewId,
+                    }
+                  )}`,
+                  "_blank"
+                );
+              }}
+            >
+              <WrappedIcon lib="lucide" icon="external-link" />
             </button>
           )}
           <button

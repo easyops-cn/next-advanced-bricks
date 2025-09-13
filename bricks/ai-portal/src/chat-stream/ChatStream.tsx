@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { getRuntime, handleHttpError } from "@next-core/runtime";
+import { getRuntime } from "@next-core/runtime";
 import ResizeObserver from "resize-observer-polyfill";
 import classNames from "classnames";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
@@ -55,6 +55,7 @@ export function ChatStreamComponent(
     showFeedbackAfterFailed,
     showFeedbackOnView,
     showUiSwitch,
+    previewUrlTemplate,
     onShare,
     onTerminate,
     onSubmitFeedback,
@@ -81,7 +82,8 @@ export function ChatStreamComponent(
   const conversationDone = DONE_STATES.includes(conversationState!);
   const { messages, jobMap, lastToolCallJobId } = useConversationStream(
     conversation,
-    tasks
+    tasks,
+    error
   );
 
   const views = useMemo(() => {
@@ -172,12 +174,6 @@ export function ChatStreamComponent(
     getRuntime().applyPageTitle(pageTitle);
   }, [pageTitle]);
 
-  useEffect(() => {
-    if (error) {
-      handleHttpError(error);
-    }
-  }, [error]);
-
   const humanInput = useCallback(
     (jobId: string, input: string) => {
       humanInputRef.current?.(jobId, input);
@@ -185,8 +181,13 @@ export function ChatStreamComponent(
     [humanInputRef]
   );
 
+  const workspace = conversation?.id;
+
   const taskContextValue = useMemo(
     () => ({
+      workspace,
+      previewUrlTemplate,
+
       humanInput,
       onShare,
       onTerminate,
@@ -206,6 +207,9 @@ export function ChatStreamComponent(
       feedbackDoneViews,
     }),
     [
+      workspace,
+      previewUrlTemplate,
+
       humanInput,
       onShare,
       onTerminate,
@@ -332,6 +336,7 @@ export function ChatStreamComponent(
                         <AssistantMessage
                           jobs={msg.jobs}
                           taskState={conversationState}
+                          error={msg.error}
                           isLatest={index === list.length - 1}
                         />
                       )}

@@ -38,6 +38,11 @@ ai-portal\.cruise-canvas .heading {
   color: #595959;
 }
 
+.button-lucide {
+  font-size: 16px;
+  padding: 2px;
+}
+
 .button:hover {
   color: var(--elevo-color-brand);
 }

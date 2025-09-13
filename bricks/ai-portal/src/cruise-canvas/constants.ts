@@ -5,6 +5,7 @@ export const END_NODE_ID = "<END>";
 export const FEEDBACK_NODE_ID = "<FEEDBACK>";
 export const REQUIREMENT_NODE_ID = "<REQUIREMENT>";
 export const LOADING_NODE_ID = "<LOADING>";
+export const ERROR_NODE_ID = "<ERROR>";
 export const CANVAS_PADDING_TOP = 20;
 export const CANVAS_PADDING_RIGHT = 20;
 // 20 + 48 + 8 + 26 + 20

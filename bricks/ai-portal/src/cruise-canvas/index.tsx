@@ -29,6 +29,7 @@ export interface CruiseCanvasProps {
   showUiSwitch?: boolean;
   showFeedbackOnView?: boolean;
   showJsxEditor?: boolean;
+  previewUrlTemplate?: string;
 }
 
 const ForwardedLegacyCruiseCanvasComponent = forwardRef(
@@ -97,6 +98,9 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
 
   @property({ type: Boolean })
   accessor showJsxEditor: boolean | undefined;
+
+  @property()
+  accessor previewUrlTemplate: string | undefined;
 
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
@@ -175,6 +179,7 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         showUiSwitch={this.showUiSwitch}
         showFeedbackOnView={this.showFeedbackOnView}
         showJsxEditor={this.showJsxEditor}
+        previewUrlTemplate={this.previewUrlTemplate}
         onShare={this.#onShare}
         onTerminate={this.#onTerminate}
         onSubmitFeedback={this.#onSubmitFeedback}

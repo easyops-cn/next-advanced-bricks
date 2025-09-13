@@ -9,12 +9,14 @@ import type { ConversationState } from "../../shared/interfaces.js";
 export interface AssistantMessageProps {
   jobs: Job[];
   taskState: TaskState | ConversationState | undefined;
+  error?: string | null;
   isLatest?: boolean;
 }
 
 export function AssistantMessage({
   jobs,
   taskState,
+  error,
   isLatest,
 }: AssistantMessageProps) {
   const working = useMemo(() => {
@@ -50,6 +52,7 @@ export function AssistantMessage({
           <NodeJob key={job.id} job={job} taskState={taskState} />
         ))}
         {working && <div className={styles.texting}></div>}
+        {error != null && <div className={styles.error}>{error}</div>}
       </div>
     </div>
   );

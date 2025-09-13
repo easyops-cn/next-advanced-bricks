@@ -10,4 +10,5 @@ export interface MessageFromUser {
 export interface MessageFromAssistant {
   role: "assistant";
   jobs: Job[];
+  error?: string | null;
 }

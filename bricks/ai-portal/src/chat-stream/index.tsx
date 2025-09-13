@@ -25,6 +25,7 @@ export interface ChatStreamProps {
   showFeedbackAfterFailed?: boolean;
   showFeedbackOnView?: boolean;
   showUiSwitch?: boolean;
+  previewUrlTemplate?: string;
 }
 
 const ForwardedLegacyChatStreamComponent = forwardRef(
@@ -81,6 +82,9 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
 
   @property({ type: Boolean, render: false })
   accessor hideMermaid: boolean | undefined;
+
+  @property()
+  accessor previewUrlTemplate: string | undefined;
 
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
@@ -155,6 +159,7 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
         showFeedbackAfterFailed={this.showFeedbackAfterFailed}
         showFeedbackOnView={this.showFeedbackOnView}
         showUiSwitch={this.showUiSwitch}
+        previewUrlTemplate={this.previewUrlTemplate}
         onShare={this.#onShare}
         onTerminate={this.#onTerminate}
         onSubmitFeedback={this.#onSubmitFeedback}

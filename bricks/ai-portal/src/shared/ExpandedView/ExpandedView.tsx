@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 import classNames from "classnames";
-import { unstable_createRoot } from "@next-core/runtime";
+import { getBasePath, unstable_createRoot } from "@next-core/runtime";
 import { uniqueId } from "lodash";
 import { convertTsx } from "@next-shared/tsx-converter";
 import type { ParseResult } from "@next-shared/tsx-parser";
@@ -15,9 +15,10 @@ import type { GraphGeneratedView } from "../../cruise-canvas/interfaces";
 import styles from "./ExpandedView.module.css";
 import { WrappedIcon, WrappedIconButton } from "../../shared/bricks";
 import { createPortal } from "../../cruise-canvas/utils/createPortal";
-import { ICON_CLOSE, ICON_FEEDBACK } from "../constants";
+import { ICON_CLOSE, ICON_EXTERNAL_LINK, ICON_FEEDBACK } from "../constants";
 import { TaskContext } from "../TaskContext";
 import { useViewFeedbackDone } from "../useViewFeedbackDone";
+import { parseTemplate } from "../parseTemplate";
 
 export interface ExpandedViewProps {
   views: GraphGeneratedView[];
@@ -27,6 +28,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
   const rootId = useMemo(() => uniqueId(), []);
   const {
     workspace,
+    previewUrlTemplate,
     activeExpandedViewJobId,
     setActiveExpandedViewJobId,
     manuallyUpdatedViews,
@@ -208,6 +210,26 @@ export function ExpandedView({ views }: ExpandedViewProps) {
           <WrappedIconButton
             icon={ICON_FEEDBACK}
             onClick={() => onFeedbackOnView?.(generatedView.viewId)}
+          />
+        )}
+        {!!(
+          generatedView?.viewId &&
+          !generatedView.withContexts &&
+          previewUrlTemplate
+        ) && (
+          <WrappedIconButton
+            icon={ICON_EXTERNAL_LINK}
+            onClick={() => {
+              window.open(
+                `${getBasePath().slice(0, -1)}${parseTemplate(
+                  previewUrlTemplate,
+                  {
+                    viewId: generatedView.viewId,
+                  }
+                )}`,
+                "_blank"
+              );
+            }}
           />
         )}
         <WrappedIconButton icon={ICON_CLOSE} onClick={handleClose} />
