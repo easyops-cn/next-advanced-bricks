@@ -5,7 +5,8 @@ import { getFlatOrderedJobs } from "../cruise-canvas/getFlatOrderedJobs.js";
 
 export function useConversationStream(
   conversation: ConversationBaseDetail | null | undefined,
-  tasks: Task[]
+  tasks: Task[],
+  error: string | null | undefined
 ) {
   return useMemo(() => {
     if (!conversation) {
@@ -64,8 +65,12 @@ export function useConversationStream(
       prevAssistantMessage.jobs.push(job);
     }
 
+    if (error != null) {
+      prevAssistantMessage.error = error;
+    }
+
     messages.push(prevAssistantMessage);
 
     return { messages, jobMap, lastToolCallJobId };
-  }, [conversation, tasks]);
+  }, [conversation, tasks, error]);
 }

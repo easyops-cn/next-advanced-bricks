@@ -10,6 +10,7 @@ import type {
 import {
   EDGE_SEP,
   END_NODE_ID,
+  ERROR_NODE_ID,
   FEEDBACK_NODE_ID,
   NODE_SEP,
   RANK_SEP,
@@ -22,6 +23,7 @@ export interface UseLayoutOptions {
   sizeMap: Map<string, SizeTuple> | null;
   completed?: boolean;
   failed?: boolean;
+  error?: string | null;
   showFeedback?: boolean;
   showFeedbackAfterFailed?: boolean;
 }
@@ -32,6 +34,7 @@ export function useLayout({
   sizeMap,
   completed,
   failed,
+  error,
   showFeedback,
   showFeedbackAfterFailed,
 }: UseLayoutOptions) {
@@ -50,8 +53,8 @@ export function useLayout({
     const rawEdges = _rawEdges ?? [];
 
     const hasSource = new Set<string>(rawEdges.map((edge) => edge.target));
-    const shouldAppend =
-      completed || (failed && showFeedback && showFeedbackAfterFailed);
+    const failedFeedback = failed && showFeedback && showFeedbackAfterFailed;
+    const shouldAppend = completed || error != null || failedFeedback;
     const hasTarget = shouldAppend
       ? new Set<string>(rawEdges.map((edge) => edge.source))
       : null;
@@ -73,6 +76,7 @@ export function useLayout({
     initialEdges.push(...rawEdges);
 
     if (finishedNodeIds.length > 0) {
+      let sourceIds = finishedNodeIds;
       if (completed) {
         initialNodes.push({
           id: END_NODE_ID,
@@ -84,22 +88,30 @@ export function useLayout({
             target: END_NODE_ID,
           }))
         );
-        if (showFeedback) {
-          initialNodes.push({
-            id: FEEDBACK_NODE_ID,
-            type: "feedback",
-          });
+        sourceIds = [END_NODE_ID];
+      }
+
+      if (error != null) {
+        initialNodes.push({
+          id: ERROR_NODE_ID,
+          type: "error",
+          content: error,
+        });
+        for (const id of sourceIds) {
           initialEdges.push({
-            source: END_NODE_ID,
-            target: FEEDBACK_NODE_ID,
+            source: id,
+            target: ERROR_NODE_ID,
           });
         }
-      } else {
+        sourceIds = [ERROR_NODE_ID];
+      }
+
+      if (showFeedback && (completed || failedFeedback)) {
         initialNodes.push({
           id: FEEDBACK_NODE_ID,
           type: "feedback",
         });
-        for (const id of finishedNodeIds) {
+        for (const id of sourceIds) {
           initialEdges.push({
             source: id,
             target: FEEDBACK_NODE_ID,
@@ -124,6 +136,7 @@ export function useLayout({
     _rawEdges,
     completed,
     failed,
+    error,
     showFeedback,
     showFeedbackAfterFailed,
   ]);

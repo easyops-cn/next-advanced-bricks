@@ -9,7 +9,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { getRuntime, handleHttpError } from "@next-core/runtime";
+import { getRuntime } from "@next-core/runtime";
 import "@next-core/theme";
 import classNames from "classnames";
 import ResizeObserver from "resize-observer-polyfill";
@@ -63,6 +63,7 @@ import { NodeFeedback } from "../shared/NodeFeedback/NodeFeedback.js";
 import { TaskContext } from "../shared/TaskContext.js";
 import { NodeLoading } from "./NodeLoading/NodeLoading.js";
 import { JsxEditor } from "../shared/JsxEditor/JsxEditor.js";
+import { NodeError } from "./NodeError/NodeError.js";
 import type { GeneratedView } from "../shared/interfaces";
 import type { CruiseCanvasProps } from ".";
 
@@ -114,6 +115,7 @@ export function CruiseCanvasComponent(
     showFeedbackOnView,
     showUiSwitch,
     showJsxEditor,
+    previewUrlTemplate,
     onShare,
     onTerminate,
     onSubmitFeedback,
@@ -213,12 +215,6 @@ export function CruiseCanvasComponent(
     getRuntime().applyPageTitle(pageTitle);
   }, [pageTitle]);
 
-  useEffect(() => {
-    if (error) {
-      handleHttpError(error);
-    }
-  }, [error]);
-
   const humanInput = useCallback(
     (jobId: string, input: string) => {
       humanInputRef.current?.(jobId, input);
@@ -247,6 +243,7 @@ export function CruiseCanvasComponent(
     rawEdges,
     completed: conversationState === "completed",
     failed: conversationState === "failed",
+    error,
     sizeMap,
     showFeedback,
     showFeedbackAfterFailed,
@@ -575,6 +572,7 @@ export function CruiseCanvasComponent(
   const taskContextValue = useMemo(
     () => ({
       workspace,
+      previewUrlTemplate,
 
       humanInput,
       onShare,
@@ -602,6 +600,7 @@ export function CruiseCanvasComponent(
     }),
     [
       workspace,
+      previewUrlTemplate,
 
       humanInput,
       onTerminate,
@@ -940,6 +939,8 @@ function NodeComponent({
         />
       ) : type === "loading" ? (
         <NodeLoading />
+      ) : type === "error" ? (
+        <NodeError content={content!} />
       ) : type === "instruction" ? (
         <NodeInstruction
           content={job!.instruction}

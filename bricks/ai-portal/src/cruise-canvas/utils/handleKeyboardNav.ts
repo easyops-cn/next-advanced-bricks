@@ -133,6 +133,7 @@ export function handleKeyboardNav(
         node.type !== "start" &&
         node.type !== "end" &&
         node.type !== "feedback" &&
+        node.type !== "error" &&
         node.type !== "instruction" &&
         ((position = getCenterPosition(node.view!)),
         (diff = (position[axis] - activePosition[axis]) * direction),

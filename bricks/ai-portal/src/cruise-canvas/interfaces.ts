@@ -23,6 +23,7 @@ export type GraphNode =
   | ViewGraphNode
   | StartGraphNode
   | EndGraphNode
+  | ErrorGraphNode
   | FeedbackGraphNode;
 
 export interface RequirementGraphNode extends BaseGraphNode {
@@ -55,6 +56,11 @@ export interface StartGraphNode extends BaseGraphNode {
 
 export interface EndGraphNode extends BaseGraphNode {
   type: "end";
+}
+
+export interface ErrorGraphNode extends BaseGraphNode {
+  type: "error";
+  content: string;
 }
 
 export interface FeedbackGraphNode extends BaseGraphNode {

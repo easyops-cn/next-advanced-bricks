@@ -19,8 +19,8 @@ export const GENERAL_DONE_STATES = [...DONE_STATES, "paused"] as (
 export const NON_WORKING_STATES = [...GENERAL_DONE_STATES, "input-required"];
 
 export const ICON_CLOSE: GeneralIconProps = {
-  lib: "antd",
-  icon: "close",
+  lib: "lucide",
+  icon: "x",
 };
 
 export const ICON_LOADING: GeneralIconProps = {
@@ -40,7 +40,11 @@ export const ICON_CHAT: GeneralIconProps = {
 } as GeneralIconProps;
 
 export const ICON_FEEDBACK: GeneralIconProps = {
-  lib: "fa",
-  prefix: "far",
-  icon: "message",
+  lib: "lucide",
+  icon: "message-square",
+};
+
+export const ICON_EXTERNAL_LINK: GeneralIconProps = {
+  lib: "lucide",
+  icon: "external-link",
 };

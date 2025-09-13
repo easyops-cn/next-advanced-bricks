@@ -19,6 +19,11 @@
   white-space: pre;
 }
 
+.error {
+  color: var(--color-error);
+  white-space: pre-wrap;
+}
+
 @keyframes texting {
   0% {
     content: "   ";
