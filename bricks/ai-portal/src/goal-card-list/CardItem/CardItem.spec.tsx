@@ -12,10 +12,7 @@ jest.mock("@next-core/react-element", () => ({
       children,
       onClick,
       onActionClick,
-      onValueChange,
-      onBlur,
       className,
-      value,
       ..._props
     }: any) => {
       const handleClick = (e: any) => {
@@ -25,20 +22,6 @@ jest.mock("@next-core/react-element", () => ({
         }
         onClick?.(e);
       };
-
-      // 输入框组件
-      if (tagName === "eo-input") {
-        return (
-          <input
-            data-testid={`mock-${tagName}`}
-            className={className}
-            value={value}
-            onChange={(e) => onValueChange?.({ detail: e.target.value })}
-            onBlur={onBlur}
-            onClick={onClick}
-          />
-        );
-      }
 
       // 其他组件
       return (
@@ -71,6 +54,12 @@ jest.mock("../i18n.js", () => ({
   t: (key: string) => key,
 }));
 
+jest.mock("../../shared/getContentEditable.js", () => ({
+  getContentEditable: jest.fn((editable: boolean) =>
+    editable ? "plaintext-only" : "false"
+  ),
+}));
+
 describe("GoalCardItem", () => {
   const mockGoalItem: GoalItem = {
     instanceId: "test-goal-1",
@@ -95,7 +84,7 @@ describe("GoalCardItem", () => {
     expect(container.querySelector(".goal-item")).toBeInTheDocument();
     expect(container.querySelector(".goal-item.ready")).toBeInTheDocument();
     expect(container.querySelector(".serial-number")).toHaveTextContent("1");
-    expect(container.querySelector(".text")).toHaveTextContent("Test Goal");
+    expect(container.querySelector(".title")).toHaveTextContent("Test Goal");
     expect(container.querySelector(".count")).toHaveTextContent("2");
   });
 
@@ -110,31 +99,42 @@ describe("GoalCardItem", () => {
     expect(onStatusChange).toHaveBeenCalledWith("completed");
   });
 
-  test("should handle title editing on hover and input change", async () => {
+  test("should handle title editing with contentEditable", async () => {
     const onTitleChange = jest.fn();
     const { container } = render(
       <GoalCardItem {...defaultProps} onTitleChange={onTitleChange} />
     );
 
     const titleElement = container.querySelector(".title") as HTMLElement;
-    const inputElement = container.querySelector("input") as HTMLInputElement;
 
-    // 模拟鼠标悬停显示输入框
-    fireEvent.mouseEnter(titleElement);
+    // 验证 contentEditable 属性
+    expect(titleElement).toHaveAttribute("contenteditable", "plaintext-only");
 
-    // 验证输入框显示状态
-    expect(container.querySelector(".input.show")).toBeInTheDocument();
-    expect(container.querySelector(".text.show")).not.toBeInTheDocument();
-
-    // 模拟输入变更
-    fireEvent.change(inputElement, { target: { value: "New Title" } });
+    // 模拟编辑内容
+    titleElement.textContent = "New Title";
 
     // 模拟失焦确认变更
     await act(async () => {
-      fireEvent.blur(inputElement);
+      fireEvent.blur(titleElement);
     });
 
     expect(onTitleChange).toHaveBeenCalledWith("New Title");
+  });
+
+  test("should not call onTitleChange when title is unchanged", async () => {
+    const onTitleChange = jest.fn();
+    const { container } = render(
+      <GoalCardItem {...defaultProps} onTitleChange={onTitleChange} />
+    );
+
+    const titleElement = container.querySelector(".title") as HTMLElement;
+
+    // 模拟失焦但没有改变内容
+    await act(async () => {
+      fireEvent.blur(titleElement);
+    });
+
+    expect(onTitleChange).not.toHaveBeenCalled();
   });
 
   test("should handle card click event", () => {
@@ -149,27 +149,38 @@ describe("GoalCardItem", () => {
     expect(onClick).toHaveBeenCalled();
   });
 
-  test("should handle mouse interactions and lock mechanism", () => {
-    const { container } = render(<GoalCardItem {...defaultProps} />);
+  test("should prevent event propagation on title click", () => {
+    const onClick = jest.fn();
+    const { container } = render(
+      <GoalCardItem {...defaultProps} onClick={onClick} />
+    );
 
     const titleElement = container.querySelector(".title") as HTMLElement;
-    const inputElement = container.querySelector("input") as HTMLInputElement;
 
-    // 模拟鼠标进入
-    fireEvent.mouseEnter(titleElement);
-    expect(container.querySelector(".input.show")).toBeInTheDocument();
+    // 模拟点击事件
+    fireEvent.click(titleElement);
 
-    // 模拟输入变更（会触发锁定）
-    fireEvent.change(inputElement, { target: { value: "Editing..." } });
+    // 卡片点击事件不应该被触发，因为 title 元素阻止了事件传播
+    expect(onClick).not.toHaveBeenCalled();
+  });
 
-    // 模拟鼠标离开（由于锁定，hover 状态应该保持）
-    fireEvent.mouseLeave(titleElement);
-    expect(container.querySelector(".input.show")).toBeInTheDocument();
+  test("should handle empty title content", async () => {
+    const onTitleChange = jest.fn();
+    const { container } = render(
+      <GoalCardItem {...defaultProps} onTitleChange={onTitleChange} />
+    );
 
-    // 模拟失焦（解除锁定并隐藏输入框）
-    act(() => {
-      fireEvent.blur(inputElement);
+    const titleElement = container.querySelector(".title") as HTMLElement;
+
+    // 清空内容
+    titleElement.textContent = "";
+
+    // 模拟失焦
+    await act(async () => {
+      fireEvent.blur(titleElement);
     });
-    expect(container.querySelector(".input.show")).not.toBeInTheDocument();
+
+    // 空内容不应该触发 onTitleChange
+    expect(onTitleChange).not.toHaveBeenCalled();
   });
 });

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import { initializeI18n } from "@next-core/i18n";
 import { wrapBrick } from "@next-core/react-element";
 import type {
@@ -16,9 +16,9 @@ import type {
   EoEasyopsAvatarProps,
 } from "@next-bricks/basic/easyops-avatar";
 import type { Action, SimpleAction } from "@next-bricks/basic/actions";
-import type { Input, InputEvents, InputProps } from "@next-bricks/form/input";
 import classNames from "classnames";
 import { K, NS, locales, t } from "../i18n.js";
+import { getContentEditable } from "../../shared/getContentEditable.js";
 initializeI18n(NS, locales);
 
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
@@ -38,13 +38,6 @@ const WrappedEasyopsAvatar = wrapBrick<EoEasyopsAvatar, EoEasyopsAvatarProps>(
 export interface InputEventsMap {
   onValueChange: "change";
 }
-
-const WrappedInput = wrapBrick<Input, InputProps, InputEvents, InputEventsMap>(
-  "eo-input",
-  {
-    onValueChange: "change",
-  }
-);
 
 export type GoalState = "ready" | "working" | "completed";
 
@@ -119,32 +112,14 @@ export function GoalCardItem({
 }: GoalCardItemProps) {
   const { state, index: serialNumber, title, conversations, leader } = goalItem;
 
-  const [hover, setHover] = useState(false);
-
-  const [value, setValue] = useState(title);
-
-  const lockRef = useRef(false);
-
   const handleStatusChange = (action: SimpleAction) => {
     onStatusChange?.(action.key as GoalState);
   };
 
-  const handleMouseLeave = () => {
-    if (!lockRef.current) {
-      setHover(false);
-    }
-  };
-
-  const handleValueChange = (value: string) => {
-    lockRef.current = true;
-    setValue(value);
-  };
-
-  const handleConfirm = () => {
-    if (value) {
-      setHover(false);
+  const handleConfirm = (e: React.FocusEvent<HTMLSpanElement>) => {
+    const value = e.currentTarget.textContent;
+    if (value && value !== title) {
       onTitleChange?.(value);
-      lockRef.current = false;
     }
   };
 
@@ -174,29 +149,11 @@ export function GoalCardItem({
         <span className="serial-number">{serialNumber}</span>
         <span
           className="title"
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => handleMouseLeave()}
           onClick={(e) => e.stopPropagation()}
+          contentEditable={getContentEditable(true)}
+          onBlur={handleConfirm}
         >
-          <WrappedInput
-            className={classNames("input", {
-              show: hover,
-            })}
-            size="small"
-            value={value}
-            onValueChange={(e) => handleValueChange(e.detail)}
-            onBlur={() => handleConfirm()}
-            inputStyle={{
-              width: "100%",
-            }}
-          />
-          <span
-            className={classNames("text", {
-              show: !hover,
-            })}
-          >
-            {title}
-          </span>
+          {title}
         </span>
       </div>
       <div className="end">

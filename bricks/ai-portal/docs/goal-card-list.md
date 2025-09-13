@@ -7,6 +7,8 @@
 ```yaml preview
 brick: ai-portal.goal-card-list
 properties:
+  style:
+    width: 600px
   goalList:
     - title: 页面流程绘制
       index: 100124
