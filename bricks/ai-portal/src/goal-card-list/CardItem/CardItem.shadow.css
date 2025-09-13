@@ -1,0 +1,84 @@
+.goal-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  padding: 14px 22px;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+  }
+
+  .start,
+  .end {
+    display: flex;
+    align-items: center;
+    column-gap: 16px;
+    min-width: 0;
+  }
+
+  .end {
+    flex-shrink: 0;
+    column-gap: 30px;
+  }
+  .serial-number {
+    font-weight: 400;
+    color: var(--palette-gray-7);
+  }
+
+  .title {
+    position: relative;
+    line-height: 24px;
+    font-weight: 500;
+    color: var(--palette-gray-10);
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    min-width: 80px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    .input,
+    .text {
+      opacity: 0;
+      &.show {
+        opacity: 1;
+      }
+    }
+
+    .input {
+      position: absolute;
+      width: 100%;
+    }
+  }
+
+  .icon {
+    border-radius: 8px;
+    padding: 4px;
+    margin-top: 4px;
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+  .message {
+    color: var(--palette-gray-7);
+    display: inline-flex;
+    align-items: center;
+    column-gap: 6px;
+    .count {
+      font-weight: 500;
+      color: var(--palette-gray-10);
+    }
+  }
+
+  .input::part(affix-wrapper) {
+    cursor: text;
+    padding: 0 4px;
+    height: 24px;
+    border-radius: 8px;
+  }
+}

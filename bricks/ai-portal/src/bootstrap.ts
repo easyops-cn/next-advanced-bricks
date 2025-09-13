@@ -18,3 +18,4 @@ import "./data-providers/entity-sdk-list.js";
 import "./data-providers/entity-sdk-get.js";
 import "./preview-container/index.js";
 import "./action-buttons/index.js";
+import "./goal-card-list/index.js";
