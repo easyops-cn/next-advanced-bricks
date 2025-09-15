@@ -12,7 +12,7 @@ const zh: Locale = {
   PROJECT_OVERALL: "项目整体",
 };
 
-export const NS = "bricks/ai-portal/project-conversations";
+export const NS = "bricks/ai-portal/project-knowledges";
 
 export const locales = { en, zh };
 
