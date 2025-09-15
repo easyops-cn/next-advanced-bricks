@@ -1,0 +1,72 @@
+.goal-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  padding: 14px 24px;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+  }
+
+  .start,
+  .end {
+    display: flex;
+    align-items: center;
+    column-gap: 16px;
+    min-width: 0;
+  }
+
+  .end {
+    flex-shrink: 0;
+    column-gap: 30px;
+  }
+  .serial-number {
+    font-weight: 400;
+    color: var(--palette-gray-7);
+  }
+
+  .title {
+    font-weight: 500;
+    padding: 2px 4px;
+    color: var(--palette-gray-10);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.6);
+      border: 1px solid var(--palette-gray-5);
+      cursor: text;
+    }
+
+    &:focus {
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.6);
+      border: 1px solid var(--elevo-color-brand);
+    }
+  }
+
+  .icon {
+    border-radius: 8px;
+    padding: 4px;
+    margin-top: 4px;
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+  .message {
+    color: var(--palette-gray-7);
+    display: inline-flex;
+    align-items: center;
+    column-gap: 6px;
+    .count {
+      font-weight: 500;
+      color: var(--palette-gray-10);
+    }
+  }
+}

@@ -1,0 +1,13 @@
+:host {
+  display: inline-block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.goal-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
