@@ -312,7 +312,7 @@ async function loadMainDll(adapterPkgFilePath: string) {
           : getLegacyRuntime().getFeatureFlags();
       const locale =
         i18n.language && i18n.language.split("-")[0] === "en"
-          ? antdLocaleEnUS
+          ? (antdLocaleEnUS as unknown as any).default || antdLocaleEnUS
           : antdLocaleZhCN;
       return (
         <LegacyErrorBoundary>
