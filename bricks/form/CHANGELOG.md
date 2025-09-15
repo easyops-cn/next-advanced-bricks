@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.18.7...@next-bricks/form@1.19.0) (2025-09-15)
+
+
+### Features
+
+* new bricks: project conversations/knowledges ([ff0da78](https://github.com/easyops-cn/next-advanced-bricks/commit/ff0da78f8ab0ee92c8ab43ac213a219a40b78d1d))
+
+
+
+
+
 ## [1.18.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.18.6...@next-bricks/form@1.18.7) (2025-08-29)
 
 
