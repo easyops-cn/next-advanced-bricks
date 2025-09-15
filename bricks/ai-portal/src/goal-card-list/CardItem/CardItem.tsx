@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { initializeI18n } from "@next-core/i18n";
 import { wrapBrick } from "@next-core/react-element";
 import type {
@@ -116,16 +116,50 @@ export function GoalCardItem({
     onStatusChange?.(action.key as GoalState);
   };
 
-  const handleConfirm = (e: React.FocusEvent<HTMLSpanElement>) => {
-    const value = e.currentTarget.textContent;
-    if (value && value !== title) {
-      onTitleChange?.(value);
-    }
-  };
+  const compositionRef = useRef(false);
+
+  const handleCompositionStart = useCallback(() => {
+    compositionRef.current = true;
+  }, []);
+
+  const handleCompositionEnd = useCallback(() => {
+    compositionRef.current = false;
+  }, []);
+
+  const [editing, setEditing] = useState(false);
+
+  const handleFocus = useCallback(() => {
+    setEditing(true);
+  }, []);
+
+  const handleBlur = useCallback(
+    (e: React.FocusEvent<HTMLSpanElement>) => {
+      setEditing(false);
+      const value = e.currentTarget.textContent;
+      if (value !== null && title !== value) {
+        onTitleChange?.(value);
+      }
+    },
+    [title, onTitleChange]
+  );
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLSpanElement>) => {
+      if (compositionRef.current) {
+        // Ignore key events during composition
+        return;
+      }
+      if (e.key === "Enter") {
+        e.preventDefault();
+        e.currentTarget.blur();
+      }
+    },
+    []
+  );
 
   return (
     <div
-      className={classNames("goal-item", goalItem.state)}
+      className={classNames("goal-item", goalItem.state, { editing })}
       style={{
         paddingLeft: `${goalItem.offsetX}px`,
         ...cardStyle,
@@ -150,8 +184,13 @@ export function GoalCardItem({
         <span
           className="title"
           onClick={(e) => e.stopPropagation()}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          onCompositionStart={handleCompositionStart}
+          onCompositionEnd={handleCompositionEnd}
           contentEditable={getContentEditable(true)}
-          onBlur={handleConfirm}
+          suppressContentEditableWarning
         >
           {title}
         </span>

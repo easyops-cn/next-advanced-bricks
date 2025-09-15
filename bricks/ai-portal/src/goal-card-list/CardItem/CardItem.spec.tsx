@@ -180,7 +180,39 @@ describe("GoalCardItem", () => {
       fireEvent.blur(titleElement);
     });
 
-    // 空内容不应该触发 onTitleChange
+    // 空内容也应该触发 onTitleChange，否则界面显示（空）和实际数据（值未变）不一致
+    expect(onTitleChange).toHaveBeenCalledWith("");
+  });
+
+  test("should handle composition", async () => {
+    const onTitleChange = jest.fn();
+    const { container } = render(
+      <GoalCardItem {...defaultProps} onTitleChange={onTitleChange} />
+    );
+
+    const titleElement = container.querySelector(".title") as HTMLElement;
+
+    titleElement.textContent = "Edited";
+
+    // Start composition
+    fireEvent.compositionStart(titleElement);
+
+    // Should ignore Enter during composition
+    await act(async () => {
+      fireEvent.keyDown(titleElement, { key: "Enter" });
+    });
     expect(onTitleChange).not.toHaveBeenCalled();
+
+    // End composition
+    fireEvent.compositionEnd(titleElement);
+
+    // Should now respond to Enter
+    await act(async () => {
+      fireEvent.keyDown(titleElement, { key: "Enter" });
+      // Call blur() in keydown handler is not triggered in test environment.
+      // So we manually call it.
+      fireEvent.blur(titleElement);
+    });
+    expect(onTitleChange).toHaveBeenCalledWith("Edited");
   });
 });
