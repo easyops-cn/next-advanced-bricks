@@ -303,7 +303,7 @@ export function parseTsx(source: string, options?: ParseOptions): ParseResult {
     } else if (t.isFunctionDeclaration(stmt)) {
       if (exported) {
         errors.push({
-          message: `Unexpected variable declaration after export`,
+          message: `Unexpected function declaration after export`,
           node: stmt,
           severity: "error",
         });
