@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/v2-adapter@1.4.1...@next-bricks/v2-adapter@1.4.2) (2025-09-15)
+
+
+### Bug Fixes
+
+* 修复antd i18n en组件国际化问题 ([3d37ec2](https://github.com/easyops-cn/next-advanced-bricks/commit/3d37ec26906f1269fe7d8b781193f3e10e6f56ec))
+
+
+
+
+
 ## [1.4.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/v2-adapter@1.4.0...@next-bricks/v2-adapter@1.4.1) (2025-08-25)
 
 **Note:** Version bump only for package @next-bricks/v2-adapter
