@@ -196,7 +196,7 @@ export function GoalCardItem({
         </span>
       </div>
       <div className="end">
-        <div className="message" onClick={(e) => e.stopPropagation()}>
+        <div className="message">
           <WrappedIcon lib="easyops" category="common" icon="message" />
           <span className="count">{conversations?.length || 0}</span>
         </div>
