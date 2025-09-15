@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.38.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.37.0...@next-bricks/ai-portal@0.38.0) (2025-09-15)
+
+
+### Bug Fixes
+
+* Optimize some things ([fb2096c](https://github.com/easyops-cn/next-advanced-bricks/commit/fb2096c387956f00ab6ef19a9d16d095612fe0e5))
+
+
+### Features
+
+* goal card list brick ([5f39515](https://github.com/easyops-cn/next-advanced-bricks/commit/5f395155b598bd3e4c18cba54f9e980469b379f4))
+
+
+
+
+
 # [0.37.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.36.0...@next-bricks/ai-portal@0.37.0) (2025-09-13)
 
 
