@@ -55,6 +55,7 @@ export
 @defineElement("eo-search", {
   styleTexts: [styleText],
   alias: ["form.general-search"],
+  shadowOptions: { delegatesFocus: true },
 })
 class GeneralSearch extends ReactNextElement implements SearchProps {
   /**

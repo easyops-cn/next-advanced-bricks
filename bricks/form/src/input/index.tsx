@@ -82,6 +82,7 @@ export
 @defineElement("eo-input", {
   styleTexts: [styleText],
   alias: ["form.general-input"],
+  shadowOptions: { delegatesFocus: true },
 })
 class Input extends FormItemElementBase {
   #RCInputRef = createRef<RCInputRef>();

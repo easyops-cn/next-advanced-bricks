@@ -1,0 +1,108 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.link {
+  display: block;
+}
+
+.link::part(link) {
+  display: flex;
+  align-items: center;
+  padding: 12px 24px;
+  color: #262626;
+}
+
+.item:not(:last-child) .link::part(link) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.link.actions-active::part(link),
+.link::part(link):hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.icon {
+  font-size: 20px;
+  margin-right: 8px;
+}
+
+.title {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.title,
+.description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.attachment {
+  color: #1a7aff;
+  margin-left: 16px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+}
+
+.description {
+  color: #595959;
+  margin-top: 6px;
+  padding-left: 28px;
+  line-height: 20px;
+}
+
+.time {
+  color: rgba(0, 0, 0, 0.45);
+  margin: 0 16px;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+}
+
+.operations {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.link.actions-active .avatar,
+.link:hover .avatar,
+.link:not(:hover):not(.actions-active) .actions {
+  display: none;
+}
+
+/* .avatar::part(avatar) {
+  border-color: #979797;
+} */
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  font-size: 20px;
+  color: #595959;
+}
