@@ -6,6 +6,7 @@ import { convertDataSources } from "./convertDataSources.js";
 import { convertVariables } from "./convertVariables.js";
 import { convertComponent } from "./convertComponent.js";
 import type { ConvertOptions, ConvertResult } from "./interfaces.js";
+import { convertTemplates } from "./convertTemplates.js";
 
 const BUILTIN_FUNCTIONS: ContextConf[] = [
   {
@@ -58,6 +59,8 @@ export async function convertTsx(
     ["Form", "Descriptions", "Button"].includes(component.name)
   );
 
+  const templates = await convertTemplates(result.templates, result, options);
+
   return {
     brick: {
       brick: "eo-content-layout",
@@ -65,6 +68,7 @@ export async function convertTsx(
     },
     context,
     functions: result.functions,
+    templates,
   };
 }
 

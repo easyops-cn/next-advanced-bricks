@@ -1,6 +1,7 @@
 import type {
   BrickConf,
   ContextConf,
+  CustomTemplate,
   StoryboardFunction,
 } from "@next-core/types";
 
@@ -15,4 +16,5 @@ export interface ConvertResult {
   brick: BrickConf;
   context?: ContextConf[];
   functions?: StoryboardFunction[];
+  templates?: CustomTemplate[];
 }

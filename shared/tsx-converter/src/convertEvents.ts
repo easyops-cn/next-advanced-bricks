@@ -83,12 +83,18 @@ function convertEventHandler(
   switch (handler?.action) {
     case "update_variable":
       return {
-        action: "context.replace",
+        action:
+          handler.payload.scope === "template"
+            ? "state.update"
+            : "context.replace",
         args: [handler.payload.name, handler.payload.value],
       };
     case "refresh_data_source":
       return {
-        action: "context.refresh",
+        action:
+          handler.payload.scope === "template"
+            ? "state.refresh"
+            : "context.refresh",
         args: [handler.payload.name],
       };
     case "call_api": {

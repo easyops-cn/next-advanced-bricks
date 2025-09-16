@@ -17,13 +17,31 @@ export interface ParseResult {
   contracts: Set<string>;
   errors: ParseError[];
   contexts: string[];
+  contextGetters: string[];
+  contextSetters: Map<string, string>;
   functionNames: string[];
   functions: StoryboardFunction[];
+  templates: Template[];
+  templateCollection?: TemplateCollection;
+}
+
+export interface Template {
+  name: string;
+  variables: Variable[];
+  dataSources: DataSource[];
+  components: Component[];
+  // componentsMap: Map<string, Component>;
+}
+
+export interface TemplateCollection {
+  identifiers: string[];
+  getters: string[];
+  setters: Map<string, string>;
 }
 
 export interface ParseError {
   message: string;
-  node: t.Node | null;
+  node: t.Node | null | undefined;
   severity: "notice" | "warning" | "error" | "fatal";
 }
 
@@ -70,6 +88,7 @@ export interface TypeEventHandlerOfUpdateVariable {
   payload: {
     name: string;
     value: any;
+    scope?: "view" | "template";
   };
 }
 
@@ -77,6 +96,7 @@ export interface TypeEventHandlerOfRefreshDataSource {
   action: "refresh_data_source";
   payload: {
     name: string;
+    scope?: "view" | "template";
   };
 }
 
@@ -86,6 +106,7 @@ export interface TypeEventHandlerOfCallComponent {
     componentId: string;
     method: string;
     args?: any[];
+    scope?: "view" | "template";
   };
 }
 

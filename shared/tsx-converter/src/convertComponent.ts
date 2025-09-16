@@ -20,6 +20,10 @@ import convertLink from "./convertLink.js";
 import convertTag from "./convertTag.js";
 import convertAvatar from "./convertAvatar.js";
 import convertAvatarGroup from "./convertAvatarGroup.js";
+import {
+  getTplNamePrefixByRootId,
+  getTplNameSuffix,
+} from "./convertTemplates.js";
 
 export async function convertComponent(
   component: Component,
@@ -27,76 +31,84 @@ export async function convertComponent(
   options: ConvertOptions
 ): Promise<BrickConf | BrickConf[]> {
   let brick: BrickConf | null = null;
-  switch (component.name) {
-    case "List":
-      brick = await convertList(component);
-      break;
-    case "Table":
-      brick = await convertTable(component, result, options);
-      break;
-    case "Descriptions":
-      brick = await convertDescriptions(component, result, options);
-      break;
-    case "Card":
-      brick = await convertCard(component);
-      break;
-    case "Dashboard":
-      brick = await convertDashboard(component, result, options);
-      break;
-    case "Button":
-      brick = await convertButton(component);
-      break;
-    case "Form":
-      brick = await convertForm(component);
-      break;
-    case "Toolbar":
-      brick = await convertToolbar(component);
-      break;
-    case "Modal":
-      brick = await convertModal(component);
-      break;
-    case "Plaintext":
-      brick = await convertText(component);
-      break;
-    case "Link":
-      brick = await convertLink(component);
-      break;
-    case "Output":
-      brick = await convertOutput(component);
-      break;
-    case "Tag":
-      brick = await convertTag(component);
-      break;
-    case "Avatar":
-      brick = await convertAvatar(component);
-      break;
-    case "AvatarGroup":
-      brick = await convertAvatarGroup(component);
-      break;
-    case "Search":
-    case "Input":
-    case "NumberInput":
-    case "Textarea":
-    case "Select":
-    case "Radio":
-    case "Checkbox":
-    case "Switch":
-    case "DatePicker":
-    case "TimePicker":
-      brick = await convertFormItem(
-        component,
-        convertComponentName(component.name)
-      );
-      break;
-    case "ForEach":
-      brick = await convertForEach(component);
-      break;
-    case "If":
-      brick = await convertIf(component);
-      break;
-    default:
-      // eslint-disable-next-line no-console
-      console.error("Unsupported component:", component.name);
+  const tpl = result.templates.find((t) => t.name === component.name);
+  if (tpl) {
+    brick = {
+      brick: `${getTplNamePrefixByRootId(options.rootId)}${getTplNameSuffix(tpl.name)}`,
+      properties: component.properties,
+    };
+  } else {
+    switch (component.name) {
+      case "List":
+        brick = await convertList(component);
+        break;
+      case "Table":
+        brick = await convertTable(component, result, options);
+        break;
+      case "Descriptions":
+        brick = await convertDescriptions(component, result, options);
+        break;
+      case "Card":
+        brick = await convertCard(component);
+        break;
+      case "Dashboard":
+        brick = await convertDashboard(component, result, options);
+        break;
+      case "Button":
+        brick = await convertButton(component);
+        break;
+      case "Form":
+        brick = await convertForm(component);
+        break;
+      case "Toolbar":
+        brick = await convertToolbar(component);
+        break;
+      case "Modal":
+        brick = await convertModal(component);
+        break;
+      case "Plaintext":
+        brick = await convertText(component);
+        break;
+      case "Link":
+        brick = await convertLink(component);
+        break;
+      case "Output":
+        brick = await convertOutput(component);
+        break;
+      case "Tag":
+        brick = await convertTag(component);
+        break;
+      case "Avatar":
+        brick = await convertAvatar(component);
+        break;
+      case "AvatarGroup":
+        brick = await convertAvatarGroup(component);
+        break;
+      case "Search":
+      case "Input":
+      case "NumberInput":
+      case "Textarea":
+      case "Select":
+      case "Radio":
+      case "Checkbox":
+      case "Switch":
+      case "DatePicker":
+      case "TimePicker":
+        brick = await convertFormItem(
+          component,
+          convertComponentName(component.name)
+        );
+        break;
+      case "ForEach":
+        brick = await convertForEach(component);
+        break;
+      case "If":
+        brick = await convertIf(component);
+        break;
+      default:
+        // eslint-disable-next-line no-console
+        console.error("Unsupported component:", component.name);
+    }
   }
 
   if (!brick) {
