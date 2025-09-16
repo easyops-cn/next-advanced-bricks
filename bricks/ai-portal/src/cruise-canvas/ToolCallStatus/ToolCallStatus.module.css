@@ -51,6 +51,17 @@
   color: #262626;
 }
 
+.timing {
+  display: none;
+  color: #8c8c8c;
+}
+
+.read-only .timing,
+:global([class^="node-job--"]):hover .timing,
+.status:hover .timing {
+  display: block;
+}
+
 .icon {
   margin-right: 8px;
   color: #8c8c8c;
