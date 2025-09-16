@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useMemo } from "react";
 import classNames from "classnames";
 import moment from "moment";
+import { humanizeTime, HumanizeTimeFormat } from "@next-shared/datetime";
 import styles from "./ToolCallStatus.module.css";
 import type { Job } from "../interfaces";
 import { WrappedIcon } from "../../shared/bricks";
@@ -57,18 +58,7 @@ export function ToolCallStatus({
       })}
       onClick={handleClick}
     >
-      <div
-        className={classNames(styles.status)}
-        title={
-          job.startTime
-            ? `${moment(job.startTime * 1000).format("YYYY-MM-DD HH:mm:ss")}${
-                job.endTime
-                  ? ` (${moment.duration(job.endTime * 1000 - job.startTime * 1000).humanize({ ss: -1 })})`
-                  : ""
-              }`
-            : undefined
-        }
-      >
+      <div className={classNames(styles.status)}>
         {job.isError || toolState === "failed" ? (
           <WrappedIcon
             className={styles.icon}
@@ -117,6 +107,15 @@ export function ToolCallStatus({
         <span className={styles.name}>
           {variant === "read-only" ? toolCall.name : toolTitle || toolCall.name}
         </span>
+        {job.startTime ? (
+          <span className={styles.timing}>
+            {`${humanizeTime(job.startTime * 1000, HumanizeTimeFormat.accurate)}${
+              job.endTime
+                ? ` (${moment.duration(job.endTime * 1000 - job.startTime * 1000).humanize({ ss: -1 })})`
+                : ""
+            }`}
+          </span>
+        ) : null}
       </div>
       {!!progress && !readOnly && (
         <ToolProgressLine progress={progress} failed={failed} />
