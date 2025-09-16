@@ -21,7 +21,6 @@ import {
   debounce,
   startsWith,
   filter,
-  reject,
   isNil,
   uniq,
   find,
@@ -53,13 +52,8 @@ const WrappedSelect = wrapBrick<
   }
 >("eo-select");
 
-export type UserOrUserGroupSelectValue = {
-  selectedUser: string[];
-  selectedUserGroup: string[];
-};
-
 export interface EoUserOrUserGroupSelectProps extends FormItemProps {
-  value?: UserOrUserGroupSelectValue | undefined;
+  value?: string[] | undefined;
   placeholder?: string;
   disabled?: boolean;
   readOnly?: boolean;
@@ -70,6 +64,7 @@ export interface EoUserOrUserGroupSelectProps extends FormItemProps {
   query?: Record<string, any>;
   userGroupQuery?: Record<string, any>;
   userQuery?: Record<string, any>;
+  userKey?: "name" | "instanceId";
   optionsMode: "user" | "group" | "all";
   staticList?: string[];
   isMultiple?: boolean;
@@ -114,7 +109,7 @@ class EoUserOrUserGroupSelect extends FormItemElementBase {
   @property({
     attribute: false,
   })
-  accessor value: string[] | UserOrUserGroupSelectValue | undefined;
+  accessor value: string[] | undefined;
 
   /**
    * 模型列表（按需传递 USER/USER_GROUP 的模型定义，用于显示对应实例名称）
@@ -154,6 +149,14 @@ class EoUserOrUserGroupSelect extends FormItemElementBase {
   accessor userGroupQuery: Record<string, any> | undefined;
 
   /**
+   * 用户对象的唯一标识字段，即：value 使用的字段名
+   *
+   * @default "name"
+   */
+  @property()
+  accessor userKey: "name" | "instanceId" | undefined;
+
+  /**
    * 支持选择用户、用户组或者两者
    * {
    *   "optionType": "button",
@@ -186,15 +189,6 @@ class EoUserOrUserGroupSelect extends FormItemElementBase {
    */
   @property()
   accessor optionsMode: "user" | "group" | "all" = "all";
-
-  /**
-   * 是否合并用户和用户组数据，当设置为 true 时，输入的`value`和`user.group.change`事件输出的 detail 都为`string[]`格式。
-   * @group advanced
-   */
-  @property({
-    type: Boolean,
-  })
-  accessor mergeUseAndUserGroup: boolean = false;
 
   /**
    * 是否禁用
@@ -236,47 +230,14 @@ class EoUserOrUserGroupSelect extends FormItemElementBase {
   accessor themeVariant: "default" | "elevo" | undefined;
 
   @event({ type: "change" })
-  accessor #changeEvent!: EventEmitter<string[] | UserOrUserGroupSelectValue>;
-
-  #mutableValue: string[] | UserOrUserGroupSelectValue | undefined;
+  accessor #changeEvent!: EventEmitter<string[]>;
 
   handleUserOrUserGroupChange = (values: string[]) => {
-    const resultValue = {
-      selectedUser: reject(values, (v) => {
-        return startsWith(v, ":");
-      }),
-
-      selectedUserGroup: filter(values, (v) => {
-        return startsWith(v, ":");
-      }),
-    };
-
-    this.value = resultValue;
-    this.#mutableValue = resultValue;
     Promise.resolve().then(() => {
-      this.#changeEvent.emit(
-        this.mergeUseAndUserGroup ? values : (resultValue as any)
-      );
+      this.#changeEvent.emit(values);
       this.getFormElement()?.resetValidateState();
     });
   };
-
-  private _handleMergeUseAndUserGroup = (
-    originValue: string[] | UserOrUserGroupSelectValue
-  ): UserOrUserGroupSelectValue => {
-    const result = groupBy(originValue, (v) =>
-      startsWith(v, ":") ? "selectedUserGroup" : "selectedUser"
-    );
-    return result as unknown as UserOrUserGroupSelectValue;
-  };
-
-  connectedCallback(): void {
-    this.#mutableValue = this.value;
-    if (this.mergeUseAndUserGroup && this.value) {
-      this.#mutableValue = this._handleMergeUseAndUserGroup(this.value);
-    }
-    super.connectedCallback();
-  }
 
   render() {
     return (
@@ -287,7 +248,7 @@ class EoUserOrUserGroupSelect extends FormItemElementBase {
         label={this.label}
         placeholder={this.placeholder}
         required={this.required}
-        value={this.#mutableValue as UserOrUserGroupSelectValue}
+        value={this.value}
         validateState={this.validateState}
         notRender={this.notRender}
         helpBrick={this.helpBrick}
@@ -297,6 +258,7 @@ class EoUserOrUserGroupSelect extends FormItemElementBase {
         query={this.query}
         userQuery={this.userQuery}
         userGroupQuery={this.userGroupQuery}
+        userKey={this.userKey}
         optionsMode={this.optionsMode}
         staticList={this.staticList}
         isMultiple={this.isMultiple}
@@ -314,6 +276,7 @@ export function EoUserOrUserGroupSelectComponent(
   // const { t } = useTranslation(NS);
   // const hello = t(K.HELLO);
   const objectList = props.objectList;
+  const userKey = props.userKey === "instanceId" ? props.userKey : "name";
   const [searchValue, setSearchValue] = useState<string>();
   const [userList, setUserList] = useState<any[]>([]);
   const [userGroupList, setUserGroupList] = useState<any[]>([]);
@@ -324,12 +287,7 @@ export function EoUserOrUserGroupSelectComponent(
     if (isNil(props.value)) {
       return undefined;
     } else {
-      return props.isMultiple
-        ? [
-            ...(props.value?.selectedUser || []),
-            ...(props.value?.selectedUserGroup || []),
-          ]
-        : props.value?.selectedUser?.[0] || props.value?.selectedUserGroup?.[0];
+      return props.isMultiple ? [...props.value] : props.value?.[0];
     }
   }, [props.value, props.isMultiple]);
 
@@ -365,16 +323,16 @@ export function EoUserOrUserGroupSelectComponent(
     const staticQuery =
       objectId === "USER"
         ? {
-            name: {
-              $in: props.value?.selectedUser,
+            [userKey]: {
+              $in: props.value?.filter((v) => !v.startsWith(":")),
             },
           }
         : {
             instanceId: {
               // 默认带为":"+instanceId，这里查询的时候去掉前面的冒号
-              $in: map(props.value?.selectedUserGroup, (v) =>
-                (v as string).slice(1)
-              ),
+              $in: props.value
+                ?.filter((v) => v.startsWith(":"))
+                .map((v) => v.slice(1)),
             },
           };
 
@@ -434,13 +392,21 @@ export function EoUserOrUserGroupSelectComponent(
     ]);
   };
 
+  const focusedRef = useRef(false);
   const handleFocus = () => {
+    focusedRef.current = true;
     if (isNil(searchValue) || searchValue !== "") {
       searchUserOrUserGroupInstances("");
     }
   };
 
-  const triggerChange = (changedValue: any) => {
+  useEffect(() => {
+    if (!focusedRef.current && props.value?.length) {
+      handleFocus();
+    }
+  }, [props.value]);
+
+  const triggerChange = (changedValue: string[]) => {
     props.onChange?.(changedValue);
   };
 
@@ -467,8 +433,9 @@ export function EoUserOrUserGroupSelectComponent(
   };
 
   const isDifferent = () => {
-    const userOfValues = props.value?.selectedUser || [];
-    const userGroupOfValues = props.value?.selectedUserGroup || [];
+    const userOfValues = props.value?.filter((v) => !v.startsWith(":")) || [];
+    const userGroupOfValues =
+      props.value?.filter((v) => v.startsWith(":")) || [];
     const userOfSelectedValue = map(
       filter(selectedValue, (item: any) => !item?.key?.startsWith(":")),
       "key"
@@ -521,46 +488,35 @@ export function EoUserOrUserGroupSelectComponent(
       if (props.value) {
         let selectedUser: any[] = [];
         let selectedUserGroup: any[] = [];
+        const usersValue = props.value.filter((v) => !v.startsWith(":"));
+        const userGroupsValue = props.value.filter((v) => v.startsWith(":"));
         const staticKeys = initializeStaticList();
-        const user = compact(
-          uniq(
-            []
-              .concat(staticKeys.user as any)
-              .concat(props.value?.selectedUser as any)
-          )
+        const user: string[] = compact(
+          uniq(([] as string[]).concat(staticKeys.user).concat(usersValue))
         );
 
-        const userGroup = compact(
+        const userGroup: string[] = compact(
           uniq(
-            []
-              .concat(staticKeys.userGroup as any)
-              .concat(props.value.selectedUserGroup as any)
+            ([] as string[])
+              .concat(staticKeys.userGroup)
+              .concat(userGroupsValue)
           )
         );
 
         if (
           (staticKeys.user &&
-            some(
-              staticKeys.user,
-              (v) => !props.value?.selectedUser?.includes(v)
-            )) ||
+            some(staticKeys.user, (v) => !usersValue.includes(v))) ||
           (staticKeys.userGroup &&
-            some(
-              staticKeys.userGroup,
-              (v) => !props.value?.selectedUserGroup?.includes(v)
-            ))
+            some(staticKeys.userGroup, (v) => !userGroupsValue.includes(v)))
         ) {
-          triggerChange({
-            selectedUser: user,
-            selectedUserGroup: userGroup,
-          });
+          triggerChange([...user, ...userGroup]);
         }
         const staticValueToSet: any = [];
         if (user.length && props.optionsMode !== "group") {
           selectedUser = (
             await InstanceApi_postSearch("USER", {
               query: {
-                name: {
+                [userKey]: {
                   $in: user,
                 },
               },
@@ -605,11 +561,11 @@ export function EoUserOrUserGroupSelectComponent(
           ...map(selectedUser, (v) => {
             const labelText = getLabel("USER", v);
             const result = {
-              key: v.name,
+              key: v[userKey],
               label: labelText,
             };
 
-            if (props.staticList?.includes(v.name)) {
+            if (props.staticList?.includes(v[userKey])) {
               staticValueToSet.push(result);
             }
             return result;
@@ -649,8 +605,8 @@ export function EoUserOrUserGroupSelectComponent(
     if (userList.length) {
       userListOptions = userList.map((user) => ({
         label: getLabel("USER", user),
-        value: user.name,
-        closeable: !props?.staticList?.includes(user.name),
+        value: user[userKey],
+        closeable: !props?.staticList?.includes(user[userKey]),
         tag: "用户(仅显示前20项，更多结果请搜索)",
       }));
     }
@@ -668,20 +624,21 @@ export function EoUserOrUserGroupSelectComponent(
       : props.optionsMode === "group"
         ? userGroupListOptions
         : [...userListOptions, ...userGroupListOptions];
-  }, [userList, userGroupList, props.optionsMode, props.staticList]);
+  }, [userList, userGroupList, props.optionsMode, props.staticList, userKey]);
 
   // 快速选择我
   const addMeQuickly = async () => {
-    const myUserName = auth.getAuth().username;
-    if (find(selectedValue, (v) => v === myUserName)) {
+    const myUserValue =
+      auth.getAuth()[userKey === "instanceId" ? "userInstanceId" : "username"];
+    if (find(selectedValue, (v) => v === myUserValue)) {
       // 如果已选择项中包含我，则不重新发起请求
       return;
     }
     const myUser = (
       await InstanceApi_postSearch("USER", {
         query: {
-          name: {
-            $eq: myUserName,
+          [userKey]: {
+            $eq: myUserValue,
           },
         },
 
@@ -698,7 +655,7 @@ export function EoUserOrUserGroupSelectComponent(
       })
     ).list as any[];
     myUser.length && setUserList([...userList, ...myUser]);
-    handleSelectChange({ detail: { value: [...selectedValue, myUserName] } });
+    handleSelectChange({ detail: { value: [...selectedValue, myUserValue] } });
   };
 
   return (
