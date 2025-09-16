@@ -55,6 +55,7 @@ export interface UploadFileProps {
   buttonText?: string;
   buttonType?: ButtonProps["type"];
   buttonIcon?: GeneralIconProps;
+  themeVariant?: "default" | "elevo";
 }
 
 /**
@@ -204,6 +205,10 @@ class EoUploadFile extends FormItemElementBase implements UploadFileProps {
   @property()
   accessor uploadName: string = "file";
 
+  /** 主题变体 */
+  @property()
+  accessor themeVariant: "default" | "elevo" | undefined;
+
   /**
    * 值变化时触发
    */
@@ -241,6 +246,7 @@ class EoUploadFile extends FormItemElementBase implements UploadFileProps {
         helpBrick={this.helpBrick}
         uploadName={this.uploadName}
         trigger="handleChange"
+        themeVariant={this.themeVariant}
         onChange={this.handleChange}
       />
     );
@@ -292,6 +298,7 @@ export function EoUploadFileComponent(props: UploadFileComponentProps) {
     url,
     method,
     uploadName,
+    themeVariant,
     onChange,
   } = props;
   const { t } = useTranslation(NS);
@@ -423,6 +430,7 @@ export function EoUploadFileComponent(props: UploadFileComponentProps) {
               type={buttonType}
               icon={buttonIcon}
               onClick={uploadActions.upload}
+              themeVariant={themeVariant}
             >
               {buttonText || t(K.UPLOAD)}
             </WrappedButton>
