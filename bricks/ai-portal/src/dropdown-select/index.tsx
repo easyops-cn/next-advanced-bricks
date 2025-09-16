@@ -59,6 +59,7 @@ export interface DropdownSelectProps {
   options?: DropdownOptions[];
   labelMaxWidth?: string | number;
   dropdownMaxWidth?: string | number;
+  dropdownContentStyle?: React.CSSProperties;
   showSearch?: boolean;
   searchPlaceholder?: string;
   loading?: boolean;
@@ -94,6 +95,9 @@ class DropdownSelect extends ReactNextElement implements DropdownSelectProps {
   @property({ attribute: false })
   accessor searchPlaceholder: string | undefined;
 
+  @property({ attribute: false })
+  accessor dropdownContentStyle: React.CSSProperties | undefined;
+
   /**
    * @default "500px"
    */
@@ -122,6 +126,7 @@ class DropdownSelect extends ReactNextElement implements DropdownSelectProps {
         dropdownMaxWidth={this.dropdownMaxWidth}
         showSearch={this.showSearch}
         searchPlaceholder={this.searchPlaceholder}
+        dropdownContentStyle={this.dropdownContentStyle}
       />
     );
   }
@@ -139,6 +144,7 @@ function DropdownSelectComponent({
   showSearch,
   loading,
   searchPlaceholder,
+  dropdownContentStyle,
   onChange,
 }: DropdownSelectComponentProps) {
   const [open, setOpen] = useState(false);
@@ -213,7 +219,7 @@ function DropdownSelectComponent({
           delay={500}
           style={{ width: "100%" }}
         >
-          <div className="dropdown-inner">
+          <div className="dropdown-inner" style={dropdownContentStyle}>
             <slot name="prefix" />
             {!!filteredOptions?.length && (
               <WrappedMenu>

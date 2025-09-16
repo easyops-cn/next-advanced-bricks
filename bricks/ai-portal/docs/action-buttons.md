@@ -10,17 +10,22 @@ children:
   - brick: ai-portal.action-buttons
     properties:
       items:
-        - key: think
+        - event: think
           text: 深度思考
           icon:
             - lib: antd
               theme: outlined
               icon: reddit
-        - key: networking
+        - event: networking
           text: 联网搜索
           icon:
             lib: antd
             theme: outlined
             icon: global
+    events:
+      think:
+        action: console.log
+      networking:
+        action: console.log
     slot: actions
 ```
