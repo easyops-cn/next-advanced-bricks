@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createDecorators } from "@next-core/element";
+import { createDecorators, EventEmitter } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
@@ -12,10 +12,9 @@ initializeI18n(NS, locales);
 
 const WrapperButton = wrapBrick<Button, ButtonProps>("eo-button");
 
-const { defineElement, property } = createDecorators();
+const { defineElement, property, event } = createDecorators();
 
 interface ActionItem extends ButtonProps {
-  key: string;
   text: string;
   icon?: GeneralIconProps;
   active?: boolean;
@@ -46,9 +45,12 @@ class ActionsButtons extends ReactNextElement implements ActionsButtonsProps {
   })
   accessor multiple: boolean | undefined;
 
+  @event({ type: "action.click" })
+  accessor #actionClick!: EventEmitter<ActionItem>;
+
   #handleActionClick = (action: ActionItem) => {
     const newItems = this.items?.map((item) => {
-      if (item.key === action.key) {
+      if (item.text === action.text) {
         return { ...item, active: !item.active };
       }
 
@@ -56,10 +58,12 @@ class ActionsButtons extends ReactNextElement implements ActionsButtonsProps {
     });
 
     this.items = newItems;
+    const current = newItems?.find((item) => item.text === action.text);
+    this.#actionClick.emit(current!);
     if (action.event) {
       const customEvent = new CustomEvent(action.event, {
         detail: {
-          current: newItems?.find((item) => item.key === action.key),
+          current,
           actives: newItems?.filter((item) => item.active),
         },
       });
@@ -92,11 +96,11 @@ function ActionsButtonsComponent({
 
   return (
     <div className="button-container">
-      {filteredItems?.map((item) => {
-        const { key, event, text, active, ...rest } = item;
+      {filteredItems?.map((item, index) => {
+        const { event, text, active, ...rest } = item;
         return (
           <WrapperButton
-            key={key}
+            key={index}
             className={`action${active ? " active" : ""}`}
             themeVariant="elevo"
             type="neutral"

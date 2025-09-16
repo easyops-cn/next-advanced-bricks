@@ -50,7 +50,7 @@ export interface GoalItem {
   description?: string;
   state: GoalState;
   index: number;
-  conversations?: string[];
+  conversations?: number;
   child_target?: GoalItem[];
   parent_target?: GoalItem[];
   leader?: GoalMember;
@@ -198,7 +198,7 @@ export function GoalCardItem({
       <div className="end">
         <div className="message">
           <WrappedIcon lib="easyops" category="common" icon="message" />
-          <span className="count">{conversations?.length || 0}</span>
+          <span className="count">{conversations || 0}</span>
         </div>
         <WrappedEasyopsAvatar
           nameOrInstanceId={leader?.instanceId}
