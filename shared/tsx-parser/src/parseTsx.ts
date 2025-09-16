@@ -58,9 +58,11 @@ export function parseTsx(source: string, options?: ParseOptions): ParseResult {
       node: null,
       severity: "fatal",
     });
+
+    return result;
   }
 
-  if (ast?.errors?.length) {
+  if (ast.errors?.length) {
     for (const error of ast.errors) {
       errors.push({
         message: `${error.code}: ${error.reasonCode}`,
@@ -157,27 +159,25 @@ export function parseTsx(source: string, options?: ParseOptions): ParseResult {
     dataSources.push(dataSource);
   }
 
-  const body = ast?.program.body ?? [];
+  const body = ast.program.body;
 
-  if (ast) {
-    t.traverse(ast.program, {
-      enter(node) {
-        if (t.isTSAnyKeyword(node)) {
-          errors.push({
-            message: `Unexpected 'any' type`,
-            node,
-            severity: "warning",
-          });
-        } else if (t.isTSAsExpression(node)) {
-          errors.push({
-            message: `Unexpected 'as' usage`,
-            node,
-            severity: "warning",
-          });
-        }
-      },
-    });
-  }
+  t.traverse(ast.program, {
+    enter(node) {
+      if (t.isTSAnyKeyword(node)) {
+        errors.push({
+          message: `Unexpected 'any' type`,
+          node,
+          severity: "warning",
+        });
+      } else if (t.isTSAsExpression(node)) {
+        errors.push({
+          message: `Unexpected 'as' usage`,
+          node,
+          severity: "warning",
+        });
+      }
+    },
+  });
 
   for (const stmt of body) {
     if (t.isVariableDeclaration(stmt)) {
