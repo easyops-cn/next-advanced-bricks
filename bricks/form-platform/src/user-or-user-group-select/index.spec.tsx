@@ -8,12 +8,16 @@ const mockPostSearch = InstanceApi_postSearch as jest.Mock;
 jest.mock("@next-api-sdk/cmdb-sdk");
 
 jest.mock("@next-core/theme", () => ({}));
-jest.mock("@next-core/runtime", () => {
-  return {
-    getAuth: jest.fn().mockReturnValue({ username: "easyops2" }),
-    getV2RuntimeFromDll: jest.fn(),
-  };
-});
+jest.mock("@next-core/easyops-runtime", () => ({
+  auth: {
+    getAuth: jest
+      .fn()
+      .mockReturnValue({
+        username: "easyops2",
+        userInstanceId: "mock-user-instance-id",
+      }),
+  },
+}));
 
 const OBJECT_LIST = [
   {
@@ -115,7 +119,6 @@ describe("eo-user-or-user-group-select", () => {
     Object.assign(element, {
       name: "user",
       label: "用户",
-      mergeUseAndUserGroup: true,
       isMultiple: false,
       value: [":59eea4ad40bw2"],
       staticList: ["easyops"],
@@ -145,7 +148,7 @@ describe("eo-user-or-user-group-select", () => {
       document.body.appendChild(element);
     });
     const select = element.shadowRoot?.querySelector("eo-select");
-    expect(InstanceApi_postSearch).toHaveBeenCalledTimes(1);
+    expect(InstanceApi_postSearch).toHaveBeenCalledTimes(3);
 
     act(() => {
       fireEvent.focus(select as HTMLElement);
@@ -170,7 +173,7 @@ describe("eo-user-or-user-group-select", () => {
     mockPostSearch.mockResolvedValue({
       list: [
         {
-          instanceId: "59eea4ad40bf82",
+          instanceId: "mock-user-instance-id",
           name: "easyops2",
           nickname: "uwin2",
         },
@@ -187,10 +190,10 @@ describe("eo-user-or-user-group-select", () => {
       objectList: OBJECT_LIST,
     });
 
-    expect(element.shadowRoot).toBeFalsy();
-
     const mockValueChangeEvent = jest.fn();
-    element.addEventListener("change", mockValueChangeEvent);
+    element.addEventListener("change", (e) => {
+      mockValueChangeEvent((e as CustomEvent).detail);
+    });
 
     act(() => {
       document.body.appendChild(element);
@@ -203,7 +206,7 @@ describe("eo-user-or-user-group-select", () => {
     });
 
     expect(InstanceApi_postSearch).toHaveBeenCalled();
-    expect(mockValueChangeEvent).toHaveBeenCalled();
+    expect(mockValueChangeEvent).toHaveBeenCalledWith(["easyops2"]);
 
     mockValueChangeEvent.mockClear();
 
@@ -216,6 +219,54 @@ describe("eo-user-or-user-group-select", () => {
     act(() => {
       document.body.removeChild(element);
     });
-    expect(element.shadowRoot?.childNodes.length).toBe(0);
+  });
+
+  test("add me quickly with instanceId", async () => {
+    mockPostSearch.mockResolvedValue({
+      list: [
+        {
+          instanceId: "mock-user-instance-id",
+          name: "easyops2",
+          nickname: "uwin2",
+        },
+      ],
+    } as never);
+    const element = document.createElement(
+      "eo-user-or-user-group-select"
+    ) as EoUserOrUserGroupSelect;
+
+    Object.assign(element, {
+      name: "user",
+      label: "用户",
+      hideAddMeQuickly: false,
+      objectList: OBJECT_LIST,
+      userKey: "instanceId",
+    });
+
+    const mockValueChangeEvent = jest.fn();
+    element.addEventListener("change", (e) => {
+      mockValueChangeEvent((e as CustomEvent).detail);
+    });
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+    // const select = element.shadowRoot?.querySelector("eo-select");
+    const addMeBtn = element.shadowRoot?.querySelector("eo-button");
+
+    await act(async () => {
+      fireEvent.click(addMeBtn as HTMLElement);
+    });
+
+    expect(InstanceApi_postSearch).toHaveBeenCalled();
+    expect(mockValueChangeEvent).toHaveBeenCalledWith([
+      "mock-user-instance-id",
+    ]);
+
+    mockValueChangeEvent.mockClear();
+
+    act(() => {
+      document.body.removeChild(element);
+    });
   });
 });
