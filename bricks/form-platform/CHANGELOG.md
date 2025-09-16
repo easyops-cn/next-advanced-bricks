@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.37](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form-platform@0.4.36...@next-bricks/form-platform@0.4.37) (2025-09-16)
+
+
+### Bug Fixes
+
+* fix eo-user-or-user-group-select ([cc77104](https://github.com/easyops-cn/next-advanced-bricks/commit/cc77104cba682da1413dc09efab16e7ae6614599))
+
+
+
+
+
 ## [0.4.36](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form-platform@0.4.35...@next-bricks/form-platform@0.4.36) (2025-08-28)
 
 
