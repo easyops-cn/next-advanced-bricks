@@ -8,7 +8,10 @@ import type {
   GeneralIcon,
   GeneralIconProps,
 } from "@next-bricks/icons/general-icon";
-import type { AvatarProps, EoAvatar } from "@next-bricks/basic/avatar";
+import type {
+  EoEasyopsAvatar,
+  EoEasyopsAvatarProps,
+} from "@next-bricks/basic/easyops-avatar";
 import type {
   ActionType,
   EoMiniActions,
@@ -27,7 +30,9 @@ initializeI18n(NS, locales);
 
 const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
-const WrappedAvatar = wrapBrick<EoAvatar, AvatarProps>("eo-avatar");
+const WrappedAvatar = wrapBrick<EoEasyopsAvatar, EoEasyopsAvatarProps>(
+  "eo-easyops-avatar"
+);
 const WrappedMiniActions = wrapBrick<
   EoMiniActions,
   EoMiniActionsProps,
@@ -52,6 +57,7 @@ export interface Conversation {
   startTime: number;
   description?: string;
   goal?: string;
+  username?: string;
 }
 
 export interface ActionClickDetail {
@@ -217,7 +223,11 @@ function ConversationLink({
             setActionsVisible(e.detail);
           }}
         />
-        <WrappedAvatar className="avatar" size="small" /* bordered */ />
+        <WrappedAvatar
+          className="avatar"
+          size="small"
+          nameOrInstanceId={conversation.username}
+        />
       </div>
     </WrappedLink>
   );
