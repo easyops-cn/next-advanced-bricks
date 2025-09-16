@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.19.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.19.0...@next-bricks/form@1.19.1) (2025-09-16)
+
+
+### Bug Fixes
+
+* **eo-upload-file:** support themeVariant ([eaaf9d6](https://github.com/easyops-cn/next-advanced-bricks/commit/eaaf9d61ce8ebdc67f76051cf36ffe324eff3147))
+
+
+
+
+
 # [1.19.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.18.7...@next-bricks/form@1.19.0) (2025-09-15)
 
 
