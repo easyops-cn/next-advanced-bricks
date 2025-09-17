@@ -23,6 +23,7 @@ ul {
 .link::part(link) {
   display: flex;
   align-items: center;
+  gap: 16px;
   padding: 12px 24px;
   color: #262626;
   background: rgba(255, 255, 255, 0.6);
@@ -41,7 +42,7 @@ ul {
 }
 
 .icon {
-  font-size: 20px;
+  font-size: 18px;
   margin-right: 8px;
 }
 
@@ -65,7 +66,6 @@ ul {
   color: #1dc897;
   line-height: 20px;
   padding: 2px 8px;
-  margin-left: 16px;
   white-space: nowrap;
 }
 
@@ -88,7 +88,7 @@ ul {
 
 .time {
   color: rgba(0, 0, 0, 0.45);
-  margin: 0 16px;
+  white-space: nowrap;
 }
 
 .main {
@@ -99,13 +99,12 @@ ul {
 .operations {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
+  justify-content: right;
+  width: 100px;
 }
 
-.link.actions-active .avatar,
-.link:hover .avatar,
+.link.actions-active .time,
+.link:hover .time,
 .link:not(:hover):not(.actions-active) .actions {
   display: none;
 }

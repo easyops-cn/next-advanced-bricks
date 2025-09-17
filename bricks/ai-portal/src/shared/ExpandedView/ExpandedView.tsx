@@ -136,8 +136,8 @@ export function ExpandedView({ views }: ExpandedViewProps) {
         if (ignore) {
           return;
         }
-        const { brick, context, functions } = convertedView;
-        await rootRef.current?.render(brick, { context, functions });
+        const { brick, context, functions, templates } = convertedView;
+        await rootRef.current?.render(brick, { context, functions, templates });
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to render view:", error);

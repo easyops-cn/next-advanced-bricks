@@ -245,7 +245,7 @@ export function constructTsxEvent(
             });
             if (args.length !== 1) {
               result.errors.push({
-                message: `Signal getter expects exact 1 argument, but got ${args.length}`,
+                message: `State setter expects exactly 1 argument, but got ${args.length}`,
                 node: args[1],
                 severity: "error",
               });
@@ -270,7 +270,7 @@ export function constructTsxEvent(
             });
             if (args.length !== 1) {
               result.errors.push({
-                message: `Signal getter expects exact 1 argument, but got ${args.length}`,
+                message: `State setter expects exactly 1 argument, but got ${args.length}`,
                 node: args[1],
                 severity: "error",
               });

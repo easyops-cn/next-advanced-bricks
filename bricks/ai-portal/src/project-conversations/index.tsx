@@ -164,7 +164,7 @@ function ConversationLink({
   onGoalClick,
   onActionClick,
 }: ConversationLinkProps) {
-  const goalRef = useRef<HTMLSpanElement>(null);
+  const goalRef = useRef<HTMLDivElement>(null);
 
   // <eo-link> handles click manually,
   // so we need to stop propagation and prevent default manually.
@@ -191,27 +191,31 @@ function ConversationLink({
     >
       <div className="main">
         <div className="header">
-          <WrappedIcon className="icon" lib="lucide" icon="clock" />
-          <span className="title">{conversation.title}</span>
-          <span
-            className={classNames("goal", {
-              global: conversation.goal == null,
-            })}
-            ref={goalRef}
-          >
-            {conversation.goal ?? t(K.PROJECT_OVERALL)}
-          </span>
+          <WrappedIcon
+            className="icon"
+            lib="easyops"
+            category="common"
+            icon="clock"
+          />
+          <div className="title">{conversation.title}</div>
         </div>
         {conversation.description && (
           <div className="description">{conversation.description}</div>
         )}
       </div>
-      <div className="time">
-        {humanizeTime(
-          conversation.startTime * 1000,
-          HumanizeTimeFormat.relative
-        )}
+      <div
+        className={classNames("goal", {
+          global: !conversation.goal,
+        })}
+        ref={goalRef}
+      >
+        {conversation.goal || t(K.PROJECT_OVERALL)}
       </div>
+      <WrappedAvatar
+        className="avatar"
+        size="small"
+        nameOrInstanceId={conversation.username}
+      />
       <div className="operations">
         <WrappedMiniActions
           className="actions"
@@ -223,11 +227,12 @@ function ConversationLink({
             setActionsVisible(e.detail);
           }}
         />
-        <WrappedAvatar
-          className="avatar"
-          size="small"
-          nameOrInstanceId={conversation.username}
-        />
+        <div className="time">
+          {humanizeTime(
+            conversation.startTime * 1000,
+            HumanizeTimeFormat.relative
+          )}
+        </div>
       </div>
     </WrappedLink>
   );
