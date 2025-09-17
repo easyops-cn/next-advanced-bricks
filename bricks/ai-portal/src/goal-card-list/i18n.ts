@@ -4,18 +4,21 @@ export enum K {
   UN_START_STATUS = "UN_START_STATUS",
   RUNNING_STATUS = "RUNNING_STATUS",
   COMPLETED_STATUS = "COMPLETED_STATUS",
+  NEW_CHAT = "NEW_CHAT",
 }
 
 const en: Locale = {
   UN_START_STATUS: "Not Start",
   RUNNING_STATUS: "Running",
   COMPLETED_STATUS: "Completed",
+  NEW_CHAT: "New Chat",
 };
 
 const zh: Locale = {
   UN_START_STATUS: "未开始",
   RUNNING_STATUS: "运行中",
   COMPLETED_STATUS: "已完成",
+  NEW_CHAT: "新对话",
 };
 
 export const NS = "bricks/ai-portal/goal-card-list";

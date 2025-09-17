@@ -1,4 +1,12 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useImperativeHandle,
+  createRef,
+} from "react";
 import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import {
@@ -18,7 +26,9 @@ initializeI18n(NS, locales);
 
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
-const { defineElement, property, event } = createDecorators();
+const { defineElement, property, event, method } = createDecorators();
+
+export const ChatBoxComponent = forwardRef(LegacyChatBoxComponent);
 
 export interface ChatBoxProps {
   disabled?: boolean;
@@ -31,6 +41,11 @@ export interface Suggestion {
   content: string;
 }
 
+export interface ChatBoxRef {
+  setValue: (value: string) => void;
+  getValue: () => string;
+}
+
 /**
  * 构件 `ai-portal.chat-box`
  */
@@ -39,6 +54,8 @@ export
   styleTexts: [styleText],
 })
 class ChatBox extends ReactNextElement implements ChatBoxProps {
+  ref = createRef<ChatBoxRef>();
+
   @property({ type: Boolean })
   accessor disabled: boolean | undefined;
 
@@ -55,6 +72,16 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
     this.#messageSubmit.emit(value);
   };
 
+  @method()
+  setValue(value: string) {
+    this.ref.current?.setValue(value);
+  }
+
+  @method()
+  getValue() {
+    return this.ref.current?.getValue();
+  }
+
   render() {
     return (
       <ChatBoxComponent
@@ -62,6 +89,7 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
         placeholder={this.placeholder}
         autoFocus={this.autoFocus}
         onSubmit={this.#handleMessageSubmit}
+        ref={this.ref}
       />
     );
   }
@@ -70,18 +98,27 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
 export interface ChatBoxComponentProps extends ChatBoxProps {
   // Define react event handlers here.
   onSubmit?: (value: string) => void;
+  ref?: React.Ref<ChatBoxRef>;
 }
 
-export function ChatBoxComponent({
-  disabled,
-  placeholder,
-  autoFocus,
-  onSubmit,
-}: ChatBoxComponentProps) {
+export function LegacyChatBoxComponent(
+  { disabled, placeholder, autoFocus, onSubmit }: ChatBoxComponentProps,
+  ref: React.Ref<ChatBoxRef>
+) {
   const containerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<TextareaAutoResizeRef>(null);
   const [value, setValue] = useState("");
   const valueRef = useRef("");
+
+  useImperativeHandle(ref, () => ({
+    setValue: (value: string) => {
+      valueRef.current = value;
+      setValue(value);
+    },
+    getValue: () => {
+      return valueRef.current;
+    },
+  }));
 
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLTextAreaElement>) => {
