@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.2.8...@next-bricks/vb-experiment@1.3.0) (2025-09-17)
+
+
+### Features
+
+* support function components ([e1025fd](https://github.com/easyops-cn/next-advanced-bricks/commit/e1025fd714c8c9b0d9e54a2c430e184ab9dff283))
+* **tsx-playground:** change event ([7376ac6](https://github.com/easyops-cn/next-advanced-bricks/commit/7376ac66ae255753510ec4803a8502148ac8c2a7))
+
+
+
+
+
 ## [1.2.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.2.7...@next-bricks/vb-experiment@1.2.8) (2025-09-15)
 
 **Note:** Version bump only for package @next-bricks/vb-experiment
