@@ -10,15 +10,27 @@ declare const refresh: (dataSource: unknown) => void;
 /** 调用指定的 Provider 接口 */
 declare const callApi: <T extends keyof ContractMap>(
   api: T,
-  params: Parameters<ContractMap[T]>[0],
-  metadata?: { objectId?: string | null }
+  params: Parameters<ContractMap[T]>[0]
 ) => Promise<ReturnType<ContractMap[T]>>;
 
 /** 调用指定的 HTTP 接口 */
-declare const callHttp: <T = unknown>(
+declare const callHttp: <T = any>(
   url: string,
   init?: RequestInit
 ) => Promise<T>;
+
+declare const useState: <T>(
+  initialValue?: T
+) => [value: T, setter: (value: T) => void];
+
+declare const useResource: <T = any>(
+  fetcher: () => Promise<T>,
+  options?: {
+    // 不启用则直接返回 fallback
+    enabled?: boolean;
+    fallback?: unknown;
+  }
+) => [data: T, refetch: () => void];
 
 /** 数据实体 SDK */
 declare namespace Entity {

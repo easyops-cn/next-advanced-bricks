@@ -34,6 +34,8 @@ export interface Template {
 export interface TemplateCollection {
   identifiers: string[];
   setters: Map<string, string>;
+  dataSources: DataSource[];
+  events: string[];
 }
 
 export interface ParseError {
@@ -57,6 +59,13 @@ export interface DataSource {
   ambiguousParams?: unknown;
   transform?: string;
   rejectTransform?: string;
+  scope?: "view" | "template";
+  config?: DataSourceConfig;
+}
+
+export interface DataSourceConfig {
+  enabled?: unknown;
+  fallback?: unknown;
 }
 
 export interface Component {
@@ -78,7 +87,8 @@ export type EventHandler =
   | TypeEventHandlerOfRefreshDataSource
   | TypeEventHandlerOfCallComponent
   | TypeEventHandlerOfShowMessage
-  | TypeEventHandlerOfCallAPI;
+  | TypeEventHandlerOfCallAPI
+  | TypeEventHandlerOfDispatchEvent;
 
 export interface TypeEventHandlerOfUpdateVariable {
   action: "update_variable";
@@ -125,6 +135,14 @@ export interface TypeEventHandlerOfCallAPI {
     objectId?: string;
   };
   callback?: TypeEventHandlerCallback;
+}
+
+export interface TypeEventHandlerOfDispatchEvent {
+  action: "dispatch_event";
+  payload: {
+    type: string;
+    detail?: unknown;
+  };
 }
 
 export interface TypeEventHandlerCallback {

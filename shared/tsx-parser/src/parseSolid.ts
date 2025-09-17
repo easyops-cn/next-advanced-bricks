@@ -40,6 +40,14 @@ export function parseSolid(
         continue;
       }
       constructFunctionComponent(stmt.declaration, result, "view", options);
+    } else if (
+      !(t.isTSInterfaceDeclaration(stmt) || t.isTSTypeAliasDeclaration(stmt))
+    ) {
+      result.errors.push({
+        message: `Unsupported top level statement type: ${stmt.type}`,
+        node: stmt,
+        severity: "error",
+      });
     }
   }
 }

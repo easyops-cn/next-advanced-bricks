@@ -141,5 +141,10 @@ function convertEventHandler(
         action: `message.${handler.payload.type}` as "message.info",
         args: [handler.payload.content],
       };
+    case "dispatch_event":
+      return {
+        action: "tpl.dispatchEvent",
+        args: [handler.payload.type, { detail: handler.payload.detail }],
+      };
   }
 }

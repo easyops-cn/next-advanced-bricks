@@ -11,6 +11,8 @@ function MyCounter({
   const [z, setZ] = useState(1);
   const v = x * y * z;
 
+  const [time] = useResource(() => callApi("getTime", { timezone: "+8" }));
+
   return (
     <Button onClick={() => {
       setZ(z + 1);
@@ -23,6 +25,8 @@ function MyCounter({
 
 export default function() {
   const [count, setCount] = useState(0);
+
+  const [data] = useResource(() => callApi("getCount", { initial: 1 }));
 
   return (
     <View title="测试页面">
