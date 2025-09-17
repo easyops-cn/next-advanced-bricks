@@ -80,6 +80,7 @@ export function ChatStreamComponent(
   const pageTitle = conversation?.title ?? "";
   const conversationState = conversation?.state;
   const conversationDone = DONE_STATES.includes(conversationState!);
+  const canChat = conversationDone || conversationState === "input-required";
   const { messages, jobMap, lastToolCallJobId } = useConversationStream(
     conversation,
     tasks,
@@ -367,10 +368,7 @@ export function ChatStreamComponent(
                         watchAgain={watchAgain}
                       />
                     ) : (
-                      <ChatBox
-                        state={conversationState}
-                        canChat={conversationDone}
-                      />
+                      <ChatBox state={conversationState} canChat={canChat} />
                     )}
                   </div>
                 </div>

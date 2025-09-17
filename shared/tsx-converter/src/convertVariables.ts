@@ -5,5 +5,6 @@ export function convertVariables(variables: Variable[]): ContextConf[] {
   return variables.map(({ name, value }) => ({
     name,
     value,
+    track: true,
   }));
 }

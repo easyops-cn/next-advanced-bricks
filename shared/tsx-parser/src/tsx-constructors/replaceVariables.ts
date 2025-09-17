@@ -14,7 +14,11 @@ interface Replacement {
 
 export function replaceGlobals(expr: string, result: ParseResult): string {
   const patterns = new Map([
-    ...result.contexts.map((k) => [k, `CTX.${k}`] as const),
+    ...(result.templateCollection
+      ? result.templateCollection.identifiers.map(
+          (k) => [k, `STATE.${k}`] as const
+        )
+      : result.contexts.map((k) => [k, `CTX.${k}`] as const)),
     ...result.functionNames.map((k) => [k, `FN.${k}`] as const),
   ]);
   return replaceVariables(expr, patterns);
@@ -48,9 +52,9 @@ export function replaceVariables(
       result = preevaluate(expr, {
         withParent: true,
         hooks: {
-          beforeVisitGlobal(node, parent) {
+          beforeVisitGlobal(node, path) {
             if (patterns.has(node.name)) {
-              const p = parent![parent!.length - 1]?.node;
+              const p = path![path!.length - 1]?.node;
               let shorthand: boolean | undefined;
               if (p && p.type === "Property" && !p.computed && p.shorthand) {
                 shorthand = true;

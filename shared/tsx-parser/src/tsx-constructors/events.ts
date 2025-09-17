@@ -224,6 +224,61 @@ export function constructTsxEvent(
           });
           continue;
         }
+
+        // Signal setters
+        if (result.templateCollection) {
+          if (result.templateCollection.setters.has(callee.name)) {
+            const arg = args[0];
+            handlers.push({
+              action: "update_variable",
+              payload: {
+                scope: "template",
+                name: result.templateCollection.setters.get(callee.name)!,
+                value:
+                  arg === undefined
+                    ? undefined
+                    : constructJsValue(arg, result, {
+                        allowExpression: true,
+                        replacePatterns,
+                      }),
+              },
+            });
+            if (args.length !== 1) {
+              result.errors.push({
+                message: `Signal getter expects exact 1 argument, but got ${args.length}`,
+                node: args[1],
+                severity: "error",
+              });
+            }
+            continue;
+          }
+        } else {
+          if (result.contextSetters.has(callee.name)) {
+            const arg = args[0];
+            handlers.push({
+              action: "update_variable",
+              payload: {
+                name: result.contextSetters.get(callee.name)!,
+                value:
+                  arg === undefined
+                    ? undefined
+                    : constructJsValue(arg, result, {
+                        allowExpression: true,
+                        replacePatterns,
+                      }),
+              },
+            });
+            if (args.length !== 1) {
+              result.errors.push({
+                message: `Signal getter expects exact 1 argument, but got ${args.length}`,
+                node: args[1],
+                severity: "error",
+              });
+            }
+            continue;
+          }
+        }
+
         if (callee.name === "showMessage") {
           if (args.length !== 1) {
             result.errors.push({

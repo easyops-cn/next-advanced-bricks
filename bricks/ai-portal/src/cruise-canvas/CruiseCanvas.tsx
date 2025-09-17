@@ -332,6 +332,7 @@ export function CruiseCanvasComponent(
   });
 
   const conversationDone = DONE_STATES.includes(conversationState);
+  const canChat = conversationDone || conversationState === "input-required";
 
   const nonLeafNodes = useMemo(() => {
     return new Set<string>(edges.map((edge) => edge.source));
@@ -837,7 +838,7 @@ export function CruiseCanvasComponent(
             </div>
           ) : supports?.chat ? (
             <div className={styles["footer-container"]}>
-              <ChatBox state={conversationState} canChat={conversationDone} />
+              <ChatBox state={conversationState} canChat={canChat} />
             </div>
           ) : null}
         </div>

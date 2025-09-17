@@ -5,6 +5,7 @@ import type {
   ParseResult,
   Events,
   ParseOptions,
+  EventHandler,
 } from "../interfaces.js";
 import { constructJsValue, constructPropValue } from "./values.js";
 import {
@@ -96,11 +97,25 @@ export function constructTsxElement(
           });
           continue;
         }
-        const handler = constructTsxEvent(
-          attr.value.expression,
-          result,
-          options
-        );
+
+        const expr = attr.value.expression;
+        let handler: EventHandler[] | null = null;
+        if (
+          t.isIdentifier(expr) &&
+          result.templateCollection?.events.includes(expr.name)
+        ) {
+          handler = [
+            {
+              action: "dispatch_event",
+              payload: {
+                type: convertJsxEventAttr(expr.name),
+                detail: "<% EVENT.detail %>",
+              },
+            },
+          ];
+        } else {
+          handler = constructTsxEvent(expr, result, options);
+        }
         if (handler) {
           events ??= {};
           events[convertJsxEventAttr(attrName)] = handler;

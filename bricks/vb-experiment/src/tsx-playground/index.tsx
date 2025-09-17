@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { createDecorators } from "@next-core/element";
+import { createDecorators, type EventEmitter } from "@next-core/element";
 import { httpErrorToString, unstable_createRoot } from "@next-core/runtime";
 import { ReactNextElement } from "@next-core/react-element";
 import { asyncWrapBrick } from "@next-core/react-runtime";
@@ -61,7 +61,7 @@ const BUILTIN_LIBS: ExtraLib[] = [
   // },
 ];
 
-const { defineElement, property } = createDecorators();
+const { defineElement, property, event } = createDecorators();
 
 export interface TsxPlaygroundProps {
   source?: string;
@@ -84,15 +84,26 @@ class TsxPlayground extends ReactNextElement implements TsxPlaygroundProps {
   @property({ attribute: false })
   accessor extraLibs: ExtraLib[] | undefined;
 
+  @event({ type: "change" })
+  accessor #change!: EventEmitter<string>;
+
+  #handleChange = (value: string) => {
+    this.#change?.emit(value);
+  };
+
   render() {
     return (
-      <TsxPlaygroundComponent source={this.source} extraLibs={this.extraLibs} />
+      <TsxPlaygroundComponent
+        source={this.source}
+        extraLibs={this.extraLibs}
+        onChange={this.#handleChange}
+      />
     );
   }
 }
 
 interface TsxPlaygroundComponentProps extends TsxPlaygroundProps {
-  onCodeChange?: () => void;
+  onChange: (value: string) => void;
 }
 
 function convertSeverity(
@@ -114,6 +125,7 @@ function convertSeverity(
 function TsxPlaygroundComponent({
   source,
   extraLibs,
+  onChange,
 }: TsxPlaygroundComponentProps) {
   const [code, setCode] = useState(source ?? "");
   const deferredCode = useDeferredValue(code);
@@ -125,9 +137,13 @@ function TsxPlaygroundComponent({
     [extraLibs]
   );
 
-  const handleCodeChange = useCallback((e: CustomEvent<string>) => {
-    setCode(e.detail);
-  }, []);
+  const handleCodeChange = useCallback(
+    (e: CustomEvent<string>) => {
+      setCode(e.detail);
+      onChange(e.detail);
+    },
+    [onChange]
+  );
   useEffect(() => {
     let ignore = false;
     (async function run() {
@@ -204,8 +220,12 @@ function TsxPlaygroundComponent({
         if (ignore) {
           return;
         }
-        const { brick, context, functions } = convertedView ?? {};
-        await rootRef.current?.render(brick ?? [], { context, functions });
+        const { brick, context, functions, templates } = convertedView ?? {};
+        await rootRef.current?.render(brick ?? [], {
+          context,
+          functions,
+          templates,
+        });
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to render view:", error);

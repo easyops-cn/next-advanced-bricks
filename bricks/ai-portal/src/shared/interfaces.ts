@@ -47,6 +47,7 @@ export type ConversationState =
   | "working"
   | "completed"
   | "failed"
+  | "input-required"
   | "terminated";
 
 export type TaskState =
