@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-parser@0.1.0...@next-shared/tsx-parser@0.1.1) (2025-09-17)
+
+
+### Bug Fixes
+
+* render with templates ([2cfb767](https://github.com/easyops-cn/next-advanced-bricks/commit/2cfb767ca337df3b61f107c2bf562572903bae09))
+
+
+
+
+
 # [0.1.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-parser@0.0.4...@next-shared/tsx-parser@0.1.0) (2025-09-17)
 
 
