@@ -43,19 +43,17 @@ export function constructFunctionComponent(
   }
 
   let identifiers: string[];
-  let getters: string[];
   let setters: Map<string, string>;
   let variables: Variable[];
   let dataSources: DataSource[];
 
   if (scope === "template") {
     identifiers = [];
-    getters = [];
     setters = new Map();
     variables = [];
     dataSources = [];
 
-    result.templateCollection = { identifiers, getters, setters };
+    result.templateCollection = { identifiers, setters };
 
     const param = fn.params[0];
     if (param) {
@@ -111,7 +109,6 @@ export function constructFunctionComponent(
     }
   } else {
     identifiers = result.contexts;
-    getters = result.contextGetters;
     setters = result.contextSetters;
     variables = result.variables;
     dataSources = result.dataSources;
@@ -122,13 +119,13 @@ export function constructFunctionComponent(
       for (const dec of stmt.declarations) {
         if (t.isCallExpression(dec.init) && t.isIdentifier(dec.init.callee)) {
           switch (dec.init.callee.name) {
-            case "createSignal":
+            case "useState":
               if (t.isArrayPattern(dec.id)) {
                 if (t.isIdentifier(dec.id.elements[0])) {
-                  const getterName = dec.id.elements[0].name;
-                  getters.push(getterName);
+                  const varName = dec.id.elements[0].name;
+                  identifiers.push(varName);
                   if (t.isIdentifier(dec.id.elements[1])) {
-                    setters.set(dec.id.elements[1].name, getterName);
+                    setters.set(dec.id.elements[1].name, varName);
                   }
                 }
               }
@@ -161,7 +158,7 @@ export function constructFunctionComponent(
         if (dec.init) {
           if (t.isCallExpression(dec.init) && t.isIdentifier(dec.init.callee)) {
             switch (dec.init.callee.name) {
-              case "createSignal":
+              case "useState":
                 if (
                   t.isArrayPattern(dec.id) &&
                   t.isIdentifier(dec.id.elements[0])
@@ -173,7 +170,7 @@ export function constructFunctionComponent(
                   } else {
                     if (args.length > 1) {
                       result.errors.push({
-                        message: `"createSignal()" expects at most 1 argument, but got ${args.length}`,
+                        message: `"useState()" expects at most 1 argument, but got ${args.length}`,
                         node: dec.init,
                         severity: "error",
                       });

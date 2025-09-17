@@ -8,12 +8,12 @@ function MyCounter({
   y,
   onClick,
 }) {
-  const [z, setZ] = createSignal(1);
-  const v = x * y * z();
+  const [z, setZ] = useState(1);
+  const v = x * y * z;
 
   return (
     <Button onClick={() => {
-      setZ(z() + 1);
+      setZ(z + 1);
       onClick();
     }}>
       {v}
@@ -22,12 +22,12 @@ function MyCounter({
 }
 
 export default function() {
-  const [count, setCount] = createSignal(0);
+  const [count, setCount] = useState(0);
 
   return (
     <View title="测试页面">
       <MyCounter x={2} y={3} />
-      {count()}
+      {count}
     </View>
   );
 }

@@ -17,7 +17,6 @@ export interface ParseResult {
   contracts: Set<string>;
   errors: ParseError[];
   contexts: string[];
-  contextGetters: string[];
   contextSetters: Map<string, string>;
   functionNames: string[];
   functions: StoryboardFunction[];
@@ -30,12 +29,10 @@ export interface Template {
   variables: Variable[];
   dataSources: DataSource[];
   components: Component[];
-  // componentsMap: Map<string, Component>;
 }
 
 export interface TemplateCollection {
   identifiers: string[];
-  getters: string[];
   setters: Map<string, string>;
 }
 

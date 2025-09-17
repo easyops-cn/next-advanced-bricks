@@ -12,11 +12,6 @@ interface Replacement {
   shorthand?: boolean;
 }
 
-interface GetterReplacement {
-  call: t.CallExpression;
-  name: string;
-}
-
 export function replaceGlobals(expr: string, result: ParseResult): string {
   const patterns = new Map([
     ...(result.templateCollection
@@ -26,20 +21,7 @@ export function replaceGlobals(expr: string, result: ParseResult): string {
       : result.contexts.map((k) => [k, `CTX.${k}`] as const)),
     ...result.functionNames.map((k) => [k, `FN.${k}`] as const),
   ]);
-  return replaceVariables(
-    replaceGetters(
-      expr,
-      new Map(
-        result.templateCollection
-          ? result.templateCollection.getters.map(
-              (k) => [k, `STATE.${k}`] as const
-            )
-          : result.contextGetters.map((k) => [k, `CTX.${k}`] as const)
-      ),
-      result
-    ),
-    patterns
-  );
+  return replaceVariables(expr, patterns);
 }
 
 export function replaceGlobalsInFunction(
@@ -97,61 +79,6 @@ export function replaceVariables(
           source.substring(prevStart, start!),
           `${shorthand ? `${name}: ` : ""}${patterns.get(name)}`
         );
-        prevStart = end!;
-      }
-      chunks.push(source.substring(prevStart));
-      return `${prefix}${chunks.join("")}${suffix}`;
-    }
-  }
-  return expr;
-}
-
-function replaceGetters(
-  expr: string,
-  patterns: Map<string, string> | undefined,
-  state: ParseResult
-): string {
-  if (!patterns?.size) {
-    return expr;
-  }
-  const keywords = [...patterns.keys()];
-  if (keywords.some((k) => expr.includes(k))) {
-    const replacements: GetterReplacement[] = [];
-    let result: PreevaluateResult | undefined;
-    try {
-      result = preevaluate(expr, {
-        withParent: true,
-        hooks: {
-          beforeVisitGlobal(node, path) {
-            if (patterns.has(node.name)) {
-              const p = path![path!.length - 1];
-              if (p && p.node.type === "CallExpression" && p.key === "callee") {
-                const args = p.node.arguments;
-                if (args.length > 0) {
-                  state.errors.push({
-                    message: `Getter "${node.name}" cannot have arguments`,
-                    node: p.node,
-                    severity: "error",
-                  });
-                }
-                replacements.push({ call: p.node, name: node.name });
-              }
-            }
-          },
-        },
-      });
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("Parse expression failed:", error);
-    }
-    if (replacements.length > 0 && result) {
-      const { prefix, source, suffix } = result;
-      const chunks: string[] = [];
-      let prevStart = 0;
-      for (let i = 0; i < replacements.length; i++) {
-        const { call, name } = replacements[i];
-        const { start, end } = call;
-        chunks.push(source.substring(prevStart, start!), patterns.get(name)!);
         prevStart = end!;
       }
       chunks.push(source.substring(prevStart));
