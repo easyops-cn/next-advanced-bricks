@@ -15,6 +15,7 @@ import type {
   EoEasyopsAvatar,
   EoEasyopsAvatarProps,
 } from "@next-bricks/basic/easyops-avatar";
+import type { Button, ButtonProps } from "@next-bricks/basic/button";
 import type { Action, SimpleAction } from "@next-bricks/basic/actions";
 import classNames from "classnames";
 import { K, NS, locales, t } from "../i18n.js";
@@ -34,6 +35,7 @@ const WrappedDropdownActions = wrapBrick<
 const WrappedEasyopsAvatar = wrapBrick<EoEasyopsAvatar, EoEasyopsAvatarProps>(
   "eo-easyops-avatar"
 );
+const WrappedButton = wrapBrick<Button, ButtonProps>("eo-button");
 
 export interface InputEventsMap {
   onValueChange: "change";
@@ -62,8 +64,10 @@ export interface GoalItem {
 interface GoalCardItemProps {
   goalItem: GoalItem;
   cardStyle?: React.CSSProperties;
+  isActive?: boolean;
   onTitleChange?: (newTitle: string) => void;
   onStatusChange?: (newStatus: GoalState) => void;
+  onNewChat?: () => void;
   onClick?: () => void;
 }
 
@@ -109,6 +113,8 @@ export function GoalCardItem({
   onStatusChange,
   onTitleChange,
   onClick,
+  onNewChat,
+  isActive,
 }: GoalCardItemProps) {
   const { state, index: serialNumber, title, conversations, leader } = goalItem;
 
@@ -159,7 +165,12 @@ export function GoalCardItem({
 
   return (
     <div
-      className={classNames("goal-item", goalItem.state, { editing })}
+      className={classNames(
+        "goal-item",
+        goalItem.state,
+        { editing },
+        { active: isActive }
+      )}
       style={{
         paddingLeft: `${goalItem.offsetX}px`,
         ...cardStyle,
@@ -196,14 +207,27 @@ export function GoalCardItem({
         </span>
       </div>
       <div className="end">
-        <div className="message">
-          <WrappedIcon lib="easyops" category="common" icon="message" />
-          <span className="count">{conversations || 0}</span>
+        <div className="info">
+          <div className="message">
+            <WrappedIcon lib="easyops" category="common" icon="message" />
+            <span className="count">{conversations || 0}</span>
+          </div>
+          <WrappedEasyopsAvatar
+            nameOrInstanceId={leader?.instanceId}
+            size="small"
+          />
         </div>
-        <WrappedEasyopsAvatar
-          nameOrInstanceId={leader?.instanceId}
-          size="small"
-        />
+        <div className="operation" onClick={(e) => e.stopPropagation()}>
+          <WrappedButton
+            className="new-chat"
+            themeVariant="elevo"
+            type="neutral"
+            size="small"
+            onClick={onNewChat}
+          >
+            {t(K.NEW_CHAT)}
+          </WrappedButton>
+        </div>
       </div>
     </div>
   );

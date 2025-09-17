@@ -15,6 +15,7 @@ const { defineElement, property, event } = createDecorators();
 export interface GoalCardListProps {
   goalList?: GoalItem[];
   cardStyle?: React.CSSProperties;
+  activeKey?: string;
 }
 
 /**
@@ -35,6 +36,9 @@ class GoalCardList extends ReactNextElement implements GoalCardListProps {
   })
   accessor cardStyle: React.CSSProperties | undefined;
 
+  @property()
+  accessor activeKey: string | undefined;
+
   @event({ type: "item.click" })
   accessor #itemClickEvent!: EventEmitter<GoalItem>;
   #handleItemClick = (item: GoalItem) => {
@@ -53,6 +57,12 @@ class GoalCardList extends ReactNextElement implements GoalCardListProps {
     this.#itemTitleChangeEvent.emit(item);
   };
 
+  @event({ type: "item.new.chat" })
+  accessor #itemNewChatEvent!: EventEmitter<GoalItem>;
+  #handleNewChat = (item: GoalItem) => {
+    this.#itemNewChatEvent.emit(item);
+  };
+
   render() {
     return (
       <GoalCardListComponent
@@ -61,6 +71,8 @@ class GoalCardList extends ReactNextElement implements GoalCardListProps {
         onTitleChange={this.#handleTitleChange}
         onStatusChange={this.#handleItemStatusChange}
         onItemClick={this.#handleItemClick}
+        onNewChat={this.#handleNewChat}
+        activeKey={this.activeKey}
       />
     );
   }
@@ -70,6 +82,7 @@ interface GoalCardListComponentProps extends GoalCardListProps {
   onTitleChange?: (item: GoalItem) => void;
   onStatusChange?: (item: GoalItem) => void;
   onItemClick?: (item: GoalItem) => void;
+  onNewChat?: (item: GoalItem) => void;
 }
 
 function GoalCardListComponent({
@@ -78,6 +91,8 @@ function GoalCardListComponent({
   onTitleChange,
   onStatusChange,
   onItemClick,
+  onNewChat,
+  activeKey,
 }: GoalCardListComponentProps) {
   const [goalList, setGoalList] = useState(_goalList);
 
@@ -118,10 +133,12 @@ function GoalCardListComponent({
       {goalList?.map((item) => (
         <GoalCardItem
           key={item.instanceId}
+          isActive={activeKey === item.instanceId}
           goalItem={item}
           cardStyle={cardStyle}
           onTitleChange={(v) => handleTitleChange(v, item)}
           onStatusChange={(v) => handleStatusChange(v, item)}
+          onNewChat={() => onNewChat?.(item)}
           onClick={() => onItemClick?.(item)}
         />
       ))}

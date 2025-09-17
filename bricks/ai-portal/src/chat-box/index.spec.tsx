@@ -113,4 +113,33 @@ describe("ai-portal.chat-box", () => {
       document.body.removeChild(element);
     });
   });
+
+  test("setValue and getValue integration", () => {
+    const element = document.createElement("ai-portal.chat-box") as ChatBox;
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    // 测试初始状态
+    expect(element.getValue()).toBe("");
+
+    // 测试 setValue 然后 getValue
+    act(() => {
+      element.setValue("Integration test");
+    });
+
+    expect(element.getValue()).toBe("Integration test");
+
+    // 测试清空值
+    act(() => {
+      element.setValue("");
+    });
+
+    expect(element.getValue()).toBe("");
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
 });

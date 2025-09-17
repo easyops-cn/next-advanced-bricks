@@ -11,6 +11,27 @@
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
+
+    .end {
+      .operation {
+        display: block;
+      }
+      .info {
+        display: none;
+      }
+    }
+  }
+
+  &.completed {
+    .serial-number,
+    .title {
+      color: #bfbfbf;
+    }
+  }
+
+  &.active {
+    background: rgba(37, 64, 255, 0.1);
+    border: 1px solid #2540ff;
   }
 
   > * {
@@ -21,18 +42,35 @@
   .end {
     display: flex;
     align-items: center;
-    column-gap: 16px;
-    min-width: 0;
   }
 
   .start {
     flex: 1;
+    min-width: 0;
+    column-gap: 16px;
     min-width: 0;
   }
 
   .end {
     flex-shrink: 0;
     column-gap: 30px;
+
+    .operation {
+      display: none;
+      .new-chat {
+        &::part(button) {
+          height: 28px;
+          font-size: 13px;
+          padding: 5px 10px;
+        }
+      }
+    }
+
+    .info {
+      display: inline-flex;
+      align-items: center;
+      column-gap: 16px;
+    }
   }
 
   .serial-number {
@@ -47,7 +85,6 @@
     border: 1px solid transparent;
     border-radius: 8px;
     cursor: pointer;
-    flex: 1;
     min-width: 0;
 
     &:hover {
