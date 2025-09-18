@@ -55,7 +55,7 @@ export interface GoalItem {
   conversations?: number;
   child_target?: GoalItem[];
   parent_target?: GoalItem[];
-  leader?: GoalMember;
+  owner?: GoalMember;
   users?: GoalMember[];
   instanceId: string;
   offsetX?: number;
@@ -116,7 +116,7 @@ export function GoalCardItem({
   onNewChat,
   isActive,
 }: GoalCardItemProps) {
-  const { state, index: serialNumber, title, conversations, leader } = goalItem;
+  const { state, index: serialNumber, title, conversations, owner } = goalItem;
 
   const handleStatusChange = (action: SimpleAction) => {
     onStatusChange?.(action.key as GoalState);
@@ -213,7 +213,7 @@ export function GoalCardItem({
             <span className="count">{conversations || 0}</span>
           </div>
           <WrappedEasyopsAvatar
-            nameOrInstanceId={leader?.instanceId}
+            nameOrInstanceId={owner?.instanceId}
             size="small"
           />
         </div>

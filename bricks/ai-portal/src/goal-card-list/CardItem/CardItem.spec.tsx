@@ -68,7 +68,7 @@ describe("GoalCardItem", () => {
     state: "ready",
     index: 1,
     conversations: 2,
-    leader: {
+    owner: {
       instanceId: "leader-1",
     },
   };
