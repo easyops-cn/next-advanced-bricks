@@ -25,15 +25,19 @@ ul {
   align-items: center;
   padding: 12px 24px;
   color: #262626;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
 }
 
-.item:not(:last-child) .link::part(link) {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+.item:not(:last-child) {
+  margin-bottom: 4px;
 }
 
 .link.actions-active::part(link),
 .link::part(link):hover {
   background: rgba(0, 0, 0, 0.05);
+  backdrop-filter: none;
 }
 
 .icon {
@@ -55,7 +59,7 @@ ul {
 
 .attachment {
   color: #1a7aff;
-  margin-left: 16px;
+  margin-left: 8px;
 }
 
 .header {
@@ -65,7 +69,6 @@ ul {
 
 .description {
   color: #595959;
-  margin-top: 6px;
   padding-left: 28px;
   line-height: 20px;
 }
@@ -90,6 +93,7 @@ ul {
 
 .link.actions-active .avatar,
 .link:hover .avatar,
+.link:hover .time,
 .link:not(:hover):not(.actions-active) .actions {
   display: none;
 }

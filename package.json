@@ -48,7 +48,7 @@
     "@cypress/browserify-preprocessor": "^3.0.2",
     "@next-bricks/basic": "^1.58.1",
     "@next-bricks/containers": "^1.15.1",
-    "@next-bricks/icons": "^1.5.2",
+    "@next-bricks/icons": "^1.5.4",
     "@next-bricks/illustrations": "^1.4.12",
     "@next-bricks/shoelace": "^1.1.6",
     "@next-core/babel-preset-next": "^1.0.26",

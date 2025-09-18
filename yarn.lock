@@ -3180,10 +3180,10 @@
   resolved "https://registry.yarnpkg.com/@next-bricks/containers/-/containers-1.15.1.tgz#934afa0190e52e4d69efd65bf4406996d9a79575"
   integrity sha512-Jr0b8QD7GuESD+NHl2BU1IrIRQPyBz97157cydJ/N8m2KYgUnt7towKLmimrG4JtgGkBXP0hoRr5p5v5yTZEgQ==
 
-"@next-bricks/icons@^1.5.2":
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/@next-bricks/icons/-/icons-1.5.2.tgz#ad957cd76620233b14a586762c425897a008e3ac"
-  integrity sha512-wJaLYc4/+3cGFhL+Zaz7lGm2XlLczLfZmNv0BrF/MVk2J7c4rJWd3voExkEufAZZQeNSP/2SfCo3FTd9/9HDJw==
+"@next-bricks/icons@^1.5.4":
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/@next-bricks/icons/-/icons-1.5.4.tgz#998873b4108fa7b2da70df3c9e6b606442e15853"
+  integrity sha512-TMDAe3D9agajjvwU6JR7V+7Kaiucj0m04SOk51RpOYN3VFDtRtPWZYFKrw3QhW+pSHmzc4FpiYl3Gr7pkZIsug==
 
 "@next-bricks/illustrations@^1.4.12":
   version "1.4.12"

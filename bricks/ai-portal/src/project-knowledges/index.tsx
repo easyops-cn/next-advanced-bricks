@@ -8,7 +8,6 @@ import type {
   GeneralIcon,
   GeneralIconProps,
 } from "@next-bricks/icons/general-icon";
-import type { AvatarProps, EoAvatar } from "@next-bricks/basic/avatar";
 import type {
   ActionType,
   EoMiniActions,
@@ -22,12 +21,19 @@ import classNames from "classnames";
 // import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
 import { parseTemplate } from "../shared/parseTemplate.js";
+import {
+  EoEasyopsAvatar,
+  EoEasyopsAvatarProps,
+} from "@next-bricks/basic/easyops-avatar";
 
 // initializeI18n(NS, locales);
 
 const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
-const WrappedAvatar = wrapBrick<EoAvatar, AvatarProps>("eo-avatar");
+
+const WrappedAvatar = wrapBrick<EoEasyopsAvatar, EoEasyopsAvatarProps>(
+  "eo-easyops-avatar"
+);
 const WrappedMiniActions = wrapBrick<
   EoMiniActions,
   EoMiniActionsProps,
@@ -47,10 +53,11 @@ export interface ProjectKnowledgesProps {
 }
 
 export interface Knowledge {
-  knowledgeId: string;
-  title: string;
-  time: number;
+  instanceId: string;
+  name: string;
   description?: string;
+  time: number;
+  user?: string;
 }
 
 export interface ActionClickDetail {
@@ -81,8 +88,15 @@ class ProjectKnowledges
   @event({ type: "action.click" })
   accessor #actionClick!: EventEmitter<ActionClickDetail>;
 
+  @event({ type: "item.click" })
+  accessor #itemClick!: EventEmitter<Knowledge>;
+
   #handleActionClick = (detail: ActionClickDetail) => {
     this.#actionClick.emit(detail);
+  };
+
+  #handleItemClick = (item: Knowledge) => {
+    this.#itemClick.emit(item);
   };
 
   render() {
@@ -92,6 +106,7 @@ class ProjectKnowledges
         urlTemplate={this.urlTemplate}
         actions={this.actions}
         onActionClick={this.#handleActionClick}
+        onItemClick={this.#handleItemClick}
       />
     );
   }
@@ -99,6 +114,7 @@ class ProjectKnowledges
 
 interface ProjectKnowledgesComponentProps extends ProjectKnowledgesProps {
   onActionClick: (detail: ActionClickDetail) => void;
+  onItemClick?: (item: Knowledge) => void;
 }
 
 function ProjectKnowledgesComponent({
@@ -106,6 +122,7 @@ function ProjectKnowledgesComponent({
   urlTemplate,
   actions,
   onActionClick,
+  onItemClick,
 }: ProjectKnowledgesComponentProps) {
   if (!list) {
     return (
@@ -118,12 +135,13 @@ function ProjectKnowledgesComponent({
   return (
     <ul>
       {list?.map((item) => (
-        <li className="item" key={item.knowledgeId}>
+        <li className="item" key={item.instanceId}>
           <KnowledgeLink
             knowledge={item}
             urlTemplate={urlTemplate}
             actions={actions}
             onActionClick={onActionClick}
+            onItemClick={onItemClick}
           />
         </li>
       ))}
@@ -134,7 +152,7 @@ function ProjectKnowledgesComponent({
 interface KnowledgeLinkProps
   extends Pick<
     ProjectKnowledgesComponentProps,
-    "urlTemplate" | "actions" | "onActionClick"
+    "urlTemplate" | "actions" | "onActionClick" | "onItemClick"
   > {
   knowledge: Knowledge;
 }
@@ -144,6 +162,7 @@ function KnowledgeLink({
   urlTemplate,
   actions,
   onActionClick,
+  onItemClick,
 }: KnowledgeLinkProps) {
   const [actionsVisible, setActionsVisible] = useState(false);
 
@@ -151,11 +170,17 @@ function KnowledgeLink({
     <WrappedLink
       className={classNames("link", { "actions-active": actionsVisible })}
       url={parseTemplate(urlTemplate, knowledge)}
+      onClick={() => onItemClick?.(knowledge)}
     >
       <div className="main">
         <div className="header">
-          <WrappedIcon className="icon" lib="lucide" icon="clock" />
-          <span className="title">{knowledge.title}</span>
+          <WrappedIcon
+            className="icon"
+            lib="easyops"
+            icon="lightbulb"
+            category="common"
+          />
+          <span className="title">{knowledge.name}</span>
           <WrappedIcon className="attachment" lib="lucide" icon="paperclip" />
         </div>
         {knowledge.description && (
@@ -176,7 +201,11 @@ function KnowledgeLink({
             setActionsVisible(e.detail);
           }}
         />
-        <WrappedAvatar className="avatar" size="small" /* bordered */ />
+        <WrappedAvatar
+          className="avatar"
+          size="small"
+          nameOrInstanceId={knowledge.user}
+        />
       </div>
     </WrappedLink>
   );
