@@ -50,6 +50,7 @@ const WELL_KNOWN_WORDS: string[] = [
     "screenshot",
     "plugin",
     "inline",
+    "fallback",
   ].flatMap((word) => [word, `${word}s`]),
   ...["checkbox", "regex"].flatMap((word) => [word, `${word}es`]),
   "antd",
@@ -146,6 +147,7 @@ const WELL_KNOWN_WORDS: string[] = [
   "elif",
   "ascii",
   "strftime",
+  "refetch",
 ];
 
 export interface SpellCheckRequest {
