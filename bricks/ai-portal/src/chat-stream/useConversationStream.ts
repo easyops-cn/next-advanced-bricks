@@ -12,7 +12,6 @@ export function useConversationStream(
     if (!conversation) {
       return {
         messages: [],
-        inputRequiredJobId: null,
         lastToolCallJobId: null,
       };
     }
@@ -59,10 +58,23 @@ export function useConversationStream(
           role: "assistant",
           jobs: [],
         };
-        continue;
+      } else {
+        prevAssistantMessage.jobs.push(job);
       }
 
-      prevAssistantMessage.jobs.push(job);
+      if (job.humanAction) {
+        if (prevAssistantMessage.jobs.length > 0) {
+          messages.push(prevAssistantMessage);
+        }
+        messages.push({
+          role: "user",
+          content: job.humanAction,
+        });
+        prevAssistantMessage = {
+          role: "assistant",
+          jobs: [],
+        };
+      }
     }
 
     if (error != null) {

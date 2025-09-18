@@ -1,5 +1,5 @@
 import type { JSONSchema } from "./json-schema";
-import type { GeneratedView } from "../shared/interfaces";
+import type { GeneratedView, HumanAction } from "../shared/interfaces";
 
 export type RangeTuple = [min: number, max: number];
 export type SizeTuple = [width: number, height: number];
@@ -152,6 +152,12 @@ export interface Job {
 
   generatedView?: GeneratedView;
   level?: number;
+
+  // 要求用户选择动作
+  requestHumanAction?: HumanAction;
+
+  // 用户选择的动作
+  humanAction?: string;
 }
 
 export interface TaskPatch extends Omit<Partial<Task>, "jobs"> {

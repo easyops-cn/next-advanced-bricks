@@ -6,7 +6,7 @@ export interface TaskContextValue {
   workspace?: string;
   previewUrlTemplate?: string;
 
-  humanInput: (jobId: string, input: string) => void;
+  humanInput: (jobId: string, input: string | null, action?: string) => void;
   onShare: () => void;
   onTerminate: () => void;
   supports?: Record<string, boolean>;

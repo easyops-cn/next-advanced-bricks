@@ -71,10 +71,7 @@ export function LegacyChatStreamComponent(
   const pageTitle = task?.title ?? "";
   const taskState = task?.state;
   const taskDone = DONE_STATES.includes(taskState!);
-  const { messages, inputRequiredJobId, lastToolCallJobId } = useTaskStream(
-    task,
-    jobs
-  );
+  const { messages, lastToolCallJobId } = useTaskStream(task, jobs);
 
   const views = useMemo(() => {
     return jobs?.flatMap((job) =>
@@ -169,7 +166,7 @@ export function LegacyChatStreamComponent(
   }, [error]);
 
   const humanInput = useCallback(
-    (jobId: string, input: string) => {
+    (jobId: string, input: string | null) => {
       humanInputRef.current?.(jobId, input);
     },
     [humanInputRef]
@@ -360,11 +357,7 @@ export function LegacyChatStreamComponent(
                     watchAgain={watchAgain}
                   />
                 ) : (
-                  <ChatBox
-                    state={taskState}
-                    canChat={taskDone && !!inputRequiredJobId}
-                    inputRequiredJobId={inputRequiredJobId}
-                  />
+                  <ChatBox state={taskState} canChat={false} />
                 )}
               </div>
             </div>

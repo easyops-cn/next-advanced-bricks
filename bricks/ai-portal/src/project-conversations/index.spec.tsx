@@ -34,7 +34,7 @@ describe("ai-portal.project-conversations", () => {
         conversationId: "1",
         title: "Conversation 1",
         startTime: 1757904096,
-        goal: "GOAL0005",
+        goalInstanceId: "g-05",
       },
       {
         conversationId: "2",
@@ -43,6 +43,7 @@ describe("ai-portal.project-conversations", () => {
         description: "This is a description",
       },
     ];
+    element.goals = [{ instanceId: "g-05", title: "GOAL0005" }];
 
     const onGoalClick = jest.fn();
     element.addEventListener("goal.click", (event) => {

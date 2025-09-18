@@ -20,6 +20,12 @@ import type { copyToClipboard as _copyToClipboard } from "@next-bricks/basic/dat
 import { PopoverProps, Popover } from "@next-bricks/basic/popover";
 import { EoNextTable, NextTableProps } from "@next-bricks/advanced/next-table";
 import type { IconButton, IconButtonProps } from "../icon-button";
+import type {
+  ChatInput,
+  ChatInputEvents,
+  ChatInputMapEvents,
+  ChatInputProps,
+} from "../chat-input";
 
 export const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
@@ -44,6 +50,16 @@ export const WrappedDrawer = wrapBrick<
 export const WrappedIconButton = wrapBrick<IconButton, IconButtonProps>(
   "ai-portal.icon-button"
 );
+
+export const WrappedChatInput = wrapBrick<
+  ChatInput,
+  ChatInputProps,
+  ChatInputEvents,
+  ChatInputMapEvents
+>("ai-portal.chat-input", {
+  onMessageSubmit: "message.submit",
+  onTerminate: "terminate",
+});
 
 export const showDialog =
   unwrapProvider<typeof _showDialog>("basic.show-dialog");

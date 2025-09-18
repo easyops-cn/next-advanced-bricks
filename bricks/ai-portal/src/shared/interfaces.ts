@@ -102,10 +102,10 @@ export interface Job {
   humanAction?: string;
 }
 
-export type HumanAction = HumanActionConfirmPlan | HumanActionSelect;
+export type HumanAction = HumanActionConfirm | HumanActionSelect;
 
-export interface HumanActionConfirmPlan {
-  type: "confirm-plan";
+export interface HumanActionConfirm {
+  type: "confirm";
   confirmText: string;
 }
 

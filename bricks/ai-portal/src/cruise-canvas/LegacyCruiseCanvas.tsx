@@ -219,7 +219,7 @@ export function LegacyCruiseCanvasComponent(
   }, [error]);
 
   const humanInput = useCallback(
-    (jobId: string, input: string) => {
+    (jobId: string, input: string | null) => {
       humanInputRef.current?.(jobId, input);
     },
     [humanInputRef]

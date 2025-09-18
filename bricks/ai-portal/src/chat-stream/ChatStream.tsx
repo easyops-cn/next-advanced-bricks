@@ -176,8 +176,8 @@ export function ChatStreamComponent(
   }, [pageTitle]);
 
   const humanInput = useCallback(
-    (jobId: string, input: string) => {
-      humanInputRef.current?.(jobId, input);
+    (jobId: string, input: string | null, action?: string) => {
+      humanInputRef.current?.(jobId, input, action);
     },
     [humanInputRef]
   );
