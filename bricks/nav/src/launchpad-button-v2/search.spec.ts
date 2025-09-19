@@ -46,6 +46,17 @@ describe("search", () => {
               id: "dir-cmdb-custom",
               name: "Dir Custom",
             },
+            {
+              type: "custom",
+              id: "hyper-deploy",
+              name: "Hyper Deploy",
+              localeName: "双态部署",
+            },
+            {
+              type: "test",
+              id: "test",
+              name: "test",
+            },
           ],
         },
       ],
@@ -118,6 +129,26 @@ describe("search", () => {
   },
 ]
 `);
+    expect(search(allMenuGroups, "双态部署")).toEqual([
+      {
+        items: [
+          {
+            items: [
+              {
+                id: "hyper-deploy",
+                localeName: "双态部署",
+                name: "Hyper Deploy",
+                type: "custom",
+              },
+            ],
+            name: "extends",
+            type: "dir",
+          },
+        ],
+        name: "IT 资源管理",
+      },
+    ]);
+    expect(search(allMenuGroups, "test")).toEqual([]);
   });
 });
 

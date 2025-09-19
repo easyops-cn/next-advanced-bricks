@@ -22,16 +22,16 @@ export function search(
         .map((item) => {
           switch (item.type) {
             case "app":
-              return matchMenuItemApp(item, lowerQ);
+              return matchMenuItem<MenuItemDataApp>(item, lowerQ);
             case "custom":
-              return matchMenuItemCustom(item, lowerQ);
+              return matchMenuItem<MenuItemDataCustom>(item, lowerQ);
             case "dir": {
               const filteredSubItems = item.items
                 .map((sub) =>
                   sub.type === "app"
-                    ? matchMenuItemApp(sub, lowerQ)
+                    ? matchMenuItem<MenuItemDataApp>(sub, lowerQ)
                     : sub.type === "custom"
-                      ? matchMenuItemCustom(sub, lowerQ)
+                      ? matchMenuItem<MenuItemDataCustom>(sub, lowerQ)
                       : null
                 )
                 .filter(Boolean) as MenuItemData[];
@@ -67,9 +67,9 @@ export function searchCategories(
       .map((item) => {
         switch (item.type) {
           case "app":
-            return matchMenuItemApp(item, lowerQ);
+            return matchMenuItem<MenuItemDataApp>(item, lowerQ);
           case "custom":
-            return matchMenuItemCustom(item, lowerQ);
+            return matchMenuItem<MenuItemDataCustom>(item, lowerQ);
         }
       })
       // Ignore not matched items
@@ -78,18 +78,21 @@ export function searchCategories(
   return _categories;
 }
 
-function matchMenuItemApp(item: MenuItemDataApp, lowerQ: string) {
-  return item.id.toLowerCase().includes(lowerQ) ||
-    item.name.toLowerCase().includes(lowerQ) ||
-    (item.description && item.description.toLowerCase().includes(lowerQ))
-    ? item
-    : null;
-}
+type MenuItemBase = {
+  id: string;
+  name: string;
+  localeName?: string;
+  description?: string;
+};
 
-function matchMenuItemCustom(item: MenuItemDataCustom, lowerQ: string) {
-  return item.id.toLowerCase().includes(lowerQ) ||
-    item.name.toLowerCase().includes(lowerQ) ||
-    (item.description && item.description.toLowerCase().includes(lowerQ))
+function matchMenuItem<T extends MenuItemBase>(
+  item: T,
+  lowerQ: string
+): T | null {
+  const { id, name, localeName, description } = item;
+  return [id, name, localeName, description].some((field) =>
+    field?.toLowerCase().includes(lowerQ)
+  )
     ? item
     : null;
 }
