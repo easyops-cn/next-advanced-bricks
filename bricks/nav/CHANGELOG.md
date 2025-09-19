@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.24.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.24.7...@next-bricks/nav@1.24.8) (2025-09-19)
+
+
+### Bug Fixes
+
+* 【7.11en】快捷访问，存在双态部署小产品，但是搜索“双态”，搜索结果不显示 ([d9c87b5](https://github.com/easyops-cn/next-advanced-bricks/commit/d9c87b5146a2e8c638f0b940da294c8a8853f363))
+
+
+
+
+
 ## [1.24.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.24.6...@next-bricks/nav@1.24.7) (2025-08-25)
 
 **Note:** Version bump only for package @next-bricks/nav
