@@ -36,11 +36,6 @@ export interface ChatBoxProps {
   autoFocus?: boolean;
 }
 
-export interface Suggestion {
-  title: string;
-  content: string;
-}
-
 export interface ChatBoxRef {
   setValue: (value: string) => void;
   getValue: () => string;
@@ -97,7 +92,7 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
 
 export interface ChatBoxComponentProps extends ChatBoxProps {
   // Define react event handlers here.
-  onSubmit?: (value: string) => void;
+  onSubmit: (value: string) => void;
   ref?: React.Ref<ChatBoxRef>;
 }
 
@@ -123,7 +118,7 @@ export function LegacyChatBoxComponent(
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLTextAreaElement>) => {
       if (e.currentTarget.value) {
-        onSubmit?.(e.currentTarget.value);
+        onSubmit(e.currentTarget.value);
       }
     },
     [onSubmit]
@@ -138,7 +133,7 @@ export function LegacyChatBoxComponent(
   );
 
   const handleSubmitClick = useCallback(() => {
-    onSubmit?.(valueRef.current);
+    onSubmit(valueRef.current);
   }, [onSubmit]);
 
   useEffect(

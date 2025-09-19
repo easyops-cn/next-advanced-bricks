@@ -11,7 +11,6 @@ export function useTaskStream(
     if (!task) {
       return {
         messages: [],
-        inputRequiredJobId: null,
         lastToolCallJobId: null,
       };
     }
@@ -29,7 +28,6 @@ export function useTaskStream(
       role: "assistant",
       jobs: [],
     };
-    let inputRequiredJobId: string | null = null;
     let lastToolCallJobId: string | null = null;
     for (const jobId of list) {
       const job = jobMap.get(jobId)!;
@@ -93,14 +91,10 @@ export function useTaskStream(
           jobs: [],
         };
       }
-
-      if (askUser && job.state === "input-required") {
-        inputRequiredJobId = jobId;
-      }
     }
 
     messages.push(prevAssistantMessage);
 
-    return { messages, inputRequiredJobId, lastToolCallJobId };
+    return { messages, lastToolCallJobId };
   }, [task, jobs]);
 }

@@ -1,3 +1,15 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 .container {
   background-color: #fff;
   border: 2px solid #7891ff;

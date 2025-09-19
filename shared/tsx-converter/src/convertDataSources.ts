@@ -17,6 +17,7 @@ export function convertDataSources(
       transform,
       rejectTransform,
       config,
+      scope,
     }) => {
       const hasEnabled =
         config && Object.prototype.hasOwnProperty.call(config, "enabled");
@@ -68,6 +69,7 @@ export function convertDataSources(
               value: config.fallback,
             }
           : null),
+        ...(scope === "template" ? { expose: false } : null),
       };
     }
   );

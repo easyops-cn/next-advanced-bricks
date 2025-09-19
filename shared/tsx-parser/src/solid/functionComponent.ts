@@ -116,9 +116,9 @@ export function constructFunctionComponent(
             const value = constructJsValue(prop.value.right, result, {
               allowExpression: true,
             });
-            variables.push({ name: varName, value });
+            variables.push({ name: varName, expose: true, value });
           } else {
-            variables.push({ name: varName });
+            variables.push({ name: varName, expose: true });
           }
         }
       }
@@ -208,7 +208,7 @@ export function constructFunctionComponent(
                 const varName = firstArg.name;
                 const args = dec.init.arguments;
                 if (args.length === 0) {
-                  variables.push({ name: varName });
+                  variables.push({ name: varName, expose: false });
                 } else {
                   if (args.length > 1) {
                     result.errors.push({
@@ -220,7 +220,7 @@ export function constructFunctionComponent(
                   const value = constructJsValue(args[0], result, {
                     allowExpression: true,
                   });
-                  variables.push({ name: varName, value });
+                  variables.push({ name: varName, expose: false, value });
                 }
                 continue;
               }

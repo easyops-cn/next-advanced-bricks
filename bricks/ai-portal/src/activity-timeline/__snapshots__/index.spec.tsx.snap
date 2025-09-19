@@ -1,0 +1,227 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ai-portal.activity-timeline basic usage 1`] = `
+NodeList [
+  <style>
+    styles.shadow.css
+  </style>,
+  <ul>
+    <li
+      class="activity"
+    >
+      <div
+        class="guide-line"
+      />
+      <div
+        class="main"
+      >
+        <eo-easyops-avatar
+          class="avatar"
+          nameorinstanceid="u001"
+          size="xs"
+        />
+        <span
+          class="user"
+        >
+          Tom
+        </span>
+         
+        <span
+          class="action"
+        >
+          created this goal
+        </span>
+        <span
+          class="time"
+          title="September 14, 2025 20:39"
+        >
+          3 days ago
+        </span>
+      </div>
+    </li>
+    <li
+      class="activity"
+    >
+      <div
+        class="guide-line"
+      />
+      <div
+        class="main"
+      >
+        <eo-easyops-avatar
+          class="avatar"
+          nameorinstanceid="u001"
+          size="xs"
+        />
+        <span
+          class="user"
+        >
+          Tom
+        </span>
+         
+        <span
+          class="action"
+        >
+          set Lucy as the owner
+        </span>
+        <span
+          class="time"
+          title="September 14, 2025 23:26"
+        >
+          3 days ago
+        </span>
+      </div>
+    </li>
+    <li
+      class="activity"
+    >
+      <div
+        class="guide-line"
+      />
+      <div
+        class="main"
+      >
+        <eo-easyops-avatar
+          class="avatar"
+          nameorinstanceid="u002"
+          size="xs"
+        />
+        <span
+          class="user"
+        >
+          Lucy
+        </span>
+         
+        <span
+          class="action"
+        >
+          <span>
+            started a chat
+          </span>
+          <eo-link
+            class="conversation"
+            target="_blank"
+          >
+            项目规划
+          </eo-link>
+          <eo-icon
+            class="external-link-icon"
+            icon="external-link"
+            lib="lucide"
+          />
+        </span>
+        <span
+          class="time"
+          title="September 15, 2025 10:41"
+        >
+          3 days ago
+        </span>
+      </div>
+    </li>
+    <li
+      class="activity"
+    >
+      <div
+        class="guide-line"
+      />
+      <div
+        class="main"
+      >
+        <eo-easyops-avatar
+          class="avatar"
+          nameorinstanceid="u002"
+          size="xs"
+        />
+        <span
+          class="user"
+        >
+          Lucy
+        </span>
+         
+        <span
+          class="action"
+        >
+          decomposed this goal to 2 sub-goals: 先计划, 再执行
+        </span>
+        <span
+          class="time"
+          title="September 15, 2025 10:41"
+        >
+          3 days ago
+        </span>
+      </div>
+    </li>
+    <li
+      class="activity"
+    >
+      <div
+        class="guide-line"
+      />
+      <div
+        class="main"
+      >
+        <eo-easyops-avatar
+          class="avatar"
+          nameorinstanceid="u002"
+          size="xs"
+        />
+        <span
+          class="user"
+        >
+          Lucy
+        </span>
+         
+        <span
+          class="action"
+        >
+          removed a goal member: Jim; added 2 goal members: Joy, Green
+        </span>
+        <span
+          class="time"
+          title="September 15, 2025 10:41"
+        >
+          3 days ago
+        </span>
+      </div>
+    </li>
+    <li
+      class="activity"
+    >
+      <div
+        class="guide-line"
+      />
+      <div
+        class="main"
+      >
+        <eo-easyops-avatar
+          class="avatar"
+          nameorinstanceid="u001"
+          size="xs"
+        />
+        <span
+          class="user"
+        >
+          Tom
+        </span>
+         
+        <span
+          class="action"
+        >
+          commented
+        </span>
+        <span
+          class="time"
+          title="September 15, 2025 10:41"
+        >
+          3 days ago
+        </span>
+      </div>
+      <div
+        class="comment"
+      >
+        Good!
+      </div>
+    </li>
+  </ul>,
+]
+`;

@@ -21,3 +21,5 @@ import "./action-buttons/index.js";
 import "./goal-card-list/index.js";
 import "./project-conversations/index.js";
 import "./project-knowledges/index.js";
+import "./activity-timeline/index.js";
+import "./chat-input/index.js";

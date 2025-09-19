@@ -128,6 +128,8 @@ function mergeJobs(
         "hidden",
         "startTime",
         "endTime",
+        "requestHumanAction",
+        "humanAction",
       ]);
       if (Array.isArray(messagesPatch) && messagesPatch.length > 0) {
         restMessagesPatch.messages = mergeMessages([

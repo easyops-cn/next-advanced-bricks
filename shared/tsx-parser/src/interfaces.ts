@@ -47,6 +47,7 @@ export interface ParseError {
 export interface Variable {
   name: string;
   value?: unknown;
+  expose?: boolean;
 }
 
 export interface DataSource {

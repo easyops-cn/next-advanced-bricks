@@ -216,8 +216,8 @@ export function CruiseCanvasComponent(
   }, [pageTitle]);
 
   const humanInput = useCallback(
-    (jobId: string, input: string) => {
-      humanInputRef.current?.(jobId, input);
+    (jobId: string, input: string | null, action?: string) => {
+      humanInputRef.current?.(jobId, input, action);
     },
     [humanInputRef]
   );
@@ -798,6 +798,7 @@ export function CruiseCanvasComponent(
                   !DONE_STATES.includes(node.state!) &&
                   !GENERAL_DONE_STATES.includes(conversationState!)
                 }
+                isLeaf={!nonLeafNodes.has(node.id)}
                 x={node.view?.x}
                 y={node.view?.y}
                 active={activeNodeId === node.id}
@@ -859,6 +860,7 @@ interface NodeComponentProps {
   state?: JobState;
   startTime?: number;
   instructionLoading?: boolean;
+  isLeaf?: boolean;
   x?: number;
   y?: number;
   active?: boolean;
@@ -872,6 +874,7 @@ function NodeComponent({
   content,
   startTime,
   instructionLoading,
+  isLeaf,
   x,
   y,
   active,
@@ -950,7 +953,7 @@ function NodeComponent({
       ) : type === "view" ? (
         <NodeView job={job!} active={active} />
       ) : (
-        <NodeJob state={state} job={job!} active={active} />
+        <NodeJob state={state} job={job!} active={active} isLeaf={isLeaf} />
       )}
     </div>
   );

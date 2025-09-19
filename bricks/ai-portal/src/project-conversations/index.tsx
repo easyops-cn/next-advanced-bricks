@@ -49,6 +49,7 @@ export interface ProjectConversationsProps {
   list?: Conversation[];
   urlTemplate?: string;
   actions?: ActionType[];
+  goals?: Goal[];
 }
 
 export interface Conversation {
@@ -56,13 +57,18 @@ export interface Conversation {
   title: string;
   startTime: number;
   description?: string;
-  goal?: string;
+  goalInstanceId?: string;
   username?: string;
 }
 
 export interface ActionClickDetail {
   action: SimpleActionType;
   item: Conversation;
+}
+
+export interface Goal {
+  instanceId: string;
+  title: string;
 }
 
 /**
@@ -85,6 +91,9 @@ class ProjectConversations
   @property({ attribute: false })
   accessor actions: ActionType[] | undefined;
 
+  @property({ attribute: false })
+  accessor goals: Goal[] | undefined;
+
   @event({ type: "goal.click" })
   accessor #goalClick!: EventEmitter<Conversation>;
 
@@ -105,6 +114,7 @@ class ProjectConversations
         list={this.list}
         urlTemplate={this.urlTemplate}
         actions={this.actions}
+        goals={this.goals}
         onGoalClick={this.#handleGoalClick}
         onActionClick={this.#handleActionClick}
       />
@@ -121,6 +131,7 @@ function ProjectConversationsComponent({
   list,
   urlTemplate,
   actions,
+  goals,
   onGoalClick,
   onActionClick,
 }: ProjectConversationsComponentProps) {
@@ -134,12 +145,13 @@ function ProjectConversationsComponent({
 
   return (
     <ul>
-      {list?.map((item) => (
+      {list.map((item) => (
         <li className="item" key={item.conversationId}>
           <ConversationLink
             conversation={item}
             urlTemplate={urlTemplate}
             actions={actions}
+            goals={goals}
             onGoalClick={onGoalClick}
             onActionClick={onActionClick}
           />
@@ -152,7 +164,7 @@ function ProjectConversationsComponent({
 interface ConversationLinkProps
   extends Pick<
     ProjectConversationsComponentProps,
-    "urlTemplate" | "actions" | "onGoalClick" | "onActionClick"
+    "urlTemplate" | "actions" | "goals" | "onGoalClick" | "onActionClick"
   > {
   conversation: Conversation;
 }
@@ -161,6 +173,7 @@ function ConversationLink({
   conversation,
   urlTemplate,
   actions,
+  goals,
   onGoalClick,
   onActionClick,
 }: ConversationLinkProps) {
@@ -203,14 +216,19 @@ function ConversationLink({
           <div className="description">{conversation.description}</div>
         )}
       </div>
-      <div
-        className={classNames("goal", {
-          global: !conversation.goal,
-        })}
-        ref={goalRef}
-      >
-        {conversation.goal || t(K.PROJECT_OVERALL)}
-      </div>
+      {goals && (
+        <div
+          className={classNames("goal", {
+            global: !conversation.goalInstanceId,
+          })}
+          ref={goalRef}
+        >
+          {conversation.goalInstanceId
+            ? goals.find((g) => g.instanceId === conversation.goalInstanceId)
+                ?.title
+            : t(K.PROJECT_OVERALL)}
+        </div>
+      )}
       <WrappedAvatar
         className="avatar"
         size="small"
@@ -227,7 +245,15 @@ function ConversationLink({
             setActionsVisible(e.detail);
           }}
         />
-        <div className="time">
+        <div
+          className="time"
+          title={
+            humanizeTime(
+              conversation.startTime * 1000,
+              HumanizeTimeFormat.full
+            )!
+          }
+        >
           {humanizeTime(
             conversation.startTime * 1000,
             HumanizeTimeFormat.relative

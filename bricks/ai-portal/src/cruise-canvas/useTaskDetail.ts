@@ -23,7 +23,7 @@ export function useTaskDetail(
     })
   );
 
-  const humanInputRef = useRef<(jobId: string, input: string) => void>();
+  const humanInputRef = useRef<(jobId: string, input: string | null) => void>();
   const resumedRef = useRef<() => void>();
 
   const replayListRef = useRef<TaskPatch[] | null>(null);
@@ -137,7 +137,7 @@ export function useTaskDetail(
 
     resumedRef.current = makeRequest;
 
-    humanInputRef.current = async (jobId: string, input: string) => {
+    humanInputRef.current = async (jobId: string, input: string | null) => {
       try {
         await http.post(
           `${getBasePath()}api/gateway/logic.llm.aiops_service/api/v1/llm/agent/flow/${taskId}/job/${jobId}`,

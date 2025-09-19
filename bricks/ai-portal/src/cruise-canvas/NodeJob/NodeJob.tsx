@@ -31,6 +31,7 @@ import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
 import { CmdbInstanceDetail } from "../CmdbInstanceDetail/CmdbInstanceDetail";
 import { FileList } from "../FileList/FileList";
 import { TaskContext } from "../../shared/TaskContext";
+import { RequestHumanAction } from "../../shared/RequestHumanAction/RequestHumanAction";
 
 // 当 markdown 中包含超过 4 列的表格时，对节点使用大尺寸样式
 const RegExpLargeTableInMarkdown = /^\s*\|(?:\s*:?-+:?\s*\|){4,}\s*$/m;
@@ -39,9 +40,15 @@ export interface NodeJobProps {
   job: Job;
   state?: JobState;
   active?: boolean;
+  isLeaf?: boolean;
 }
 
-export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
+export function NodeJob({
+  job,
+  state,
+  active,
+  isLeaf,
+}: NodeJobProps): JSX.Element {
   const toolTitle = job.toolCall?.annotations?.title;
   const toolName = job.toolCall?.name;
   const askUser = toolName === "ask_human";
@@ -244,6 +251,12 @@ export function NodeJob({ job, state, active }: NodeJobProps): JSX.Element {
           <CmdbInstanceDetail key={index} {...detail} />
         ))}
         {files.length > 0 && <FileList files={files} large={sizeLarge} />}
+        {isLeaf &&
+          !job.humanAction &&
+          job.requestHumanAction &&
+          (job.state === "working" || job.state === "input-required") && (
+            <RequestHumanAction action={job.requestHumanAction} />
+          )}
       </div>
     </div>
   );

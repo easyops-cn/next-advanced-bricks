@@ -120,6 +120,16 @@ export function useConversationGraph(
         });
       }
 
+      if (job.humanAction) {
+        const humanActionNodeId = `human-action:${job.id}`;
+        nodes.push({
+          type: "requirement",
+          id: humanActionNodeId,
+          content: job.humanAction,
+        });
+        nodeIds.push(humanActionNodeId);
+      }
+
       jobNodesMap.set(jobId, nodeIds);
       if (userInput !== undefined && job.state === "completed") {
         userInputNodes.push(nodeIds[nodeIds.length - 1]);
