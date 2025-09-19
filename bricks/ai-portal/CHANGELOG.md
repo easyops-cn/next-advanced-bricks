@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.40.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.39.7...@next-bricks/ai-portal@0.40.0) (2025-09-19)
+
+
+### Bug Fixes
+
+* add loading status ([d434e6c](https://github.com/easyops-cn/next-advanced-bricks/commit/d434e6c0bcd6abe1a2bb72b19e1e5ee8ed66197a))
+
+
+### Features
+
+* new bricks: chat-input, activity-timeline ([db1d0f3](https://github.com/easyops-cn/next-advanced-bricks/commit/db1d0f37adb7f299afc48f4b2a4a59c37228bd86))
+
+
+
+
+
 ## [0.39.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.39.6...@next-bricks/ai-portal@0.39.7) (2025-09-18)
 
 
