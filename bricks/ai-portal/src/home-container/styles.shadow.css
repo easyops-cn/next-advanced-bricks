@@ -1,5 +1,6 @@
 :host {
   display: block;
+  padding: 24px 54px 72px;
 }
 
 :host([hidden]) {
@@ -17,4 +18,11 @@
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
+}
+
+@media (max-width: 719px) {
+  :host {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
 }

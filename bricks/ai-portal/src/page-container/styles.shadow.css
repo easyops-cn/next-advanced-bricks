@@ -72,3 +72,13 @@ h1 {
     margin: 0 8px;
   }
 }
+
+@media (max-width: 719px) {
+  :host {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .header {
+    margin-left: 40px;
+  }
+}

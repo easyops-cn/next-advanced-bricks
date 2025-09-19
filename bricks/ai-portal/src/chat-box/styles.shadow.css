@@ -15,6 +15,7 @@
   background: url("./images/bg.png") no-repeat center bottom;
   background-size: 100% 104px;
   padding: 12px 12px 29px;
+  margin: 0 -12px;
 }
 
 .container {

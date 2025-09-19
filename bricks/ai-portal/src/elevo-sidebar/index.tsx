@@ -9,7 +9,7 @@ import React, {
   useState,
 } from "react";
 import { createDecorators, type EventEmitter } from "@next-core/element";
-import { ReactNextElement } from "@next-core/react-element";
+import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
 import { i18n, initializeI18n } from "@next-core/i18n";
 import { getHistory } from "@next-core/runtime";
@@ -19,7 +19,6 @@ import type { ActionType } from "@next-bricks/basic/mini-actions";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
-import ElevoLogo from "./images/logo@2x.png";
 import {
   WrappedDropdownActions,
   WrappedEasyopsAvatar,
@@ -45,6 +44,8 @@ const SIDEBAR_ICON: GeneralIconProps = {
   lib: "easyops",
   icon: "sidebar",
 };
+
+const WrappedElevoLogo = wrapBrick("ai-portal.elevo-logo");
 
 const { defineElement, property, event, method } = createDecorators();
 
@@ -350,13 +351,7 @@ function LegacyElevoSidebarComponent(
       <div className="sidebar">
         <div className="logo-bar">
           <WrappedLink url={logoUrl} className="logo-link">
-            <img
-              className="logo"
-              alt="Elevo"
-              src={ElevoLogo}
-              width={95}
-              height={28}
-            />
+            <WrappedElevoLogo />
           </WrappedLink>
           <WrappedIconButton
             icon={SIDEBAR_ICON}
