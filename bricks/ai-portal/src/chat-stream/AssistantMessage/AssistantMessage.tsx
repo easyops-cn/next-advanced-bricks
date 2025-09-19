@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import type { Job, TaskState } from "../../cruise-canvas/interfaces.js";
 import styles from "./AssistantMessage.module.css";
-import Avatar from "../images/avatar@2x.png";
 import { NodeJob } from "../NodeJob/NodeJob.js";
 import { NON_WORKING_STATES } from "../../shared/constants.js";
 import type { ConversationState } from "../../shared/interfaces.js";
+import { WrappedIcon } from "../../shared/bricks.js";
 
 export interface AssistantMessageProps {
   jobs: Job[];
@@ -44,9 +44,12 @@ export function AssistantMessage({
 
   return (
     <div className={styles.assistant}>
-      <div className={styles.avatar}>
-        <img src={Avatar} width={32} height={32} alt="Elevo" />
-      </div>
+      <WrappedIcon
+        lib="easyops"
+        category="image"
+        icon="elevo-avatar-png"
+        className={styles.avatar}
+      />
       <div className={styles.body}>
         {jobs.map((job) => (
           <NodeJob key={job.id} job={job} taskState={taskState} />

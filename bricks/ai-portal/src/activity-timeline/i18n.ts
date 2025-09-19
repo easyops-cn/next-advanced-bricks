@@ -4,6 +4,8 @@ export enum K {
   STARTED_A_CHAT = "STARTED_A_CHAT",
   CREATED_THIS_GOAL = "CREATED_THIS_GOAL",
   CHANGED_THE_GOAL_TITLE = "CHANGED_THE_GOAL_TITLE",
+  CHANGED_THE_GOAL_DESCRIPTION = "CHANGED_THE_GOAL_DESCRIPTION",
+  CHANGED_THE_GOAL = "CHANGED_THE_GOAL",
   DELETED_THIS_GOAL = "DELETED_THIS_GOAL",
   DECOMPOSED_THIS_GOAL = "DECOMPOSED_THIS_GOAL",
   SET_OWNER = "SET_OWNER",
@@ -17,7 +19,10 @@ export enum K {
 const en: Locale = {
   STARTED_A_CHAT: "started a chat",
   CREATED_THIS_GOAL: "created this goal",
-  CHANGED_THE_GOAL_TITLE: "changed the goal title",
+  CHANGED_THE_GOAL_TITLE: 'changed the goal title to "{{ title }}"',
+  CHANGED_THE_GOAL_DESCRIPTION:
+    'changed the goal description to "{{ description }}"',
+  CHANGED_THE_GOAL: "changed the goal",
   DELETED_THIS_GOAL: "deleted this goal",
   DECOMPOSED_THIS_GOAL: "decomposed this goal to {{ count }} sub-goal: ",
   DECOMPOSED_THIS_GOAL_plural:
@@ -35,7 +40,9 @@ const en: Locale = {
 const zh: Locale = {
   STARTED_A_CHAT: "发起了对话",
   CREATED_THIS_GOAL: "创建了此目标",
-  CHANGED_THE_GOAL_TITLE: "修改了目标标题",
+  CHANGED_THE_GOAL_TITLE: "修改目标标题为 “{{ title }}”",
+  CHANGED_THE_GOAL_DESCRIPTION: "修改目标描述为 “{{ description }}”",
+  CHANGED_THE_GOAL: "修改了此目标",
   DELETED_THIS_GOAL: "删除了此目标",
   DECOMPOSED_THIS_GOAL: "将此目标分解为 {{ count }} 个子目标：",
   DECOMPOSED_THIS_GOAL_plural: "将此目标分解为 {{ count }} 个子目标：",

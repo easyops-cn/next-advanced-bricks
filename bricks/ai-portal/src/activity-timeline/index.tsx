@@ -82,9 +82,9 @@ function ActivityTimelineComponent({
               nameOrInstanceId={activity.user_id}
               size="xs"
             />
-            <span className="user">{activity.user_name}</span>
-            &nbsp;
             <span className="action">
+              {activity.user_name}
+              &nbsp;
               {activity.action_type === "start_conversation" ? (
                 <>
                   <span>{t(K.STARTED_A_CHAT)}</span>
@@ -104,7 +104,13 @@ function ActivityTimelineComponent({
               ) : activity.action_type === "create_goal" ? (
                 t(K.CREATED_THIS_GOAL)
               ) : activity.action_type === "edit_goal" ? (
-                t(K.CHANGED_THE_GOAL_TITLE)
+                activity.metadata.after.title ? (
+                  t(K.CHANGED_THE_GOAL_TITLE, activity.metadata.after)
+                ) : activity.metadata.after.description ? (
+                  t(K.CHANGED_THE_GOAL_DESCRIPTION, activity.metadata.after)
+                ) : (
+                  t(K.CHANGED_THE_GOAL)
+                )
               ) : activity.action_type === "delete_goal" ? (
                 t(K.DELETED_THIS_GOAL)
               ) : activity.action_type === "decompose_goals" ? (
@@ -114,7 +120,9 @@ function ActivityTimelineComponent({
                   .map((g) => g.title)
                   .join(t(K.COMMA))}`
               ) : activity.action_type === "alter_owner" ? (
-                t(K.SET_OWNER, { user: activity.metadata.after.user_name })
+                t(K.SET_OWNER, {
+                  user: activity.metadata.after.owner.user_name,
+                })
               ) : activity.action_type === "alter_user" ? (
                 getAlterMembersActivityDescription(activity)
               ) : activity.action_type === "add_comment" ? (
@@ -126,11 +134,9 @@ function ActivityTimelineComponent({
             </span>
             <span
               className="time"
-              title={
-                humanizeTime(activity.time * 1000, HumanizeTimeFormat.full)!
-              }
+              title={humanizeTime(activity.time, HumanizeTimeFormat.full)!}
             >
-              {humanizeTime(activity.time * 1000, HumanizeTimeFormat.relative)}
+              {humanizeTime(activity.time, HumanizeTimeFormat.relative)}
             </span>
           </div>
           {activity.action_type === "add_comment" && (
@@ -146,17 +152,17 @@ function getAlterMembersActivityDescription(activity: ActivityOfAlterUser) {
   const removed: string[] = [];
   const added: string[] = [];
   const beforeUserIds = new Set(
-    activity.metadata.before.map((user) => user.user_name)
+    activity.metadata.before.users.map((user) => user.user_name)
   );
-  for (const user of activity.metadata.after) {
+  for (const user of activity.metadata.after.users) {
     if (!beforeUserIds.has(user.user_name)) {
       added.push(user.user_name);
     }
   }
   const afterUserIds = new Set(
-    activity.metadata.after.map((user) => user.user_name)
+    activity.metadata.after.users.map((user) => user.user_name)
   );
-  for (const user of activity.metadata.before) {
+  for (const user of activity.metadata.before.users) {
     if (!afterUserIds.has(user.user_name)) {
       removed.push(user.user_name);
     }
