@@ -66,7 +66,7 @@ describe("GoalCardItem", () => {
     title: "Test Goal",
     description: "Test Description",
     state: "ready",
-    index: 1,
+    id: 1,
     conversations: 2,
     owner: {
       instanceId: "leader-1",

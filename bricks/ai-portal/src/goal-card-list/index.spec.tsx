@@ -22,14 +22,14 @@ describe("ai-portal.goal-card-list", () => {
       title: "Goal 1",
       description: "Description 1",
       state: "ready",
-      index: 1,
+      id: 1,
     },
     {
       instanceId: "goal-2",
       title: "Goal 2",
       description: "Description 2",
       state: "working",
-      index: 2,
+      id: 2,
     },
   ];
 

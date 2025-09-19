@@ -51,7 +51,7 @@ export interface GoalItem {
   title: string;
   description?: string;
   state: GoalState;
-  index: number;
+  id: number;
   conversations?: number;
   child_target?: GoalItem[];
   parent_target?: GoalItem[];
@@ -116,7 +116,7 @@ export function GoalCardItem({
   onNewChat,
   isActive,
 }: GoalCardItemProps) {
-  const { state, index: serialNumber, title, conversations, owner } = goalItem;
+  const { state, id: serialNumber, title, conversations, owner } = goalItem;
 
   const handleStatusChange = (action: SimpleAction) => {
     onStatusChange?.(action.key as GoalState);
@@ -191,7 +191,7 @@ export function GoalCardItem({
           />
         </WrappedDropdownActions>
 
-        <span className="serial-number">{serialNumber}</span>
+        <span className="serial-number">#{serialNumber}</span>
         <span
           className="title"
           onClick={(e) => e.stopPropagation()}
