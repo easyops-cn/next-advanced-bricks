@@ -11,3 +11,12 @@
   flex-direction: column;
   gap: 4px;
 }
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  font-size: 20px;
+  color: #595959;
+}

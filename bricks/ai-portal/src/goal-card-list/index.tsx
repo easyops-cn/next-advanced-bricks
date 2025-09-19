@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { createDecorators, EventEmitter } from "@next-core/element";
-import { ReactNextElement } from "@next-core/react-element";
+import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import { NS, locales } from "./i18n.js";
 import CardItemStyleText from "./CardItem/CardItem.shadow.css";
 import styleText from "./styles.shadow.css";
 import { GoalCardItem, GoalItem, GoalState } from "./CardItem/CardItem.js";
+import { GeneralIcon, GeneralIconProps } from "@next-bricks/icons/general-icon";
 
 initializeI18n(NS, locales);
 
 const { defineElement, property, event } = createDecorators();
+
+const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
 export interface GoalCardListProps {
   goalList?: GoalItem[];
@@ -127,6 +130,14 @@ function GoalCardListComponent({
   const handleStatusChange = (newStatus: GoalState, item: GoalItem) => {
     updateGoalItem(item, "state", newStatus, onStatusChange);
   };
+
+  if (!goalList) {
+    return (
+      <div className="loading">
+        <WrappedIcon lib="antd" icon="loading-3-quarters" spinning />
+      </div>
+    );
+  }
 
   return (
     <div className="goal-container">

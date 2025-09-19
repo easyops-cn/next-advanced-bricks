@@ -192,4 +192,24 @@ describe("ai-portal.goal-card-list", () => {
       document.body.removeChild(element);
     });
   });
+
+  test("should render loading state when goalList is undefined", async () => {
+    const element = document.createElement(
+      "ai-portal.goal-card-list"
+    ) as GoalCardList;
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    const loadingElement = element.shadowRoot?.querySelector(".loading");
+    expect(loadingElement).toBeTruthy();
+
+    const goalContainer = element.shadowRoot?.querySelector(".goal-container");
+    expect(goalContainer).toBeFalsy();
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
 });
