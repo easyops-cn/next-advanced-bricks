@@ -36,12 +36,12 @@ export interface ActivityOfEditGoal extends ActivityBase {
   action_type: "edit_goal";
   metadata: {
     before: {
-      title: string;
-      description: string;
+      title?: string;
+      description?: string;
     };
     after: {
-      title: string;
-      description: string;
+      title?: string;
+      description?: string;
     };
   };
 }
@@ -69,12 +69,16 @@ export interface ActivityOfAlterOwner extends ActivityBase {
   action_type: "alter_owner";
   metadata: {
     before: {
-      user_id: string;
-      user_name: string;
+      owner: {
+        user_id: string;
+        user_name: string;
+      };
     };
     after: {
-      user_id: string;
-      user_name: string;
+      owner: {
+        user_id: string;
+        user_name: string;
+      };
     };
   };
 }
@@ -82,14 +86,18 @@ export interface ActivityOfAlterOwner extends ActivityBase {
 export interface ActivityOfAlterUser extends ActivityBase {
   action_type: "alter_user";
   metadata: {
-    before: Array<{
-      user_id: string;
-      user_name: string;
-    }>;
-    after: Array<{
-      user_id: string;
-      user_name: string;
-    }>;
+    before: {
+      users: Array<{
+        user_id: string;
+        user_name: string;
+      }>;
+    };
+    after: {
+      users: Array<{
+        user_id: string;
+        user_name: string;
+      }>;
+    };
   };
 }
 

@@ -47,6 +47,9 @@ export interface ChatBoxRef {
 export
 @defineElement("ai-portal.chat-box", {
   styleTexts: [styleText],
+  shadowOptions: {
+    delegatesFocus: true,
+  },
 })
 class ChatBox extends ReactNextElement implements ChatBoxProps {
   ref = createRef<ChatBoxRef>();

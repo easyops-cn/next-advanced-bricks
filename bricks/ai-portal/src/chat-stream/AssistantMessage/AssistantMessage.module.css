@@ -24,6 +24,10 @@
   white-space: pre-wrap;
 }
 
+.avatar {
+  font-size: 32px;
+}
+
 @keyframes texting {
   0% {
     content: "   ";

@@ -21,14 +21,10 @@ NodeList [
           size="xs"
         />
         <span
-          class="user"
-        >
-          Tom
-        </span>
-         
-        <span
           class="action"
         >
+          Tom
+           
           created this goal
         </span>
         <span
@@ -54,14 +50,10 @@ NodeList [
           size="xs"
         />
         <span
-          class="user"
-        >
-          Tom
-        </span>
-         
-        <span
           class="action"
         >
+          Tom
+           
           set Lucy as the owner
         </span>
         <span
@@ -87,14 +79,10 @@ NodeList [
           size="xs"
         />
         <span
-          class="user"
-        >
-          Lucy
-        </span>
-         
-        <span
           class="action"
         >
+          Lucy
+           
           <span>
             started a chat
           </span>
@@ -133,14 +121,10 @@ NodeList [
           size="xs"
         />
         <span
-          class="user"
-        >
-          Lucy
-        </span>
-         
-        <span
           class="action"
         >
+          Lucy
+           
           decomposed this goal to 2 sub-goals: 先计划, 再执行
         </span>
         <span
@@ -166,14 +150,10 @@ NodeList [
           size="xs"
         />
         <span
-          class="user"
-        >
-          Lucy
-        </span>
-         
-        <span
           class="action"
         >
+          Lucy
+           
           removed a goal member: Jim; added 2 goal members: Joy, Green
         </span>
         <span
@@ -199,14 +179,10 @@ NodeList [
           size="xs"
         />
         <span
-          class="user"
-        >
-          Tom
-        </span>
-         
-        <span
           class="action"
         >
+          Tom
+           
           commented
         </span>
         <span

@@ -62,6 +62,9 @@ export interface ChatInputMapEvents {
 export
 @defineElement("ai-portal.chat-input", {
   styleTexts: [styleText],
+  shadowOptions: {
+    delegatesFocus: true,
+  },
 })
 class ChatInput extends ReactNextElement implements ChatInputProps {
   @property()
