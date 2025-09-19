@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.41.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.40.2...@next-bricks/ai-portal@0.41.0) (2025-09-19)
+
+
+### Features
+
+* make elevo logo as a brick ([ca69d9a](https://github.com/easyops-cn/next-advanced-bricks/commit/ca69d9a36a7f81de18be628c86cd5aeb3d305d89))
+
+
+
+
+
 ## [0.40.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.40.1...@next-bricks/ai-portal@0.40.2) (2025-09-19)
 
 
