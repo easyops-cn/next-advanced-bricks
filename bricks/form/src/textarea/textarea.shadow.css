@@ -22,6 +22,7 @@ textarea {
   box-sizing: border-box;
   border-radius: var(--antd-button-border-radius);
   border: 1px solid var(--eo-input-border-color);
+  font: inherit;
   font-size: 14px;
   line-height: 22px;
 }
@@ -68,4 +69,8 @@ textarea.error:focus {
     box-shadow: var(--elevo-input-box-shadow);
     border-radius: var(--elevo-border-radius);
   }
+}
+
+:host([theme-variant="elevo"][variant="muted"]) textarea {
+  box-shadow: none;
 }
