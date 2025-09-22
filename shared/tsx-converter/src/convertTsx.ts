@@ -7,6 +7,7 @@ import { convertVariables } from "./convertVariables.js";
 import { convertComponent } from "./convertComponent.js";
 import type { ConvertOptions, ConvertResult } from "./interfaces.js";
 import { convertTemplates } from "./convertTemplates.js";
+import { getViewTitle } from "./getViewTitle.js";
 
 const BUILTIN_FUNCTIONS: ContextConf[] = [
   {
@@ -47,9 +48,15 @@ export async function convertTsx(
     ...BUILTIN_FUNCTIONS,
   ];
 
+  if (result.components.length !== 1 || result.components[0].name !== "View") {
+    throw new Error("Only single root component <View> is supported");
+  }
+
+  const view = result.components[0];
+
   const children = (
     await Promise.all(
-      result.components.map((component) =>
+      (view.children ?? []).map((component) =>
         convertComponent(component, result, options)
       )
     )
@@ -62,6 +69,7 @@ export async function convertTsx(
   const templates = await convertTemplates(result.templates, result, options);
 
   return {
+    title: getViewTitle(result),
     brick: {
       brick: "eo-content-layout",
       children: needBox ? [withBox(children, options)] : children,

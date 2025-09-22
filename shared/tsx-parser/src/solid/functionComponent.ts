@@ -7,7 +7,6 @@ import type {
   Variable,
 } from "../interfaces.js";
 import { constructJsValue } from "../tsx-constructors/values.js";
-import { constructTsxView } from "../tsx-constructors/view.js";
 import { constructComponents } from "../tsx-constructors/components.js";
 import { parseDataSourceCall } from "../tsx-constructors/dataSource.js";
 
@@ -425,12 +424,8 @@ export function constructFunctionComponent(
         });
         return;
       }
+      const components = constructComponents([stmt.argument], result, options);
       if (scope === "template") {
-        const components = constructComponents(
-          [stmt.argument],
-          result,
-          options
-        );
         result.templates.push({
           name: fn.id!.name,
           variables,
@@ -438,11 +433,10 @@ export function constructFunctionComponent(
           components,
         });
         delete result.templateCollection;
-        return;
       } else {
-        constructTsxView(stmt.argument, result, options);
-        return;
+        result.components.push(...components);
       }
+      return;
     } else if (
       !(t.isTSInterfaceDeclaration(stmt) || t.isTSTypeAliasDeclaration(stmt))
     ) {

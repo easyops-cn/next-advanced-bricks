@@ -146,6 +146,14 @@ class Textarea extends FormItemElementBase implements TextareaProps {
     | undefined;
 
   /**
+   * 变体
+   *
+   * - muted: 在 themeVariant 为 elevo 时可用，设置时输入框没有 box-shadow
+   */
+  @property({ render: false })
+  accessor variant: "default" | "muted" | undefined;
+
+  /**
    * 主题变体
    */
   @property({ render: false })

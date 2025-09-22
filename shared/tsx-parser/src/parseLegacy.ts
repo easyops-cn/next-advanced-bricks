@@ -2,9 +2,9 @@ import type { ParseResult as BabelParseResult } from "@babel/parser";
 import * as t from "@babel/types";
 import type { ParseResult, ParseOptions } from "./interfaces.js";
 import { constructJsValue } from "./tsx-constructors/values.js";
-import { constructTsxView } from "./tsx-constructors/view.js";
 import { constructFunction } from "./tsx-constructors/function.js";
 import { parseDataSourceCall } from "./tsx-constructors/dataSource.js";
+import { constructComponents } from "./tsx-constructors/components.js";
 
 export function parseLegacy(
   ast: BabelParseResult<t.File>,
@@ -175,7 +175,8 @@ export function parseLegacy(
         continue;
       }
 
-      constructTsxView(declaration, result, options);
+      const components = constructComponents([declaration], result, options);
+      result.components.push(...components);
     } else if (
       !(t.isTSInterfaceDeclaration(stmt) || t.isTSTypeAliasDeclaration(stmt))
     ) {

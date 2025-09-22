@@ -18,7 +18,6 @@ export function parseTsx(source: string, options?: ParseOptions): ParseResult {
   const variables: Variable[] = [];
   const components: Component[] = [];
   const errors: ParseError[] = [];
-  let title: string | undefined;
   const componentsMap = new Map<string, Component>();
   const contexts: string[] = options?.withContexts ?? [];
   const contextSetters = new Map<string, string>();
@@ -28,7 +27,6 @@ export function parseTsx(source: string, options?: ParseOptions): ParseResult {
   const templates: Template[] = [];
   const result: ParseResult = {
     source,
-    title,
     dataSources,
     variables,
     components,

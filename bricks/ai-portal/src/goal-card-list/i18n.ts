@@ -11,7 +11,7 @@ const en: Locale = {
   UN_START_STATUS: "Not Start",
   RUNNING_STATUS: "Running",
   COMPLETED_STATUS: "Completed",
-  NEW_CHAT: "New Chat",
+  NEW_CHAT: "New chat",
 };
 
 const zh: Locale = {

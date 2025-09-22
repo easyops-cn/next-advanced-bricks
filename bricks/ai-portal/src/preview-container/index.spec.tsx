@@ -1,6 +1,7 @@
 import { describe, test, expect, jest } from "@jest/globals";
 import { act } from "react-dom/test-utils";
 import type { EoPageTitle } from "@next-bricks/basic/page-title";
+import type { ParseResult } from "@next-shared/tsx-parser";
 import "./";
 import type { PreviewContainer } from "./index.js";
 
@@ -13,17 +14,28 @@ jest.mock("../shared/workers/tsxParser.js", () => ({
           throw new Error("Parse error");
         }
         return {
-          title: source.match(/title="([^"]+)"/)?.[1],
+          components: [
+            {
+              name: "View",
+              properties: { title: source.match(/title="([^"]+)"/)?.[1] },
+            },
+          ],
         };
       },
     })
   ),
 }));
 jest.mock("@next-shared/tsx-converter", () => ({
-  convertTsx: jest.fn(({ title }) =>
-    title.includes("convert-error")
+  convertTsx: jest.fn((parsedResult: ParseResult) =>
+    (parsedResult.components[0]?.properties?.title as string)?.includes(
+      "convert-error"
+    )
       ? Promise.reject(new Error("Convert error"))
       : Promise.resolve(null)
+  ),
+  getViewTitle: jest.fn(
+    (parsedResult: ParseResult | null | undefined) =>
+      parsedResult?.components[0]?.properties?.title
   ),
 }));
 jest.mock("@next-core/runtime", () => ({
