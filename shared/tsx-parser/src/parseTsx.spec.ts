@@ -85,6 +85,7 @@ describe("parseTsx", () => {
     // }
     // console.dir(result, { depth: null, colors: true });
     // expect(errors).toHaveLength(1);
-    expect(result.components).toHaveLength(2);
+    expect(result.components).toHaveLength(1);
+    expect(result.components[0].children).toHaveLength(2);
   });
 });

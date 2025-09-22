@@ -433,8 +433,9 @@ export function constructFunctionComponent(
           components,
         });
         delete result.templateCollection;
+      } else {
+        result.components.push(...components);
       }
-      result.components.push(...components);
       return;
     } else if (
       !(t.isTSInterfaceDeclaration(stmt) || t.isTSTypeAliasDeclaration(stmt))
