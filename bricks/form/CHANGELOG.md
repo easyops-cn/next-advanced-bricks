@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.19.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.19.1...@next-bricks/form@1.19.2) (2025-09-22)
+
+
+### Bug Fixes
+
+* **textarea:** support variant muted ([bd45c34](https://github.com/easyops-cn/next-advanced-bricks/commit/bd45c345631cddd4a13603c1b6e6fc9d7a2ab13b))
+
+
+
+
+
 ## [1.19.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.19.0...@next-bricks/form@1.19.1) (2025-09-16)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-converter@0.1.2...@next-shared/tsx-converter@0.1.3) (2025-09-22)
+
+
+### Bug Fixes
+
+* refine tsx view ([7d871fb](https://github.com/easyops-cn/next-advanced-bricks/commit/7d871fba8b04e0f776f1579650ea2fdf30ae9644))
+
+
+
+
+
 ## [0.1.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-converter@0.1.1...@next-shared/tsx-converter@0.1.2) (2025-09-19)
 
 

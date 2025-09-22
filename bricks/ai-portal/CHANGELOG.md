@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.41.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.41.2...@next-bricks/ai-portal@0.41.3) (2025-09-22)
+
+
+### Bug Fixes
+
+* fix tsx ([2620bd5](https://github.com/easyops-cn/next-advanced-bricks/commit/2620bd56585abdfeb2e3072d121ee6beda02ff2b))
+* refine i18n ([d49cfcb](https://github.com/easyops-cn/next-advanced-bricks/commit/d49cfcb71569d78586035c8075272d51ead3721d))
+* refine tsx view ([7d871fb](https://github.com/easyops-cn/next-advanced-bricks/commit/7d871fba8b04e0f776f1579650ea2fdf30ae9644))
+
+
+
+
+
 ## [0.41.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.41.1...@next-bricks/ai-portal@0.41.2) (2025-09-19)
 
 
