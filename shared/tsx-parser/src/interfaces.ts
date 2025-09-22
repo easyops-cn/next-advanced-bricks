@@ -9,7 +9,6 @@ export interface ParseOptions {
 
 export interface ParseResult {
   source: string;
-  title?: string;
   dataSources: DataSource[];
   variables: Variable[];
   components: Component[];

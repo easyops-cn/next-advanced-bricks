@@ -9,7 +9,7 @@ import React, {
 import classNames from "classnames";
 import { getBasePath, unstable_createRoot } from "@next-core/runtime";
 import { uniqueId } from "lodash";
-import { convertTsx } from "@next-shared/tsx-converter";
+import { convertTsx, getViewTitle } from "@next-shared/tsx-converter";
 import type { ParseResult } from "@next-shared/tsx-parser";
 import type { GraphGeneratedView } from "../../cruise-canvas/interfaces";
 import styles from "./ExpandedView.module.css";
@@ -71,7 +71,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
         const view = await v.view.asyncConstructedView;
         return {
           ...v,
-          title: view?.title,
+          title: getViewTitle(view),
         };
       })
     ).then((result) => {

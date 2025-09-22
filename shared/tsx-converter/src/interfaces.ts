@@ -13,6 +13,7 @@ export interface ConvertOptions {
 }
 
 export interface ConvertResult {
+  title?: string;
   brick: BrickConf;
   context?: ContextConf[];
   functions?: StoryboardFunction[];

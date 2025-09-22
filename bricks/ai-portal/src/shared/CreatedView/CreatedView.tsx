@@ -11,7 +11,7 @@ import { getBasePath, unstable_createRoot } from "@next-core/runtime";
 import classNames from "classnames";
 import { uniqueId } from "lodash";
 import { initializeI18n } from "@next-core/i18n";
-import { convertTsx } from "@next-shared/tsx-converter";
+import { convertTsx, getViewTitle } from "@next-shared/tsx-converter";
 import type { Component, ParseResult } from "@next-shared/tsx-parser";
 import styles from "./CreatedView.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
@@ -150,6 +150,8 @@ export function CreatedView({
     setActiveExpandedViewJobId(job.id);
   }, [job.id, setActiveExpandedViewJobId]);
 
+  const viewTitle = useMemo(() => getViewTitle(view), [view]);
+
   return (
     <div>
       <div className={styles.heading}>
@@ -158,7 +160,7 @@ export function CreatedView({
             [sharedStyles["shine-text"]]: view && loading,
           })}
         >
-          {view ? view.title : <WrappedIcon {...ICON_LOADING} />}
+          {view ? viewTitle : <WrappedIcon {...ICON_LOADING} />}
         </div>
         <div className={styles.buttons}>
           {showJsxEditor && (

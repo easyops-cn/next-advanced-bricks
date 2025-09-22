@@ -5,7 +5,11 @@ import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import { unstable_createRoot } from "@next-core/runtime";
 import type { ParseResult } from "@next-shared/tsx-parser";
-import { convertTsx, type ConvertResult } from "@next-shared/tsx-converter";
+import {
+  convertTsx,
+  getViewTitle,
+  type ConvertResult,
+} from "@next-shared/tsx-converter";
 import type {
   GeneralIcon,
   GeneralIconProps,
@@ -116,10 +120,12 @@ function PreviewContainerComponent({
 
   const convertedResult = use(convertedResultPromise);
 
+  const viewTitle = useMemo(() => getViewTitle(parsedResult), [parsedResult]);
+
   return (
     <RenderComponent
       rootId={rootId}
-      pageTitle={parsedResult?.title}
+      pageTitle={viewTitle}
       convertedResult={convertedResult}
     />
   );
