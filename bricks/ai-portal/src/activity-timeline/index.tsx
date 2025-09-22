@@ -124,7 +124,7 @@ function ActivityTimelineComponent({
                   user: activity.metadata.after.owner.user_name,
                 })
               ) : activity.action_type === "alter_user" ? (
-                getAlterMembersActivityDescription(activity)
+                getAlterPARTICIPANTsActivityDescription(activity)
               ) : activity.action_type === "add_comment" ? (
                 t(K.COMMENTED)
               ) : (
@@ -148,7 +148,9 @@ function ActivityTimelineComponent({
   );
 }
 
-function getAlterMembersActivityDescription(activity: ActivityOfAlterUser) {
+function getAlterPARTICIPANTsActivityDescription(
+  activity: ActivityOfAlterUser
+) {
   const removed: string[] = [];
   const added: string[] = [];
   const beforeUserIds = new Set(
@@ -171,13 +173,14 @@ function getAlterMembersActivityDescription(activity: ActivityOfAlterUser) {
   const descriptions: string[] = [];
   if (removed.length > 0) {
     descriptions.push(
-      t(K.REMOVED_GOAL_MEMBERS, { count: removed.length }) +
+      t(K.REMOVED_GOAL_PARTICIPANTS, { count: removed.length }) +
         removed.join(t(K.COMMA))
     );
   }
   if (added.length > 0) {
     descriptions.push(
-      t(K.ADDED_GOAL_MEMBERS, { count: added.length }) + added.join(t(K.COMMA))
+      t(K.ADDED_GOAL_PARTICIPANTS, { count: added.length }) +
+        added.join(t(K.COMMA))
     );
   }
 
