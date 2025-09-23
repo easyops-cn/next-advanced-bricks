@@ -4,3 +4,5 @@ export * from "./FormStore.js";
 export * from "./interfaces.js";
 export * from "./pickFormItemProps.js";
 export * from "./TextareaAutoResize.js";
+export * from "./getCaretPositionInTextarea.js";
+export * from "./getContentRectInTextarea.js";

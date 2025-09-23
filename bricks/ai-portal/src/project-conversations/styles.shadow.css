@@ -103,6 +103,10 @@ ul {
   width: 100px;
 }
 
+.operations.lang-zh {
+  width: 64px;
+}
+
 .link.actions-active .time,
 .link:hover .time,
 .link:not(:hover):not(.actions-active) .actions {

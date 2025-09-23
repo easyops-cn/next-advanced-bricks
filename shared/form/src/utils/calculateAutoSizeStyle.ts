@@ -1,39 +1,6 @@
 // istanbul ignore file
 import type React from "react";
-
-const HIDDEN_TEXTAREA_STYLE = `
-  min-height: 0!important;
-  max-height: none!important;
-  height: 0!important;
-  visibility: hidden!important;
-  overflow: hidden!important;
-  position: absolute!important;
-  z-index: -1000!important;
-  top: 0!important;
-  right: 0!important;
-  pointer-events: none!important;
-`;
-
-const SIZING_STYLE = [
-  "letter-spacing",
-  "line-height",
-  "padding-top",
-  "padding-bottom",
-  "font-family",
-  "font-weight",
-  "font-size",
-  "font-variant",
-  "text-rendering",
-  "text-transform",
-  "width",
-  "text-indent",
-  "padding-left",
-  "padding-right",
-  "border-width",
-  "box-sizing",
-  "word-break",
-  "white-space",
-];
+import { getMirroredStyle } from "./getMirroredStyle.js";
 
 let hiddenTextarea: HTMLTextAreaElement | undefined;
 
@@ -66,16 +33,8 @@ export default function calculateAutoSizeStyle(
     document.body.appendChild(hiddenTextarea);
   }
 
-  const uiTextNodeStyle = window.getComputedStyle(uiTextNode);
-  const sizingStyle = SIZING_STYLE.map(
-    (name) => `${name}:${uiTextNodeStyle.getPropertyValue(name)}`
-  ).join(";");
-
   // equal style
-  hiddenTextarea.setAttribute(
-    "style",
-    `${sizingStyle};${HIDDEN_TEXTAREA_STYLE}`
-  );
+  hiddenTextarea.setAttribute("style", getMirroredStyle(uiTextNode));
   hiddenTextarea.value = uiTextNode.value || uiTextNode.placeholder || "";
 
   let minHeight: number | undefined;

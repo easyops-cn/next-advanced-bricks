@@ -32,6 +32,10 @@ export interface CruiseCanvasProps {
   previewUrlTemplate?: string;
 }
 
+export interface ConversationDetail {
+  projectId?: string;
+}
+
 const ForwardedLegacyCruiseCanvasComponent = forwardRef(
   LegacyCruiseCanvasComponent
 );
@@ -137,6 +141,13 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
     this.#switch.emit("chat");
   };
 
+  @event({ type: "detail.change" })
+  accessor #detailChange!: EventEmitter<ConversationDetail>;
+
+  #onDetailChange = (detail: ConversationDetail) => {
+    this.#detailChange.emit(detail);
+  };
+
   #ref = createRef<CruiseCanvasRef>();
 
   @method()
@@ -185,6 +196,7 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         onSubmitFeedback={this.#onSubmitFeedback}
         onSwitchToChat={this.#onSwitchToChat}
         onFeedbackOnView={this.#onFeedbackOnView}
+        onDetailChange={this.#onDetailChange}
         ref={this.#ref}
       />
     );

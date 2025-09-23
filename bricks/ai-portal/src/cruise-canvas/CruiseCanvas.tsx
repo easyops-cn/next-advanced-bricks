@@ -65,7 +65,7 @@ import { NodeLoading } from "./NodeLoading/NodeLoading.js";
 import { JsxEditor } from "../shared/JsxEditor/JsxEditor.js";
 import { NodeError } from "./NodeError/NodeError.js";
 import type { GeneratedView } from "../shared/interfaces";
-import type { CruiseCanvasProps } from ".";
+import type { ConversationDetail, CruiseCanvasProps } from ".";
 
 const MemoizedNodeComponent = memo(NodeComponent);
 
@@ -76,6 +76,7 @@ interface CruiseCanvasComponentProps extends CruiseCanvasProps {
   onSubmitFeedback: (detail: FeedbackDetail) => void;
   onSwitchToChat: () => void;
   onFeedbackOnView: (viewId: string) => void;
+  onDetailChange: (detail: ConversationDetail) => void;
 }
 
 interface ScrollToOptions {
@@ -121,6 +122,7 @@ export function CruiseCanvasComponent(
     onSubmitFeedback,
     onSwitchToChat,
     onFeedbackOnView,
+    onDetailChange,
   }: CruiseCanvasComponentProps,
   ref: React.Ref<CruiseCanvasRef>
 ) {
@@ -158,6 +160,12 @@ export function CruiseCanvasComponent(
     }
     return null;
   }, [activeNodeId]);
+
+  useEffect(() => {
+    onDetailChange({
+      projectId: conversation?.projectId,
+    });
+  }, [onDetailChange, conversation?.projectId]);
 
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
   const [submittedFeedback, setSubmittedFeedback] = useState(false);

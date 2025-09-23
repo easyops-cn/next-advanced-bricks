@@ -63,7 +63,7 @@ import { NodeFeedback } from "../shared/NodeFeedback/NodeFeedback.js";
 import { TaskContext } from "../shared/TaskContext.js";
 import { NodeLoading } from "./NodeLoading/NodeLoading.js";
 import { JsxEditor } from "../shared/JsxEditor/JsxEditor.js";
-import type { CruiseCanvasProps } from ".";
+import type { ConversationDetail, CruiseCanvasProps } from ".";
 import type { GeneratedView } from "../shared/interfaces";
 
 const MemoizedNodeComponent = memo(NodeComponent);
@@ -74,6 +74,7 @@ interface CruiseCanvasComponentProps extends CruiseCanvasProps {
   onSubmitFeedback: (detail: FeedbackDetail) => void;
   onSwitchToChat: () => void;
   onFeedbackOnView: (viewId: string) => void;
+  onDetailChange: (detail: ConversationDetail) => void;
 }
 
 interface ScrollToOptions {

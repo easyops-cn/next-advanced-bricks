@@ -2,6 +2,7 @@ import React, {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -29,10 +30,20 @@ export interface TextareaAutoResizeProps
   paddingSize?: number;
   containerRef?: React.RefObject<HTMLElement>;
   submitWhen?: "enter-without-shift" | "enter-with-mod";
+  desiredSelectionRef?: React.MutableRefObject<{
+    start: number;
+    end: number;
+  } | null>;
+  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  /**
+   * The handler can return false to prevent default behavior (submit)
+   */
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void | false;
 }
 
 export interface TextareaAutoResizeRef {
   focus(): void;
+  element: HTMLTextAreaElement | null;
 }
 
 export const TextareaAutoResize = React.forwardRef<
@@ -51,6 +62,7 @@ function LegacyTextareaAutoResize(
     value: propValue,
     style,
     submitWhen,
+    desiredSelectionRef,
     onChange,
     onSubmit,
     onKeyDown,
@@ -77,6 +89,7 @@ function LegacyTextareaAutoResize(
           valueLength && textarea.setSelectionRange(valueLength, valueLength);
         }
       },
+      element: textareaRef.current,
     }),
     []
   );
@@ -141,6 +154,10 @@ function LegacyTextareaAutoResize(
         return;
       }
 
+      if (onKeyDown?.(e) === false) {
+        return;
+      }
+
       if (
         e.key === "Enter" &&
         (submitWhen === "enter-without-shift"
@@ -151,11 +168,19 @@ function LegacyTextareaAutoResize(
         e.stopPropagation();
         onSubmit?.(e);
       }
-
-      onKeyDown?.(e);
     },
     [onKeyDown, onSubmit, submitWhen]
   );
+
+  useLayoutEffect(() => {
+    const desiredSelection = desiredSelectionRef?.current;
+    const textarea = textareaRef.current;
+    if (desiredSelection && textarea) {
+      const { start, end } = desiredSelection;
+      desiredSelectionRef.current = null;
+      textarea.setSelectionRange(start, end);
+    }
+  }, [desiredSelectionRef, value]);
 
   // istanbul ignore next
   useEffect(() => {
