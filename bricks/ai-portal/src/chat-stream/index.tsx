@@ -28,6 +28,10 @@ export interface ChatStreamProps {
   previewUrlTemplate?: string;
 }
 
+export interface ConversationDetail {
+  projectId?: string;
+}
+
 const ForwardedLegacyChatStreamComponent = forwardRef(
   LegacyChatStreamComponent
 );
@@ -121,6 +125,13 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
     this.#switch.emit("canvas");
   };
 
+  @event({ type: "detail.change" })
+  accessor #detailChange!: EventEmitter<ConversationDetail>;
+
+  #onDetailChange = (detail: ConversationDetail) => {
+    this.#detailChange.emit(detail);
+  };
+
   #ref = createRef<ChatStreamRef>();
 
   @method()
@@ -165,6 +176,7 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
         onSubmitFeedback={this.#onSubmitFeedback}
         onSwitchToCanvas={this.#onSwitchToCanvas}
         onFeedbackOnView={this.#onFeedbackOnView}
+        onDetailChange={this.#onDetailChange}
       />
     );
   }

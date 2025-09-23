@@ -7,6 +7,8 @@ export interface Conversation {
   // 根据用户需求自动生成的会话标题
   title: string;
 
+  projectId?: string;
+
   state: ConversationState;
 
   tasks: Task[];

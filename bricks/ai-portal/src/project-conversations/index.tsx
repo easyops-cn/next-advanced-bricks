@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
-import { initializeI18n } from "@next-core/i18n";
+import { initializeI18n, i18n } from "@next-core/i18n";
 import type { Link, LinkProps } from "@next-bricks/basic/link";
 import type {
   GeneralIcon,
@@ -178,6 +178,7 @@ function ConversationLink({
   onActionClick,
 }: ConversationLinkProps) {
   const goalRef = useRef<HTMLDivElement>(null);
+  const language = i18n.language.split("-")[0];
 
   // <eo-link> handles click manually,
   // so we need to stop propagation and prevent default manually.
@@ -234,7 +235,7 @@ function ConversationLink({
         size="small"
         nameOrInstanceId={conversation.username}
       />
-      <div className="operations">
+      <div className={`operations lang-${language}`}>
         <WrappedMiniActions
           className="actions"
           actions={actions}

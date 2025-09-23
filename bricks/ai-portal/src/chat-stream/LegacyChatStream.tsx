@@ -25,7 +25,7 @@ import { Aside } from "./Aside/Aside.js";
 import { StreamContext } from "./StreamContext.js";
 import type { FeedbackDetail } from "../cruise-canvas/interfaces.js";
 import { NodeFeedback } from "../shared/NodeFeedback/NodeFeedback.js";
-import type { ChatStreamProps, ChatStreamRef } from ".";
+import type { ChatStreamProps, ChatStreamRef, ConversationDetail } from ".";
 import styles from "./styles.module.css";
 
 const ICON_SHARE: GeneralIconProps = {
@@ -39,6 +39,7 @@ interface ChatStreamComponentProps extends ChatStreamProps {
   onSubmitFeedback: (detail: FeedbackDetail) => void;
   onSwitchToCanvas: () => void;
   onFeedbackOnView: (viewId: string) => void;
+  onDetailChange: (detail: ConversationDetail) => void;
 }
 
 export function LegacyChatStreamComponent(

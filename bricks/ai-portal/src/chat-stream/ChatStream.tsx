@@ -25,7 +25,7 @@ import { Aside } from "./Aside/Aside.js";
 import { StreamContext } from "./StreamContext.js";
 import type { FeedbackDetail } from "../cruise-canvas/interfaces.js";
 import { NodeFeedback } from "../shared/NodeFeedback/NodeFeedback.js";
-import type { ChatStreamProps, ChatStreamRef } from ".";
+import type { ChatStreamProps, ChatStreamRef, ConversationDetail } from ".";
 import styles from "./styles.module.css";
 import toolbarStyles from "../cruise-canvas/toolbar.module.css";
 import { K, t } from "./i18n.js";
@@ -42,6 +42,7 @@ interface ChatStreamComponentProps extends ChatStreamProps {
   onSubmitFeedback: (detail: FeedbackDetail) => void;
   onSwitchToCanvas: () => void;
   onFeedbackOnView: (viewId: string) => void;
+  onDetailChange: (detail: ConversationDetail) => void;
 }
 
 export function ChatStreamComponent(
@@ -61,6 +62,7 @@ export function ChatStreamComponent(
     onSubmitFeedback,
     onSwitchToCanvas,
     onFeedbackOnView,
+    onDetailChange,
   }: ChatStreamComponentProps,
   ref: React.Ref<ChatStreamRef>
 ) {
@@ -86,6 +88,12 @@ export function ChatStreamComponent(
     tasks,
     error
   );
+
+  useEffect(() => {
+    onDetailChange({
+      projectId: conversation?.projectId,
+    });
+  }, [onDetailChange, conversation?.projectId]);
 
   const views = useMemo(() => {
     if (!jobMap) {

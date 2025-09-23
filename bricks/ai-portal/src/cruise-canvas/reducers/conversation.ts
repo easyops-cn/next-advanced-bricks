@@ -15,6 +15,7 @@ export const conversation: Reducer<
         "title",
         "startTime",
         "endTime",
+        "projectId",
       ]);
 
       return (

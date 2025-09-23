@@ -21,6 +21,7 @@ type AutoSize =
     };
 export interface TextareaComponentRef {
   focus(): void;
+  element: HTMLTextAreaElement | null;
 }
 
 export interface TextareaProps extends FormItemProps {
