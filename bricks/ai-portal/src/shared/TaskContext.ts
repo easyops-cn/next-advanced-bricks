@@ -1,11 +1,14 @@
 import { createContext, type Dispatch } from "react";
 import type { FeedbackDetail, Job } from "../cruise-canvas/interfaces";
-import type { GeneratedView } from "./interfaces";
+import type { ExampleProject, GeneratedView, ShowCaseType } from "./interfaces";
 
 export interface TaskContextValue {
+  conversationId?: string;
   workspace?: string;
   previewUrlTemplate?: string;
   replay?: boolean;
+  showCases?: ShowCaseType[];
+  exampleProjects?: ExampleProject[];
 
   humanInput: (jobId: string, input: string | null, action?: string) => void;
   onShare: () => void;
@@ -30,6 +33,10 @@ export interface TaskContextValue {
   showFeedbackOnView?: boolean;
   onFeedbackOnView?: (viewId: string) => void;
   feedbackDoneViews?: Set<string>;
+
+  skipToResults?: () => void;
+  watchAgain?: () => void;
+  tryItOut?: () => void;
 }
 
 export const TaskContext = createContext<TaskContextValue>({

@@ -14,6 +14,7 @@ import {
   FEEDBACK_NODE_ID,
   NODE_SEP,
   RANK_SEP,
+  REPLAY_NODE_ID,
   START_NODE_ID,
 } from "./constants";
 
@@ -23,9 +24,11 @@ export interface UseLayoutOptions {
   sizeMap: Map<string, SizeTuple> | null;
   completed?: boolean;
   failed?: boolean;
+  finished?: boolean;
   error?: string | null;
   showFeedback?: boolean;
   showFeedbackAfterFailed?: boolean;
+  replay?: boolean;
 }
 
 export function useLayout({
@@ -34,9 +37,11 @@ export function useLayout({
   sizeMap,
   completed,
   failed,
+  finished,
   error,
   showFeedback,
   showFeedbackAfterFailed,
+  replay,
 }: UseLayoutOptions) {
   const memoizedPositionsRef = useRef<Map<string, NodePosition> | null>(null);
 
@@ -54,7 +59,8 @@ export function useLayout({
 
     const hasSource = new Set<string>(rawEdges.map((edge) => edge.target));
     const failedFeedback = failed && showFeedback && showFeedbackAfterFailed;
-    const shouldAppend = completed || error != null || failedFeedback;
+    const shouldAppend =
+      error != null || (replay ? finished : completed || failedFeedback);
     const hasTarget = shouldAppend
       ? new Set<string>(rawEdges.map((edge) => edge.source))
       : null;
@@ -77,20 +83,6 @@ export function useLayout({
 
     if (finishedNodeIds.length > 0) {
       let sourceIds = finishedNodeIds;
-      if (completed) {
-        initialNodes.push({
-          id: END_NODE_ID,
-          type: "end",
-        });
-        initialEdges.push(
-          ...finishedNodeIds.map((id) => ({
-            source: id,
-            target: END_NODE_ID,
-          }))
-        );
-        sourceIds = [END_NODE_ID];
-      }
-
       if (error != null) {
         initialNodes.push({
           id: ERROR_NODE_ID,
@@ -106,16 +98,53 @@ export function useLayout({
         sourceIds = [ERROR_NODE_ID];
       }
 
-      if (showFeedback && (completed || failedFeedback)) {
-        initialNodes.push({
-          id: FEEDBACK_NODE_ID,
-          type: "feedback",
-        });
-        for (const id of sourceIds) {
-          initialEdges.push({
-            source: id,
-            target: FEEDBACK_NODE_ID,
+      if (replay) {
+        if (finished) {
+          initialNodes.push({
+            id: END_NODE_ID,
+            type: "end",
           });
+          initialEdges.push(
+            ...sourceIds.map((id) => ({
+              source: id,
+              target: END_NODE_ID,
+            }))
+          );
+          initialNodes.push({
+            id: REPLAY_NODE_ID,
+            type: "replay",
+          });
+          initialEdges.push({
+            source: END_NODE_ID,
+            target: REPLAY_NODE_ID,
+          });
+        }
+      } else {
+        if (completed) {
+          initialNodes.push({
+            id: END_NODE_ID,
+            type: "end",
+          });
+          initialEdges.push(
+            ...sourceIds.map((id) => ({
+              source: id,
+              target: END_NODE_ID,
+            }))
+          );
+          sourceIds = [END_NODE_ID];
+        }
+
+        if (showFeedback && (completed || failedFeedback)) {
+          initialNodes.push({
+            id: FEEDBACK_NODE_ID,
+            type: "feedback",
+          });
+          for (const id of sourceIds) {
+            initialEdges.push({
+              source: id,
+              target: FEEDBACK_NODE_ID,
+            });
+          }
         }
       }
     }
@@ -136,9 +165,11 @@ export function useLayout({
     _rawEdges,
     completed,
     failed,
+    finished,
     error,
     showFeedback,
     showFeedbackAfterFailed,
+    replay,
   ]);
 
   const startNodePositionRef = useRef<NodePosition | null>(null);

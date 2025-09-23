@@ -925,7 +925,7 @@ function NodeComponent({
       {type === "start" ? (
         <NodeStart />
       ) : type === "end" ? (
-        <NodeEnd showCompleted />
+        <NodeEnd />
       ) : type === "feedback" ? (
         <NodeFeedback />
       ) : type === "requirement" ? (

@@ -190,6 +190,10 @@ interface Window {
   /** Mock global date, currently for sandbox demo website only */
   MOCK_DATE?: string;
 
+  __elevo_try_it_out?: {
+    content?: string;
+  };
+
   // for File System Access Api
   showDirectoryPicker?(options: {
     mode: "read" | "readwrite";

@@ -67,6 +67,7 @@ export function useConversationDetail(
       dispatch({ type: "sse", payload: value, workspace: conversationId });
       isInitial = false;
     }
+    dispatch({ type: "finished" });
   }, [conversationId]);
 
   useEffect(() => {
@@ -136,6 +137,7 @@ export function useConversationDetail(
           dispatch({ type: "sse", payload: value, workspace: conversationId });
           isInitial = false;
         }
+        dispatch({ type: "finished" });
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error("sse failed", e);

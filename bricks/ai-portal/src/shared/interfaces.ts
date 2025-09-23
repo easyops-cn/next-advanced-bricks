@@ -15,6 +15,7 @@ export interface Conversation {
 
   startTime: number;
   endTime?: number;
+  finished?: boolean;
 }
 
 export interface Task {
@@ -204,4 +205,18 @@ export interface GeneratedView {
   from?: "generate" | "config";
   withContexts?: Record<string, unknown>;
   asyncConstructedView?: Promise<ParseResult | null>;
+}
+
+export interface ShowCaseType {
+  conversationId: string;
+  title: string;
+  summary: string;
+  scenario: string;
+  url?: string;
+}
+
+export interface ExampleProject {
+  instanceId: string;
+  name: string;
+  url?: string;
 }

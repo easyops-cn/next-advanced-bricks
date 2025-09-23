@@ -24,7 +24,8 @@ export type GraphNode =
   | StartGraphNode
   | EndGraphNode
   | ErrorGraphNode
-  | FeedbackGraphNode;
+  | FeedbackGraphNode
+  | ReplayGraphNode;
 
 export interface RequirementGraphNode extends BaseGraphNode {
   type: "requirement";
@@ -65,6 +66,10 @@ export interface ErrorGraphNode extends BaseGraphNode {
 
 export interface FeedbackGraphNode extends BaseGraphNode {
   type: "feedback";
+}
+
+export interface ReplayGraphNode extends BaseGraphNode {
+  type: "replay";
 }
 
 export interface BaseGraphNode {

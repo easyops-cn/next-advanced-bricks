@@ -10,7 +10,6 @@ import type {
 } from "@next-bricks/icons/general-icon";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
-import { parseTemplate } from "../shared/parseTemplate.js";
 
 initializeI18n(NS, locales);
 
@@ -21,10 +20,9 @@ const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
 const { defineElement, property } = createDecorators();
 
 export interface ShowCaseProps {
-  conversationId?: string;
   caseTitle?: string;
   summary?: string;
-  urlTemplate?: string;
+  url?: string;
 }
 
 /**
@@ -36,39 +34,30 @@ export
 })
 class ShowCase extends ReactNextElement implements ShowCaseProps {
   @property()
-  accessor conversationId: string | undefined;
-
-  @property()
   accessor caseTitle: string | undefined;
 
   @property()
   accessor summary: string | undefined;
 
   @property()
-  accessor urlTemplate: string | undefined;
+  accessor url: string | undefined;
 
   render() {
     return (
       <ShowCaseComponent
-        conversationId={this.conversationId}
         caseTitle={this.caseTitle}
         summary={this.summary}
-        urlTemplate={this.urlTemplate}
+        url={this.url}
       />
     );
   }
 }
 
-function ShowCaseComponent({
-  conversationId,
-  caseTitle,
-  summary,
-  urlTemplate,
-}: ShowCaseProps) {
+function ShowCaseComponent({ caseTitle, summary, url }: ShowCaseProps) {
   return (
     <WrappedLink
       className={`link ${bgClasses[Math.floor(Math.random() * bgClasses.length)]}`}
-      url={parseTemplate(urlTemplate, { conversationId })}
+      url={url}
     >
       <span className="title">{caseTitle}</span>
       <span className="description">{summary}</span>

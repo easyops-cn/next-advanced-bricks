@@ -13,6 +13,7 @@ import type {
   TabListProps,
 } from "../tab-list/index.js";
 import type { ShowCase, ShowCaseProps } from "../show-case/index.js";
+import type { ShowCaseType } from "../shared/interfaces.js";
 
 initializeI18n(NS, locales);
 
@@ -32,15 +33,6 @@ const { defineElement, property } = createDecorators();
 
 export interface ShowCasesProps {
   list?: ShowCaseType[];
-  urlTemplate?: string;
-}
-
-export interface ShowCaseType {
-  conversationId: string;
-  title: string;
-  summary: string;
-  scenario: string;
-  thumbUrl?: string;
 }
 
 /**
@@ -54,17 +46,12 @@ class ShowCases extends ReactNextElement implements ShowCasesProps {
   @property({ attribute: false })
   accessor list: ShowCaseType[] | undefined;
 
-  @property()
-  accessor urlTemplate: string | undefined;
-
   render() {
-    return (
-      <ShowCasesComponent list={this.list} urlTemplate={this.urlTemplate} />
-    );
+    return <ShowCasesComponent list={this.list} />;
   }
 }
 
-function ShowCasesComponent({ list, urlTemplate }: ShowCasesProps) {
+function ShowCasesComponent({ list }: ShowCasesProps) {
   // Grouping the list by scenario
   const groups = useMemo<string[]>(() => {
     return ["", ...new Set(list?.map((item) => item.scenario).filter(Boolean))];
@@ -102,10 +89,9 @@ function ShowCasesComponent({ list, urlTemplate }: ShowCasesProps) {
         {filteredList?.map((item) => (
           <li key={item.conversationId}>
             <WrappedShowCase
-              conversationId={item.conversationId}
               caseTitle={item.title}
               summary={item.summary}
-              urlTemplate={urlTemplate}
+              url={item.url}
             />
           </li>
         ))}
