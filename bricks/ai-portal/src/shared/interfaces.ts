@@ -43,6 +43,8 @@ export interface Task {
 
   startTime: number;
   endTime?: number;
+
+  aiEmployeeId?: string;
 }
 
 export type ConversationState =
@@ -102,6 +104,8 @@ export interface Job {
 
   // 用户选择的动作
   humanAction?: string;
+
+  aiEmployeeId?: string;
 }
 
 export type HumanAction = HumanActionConfirm | HumanActionSelect;

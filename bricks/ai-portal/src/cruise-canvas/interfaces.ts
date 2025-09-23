@@ -110,6 +110,8 @@ export interface Task {
 
   startTime: number;
   endTime?: number;
+
+  aiEmployeeId?: string;
 }
 
 export interface Step {
@@ -158,6 +160,8 @@ export interface Job {
 
   // 用户选择的动作
   humanAction?: string;
+
+  aiEmployeeId?: string;
 }
 
 export interface TaskPatch extends Omit<Partial<Task>, "jobs"> {
