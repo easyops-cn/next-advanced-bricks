@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.19.2...@next-bricks/form@1.20.0) (2025-09-23)
+
+
+### Features
+
+* mention AI Employees ([e45aa94](https://github.com/easyops-cn/next-advanced-bricks/commit/e45aa9460fdabd480ec8a71d5d732eb4ee9e7677))
+
+
+
+
+
 ## [1.19.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.19.1...@next-bricks/form@1.19.2) (2025-09-22)
 
 

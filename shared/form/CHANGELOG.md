@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/form@0.8.4...@next-shared/form@0.9.0) (2025-09-23)
+
+
+### Features
+
+* mention AI Employees ([e45aa94](https://github.com/easyops-cn/next-advanced-bricks/commit/e45aa9460fdabd480ec8a71d5d732eb4ee9e7677))
+
+
+
+
+
 ## [0.8.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/form@0.8.3...@next-shared/form@0.8.4) (2025-07-10)
 
 **Note:** Version bump only for package @next-shared/form
