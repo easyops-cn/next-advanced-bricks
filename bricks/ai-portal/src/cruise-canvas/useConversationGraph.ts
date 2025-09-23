@@ -14,6 +14,7 @@ export function useConversationGraph(
   tasks: Task[],
   options?: {
     showHiddenJobs?: boolean;
+    showHumanActions?: boolean;
   }
 ) {
   return useMemo(() => {
@@ -120,7 +121,7 @@ export function useConversationGraph(
         });
       }
 
-      if (job.humanAction) {
+      if (options?.showHumanActions && job.humanAction) {
         const humanActionNodeId = `human-action:${job.id}`;
         nodes.push({
           type: "requirement",

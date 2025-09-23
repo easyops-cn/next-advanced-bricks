@@ -202,7 +202,6 @@ function LegacyChatBoxComponent(
         selectionStart === selectionEnd &&
         aiEmployees?.length
       ) {
-        // const lastChar = value[selectionStart - 1];
         const previousContent = value.slice(0, selectionStart);
         const mentionIndex = previousContent.lastIndexOf("@");
         if (mentionIndex >= 0) {
@@ -287,6 +286,7 @@ function LegacyChatBoxComponent(
     const rect = getContentRectInTextarea(
       element,
       mentionPrefix,
+      // Ignore the last space
       mentionedText.slice(0, -1)
     );
     return {

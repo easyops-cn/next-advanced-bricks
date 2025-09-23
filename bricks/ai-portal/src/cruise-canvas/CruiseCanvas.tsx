@@ -111,6 +111,7 @@ export function CruiseCanvasComponent(
     replayDelay,
     supports,
     showHiddenJobs,
+    showHumanActions,
     showFeedback: propShowFeedback,
     showFeedbackAfterFailed,
     showFeedbackOnView,
@@ -141,7 +142,10 @@ export function CruiseCanvasComponent(
     replayDelay
   );
   const plan = tasks[tasks.length - 1]?.plan;
-  const graph = useConversationGraph(conversation, tasks, { showHiddenJobs });
+  const graph = useConversationGraph(conversation, tasks, {
+    showHiddenJobs,
+    showHumanActions,
+  });
   const rawNodes = graph?.nodes;
   const rawEdges = graph?.edges;
   const nav = graph?.nav;
@@ -582,6 +586,7 @@ export function CruiseCanvasComponent(
     () => ({
       workspace,
       previewUrlTemplate,
+      replay,
 
       humanInput,
       onShare,
@@ -610,6 +615,7 @@ export function CruiseCanvasComponent(
     [
       workspace,
       previewUrlTemplate,
+      replay,
 
       humanInput,
       onTerminate,
