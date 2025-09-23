@@ -24,3 +24,4 @@ import "./project-knowledges/index.js";
 import "./activity-timeline/index.js";
 import "./chat-input/index.js";
 import "./elevo-logo/index.js";
+import "./show-case/index.js";
