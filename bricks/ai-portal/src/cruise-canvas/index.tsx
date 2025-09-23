@@ -24,6 +24,7 @@ export interface CruiseCanvasProps {
   replayDelay?: number;
   supports?: Record<string, boolean>;
   showHiddenJobs?: boolean;
+  showHumanActions?: boolean;
   showFeedback?: boolean;
   showFeedbackAfterFailed?: boolean;
   showUiSwitch?: boolean;
@@ -84,6 +85,9 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
 
   @property({ type: Boolean })
   accessor showHiddenJobs: boolean | undefined;
+
+  @property({ type: Boolean })
+  accessor showHumanActions: boolean | undefined;
 
   @property({ type: Boolean })
   accessor showFeedback: boolean | undefined;
@@ -185,6 +189,7 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         replayDelay={this.replayDelay}
         supports={this.supports}
         showHiddenJobs={this.showHiddenJobs}
+        showHumanActions={this.showHumanActions}
         showFeedback={this.showFeedback}
         showFeedbackAfterFailed={this.showFeedbackAfterFailed}
         showUiSwitch={this.showUiSwitch}

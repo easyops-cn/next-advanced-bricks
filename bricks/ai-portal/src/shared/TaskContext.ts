@@ -5,6 +5,7 @@ import type { GeneratedView } from "./interfaces";
 export interface TaskContextValue {
   workspace?: string;
   previewUrlTemplate?: string;
+  replay?: boolean;
 
   humanInput: (jobId: string, input: string | null, action?: string) => void;
   onShare: () => void;

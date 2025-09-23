@@ -21,6 +21,7 @@ export interface ChatStreamProps {
   replay?: boolean;
   replayDelay?: number;
   supports?: Record<string, boolean>;
+  showHumanActions?: boolean;
   showFeedback?: boolean;
   showFeedbackAfterFailed?: boolean;
   showFeedbackOnView?: boolean;
@@ -71,6 +72,9 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
 
   @property({ attribute: false })
   accessor supports: Record<string, boolean> | undefined;
+
+  @property({ type: Boolean })
+  accessor showHumanActions: boolean | undefined;
 
   @property({ type: Boolean })
   accessor showFeedback: boolean | undefined;
@@ -166,6 +170,7 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
         replay={this.replay}
         replayDelay={this.replayDelay}
         supports={this.supports}
+        showHumanActions={this.showHumanActions}
         showFeedback={this.showFeedback}
         showFeedbackAfterFailed={this.showFeedbackAfterFailed}
         showFeedbackOnView={this.showFeedbackOnView}

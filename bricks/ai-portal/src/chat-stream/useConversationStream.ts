@@ -6,7 +6,10 @@ import { getFlatOrderedJobs } from "../cruise-canvas/getFlatOrderedJobs.js";
 export function useConversationStream(
   conversation: ConversationBaseDetail | null | undefined,
   tasks: Task[],
-  error: string | null | undefined
+  error: string | null | undefined,
+  options?: {
+    showHumanActions?: boolean;
+  }
 ) {
   return useMemo(() => {
     if (!conversation) {
@@ -62,7 +65,7 @@ export function useConversationStream(
         prevAssistantMessage.jobs.push(job);
       }
 
-      if (job.humanAction) {
+      if (options?.showHumanActions && job.humanAction) {
         if (prevAssistantMessage.jobs.length > 0) {
           messages.push(prevAssistantMessage);
         }

@@ -52,6 +52,7 @@ export function ChatStreamComponent(
     replay,
     replayDelay,
     supports,
+    showHumanActions,
     showFeedback: propShowFeedback,
     showFeedbackAfterFailed,
     showFeedbackOnView,
@@ -86,7 +87,8 @@ export function ChatStreamComponent(
   const { messages, jobMap, lastToolCallJobId } = useConversationStream(
     conversation,
     tasks,
-    error
+    error,
+    { showHumanActions }
   );
 
   useEffect(() => {
@@ -196,6 +198,7 @@ export function ChatStreamComponent(
     () => ({
       workspace,
       previewUrlTemplate,
+      replay,
 
       humanInput,
       onShare,
@@ -218,6 +221,7 @@ export function ChatStreamComponent(
     [
       workspace,
       previewUrlTemplate,
+      replay,
 
       humanInput,
       onShare,

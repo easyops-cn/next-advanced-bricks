@@ -11,7 +11,7 @@ export function RequestHumanAction({
 }: {
   action: HumanAction;
 }): JSX.Element | null {
-  const { humanInput } = useContext(TaskContext);
+  const { humanInput, replay } = useContext(TaskContext);
   const [disabled, setDisabled] = useState(false);
 
   if (action.type === "select") {
@@ -26,6 +26,9 @@ export function RequestHumanAction({
         shape="round"
         disabled={disabled}
         onClick={() => {
+          if (replay) {
+            return;
+          }
           humanInput("", null, action.confirmText || "确认");
           setDisabled(true);
         }}
