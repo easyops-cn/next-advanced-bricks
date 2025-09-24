@@ -6,7 +6,6 @@ import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import { NS, locales } from "./i18n.js";
 import type { Job, TaskBaseDetail, FeedbackDetail } from "./interfaces.js";
-import { LegacyCruiseCanvasComponent } from "./LegacyCruiseCanvas.js";
 import { CruiseCanvasComponent, type CruiseCanvasRef } from "./CruiseCanvas.js";
 import type {
   ExampleProject,
@@ -21,7 +20,6 @@ const { defineElement, property, event, method } = createDecorators();
 export interface CruiseCanvasProps {
   conversationId?: string;
   initialRequest?: RequestStore | null;
-  taskId?: string;
   task?: TaskBaseDetail;
   jobs?: Job[];
   replay?: boolean;
@@ -43,10 +41,6 @@ export interface CruiseCanvasProps {
 export interface ConversationDetail {
   projectId?: string;
 }
-
-const ForwardedLegacyCruiseCanvasComponent = forwardRef(
-  LegacyCruiseCanvasComponent
-);
 
 const ForwardedCruiseCanvasComponent = forwardRef(CruiseCanvasComponent);
 
@@ -191,14 +185,10 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
   }
 
   render() {
-    const Component = this.conversationId
-      ? ForwardedCruiseCanvasComponent
-      : ForwardedLegacyCruiseCanvasComponent;
     return (
-      <Component
+      <ForwardedCruiseCanvasComponent
         conversationId={this.conversationId!}
         initialRequest={this.initialRequest}
-        taskId={this.taskId}
         jobs={this.jobs}
         task={this.task}
         replay={this.replay}

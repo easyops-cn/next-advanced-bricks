@@ -6,7 +6,6 @@ import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import { NS, locales } from "./i18n.js";
 import type { FeedbackDetail } from "../cruise-canvas/interfaces.js";
-import { LegacyChatStreamComponent } from "./LegacyChatStream.js";
 import { ChatStreamComponent } from "./ChatStream.js";
 import type {
   ExampleProject,
@@ -21,7 +20,6 @@ const { defineElement, property, event, method } = createDecorators();
 export interface ChatStreamProps {
   conversationId?: string;
   initialRequest?: RequestStore | null;
-  taskId?: string;
   replay?: boolean;
   replayDelay?: number;
   supports?: Record<string, boolean>;
@@ -40,10 +38,6 @@ export interface ConversationDetail {
   projectId?: string;
 }
 
-const ForwardedLegacyChatStreamComponent = forwardRef(
-  LegacyChatStreamComponent
-);
-
 const ForwardedChatStreamComponent = forwardRef(ChatStreamComponent);
 
 /**
@@ -61,9 +55,6 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
   /** 初始请求数据。仅初始设置有效。 */
   @property({ attribute: false, render: false })
   accessor initialRequest: RequestStore | undefined | null;
-
-  @property()
-  accessor taskId: string | undefined;
 
   /** 是否启用回放。仅初始设置有效。 */
   @property({ type: Boolean })
@@ -175,14 +166,10 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
   }
 
   render() {
-    const Component = this.conversationId
-      ? ForwardedChatStreamComponent
-      : ForwardedLegacyChatStreamComponent;
     return (
-      <Component
+      <ForwardedChatStreamComponent
         conversationId={this.conversationId!}
         initialRequest={this.initialRequest}
-        taskId={this.taskId}
         replay={this.replay}
         replayDelay={this.replayDelay}
         supports={this.supports}

@@ -33,10 +33,6 @@ import {
   type Project,
   type ProjectActionClickDetail,
 } from "./ChatHistory.js";
-import {
-  LegacyChatHistory,
-  type LegacyActionClickDetail,
-} from "./LegacyChatHistory.js";
 
 initializeI18n(NS, locales);
 
@@ -50,8 +46,6 @@ const WrappedElevoLogo = wrapBrick("ai-portal.elevo-logo");
 const { defineElement, property, event, method } = createDecorators();
 
 export interface ElevoSidebarProps {
-  /** @deprecated */
-  legacy?: boolean;
   userInstanceId?: string;
   behavior?: "default" | "drawer";
   bordered?: boolean;
@@ -87,10 +81,6 @@ export
   styleTexts: [styleText],
 })
 class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
-  /** @deprecated */
-  @property({ type: Boolean })
-  accessor legacy = true;
-
   @property()
   accessor userInstanceId: string | undefined;
 
@@ -138,15 +128,9 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
   };
 
   @event({ type: "action.click" })
-  accessor #actionClick!: EventEmitter<
-    ActionClickDetail | LegacyActionClickDetail
-  >;
+  accessor #actionClick!: EventEmitter<ActionClickDetail>;
 
   #handleActionClick = (detail: ActionClickDetail) => {
-    this.#actionClick.emit(detail);
-  };
-
-  #handleLegacyActionClick = (detail: LegacyActionClickDetail) => {
     this.#actionClick.emit(detail);
   };
 
@@ -201,7 +185,6 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
     return (
       <ElevoSidebarComponent
         ref={this.#ref}
-        legacy={this.legacy}
         userInstanceId={this.userInstanceId}
         behavior={this.behavior}
         logoUrl={this.logoUrl}
@@ -215,7 +198,6 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
         projectActions={this.projectActions}
         links={this.links}
         onLogout={this.#handleLogout}
-        onLegacyActionClick={this.#handleLegacyActionClick}
         onActionClick={this.#handleActionClick}
         onProjectActionClick={this.#handleProjectActionClick}
         onAddProject={this.#handleAddProject}
@@ -227,14 +209,12 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
 interface ElevoSidebarComponentProps extends ElevoSidebarProps {
   onLogout: () => void;
   onActionClick: (detail: ActionClickDetail) => void;
-  onLegacyActionClick: (detail: LegacyActionClickDetail) => void;
   onProjectActionClick: (detail: ProjectActionClickDetail) => void;
   onAddProject: () => void;
 }
 
 function LegacyElevoSidebarComponent(
   {
-    legacy,
     userInstanceId,
     behavior,
     logoUrl,
@@ -249,7 +229,6 @@ function LegacyElevoSidebarComponent(
     links,
     onLogout,
     onActionClick,
-    onLegacyActionClick,
     onProjectActionClick,
     onAddProject,
   }: ElevoSidebarComponentProps,
@@ -377,30 +356,19 @@ function LegacyElevoSidebarComponent(
             ))}
           </div>
         ) : null}
-        {legacy ? (
-          <LegacyChatHistory
-            ref={historyRef}
-            activeId={historyActiveId}
-            urlTemplate={historyUrlTemplate}
-            actions={historyActions}
-            onActionClick={onLegacyActionClick}
-            onHistoryClick={handleHistoryClick}
-          />
-        ) : (
-          <ChatHistory
-            ref={historyRef}
-            historyActiveId={historyActiveId}
-            historyUrlTemplate={historyUrlTemplate}
-            historyActions={historyActions}
-            projectActiveId={projectActiveId}
-            projectUrlTemplate={projectUrlTemplate}
-            projectActions={projectActions}
-            onActionClick={onActionClick}
-            onHistoryClick={handleHistoryClick}
-            onProjectActionClick={onProjectActionClick}
-            onAddProject={onAddProject}
-          />
-        )}
+        <ChatHistory
+          ref={historyRef}
+          historyActiveId={historyActiveId}
+          historyUrlTemplate={historyUrlTemplate}
+          historyActions={historyActions}
+          projectActiveId={projectActiveId}
+          projectUrlTemplate={projectUrlTemplate}
+          projectActions={projectActions}
+          onActionClick={onActionClick}
+          onHistoryClick={handleHistoryClick}
+          onProjectActionClick={onProjectActionClick}
+          onAddProject={onAddProject}
+        />
         <div className="footer">
           <WrappedDropdownActions
             className="dropdown"
