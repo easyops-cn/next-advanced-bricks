@@ -17,9 +17,10 @@ initializeI18n(NS, locales);
 
 export interface NodeReplayProps {
   finished?: boolean;
+  ui?: "chat" | "canvas";
 }
 
-export function NodeReplay({ finished }: NodeReplayProps) {
+export function NodeReplay({ finished, ui }: NodeReplayProps) {
   const {
     conversationId,
     showCases,
@@ -33,6 +34,7 @@ export function NodeReplay({ finished }: NodeReplayProps) {
     <div
       className={classNames(styles["node-replay"], {
         [styles.finished]: finished,
+        [styles.chat]: ui === "chat",
       })}
     >
       <div className={styles.bar}>
