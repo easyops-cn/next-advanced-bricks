@@ -63,7 +63,7 @@ function ShowCaseComponent({ caseTitle, summary, url }: ShowCaseProps) {
       <span className="description">{summary}</span>
       <span className="mask" />
       <span className="button">
-        <WrappedIcon lib="lucide" icon="play-circle" />
+        <WrappedIcon lib="easyops" icon="replay" />
         {t(K.WATCH_REPLAY)}
       </span>
     </WrappedLink>

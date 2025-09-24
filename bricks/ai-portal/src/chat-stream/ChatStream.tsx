@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { getRuntime } from "@next-core/runtime";
+import { getBasePath, getRuntime } from "@next-core/runtime";
 import ResizeObserver from "resize-observer-polyfill";
 import classNames from "classnames";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
@@ -20,7 +20,6 @@ import { TaskContext } from "../shared/TaskContext.js";
 import { ChatBox } from "../shared/ChatBox/ChatBox.js";
 import { DONE_STATES, ICON_CANVAS } from "../shared/constants.js";
 import { ExpandedView } from "../shared/ExpandedView/ExpandedView.js";
-import { ReplayToolbar } from "../shared/ReplayToolbar/ReplayToolbar.js";
 import { Aside } from "./Aside/Aside.js";
 import { StreamContext } from "./StreamContext.js";
 import type { FeedbackDetail } from "../cruise-canvas/interfaces.js";
@@ -29,6 +28,7 @@ import type { ChatStreamProps, ChatStreamRef, ConversationDetail } from ".";
 import styles from "./styles.module.css";
 import toolbarStyles from "../cruise-canvas/toolbar.module.css";
 import { K, t } from "./i18n.js";
+import { NodeReplay } from "../cruise-canvas/NodeReplay/NodeReplay.js";
 
 const ICON_SHARE: GeneralIconProps = {
   lib: "easyops",
@@ -58,6 +58,9 @@ export function ChatStreamComponent(
     showFeedbackOnView,
     showUiSwitch,
     previewUrlTemplate,
+    showCases,
+    exampleProjects,
+    tryItOutUrl,
     onShare,
     onTerminate,
     onSubmitFeedback,
@@ -192,7 +195,14 @@ export function ChatStreamComponent(
     [humanInputRef]
   );
 
-  const workspace = conversation?.id;
+  const requirementMessage = messages[0];
+  const userInput = useMemo(() => {
+    if (requirementMessage?.role === "user") {
+      return requirementMessage.content;
+    }
+  }, [requirementMessage]);
+
+  const workspace = conversationId;
 
   const taskContextValue = useMemo(
     () => ({
@@ -200,6 +210,8 @@ export function ChatStreamComponent(
       workspace,
       previewUrlTemplate,
       replay,
+      showCases,
+      exampleProjects,
 
       humanInput,
       onShare,
@@ -218,12 +230,28 @@ export function ChatStreamComponent(
       showFeedbackOnView,
       onFeedbackOnView,
       feedbackDoneViews,
+
+      skipToResults,
+      watchAgain,
+      tryItOut() {
+        const win = window.open(
+          `${getBasePath().slice(0, -1)}${tryItOutUrl ?? "/elevo"}`,
+          "_blank"
+        );
+        if (win) {
+          win.__elevo_try_it_out = {
+            content: userInput,
+          };
+        }
+      },
     }),
     [
       conversationId,
       workspace,
       previewUrlTemplate,
       replay,
+      showCases,
+      exampleProjects,
 
       humanInput,
       onShare,
@@ -239,6 +267,11 @@ export function ChatStreamComponent(
       showFeedbackOnView,
       onFeedbackOnView,
       feedbackDoneViews,
+
+      skipToResults,
+      watchAgain,
+      userInput,
+      tryItOutUrl,
     ]
   );
 
@@ -357,12 +390,14 @@ export function ChatStreamComponent(
                       )}
                     </div>
                   ))}
-                  {showFeedback &&
-                    (conversationState === "completed" ||
-                      (conversationState === "failed" &&
-                        showFeedbackAfterFailed)) && (
-                      <NodeFeedback className={styles.feedback} />
-                    )}
+                  {replay
+                    ? conversation?.finished && <NodeReplay finished />
+                    : showFeedback &&
+                      (conversationState === "completed" ||
+                        (conversationState === "failed" &&
+                          showFeedbackAfterFailed)) && (
+                        <NodeFeedback className={styles.feedback} />
+                      )}
                 </div>
               </div>
               <div
@@ -372,15 +407,11 @@ export function ChatStreamComponent(
               >
                 <WrappedIcon lib="antd" icon="down" />
               </div>
-              {replay || supports?.chat ? (
+              {(replay ? !conversation?.finished : supports?.chat) ? (
                 <div className={styles.footer}>
                   <div className={styles.narrow}>
                     {replay ? (
-                      <ReplayToolbar
-                        taskDone={conversationDone}
-                        skipToResults={skipToResults}
-                        watchAgain={watchAgain}
-                      />
+                      <NodeReplay />
                     ) : (
                       <ChatBox state={conversationState} canChat={canChat} />
                     )}
