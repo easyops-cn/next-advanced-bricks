@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.44.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.43.1...@next-bricks/ai-portal@0.44.0) (2025-09-24)
+
+
+### Bug Fixes
+
+* fix errors between jobs ([b81829e](https://github.com/easyops-cn/next-advanced-bricks/commit/b81829e45e02ef83ddcc506fdfa5ee2604889e0b))
+* refine replay style ([fc6c2e3](https://github.com/easyops-cn/next-advanced-bricks/commit/fc6c2e3ff11e3e56a5f72a6e3af40e20c82003ff))
+* remove duplicated types ([f596f55](https://github.com/easyops-cn/next-advanced-bricks/commit/f596f5543aa3a2110c0245e880c6ed539a467166))
+* remove supports for ask user tools ([2ecd634](https://github.com/easyops-cn/next-advanced-bricks/commit/2ecd634e6c06c89d663f8033ece77541ba8ffa77))
+* remove unused deps ([e05bb4f](https://github.com/easyops-cn/next-advanced-bricks/commit/e05bb4f71b180fd8a0a71754147a75bf286d419e))
+* remove unused i18n data ([192d920](https://github.com/easyops-cn/next-advanced-bricks/commit/192d9202524155958fbd1020a900f9e628ed1344))
+
+
+### Features
+
+* remove legacy implementations ([94b4a92](https://github.com/easyops-cn/next-advanced-bricks/commit/94b4a92e47916d0ce0d7fdb40e2a4a1949e7ce25))
+
+
+
+
+
 ## [0.43.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.43.0...@next-bricks/ai-portal@0.43.1) (2025-09-24)
 
 
