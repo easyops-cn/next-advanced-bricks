@@ -1,4 +1,4 @@
-import type { DataPart, Message } from "../interfaces";
+import type { DataPart, Message } from "../../shared/interfaces";
 
 export const getToolDataProgress = (
   toolCallMessages: Message[] | undefined

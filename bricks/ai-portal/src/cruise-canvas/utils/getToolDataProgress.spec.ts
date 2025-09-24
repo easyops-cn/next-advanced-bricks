@@ -1,5 +1,5 @@
 import { getToolDataProgress } from "./getToolDataProgress";
-import type { Message } from "../interfaces";
+import type { Message } from "../../shared/interfaces";
 
 describe("utils", () => {
   describe("getToolDataProgress", () => {

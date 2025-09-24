@@ -1,13 +1,7 @@
 import React, { useContext, useMemo, useState } from "react";
 import classNames from "classnames";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
-import type {
-  CmdbInstanceDetailData,
-  FileInfo,
-  Job,
-  JobState,
-  TaskState,
-} from "../../cruise-canvas/interfaces.js";
+import type { CmdbInstanceDetailData } from "../../cruise-canvas/interfaces.js";
 import styles from "./NodeJob.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
 import { WrappedIcon } from "../../shared/bricks.js";
@@ -16,7 +10,13 @@ import { CmdbInstanceDetail } from "../../cruise-canvas/CmdbInstanceDetail/CmdbI
 import { NodeView } from "../NodeView/NodeView.js";
 import { TaskContext } from "../../shared/TaskContext.js";
 import { StreamContext } from "../StreamContext.js";
-import type { ConversationState } from "../../shared/interfaces.js";
+import type {
+  ConversationState,
+  FileInfo,
+  Job,
+  JobState,
+  TaskState,
+} from "../../shared/interfaces.js";
 
 export interface NodeJobProps {
   job: Job;
@@ -165,16 +165,12 @@ function getClassNameAndIconProps(
       };
     case "submitted":
     case "working":
-      if (
-        taskState === "paused" ||
-        taskState === "canceled" ||
-        taskState === "terminated"
-      ) {
+      if (taskState === "terminated") {
         return {
           icon: {
             lib: "fa",
             prefix: "far",
-            icon: taskState === "paused" ? "circle-pause" : "circle-stop",
+            icon: "circle-stop",
           },
         };
       }

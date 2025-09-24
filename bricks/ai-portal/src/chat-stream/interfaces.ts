@@ -1,4 +1,4 @@
-import type { Job } from "../cruise-canvas/interfaces.js";
+import type { Job } from "../shared/interfaces.js";
 
 export type ChatMessage = MessageFromUser | MessageFromAssistant;
 

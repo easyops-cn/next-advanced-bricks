@@ -4,16 +4,13 @@ import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import styles from "./Aside.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
 import { WrappedIcon, WrappedIconButton } from "../../shared/bricks";
-import type {
-  CmdbInstanceDetailData,
-  FileInfo,
-  Job,
-} from "../../cruise-canvas/interfaces";
+import type { CmdbInstanceDetailData } from "../../cruise-canvas/interfaces";
 import { ToolCallStatus } from "../../cruise-canvas/ToolCallStatus/ToolCallStatus";
 import { TaskContext } from "../../shared/TaskContext";
 import { StreamContext } from "../StreamContext";
 import { ICON_LOADING } from "../../shared/constants";
 import { CodeDisplay } from "../../shared/CodeDisplay";
+import type { FileInfo, Job } from "../../shared/interfaces";
 
 const ICON_SHRINK: GeneralIconProps = {
   lib: "easyops",

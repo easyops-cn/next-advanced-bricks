@@ -2,7 +2,7 @@
 import React, { useCallback, useState } from "react";
 import classNames from "classnames";
 import { CreatedView } from "../../shared/CreatedView/CreatedView";
-import type { Job } from "../../cruise-canvas/interfaces";
+import type { Job } from "../../shared/interfaces";
 import styles from "./NodeView.module.css";
 
 export interface NodeViewProps {

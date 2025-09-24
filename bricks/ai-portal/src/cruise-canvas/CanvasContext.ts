@@ -1,5 +1,6 @@
 import { createContext, type Dispatch } from "react";
-import type { FileInfo, SizeTuple } from "./interfaces";
+import type { SizeTuple } from "./interfaces";
+import type { FileInfo } from "../shared/interfaces";
 
 export interface CanvasContextValue {
   onNodeResize: (id: string, size: SizeTuple | null) => void;

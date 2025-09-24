@@ -4,14 +4,10 @@ import classNames from "classnames";
 import moment from "moment";
 import styles from "./NodeJob.module.css";
 import sharedStyles from "../shared.module.css";
-import type {
-  CmdbInstanceDetailData,
-  FileInfo,
-  Job,
-  JobState,
-} from "../interfaces";
+import type { CmdbInstanceDetailData } from "../interfaces";
 import { K, t } from "../i18n.js";
 import { WrappedIcon } from "../../shared/bricks";
+import { FileInfo, Job, JobState } from "../../shared/interfaces";
 import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus.js";
 import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
 import { CmdbInstanceDetail } from "../CmdbInstanceDetail/CmdbInstanceDetail";

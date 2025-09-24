@@ -1,9 +1,12 @@
 import React, { useMemo } from "react";
-import type { Job, TaskState } from "../../cruise-canvas/interfaces.js";
 import styles from "./AssistantMessage.module.css";
 import { NodeJob } from "../NodeJob/NodeJob.js";
 import { NON_WORKING_STATES } from "../../shared/constants.js";
-import type { ConversationState } from "../../shared/interfaces.js";
+import type {
+  ConversationState,
+  Job,
+  TaskState,
+} from "../../shared/interfaces.js";
 import { WrappedIcon } from "../../shared/bricks.js";
 
 export interface AssistantMessageProps {

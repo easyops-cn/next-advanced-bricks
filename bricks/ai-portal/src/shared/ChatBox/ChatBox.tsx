@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { initializeI18n } from "@next-core/i18n";
 import { showDialog, WrappedChatInput } from "../bricks";
-import type { TaskState } from "../../cruise-canvas/interfaces";
 import { K, locales, NS, t } from "./i18n";
 import { TaskContext } from "../TaskContext";
 import type { ConversationState } from "../interfaces";
@@ -9,7 +8,7 @@ import type { ConversationState } from "../interfaces";
 initializeI18n(NS, locales);
 
 export interface ChatBoxProps {
-  state: TaskState | ConversationState | undefined;
+  state: ConversationState | undefined;
   canChat: boolean;
 }
 

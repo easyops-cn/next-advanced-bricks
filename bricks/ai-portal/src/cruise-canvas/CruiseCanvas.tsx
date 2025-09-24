@@ -21,13 +21,10 @@ import { useZoom } from "./useZoom.js";
 import type {
   SizeTuple,
   GraphNode,
-  Job,
   RequirementGraphNode,
   JobGraphNode,
   ZoomAction,
-  FileInfo,
   FeedbackDetail,
-  JobState,
 } from "./interfaces.js";
 import { useAutoCenter } from "./useAutoCenter.js";
 import { useLayout } from "./useLayout.js";
@@ -64,7 +61,12 @@ import { TaskContext } from "../shared/TaskContext.js";
 import { NodeLoading } from "./NodeLoading/NodeLoading.js";
 import { JsxEditor } from "../shared/JsxEditor/JsxEditor.js";
 import { NodeError } from "./NodeError/NodeError.js";
-import type { GeneratedView } from "../shared/interfaces";
+import type {
+  GeneratedView,
+  FileInfo,
+  Job,
+  JobState,
+} from "../shared/interfaces";
 import { NodeReplay } from "./NodeReplay/NodeReplay.js";
 import type { ConversationDetail, CruiseCanvasProps } from ".";
 

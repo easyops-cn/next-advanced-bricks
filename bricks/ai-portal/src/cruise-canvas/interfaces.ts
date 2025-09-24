@@ -1,5 +1,5 @@
 import type { JSONSchema } from "./json-schema";
-import type { GeneratedView, HumanAction } from "../shared/interfaces";
+import type { GeneratedView, Job, JobState } from "../shared/interfaces";
 
 export type RangeTuple = [min: number, max: number];
 export type SizeTuple = [width: number, height: number];
@@ -93,173 +93,12 @@ export interface Edge {
   points: NodePosition[];
 }
 
-export type TaskBaseDetail = Omit<Task, "jobs">;
-
-export interface Task {
-  // Task ID
-  id: string;
-
-  // 根据用户需求自动生成的任务标题
-  title: string;
-
-  // User requirement
-  requirement: string;
-
-  // attachments?: File[];
-
-  state: TaskState;
-
-  plan: Step[];
-
-  jobs: Job[];
-
-  startTime: number;
-  endTime?: number;
-
-  aiEmployeeId?: string;
-}
-
 export interface Step {
   // Pre-generated Job ID for this step
   id: string;
 
   // The instruction for this step
   instruction: string;
-}
-
-export interface StepWithState extends Step {
-  state?: JobState;
-}
-
-export interface Job {
-  // Job ID
-  id: string;
-
-  // Upstream job IDs
-  upstream?: string[];
-
-  // Parent job ID
-  parent?: string;
-
-  // Instruction from plan
-  instruction?: string;
-
-  state: JobState;
-
-  toolCall?: ToolCall;
-
-  messages?: Message[];
-
-  isError?: boolean;
-
-  hidden?: boolean;
-
-  startTime: number;
-  endTime?: number;
-
-  generatedView?: GeneratedView;
-  level?: number;
-
-  // 要求用户选择动作
-  requestHumanAction?: HumanAction;
-
-  // 用户选择的动作
-  humanAction?: string;
-
-  aiEmployeeId?: string;
-}
-
-export interface TaskPatch extends Omit<Partial<Task>, "jobs"> {
-  jobs?: JobPatch[];
-
-  error?: string;
-
-  time?: number;
-}
-
-export interface JobPatch extends Partial<Job> {
-  id: string;
-}
-
-export type BaseState =
-  | "submitted"
-  | "working"
-  | "input-required"
-  | "completed"
-  | "canceled"
-  | "failed"
-  | "unknown";
-
-export type JobState = BaseState | "skipped";
-
-export type TaskState = JobState | "paused" | "confirming-plan";
-
-export interface Message {
-  role: string;
-  parts: Part[];
-}
-
-export type Part = TextPart | FilePart | DataPart;
-
-export interface TextPart {
-  type: "text";
-  text: string;
-}
-
-export interface FilePart {
-  type: "file";
-  file: FileInfo;
-}
-
-export interface FileInfo {
-  name?: string;
-  mimeType?: string;
-  size?: number; // in bytes
-  // oneof {
-  bytes?: string; // base64 encoded content
-  uri?: string;
-  // }
-}
-
-// 自定义结构化信息，用于个性化 UI 显示
-export interface DataPart {
-  type: "data";
-  data: Record<string, any>;
-}
-
-export interface ToolCall {
-  name: string;
-  arguments?: Record<string, unknown>;
-  argumentsParseFailed?: boolean;
-  argumentsParseError?: unknown;
-  originalArguments?: string;
-  annotations?: {
-    title?: string;
-  };
-}
-
-export interface RawComponentGraphNode {
-  id: string;
-  name: string;
-  description?: string;
-  status?: "trouble" | "ok";
-  children?: string[];
-}
-
-export interface ComponentGraph {
-  initial: boolean;
-  nodes: ComponentGraphNode[];
-  edges: ComponentGraphEdge[];
-}
-
-export interface ComponentGraphNode {
-  type: "node";
-  id: string;
-  data: RawComponentGraphNode;
-}
-
-export interface ComponentGraphEdge extends GraphEdge {
-  type: "edge";
 }
 
 export interface GraphNavItem {

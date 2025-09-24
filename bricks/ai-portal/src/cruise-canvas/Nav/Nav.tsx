@@ -1,16 +1,15 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import classNames from "classnames";
 import styles from "./Nav.module.css";
-import type {
-  GraphNavItem,
-  Job,
-  JobState,
-  Step,
-  TaskState,
-} from "../interfaces";
+import type { GraphNavItem, Step } from "../interfaces";
 import { WrappedIcon } from "../../shared/bricks";
 import { DONE_STATES } from "../../shared/constants";
-import type { ConversationState } from "../../shared/interfaces";
+import type {
+  ConversationState,
+  Job,
+  JobState,
+  TaskState,
+} from "../../shared/interfaces";
 
 export interface NavProps {
   nav: GraphNavItem[] | undefined;
@@ -208,16 +207,12 @@ function getClassNameAndIconProps(
       };
     case "submitted":
     case "working":
-      if (
-        taskState === "paused" ||
-        taskState === "canceled" ||
-        taskState === "terminated"
-      ) {
+      if (taskState === "terminated") {
         return {
           icon: {
             lib: "fa",
             prefix: "far",
-            icon: taskState === "paused" ? "circle-pause" : "circle-stop",
+            icon: "circle-stop",
           },
         };
       }

@@ -1,6 +1,11 @@
 import { createContext, type Dispatch } from "react";
-import type { FeedbackDetail, Job } from "../cruise-canvas/interfaces";
-import type { ExampleProject, GeneratedView, ShowCaseType } from "./interfaces";
+import type { FeedbackDetail } from "../cruise-canvas/interfaces";
+import type {
+  ExampleProject,
+  GeneratedView,
+  Job,
+  ShowCaseType,
+} from "./interfaces";
 
 export interface TaskContextValue {
   conversationId?: string;
