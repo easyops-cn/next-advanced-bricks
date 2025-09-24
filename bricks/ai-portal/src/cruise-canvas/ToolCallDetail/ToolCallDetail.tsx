@@ -127,7 +127,7 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
       {hasProcessParts && (
         <div className={styles.detail}>
           <div className={styles.heading}>{t(K.PROCESS)}:</div>
-          <div className={`${styles.body} ${sharedStyles.markdown}`}>
+          <div className={styles.body}>
             {intermediateParts.map((part, partIndex) =>
               part.data?.type === "stream" ? (
                 <div
@@ -137,10 +137,15 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
                     sharedStyles.markdown
                   )}
                 >
-                  <EnhancedMarkdown content={part.data.message} />
+                  <EnhancedMarkdown
+                    className={sharedStyles["markdown-wrapper"]}
+                    content={part.data.message}
+                  />
                 </div>
               ) : (
-                <PreComponent key={partIndex} content={JSON.stringify(part)} />
+                <div key={partIndex} className={sharedStyles.markdown}>
+                  <PreComponent content={JSON.stringify(part)} />
+                </div>
               )
             )}
             {!!progress && (

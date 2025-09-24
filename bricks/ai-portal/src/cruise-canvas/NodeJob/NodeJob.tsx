@@ -119,7 +119,10 @@ export function NodeJob({
               {message.parts?.map((part, partIndex) => (
                 <React.Fragment key={partIndex}>
                   {part.type === "text" && (
-                    <EnhancedMarkdown content={part.text} />
+                    <EnhancedMarkdown
+                      className={sharedStyles["markdown-wrapper"]}
+                      content={part.text}
+                    />
                   )}
                 </React.Fragment>
               ))}
@@ -131,7 +134,10 @@ export function NodeJob({
             className={classNames(styles.message, sharedStyles.markdown)}
             style={{ padding: "0 8px" }}
           >
-            <EnhancedMarkdown content={toolMarkdownContent} />
+            <EnhancedMarkdown
+              className={sharedStyles["markdown-wrapper"]}
+              content={toolMarkdownContent}
+            />
           </div>
         )}
         {cmdbInstanceDetails.map((detail, index) => (
