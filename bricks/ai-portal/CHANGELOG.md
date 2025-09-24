@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.43.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.42.1...@next-bricks/ai-portal@0.43.0) (2025-09-24)
+
+
+### Bug Fixes
+
+* refine replay ([12ce0fd](https://github.com/easyops-cn/next-advanced-bricks/commit/12ce0fd9326594e3607928e6b0ce76fa7b89268a))
+* set job aiEmployeeId ([07002b6](https://github.com/easyops-cn/next-advanced-bricks/commit/07002b65793dea0dd0c4b6e9132765ead1622a8c))
+
+
+### Features
+
+* refine show cases ([43170ba](https://github.com/easyops-cn/next-advanced-bricks/commit/43170ba8631ad2235c647a1bc5a27aea93357a95))
+
+
+
+
+
 ## [0.42.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.42.0...@next-bricks/ai-portal@0.42.1) (2025-09-23)
 
 
