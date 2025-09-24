@@ -24,15 +24,17 @@ export const errors: Reducer<ConversationError[], CruiseCanvasAction> = (
         return [{ jobs: [], error }, { jobs: [] }];
       }
 
+      const previousJobs = new Set(state.flatMap((e) => Array.from(e.jobs)));
       const jobs = new Set<string>();
       for (const task of tasks ?? []) {
         for (const job of task.jobs ?? []) {
-          jobs.add(job.id);
+          if (!previousJobs.has(job.id)) {
+            jobs.add(job.id);
+          }
         }
       }
 
-      const previousJobs = state.flatMap((e) => Array.from(e.jobs));
-      const newJobs = Array.from(jobs).filter((j) => !previousJobs.includes(j));
+      const newJobs = Array.from(jobs);
 
       if (newJobs.length === 0) {
         return state;
