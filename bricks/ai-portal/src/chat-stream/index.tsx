@@ -8,7 +8,11 @@ import { NS, locales } from "./i18n.js";
 import type { FeedbackDetail } from "../cruise-canvas/interfaces.js";
 import { LegacyChatStreamComponent } from "./LegacyChatStream.js";
 import { ChatStreamComponent } from "./ChatStream.js";
-import type { RequestStore } from "../shared/interfaces.js";
+import type {
+  ExampleProject,
+  RequestStore,
+  ShowCaseType,
+} from "../shared/interfaces.js";
 
 initializeI18n(NS, locales);
 
@@ -27,6 +31,9 @@ export interface ChatStreamProps {
   showFeedbackOnView?: boolean;
   showUiSwitch?: boolean;
   previewUrlTemplate?: string;
+  showCases?: ShowCaseType[];
+  exampleProjects?: ExampleProject[];
+  tryItOutUrl?: string;
 }
 
 export interface ConversationDetail {
@@ -93,6 +100,15 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
 
   @property()
   accessor previewUrlTemplate: string | undefined;
+
+  @property({ attribute: false })
+  accessor showCases: ShowCaseType[] | undefined;
+
+  @property({ attribute: false })
+  accessor exampleProjects: ExampleProject[] | undefined;
+
+  @property()
+  accessor tryItOutUrl: string | undefined;
 
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
@@ -176,6 +192,9 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
         showFeedbackOnView={this.showFeedbackOnView}
         showUiSwitch={this.showUiSwitch}
         previewUrlTemplate={this.previewUrlTemplate}
+        showCases={this.showCases}
+        exampleProjects={this.exampleProjects}
+        tryItOutUrl={this.tryItOutUrl}
         onShare={this.#onShare}
         onTerminate={this.#onTerminate}
         onSubmitFeedback={this.#onSubmitFeedback}
