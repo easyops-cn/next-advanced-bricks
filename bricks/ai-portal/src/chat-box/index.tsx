@@ -171,6 +171,17 @@ function LegacyChatBoxComponent(
   const [activeActionIndex, setActiveActionIndex] = useState(0);
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
 
+  useEffect(() => {
+    const store = window.__elevo_try_it_out;
+    if (store) {
+      delete window.__elevo_try_it_out;
+    }
+    if (typeof store?.content === "string") {
+      valueRef.current = store.content;
+      setValue(store.content);
+    }
+  }, []);
+
   useImperativeHandle(ref, () => ({
     setValue: (value: string) => {
       valueRef.current = value;

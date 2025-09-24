@@ -26,6 +26,7 @@ import type {
   ChatInputMapEvents,
   ChatInputProps,
 } from "../chat-input";
+import type { ShowCase, ShowCaseProps } from "../show-case";
 
 export const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
@@ -60,6 +61,10 @@ export const WrappedChatInput = wrapBrick<
   onMessageSubmit: "message.submit",
   onTerminate: "terminate",
 });
+
+export const WrappedShowCase = wrapBrick<ShowCase, ShowCaseProps>(
+  "ai-portal.show-case"
+);
 
 export const showDialog =
   unwrapProvider<typeof _showDialog>("basic.show-dialog");

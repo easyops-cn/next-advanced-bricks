@@ -23,9 +23,14 @@ export const conversation: Reducer<
       ) as ConversationBaseDetail;
     }
 
-    case "reset": {
+    case "reset":
       return null;
-    }
+
+    case "finished":
+      if (state) {
+        return { ...state, finished: true };
+      }
+      return state;
   }
   return state;
 };

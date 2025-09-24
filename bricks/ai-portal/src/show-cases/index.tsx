@@ -3,11 +3,8 @@ import { createDecorators } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
-import type { Link, LinkProps } from "@next-bricks/basic/link";
-import { getBasePath } from "@next-core/runtime";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
-import { parseTemplate } from "../shared/parseTemplate.js";
 import type {
   Tab,
   TabList,
@@ -15,10 +12,14 @@ import type {
   TabListMapping,
   TabListProps,
 } from "../tab-list/index.js";
+import type { ShowCase, ShowCaseProps } from "../show-case/index.js";
+import type { ShowCaseType } from "../shared/interfaces.js";
 
 initializeI18n(NS, locales);
 
-const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
+const WrappedShowCase = wrapBrick<ShowCase, ShowCaseProps>(
+  "ai-portal.show-case"
+);
 const WrappedTabList = wrapBrick<
   TabList,
   TabListProps,
@@ -31,16 +32,7 @@ const WrappedTabList = wrapBrick<
 const { defineElement, property } = createDecorators();
 
 export interface ShowCasesProps {
-  list?: ShowCase[];
-  taskUrlTemplate?: string;
-}
-
-export interface ShowCase {
-  taskId: string;
-  title: string;
-  summary: string;
-  scenario: string;
-  thumbUrl?: string;
+  list?: ShowCaseType[];
 }
 
 /**
@@ -52,22 +44,14 @@ export
 })
 class ShowCases extends ReactNextElement implements ShowCasesProps {
   @property({ attribute: false })
-  accessor list: ShowCase[] | undefined;
-
-  @property()
-  accessor taskUrlTemplate: string | undefined;
+  accessor list: ShowCaseType[] | undefined;
 
   render() {
-    return (
-      <ShowCasesComponent
-        list={this.list}
-        taskUrlTemplate={this.taskUrlTemplate}
-      />
-    );
+    return <ShowCasesComponent list={this.list} />;
   }
 }
 
-function ShowCasesComponent({ list, taskUrlTemplate }: ShowCasesProps) {
+function ShowCasesComponent({ list }: ShowCasesProps) {
   // Grouping the list by scenario
   const groups = useMemo<string[]>(() => {
     return ["", ...new Set(list?.map((item) => item.scenario).filter(Boolean))];
@@ -103,21 +87,12 @@ function ShowCasesComponent({ list, taskUrlTemplate }: ShowCasesProps) {
       />
       <ul className="cases">
         {filteredList?.map((item) => (
-          <li key={item.taskId}>
-            <WrappedLink
-              className="link"
-              url={parseTemplate(taskUrlTemplate, item)}
-              style={
-                item.thumbUrl
-                  ? {
-                      backgroundImage: `url("${getBasePath()}${item.thumbUrl}")`,
-                    }
-                  : undefined
-              }
-            >
-              <div className="title">{item.title}</div>
-              <div className="description">{item.summary}</div>
-            </WrappedLink>
+          <li key={item.conversationId}>
+            <WrappedShowCase
+              caseTitle={item.title}
+              summary={item.summary}
+              url={item.url}
+            />
           </li>
         ))}
       </ul>

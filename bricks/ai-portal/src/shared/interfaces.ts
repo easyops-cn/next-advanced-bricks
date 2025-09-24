@@ -15,6 +15,7 @@ export interface Conversation {
 
   startTime: number;
   endTime?: number;
+  finished?: boolean;
 }
 
 export interface Task {
@@ -43,6 +44,8 @@ export interface Task {
 
   startTime: number;
   endTime?: number;
+
+  aiEmployeeId?: string;
 }
 
 export type ConversationState =
@@ -102,6 +105,8 @@ export interface Job {
 
   // 用户选择的动作
   humanAction?: string;
+
+  aiEmployeeId?: string;
 }
 
 export type HumanAction = HumanActionConfirm | HumanActionSelect;
@@ -200,4 +205,18 @@ export interface GeneratedView {
   from?: "generate" | "config";
   withContexts?: Record<string, unknown>;
   asyncConstructedView?: Promise<ParseResult | null>;
+}
+
+export interface ShowCaseType {
+  conversationId: string;
+  title: string;
+  summary: string;
+  scenario: string;
+  url?: string;
+}
+
+export interface ExampleProject {
+  instanceId: string;
+  name: string;
+  url?: string;
 }

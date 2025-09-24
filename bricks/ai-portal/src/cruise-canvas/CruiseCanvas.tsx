@@ -9,7 +9,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { getRuntime } from "@next-core/runtime";
+import { getBasePath, getRuntime } from "@next-core/runtime";
 import "@next-core/theme";
 import classNames from "classnames";
 import ResizeObserver from "resize-observer-polyfill";
@@ -47,6 +47,7 @@ import {
   CANVAS_PADDING_TOP,
   END_NODE_ID,
   FEEDBACK_NODE_ID,
+  REPLAY_NODE_ID,
 } from "./constants.js";
 import { DONE_STATES, GENERAL_DONE_STATES } from "../shared/constants.js";
 import { WrappedIcon } from "../shared/bricks";
@@ -56,7 +57,6 @@ import { getScrollTo } from "./utils/getScrollTo.js";
 import { handleKeyboardNav } from "./utils/handleKeyboardNav.js";
 import { ExpandedView } from "../shared/ExpandedView/ExpandedView.js";
 import { Nav } from "./Nav/Nav.js";
-import { ReplayToolbar } from "../shared/ReplayToolbar/ReplayToolbar.js";
 import { ChatBox } from "../shared/ChatBox/ChatBox.js";
 import { FilePreview } from "./FilePreview/FilePreview.js";
 import { NodeFeedback } from "../shared/NodeFeedback/NodeFeedback.js";
@@ -65,6 +65,7 @@ import { NodeLoading } from "./NodeLoading/NodeLoading.js";
 import { JsxEditor } from "../shared/JsxEditor/JsxEditor.js";
 import { NodeError } from "./NodeError/NodeError.js";
 import type { GeneratedView } from "../shared/interfaces";
+import { NodeReplay } from "./NodeReplay/NodeReplay.js";
 import type { ConversationDetail, CruiseCanvasProps } from ".";
 
 const MemoizedNodeComponent = memo(NodeComponent);
@@ -118,6 +119,9 @@ export function CruiseCanvasComponent(
     showUiSwitch,
     showJsxEditor,
     previewUrlTemplate,
+    showCases,
+    exampleProjects,
+    tryItOutUrl,
     onShare,
     onTerminate,
     onSubmitFeedback,
@@ -255,10 +259,12 @@ export function CruiseCanvasComponent(
     rawEdges,
     completed: conversationState === "completed",
     failed: conversationState === "failed",
+    finished: conversation?.finished,
     error,
     sizeMap,
     showFeedback,
     showFeedbackAfterFailed,
+    replay,
   });
 
   // Disable auto scroll when the user manually scrolled up
@@ -580,13 +586,24 @@ export function CruiseCanvasComponent(
     });
   }, []);
 
-  const workspace = conversation?.id;
+  const requirementNode = rawNodes?.[0];
+
+  const userInput = useMemo(() => {
+    if (requirementNode?.type === "requirement") {
+      return requirementNode.content;
+    }
+  }, [requirementNode]);
+
+  const workspace = conversationId;
 
   const taskContextValue = useMemo(
     () => ({
+      conversationId,
       workspace,
       previewUrlTemplate,
       replay,
+      showCases,
+      exampleProjects,
 
       humanInput,
       onShare,
@@ -611,11 +628,31 @@ export function CruiseCanvasComponent(
       showFeedbackOnView,
       onFeedbackOnView,
       feedbackDoneViews,
+
+      skipToResults,
+      watchAgain() {
+        watchAgain();
+        setCentered(false);
+      },
+      tryItOut() {
+        const win = window.open(
+          `${getBasePath().slice(0, -1)}${tryItOutUrl ?? "/elevo"}`,
+          "_blank"
+        );
+        if (win) {
+          win.__elevo_try_it_out = {
+            content: userInput,
+          };
+        }
+      },
     }),
     [
+      conversationId,
       workspace,
       previewUrlTemplate,
       replay,
+      showCases,
+      exampleProjects,
 
       humanInput,
       onTerminate,
@@ -636,6 +673,12 @@ export function CruiseCanvasComponent(
       showFeedbackOnView,
       onFeedbackOnView,
       feedbackDoneViews,
+
+      skipToResults,
+      watchAgain,
+      setCentered,
+      userInput,
+      tryItOutUrl,
     ]
   );
 
@@ -784,6 +827,7 @@ export function CruiseCanvasComponent(
             <svg className={styles.edges}>
               {edges.map((edge) =>
                 edge.target === END_NODE_ID ||
+                edge.target === REPLAY_NODE_ID ||
                 edge.target === FEEDBACK_NODE_ID ? null : (
                   <path
                     className={styles.edge}
@@ -841,16 +885,11 @@ export function CruiseCanvasComponent(
             onSwitchToChat={onSwitchToChat}
           />
           {replay ? (
-            <div className={styles["footer-container"]}>
-              <ReplayToolbar
-                taskDone={conversationDone}
-                skipToResults={skipToResults}
-                watchAgain={() => {
-                  watchAgain();
-                  setCentered(false);
-                }}
-              />
-            </div>
+            !conversation?.finished && (
+              <div className={styles["footer-container"]}>
+                <NodeReplay />
+              </div>
+            )
           ) : supports?.chat ? (
             <div className={styles["footer-container"]}>
               <ChatBox state={conversationState} canChat={canChat} />
@@ -959,6 +998,8 @@ function NodeComponent({
         <NodeLoading />
       ) : type === "error" ? (
         <NodeError content={content!} />
+      ) : type === "replay" ? (
+        <NodeReplay finished />
       ) : type === "instruction" ? (
         <NodeInstruction
           content={job!.instruction}

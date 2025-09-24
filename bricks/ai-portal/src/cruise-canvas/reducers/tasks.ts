@@ -33,6 +33,7 @@ export const tasks: Reducer<Task[], CruiseCanvasAction> = (state, action) => {
           "startTime",
           "endTime",
           "jobs",
+          "aiEmployeeId",
         ]);
         const previousTaskIndex = tasks.findIndex(
           (task) => task.id === taskPatch.id
@@ -41,7 +42,8 @@ export const tasks: Reducer<Task[], CruiseCanvasAction> = (state, action) => {
         taskPatch.jobs = mergeJobs(
           previousTask?.jobs,
           taskPatch.jobs,
-          action.workspace
+          action.workspace,
+          taskPatch.aiEmployeeId ?? previousTask?.aiEmployeeId
         );
 
         if (previousTaskIndex === -1) {
@@ -71,7 +73,8 @@ export const tasks: Reducer<Task[], CruiseCanvasAction> = (state, action) => {
 function mergeJobs(
   previousJobs: Job[] | undefined,
   jobsPatch: JobPatch[] | undefined,
-  workspace: string
+  workspace: string,
+  aiEmployeeId: string | undefined
 ): Job[] {
   let jobs = previousJobs ?? [];
   for (const jobPatch of jobsPatch ?? []) {
@@ -95,6 +98,10 @@ function mergeJobs(
       const patch = {
         ...jobPatch,
       };
+      if (aiEmployeeId !== undefined) {
+        patch.aiEmployeeId = aiEmployeeId;
+      }
+
       if (
         patch.toolCall?.name === "create_view" &&
         patch.state === "completed"
@@ -131,6 +138,9 @@ function mergeJobs(
         "requestHumanAction",
         "humanAction",
       ]);
+      if (aiEmployeeId !== undefined) {
+        restMessagesPatch.aiEmployeeId = aiEmployeeId;
+      }
       if (Array.isArray(messagesPatch) && messagesPatch.length > 0) {
         restMessagesPatch.messages = mergeMessages([
           ...(previousJob.messages ?? []),

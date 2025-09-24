@@ -196,6 +196,7 @@ export function ChatStreamComponent(
 
   const taskContextValue = useMemo(
     () => ({
+      conversationId,
       workspace,
       previewUrlTemplate,
       replay,
@@ -219,6 +220,7 @@ export function ChatStreamComponent(
       feedbackDoneViews,
     }),
     [
+      conversationId,
       workspace,
       previewUrlTemplate,
       replay,

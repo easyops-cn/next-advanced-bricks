@@ -1,0 +1,89 @@
+.node-replay {
+  width: var(--cruise-canvas-node-width-large);
+  max-width: 100%;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 4px;
+}
+
+.finished {
+  max-width: 90vw;
+}
+
+.bar {
+  background: rgba(184, 187, 205, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.label {
+  font-weight: 500;
+}
+
+.cases,
+.projects {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.content {
+  padding: 0 16px 16px;
+}
+
+.heading {
+  margin: 26px 0 10px;
+  color: rgba(0, 0, 0, 0.6);
+  line-height: 20px;
+}
+
+.tips {
+  font-size: 12px;
+  line-height: 20px;
+  color: rgba(0, 0, 0, 0.35);
+  margin: -3px 0 10px;
+}
+
+.project {
+  width: 100%;
+}
+
+.project::part(link) {
+  height: 48px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 6px;
+  font-weight: 500;
+  color: #262626;
+}
+
+.project::part(link):hover {
+  color: var(--elevo-color-brand);
+}
+
+.tag {
+  display: inline-block;
+  padding: 0 4px;
+  background: rgba(37, 64, 255, 0.1);
+  border-radius: 4px;
+  color: var(--elevo-color-brand);
+}
