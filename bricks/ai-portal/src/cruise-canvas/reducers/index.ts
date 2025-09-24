@@ -2,7 +2,7 @@ import { Reducer } from "react";
 import type { CruiseCanvasAction, CruiseCanvasState } from "./interfaces";
 import { tasks } from "./tasks";
 import { conversation } from "./conversation";
-import { error } from "./error";
+import { errors } from "./errors";
 
 type ReducersMapObject<S, A> = {
   [K in keyof S]: Reducer<S[K], A>;
@@ -26,5 +26,5 @@ export const rootReducer = combineReducers<
 >({
   conversation,
   tasks,
-  error,
+  errors,
 });

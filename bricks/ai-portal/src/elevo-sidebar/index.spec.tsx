@@ -4,6 +4,12 @@ import "./";
 import type { ElevoSidebar } from "./index.js";
 
 jest.mock("@next-core/theme", () => ({}));
+jest.mock("@next-api-sdk/llm-sdk", () => ({
+  ElevoApi_getElevoProjects: jest.fn(() => Promise.resolve({ list: [] })),
+  ElevoApi_listElevoConversations: jest.fn(() =>
+    Promise.resolve({ conversations: [] })
+  ),
+}));
 
 describe("ai-portal.elevo-sidebar", () => {
   test("basic usage", async () => {

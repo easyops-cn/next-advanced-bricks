@@ -1,8 +1,9 @@
-import type { Task, Job } from "../shared/interfaces";
+import type { Task, Job, ConversationError } from "../shared/interfaces";
 import { getOrderedNodes } from "./getOrderedNodes";
 
 export function getFlatOrderedJobs(
   tasks: Task[] | null | undefined,
+  errors: ConversationError[],
   options?: {
     showHiddenJobs?: boolean;
   }
@@ -62,11 +63,29 @@ export function getFlatOrderedJobs(
     }
   }
 
+  const downstreamMap = new Map(downstreamMapEntries);
+
+  const jobsWithFollowingErrors = new Map<string, string>();
+  for (const error of errors) {
+    if (error.error) {
+      const jobId = error.jobs.findLast((job) => {
+        const downstreams = downstreamMap.get(job);
+        return (
+          !downstreams || downstreams.every((d) => !error.jobs.includes(d))
+        );
+      });
+      if (jobId) {
+        jobsWithFollowingErrors.set(jobId, error.error);
+      }
+    }
+  }
+
   return {
     list,
     map: new Map(mapEntries),
     roots,
     levels: new Map(levelEntries),
-    downstreamMap: new Map(downstreamMapEntries),
+    downstreamMap,
+    jobsWithFollowingErrors,
   };
 }

@@ -6,12 +6,17 @@ import type {
   GraphGeneratedView,
 } from "./interfaces";
 import { LOADING_NODE_ID } from "./constants";
-import type { ConversationBaseDetail, Task } from "../shared/interfaces";
+import type {
+  ConversationBaseDetail,
+  ConversationError,
+  Task,
+} from "../shared/interfaces";
 import { getFlatOrderedJobs } from "./getFlatOrderedJobs";
 
 export function useConversationGraph(
   conversation: ConversationBaseDetail | null | undefined,
   tasks: Task[],
+  errors: ConversationError[],
   options?: {
     showHiddenJobs?: boolean;
     showHumanActions?: boolean;
@@ -33,9 +38,9 @@ export function useConversationGraph(
       map: jobMap,
       levels: jobLevels,
       downstreamMap,
-    } = getFlatOrderedJobs(tasks, options);
+      jobsWithFollowingErrors,
+    } = getFlatOrderedJobs(tasks, errors, options);
 
-    // Make sure every job in the list has at least one corresponding node
     const jobNodesMap = new Map<string, string[]>();
     const userInputNodes: string[] = [];
 
@@ -93,8 +98,8 @@ export function useConversationGraph(
         });
       }
 
-      if (hasMessages || !job.instruction) {
-        const jobNodeId = `job:${job.id}`;
+      const jobNodeId = `job:${job.id}`;
+      if (hasMessages) {
         nodes.push({
           type: "job",
           id: jobNodeId,
@@ -121,6 +126,17 @@ export function useConversationGraph(
         });
       }
 
+      const followingError = jobsWithFollowingErrors.get(jobId);
+      if (followingError) {
+        const errorNodeId = `error:${jobId}`;
+        nodes.push({
+          type: "error",
+          id: errorNodeId,
+          content: followingError,
+        });
+        nodeIds.push(errorNodeId);
+      }
+
       if (options?.showHumanActions && job.humanAction) {
         const humanActionNodeId = `human-action:${job.id}`;
         nodes.push({
@@ -129,6 +145,17 @@ export function useConversationGraph(
           content: job.humanAction,
         });
         nodeIds.push(humanActionNodeId);
+      }
+
+      // Make sure every job in the list has at least one corresponding node
+      if (nodeIds.length === 0) {
+        nodes.push({
+          type: "job",
+          id: jobNodeId,
+          job,
+          state: job.state,
+        });
+        nodeIds.push(jobNodeId);
       }
 
       jobNodesMap.set(jobId, nodeIds);

@@ -1,12 +1,16 @@
 import { useMemo } from "react";
 import type { ChatMessage } from "./interfaces.js";
-import type { ConversationBaseDetail, Task } from "../shared/interfaces.js";
+import type {
+  ConversationBaseDetail,
+  ConversationError,
+  Task,
+} from "../shared/interfaces.js";
 import { getFlatOrderedJobs } from "../cruise-canvas/getFlatOrderedJobs.js";
 
 export function useConversationStream(
   conversation: ConversationBaseDetail | null | undefined,
   tasks: Task[],
-  error: string | null | undefined,
+  errors: ConversationError[],
   options?: {
     showHumanActions?: boolean;
   }
@@ -23,11 +27,9 @@ export function useConversationStream(
 
     const {
       list,
-      // roots: jobRoots,
       map: jobMap,
-      // levels: jobLevels,
-      // downstreamMap,
-    } = getFlatOrderedJobs(tasks);
+      jobsWithFollowingErrors,
+    } = getFlatOrderedJobs(tasks, errors);
 
     let prevAssistantMessage: ChatMessage = {
       role: "assistant",
@@ -46,7 +48,10 @@ export function useConversationStream(
         job.messages?.length &&
         job.messages.every((msg) => msg.role === "user")
       ) {
-        if (prevAssistantMessage.jobs.length > 0) {
+        if (
+          prevAssistantMessage.jobs.length > 0 ||
+          prevAssistantMessage.error
+        ) {
           messages.push(prevAssistantMessage);
         }
         messages.push({
@@ -65,8 +70,16 @@ export function useConversationStream(
         prevAssistantMessage.jobs.push(job);
       }
 
+      const followingError = jobsWithFollowingErrors.get(jobId);
+      if (followingError) {
+        prevAssistantMessage.error = followingError;
+      }
+
       if (options?.showHumanActions && job.humanAction) {
-        if (prevAssistantMessage.jobs.length > 0) {
+        if (
+          prevAssistantMessage.jobs.length > 0 ||
+          prevAssistantMessage.error
+        ) {
           messages.push(prevAssistantMessage);
         }
         messages.push({
@@ -80,12 +93,8 @@ export function useConversationStream(
       }
     }
 
-    if (error != null) {
-      prevAssistantMessage.error = error;
-    }
-
     messages.push(prevAssistantMessage);
 
     return { messages, jobMap, lastToolCallJobId };
-  }, [conversation, tasks, error]);
+  }, [conversation, tasks, errors]);
 }

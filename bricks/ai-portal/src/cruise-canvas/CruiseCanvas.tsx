@@ -137,7 +137,7 @@ export function CruiseCanvasComponent(
   const {
     conversation,
     tasks,
-    error,
+    errors,
     humanInputRef,
     skipToResults,
     watchAgain,
@@ -148,7 +148,7 @@ export function CruiseCanvasComponent(
     replayDelay
   );
   const plan = tasks[tasks.length - 1]?.plan;
-  const graph = useConversationGraph(conversation, tasks, {
+  const graph = useConversationGraph(conversation, tasks, errors, {
     showHiddenJobs,
     showHumanActions,
   });
@@ -262,7 +262,6 @@ export function CruiseCanvasComponent(
     completed: conversationState === "completed",
     failed: conversationState === "failed",
     finished: conversation?.finished,
-    error,
     sizeMap,
     showFeedback,
     showFeedbackAfterFailed,

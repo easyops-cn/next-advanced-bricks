@@ -10,18 +10,22 @@ import type {
 
 describe("useConversationGraph", () => {
   it("should return null when conversation is null", () => {
-    const { result } = renderHook(() => useConversationGraph(null, []));
+    const { result } = renderHook(() => useConversationGraph(null, [], []));
     expect(result.current).toBeNull();
   });
 
   it("should return null when conversation is undefined", () => {
-    const { result } = renderHook(() => useConversationGraph(undefined, []));
+    const { result } = renderHook(() =>
+      useConversationGraph(undefined, [], [])
+    );
     expect(result.current).toBeNull();
   });
 
   it("should create loading node when no tasks provided", () => {
     const conversation = { id: "conv-1" } as ConversationBaseDetail;
-    const { result } = renderHook(() => useConversationGraph(conversation, []));
+    const { result } = renderHook(() =>
+      useConversationGraph(conversation, [], [])
+    );
 
     expect(result.current).toEqual({
       nodes: [
@@ -59,7 +63,7 @@ describe("useConversationGraph", () => {
     ] as Task[];
 
     const { result } = renderHook(() =>
-      useConversationGraph(conversation, tasks)
+      useConversationGraph(conversation, tasks, [])
     );
 
     expect(result.current?.nodes).toContainEqual({
@@ -86,7 +90,7 @@ describe("useConversationGraph", () => {
     ] as Task[];
 
     const { result } = renderHook(() =>
-      useConversationGraph(conversation, tasks)
+      useConversationGraph(conversation, tasks, [])
     );
 
     expect(result.current?.nodes).toContainEqual({
@@ -118,7 +122,7 @@ describe("useConversationGraph", () => {
     ] as Task[];
 
     const { result } = renderHook(() =>
-      useConversationGraph(conversation, tasks)
+      useConversationGraph(conversation, tasks, [])
     );
 
     expect(result.current?.nodes).toContainEqual({
@@ -146,7 +150,7 @@ describe("useConversationGraph", () => {
     ] as Task[];
 
     const { result } = renderHook(() =>
-      useConversationGraph(conversation, tasks)
+      useConversationGraph(conversation, tasks, [])
     );
 
     expect(result.current?.nodes).toContainEqual({
@@ -178,7 +182,7 @@ describe("useConversationGraph", () => {
     ] as Task[];
 
     const { result } = renderHook(() =>
-      useConversationGraph(conversation, tasks)
+      useConversationGraph(conversation, tasks, [])
     );
 
     expect(result.current?.nav).toContainEqual({
@@ -209,7 +213,7 @@ describe("useConversationGraph", () => {
     ] as Task[];
 
     const { result } = renderHook(() =>
-      useConversationGraph(conversation, tasks)
+      useConversationGraph(conversation, tasks, [])
     );
 
     expect(result.current?.nav).toContainEqual({
@@ -243,7 +247,7 @@ describe("useConversationGraph", () => {
     ] as Task[];
 
     const { result } = renderHook(() =>
-      useConversationGraph(conversation, tasks)
+      useConversationGraph(conversation, tasks, [])
     );
 
     expect(result.current?.edges).toContainEqual({
@@ -281,7 +285,7 @@ describe("useConversationGraph", () => {
     ] as Task[];
 
     const { result } = renderHook(() =>
-      useConversationGraph(conversation, tasks)
+      useConversationGraph(conversation, tasks, [])
     );
 
     expect(result.current?.edges).toContainEqual({
@@ -311,7 +315,7 @@ describe("useConversationGraph", () => {
     ] as Task[];
 
     const { result } = renderHook(() =>
-      useConversationGraph(conversation, tasks)
+      useConversationGraph(conversation, tasks, [])
     );
 
     expect(result.current?.nodes).toContainEqual({
@@ -349,7 +353,7 @@ describe("useConversationGraph", () => {
     ] as Task[];
 
     const { result } = renderHook(() =>
-      useConversationGraph(conversation, tasks, { showHiddenJobs: true })
+      useConversationGraph(conversation, tasks, [], { showHiddenJobs: true })
     );
 
     expect(result.current?.nodes).toContainEqual({
@@ -377,7 +381,7 @@ describe("useConversationGraph", () => {
     ] as Task[];
 
     const { result, rerender } = renderHook(
-      ({ conv, taskList }) => useConversationGraph(conv, taskList),
+      ({ conv, taskList }) => useConversationGraph(conv, taskList, []),
       { initialProps: { conv: conversation, taskList: tasks } }
     );
 

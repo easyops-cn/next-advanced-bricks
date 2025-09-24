@@ -73,7 +73,7 @@ export function ChatStreamComponent(
   const {
     conversation,
     tasks,
-    error,
+    errors,
     humanInputRef,
     skipToResults,
     watchAgain,
@@ -90,7 +90,7 @@ export function ChatStreamComponent(
   const { messages, jobMap, lastToolCallJobId } = useConversationStream(
     conversation,
     tasks,
-    error,
+    errors,
     { showHumanActions }
   );
 

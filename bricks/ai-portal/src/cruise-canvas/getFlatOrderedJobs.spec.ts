@@ -7,11 +7,12 @@ describe("getFlatOrderedJobs", () => {
   });
 
   it("should handle null or undefined tasks", () => {
-    const result = getFlatOrderedJobs(null);
+    const result = getFlatOrderedJobs(null, []);
 
     expect(result).toEqual({
       list: [],
       map: new Map(),
+      jobsWithFollowingErrors: new Map(),
       roots: [],
       levels: new Map(),
       downstreamMap: new Map(),
@@ -35,7 +36,7 @@ describe("getFlatOrderedJobs", () => {
     // We'll add a downstream connection by making task-2 depend on task-1
     const tasks: Task[] = [mockTask1, { ...mockTask2, upstream: ["task-1"] }];
 
-    const result = getFlatOrderedJobs(tasks);
+    const result = getFlatOrderedJobs(tasks, []);
 
     expect(result.list).toEqual(["job-1-1", "job-1-2", "job-2-1", "job-2-2"]);
     expect(result.map.size).toBe(4);
@@ -52,7 +53,7 @@ describe("getFlatOrderedJobs", () => {
       { id: "task-1", jobs: [{ id: "job-1", hidden: true }] },
     ] as Task[];
 
-    const result = getFlatOrderedJobs(tasks, { showHiddenJobs: true });
+    const result = getFlatOrderedJobs(tasks, [], { showHiddenJobs: true });
 
     // When showHiddenJobs is true, hidden jobs should be included
     expect(result.list).toContain("job-1");
