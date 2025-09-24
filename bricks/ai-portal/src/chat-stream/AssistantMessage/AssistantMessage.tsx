@@ -30,13 +30,7 @@ export function AssistantMessage({
     }
     const lastJob = jobs[jobs.length - 1];
     if (lastJob && lastJob.state === "working" && lastJob.toolCall) {
-      const toolName = lastJob.toolCall.name;
-      if (
-        toolName !== "ask_human" &&
-        toolName !== "ask_human_confirming_plan"
-      ) {
-        return false;
-      }
+      return false;
     }
 
     return true;
