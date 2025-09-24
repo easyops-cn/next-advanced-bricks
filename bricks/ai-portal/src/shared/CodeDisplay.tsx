@@ -14,7 +14,6 @@ const THEME = "light-plus";
 export interface CodeDisplayProps {
   language: string;
   source: string;
-  disabled?: boolean;
 }
 
 /**

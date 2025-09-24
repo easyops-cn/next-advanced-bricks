@@ -59,7 +59,7 @@ export function CodeBlock({ children, node, ...props }: CodeBlockProps) {
 
   return (
     <div className={styles["code-block"]}>
-      <pre {...props} className={props.className} ref={ref}>
+      <pre {...props} ref={ref}>
         {children}
         {isCodeBlock && (
           <WrappedButton
