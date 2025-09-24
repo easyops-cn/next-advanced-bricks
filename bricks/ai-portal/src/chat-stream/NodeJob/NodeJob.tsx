@@ -13,9 +13,6 @@ import sharedStyles from "../../cruise-canvas/shared.module.css";
 import { WrappedIcon } from "../../shared/bricks.js";
 import { EnhancedMarkdown } from "../../cruise-canvas/EnhancedMarkdown/EnhancedMarkdown.js";
 import { CmdbInstanceDetail } from "../../cruise-canvas/CmdbInstanceDetail/CmdbInstanceDetail.js";
-import { K, t } from "../i18n.js";
-import { HumanAdjustPlanResult } from "../HumanAdjustPlanResult/HumanAdjustPlanResult.js";
-import { HumanAdjustPlan } from "../../shared/HumanAdjustPlan/HumanAdjustPlan.js";
 import { NodeView } from "../NodeView/NodeView.js";
 import { TaskContext } from "../../shared/TaskContext.js";
 import { StreamContext } from "../StreamContext.js";
@@ -35,20 +32,7 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
   const toolCall = job.toolCall;
   const toolTitle = toolCall?.annotations?.title || toolCall?.name;
   const toolName = toolCall?.name;
-  const askUser = toolName === "ask_human";
-  const askUserPlan = toolName === "ask_human_confirming_plan";
-  const generalAskUser = askUser || askUserPlan;
-  const knownAskUser =
-    (askUser &&
-      [
-        "ask_user_more",
-        "ask_user_confirm",
-        "ask_user_choose",
-        "ask_user_select_from_cmdb",
-        "ask_user_adjust_plan",
-      ].includes(job.toolCall!.arguments?.command as string)) ||
-    askUserPlan;
-  const showToolCall = !!toolCall && !generalAskUser;
+  const showToolCall = !!toolCall;
   const { setActiveToolCallJobId } = useContext(TaskContext);
   const { lastToolCallJobId, setUserClosedAside } = useContext(StreamContext);
 
@@ -99,52 +83,23 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
   return (
     <div className={classNames({ [styles.collapsed]: collapsed })}>
       <div className={styles.main}>
-        {knownAskUser ? (
-          <>
-            {(askUserPlan || !!toolCall!.arguments?.question) && (
-              <div
-                className={classNames(styles.message, sharedStyles.markdown)}
-              >
-                <EnhancedMarkdown
-                  className={styles["message-part"]}
-                  content={
-                    askUserPlan
-                      ? t(K.CONFIRMING_PLAN_TIPS)
-                      : (job.toolCall!.arguments?.question as string)
-                  }
-                />
-              </div>
-            )}
-            {job.state === "input-required" &&
-              (askUserPlan ? (
-                <HumanAdjustPlan
-                  jobId={job.id}
-                  steps={job.toolCall!.arguments!.steps as string[]}
-                />
-              ) : null)}
-          </>
-        ) : null}
-        {askUserPlan && job.state === "completed" ? (
-          <HumanAdjustPlanResult job={job} />
-        ) : askUser ? null : (
-          job.messages?.map((message, index) =>
-            message.role === "tool" && !generalAskUser ? null : (
-              <div
-                key={index}
-                className={classNames(styles.message, sharedStyles.markdown)}
-              >
-                {message.parts?.map((part, partIndex) => (
-                  <React.Fragment key={partIndex}>
-                    {part.type === "text" && (
-                      <EnhancedMarkdown
-                        className={styles["message-part"]}
-                        content={part.text}
-                      />
-                    )}
-                  </React.Fragment>
-                ))}
-              </div>
-            )
+        {job.messages?.map((message, index) =>
+          message.role === "tool" ? null : (
+            <div
+              key={index}
+              className={classNames(styles.message, sharedStyles.markdown)}
+            >
+              {message.parts?.map((part, partIndex) => (
+                <React.Fragment key={partIndex}>
+                  {part.type === "text" && (
+                    <EnhancedMarkdown
+                      className={styles["message-part"]}
+                      content={part.text}
+                    />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
           )
         )}
       </div>

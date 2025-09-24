@@ -391,7 +391,9 @@ export function ChatStreamComponent(
                     </div>
                   ))}
                   {replay
-                    ? conversation?.finished && <NodeReplay finished />
+                    ? conversation?.finished && (
+                        <NodeReplay finished ui="chat" />
+                      )
                     : showFeedback &&
                       (conversationState === "completed" ||
                         (conversationState === "failed" &&
