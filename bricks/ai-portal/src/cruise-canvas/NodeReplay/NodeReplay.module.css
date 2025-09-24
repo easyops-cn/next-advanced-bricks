@@ -7,7 +7,7 @@
   padding: 4px;
 }
 
-.finished {
+.finished:not(.chat) {
   max-width: 90vw;
 }
 

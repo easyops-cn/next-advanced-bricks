@@ -15,7 +15,7 @@ import { convertTsx, getViewTitle } from "@next-shared/tsx-converter";
 import type { Component, ParseResult } from "@next-shared/tsx-parser";
 import styles from "./CreatedView.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
-import type { Job } from "../../cruise-canvas/interfaces";
+import type { Job } from "../../shared/interfaces";
 import { WrappedIcon } from "../../shared/bricks";
 import { K, locales, NS, t } from "./i18n";
 import { createPortal } from "../../cruise-canvas/utils/createPortal";

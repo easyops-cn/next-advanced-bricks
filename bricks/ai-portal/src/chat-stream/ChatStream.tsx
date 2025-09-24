@@ -73,7 +73,7 @@ export function ChatStreamComponent(
   const {
     conversation,
     tasks,
-    error,
+    errors,
     humanInputRef,
     skipToResults,
     watchAgain,
@@ -90,7 +90,7 @@ export function ChatStreamComponent(
   const { messages, jobMap, lastToolCallJobId } = useConversationStream(
     conversation,
     tasks,
-    error,
+    errors,
     { showHumanActions }
   );
 
@@ -391,7 +391,9 @@ export function ChatStreamComponent(
                     </div>
                   ))}
                   {replay
-                    ? conversation?.finished && <NodeReplay finished />
+                    ? conversation?.finished && (
+                        <NodeReplay finished ui="chat" />
+                      )
                     : showFeedback &&
                       (conversationState === "completed" ||
                         (conversationState === "failed" &&

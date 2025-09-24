@@ -10,7 +10,6 @@ import type {
 import {
   EDGE_SEP,
   END_NODE_ID,
-  ERROR_NODE_ID,
   FEEDBACK_NODE_ID,
   NODE_SEP,
   RANK_SEP,
@@ -25,7 +24,6 @@ export interface UseLayoutOptions {
   completed?: boolean;
   failed?: boolean;
   finished?: boolean;
-  error?: string | null;
   showFeedback?: boolean;
   showFeedbackAfterFailed?: boolean;
   replay?: boolean;
@@ -38,7 +36,6 @@ export function useLayout({
   completed,
   failed,
   finished,
-  error,
   showFeedback,
   showFeedbackAfterFailed,
   replay,
@@ -59,8 +56,7 @@ export function useLayout({
 
     const hasSource = new Set<string>(rawEdges.map((edge) => edge.target));
     const failedFeedback = failed && showFeedback && showFeedbackAfterFailed;
-    const shouldAppend =
-      error != null || (replay ? finished : completed || failedFeedback);
+    const shouldAppend = replay ? finished : completed || failedFeedback;
     const hasTarget = shouldAppend
       ? new Set<string>(rawEdges.map((edge) => edge.source))
       : null;
@@ -83,20 +79,6 @@ export function useLayout({
 
     if (finishedNodeIds.length > 0) {
       let sourceIds = finishedNodeIds;
-      if (error != null) {
-        initialNodes.push({
-          id: ERROR_NODE_ID,
-          type: "error",
-          content: error,
-        });
-        for (const id of sourceIds) {
-          initialEdges.push({
-            source: id,
-            target: ERROR_NODE_ID,
-          });
-        }
-        sourceIds = [ERROR_NODE_ID];
-      }
 
       if (replay) {
         if (finished) {
@@ -166,7 +148,6 @@ export function useLayout({
     completed,
     failed,
     finished,
-    error,
     showFeedback,
     showFeedbackAfterFailed,
     replay,

@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import type { Drawer } from "@next-bricks/containers/drawer";
 import classNames from "classnames";
-import type { DataPart, Job, Part } from "../interfaces";
+import type { DataPart, Job, Part } from "../../shared/interfaces";
 import { WrappedDrawer, WrappedIcon } from "../../shared/bricks";
 import styles from "./ToolCallDetail.module.css";
 import sharedStyles from "../shared.module.css";

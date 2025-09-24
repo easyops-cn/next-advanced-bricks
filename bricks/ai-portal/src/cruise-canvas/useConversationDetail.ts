@@ -13,13 +13,13 @@ export function useConversationDetail(
   replay?: boolean,
   replayDelay?: number
 ) {
-  const [{ conversation, tasks, error }, dispatch] = useReducer(
+  const [{ conversation, tasks, errors }, dispatch] = useReducer(
     rootReducer,
     null,
     () => ({
       conversation: null,
       tasks: [],
-      error: null,
+      errors: [],
     })
   );
 
@@ -170,7 +170,7 @@ export function useConversationDetail(
   return {
     conversation,
     tasks,
-    error,
+    errors,
     humanInputRef,
     skipToResults,
     watchAgain,

@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import styles from "./ToolProgressLine.module.css";
-import { DataPart } from "../interfaces";
+import { DataPart } from "../../shared/interfaces";
 
 export interface ToolProgressLineProps {
   progress: DataPart;

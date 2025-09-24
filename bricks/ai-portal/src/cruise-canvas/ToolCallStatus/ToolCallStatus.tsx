@@ -3,12 +3,11 @@ import classNames from "classnames";
 import moment from "moment";
 import { humanizeTime, HumanizeTimeFormat } from "@next-shared/datetime";
 import styles from "./ToolCallStatus.module.css";
-import type { Job } from "../interfaces";
 import { WrappedIcon } from "../../shared/bricks";
 import { TaskContext } from "../../shared/TaskContext";
 import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
 import { getToolDataProgress } from "../utils/getToolDataProgress";
-import type { JobState } from "../../shared/interfaces";
+import type { Job, JobState } from "../../shared/interfaces";
 
 export interface NodeJobToolCallProps {
   job: Job;

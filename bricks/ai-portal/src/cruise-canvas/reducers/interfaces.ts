@@ -1,13 +1,14 @@
 import type {
   ConversationBaseDetail,
   ConversationPatch,
+  ConversationError,
   Task,
 } from "../../shared/interfaces";
 
 export interface CruiseCanvasState {
   conversation: ConversationBaseDetail | null;
   tasks: Task[];
-  error: string | null;
+  errors: ConversationError[];
 }
 
 export type CruiseCanvasAction =

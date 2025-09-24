@@ -127,30 +127,6 @@ describe("useLayout", () => {
     expect(result.current.edges.length).toBe(0);
   });
 
-  it("should handle error state by adding an error node", () => {
-    const { result } = renderHook(() =>
-      useLayout({
-        rawNodes: mockNodes,
-        rawEdges: mockEdges,
-        sizeMap: mockSizeMap,
-        error: "Test error",
-      })
-    );
-    const errorNode = result.current.nodes.find(
-      (node) => node.type === "error"
-    );
-    expect(errorNode).toBeDefined();
-    expect(errorNode?.id).toBe("<ERROR>");
-    expect(errorNode?.content).toBe("Test error");
-
-    // Expect edges from nodes without outgoing edges to the error node
-    const errorEdges = result.current.edges.filter(
-      (edge) => edge.target === "<ERROR>"
-    );
-    expect(errorEdges.length).toBe(1); // Only node2 should connect to error node
-    expect(errorEdges[0].source).toBe("node2");
-  });
-
   it("should handle append feedback node when completed", () => {
     const { result } = renderHook(() =>
       useLayout({

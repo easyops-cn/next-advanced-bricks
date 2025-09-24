@@ -10,7 +10,7 @@ import type { Drawer } from "@next-bricks/containers/drawer";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import classNames from "classnames";
 import { saveAs } from "file-saver";
-import type { FileInfo } from "../interfaces";
+import type { FileInfo } from "../../shared/interfaces";
 import {
   WrappedDrawer,
   WrappedIconButton,

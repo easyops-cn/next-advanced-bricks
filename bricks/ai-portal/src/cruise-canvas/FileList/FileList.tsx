@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import classNames from "classnames";
-import type { FileInfo } from "../interfaces";
+import type { FileInfo } from "../../shared/interfaces";
 import styles from "./FileList.module.css";
 import { K, t } from "../i18n";
 import { CanvasContext } from "../CanvasContext";

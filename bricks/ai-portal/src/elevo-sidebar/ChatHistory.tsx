@@ -20,7 +20,6 @@ import type {
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import { isEqual } from "lodash";
 import { K, t } from "./i18n.js";
-import type { TaskState } from "../cruise-canvas/interfaces.js";
 import {
   WrappedIcon,
   WrappedLink,
@@ -29,6 +28,7 @@ import {
 } from "./bricks.js";
 import { DONE_STATES } from "../shared/constants.js";
 import { parseTemplate } from "../shared/parseTemplate.js";
+import type { ConversationState } from "../shared/interfaces.js";
 
 const ADD_ICON: GeneralIconProps = {
   lib: "fa",
@@ -39,7 +39,7 @@ export interface HistoryItem {
   conversationId: string;
   title: string;
   startTime: number;
-  state?: TaskState;
+  state?: ConversationState;
 }
 
 export interface GroupedHistory {

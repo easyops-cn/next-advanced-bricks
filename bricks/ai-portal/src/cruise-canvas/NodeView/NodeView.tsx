@@ -2,7 +2,7 @@
 import React, { useCallback, useContext, useRef, useState } from "react";
 import classNames from "classnames";
 import jobStyles from "../NodeJob/NodeJob.module.css";
-import type { Job } from "../interfaces";
+import type { Job } from "../../shared/interfaces";
 import { CanvasContext } from "../CanvasContext";
 import { CreatedView } from "../../shared/CreatedView/CreatedView";
 

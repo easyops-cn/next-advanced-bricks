@@ -220,3 +220,8 @@ export interface ExampleProject {
   name: string;
   url?: string;
 }
+
+export interface ConversationError {
+  jobs: string[];
+  error?: string;
+}
