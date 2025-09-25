@@ -1,0 +1,4 @@
+.avatar::part(avatar) {
+  background-color: rgb(213, 214, 230);
+  padding: 1px;
+}

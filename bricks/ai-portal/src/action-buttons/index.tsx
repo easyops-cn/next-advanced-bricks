@@ -12,17 +12,18 @@ initializeI18n(NS, locales);
 
 const WrapperButton = wrapBrick<Button, ButtonProps>("eo-button");
 
-const { defineElement, property, event } = createDecorators();
+const { defineElement, property, event, method } = createDecorators();
 
 interface ActionItem extends ButtonProps {
   text: string;
+  key: string;
   icon?: GeneralIconProps;
   active?: boolean;
   event?: string;
   hidden?: boolean;
 }
 
-export interface ActionsButtonsProps {
+export interface ActionButtonsProps {
   items?: ActionItem[];
   multiple?: boolean; // 是否支持多选
 }
@@ -34,15 +35,13 @@ export
 @defineElement("ai-portal.action-buttons", {
   styleTexts: [styleText],
 })
-class ActionsButtons extends ReactNextElement implements ActionsButtonsProps {
+class ActionButtons extends ReactNextElement implements ActionButtonsProps {
   @property({
     attribute: false,
   })
   accessor items: ActionItem[] | undefined;
 
-  @property({
-    attribute: false,
-  })
+  @property({ type: Boolean })
   accessor multiple: boolean | undefined;
 
   @event({ type: "action.click" })
@@ -71,9 +70,18 @@ class ActionsButtons extends ReactNextElement implements ActionsButtonsProps {
     }
   };
 
+  @method()
+  setActive(key: string) {
+    const action = this.items?.find((item) => item.key === key);
+    if (!action || action.active) {
+      return;
+    }
+    this.#handleActionClick(action);
+  }
+
   render() {
     return (
-      <ActionsButtonsComponent
+      <ActionButtonsComponent
         items={this.items}
         multiple={this.multiple}
         onActionClick={this.#handleActionClick}
@@ -82,25 +90,25 @@ class ActionsButtons extends ReactNextElement implements ActionsButtonsProps {
   }
 }
 
-interface ActionsButtonsComponentProps extends ActionsButtonsProps {
+interface ActionButtonsComponentProps extends ActionButtonsProps {
   onActionClick: (action: ActionItem) => void;
 }
 
-function ActionsButtonsComponent({
+function ActionButtonsComponent({
   items,
   onActionClick,
-}: ActionsButtonsComponentProps) {
+}: ActionButtonsComponentProps) {
   const filteredItems = useMemo(() => {
     return items?.filter((item) => !item.hidden);
   }, [items]);
 
   return (
     <div className="button-container">
-      {filteredItems?.map((item, index) => {
-        const { event, text, active, ...rest } = item;
+      {filteredItems?.map((item) => {
+        const { event, text, active, key, ...rest } = item;
         return (
           <WrapperButton
-            key={index}
+            key={key}
             className={`action${active ? " active" : ""}`}
             themeVariant="elevo"
             type="neutral"

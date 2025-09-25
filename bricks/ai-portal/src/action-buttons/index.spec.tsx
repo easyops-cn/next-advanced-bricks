@@ -1,7 +1,7 @@
 import { describe, test, expect, jest } from "@jest/globals";
 import { act } from "react-dom/test-utils";
 import ".";
-import type { ActionsButtons } from "./index.jsx";
+import type { ActionButtons } from "./index.jsx";
 
 jest.mock("@next-core/theme", () => ({}));
 
@@ -9,7 +9,7 @@ describe("ai-portal.action-buttons", () => {
   test("should render buttons with items", () => {
     const element = document.createElement(
       "ai-portal.action-buttons"
-    ) as ActionsButtons;
+    ) as ActionButtons;
 
     const testItems = [
       { key: "item1", text: "按钮1" },
@@ -43,7 +43,7 @@ describe("ai-portal.action-buttons", () => {
   test("should handle single selection mode by default", () => {
     const element = document.createElement(
       "ai-portal.action-buttons"
-    ) as ActionsButtons;
+    ) as ActionButtons;
 
     const testItems = [
       { key: "item1", text: "按钮1" },
@@ -77,7 +77,7 @@ describe("ai-portal.action-buttons", () => {
   test("should handle multiple selection mode", () => {
     const element = document.createElement(
       "ai-portal.action-buttons"
-    ) as ActionsButtons;
+    ) as ActionButtons;
 
     const testItems = [
       { key: "item1", text: "按钮1" },
@@ -122,7 +122,7 @@ describe("ai-portal.action-buttons", () => {
   test("should dispatch custom event when action has event property", (done) => {
     const element = document.createElement(
       "ai-portal.action-buttons"
-    ) as ActionsButtons;
+    ) as ActionButtons;
 
     const testItems = [
       { key: "item1", text: "按钮1", event: "item.click" },
@@ -161,7 +161,7 @@ describe("ai-portal.action-buttons", () => {
   test("should not dispatch event when action has no event property", () => {
     const element = document.createElement(
       "ai-portal.action-buttons"
-    ) as ActionsButtons;
+    ) as ActionButtons;
 
     const testItems = [
       { key: "item1", text: "按钮1" }, // 没有 event 属性
@@ -193,7 +193,7 @@ describe("ai-portal.action-buttons", () => {
   test("should update items when property changes", async () => {
     const element = document.createElement(
       "ai-portal.action-buttons"
-    ) as ActionsButtons;
+    ) as ActionButtons;
 
     const initialItems = [{ key: "item1", text: "按钮1" }];
 
@@ -227,7 +227,7 @@ describe("ai-portal.action-buttons", () => {
   test("should handle multiple selection with event dispatching", (done) => {
     const element = document.createElement(
       "ai-portal.action-buttons"
-    ) as ActionsButtons;
+    ) as ActionButtons;
 
     const testItems = [
       { key: "item1", text: "按钮1", event: "multi.select" },
