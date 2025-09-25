@@ -53,7 +53,7 @@ export interface DataSource {
   name: string;
   api: string;
   http?: boolean;
-  entity?: string;
+  tool?: ToolInfo;
   objectId?: string;
   params?: string | Record<string, unknown>;
   ambiguousParams?: unknown;
@@ -61,6 +61,11 @@ export interface DataSource {
   rejectTransform?: string;
   scope?: "view" | "template";
   config?: DataSourceConfig;
+}
+
+export interface ToolInfo {
+  conversationId: string;
+  stepId: string;
 }
 
 export interface DataSourceConfig {
@@ -130,7 +135,7 @@ export interface TypeEventHandlerOfCallAPI {
   payload: {
     api: string;
     http?: boolean;
-    entity?: string;
+    tool?: ToolInfo;
     params?: any;
     objectId?: string;
   };

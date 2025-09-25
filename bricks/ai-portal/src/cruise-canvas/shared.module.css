@@ -85,11 +85,13 @@
   margin: 1em 0;
 }
 
-.markdown > :first-child {
+.markdown > :first-child,
+.markdown-wrapper > :first-child {
   margin-top: 0;
 }
 
-.markdown > :last-child {
+.markdown > :last-child,
+.markdown-wrapper > :last-child {
   margin-bottom: 0;
 }
 

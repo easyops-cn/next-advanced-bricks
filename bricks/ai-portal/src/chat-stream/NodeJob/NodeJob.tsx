@@ -93,7 +93,10 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
                 <React.Fragment key={partIndex}>
                   {part.type === "text" && (
                     <EnhancedMarkdown
-                      className={styles["message-part"]}
+                      className={classNames(
+                        styles["message-part"],
+                        sharedStyles["markdown-wrapper"]
+                      )}
                       content={part.text}
                     />
                   )}
@@ -132,7 +135,10 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
                 <div
                   className={classNames(styles.markdown, sharedStyles.markdown)}
                 >
-                  <EnhancedMarkdown content={toolMarkdownContent} />
+                  <EnhancedMarkdown
+                    className={sharedStyles["markdown-wrapper"]}
+                    content={toolMarkdownContent}
+                  />
                 </div>
               )}
               {cmdbInstanceDetails.map((detail, index) => (

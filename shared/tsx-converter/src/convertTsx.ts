@@ -37,7 +37,7 @@ export async function convertTsx(
   options: ConvertOptions
 ): Promise<ConvertResult> {
   const context: ContextConf[] = [
-    ...convertDataSources(result.dataSources ?? [], options),
+    ...convertDataSources(result.dataSources ?? []),
     ...convertVariables(result.variables ?? []),
     ...(options.withContexts
       ? Object.entries(options.withContexts).map(([name, value]) => ({

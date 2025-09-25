@@ -1,38 +1,28 @@
 // istanbul ignore file: experimental
 import React, { useMemo } from "react";
 import classNames from "classnames";
-import moment from "moment";
 import styles from "./NodeJob.module.css";
 import sharedStyles from "../shared.module.css";
 import type { CmdbInstanceDetailData } from "../interfaces";
-import { K, t } from "../i18n.js";
-import { WrappedIcon } from "../../shared/bricks";
-import { FileInfo, Job, JobState } from "../../shared/interfaces";
+import { FileInfo, Job } from "../../shared/interfaces";
 import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus.js";
 import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
 import { CmdbInstanceDetail } from "../CmdbInstanceDetail/CmdbInstanceDetail";
 import { FileList } from "../FileList/FileList";
 import { RequestHumanAction } from "../../shared/RequestHumanAction/RequestHumanAction";
+import { AIEmployeeAvatar } from "../AIEmployeeAvatar/AIEmployeeAvatar";
 
 // 当 markdown 中包含超过 4 列的表格时，对节点使用大尺寸样式
 const RegExpLargeTableInMarkdown = /^\s*\|(?:\s*:?-+:?\s*\|){4,}\s*$/m;
 
 export interface NodeJobProps {
   job: Job;
-  state?: JobState;
   active?: boolean;
   isLeaf?: boolean;
 }
 
-export function NodeJob({
-  job,
-  state,
-  active,
-  isLeaf,
-}: NodeJobProps): JSX.Element {
-  const toolTitle = job.toolCall?.annotations?.title;
+export function NodeJob({ job, active, isLeaf }: NodeJobProps): JSX.Element {
   const toolName = job.toolCall?.name;
-  const loading = state === "working" || state === "submitted";
 
   const [toolMarkdownContent, cmdbInstanceDetails, files, sizeLarge] =
     useMemo(() => {
@@ -83,28 +73,11 @@ export function NodeJob({
       })}
     >
       <div className={styles.background} />
-      <div className={styles.heading}>
-        {job.toolCall ? (
-          <WrappedIcon
-            className={styles.icon}
-            lib="antd"
-            theme="outlined"
-            icon="tool"
-          />
-        ) : (
-          <WrappedIcon className={styles.icon} lib="easyops" icon="robot" />
-        )}
-        <div
-          className={classNames(styles.tool, {
-            [sharedStyles["shine-text"]]: loading,
-          })}
-        >
-          {toolTitle || (toolName ? t(K[toolName as K]) || toolName : "Elevo")}
+      {job.aiEmployeeId ? (
+        <div className={styles.heading}>
+          <AIEmployeeAvatar aiEmployeeId={job.aiEmployeeId} />
         </div>
-        <div className={styles.time}>
-          {job.startTime && moment(job.startTime * 1000).format("MM-DD HH:mm")}
-        </div>
-      </div>
+      ) : null}
       <div className={styles.body}>
         {job.toolCall && <ToolCallStatus job={job} />}
         {job.messages?.map((message, index) =>
@@ -119,7 +92,10 @@ export function NodeJob({
               {message.parts?.map((part, partIndex) => (
                 <React.Fragment key={partIndex}>
                   {part.type === "text" && (
-                    <EnhancedMarkdown content={part.text} />
+                    <EnhancedMarkdown
+                      className={sharedStyles["markdown-wrapper"]}
+                      content={part.text}
+                    />
                   )}
                 </React.Fragment>
               ))}
@@ -131,7 +107,10 @@ export function NodeJob({
             className={classNames(styles.message, sharedStyles.markdown)}
             style={{ padding: "0 8px" }}
           >
-            <EnhancedMarkdown content={toolMarkdownContent} />
+            <EnhancedMarkdown
+              className={sharedStyles["markdown-wrapper"]}
+              content={toolMarkdownContent}
+            />
           </div>
         )}
         {cmdbInstanceDetails.map((detail, index) => (

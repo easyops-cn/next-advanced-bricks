@@ -52,33 +52,11 @@
 }
 
 .heading {
-  /* display: flex; */
-  display: none;
+  display: flex;
   align-items: center;
-  border-bottom: 1px solid #e2e2ec;
   padding: 0 5px 5px;
   font-size: 13px;
   color: #8c8c8c;
-}
-
-.icon {
-  margin-right: 6px;
-  font-size: 14px;
-}
-
-.tool {
-  flex: 1;
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  --shine-text-color: #8c8c8c;
-  --shine-text-highlight-color: #dcdcdc;
-}
-
-.time {
-  margin-left: 6px;
 }
 
 .body {

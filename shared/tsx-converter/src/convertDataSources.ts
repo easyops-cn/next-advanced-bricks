@@ -1,19 +1,15 @@
 import type { ContextConf } from "@next-core/types";
 import { isObject } from "@next-core/utils/general";
 import type { DataSource } from "@next-shared/tsx-parser";
-import type { ConvertOptions } from "./interfaces.js";
 
-export function convertDataSources(
-  dataSources: DataSource[],
-  options: ConvertOptions
-): ContextConf[] {
+export function convertDataSources(dataSources: DataSource[]): ContextConf[] {
   return dataSources.map(
     ({
       name,
       http,
       api,
       params,
-      entity,
+      tool,
       transform,
       rejectTransform,
       config,
@@ -30,10 +26,10 @@ export function convertDataSources(
                 useProvider: "basic.http-request",
                 args: [api, params],
               }
-            : typeof entity === "string"
+            : tool
               ? {
-                  useProvider: `ai-portal.${api.toLowerCase().replace(".", "-sdk-")}`,
-                  args: [options.workspace, entity, params],
+                  useProvider: "ai-portal.call-tool",
+                  args: [tool, params],
                 }
               : {
                   useProvider: `${api}:*`,

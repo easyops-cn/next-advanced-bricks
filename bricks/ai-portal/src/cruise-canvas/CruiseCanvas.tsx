@@ -61,12 +61,7 @@ import { TaskContext } from "../shared/TaskContext.js";
 import { NodeLoading } from "./NodeLoading/NodeLoading.js";
 import { JsxEditor } from "../shared/JsxEditor/JsxEditor.js";
 import { NodeError } from "./NodeError/NodeError.js";
-import type {
-  GeneratedView,
-  FileInfo,
-  Job,
-  JobState,
-} from "../shared/interfaces";
+import type { GeneratedView, FileInfo, Job } from "../shared/interfaces";
 import { NodeReplay } from "./NodeReplay/NodeReplay.js";
 import type { ConversationDetail, CruiseCanvasProps } from ".";
 
@@ -849,7 +844,6 @@ export function CruiseCanvasComponent(
                 type={node.type}
                 content={(node as RequirementGraphNode).content}
                 job={(node as JobGraphNode).job}
-                state={node.state}
                 startTime={conversation?.startTime}
                 instructionLoading={
                   node.type === "instruction" &&
@@ -911,7 +905,6 @@ interface NodeComponentProps {
   type: GraphNode["type"];
   content?: string;
   job?: Job;
-  state?: JobState;
   startTime?: number;
   instructionLoading?: boolean;
   isLeaf?: boolean;
@@ -923,7 +916,6 @@ interface NodeComponentProps {
 function NodeComponent({
   id,
   type,
-  state,
   job,
   content,
   startTime,
@@ -1009,7 +1001,7 @@ function NodeComponent({
       ) : type === "view" ? (
         <NodeView job={job!} active={active} />
       ) : (
-        <NodeJob state={state} job={job!} active={active} isLeaf={isLeaf} />
+        <NodeJob job={job!} active={active} isLeaf={isLeaf} />
       )}
     </div>
   );
