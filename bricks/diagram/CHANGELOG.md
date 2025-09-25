@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.68.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.68.1...@next-bricks/diagram@0.68.2) (2025-09-25)
+
+
+### Bug Fixes
+
+* 修复容器元素在firefox浏览器看不到背景色的问题 ([fcb35eb](https://github.com/easyops-cn/next-advanced-bricks/commit/fcb35eb623daf177aabc084462456f43f4622e2e))
+
+
+
+
+
 ## [0.68.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.68.0...@next-bricks/diagram@0.68.1) (2025-09-02)
 
 **Note:** Version bump only for package @next-bricks/diagram
