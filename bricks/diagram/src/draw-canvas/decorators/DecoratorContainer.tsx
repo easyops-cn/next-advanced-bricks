@@ -218,7 +218,13 @@ export function DecoratorContainer({
           />
         </div>
       </foreignObject>
-      <foreignObject className="container-wrapper">
+      <foreignObject
+        x={0}
+        y={0}
+        width={view.width}
+        height={view.height}
+        className="container-wrapper"
+      >
         <div
           className={classNames("container", {
             ["active-container"]: shouldHighlight,
