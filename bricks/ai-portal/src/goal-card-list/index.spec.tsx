@@ -1,19 +1,11 @@
 import { describe, test, expect, jest } from "@jest/globals";
 import { act } from "react-dom/test-utils";
+import { fireEvent } from "@testing-library/react";
 import "./";
 import type { GoalCardList } from "./index.js";
 import type { GoalItem, GoalState } from "./CardItem/CardItem.js";
 
 jest.mock("@next-core/theme", () => ({}));
-
-// Mock GoalCardItem 组件以便测试事件处理
-const mockGoalCardItem = jest.fn();
-jest.mock("./CardItem/CardItem.js", () => ({
-  GoalCardItem: (props: any) => {
-    mockGoalCardItem(props);
-    return null;
-  },
-}));
 
 describe("ai-portal.goal-card-list", () => {
   const mockGoalList: GoalItem[] = [
@@ -23,6 +15,7 @@ describe("ai-portal.goal-card-list", () => {
       description: "Description 1",
       state: "ready",
       id: 1,
+      level: 0,
     },
     {
       instanceId: "goal-2",
@@ -30,12 +23,9 @@ describe("ai-portal.goal-card-list", () => {
       description: "Description 2",
       state: "working",
       id: 2,
+      level: 0,
     },
   ];
-
-  beforeEach(() => {
-    mockGoalCardItem.mockClear();
-  });
 
   test("basic usage - should render and cleanup properly", async () => {
     const element = document.createElement(
@@ -59,22 +49,17 @@ describe("ai-portal.goal-card-list", () => {
     const element = document.createElement(
       "ai-portal.goal-card-list"
     ) as GoalCardList;
+    element.goalList = mockGoalList;
     const clickHandler = jest.fn();
 
     element.addEventListener("item.click", clickHandler);
 
     act(() => {
-      element.goalList = mockGoalList;
       document.body.appendChild(element);
     });
 
-    // 获取传递给第一个 GoalCardItem 的 onClick 函数
-    const firstItemProps = mockGoalCardItem.mock.calls[0][0] as any;
-    const onClickHandler = firstItemProps.onClick;
-
-    // 模拟点击事件
     act(() => {
-      onClickHandler();
+      fireEvent.click(element.shadowRoot!.querySelector(".goal-item")!);
     });
 
     expect(clickHandler).toHaveBeenCalledTimes(1);
@@ -93,23 +78,24 @@ describe("ai-portal.goal-card-list", () => {
     const element = document.createElement(
       "ai-portal.goal-card-list"
     ) as GoalCardList;
+    element.goalList = mockGoalList;
     const titleChangeHandler = jest.fn();
 
     element.addEventListener("item.title.change", titleChangeHandler);
 
     act(() => {
-      element.goalList = [...mockGoalList]; // 使用副本以测试状态更新
       document.body.appendChild(element);
     });
 
-    // 获取传递给第一个 GoalCardItem 的 onTitleChange 函数
-    const firstItemProps = mockGoalCardItem.mock.calls[0][0] as any;
-    const onTitleChangeHandler = firstItemProps.onTitleChange;
-
-    // 模拟标题变更
     const newTitle = "Updated Goal Title";
     act(() => {
-      onTitleChangeHandler(newTitle);
+      fireEvent.focus(element.shadowRoot!.querySelector(".title")!);
+    });
+
+    element.shadowRoot!.querySelector(".title")!.textContent = newTitle;
+
+    act(() => {
+      fireEvent.blur(element.shadowRoot!.querySelector(".title")!);
     });
 
     // 验证事件被触发
@@ -123,17 +109,6 @@ describe("ai-portal.goal-card-list", () => {
       })
     );
 
-    await (global as any).flushPromises();
-
-    // 验证组件被重新调用，并且第一个 GoalCardItem 的数据已更新
-    const updatedCalls = mockGoalCardItem.mock.calls;
-    const hasUpdatedTitle = updatedCalls.some(
-      (call: any) =>
-        call[0].goalItem.instanceId === "goal-1" &&
-        call[0].goalItem.title === newTitle
-    );
-    expect(hasUpdatedTitle).toBe(true);
-
     act(() => {
       document.body.removeChild(element);
     });
@@ -143,23 +118,24 @@ describe("ai-portal.goal-card-list", () => {
     const element = document.createElement(
       "ai-portal.goal-card-list"
     ) as GoalCardList;
+    element.goalList = mockGoalList;
     const statusChangeHandler = jest.fn();
 
     element.addEventListener("item.status.change", statusChangeHandler);
 
     act(() => {
-      element.goalList = [...mockGoalList]; // 使用副本以测试状态更新
       document.body.appendChild(element);
     });
 
-    // 获取传递给第一个 GoalCardItem 的 onStatusChange 函数
-    const firstItemProps = mockGoalCardItem.mock.calls[0][0] as any;
-    const onStatusChangeHandler = firstItemProps.onStatusChange;
-
-    // 模拟状态变更
+    // 模拟点击第一个 GoalCardItem 的状态下拉菜单并选择新状态
     const newStatus: GoalState = "completed";
     act(() => {
-      onStatusChangeHandler(newStatus);
+      fireEvent(
+        element.shadowRoot!.querySelector("eo-dropdown-actions")!,
+        new CustomEvent("action.click", {
+          detail: { key: newStatus },
+        })
+      );
     });
 
     // 验证事件被触发
@@ -180,13 +156,11 @@ describe("ai-portal.goal-card-list", () => {
     });
 
     // 验证组件被重新调用，并且第一个 GoalCardItem 的状态已更新
-    const updatedCalls = mockGoalCardItem.mock.calls;
-    const hasUpdatedStatus = updatedCalls.some(
-      (call: any) =>
-        call[0].goalItem.instanceId === "goal-1" &&
-        call[0].goalItem.state === newStatus
-    );
-    expect(hasUpdatedStatus).toBe(true);
+    expect(
+      element
+        .shadowRoot!.querySelector(".goal-item")
+        ?.classList.contains("completed")
+    ).toBe(true);
 
     act(() => {
       document.body.removeChild(element);
@@ -207,6 +181,92 @@ describe("ai-portal.goal-card-list", () => {
 
     const goalContainer = element.shadowRoot?.querySelector(".goal-container");
     expect(goalContainer).toBeFalsy();
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
+
+  test("should handle append child goal and revoke", async () => {
+    const element = document.createElement(
+      "ai-portal.goal-card-list"
+    ) as GoalCardList;
+    element.goalList = mockGoalList;
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    expect(element.shadowRoot!.querySelectorAll(".goal-item").length).toBe(2);
+
+    // Append child to the first goal
+    act(() => {
+      fireEvent.click(element.shadowRoot!.querySelector(".append-child")!);
+    });
+    expect(element.shadowRoot!.querySelectorAll(".goal-item").length).toBe(3);
+    expect(element.shadowRoot!.activeElement?.classList.contains("title")).toBe(
+      true
+    );
+
+    // Revoke by blurring without entering title
+    act(() => {
+      fireEvent.blur(element.shadowRoot!.activeElement!);
+    });
+    expect(element.shadowRoot!.querySelectorAll(".goal-item").length).toBe(2);
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
+
+  test("should handle append child goal and done", async () => {
+    const element = document.createElement(
+      "ai-portal.goal-card-list"
+    ) as GoalCardList;
+    element.goalList = mockGoalList;
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    expect(element.shadowRoot!.querySelectorAll(".goal-item").length).toBe(2);
+
+    // Append child to the first goal
+    act(() => {
+      fireEvent.click(element.shadowRoot!.querySelector(".append-child")!);
+    });
+    expect(element.shadowRoot!.querySelectorAll(".goal-item").length).toBe(3);
+    expect(element.shadowRoot!.activeElement?.classList.contains("title")).toBe(
+      true
+    );
+    expect(
+      element
+        .shadowRoot!.querySelectorAll(".goal-item")[1]
+        .querySelector(".serial-number")?.textContent
+    ).toBe("#");
+
+    element.shadowRoot!.activeElement!.textContent = "New Child Goal";
+
+    act(() => {
+      fireEvent.blur(element.shadowRoot!.activeElement!);
+    });
+
+    act(() => {
+      element.appendChildDone("test-pending-id", {
+        instanceId: "goal-1-1",
+        title: "New Child Goal",
+        description: "",
+        state: "ready",
+        id: 3,
+        level: 1,
+      });
+    });
+    expect(element.shadowRoot!.querySelectorAll(".goal-item").length).toBe(3);
+    expect(
+      element
+        .shadowRoot!.querySelectorAll(".goal-item")[1]
+        .querySelector(".serial-number")?.textContent
+    ).toBe("#3");
 
     act(() => {
       document.body.removeChild(element);

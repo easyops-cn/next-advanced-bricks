@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { initializeI18n } from "@next-core/i18n";
 import { wrapBrick } from "@next-core/react-element";
 import type {
@@ -53,12 +53,12 @@ export interface GoalItem {
   state: GoalState;
   id: number;
   conversations?: number;
-  child_target?: GoalItem[];
-  parent_target?: GoalItem[];
   owner?: GoalMember;
   users?: GoalMember[];
   instanceId: string;
-  offsetX?: number;
+  level: number;
+  pending?: boolean;
+  pendingParentId?: string;
 }
 
 interface GoalCardItemProps {
@@ -69,6 +69,8 @@ interface GoalCardItemProps {
   onStatusChange?: (newStatus: GoalState) => void;
   onNewChat?: () => void;
   onClick?: () => void;
+  onAppendChild?: () => void;
+  onRevokeAppendChild?: () => void;
 }
 
 const iconMap = {
@@ -114,9 +116,18 @@ export function GoalCardItem({
   onTitleChange,
   onClick,
   onNewChat,
+  onAppendChild,
+  onRevokeAppendChild,
   isActive,
 }: GoalCardItemProps) {
-  const { state, id: serialNumber, title, conversations, owner } = goalItem;
+  const {
+    state,
+    id: serialNumber,
+    title,
+    conversations,
+    owner,
+    pending,
+  } = goalItem;
 
   const handleStatusChange = (action: SimpleAction) => {
     onStatusChange?.(action.key as GoalState);
@@ -142,11 +153,17 @@ export function GoalCardItem({
     (e: React.FocusEvent<HTMLSpanElement>) => {
       setEditing(false);
       const value = e.currentTarget.textContent;
+
+      if (pending && !value?.trim()) {
+        onRevokeAppendChild?.();
+        return;
+      }
+
       if (value !== null && title !== value) {
         onTitleChange?.(value);
       }
     },
-    [title, onTitleChange]
+    [pending, title, onRevokeAppendChild, onTitleChange]
   );
 
   const handleKeyDown = useCallback(
@@ -163,6 +180,14 @@ export function GoalCardItem({
     []
   );
 
+  const titleRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (pending) {
+      titleRef.current?.focus();
+    }
+  }, [pending]);
+
   return (
     <div
       className={classNames(
@@ -172,15 +197,18 @@ export function GoalCardItem({
         { active: isActive }
       )}
       style={{
-        paddingLeft: `${goalItem.offsetX}px`,
+        paddingLeft: `${(goalItem.level + 1) * 24}px`,
         ...cardStyle,
       }}
-      onClick={onClick}
+      onClick={pending ? undefined : onClick}
     >
       <div className="start">
         <WrappedDropdownActions
           actions={iconActions}
-          onActionClick={(e) => handleStatusChange(e.detail)}
+          disabled={pending}
+          onActionClick={(e) => {
+            handleStatusChange(e.detail);
+          }}
         >
           <WrappedIcon
             className="icon"
@@ -191,9 +219,10 @@ export function GoalCardItem({
           />
         </WrappedDropdownActions>
 
-        <span className="serial-number">#{serialNumber}</span>
+        <span className="serial-number">#{pending ? "" : serialNumber}</span>
         <span
           className="title"
+          ref={titleRef}
           onClick={(e) => e.stopPropagation()}
           onFocus={handleFocus}
           onBlur={handleBlur}
@@ -218,15 +247,28 @@ export function GoalCardItem({
           />
         </div>
         <div className="operation" onClick={(e) => e.stopPropagation()}>
-          <WrappedButton
-            className="new-chat"
-            themeVariant="elevo"
-            type="neutral"
-            size="small"
-            onClick={onNewChat}
-          >
-            {t(K.NEW_CHAT)}
-          </WrappedButton>
+          {goalItem.level === 0 && (
+            <WrappedButton
+              className="append-child"
+              themeVariant="elevo"
+              type="neutral"
+              size="small"
+              onClick={onAppendChild}
+            >
+              <WrappedIcon lib="lucide" icon="plus" />
+            </WrappedButton>
+          )}
+          {!pending && (
+            <WrappedButton
+              className="new-chat"
+              themeVariant="elevo"
+              type="neutral"
+              size="small"
+              onClick={onNewChat}
+            >
+              {t(K.NEW_CHAT)}
+            </WrappedButton>
+          )}
         </div>
       </div>
     </div>

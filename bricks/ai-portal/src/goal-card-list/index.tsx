@@ -1,4 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  forwardRef,
+  createRef,
+  useImperativeHandle,
+} from "react";
 import { createDecorators, EventEmitter } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
@@ -8,10 +14,11 @@ import CardItemStyleText from "./CardItem/CardItem.shadow.css";
 import styleText from "./styles.shadow.css";
 import { GoalCardItem, GoalItem, GoalState } from "./CardItem/CardItem.js";
 import { GeneralIcon, GeneralIconProps } from "@next-bricks/icons/general-icon";
+import { uniqueId } from "lodash";
 
 initializeI18n(NS, locales);
 
-const { defineElement, property, event } = createDecorators();
+const { defineElement, property, event, method } = createDecorators();
 
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
@@ -20,6 +27,8 @@ export interface GoalCardListProps {
   cardStyle?: React.CSSProperties;
   activeKey?: string;
 }
+
+const GoalCardListComponent = forwardRef(LegacyGoalCardListComponent);
 
 /**
  * 构件 `ai-portal.goal-card-list`
@@ -66,9 +75,17 @@ class GoalCardList extends ReactNextElement implements GoalCardListProps {
     this.#itemNewChatEvent.emit(item);
   };
 
+  #ref = createRef<GoalListRef>();
+
+  @method()
+  appendChildDone(pendingId: string, newItem: GoalItem) {
+    this.#ref.current?.appendChildDone(pendingId, newItem);
+  }
+
   render() {
     return (
       <GoalCardListComponent
+        ref={this.#ref}
         goalList={this.goalList}
         cardStyle={this.cardStyle}
         onTitleChange={this.#handleTitleChange}
@@ -88,15 +105,22 @@ interface GoalCardListComponentProps extends GoalCardListProps {
   onNewChat?: (item: GoalItem) => void;
 }
 
-function GoalCardListComponent({
-  goalList: _goalList,
-  cardStyle,
-  onTitleChange,
-  onStatusChange,
-  onItemClick,
-  onNewChat,
-  activeKey,
-}: GoalCardListComponentProps) {
+interface GoalListRef {
+  appendChildDone: (pendingId: string, newItem: GoalItem) => void;
+}
+
+function LegacyGoalCardListComponent(
+  {
+    goalList: _goalList,
+    cardStyle,
+    onTitleChange,
+    onStatusChange,
+    onItemClick,
+    onNewChat,
+    activeKey,
+  }: GoalCardListComponentProps,
+  ref: React.Ref<GoalListRef>
+) {
   const [goalList, setGoalList] = useState(_goalList);
 
   useEffect(() => {
@@ -131,6 +155,53 @@ function GoalCardListComponent({
     updateGoalItem(item, "state", newStatus, onStatusChange);
   };
 
+  const handleAppendChild = (item: GoalItem) => {
+    const newChild: GoalItem = {
+      instanceId:
+        process.env.NODE_ENV === "test"
+          ? "test-pending-id"
+          : uniqueId("pending-"),
+      pending: true,
+      id: 0,
+      title: "",
+      state: "ready",
+      level: 1,
+      pendingParentId: item.instanceId,
+    };
+    setGoalList((prevList) => {
+      const index =
+        prevList?.findIndex((goal) => goal.instanceId === item.instanceId) ??
+        -1;
+      if (index === -1) return prevList;
+      const offsetIndex =
+        prevList!.slice(index + 1).findIndex((goal) => goal.level === 0) + 1;
+      if (offsetIndex === 0) {
+        return [...prevList!, newChild];
+      }
+      return [
+        ...prevList!.slice(0, index + offsetIndex),
+        newChild,
+        ...prevList!.slice(index + offsetIndex),
+      ];
+    });
+  };
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      appendChildDone: (pendingId: string, newItem: GoalItem) => {
+        setGoalList((prevList) =>
+          prevList?.map((goal) =>
+            goal.instanceId === pendingId
+              ? { ...newItem, level: goal.level }
+              : goal
+          )
+        );
+      },
+    }),
+    []
+  );
+
   if (!goalList) {
     return (
       <div className="loading">
@@ -151,6 +222,12 @@ function GoalCardListComponent({
           onStatusChange={(v) => handleStatusChange(v, item)}
           onNewChat={() => onNewChat?.(item)}
           onClick={() => onItemClick?.(item)}
+          onAppendChild={() => handleAppendChild(item)}
+          onRevokeAppendChild={() => {
+            setGoalList((prevList) =>
+              prevList?.filter((goal) => goal.instanceId !== item.instanceId)
+            );
+          }}
         />
       ))}
     </div>

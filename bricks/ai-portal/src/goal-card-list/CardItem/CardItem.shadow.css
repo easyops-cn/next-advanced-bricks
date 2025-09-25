@@ -15,7 +15,7 @@
 
     .end {
       .operation {
-        display: block;
+        display: flex;
       }
       .info {
         display: none;
@@ -58,12 +58,21 @@
 
     .operation {
       display: none;
-      .new-chat {
-        &::part(button) {
-          height: 28px;
-          font-size: 13px;
-          padding: 5px 10px;
-        }
+      align-items: center;
+      gap: 8px;
+
+      eo-button::part(button) {
+        height: 28px;
+      }
+
+      .new-chat::part(button) {
+        padding: 5px 10px;
+        font-size: 13px;
+      }
+
+      .append-child::part(button) {
+        padding: 5px 8px;
+        font-size: 14px;
       }
     }
 
@@ -88,7 +97,7 @@
     border: 1px solid transparent;
     border-radius: 8px;
     cursor: pointer;
-    min-width: 0;
+    min-width: 80px;
 
     &:hover {
       background-color: rgba(255, 255, 255, 0.6);
