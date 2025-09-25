@@ -12,10 +12,10 @@ import classNames from "classnames";
 import { uniqueId } from "lodash";
 import { initializeI18n } from "@next-core/i18n";
 import { convertTsx, getViewTitle } from "@next-shared/tsx-converter";
-import type { Component, ParseResult } from "@next-shared/tsx-parser";
+import type { Component } from "@next-shared/tsx-parser";
 import styles from "./CreatedView.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
-import type { Job } from "../../shared/interfaces";
+import type { Job, ParsedView } from "../../shared/interfaces";
 import { WrappedIcon } from "../../shared/bricks";
 import { K, locales, NS, t } from "./i18n";
 import { createPortal } from "../../cruise-canvas/utils/createPortal";
@@ -55,15 +55,22 @@ export function CreatedView({
   const feedbackDone =
     useViewFeedbackDone(generatedView.viewId, showFeedbackOnView) ||
     feedbackDoneViews?.has(generatedView.viewId);
-  const [view, setView] = useState<ParseResult | null>(null);
+  const [view, setView] = useState<ParsedView | null>(null);
   const canFeedback =
     !!view && !!generatedView.viewId && generatedView.from !== "config";
 
   useEffect(() => {
+    setView(null);
+    let ignore = false;
     generatedView.asyncConstructedView?.then((view) => {
-      setView(view);
+      if (!ignore) {
+        setView(view);
+      }
     });
-  }, [generatedView, workspace]);
+    return () => {
+      ignore = true;
+    };
+  }, [generatedView]);
 
   useEffect(() => {
     const container = ref.current;
@@ -97,7 +104,7 @@ export function CreatedView({
         const convertedView = await convertTsx(view, {
           rootId,
           workspace,
-          withContexts: generatedView.withContexts,
+          withContexts: view.withContexts,
         });
         if (ignore) {
           return;
@@ -116,7 +123,7 @@ export function CreatedView({
     return () => {
       ignore = true;
     };
-  }, [rootId, workspace, view, generatedView]);
+  }, [rootId, workspace, view]);
 
   const sizeLarge = useMemo(() => {
     let large = false;

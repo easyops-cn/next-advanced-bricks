@@ -11,7 +11,6 @@ import "./ai-employees/index.js";
 import "./ai-agents/index.js";
 import "./data-providers/request-store.js";
 import "./page-container/index.js";
-import "./project-summary/index.js";
 import "./tab-list/index.js";
 import "./dropdown-select/index.js";
 import "./preview-container/index.js";
