@@ -10,7 +10,6 @@ import classNames from "classnames";
 import { getBasePath, unstable_createRoot } from "@next-core/runtime";
 import { uniqueId } from "lodash";
 import { convertTsx, getViewTitle } from "@next-shared/tsx-converter";
-import type { ParseResult } from "@next-shared/tsx-parser";
 import type { GraphGeneratedView } from "../../cruise-canvas/interfaces";
 import styles from "./ExpandedView.module.css";
 import { WrappedIcon, WrappedIconButton } from "../../shared/bricks";
@@ -19,6 +18,7 @@ import { ICON_CLOSE, ICON_EXTERNAL_LINK, ICON_FEEDBACK } from "../constants";
 import { TaskContext } from "../TaskContext";
 import { useViewFeedbackDone } from "../useViewFeedbackDone";
 import { parseTemplate } from "../parseTemplate";
+import type { ParsedView } from "../interfaces";
 
 export interface ExpandedViewProps {
   views: GraphGeneratedView[];
@@ -48,7 +48,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
   const feedbackDone =
     useViewFeedbackDone(generatedView?.viewId, showFeedbackOnView) ||
     (generatedView && feedbackDoneViews?.has(generatedView.viewId));
-  const [view, setView] = useState<ParseResult | null>(null);
+  const [view, setView] = useState<ParsedView | null>(null);
   const canFeedback =
     !!view && !!generatedView?.viewId && generatedView.from !== "config";
   const [viewsWithTitle, setViewsWithTitle] = useState<
@@ -60,10 +60,17 @@ export function ExpandedView({ views }: ExpandedViewProps) {
   >(views);
 
   useEffect(() => {
+    setView(null);
+    let ignore = false;
     generatedView?.asyncConstructedView?.then((view) => {
-      setView(view);
+      if (!ignore) {
+        setView(view);
+      }
     });
-  }, [generatedView, workspace]);
+    return () => {
+      ignore = true;
+    };
+  }, [generatedView]);
 
   useEffect(() => {
     Promise.all(
@@ -121,7 +128,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
 
   useEffect(() => {
     setLoading(true);
-    if (!view || !generatedView) {
+    if (!view) {
       return;
     }
     let ignore = false;
@@ -131,7 +138,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
           rootId,
           workspace,
           expanded: true,
-          withContexts: generatedView.withContexts,
+          withContexts: view.withContexts,
         });
         if (ignore) {
           return;
@@ -150,7 +157,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
     return () => {
       ignore = true;
     };
-  }, [rootId, workspace, view, generatedView]);
+  }, [rootId, workspace, view]);
 
   const handleClose = useCallback(() => {
     setActiveExpandedViewJobId(null);

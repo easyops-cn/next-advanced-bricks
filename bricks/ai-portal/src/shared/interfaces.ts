@@ -204,7 +204,12 @@ export interface GeneratedView {
   isStaticData?: boolean;
   from?: "generate" | "config";
   withContexts?: Record<string, unknown>;
-  asyncConstructedView?: Promise<ParseResult | null>;
+  asyncConstructedView?: Promise<ParsedView | null>;
+}
+
+export interface ParsedView extends ParseResult {
+  viewId: string;
+  withContexts?: Record<string, unknown>;
 }
 
 export interface ShowCaseType {
