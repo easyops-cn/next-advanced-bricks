@@ -104,46 +104,26 @@ export function parseLegacy(
           }
           if (t.isMemberExpression(callee)) {
             if (
-              t.isIdentifier(callee.object) &&
-              callee.object.name === "Entity"
+              !t.isIdentifier(callee.property) ||
+              callee.computed ||
+              (callee.property.name !== "then" &&
+                callee.property.name !== "catch")
             ) {
-              if (
-                !t.isIdentifier(callee.property) ||
-                callee.computed ||
-                (callee.property.name !== "list" &&
-                  callee.property.name !== "get")
-              ) {
-                errors.push({
-                  message: `Unexpected awaited expression`,
-                  node: callee.property,
-                  severity: "error",
-                });
-                continue;
-              }
-              parseDataSourceCall(call, result, options, name);
-            } else {
-              if (
-                !t.isIdentifier(callee.property) ||
-                callee.computed ||
-                (callee.property.name !== "then" &&
-                  callee.property.name !== "catch")
-              ) {
-                errors.push({
-                  message: `Unexpected awaited expression`,
-                  node: callee.property,
-                  severity: "error",
-                });
-                continue;
-              }
-              parseDataSourceCall(
-                callee.object,
-                result,
-                options,
-                name,
-                call.arguments,
-                callee.property.name
-              );
+              errors.push({
+                message: `Unexpected awaited expression`,
+                node: callee.property,
+                severity: "error",
+              });
+              continue;
             }
+            parseDataSourceCall(
+              callee.object,
+              result,
+              options,
+              name,
+              call.arguments,
+              callee.property.name
+            );
           } else {
             parseDataSourceCall(call, result, options, name);
           }

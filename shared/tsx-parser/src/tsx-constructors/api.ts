@@ -1,13 +1,13 @@
 import * as t from "@babel/types";
 import { isExpressionString, isNilNode } from "../utils.js";
 import type { ConstructJsValueOptions } from "./interfaces.js";
-import type { ParseResult, ParseOptions } from "../interfaces.js";
+import type { ParseResult, ParseOptions, ToolInfo } from "../interfaces.js";
 import { constructJsValue } from "./values.js";
 
 export interface CallApiPayload {
   api: string;
   http?: boolean;
-  entity?: string;
+  tool?: ToolInfo;
   params?: string | Record<string, unknown>;
   ambiguousParams?: unknown;
   objectId?: string;
@@ -16,8 +16,7 @@ export interface CallApiPayload {
 const EXPECTED_ARGS = {
   callApi: [2, 3],
   callHttp: [1, 2],
-  "Entity.list": [1, 2],
-  "Entity.get": [2],
+  callTool: [2, 3],
 };
 
 export function parseTsxCallApi(
@@ -35,38 +34,16 @@ export function parseTsxCallApi(
     return null;
   }
   const { callee } = call;
-  let calleeName: "callApi" | "callHttp" | "Entity.list" | "Entity.get";
-  if (t.isMemberExpression(callee)) {
-    if (!options?.workspace) {
-      result.errors.push({
-        message: `Entity SDK calls require a workspace context`,
-        node: callee,
-        severity: "error",
-      });
-      return null;
-    }
+  let calleeName: "callApi" | "callHttp" | "callTool";
+  if (t.isIdentifier(callee)) {
+    calleeName = callee.name as "callApi" | "callHttp" | "callTool";
     if (
-      !(
-        t.isIdentifier(callee.object) &&
-        callee.object.name === "Entity" &&
-        t.isIdentifier(callee.property) &&
-        !callee.computed &&
-        (callee.property.name === "list" || callee.property.name === "get")
-      )
+      calleeName !== "callApi" &&
+      calleeName !== "callHttp" &&
+      calleeName !== "callTool"
     ) {
       result.errors.push({
-        message: `Unexpected awaited expression`,
-        node: callee,
-        severity: "error",
-      });
-      return null;
-    }
-    calleeName = `Entity.${callee.property.name}`;
-  } else if (t.isIdentifier(callee)) {
-    calleeName = callee.name as "callApi" | "callHttp";
-    if (calleeName !== "callApi" && calleeName !== "callHttp") {
-      result.errors.push({
-        message: `Await expression must call "callApi" or "callHttp", received "${calleeName}"`,
+        message: `Await expression must call "callApi", "callHttp" or "callTool", received "${calleeName}"`,
         node: callee,
         severity: "error",
       });
@@ -96,17 +73,17 @@ export function parseTsxCallApi(
   }
 
   let payload: CallApiPayload;
-  const apiNode = call.arguments[0];
+  const firstArg = call.arguments[0];
 
   if (calleeName === "callHttp") {
-    const value = constructJsValue(apiNode, result, {
+    const value = constructJsValue(firstArg, result, {
       ...jsValueOptions,
       allowExpression: true,
     });
     if (typeof value !== "string") {
       result.errors.push({
         message: `"${calleeName}()" expects a string value as the first argument, but got ${typeof value}`,
-        node: apiNode,
+        node: firstArg,
         severity: "error",
       });
       return null;
@@ -116,32 +93,46 @@ export function parseTsxCallApi(
       http: true,
     };
   } else if (calleeName === "callApi") {
-    const apiNode = call.arguments[0];
-    if (!t.isStringLiteral(apiNode)) {
+    if (!t.isStringLiteral(firstArg)) {
       result.errors.push({
-        message: `"${calleeName}()" expects a string literal as the first argument, but got ${apiNode.type}`,
-        node: apiNode,
+        message: `"${calleeName}()" expects a string literal as the first argument, but got ${firstArg.type}`,
+        node: firstArg,
         severity: "error",
       });
       return null;
     }
     payload = {
-      api: apiNode.value,
+      api: firstArg.value,
     };
   } else {
-    const entity = constructJsValue(apiNode, result, {
+    const conversationId = constructJsValue(firstArg, result, {
       ...jsValueOptions,
       allowExpression: true,
     });
-    if (typeof entity !== "string") {
+    if (typeof conversationId !== "string") {
       result.errors.push({
-        message: `"${calleeName}()" expects a string value as the first argument, but got ${typeof entity}`,
-        node: apiNode,
+        message: `"${calleeName}()" expects a string value as the first argument, but got ${typeof conversationId}`,
+        node: firstArg,
         severity: "error",
       });
       return null;
     }
-    const paramsNode = call.arguments[1];
+
+    const secondArg = call.arguments[1];
+    const stepId = constructJsValue(secondArg, result, {
+      ...jsValueOptions,
+      allowExpression: true,
+    });
+    if (typeof stepId !== "string") {
+      result.errors.push({
+        message: `"${calleeName}()" expects a string value as the second argument, but got ${typeof stepId}`,
+        node: secondArg,
+        severity: "error",
+      });
+      return null;
+    }
+
+    const paramsNode = call.arguments[2];
     let params: string | Record<string, unknown> | undefined;
     if (paramsNode) {
       params = constructJsValue(paramsNode, result, {
@@ -151,7 +142,7 @@ export function parseTsxCallApi(
     }
     payload = {
       api: calleeName,
-      entity,
+      tool: { conversationId, stepId },
       params,
     };
   }

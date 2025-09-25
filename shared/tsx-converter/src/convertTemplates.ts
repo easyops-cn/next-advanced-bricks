@@ -38,7 +38,7 @@ export function convertTemplates(
         name: `${tplNamePrefix}${getTplNameSuffix(tpl.name)}`,
         bricks: children,
         state: [
-          ...convertDataSources(tpl.dataSources ?? [], options),
+          ...convertDataSources(tpl.dataSources ?? []),
           ...convertVariables(tpl.variables ?? []),
         ],
       } as CustomTemplate;

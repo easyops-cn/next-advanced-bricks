@@ -33,7 +33,7 @@ export function parseDataSourceCall(
   if (transformArgs) {
     if (transformArgs.length > (method === "catch" ? 1 : 2)) {
       result.errors.push({
-        message: `"callApi().${method}()" expects no more than 2 arguments, but got ${transformArgs.length}`,
+        message: `".${method}()" expects no more than 2 arguments, but got ${transformArgs.length}`,
         node: transformArgs[1],
         severity: "error",
       });
@@ -63,7 +63,7 @@ function parsePromiseCallback(
 ): string | null {
   if (!t.isArrowFunctionExpression(callback)) {
     result.errors.push({
-      message: `"callApi().then()" callback expects an arrow function, but got ${callback.type}`,
+      message: `".then()" callback expects an arrow function, but got ${callback.type}`,
       node: callback,
       severity: "error",
     });
@@ -71,7 +71,7 @@ function parsePromiseCallback(
   }
   if (!t.isExpression(callback.body)) {
     result.errors.push({
-      message: `"callApi().then()" callback function body expects an expression, but got ${callback.body.type}`,
+      message: `".then()" callback function body expects an expression, but got ${callback.body.type}`,
       node: callback.body,
       severity: "error",
     });
@@ -79,7 +79,7 @@ function parsePromiseCallback(
   }
   if (callback.params.length > 1) {
     result.errors.push({
-      message: `"callApi().then()" callback function expects exactly 0 or 1 parameter, but got ${callback.params.length}`,
+      message: `".then()" callback function expects exactly 0 or 1 parameter, but got ${callback.params.length}`,
       node: callback.params[1] ?? callback,
       severity: "error",
     });
@@ -93,7 +93,7 @@ function parsePromiseCallback(
   const arg = callback.params[0];
   if (!t.isIdentifier(arg)) {
     result.errors.push({
-      message: `"callApi().then()" callback function parameter expects an identifier, but got ${arg.type}`,
+      message: `".then()" callback function parameter expects an identifier, but got ${arg.type}`,
       node: arg,
       severity: "error",
     });

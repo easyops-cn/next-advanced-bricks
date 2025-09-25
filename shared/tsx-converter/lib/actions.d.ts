@@ -32,25 +32,11 @@ declare const useResource: <T = any>(
   }
 ) => [data: T, refetch: () => void];
 
-/** 数据实体 SDK */
-declare namespace Entity {
-  export function list(
-    entity: string,
-    params?: {
-      fields: string[];
-      filter?: object[];
-      page?: number;
-      pageSize?: number;
-    }
-  ): Promise<{
-    page: number;
-    pageSize: number;
-    total: number;
-    list: object[];
-  }>;
-
-  export function get(entity: string, id: string): Promise<object | null>;
-}
+declare const callTool: <T = any, P = any>(
+  conversationId: string,
+  stepId: string,
+  params: P
+) => Promise<T>;
 
 /** 获取指定的组件 */
 declare const getComponent: <T extends keyof ComponentInstanceMap>(
