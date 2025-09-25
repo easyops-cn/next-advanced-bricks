@@ -71,6 +71,7 @@ describe("GoalCardItem", () => {
     owner: {
       instanceId: "leader-1",
     },
+    level: 0,
   };
 
   const defaultProps = {
