@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.45.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.44.1...@next-bricks/ai-portal@0.45.0) (2025-09-25)
+
+
+### Bug Fixes
+
+* fix markdown style ([734405f](https://github.com/easyops-cn/next-advanced-bricks/commit/734405fb383a25408e614268de3f17a58abc02a5))
+
+
+### Features
+
+* show ai employee avatar in job node ([14ccb1a](https://github.com/easyops-cn/next-advanced-bricks/commit/14ccb1a8307995ba04fd3acfd4a2d17fdc1826ea))
+* support callTool ([b0d04b5](https://github.com/easyops-cn/next-advanced-bricks/commit/b0d04b561c6028551aaf1b3e937785b8912bbeb0))
+
+
+
+
+
 ## [0.44.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.44.0...@next-bricks/ai-portal@0.44.1) (2025-09-25)
 
 

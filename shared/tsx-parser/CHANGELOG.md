@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-parser@0.1.3...@next-shared/tsx-parser@0.2.0) (2025-09-25)
+
+
+### Features
+
+* support callTool ([b0d04b5](https://github.com/easyops-cn/next-advanced-bricks/commit/b0d04b561c6028551aaf1b3e937785b8912bbeb0))
+
+
+
+
+
 ## [0.1.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-parser@0.1.2...@next-shared/tsx-parser@0.1.3) (2025-09-22)
 
 
