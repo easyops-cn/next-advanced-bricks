@@ -842,6 +842,7 @@ export function CruiseCanvasComponent(
                 key={node.id}
                 id={node.id}
                 type={node.type}
+                username={(node as RequirementGraphNode).username}
                 content={(node as RequirementGraphNode).content}
                 job={(node as JobGraphNode).job}
                 startTime={conversation?.startTime}
@@ -903,6 +904,7 @@ export function CruiseCanvasComponent(
 interface NodeComponentProps {
   id: string;
   type: GraphNode["type"];
+  username?: string;
   content?: string;
   job?: Job;
   startTime?: number;
@@ -917,6 +919,7 @@ function NodeComponent({
   id,
   type,
   job,
+  username,
   content,
   startTime,
   instructionLoading,
@@ -983,6 +986,7 @@ function NodeComponent({
         <NodeFeedback />
       ) : type === "requirement" ? (
         <NodeRequirement
+          username={username}
           content={content}
           startTime={startTime}
           active={active}

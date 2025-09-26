@@ -43,6 +43,7 @@ export function useConversationGraph(
 
     const jobNodesMap = new Map<string, string[]>();
     const userInputNodes: string[] = [];
+    let username: string | undefined;
 
     for (const jobId of list) {
       const job = jobMap.get(jobId)!;
@@ -61,10 +62,12 @@ export function useConversationGraph(
         (jobRoots.includes(jobId) || messages!.length === 1);
       if (isRequirementJob) {
         const requirementId = `requirement:${jobId}`;
+        username = job.username;
         nodes.push({
           type: "requirement",
           id: requirementId,
           content: userInput,
+          username,
         });
         nodeIds.push(requirementId);
         jobNodesMap.set(jobId, nodeIds);
@@ -143,6 +146,7 @@ export function useConversationGraph(
           type: "requirement",
           id: humanActionNodeId,
           content: job.humanAction,
+          username,
         });
         nodeIds.push(humanActionNodeId);
       }
