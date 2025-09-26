@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.20.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.20.0...@next-bricks/form@1.20.1) (2025-09-26)
+
+
+### Bug Fixes
+
+* **eo-textarea:** delegate focus ([f8106b9](https://github.com/easyops-cn/next-advanced-bricks/commit/f8106b97f4450b0d68ba7492b6e5e00181512c92))
+
+
+
+
+
 # [1.20.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.19.2...@next-bricks/form@1.20.0) (2025-09-23)
 
 
