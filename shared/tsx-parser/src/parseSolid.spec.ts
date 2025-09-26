@@ -31,7 +31,7 @@ export default function() {
   return (
     <View title="测试页面">
       <MyCounter x={2} y={3} />
-      {count}
+      {(count as number).toFixed(1)}
     </View>
   );
 }
