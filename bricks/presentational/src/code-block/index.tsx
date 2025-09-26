@@ -1,4 +1,4 @@
-import React, { Suspense, use, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { createDecorators } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import { useCurrentTheme } from "@next-core/react-runtime";
@@ -71,24 +71,13 @@ class CodeBlock extends ReactNextElement implements CodeBlockProps {
 
   render() {
     return (
-      <Suspense
-        fallback={
-          <WrappedIcon
-            lib="lucide"
-            icon="loader-circle"
-            className="loading"
-            spinning
-          />
-        }
-      >
-        <CodeBlockComponent
-          language={this.language}
-          source={this.source}
-          theme={this.theme}
-          themeVariant={this.themeVariant}
-          showCopyButton={this.showCopyButton}
-        />
-      </Suspense>
+      <CodeBlockComponent
+        language={this.language}
+        source={this.source}
+        theme={this.theme}
+        themeVariant={this.themeVariant}
+        showCopyButton={this.showCopyButton}
+      />
     );
   }
 }
@@ -105,6 +94,9 @@ function CodeBlockComponent({
   themeVariant,
   showCopyButton,
 }: CodeBlockProps) {
+  const [loading, setLoading] = useState(true);
+  const [node, setNode] = useState<React.ReactNode>(null);
+
   const systemTheme = useCurrentTheme();
   const _theme = __theme ?? "auto";
   const theme =
@@ -114,9 +106,10 @@ function CodeBlockComponent({
         : "light-plus"
       : _theme;
 
-  const renderPromise = useMemo(
-    () =>
-      renderCodeBlock(
+  useEffect(() => {
+    let ignore = false;
+    (async () => {
+      const node = await renderCodeBlock(
         source,
         language,
         theme,
@@ -126,11 +119,26 @@ function CodeBlockComponent({
         <div style={{ color: "var(--color-error)" }}>
           {httpErrorToString(error)}
         </div>
-      )),
-    [language, source, theme, themeVariant, showCopyButton]
-  );
+      ));
+      if (ignore) return;
+      setNode(node);
+      setLoading(false);
+    })();
+    return () => {
+      ignore = true;
+    };
+  }, [language, showCopyButton, source, theme, themeVariant]);
 
-  return use(renderPromise);
+  return loading ? (
+    <WrappedIcon
+      lib="lucide"
+      icon="loader-circle"
+      className="loading"
+      spinning
+    />
+  ) : (
+    node
+  );
 }
 
 async function renderCodeBlock(
