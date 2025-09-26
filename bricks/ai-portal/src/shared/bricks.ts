@@ -71,7 +71,7 @@ export const WrappedShowCase = wrapBrick<ShowCase, ShowCaseProps>(
 );
 
 export const WrappedCodeBlock = wrapBrick<CodeBlock, CodeBlockProps>(
-  "presentational.code-block"
+  "eo-code-block"
 );
 
 export const showDialog =

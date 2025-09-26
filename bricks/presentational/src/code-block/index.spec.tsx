@@ -7,11 +7,9 @@ import type { CodeBlock } from "./index.js";
 
 jest.mock("@next-core/theme", () => ({}));
 
-describe("presentational.code-block", () => {
+describe("eo-code-block", () => {
   test("basic usage", async () => {
-    const element = document.createElement(
-      "presentational.code-block"
-    ) as CodeBlock;
+    const element = document.createElement("eo-code-block") as CodeBlock;
     element.language = "js";
     element.source = "console.log('Hello');";
 
@@ -54,9 +52,7 @@ describe("presentational.code-block", () => {
   });
 
   test("mermaid in markdown", async () => {
-    const element = document.createElement(
-      "presentational.code-block"
-    ) as CodeBlock;
+    const element = document.createElement("eo-code-block") as CodeBlock;
     element.language = "md";
     element.source =
       "```mermaid\nsequenceDiagram\n    Alice->>John: Hello John, how are you?\n    John-->>Alice: Great!\n```";

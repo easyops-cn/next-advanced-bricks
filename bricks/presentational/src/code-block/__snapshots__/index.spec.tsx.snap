@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`presentational.code-block basic usage 2`] = `
+exports[`eo-code-block basic usage 2`] = `
 NodeList [
   <style>
     styles.shadow.css
@@ -56,7 +56,7 @@ NodeList [
 ]
 `;
 
-exports[`presentational.code-block mermaid in markdown 1`] = `
+exports[`eo-code-block mermaid in markdown 1`] = `
 NodeList [
   <style>
     styles.shadow.css

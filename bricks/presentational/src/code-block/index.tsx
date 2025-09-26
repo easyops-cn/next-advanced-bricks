@@ -34,7 +34,7 @@ export interface CodeBlockProps {
 }
 
 /**
- * 构件 `presentational.code-block`
+ * 构件 `eo-code-block`
  *
  * @part pre - 包裹代码内容的 `<pre>` 元素
  * @part copy - 复制按钮
@@ -42,7 +42,8 @@ export interface CodeBlockProps {
  * @part wrapper - code-wrapper 构件
  */
 export
-@defineElement("presentational.code-block", {
+@defineElement("eo-code-block", {
+  alias: ["presentational.code-block"],
   styleTexts: [styleText],
 })
 class CodeBlock extends ReactNextElement implements CodeBlockProps {
