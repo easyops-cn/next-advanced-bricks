@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-parser@0.2.0...@next-shared/tsx-parser@0.2.1) (2025-09-26)
+
+
+### Bug Fixes
+
+* remove ts as expressions ([7e3800a](https://github.com/easyops-cn/next-advanced-bricks/commit/7e3800a99baa2d98845bf566d6d18dc6802be64c))
+
+
+
+
+
 # [0.2.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-parser@0.1.3...@next-shared/tsx-parser@0.2.0) (2025-09-25)
 
 
