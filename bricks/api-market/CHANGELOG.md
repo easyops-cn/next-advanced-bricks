@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.57](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/api-market@0.1.56...@next-bricks/api-market@0.1.57) (2025-09-26)
+
+**Note:** Version bump only for package @next-bricks/api-market
+
+
+
+
+
 ## [0.1.56](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/api-market@0.1.55...@next-bricks/api-market@0.1.56) (2025-08-25)
 
 **Note:** Version bump only for package @next-bricks/api-market

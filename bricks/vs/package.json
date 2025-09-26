@@ -1,6 +1,6 @@
 {
   "name": "@next-bricks/vs",
-  "version": "1.18.2",
+  "version": "1.18.3",
   "homepage": "https://github.com/easyops-cn/next-advanced-bricks/tree/master/bricks/vs",
   "repository": {
     "type": "git",
@@ -67,10 +67,10 @@
     "@next-core/runtime": "^1.69.3",
     "@next-core/theme": "^1.6.1",
     "@next-core/utils": "^1.8.6",
-    "@next-shared/form": "^0.9.0",
-    "@next-shared/monaco-copilot": "^0.2.0",
+    "@next-shared/form": "^0.9.1",
+    "@next-shared/monaco-copilot": "^0.2.1",
     "@next-shared/monaco-textmate": "^0.1.2",
-    "@next-shared/spell-check": "^0.1.5",
+    "@next-shared/spell-check": "^0.1.6",
     "comlink": "^4.4.2",
     "monaco-editor": "^0.50.0",
     "react": "0.0.0-experimental-ee8509801-20230117",

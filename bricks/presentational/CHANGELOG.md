@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.21.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.20.1...@next-bricks/presentational@1.21.0) (2025-09-26)
+
+
+### Bug Fixes
+
+* remove usage of `React.use` which has bug ([0676bb6](https://github.com/easyops-cn/next-advanced-bricks/commit/0676bb6c407289ffe411e33cf3b23e7adbab1ed8))
+* use eo-code-block ([07e12fa](https://github.com/easyops-cn/next-advanced-bricks/commit/07e12fa2488154cce32e0f9b4e3bf79691619020))
+
+
+### Features
+
+* code block ([81c85ff](https://github.com/easyops-cn/next-advanced-bricks/commit/81c85ff4117af4ff5c90c4ddceac55dd859c6876))
+
+
+
+
+
 ## [1.20.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.20.0...@next-bricks/presentational@1.20.1) (2025-09-04)
 
 
