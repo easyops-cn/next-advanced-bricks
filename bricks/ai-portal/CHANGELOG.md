@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.46.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.46.0...@next-bricks/ai-portal@0.46.1) (2025-09-26)
+
+
+### Bug Fixes
+
+* align goal numbers ([7f73e92](https://github.com/easyops-cn/next-advanced-bricks/commit/7f73e92ab6bc06db9bf6e6f355005474a6bc64a0))
+
+
+
+
+
 # [0.46.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.45.2...@next-bricks/ai-portal@0.46.0) (2025-09-25)
 
 
