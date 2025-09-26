@@ -51,6 +51,9 @@ const { defineElement, property, event, method } = createDecorators();
 @defineElement("eo-textarea", {
   styleTexts: [styleText],
   alias: ["form.general-textarea"],
+  shadowOptions: {
+    delegatesFocus: true,
+  },
 })
 class Textarea extends FormItemElementBase implements TextareaProps {
   #componentRef = createRef<TextareaComponentRef>();
