@@ -1,7 +1,6 @@
 // istanbul ignore file: experimental
-import React, { useMemo } from "react";
+import React from "react";
 import { wrapBrick } from "@next-core/react-element";
-import { auth } from "@next-core/easyops-runtime";
 import type {
   EoEasyopsAvatar,
   EoEasyopsAvatarProps,
@@ -15,20 +14,18 @@ const WrappedEasyOpsAvatar = wrapBrick<EoEasyopsAvatar, EoEasyopsAvatarProps>(
 );
 
 export interface NodeRequirementProps {
+  username?: string;
   content?: string;
   startTime?: number;
   active?: boolean;
 }
 
 export function NodeRequirement({
+  username,
   content,
   startTime,
   active,
 }: NodeRequirementProps): JSX.Element {
-  const username = useMemo(() => {
-    return auth.getAuth().username;
-  }, []);
-
   return (
     <div
       className={classNames(styles["node-requirement"], {

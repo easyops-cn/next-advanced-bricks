@@ -137,6 +137,7 @@ function mergeJobs(
         "endTime",
         "requestHumanAction",
         "humanAction",
+        "username",
       ]);
       if (aiEmployeeId !== undefined) {
         restMessagesPatch.aiEmployeeId = aiEmployeeId;

@@ -30,6 +30,7 @@ export type GraphNode =
 export interface RequirementGraphNode extends BaseGraphNode {
   type: "requirement";
   content: string;
+  username?: string;
 }
 
 export interface LoadingGraphNode extends BaseGraphNode {

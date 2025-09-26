@@ -107,6 +107,8 @@ export interface Job {
   humanAction?: string;
 
   aiEmployeeId?: string;
+
+  username?: string;
 }
 
 export type HumanAction = HumanActionConfirm | HumanActionSelect;
