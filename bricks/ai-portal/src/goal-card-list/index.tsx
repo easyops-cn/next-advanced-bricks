@@ -4,6 +4,7 @@ import React, {
   forwardRef,
   createRef,
   useImperativeHandle,
+  useMemo,
 } from "react";
 import { createDecorators, EventEmitter } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
@@ -202,6 +203,12 @@ function LegacyGoalCardListComponent(
     []
   );
 
+  const idWidth = useMemo(() => {
+    const maxId =
+      goalList?.reduce((max, item) => Math.max(max, item.id), 0) ?? 0;
+    return 10 * (maxId.toString().length + 1);
+  }, [goalList]);
+
   if (!goalList) {
     return (
       <div className="loading">
@@ -217,6 +224,7 @@ function LegacyGoalCardListComponent(
           key={item.instanceId}
           isActive={activeKey === item.instanceId}
           goalItem={item}
+          idWidth={idWidth}
           cardStyle={cardStyle}
           onTitleChange={(v) => handleTitleChange(v, item)}
           onStatusChange={(v) => handleStatusChange(v, item)}

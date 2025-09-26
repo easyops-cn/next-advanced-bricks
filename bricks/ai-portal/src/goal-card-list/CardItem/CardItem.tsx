@@ -63,6 +63,7 @@ export interface GoalItem {
 
 interface GoalCardItemProps {
   goalItem: GoalItem;
+  idWidth?: number;
   cardStyle?: React.CSSProperties;
   isActive?: boolean;
   onTitleChange?: (newTitle: string) => void;
@@ -111,6 +112,7 @@ const iconActions: Action[] = [
 
 export function GoalCardItem({
   goalItem,
+  idWidth,
   cardStyle,
   onStatusChange,
   onTitleChange,
@@ -219,7 +221,9 @@ export function GoalCardItem({
           />
         </WrappedDropdownActions>
 
-        <span className="serial-number">#{pending ? "" : serialNumber}</span>
+        <span className="serial-number" style={{ width: idWidth }}>
+          #{pending ? "" : serialNumber}
+        </span>
         <span
           className="title"
           ref={titleRef}
