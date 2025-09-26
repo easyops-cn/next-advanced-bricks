@@ -150,6 +150,8 @@ export function removeTypeAnnotations(source: string, expr: t.Expression) {
         t.isTSTypeParameterInstantiation(node)
       ) {
         annotations.push([node.start!, node.end!]);
+      } else if (t.isTSAsExpression(node)) {
+        annotations.push([node.expression.end!, node.end!]);
       }
     },
   });
