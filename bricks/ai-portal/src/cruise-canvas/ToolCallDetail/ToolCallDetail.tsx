@@ -1,5 +1,4 @@
 import React, {
-  Suspense,
   useCallback,
   useContext,
   useEffect,
@@ -10,17 +9,15 @@ import React, {
 import type { Drawer } from "@next-bricks/containers/drawer";
 import classNames from "classnames";
 import type { DataPart, Job, Part } from "../../shared/interfaces";
-import { WrappedDrawer, WrappedIcon } from "../../shared/bricks";
+import { WrappedCodeBlock, WrappedDrawer } from "../../shared/bricks";
 import styles from "./ToolCallDetail.module.css";
 import sharedStyles from "../shared.module.css";
 import { K, t } from "../i18n";
 import { TaskContext } from "../../shared/TaskContext";
 import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus";
 import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
-import { CodeBlock } from "../CodeBlock/CodeBlock";
 import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
-import { ICON_LOADING } from "../../shared/constants";
-import { CodeDisplay } from "../../shared/CodeDisplay";
+import { MarkdownPre } from "../../shared/MarkdownPre";
 
 export interface ToolCallDetailProps {
   job: Job;
@@ -151,7 +148,7 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
             {!!progress && (
               <div
                 className={classNames(styles["progress-container"], {
-                  [styles.fallback]: failed,
+                  [styles["progress-fallback"]]: failed,
                 })}
               >
                 <ToolProgressLine progress={progress} failed={failed} />
@@ -202,12 +199,17 @@ function PreComponent({
   }, [content, maybeJson]);
 
   return fallback ? (
-    <CodeBlock className={classNames("shiki light-plus", styles.fallback)}>
-      <code>{refinedContent}</code>
-    </CodeBlock>
+    <div className={styles["code-fallback"]}>
+      <MarkdownPre>
+        <code>{refinedContent}</code>
+      </MarkdownPre>
+    </div>
   ) : (
-    <Suspense fallback={<WrappedIcon {...ICON_LOADING} />}>
-      <CodeDisplay source={refinedContent!} language="json" />
-    </Suspense>
+    <WrappedCodeBlock
+      className={styles["code-block"]}
+      source={refinedContent!}
+      language="json"
+      themeVariant="elevo"
+    />
   );
 }

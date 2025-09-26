@@ -67,6 +67,7 @@
   },
   "peerDependencies": {
     "@next-bricks/form": "*",
-    "@next-bricks/icons": "*"
+    "@next-bricks/icons": "*",
+    "@next-bricks/presentational": "*"
   }
 }

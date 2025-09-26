@@ -6,3 +6,5 @@ dependencies:
     local_deploy: true
   - name: "icons-NB"
     version: ">= 0.3.0"
+  - name: "presentational-NB"
+    version: ">=1.21.0"

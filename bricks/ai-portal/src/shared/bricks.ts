@@ -19,6 +19,10 @@ import type { showDialog as _showDialog } from "@next-bricks/basic/data-provider
 import type { copyToClipboard as _copyToClipboard } from "@next-bricks/basic/data-providers/copy-to-clipboard";
 import { PopoverProps, Popover } from "@next-bricks/basic/popover";
 import { EoNextTable, NextTableProps } from "@next-bricks/advanced/next-table";
+import {
+  CodeBlock,
+  CodeBlockProps,
+} from "@next-bricks/presentational/code-block";
 import type { IconButton, IconButtonProps } from "../icon-button";
 import type {
   ChatInput,
@@ -64,6 +68,10 @@ export const WrappedChatInput = wrapBrick<
 
 export const WrappedShowCase = wrapBrick<ShowCase, ShowCaseProps>(
   "ai-portal.show-case"
+);
+
+export const WrappedCodeBlock = wrapBrick<CodeBlock, CodeBlockProps>(
+  "presentational.code-block"
 );
 
 export const showDialog =

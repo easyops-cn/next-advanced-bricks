@@ -4,13 +4,11 @@
   margin-bottom: 7px;
 }
 
-.detail .body :global(.shiki.light-plus) {
-  background: #fff !important;
+.code-block::part(pre) {
   border: 1px solid #ccd1de;
-  border-radius: 9px;
 }
 
-.detail .body :global(.shiki.light-plus).fallback {
+.code-fallback [class*="code-wrapper--"]::part(pre) {
   white-space: pre-wrap;
   background: #fef5f3 !important;
 }
@@ -26,7 +24,7 @@
   padding: 6px 2px;
 }
 
-.fallback {
+.progress-fallback {
   background: #fef5f3;
 }
 
