@@ -10,3 +10,5 @@ import "./statistics-card/index.js";
 import "./loading-step/index.js";
 import "./current-time/index.js";
 import "./carousel-text/index.js";
+import "./code-block/index.js";
+import "./code-wrapper/index.js";

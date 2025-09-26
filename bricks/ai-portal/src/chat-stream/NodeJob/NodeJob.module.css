@@ -71,14 +71,14 @@
 .content {
   margin-top: 14px;
 
-  .markdown :global(.mermaid) {
+  .markdown [class*="code-wrapper--"]::part(mermaid) {
     background: rgba(255, 255, 255, 0.6);
     border-radius: 8px;
     border: 1px solid rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
     padding: 20px;
     min-width: var(--cruise-canvas-node-width-medium);
-    width: fit-content;
+    width: auto;
     max-width: 100%;
   }
 }

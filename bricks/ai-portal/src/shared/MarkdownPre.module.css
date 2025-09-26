@@ -1,0 +1,8 @@
+.code-wrapper::part(pre) {
+  border: 1px solid #ccd1de;
+}
+
+.code-wrapper::part(mermaid) {
+  border: none;
+  background: none;
+}

@@ -1,0 +1,12 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.loading {
+  display: block;
+  margin: 0 auto;
+}

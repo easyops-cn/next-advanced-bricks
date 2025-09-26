@@ -72,13 +72,14 @@
   justify-content: center;
 }
 
-.editor .content div[class*="code-block--"] {
+.editor .content .code-block::part(wrapper) {
   position: static;
+  margin: 0;
 }
 
-.editor .content :global(.shiki.light-plus) {
+.editor .content .code-block::part(pre) {
   background: none !important;
   padding: 0;
-  margin: 0;
   border-radius: 0;
+  border: 0;
 }

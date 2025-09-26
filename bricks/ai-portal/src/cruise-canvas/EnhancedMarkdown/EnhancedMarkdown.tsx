@@ -3,11 +3,11 @@ import {
   MarkdownComponent,
   type MarkdownComponentProps,
 } from "@next-shared/markdown";
-import { CodeBlock } from "../CodeBlock/CodeBlock";
 import { CanvasContext } from "../CanvasContext";
+import { MarkdownPre } from "../../shared/MarkdownPre";
 
 const components: MarkdownComponentProps["components"] = {
-  pre: CodeBlock,
+  pre: MarkdownPre,
 };
 
 const shikiOptions: MarkdownComponentProps["shiki"] = {

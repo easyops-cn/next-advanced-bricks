@@ -1,15 +1,13 @@
-import React, { Suspense, useContext, useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import classNames from "classnames";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import styles from "./Aside.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
-import { WrappedIcon, WrappedIconButton } from "../../shared/bricks";
+import { WrappedCodeBlock, WrappedIconButton } from "../../shared/bricks";
 import type { CmdbInstanceDetailData } from "../../cruise-canvas/interfaces";
 import { ToolCallStatus } from "../../cruise-canvas/ToolCallStatus/ToolCallStatus";
 import { TaskContext } from "../../shared/TaskContext";
 import { StreamContext } from "../StreamContext";
-import { ICON_LOADING } from "../../shared/constants";
-import { CodeDisplay } from "../../shared/CodeDisplay";
 import type { FileInfo, Job } from "../../shared/interfaces";
 
 const ICON_SHRINK: GeneralIconProps = {
@@ -107,9 +105,12 @@ function EditorApp({ name, source, language }: EditorAppProps) {
       <div className={styles.heading}>{`${name}.${language}`}</div>
       <div className={classNames(styles.content, sharedStyles.markdown)}>
         <div className={styles.scroller}>
-          <Suspense fallback={<WrappedIcon {...ICON_LOADING} />}>
-            <CodeDisplay source={source} language={language} />
-          </Suspense>
+          <WrappedCodeBlock
+            className={styles["code-block"]}
+            source={source}
+            language={language}
+            themeVariant="elevo"
+          />
         </div>
       </div>
     </div>
