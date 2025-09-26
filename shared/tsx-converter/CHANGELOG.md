@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-converter@0.2.2...@next-shared/tsx-converter@0.2.3) (2025-09-26)
+
+
+### Bug Fixes
+
+* support CodeBlock ([25da13d](https://github.com/easyops-cn/next-advanced-bricks/commit/25da13d050605d3cdfc77dd890e502fe992d036c))
+
+
+
+
+
 ## [0.2.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-converter@0.2.1...@next-shared/tsx-converter@0.2.2) (2025-09-26)
 
 **Note:** Version bump only for package @next-shared/tsx-converter
