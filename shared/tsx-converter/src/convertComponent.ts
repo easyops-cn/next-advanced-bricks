@@ -24,6 +24,7 @@ import {
   getTplNamePrefixByRootId,
   getTplNameSuffix,
 } from "./convertTemplates.js";
+import convertCodeBlock from "./convertCodeBlock.js";
 
 export async function convertComponent(
   component: Component,
@@ -83,6 +84,9 @@ export async function convertComponent(
         break;
       case "AvatarGroup":
         brick = await convertAvatarGroup(component);
+        break;
+      case "CodeBlock":
+        brick = await convertCodeBlock(component);
         break;
       case "Search":
       case "Input":

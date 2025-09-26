@@ -141,6 +141,11 @@ export interface AvatarGroupProps extends BaseProps {
   size?: "large" | "medium" | "small";
 }
 
+export interface CodeBlockProps extends BaseProps {
+  source: string;
+  language: string;
+}
+
 export interface PlaintextProps extends BaseProps {
   /** Related advisory information */
   title?: string;
@@ -216,5 +221,6 @@ declare const Tag: (props: TagProps) => any;
 declare const Link: (props: LinkProps) => any;
 declare const Avatar: (props: AvatarProps) => any;
 declare const AvatarGroup: (props: AvatarGroupProps) => any;
+declare const CodeBlock: (props: CodeBlockProps) => any;
 declare const Plaintext: (props: PlaintextProps) => any;
 declare const Fragment: (props: { key?: string | number }) => any;
