@@ -23,6 +23,10 @@ declare const useState: <T>(
   initialValue?: T
 ) => [value: T, setter: (value: T) => void];
 
+declare const useRef: <T>(initialValue: T) => {
+  readonly current: T;
+};
+
 declare const useResource: <T = any>(
   fetcher: () => Promise<T>,
   options?: {

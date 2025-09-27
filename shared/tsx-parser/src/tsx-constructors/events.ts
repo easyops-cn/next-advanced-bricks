@@ -101,18 +101,77 @@ export function constructTsxEvent(
           t.isMemberExpression(callee) ||
           t.isOptionalMemberExpression(callee)
         ) {
-          if (!t.isCallExpression(callee.object)) {
+          if (callee.computed) {
             result.errors.push({
-              message: `Member expression in event handler expects a call expression as object, but got ${callee.object.type}`,
-              node: callee.object,
+              message: `Member expression in event handler does not support computed property`,
+              node: callee.property,
               severity: "error",
             });
             continue;
           }
-          if (!t.isIdentifier(callee.object.callee)) {
+          const { object } = callee;
+          if (
+            t.isMemberExpression(object) ||
+            t.isOptionalMemberExpression(object)
+          ) {
+            if (
+              !object.computed &&
+              t.isIdentifier(object.property) &&
+              object.property.name === "current"
+            ) {
+              const refObject = object.object;
+              if (t.isIdentifier(refObject)) {
+                const refName = refObject.name;
+                const refs = result.templateCollection
+                  ? result.templateCollection.refs
+                  : result.refs;
+                if (!refs.includes(refName)) {
+                  result.errors.push({
+                    message: `Ref "${refName}" is not defined`,
+                    node: refObject,
+                    severity: "error",
+                  });
+                  continue;
+                }
+                if (!t.isIdentifier(callee.property)) {
+                  result.errors.push({
+                    message: `Member expression in event handler expects an identifier as property, but got ${callee.property.type}`,
+                    node: callee.property,
+                    severity: "error",
+                  });
+                  continue;
+                }
+                handlers.push({
+                  action: "call_ref",
+                  payload: {
+                    ref: refName,
+                    method: callee.property.name,
+                    args: args.map((arg) =>
+                      constructJsValue(arg, result, {
+                        allowExpression: true,
+                        replacePatterns,
+                      })
+                    ),
+                    scope: result.templateCollection ? "template" : "view",
+                  },
+                });
+                continue;
+              }
+            }
+          }
+
+          if (!t.isCallExpression(object)) {
             result.errors.push({
-              message: `Member expression in event handler expects an identifier as callee, but got ${callee.object.callee.type}`,
-              node: callee.object.callee,
+              message: `Member expression in event handler expects a call expression as object, but got ${object.type}`,
+              node: object,
+              severity: "error",
+            });
+            continue;
+          }
+          if (!t.isIdentifier(object.callee)) {
+            result.errors.push({
+              message: `Member expression in event handler expects an identifier as callee, but got ${object.callee.type}`,
+              node: object.callee,
               severity: "error",
             });
             continue;
@@ -125,8 +184,8 @@ export function constructTsxEvent(
             });
             continue;
           }
-          const action = callee.object.callee.name;
-          const componentArgs = callee.object.arguments;
+          const action = object.callee.name;
+          const componentArgs = object.arguments;
           if (action === "getComponent") {
             if (componentArgs.length !== 2) {
               result.errors.push({
@@ -184,7 +243,7 @@ export function constructTsxEvent(
               });
               continue;
             }
-            const payload = parseTsxCallApi(callee.object, result, options, {
+            const payload = parseTsxCallApi(object, result, options, {
               replacePatterns,
             });
             if (!payload) {
@@ -210,7 +269,7 @@ export function constructTsxEvent(
           } else {
             result.errors.push({
               message: `Unsupported action in event handler: ${action}`,
-              node: callee.object.callee,
+              node: object.callee,
               severity: "error",
             });
           }

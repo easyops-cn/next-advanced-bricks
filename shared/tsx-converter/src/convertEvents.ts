@@ -136,6 +136,18 @@ function convertEventHandler(
         method: handler.payload.method,
         args: handler.payload.args,
       };
+    case "call_ref":
+      return {
+        ...(handler.payload.scope === "template"
+          ? {
+              targetRef: handler.payload.ref,
+            }
+          : {
+              target: `[data-root-id="${options.rootId}"] [data-ref="${handler.payload.ref}"]`,
+            }),
+        method: handler.payload.method,
+        args: handler.payload.args,
+      };
     case "show_message":
       return {
         action: `message.${handler.payload.type}` as "message.info",

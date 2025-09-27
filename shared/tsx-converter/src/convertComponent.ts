@@ -29,7 +29,8 @@ import convertCodeBlock from "./convertCodeBlock.js";
 export async function convertComponent(
   component: Component,
   result: ParseResult,
-  options: ConvertOptions
+  options: ConvertOptions,
+  scope: "view" | "template"
 ): Promise<BrickConf | BrickConf[]> {
   let brick: BrickConf | null = null;
   const tpl = result.templates.find((t) => t.name === component.name);
@@ -44,10 +45,10 @@ export async function convertComponent(
         brick = await convertList(component);
         break;
       case "Table":
-        brick = await convertTable(component, result, options);
+        brick = await convertTable(component, result, options, scope);
         break;
       case "Descriptions":
-        brick = await convertDescriptions(component, result, options);
+        brick = await convertDescriptions(component, result, options, scope);
         break;
       case "Card":
         brick = await convertCard(component);
@@ -127,6 +128,16 @@ export async function convertComponent(
       component.componentId;
   }
 
+  if (component.ref) {
+    if (scope === "template") {
+      (brick as { ref?: string }).ref = component.ref;
+    } else {
+      brick.properties ??= {};
+      brick.properties.dataset ??= {};
+      (brick.properties.dataset as Record<string, string>).ref = component.ref;
+    }
+  }
+
   if (component.slot) {
     brick.slot = component.slot;
   }
@@ -137,7 +148,7 @@ export async function convertComponent(
     brick.children = (
       await Promise.all(
         component.children.map((child) =>
-          convertComponent(child, result, options)
+          convertComponent(child, result, options, scope)
         )
       )
     ).flat();

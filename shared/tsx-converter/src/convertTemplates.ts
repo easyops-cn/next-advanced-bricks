@@ -30,7 +30,7 @@ export function convertTemplates(
       const children = (
         await Promise.all(
           tpl.components.map((component) =>
-            convertComponent(component, result, options)
+            convertComponent(component, result, options, "template")
           )
         )
       ).flat();

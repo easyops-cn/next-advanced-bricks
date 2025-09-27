@@ -17,6 +17,7 @@ export interface ParseResult {
   errors: ParseError[];
   contexts: string[];
   contextSetters: Map<string, string>;
+  refs: string[];
   functionNames: string[];
   functions: StoryboardFunction[];
   templates: Template[];
@@ -35,6 +36,7 @@ export interface TemplateCollection {
   setters: Map<string, string>;
   dataSources: DataSource[];
   events: string[];
+  refs: string[];
 }
 
 export interface ParseError {
@@ -76,6 +78,7 @@ export interface DataSourceConfig {
 export interface Component {
   name: string;
   componentId?: string;
+  ref?: string;
   slot?: string;
   properties: Record<string, unknown>;
   ambiguousProps?: Record<string, unknown>;
@@ -91,6 +94,7 @@ export type EventHandler =
   | TypeEventHandlerOfUpdateVariable
   | TypeEventHandlerOfRefreshDataSource
   | TypeEventHandlerOfCallComponent
+  | TypeEventHandlerOfCallRef
   | TypeEventHandlerOfShowMessage
   | TypeEventHandlerOfCallAPI
   | TypeEventHandlerOfDispatchEvent;
@@ -116,6 +120,16 @@ export interface TypeEventHandlerOfCallComponent {
   action: "call_component";
   payload: {
     componentId: string;
+    method: string;
+    args?: any[];
+    scope?: "view" | "template";
+  };
+}
+
+export interface TypeEventHandlerOfCallRef {
+  action: "call_ref";
+  payload: {
+    ref: string;
     method: string;
     args?: any[];
     scope?: "view" | "template";
