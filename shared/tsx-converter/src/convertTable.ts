@@ -18,7 +18,8 @@ const columnUseBrickParams = ["cellData", "rowData"];
 export default async function convertTable(
   component: Component,
   view: ParseResult,
-  options: ConvertOptions
+  options: ConvertOptions,
+  scope: "view" | "template"
 ): Promise<BrickConf> {
   const { properties } = component;
   const { dataSource, size, columns, rowKey, pagination, ...restProps } =
@@ -81,7 +82,7 @@ export default async function convertTable(
             const useBrick = (
               await Promise.all(
                 render.children.map((child) =>
-                  convertComponent(child, view, options)
+                  convertComponent(child, view, options, scope)
                 )
               )
             ).flatMap((child) => deepReplaceVariables(child, patterns));

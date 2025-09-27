@@ -71,6 +71,14 @@ export interface SearchProps extends BaseProps {
 export interface FormProps<T extends object> extends BaseProps {
   values?: T;
   onValidateSuccess?: (e: CustomEvent<T>) => void;
+  ref?: {
+    readonly current: FormRef;
+  };
+}
+
+export interface FormRef {
+  validate: () => void;
+  reset: () => void;
 }
 
 export interface InputProps extends FormItemProps {
@@ -110,6 +118,14 @@ export interface ModalProps extends BaseProps {
   confirmText?: string;
   cancelText?: string;
   onConfirm?: () => void;
+  ref?: {
+    readonly current: ModalRef;
+  };
+}
+
+export interface ModalRef {
+  open: () => void;
+  close: () => void;
 }
 
 export interface CardProps extends BaseProps {

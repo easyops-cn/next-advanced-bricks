@@ -57,7 +57,7 @@ export async function convertTsx(
   const children = (
     await Promise.all(
       (view.children ?? []).map((component) =>
-        convertComponent(component, result, options)
+        convertComponent(component, result, options, "view")
       )
     )
   ).flat();
