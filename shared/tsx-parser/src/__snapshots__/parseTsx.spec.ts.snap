@@ -133,7 +133,7 @@ exports[`parseTsx should work 1`] = `
                         {
                           "name": "Plaintext",
                           "properties": {
-                            "textContent": "<%= CTX.__builtin_fn_mergeTexts({type:"expression",value:(moment(v * 1000).format("HH:mm:ss"))}) %>",
+                            "textContent": "<%= FN._helper_mergeTexts({type:"expression",value:(moment(v * 1000).format("HH:mm:ss"))}) %>",
                           },
                         },
                       ],
@@ -151,7 +151,7 @@ exports[`parseTsx should work 1`] = `
                         {
                           "name": "Plaintext",
                           "properties": {
-                            "textContent": "<%= CTX.__builtin_fn_mergeTexts({type:"expression",value:(\`\${v}\${r.opSubType ? \` / \${r.opSubType}\` : ""}\`)}) %>",
+                            "textContent": "<%= FN._helper_mergeTexts({type:"expression",value:(\`\${v}\${r.opSubType ? \` / \${r.opSubType}\` : ""}\`)}) %>",
                           },
                         },
                       ],
@@ -325,7 +325,7 @@ exports[`parseTsx should work 1`] = `
                             {
                               "name": "Plaintext",
                               "properties": {
-                                "textContent": "<%= CTX.__builtin_fn_mergeTexts({type:"expression",value:(moment(r.time * 1000).format("llll"))}) %>",
+                                "textContent": "<%= FN._helper_mergeTexts({type:"expression",value:(moment(r.time * 1000).format("llll"))}) %>",
                               },
                             },
                           ],
@@ -456,7 +456,7 @@ exports[`parseTsx should work 1`] = `
                   },
                   "name": "Button",
                   "properties": {
-                    "textContent": "<%= CTX.__builtin_fn_mergeTexts({type:"expression",value:(STATE.expanded ? "收起" : "展开")}) %>",
+                    "textContent": "<%= FN._helper_mergeTexts({type:"expression",value:(STATE.expanded ? "收起" : "展开")}) %>",
                   },
                   "ref": undefined,
                 },
@@ -508,6 +508,9 @@ exports[`parseTsx should work 1`] = `
       ],
     },
   ],
+  "usedHelpers": Set {
+    "_helper_mergeTexts",
+  },
   "variables": [
     {
       "expose": false,

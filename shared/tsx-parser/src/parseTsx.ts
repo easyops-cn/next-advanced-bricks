@@ -27,6 +27,7 @@ export function parseTsx(source: string, options?: ParseOptions): ParseResult {
   const functionNames: string[] = [];
   const contracts = new Set<string>();
   const templates: Template[] = [];
+  const usedHelpers = new Set<string>();
   const result: ParseResult = {
     source,
     dataSources,
@@ -42,6 +43,7 @@ export function parseTsx(source: string, options?: ParseOptions): ParseResult {
     functions,
     contracts,
     templates,
+    usedHelpers,
   };
 
   let ast: BabelParseResult<t.File> | undefined;

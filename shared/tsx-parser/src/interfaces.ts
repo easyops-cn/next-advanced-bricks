@@ -21,6 +21,7 @@ export interface ParseResult {
   globals: Map<string, string>;
   functionNames: string[];
   functions: StoryboardFunction[];
+  usedHelpers: Set<string>;
   templates: Template[];
   templateCollection?: TemplateCollection;
 }
