@@ -86,6 +86,7 @@ export interface ChatHistoryProps {
   projectActiveId?: string;
   projectUrlTemplate?: string;
   projectActions?: ActionType[];
+  canAddProject?: boolean;
   onActionClick: (detail: ActionClickDetail) => void;
   onHistoryClick: () => void;
   onProjectActionClick: (detail: ProjectActionClickDetail) => void;
@@ -109,6 +110,7 @@ export function LowLevelChatHistory(
     projectActiveId,
     projectUrlTemplate,
     projectActions,
+    canAddProject,
     onActionClick,
     onHistoryClick,
     onProjectActionClick,
@@ -333,12 +335,14 @@ export function LowLevelChatHistory(
             {t(K.PROJECTS)}
             <WrappedIcon lib="fa" icon="angle-down" />
           </div>
-          <WrappedIconButton
-            icon={ADD_ICON}
-            variant="mini-light"
-            tooltip={t(K.CREATE_PROJECT)}
-            onClick={onAddProject}
-          />
+          {canAddProject && (
+            <WrappedIconButton
+              icon={ADD_ICON}
+              variant="mini-light"
+              tooltip={t(K.CREATE_PROJECT)}
+              onClick={onAddProject}
+            />
+          )}
         </div>
         <ul className="items">
           {projectsError ? (
