@@ -23,7 +23,8 @@ interface DescriptionItem {
 export default async function convertDescriptions(
   { properties }: Component,
   view: ParseResult,
-  options: ConvertOptions
+  options: ConvertOptions,
+  scope: "view" | "template"
 ): Promise<BrickConf> {
   const { dataSource, title, list, columns, ...restProps } =
     properties as Partial<DescriptionsProps<object>> as Omit<
@@ -79,7 +80,7 @@ export default async function convertDescriptions(
             const useBrick = (
               await Promise.all(
                 render.children.map((child) =>
-                  convertComponent(child, view, options)
+                  convertComponent(child, view, options, scope)
                 )
               )
             ).flatMap((child) => deepReplaceVariables(child, patterns));

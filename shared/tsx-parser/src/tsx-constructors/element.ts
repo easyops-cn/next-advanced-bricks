@@ -60,6 +60,7 @@ export function constructTsxElement(
     const ambiguousProps: Record<string, unknown> = {};
     let events: Events | undefined;
     let componentId: string | undefined;
+    let ref: string | undefined;
 
     for (const attr of node.openingElement.attributes) {
       if (t.isJSXSpreadAttribute(attr)) {
@@ -79,6 +80,41 @@ export function constructTsxElement(
         continue;
       }
       const attrName = attr.name.name;
+      if (attrName === "key") {
+        // Ignore key attribute
+        continue;
+      }
+      if (attrName === "ref") {
+        if (!t.isJSXExpressionContainer(attr.value)) {
+          result.errors.push({
+            message: `The "ref" attribute in component expects a JSXExpressionContainer, but got ${attr.value?.type}`,
+            node: attr.value ?? attr,
+            severity: "error",
+          });
+          continue;
+        }
+        if (!t.isIdentifier(attr.value.expression)) {
+          result.errors.push({
+            message: `The "ref" attribute in component expects an identifier, but got ${attr.value.expression.type}`,
+            node: attr.value.expression,
+            severity: "error",
+          });
+          continue;
+        }
+        const refs = result.templateCollection
+          ? result.templateCollection.refs
+          : result.refs;
+        const refName = attr.value.expression.name;
+        if (!refs.includes(refName)) {
+          result.errors.push({
+            message: `The ref "${refName}" is not defined`,
+            node: attr.value.expression,
+            severity: "error",
+          });
+        }
+        ref = refName;
+        continue;
+      }
       const isEventHandler = /^on[A-Z]/.test(attrName);
       if (isEventHandler) {
         if (!t.isJSXExpressionContainer(attr.value)) {
@@ -194,6 +230,7 @@ export function constructTsxElement(
     const component: Component = {
       name: tagName,
       componentId,
+      ref,
       properties,
       events,
       children,

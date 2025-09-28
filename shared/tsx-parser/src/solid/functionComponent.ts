@@ -47,15 +47,23 @@ export function constructFunctionComponent(
   let setters: Map<string, string>;
   let variables: Variable[];
   let dataSources: DataSource[];
+  let refs: string[];
 
   if (scope === "template") {
     identifiers = [];
     setters = new Map();
     variables = [];
     dataSources = [];
+    refs = [];
     const events: string[] = [];
 
-    result.templateCollection = { identifiers, setters, dataSources, events };
+    result.templateCollection = {
+      identifiers,
+      setters,
+      dataSources,
+      events,
+      refs,
+    };
 
     const param = fn.params[0];
     if (param) {
@@ -127,6 +135,7 @@ export function constructFunctionComponent(
     setters = result.contextSetters;
     variables = result.variables;
     dataSources = result.dataSources;
+    refs = result.refs;
   }
 
   for (const stmt of fn.body.body) {
@@ -153,6 +162,12 @@ export function constructFunctionComponent(
                   const varName = firstArg.name;
                   identifiers.push(varName);
                 }
+              }
+              break;
+            case "useRef":
+              if (t.isIdentifier(dec.id)) {
+                const varName = dec.id.name;
+                refs.push(varName);
               }
               break;
           }
@@ -382,6 +397,27 @@ export function constructFunctionComponent(
                     undefined,
                     config
                   );
+                }
+                continue;
+              }
+              case "useRef": {
+                const args = dec.init.arguments;
+                if (args.length > 1) {
+                  result.errors.push({
+                    message: `"useRef()" expects at most 1 argument, but got ${args.length}`,
+                    node: dec.init,
+                    severity: "error",
+                  });
+                  continue;
+                }
+                const firstArg = args[0];
+                if (firstArg && !t.isNullLiteral(firstArg)) {
+                  result.errors.push({
+                    message: `"useRef()" first argument must be null, but got ${firstArg.type}`,
+                    node: firstArg,
+                    severity: "error",
+                  });
+                  continue;
                 }
                 continue;
               }
