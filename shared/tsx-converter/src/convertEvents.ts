@@ -67,9 +67,12 @@ export function convertEvents(component: Component, options: ConvertOptions) {
 }
 
 function convertEventHandlers(
-  handler: EventHandler | EventHandler[],
+  handler: EventHandler | EventHandler[] | null,
   options: ConvertOptions
 ): BrickEventHandler[] | undefined {
+  if (!handler) {
+    return;
+  }
   const list = (Array.isArray(handler) ? handler : [handler])
     .map((hdl) => convertEventHandler(hdl, options))
     .filter(Boolean) as BrickEventHandler[];
@@ -165,6 +168,12 @@ function convertEventHandler(
       return {
         action: "tpl.dispatchEvent",
         args: [handler.payload.type, { detail: handler.payload.detail }],
+      };
+    case "conditional":
+      return {
+        if: handler.payload.test,
+        then: convertEventHandlers(handler.payload.consequent, options) ?? [],
+        else: convertEventHandlers(handler.payload.alternate, options),
       };
   }
 }

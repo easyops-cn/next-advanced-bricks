@@ -13,20 +13,45 @@ exports[`convertTsx should work 1`] = `
             "events": {
               "search": [
                 {
-                  "action": "context.replace",
-                  "args": [
-                    "logId",
-                    "<% EVENT.detail %>",
-                  ],
-                },
-                {
-                  "action": "history.pushQuery",
-                  "args": [
+                  "else": [
                     {
-                      "logId": "<% EVENT.detail %>",
+                      "action": "context.replace",
+                      "args": [
+                        "logId",
+                        undefined,
+                      ],
                     },
                     {
-                      "notify": false,
+                      "action": "history.pushQuery",
+                      "args": [
+                        {
+                          "logId": null,
+                        },
+                        {
+                          "notify": false,
+                        },
+                      ],
+                    },
+                  ],
+                  "if": "<% EVENT.detail %>",
+                  "then": [
+                    {
+                      "action": "context.replace",
+                      "args": [
+                        "logId",
+                        "<% EVENT.detail %>",
+                      ],
+                    },
+                    {
+                      "action": "history.pushQuery",
+                      "args": [
+                        {
+                          "logId": "<% EVENT.detail %>",
+                        },
+                        {
+                          "notify": false,
+                        },
+                      ],
                     },
                   ],
                 },

@@ -100,7 +100,8 @@ export type EventHandler =
   | TypeEventHandlerOfShowMessage
   | TypeEventHandlerOfCallAPI
   | TypeEventHandlerOfDispatchEvent
-  | TypeEventHandlerOfUpdateQuery;
+  | TypeEventHandlerOfUpdateQuery
+  | TypeEventHandlerOfConditional;
 
 export interface TypeEventHandlerOfUpdateVariable {
   action: "update_variable";
@@ -172,6 +173,15 @@ export interface TypeEventHandlerOfUpdateQuery {
   payload: {
     method: "push" | "replace";
     args: unknown[];
+  };
+}
+
+export interface TypeEventHandlerOfConditional {
+  action: "conditional";
+  payload: {
+    test: string | boolean | undefined;
+    consequent: EventHandler | EventHandler[] | null;
+    alternate: EventHandler | EventHandler[] | null;
   };
 }
 

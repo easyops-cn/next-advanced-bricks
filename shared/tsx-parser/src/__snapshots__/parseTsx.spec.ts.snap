@@ -13,24 +13,55 @@ exports[`parseTsx should work 1`] = `
               "events": {
                 "search": [
                   {
-                    "action": "update_variable",
+                    "action": "conditional",
                     "payload": {
-                      "name": "logId",
-                      "value": "<% EVENT.detail %>",
-                    },
-                  },
-                  {
-                    "action": "update_query",
-                    "payload": {
-                      "args": [
+                      "alternate": [
                         {
-                          "logId": "<% EVENT.detail %>",
+                          "action": "update_variable",
+                          "payload": {
+                            "name": "logId",
+                            "value": undefined,
+                          },
                         },
                         {
-                          "notify": false,
+                          "action": "update_query",
+                          "payload": {
+                            "args": [
+                              {
+                                "logId": null,
+                              },
+                              {
+                                "notify": false,
+                              },
+                            ],
+                            "method": "push",
+                          },
                         },
                       ],
-                      "method": "push",
+                      "consequent": [
+                        {
+                          "action": "update_variable",
+                          "payload": {
+                            "name": "logId",
+                            "value": "<% EVENT.detail %>",
+                          },
+                        },
+                        {
+                          "action": "update_query",
+                          "payload": {
+                            "args": [
+                              {
+                                "logId": "<% EVENT.detail %>",
+                              },
+                              {
+                                "notify": false,
+                              },
+                            ],
+                            "method": "push",
+                          },
+                        },
+                      ],
+                      "test": "<% EVENT.detail %>",
                     },
                   },
                 ],
