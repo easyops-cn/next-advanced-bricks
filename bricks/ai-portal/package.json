@@ -1,6 +1,6 @@
 {
   "name": "@next-bricks/ai-portal",
-  "version": "0.47.1",
+  "version": "0.47.2",
   "homepage": "https://github.com/easyops-cn/next-advanced-bricks/tree/master/bricks/ai-portal",
   "repository": {
     "type": "git",
@@ -54,8 +54,8 @@
     "@next-shared/form": "^0.9.1",
     "@next-shared/markdown": "^0.7.2",
     "@next-shared/shiki": "^0.1.0",
-    "@next-shared/tsx-converter": "^0.2.3",
-    "@next-shared/tsx-parser": "^0.2.2",
+    "@next-shared/tsx-converter": "^0.3.0",
+    "@next-shared/tsx-parser": "^0.3.0",
     "classnames": "^2.3.2",
     "comlink": "^4.4.2",
     "d3-selection": "^3.0.0",

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.12.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/data-view@1.12.6...@next-bricks/data-view@1.12.7) (2025-09-28)
+
+**Note:** Version bump only for package @next-bricks/data-view
+
+
+
+
+
 ## [1.12.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/data-view@1.12.5...@next-bricks/data-view@1.12.6) (2025-09-26)
 
 **Note:** Version bump only for package @next-bricks/data-view
