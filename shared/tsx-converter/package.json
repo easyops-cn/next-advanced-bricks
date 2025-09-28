@@ -32,7 +32,9 @@
     "prebuild": "npm run clean",
     "build": "npm run build:types && npm run build:main",
     "build:main": "cross-env NODE_ENV=production build-next-libs",
-    "build:types": "tsc --emitDeclarationOnly --declaration --declarationDir dist/types --project tsconfig.build.json"
+    "build:types": "tsc --emitDeclarationOnly --declaration --declarationDir dist/types --project tsconfig.build.json",
+    "test": "cross-env NODE_ENV='test' test-next",
+    "test:ci": "cross-env NODE_ENV='test' CI=true test-next"
   },
   "dependencies": {
     "@babel/types": "^7.27.7",
@@ -43,6 +45,7 @@
     "@next-shared/tsx-parser": "^0.3.0"
   },
   "devDependencies": {
-    "@next-core/build-next-libs": "^1.0.25"
+    "@next-core/build-next-libs": "^1.0.25",
+    "@next-core/test-next": "^2.0.1"
   }
 }

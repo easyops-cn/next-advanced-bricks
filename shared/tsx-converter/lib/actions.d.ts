@@ -19,14 +19,17 @@ declare const callHttp: <T = any>(
   init?: RequestInit
 ) => Promise<T>;
 
+/** 返回一个有状态的值和一个更新它的函数。 */
 declare const useState: <T>(
   initialValue?: T
 ) => [value: T, setter: (value: T) => void];
 
+/** 返回一个可变的 ref 对象，其 `.current` 属性初始化为传入的参数 (`initialValue`) */
 declare const useRef: <T>(initialValue: T) => {
-  readonly current: T;
+  current: T;
 };
 
+/** 异步获取资源，返回获取到的数据、以及一个重新拉取数据的函数 */
 declare const useResource: <T = any>(
   fetcher: () => Promise<T>,
   options?: {
@@ -36,6 +39,23 @@ declare const useResource: <T = any>(
   }
 ) => [data: T, refetch: () => void];
 
+/** 获取当前的 URL search 参数 */
+declare const useQuery: () => {
+  readonly [key: string]: string | undefined;
+};
+
+/** 更新当前的 URL search 参数 */
+declare const pushQuery: (
+  newQuery: Record<string, string | null>,
+  options?: UpdateQueryOptions
+) => void;
+
+interface UpdateQueryOptions {
+  clear?: boolean; // 是否清除已有参数，默认 false
+  notify?: boolean; // 是否通知路由变化，默认 true
+}
+
+/** 调用指定的工具函数 */
 declare const callTool: <T = any, P = any>(
   conversationId: string,
   stepId: string,

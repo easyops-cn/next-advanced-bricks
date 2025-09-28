@@ -22,6 +22,7 @@ export function parseTsx(source: string, options?: ParseOptions): ParseResult {
   const contexts: string[] = options?.withContexts ?? [];
   const contextSetters = new Map<string, string>();
   const refs: string[] = [];
+  const globals = new Map<string, string>();
   const functions: StoryboardFunction[] = [];
   const functionNames: string[] = [];
   const contracts = new Set<string>();
@@ -36,6 +37,7 @@ export function parseTsx(source: string, options?: ParseOptions): ParseResult {
     contexts,
     contextSetters,
     refs,
+    globals,
     functionNames,
     functions,
     contracts,

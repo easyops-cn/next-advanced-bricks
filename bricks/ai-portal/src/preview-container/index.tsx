@@ -47,6 +47,7 @@ const { defineElement, property } = createDecorators();
 
 export interface PreviewContainerProps {
   source?: string;
+  url?: string;
 }
 
 /**
@@ -63,6 +64,9 @@ class PreviewContainer
   @property({ attribute: false })
   accessor source: string | undefined;
 
+  @property()
+  accessor url: string | undefined;
+
   #rootId = uniqueId();
 
   render() {
@@ -77,7 +81,11 @@ class PreviewContainer
           />
         }
       >
-        <PreviewContainerComponent rootId={this.#rootId} source={this.source} />
+        <PreviewContainerComponent
+          rootId={this.#rootId}
+          source={this.source}
+          url={this.url}
+        />
       </Suspense>
     );
   }
@@ -90,6 +98,7 @@ interface PreviewContainerComponentProps extends PreviewContainerProps {
 function PreviewContainerComponent({
   rootId,
   source,
+  url,
 }: PreviewContainerComponentProps) {
   const parsedResultPromise = useMemo(() => {
     if (!source) {
@@ -127,6 +136,7 @@ function PreviewContainerComponent({
       rootId={rootId}
       pageTitle={viewTitle}
       convertedResult={convertedResult}
+      url={url}
     />
   );
 }
@@ -135,12 +145,14 @@ interface RenderComponentProps {
   rootId: string;
   pageTitle?: string;
   convertedResult: ConvertResult | null;
+  url?: string;
 }
 
 function RenderComponent({
   rootId,
   pageTitle,
   convertedResult,
+  url,
 }: RenderComponentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const rootRef = useRef<Awaited<
@@ -170,8 +182,8 @@ function RenderComponent({
       return;
     }
     const { brick, context, functions, templates } = convertedResult;
-    rootRef.current?.render(brick, { context, functions, templates });
-  }, [convertedResult]);
+    rootRef.current?.render(brick, { context, functions, templates, url });
+  }, [convertedResult, url]);
 
   return (
     <WrappedNarrowView size="large" className={styles.container}>

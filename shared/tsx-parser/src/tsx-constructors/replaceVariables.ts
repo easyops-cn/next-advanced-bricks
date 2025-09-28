@@ -20,6 +20,7 @@ export function replaceGlobals(expr: string, result: ParseResult): string {
         )
       : result.contexts.map((k) => [k, `CTX.${k}`] as const)),
     ...result.functionNames.map((k) => [k, `FN.${k}`] as const),
+    ...result.globals.entries(),
   ]);
   return replaceVariables(expr, patterns);
 }

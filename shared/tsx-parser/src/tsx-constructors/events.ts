@@ -390,6 +390,28 @@ export function constructTsxEvent(
             action: "call_api",
             payload,
           });
+        } else if (callee.name === "pushQuery") {
+          if (args.length !== 1 && args.length !== 2) {
+            result.errors.push({
+              message: `"pushQuery()" expects 1 or 2 arguments, but got ${args.length}`,
+              node: stmt.expression,
+              severity: "error",
+            });
+            continue;
+          }
+          const queryArgs = args.map((arg) =>
+            constructJsValue(arg, result, {
+              allowExpression: true,
+              replacePatterns,
+            })
+          );
+          handlers.push({
+            action: "update_query",
+            payload: {
+              method: "push",
+              args: queryArgs,
+            },
+          });
         } else {
           result.errors.push({
             message: `Unsupported action in event handler: ${callee.name}`,

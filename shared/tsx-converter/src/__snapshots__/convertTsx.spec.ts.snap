@@ -1,0 +1,473 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`convertTsx should work 1`] = `
+{
+  "brick": {
+    "brick": "eo-content-layout",
+    "children": [
+      {
+        "brick": "eo-flex-layout",
+        "children": [
+          {
+            "brick": "eo-search",
+            "events": {
+              "search": [
+                {
+                  "action": "context.replace",
+                  "args": [
+                    "logId",
+                    "<% EVENT.detail %>",
+                  ],
+                },
+                {
+                  "action": "history.pushQuery",
+                  "args": [
+                    {
+                      "logId": "<% EVENT.detail %>",
+                    },
+                    {
+                      "notify": false,
+                    },
+                  ],
+                },
+              ],
+            },
+            "properties": {
+              "inputStyle": {
+                "width": "300px",
+              },
+              "placeholder": "输入任务 ID 并按回车",
+              "themeVariant": "elevo",
+              "trim": true,
+              "value": "<%= CTX.logId %>",
+            },
+          },
+          {
+            "brick": ":if",
+            "children": [
+              {
+                "brick": "eo-button",
+                "children": [
+                  {
+                    "brick": "span",
+                    "events": undefined,
+                    "properties": {
+                      "textContent": "<%= CTX.allExpanded ? "全部收起" : "全部展开" %>",
+                    },
+                  },
+                ],
+                "events": {
+                  "click": [
+                    {
+                      "action": "context.replace",
+                      "args": [
+                        "allExpanded",
+                        "<% !CTX.allExpanded %>",
+                      ],
+                    },
+                  ],
+                },
+                "properties": {
+                  "themeVariant": "elevo",
+                },
+              },
+            ],
+            "dataSource": "<%= CTX.logs %>",
+            "events": undefined,
+          },
+        ],
+        "events": undefined,
+        "properties": {
+          "alignItems": "center",
+          "gap": "0.5em",
+        },
+      },
+      {
+        "brick": ":if",
+        "children": [
+          {
+            "brick": "eo-next-table",
+            "children": [],
+            "events": undefined,
+            "properties": {
+              "columns": [
+                {
+                  "dataIndex": "time",
+                  "key": "time",
+                  "title": "时间",
+                  "useBrick": [
+                    {
+                      "brick": "span",
+                      "events": undefined,
+                      "properties": {
+                        "textContent": "<%= CTX.__builtin_fn_mergeTexts({type:"expression",value:(moment(DATA.cellData * 1000).format("HH:mm:ss"))}) %>",
+                      },
+                    },
+                  ],
+                },
+                {
+                  "dataIndex": "opType",
+                  "key": "opType",
+                  "title": "操作类型",
+                  "useBrick": [
+                    {
+                      "brick": "span",
+                      "events": undefined,
+                      "properties": {
+                        "textContent": "<%= CTX.__builtin_fn_mergeTexts({type:"expression",value:(\`\${DATA.cellData}\${DATA.rowData.opSubType ? \` / \${DATA.rowData.opSubType}\` : ""}\`)}) %>",
+                      },
+                    },
+                  ],
+                },
+                {
+                  "dataIndex": "data",
+                  "key": "data",
+                  "title": "数据",
+                  "useBrick": [
+                    {
+                      "brick": "div",
+                      "children": [
+                        {
+                          "brick": ":if",
+                          "children": [
+                            {
+                              "brick": "eo-code-block",
+                              "events": undefined,
+                              "properties": {
+                                "language": "json",
+                                "source": "<%= FN.prettierOutput(DATA.cellData) %>",
+                                "style": {
+                                  "maxWidth": "696px",
+                                },
+                                "themeVariant": "elevo",
+                              },
+                            },
+                            {
+                              "brick": "span",
+                              "children": [
+                                {
+                                  "brick": "span",
+                                  "events": undefined,
+                                  "properties": {
+                                    "textContent": "<%= DATA.cellData %>",
+                                  },
+                                },
+                              ],
+                              "events": undefined,
+                              "properties": {
+                                "style": {
+                                  "display": "block",
+                                  "maxWidth": "696px",
+                                  "overflow": "hidden",
+                                  "textOverflow": "ellipsis",
+                                  "whiteSpace": "nowrap",
+                                },
+                              },
+                              "slot": "else",
+                            },
+                          ],
+                          "dataSource": "<%= CTX.allExpanded || CTX.expandedSet.has(DATA.rowData.logId) %>",
+                          "events": undefined,
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  "dataIndex": "operation",
+                  "key": "operation",
+                  "title": "操作",
+                  "useBrick": [
+                    {
+                      "brick": "isolated-tpl-0-operations",
+                      "events": {
+                        "open.detail": [
+                          {
+                            "action": "context.replace",
+                            "args": [
+                              "detailLog",
+                              "<% DATA.rowData %>",
+                            ],
+                          },
+                          {
+                            "args": [],
+                            "method": "open",
+                            "target": "[data-root-id="test-root"] [data-ref="modalRef"]",
+                          },
+                        ],
+                        "toggle": [
+                          {
+                            "action": "context.replace",
+                            "args": [
+                              "expandedSet",
+                              "<% new Set(
+                        CTX.expandedSet.has(DATA.rowData.logId)
+                          ? [...CTX.expandedSet].filter((id) => id !== DATA.rowData.logId)
+                          : [...CTX.expandedSet, DATA.rowData.logId]
+                      ) %>",
+                            ],
+                          },
+                        ],
+                      },
+                      "properties": {
+                        "allExpanded": "<%= CTX.allExpanded %>",
+                        "expanded": "<%= CTX.expandedSet.has(DATA.rowData.logId) %>",
+                      },
+                    },
+                  ],
+                },
+              ],
+              "dataSource": {
+                "list": "<%= CTX.logs %>",
+              },
+              "pagination": false,
+              "rowKey": "logId",
+              "scrollConfig": {
+                "x": "max-content",
+              },
+              "size": "middle",
+              "themeVariant": "elevo",
+            },
+          },
+        ],
+        "dataSource": "<%= CTX.logs %>",
+        "events": undefined,
+      },
+      {
+        "brick": "eo-modal",
+        "children": [
+          {
+            "brick": "eo-content-layout",
+            "children": [
+              {
+                "brick": ":if",
+                "children": [
+                  {
+                    "brick": "eo-descriptions",
+                    "children": [],
+                    "events": undefined,
+                    "properties": {
+                      "column": 1,
+                      "dataSource": "<%= CTX.detailLog %>",
+                      "list": [
+                        {
+                          "field": "logId",
+                          "label": "日志 ID",
+                        },
+                        {
+                          "field": "conversationId",
+                          "label": "任务 ID",
+                        },
+                        {
+                          "field": "taskId",
+                          "label": "任务 ID",
+                        },
+                        {
+                          "label": "时间",
+                          "useBrick": [
+                            {
+                              "brick": "span",
+                              "events": undefined,
+                              "properties": {
+                                "textContent": "<%= CTX.__builtin_fn_mergeTexts({type:"expression",value:(moment(DATA.time * 1000).format("llll"))}) %>",
+                              },
+                            },
+                          ],
+                        },
+                      ],
+                      "themeVariant": "elevo",
+                    },
+                  },
+                  {
+                    "brick": "eo-code-block",
+                    "events": undefined,
+                    "properties": {
+                      "language": "json",
+                      "source": "<%= FN.prettierOutput(CTX.detailLog.data) %>",
+                      "themeVariant": "elevo",
+                    },
+                  },
+                ],
+                "dataSource": "<%= CTX.detailLog %>",
+                "events": undefined,
+              },
+            ],
+          },
+        ],
+        "events": undefined,
+        "portal": true,
+        "properties": {
+          "cancelText": undefined,
+          "confirmText": undefined,
+          "dataset": {
+            "ref": "modalRef",
+          },
+          "hideCancelButton": true,
+          "keyboard": true,
+          "maskClosable": true,
+          "modalTitle": "<%= CTX.detailLog
+            ? \`\${r.opType}\${r.opSubType ? \` / \${r.opSubType}\` : ""}\`
+            : "" %>",
+          "themeVariant": "elevo",
+          "width": "800px",
+        },
+      },
+    ],
+  },
+  "context": [
+    {
+      "name": "logs",
+      "resolve": {
+        "args": [
+          "<% \`logs/\${CTX.logId}\` %>",
+          undefined,
+        ],
+        "if": "<% !!CTX.logId %>",
+        "transform": {
+          "value": "<% DATA.data.logs %>",
+        },
+        "useProvider": "basic.http-request",
+      },
+      "track": true,
+      "value": null,
+    },
+    {
+      "expose": false,
+      "name": "logId",
+      "track": true,
+      "value": "<% QUERY.logId %>",
+    },
+    {
+      "expose": false,
+      "name": "allExpanded",
+      "track": true,
+      "value": false,
+    },
+    {
+      "expose": false,
+      "name": "expandedSet",
+      "track": true,
+      "value": "<% new Set() %>",
+    },
+    {
+      "expose": false,
+      "name": "detailLog",
+      "track": true,
+      "value": null,
+    },
+    {
+      "name": "__builtin_fn_mergeTexts",
+      "value": [Function],
+    },
+    {
+      "name": "__builtin_fn_getLatestMetricValue",
+      "value": [Function],
+    },
+    {
+      "name": "__builtin_fn_extractList",
+      "value": [Function],
+    },
+    {
+      "name": "__builtin_fn_groupMetricData",
+      "value": [Function],
+    },
+    {
+      "name": "__builtin_fn_getMetricDisplayNames",
+      "value": [Function],
+    },
+  ],
+  "functions": [
+    {
+      "name": "prettierOutput",
+      "source": "function prettierOutput(output: string) {
+  try {
+    const data = JSON.parse(output);
+    return JSON.stringify(data, null, 2);
+  } catch (e) {
+    return output;
+  }
+}",
+      "typescript": true,
+    },
+  ],
+  "templates": [
+    {
+      "bricks": [
+        {
+          "brick": "eo-flex-layout",
+          "children": [
+            {
+              "brick": ":if",
+              "children": [
+                {
+                  "brick": "eo-button",
+                  "events": {
+                    "click": [
+                      {
+                        "action": "tpl.dispatchEvent",
+                        "args": [
+                          "toggle",
+                          {
+                            "detail": "<% EVENT.detail %>",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  "properties": {
+                    "textContent": "<%= CTX.__builtin_fn_mergeTexts({type:"expression",value:(STATE.expanded ? "收起" : "展开")}) %>",
+                    "themeVariant": "elevo",
+                  },
+                },
+              ],
+              "dataSource": "<%= !STATE.allExpanded %>",
+              "events": undefined,
+            },
+            {
+              "brick": "eo-button",
+              "events": {
+                "click": [
+                  {
+                    "action": "tpl.dispatchEvent",
+                    "args": [
+                      "open.detail",
+                      {
+                        "detail": "<% EVENT.detail %>",
+                      },
+                    ],
+                  },
+                ],
+              },
+              "properties": {
+                "textContent": "详情",
+                "themeVariant": "elevo",
+              },
+            },
+          ],
+          "events": undefined,
+          "properties": {
+            "alignItems": "center",
+            "gap": "0.5em",
+          },
+        },
+      ],
+      "name": "isolated-tpl-0-operations",
+      "state": [
+        {
+          "expose": true,
+          "name": "expanded",
+          "track": true,
+          "value": undefined,
+        },
+        {
+          "expose": true,
+          "name": "allExpanded",
+          "track": true,
+          "value": undefined,
+        },
+      ],
+    },
+  ],
+  "title": "任务日志",
+}
+`;

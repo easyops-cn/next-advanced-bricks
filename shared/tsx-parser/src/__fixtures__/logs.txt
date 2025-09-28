@@ -1,0 +1,182 @@
+// @ts-nocheck
+
+interface Log {
+  logId: string;
+  opType: string;
+  opSubType: string;
+  data: string;
+  time: number;
+  conversationId: string;
+  taskId: string;
+}
+
+function Operations({
+  expanded,
+  allExpanded,
+  onToggle,
+  onOpenDetail,
+}: {
+  expanded: boolean;
+  allExpanded: boolean;
+  onToggle?: () => void;
+  onOpenDetail?: () => void;
+}) {
+  return (
+    <Toolbar>
+      {!allExpanded && (
+        <Button onClick={onToggle}>{expanded ? "收起" : "展开"}</Button>
+      )}
+      <Button onClick={onOpenDetail}>详情</Button>
+    </Toolbar>
+  );
+}
+
+function prettierOutput(output: string) {
+  try {
+    const data = JSON.parse(output);
+    return JSON.stringify(data, null, 2);
+  } catch (e) {
+    return output;
+  }
+}
+
+export default function () {
+  const query = useQuery();
+  const [logId, setLogId] = useState<string | undefined>(query.logId);
+  const [allExpanded, setAllExpanded] = useState(false);
+  const [expandedSet, setExpandedSet] = useState(new Set<string>());
+  const modalRef = useRef<ModalRef>(null);
+  const [detailLog, setDetailLog] = useState<Log | null>(null);
+
+  const [logs, refetchLogs] = useResource<Log[]>(
+    () =>
+      callHttp(`logs/${logId}`).then((res) => res.data.logs),
+    {
+      enabled: !!logId,
+      fallback: null,
+    }
+  );
+
+  return (
+    <View title="任务日志">
+      <Toolbar>
+        <Search
+          value={logId}
+          placeholder="输入任务 ID 并按回车"
+          onSearch={(event) => {
+            setLogId(event.detail);
+            pushQuery({ logId: event.detail }, { notify: false });
+          }}
+          inputStyle={{ width: "300px" }}
+        />
+        {logs && (
+          <Button
+            onClick={(e) => {
+              setAllExpanded(!allExpanded);
+              // setExpandedSet(new Set<string>());
+            }}
+          >
+            {allExpanded ? "全部收起" : "全部展开"}
+          </Button>
+        )}
+      </Toolbar>
+      {logs && (
+        <Table
+          dataSource={{ list: logs }}
+          columns={[
+            {
+              dataIndex: "time",
+              key: "time",
+              title: "时间",
+              render: (v) => moment(v * 1000).format("HH:mm:ss"),
+            },
+            {
+              dataIndex: "opType",
+              key: "opType",
+              title: "操作类型",
+              render: (v, r) => `${v}${r.opSubType ? ` / ${r.opSubType}` : ""}`,
+            },
+            {
+              dataIndex: "data",
+              key: "data",
+              title: "数据",
+              render: (v, r) =>
+                allExpanded || expandedSet.has(r.logId) ? (
+                  <CodeBlock language="json" source={prettierOutput(v)} style={{ maxWidth: "696px" }} />
+                ) : (
+                  <Plaintext
+                    style={{
+                      maxWidth: "696px",
+                      display: "block",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {v}
+                  </Plaintext>
+                ),
+            },
+            {
+              dataIndex: "operation",
+              key: "operation",
+              title: "操作",
+              render: (v, r) => (
+                <Operations
+                  expanded={expandedSet.has(r.logId)}
+                  allExpanded={allExpanded}
+                  onToggle={() => {
+                    setExpandedSet(
+                      new Set(
+                        expandedSet.has(r.logId)
+                          ? [...expandedSet].filter((id) => id !== r.logId)
+                          : [...expandedSet, r.logId]
+                      )
+                    );
+                  }}
+                  onOpenDetail={() => {
+                    setDetailLog(r);
+                    modalRef.current?.open();
+                  }}
+                />
+              ),
+            },
+          ]}
+          rowKey="logId"
+          pagination={false}
+        />
+      )}
+      <Modal
+        ref={modalRef}
+        title={
+          detailLog
+            ? `${r.opType}${r.opSubType ? ` / ${r.opSubType}` : ""}`
+            : ""
+        }
+        width="800px"
+        hideCancelButton
+        maskClosable
+      >
+        {detailLog && (
+          <>
+            <Descriptions
+              dataSource={detailLog}
+              list={[
+                { label: "日志 ID", field: "logId" },
+                { label: "任务 ID", field: "conversationId" },
+                { label: "任务 ID", field: "taskId" },
+                {
+                  label: "时间",
+                  field: "time",
+                  render: (r) => moment(r.time * 1000).format("llll"),
+                },
+              ]}
+              columns={1}
+            />
+            <CodeBlock language="json" source={prettierOutput(detailLog.data)} />
+          </>
+        )}
+      </Modal>
+    </View>
+  );
+}
