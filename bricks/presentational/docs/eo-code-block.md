@@ -1,11 +1,11 @@
-构件 `presentational.code-block`
+构件 `eo-code-block`
 
 ## Examples
 
 ### Basic
 
 ```yaml preview
-brick: presentational.code-block
+brick: eo-code-block
 properties:
   language: js
   source: |
