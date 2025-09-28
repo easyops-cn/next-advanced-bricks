@@ -59,6 +59,7 @@ export interface ElevoSidebarProps {
   projectUrlTemplate?: string;
   projectActions?: ActionType[];
   links?: SidebarLink[];
+  canAddProject?: boolean;
 }
 
 export interface SidebarLink {
@@ -119,6 +120,9 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
 
   @property({ attribute: false })
   accessor links: SidebarLink[] | undefined;
+
+  @property({ type: Boolean })
+  accessor canAddProject: boolean | undefined = true;
 
   @event({ type: "logout" })
   accessor #logout!: EventEmitter<void>;
@@ -197,6 +201,7 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
         projectUrlTemplate={this.projectUrlTemplate}
         projectActions={this.projectActions}
         links={this.links}
+        canAddProject={this.canAddProject}
         onLogout={this.#handleLogout}
         onActionClick={this.#handleActionClick}
         onProjectActionClick={this.#handleProjectActionClick}
@@ -227,6 +232,7 @@ function LegacyElevoSidebarComponent(
     projectUrlTemplate,
     projectActions,
     links,
+    canAddProject,
     onLogout,
     onActionClick,
     onProjectActionClick,
@@ -358,6 +364,7 @@ function LegacyElevoSidebarComponent(
         ) : null}
         <ChatHistory
           ref={historyRef}
+          canAddProject={canAddProject}
           historyActiveId={historyActiveId}
           historyUrlTemplate={historyUrlTemplate}
           historyActions={historyActions}
