@@ -32,3 +32,10 @@
   padding: 1em;
   margin: 0.5em 0;
 }
+
+.markdown-block {
+  border: 1px solid #ccd1de;
+  border-radius: 9px;
+  padding: 1em;
+  background: #fff;
+}
