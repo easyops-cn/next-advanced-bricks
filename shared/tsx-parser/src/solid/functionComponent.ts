@@ -48,6 +48,7 @@ export function constructFunctionComponent(
   let variables: Variable[];
   let dataSources: DataSource[];
   let refs: string[];
+  let globals: Map<string, string>;
 
   if (scope === "template") {
     identifiers = [];
@@ -55,6 +56,7 @@ export function constructFunctionComponent(
     variables = [];
     dataSources = [];
     refs = [];
+    globals = new Map();
     const events: string[] = [];
 
     result.templateCollection = {
@@ -63,6 +65,7 @@ export function constructFunctionComponent(
       dataSources,
       events,
       refs,
+      globals,
     };
 
     const param = fn.params[0];
@@ -136,6 +139,7 @@ export function constructFunctionComponent(
     variables = result.variables;
     dataSources = result.dataSources;
     refs = result.refs;
+    globals = result.globals;
   }
 
   for (const stmt of fn.body.body) {
@@ -168,6 +172,12 @@ export function constructFunctionComponent(
               if (t.isIdentifier(dec.id)) {
                 const varName = dec.id.name;
                 refs.push(varName);
+              }
+              break;
+            case "useQuery":
+              if (t.isIdentifier(dec.id)) {
+                const varName = dec.id.name;
+                globals.set(varName, "QUERY");
               }
               break;
           }
@@ -401,6 +411,14 @@ export function constructFunctionComponent(
                 continue;
               }
               case "useRef": {
+                if (!t.isIdentifier(dec.id)) {
+                  result.errors.push({
+                    message: `"useRef()" return value must be assigned to an identifier, received ${dec.id.type}`,
+                    node: dec.id,
+                    severity: "error",
+                  });
+                  continue;
+                }
                 const args = dec.init.arguments;
                 if (args.length > 1) {
                   result.errors.push({
@@ -415,6 +433,26 @@ export function constructFunctionComponent(
                   result.errors.push({
                     message: `"useRef()" first argument must be null, but got ${firstArg.type}`,
                     node: firstArg,
+                    severity: "error",
+                  });
+                  continue;
+                }
+                continue;
+              }
+              case "useQuery": {
+                if (!t.isIdentifier(dec.id)) {
+                  result.errors.push({
+                    message: `"useQuery()" return value must be assigned to an identifier, received ${dec.id.type}`,
+                    node: dec.id,
+                    severity: "error",
+                  });
+                  continue;
+                }
+                const args = dec.init.arguments;
+                if (args.length !== 0) {
+                  result.errors.push({
+                    message: `"useQuery()" does not expect any arguments, but got ${args.length}`,
+                    node: args[0],
                     severity: "error",
                   });
                   continue;

@@ -148,6 +148,14 @@ function convertEventHandler(
         method: handler.payload.method,
         args: handler.payload.args,
       };
+    case "update_query":
+      return {
+        action:
+          handler.payload.method === "replace"
+            ? "history.replaceQuery"
+            : "history.pushQuery",
+        args: handler.payload.args,
+      };
     case "show_message":
       return {
         action: `message.${handler.payload.type}` as "message.info",

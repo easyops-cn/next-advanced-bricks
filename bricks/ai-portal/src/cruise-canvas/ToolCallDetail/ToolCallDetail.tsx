@@ -118,7 +118,11 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
       <div className={styles.detail}>
         <div className={styles.heading}>{t(K.ARGUMENTS)}:</div>
         <div className={`${styles.body} ${sharedStyles.markdown}`}>
-          <PreComponent content={toolCall.originalArguments} maybeJson />
+          <PreComponent
+            content={toolCall.originalArguments}
+            maybeJson
+            fallbackAsMarkdown
+          />
         </div>
       </div>
       {hasProcessParts && (
@@ -182,23 +186,35 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
 function PreComponent({
   content,
   maybeJson,
+  fallbackAsMarkdown,
 }: {
   content?: string;
   maybeJson?: boolean;
+  fallbackAsMarkdown?: boolean;
 }): JSX.Element | null {
-  const [refinedContent, fallback] = useMemo(() => {
+  const [refinedContent, fallback, asMarkdown] = useMemo(() => {
     if (maybeJson && content) {
       try {
         const json = JSON.parse(content);
-        return [JSON.stringify(json, null, 2), false];
+        return [JSON.stringify(json, null, 2), false, false];
       } catch {
         // Fallback to original content
+        if (fallbackAsMarkdown) {
+          return [content, false, true];
+        }
       }
     }
-    return [content, true];
-  }, [content, maybeJson]);
+    return [content, true, false];
+  }, [content, fallbackAsMarkdown, maybeJson]);
 
-  return fallback ? (
+  return asMarkdown ? (
+    <div className={styles["markdown-block"]}>
+      <EnhancedMarkdown
+        className={sharedStyles["markdown-wrapper"]}
+        content={refinedContent}
+      />
+    </div>
+  ) : fallback ? (
     <div className={styles["code-fallback"]}>
       <MarkdownPre>
         <code>{refinedContent}</code>

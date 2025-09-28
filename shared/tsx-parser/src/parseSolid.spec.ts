@@ -25,19 +25,22 @@ function MyCounter({
 
 export default function() {
   const [count, setCount] = useState(0);
+  const query = useQuery();
 
-  const [data] = useResource(() => callApi("getCount", { initial: 1 }));
+  const [data] = useResource(() => callApi("getCount", { initial: query.start }));
 
   return (
     <View title="测试页面">
-      <MyCounter x={2} y={3} />
+      <MyCounter x={2} y={3} onClick={() => {
+        pushQuery({ start: 0 });
+      }} />
       {(count as number).toFixed(1)}
     </View>
   );
 }
 `;
 
-describe("parseTsx", () => {
+describe("parseSolid", () => {
   test("should parse TSX code with defineContext", () => {
     const { errors, componentsMap, source, ...result } = parseTsx(code, {
       // withContexts: ["RESPONSE"],

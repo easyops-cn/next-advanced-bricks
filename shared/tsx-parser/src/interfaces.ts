@@ -18,6 +18,7 @@ export interface ParseResult {
   contexts: string[];
   contextSetters: Map<string, string>;
   refs: string[];
+  globals: Map<string, string>;
   functionNames: string[];
   functions: StoryboardFunction[];
   templates: Template[];
@@ -37,6 +38,7 @@ export interface TemplateCollection {
   dataSources: DataSource[];
   events: string[];
   refs: string[];
+  globals: Map<string, string>;
 }
 
 export interface ParseError {
@@ -97,7 +99,8 @@ export type EventHandler =
   | TypeEventHandlerOfCallRef
   | TypeEventHandlerOfShowMessage
   | TypeEventHandlerOfCallAPI
-  | TypeEventHandlerOfDispatchEvent;
+  | TypeEventHandlerOfDispatchEvent
+  | TypeEventHandlerOfUpdateQuery;
 
 export interface TypeEventHandlerOfUpdateVariable {
   action: "update_variable";
@@ -161,6 +164,14 @@ export interface TypeEventHandlerOfDispatchEvent {
   payload: {
     type: string;
     detail?: unknown;
+  };
+}
+
+export interface TypeEventHandlerOfUpdateQuery {
+  action: "update_query";
+  payload: {
+    method: "push" | "replace";
+    args: unknown[];
   };
 }
 
