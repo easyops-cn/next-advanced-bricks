@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-parser@0.3.0...@next-shared/tsx-parser@0.4.0) (2025-09-28)
+
+
+### Features
+
+* support useQuery ([dfe7f39](https://github.com/easyops-cn/next-advanced-bricks/commit/dfe7f39613513e61b98383842170c3e4295ca9cc))
+
+
+
+
+
 # [0.3.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-parser@0.2.2...@next-shared/tsx-parser@0.3.0) (2025-09-28)
 
 

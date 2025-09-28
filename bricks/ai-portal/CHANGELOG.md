@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.48.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.47.3...@next-bricks/ai-portal@0.48.0) (2025-09-28)
+
+
+### Bug Fixes
+
+* fallback as markdown for tool arguments ([06aa582](https://github.com/easyops-cn/next-advanced-bricks/commit/06aa5826197b68933783d07ef113b13142f76fc1))
+
+
+### Features
+
+* support useQuery ([dfe7f39](https://github.com/easyops-cn/next-advanced-bricks/commit/dfe7f39613513e61b98383842170c3e4295ca9cc))
+
+
+
+
+
 ## [0.47.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.47.2...@next-bricks/ai-portal@0.47.3) (2025-09-28)
 
 
