@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.47.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.47.2...@next-bricks/ai-portal@0.47.3) (2025-09-28)
+
+
+### Bug Fixes
+
+* ability to disable adding project ([0f78ee6](https://github.com/easyops-cn/next-advanced-bricks/commit/0f78ee62bb0775b4dc5716da6fb7d973cc85d2ef))
+
+
+
+
+
 ## [0.47.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.47.1...@next-bricks/ai-portal@0.47.2) (2025-09-28)
 
 **Note:** Version bump only for package @next-bricks/ai-portal
