@@ -3,6 +3,7 @@ import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
 import "@next-core/theme";
 import classNames from "classnames";
+import { throttle } from "lodash";
 import styleText from "./styles.shadow.css";
 
 const { defineElement, property, event } = createDecorators();
@@ -101,10 +102,14 @@ function TabListComponent({
     }
     const parent = getVerticalScrollParent(root);
     if (parent) {
-      const onScroll = () => {
-        const rect = root.getBoundingClientRect();
-        setStickyActive(rect.top < stickyThreshold);
-      };
+      const onScroll = throttle(
+        () => {
+          const rect = root.getBoundingClientRect();
+          setStickyActive(rect.top < stickyThreshold);
+        },
+        100,
+        { leading: false }
+      );
       parent.addEventListener("scroll", onScroll);
       return () => {
         parent.removeEventListener("scroll", onScroll);
