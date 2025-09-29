@@ -354,7 +354,7 @@ function constructEventHandler(
           if (args.length !== 1) {
             result.errors.push({
               message: `State setter expects exactly 1 argument, but got ${args.length}`,
-              node: args[1],
+              node: args.length === 0 ? stmt.expression : args[1],
               severity: "error",
             });
           }
@@ -379,7 +379,7 @@ function constructEventHandler(
           if (args.length !== 1) {
             result.errors.push({
               message: `State setter expects exactly 1 argument, but got ${args.length}`,
-              node: args[1],
+              node: args.length === 0 ? stmt.expression : args[1],
               severity: "error",
             });
           }
