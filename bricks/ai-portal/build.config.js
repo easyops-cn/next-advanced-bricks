@@ -3,12 +3,20 @@ import webpack from "webpack";
 
 /** @type {import("@next-core/build-next-bricks").BuildNextBricksConfig} */
 export default {
+  oneOfRulesForBabel: [
+    {
+      test: /\.[tj]sx?$/,
+      resourceQuery: /raw/,
+      type: "asset/source",
+    },
+  ],
   moduleRules: [
     {
       test: /\.md$/,
       type: "asset/source",
     },
     {
+      exclude: /\.[tj]sx?$/,
       resourceQuery: /raw/,
       type: "asset/source",
     },
