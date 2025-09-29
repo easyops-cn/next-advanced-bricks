@@ -33,6 +33,7 @@ const { defineElement, property } = createDecorators();
 
 export interface ShowCasesProps {
   list?: ShowCaseType[];
+  limit?: number;
 }
 
 /**
@@ -46,12 +47,15 @@ class ShowCases extends ReactNextElement implements ShowCasesProps {
   @property({ attribute: false })
   accessor list: ShowCaseType[] | undefined;
 
+  @property({ type: Number })
+  accessor limit: number | undefined;
+
   render() {
-    return <ShowCasesComponent list={this.list} />;
+    return <ShowCasesComponent list={this.list} limit={this.limit} />;
   }
 }
 
-function ShowCasesComponent({ list }: ShowCasesProps) {
+function ShowCasesComponent({ list, limit }: ShowCasesProps) {
   // Grouping the list by scenario
   const groups = useMemo<string[]>(() => {
     return ["", ...new Set(list?.map((item) => item.scenario).filter(Boolean))];
@@ -60,11 +64,18 @@ function ShowCasesComponent({ list }: ShowCasesProps) {
   const [activeGroup, setActiveGroup] = useState("");
 
   const filteredList = useMemo(() => {
-    if (!activeGroup) {
-      return list;
+    if (!list) {
+      return;
     }
-    return list?.filter((item) => item.scenario === activeGroup);
-  }, [activeGroup, list]);
+    let filtered = list;
+    if (activeGroup) {
+      filtered = filtered.filter((item) => item.scenario === activeGroup);
+    }
+    if (limit) {
+      filtered = filtered.slice(0, limit);
+    }
+    return filtered;
+  }, [activeGroup, list, limit]);
 
   const tabs = useMemo<Tab[]>(() => {
     return groups.map((group) => ({

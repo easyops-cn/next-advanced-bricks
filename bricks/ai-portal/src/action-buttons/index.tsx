@@ -50,6 +50,7 @@ class ActionButtons extends ReactNextElement implements ActionButtonsProps {
   accessor #change!: EventEmitter<ActionItem | null>;
 
   #handleChange = (action: ActionItem | null) => {
+    this.activeKey = action ? action.key : null;
     this.#change.emit(action);
   };
 
