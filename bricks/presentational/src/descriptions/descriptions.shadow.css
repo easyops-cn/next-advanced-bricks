@@ -20,6 +20,7 @@
 
 .description-item-content {
   color: var(--antd-description-item-content-color);
+  min-width: 0;
 }
 
 .description-item.horizontal {

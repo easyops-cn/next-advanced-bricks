@@ -32,7 +32,12 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
         if (!(el instanceof HTMLElement)) {
           continue;
         }
-        if (el.classList.contains("ant-table-content")) {
+        if (el.tagName === "PRE") {
+          if (el.scrollWidth > el.clientWidth) {
+            found = true;
+            break;
+          }
+        } else if (el.classList.contains("ant-table-content")) {
           scrollableContent = el;
         } else if (
           el.classList.contains("ant-table") &&
@@ -43,8 +48,8 @@ export function NodeView({ job, active }: NodeViewProps): JSX.Element {
             scrollableContent.scrollWidth > scrollableContent.clientWidth
           ) {
             found = true;
+            break;
           }
-          break;
         }
       }
       setHoverOnScrollableContent(found);
