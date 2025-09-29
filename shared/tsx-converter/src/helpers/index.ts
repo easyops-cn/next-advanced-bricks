@@ -1,8 +1,8 @@
-import mergeTexts from "./mergeTexts.txt?raw";
-import getLatestMetricValue from "./getLatestMetricValue.txt?raw";
-import extractList from "./extractList.txt?raw";
-import groupMetricData from "./groupMetricData.txt?raw";
-import getMetricDisplayNames from "./getMetricDisplayNames.txt?raw";
+import mergeTexts from "../../../src/helpers/mergeTexts.ts?raw";
+import getLatestMetricValue from "../../../src/helpers/getLatestMetricValue.ts?raw";
+import extractList from "../../../src/helpers/extractList.ts?raw";
+import groupMetricData from "../../../src/helpers/groupMetricData.ts?raw";
+import getMetricDisplayNames from "../../../src/helpers/getMetricDisplayNames.ts?raw";
 
 let helperFunctions: Map<string, string> | undefined;
 
