@@ -12,7 +12,8 @@
   "type": "module",
   "files": [
     "dist",
-    "lib"
+    "lib",
+    "src/helpers"
   ],
   "exports": {
     ".": {
