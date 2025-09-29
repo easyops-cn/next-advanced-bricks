@@ -65,6 +65,7 @@ export interface AIEmployee {
 export interface ChatBoxRef {
   setValue: (value: string) => void;
   getValue: () => string;
+  focusOnInput: () => void;
 }
 
 /**
@@ -114,6 +115,11 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
   @method()
   getValue() {
     return this.ref.current?.getValue();
+  }
+
+  @method()
+  focusOnInput() {
+    return this.ref.current?.focusOnInput();
   }
 
   render() {
@@ -189,6 +195,9 @@ function LegacyChatBoxComponent(
     },
     getValue: () => {
       return valueRef.current;
+    },
+    focusOnInput: () => {
+      textareaRef.current?.focus();
     },
   }));
 

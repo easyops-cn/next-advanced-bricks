@@ -13,20 +13,45 @@ exports[`convertTsx should work 1`] = `
             "events": {
               "search": [
                 {
-                  "action": "context.replace",
-                  "args": [
-                    "logId",
-                    "<% EVENT.detail %>",
-                  ],
-                },
-                {
-                  "action": "history.pushQuery",
-                  "args": [
+                  "else": [
                     {
-                      "logId": "<% EVENT.detail %>",
+                      "action": "context.replace",
+                      "args": [
+                        "logId",
+                        undefined,
+                      ],
                     },
                     {
-                      "notify": false,
+                      "action": "history.pushQuery",
+                      "args": [
+                        {
+                          "logId": null,
+                        },
+                        {
+                          "notify": false,
+                        },
+                      ],
+                    },
+                  ],
+                  "if": "<% EVENT.detail %>",
+                  "then": [
+                    {
+                      "action": "context.replace",
+                      "args": [
+                        "logId",
+                        "<% EVENT.detail %>",
+                      ],
+                    },
+                    {
+                      "action": "history.pushQuery",
+                      "args": [
+                        {
+                          "logId": "<% EVENT.detail %>",
+                        },
+                        {
+                          "notify": false,
+                        },
+                      ],
                     },
                   ],
                 },
@@ -100,7 +125,7 @@ exports[`convertTsx should work 1`] = `
                       "brick": "span",
                       "events": undefined,
                       "properties": {
-                        "textContent": "<%= CTX.__builtin_fn_mergeTexts({type:"expression",value:(moment(DATA.cellData * 1000).format("HH:mm:ss"))}) %>",
+                        "textContent": "<%= FN._helper_mergeTexts({type:"expression",value:(moment(DATA.cellData * 1000).format("HH:mm:ss"))}) %>",
                       },
                     },
                   ],
@@ -114,7 +139,7 @@ exports[`convertTsx should work 1`] = `
                       "brick": "span",
                       "events": undefined,
                       "properties": {
-                        "textContent": "<%= CTX.__builtin_fn_mergeTexts({type:"expression",value:(\`\${DATA.cellData}\${DATA.rowData.opSubType ? \` / \${DATA.rowData.opSubType}\` : ""}\`)}) %>",
+                        "textContent": "<%= FN._helper_mergeTexts({type:"expression",value:(\`\${DATA.cellData}\${DATA.rowData.opSubType ? \` / \${DATA.rowData.opSubType}\` : ""}\`)}) %>",
                       },
                     },
                   ],
@@ -269,7 +294,7 @@ exports[`convertTsx should work 1`] = `
                               "brick": "span",
                               "events": undefined,
                               "properties": {
-                                "textContent": "<%= CTX.__builtin_fn_mergeTexts({type:"expression",value:(moment(DATA.time * 1000).format("llll"))}) %>",
+                                "textContent": "<%= FN._helper_mergeTexts({type:"expression",value:(moment(DATA.time * 1000).format("llll"))}) %>",
                               },
                             },
                           ],
@@ -355,26 +380,6 @@ exports[`convertTsx should work 1`] = `
       "track": true,
       "value": null,
     },
-    {
-      "name": "__builtin_fn_mergeTexts",
-      "value": [Function],
-    },
-    {
-      "name": "__builtin_fn_getLatestMetricValue",
-      "value": [Function],
-    },
-    {
-      "name": "__builtin_fn_extractList",
-      "value": [Function],
-    },
-    {
-      "name": "__builtin_fn_groupMetricData",
-      "value": [Function],
-    },
-    {
-      "name": "__builtin_fn_getMetricDisplayNames",
-      "value": [Function],
-    },
   ],
   "functions": [
     {
@@ -387,6 +392,11 @@ exports[`convertTsx should work 1`] = `
     return output;
   }
 }",
+      "typescript": true,
+    },
+    {
+      "name": "_helper_mergeTexts",
+      "source": "function mock() {}",
       "typescript": true,
     },
   ],
@@ -415,7 +425,7 @@ exports[`convertTsx should work 1`] = `
                     ],
                   },
                   "properties": {
-                    "textContent": "<%= CTX.__builtin_fn_mergeTexts({type:"expression",value:(STATE.expanded ? "收起" : "展开")}) %>",
+                    "textContent": "<%= FN._helper_mergeTexts({type:"expression",value:(STATE.expanded ? "收起" : "展开")}) %>",
                     "themeVariant": "elevo",
                   },
                 },

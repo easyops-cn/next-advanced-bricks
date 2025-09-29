@@ -64,8 +64,13 @@ export default function () {
           value={logId}
           placeholder="输入任务 ID 并按回车"
           onSearch={(event) => {
-            setLogId(event.detail);
-            pushQuery({ logId: event.detail }, { notify: false });
+            if (event.detail) {
+              setLogId(event.detail);
+              pushQuery({ logId: event.detail }, { notify: false });
+            } else {
+              setLogId(undefined);
+              pushQuery({ logId: null }, { notify: false });
+            }
           }}
           inputStyle={{ width: "300px" }}
         />

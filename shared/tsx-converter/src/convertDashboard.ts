@@ -48,12 +48,17 @@ export default async function convertDashboard(
     dataSource: string | object;
   };
 
+  view.usedHelpers.add("_helper_getLatestMetricValue");
+  view.usedHelpers.add("_helper_extractList");
+  view.usedHelpers.add("_helper_groupMetricData");
+  view.usedHelpers.add("_helper_getMetricDisplayNames");
+
   const groupField = _groupField ? "#showKey" : undefined;
 
   const { isString, expression, usedContexts } = parseDataSource(dataSource);
 
   const chartData = isString
-    ? `<%= CTX.__builtin_fn_extractList((${expression})) %>`
+    ? `<%= FN._helper_extractList((${expression})) %>`
     : dataSource;
 
   if (options.expanded) {
@@ -124,13 +129,13 @@ export default async function convertDashboard(
             ...(widget.relevantMetrics
               ? {
                   // yFields: widget.relevantMetrics,
-                  yFields: `<% CTX.__builtin_fn_getMetricDisplayNames((${expression}).displayNameList, ${JSON.stringify(
+                  yFields: `<% FN._helper_getMetricDisplayNames((${expression}).displayNameList, ${JSON.stringify(
                     widget.relevantMetrics
                   )}) %>`,
                 }
               : {
                   // yField: metric.id,
-                  yField: `<% CTX.__builtin_fn_getMetricDisplayNames((${expression}).displayNameList, [${JSON.stringify(
+                  yField: `<% FN._helper_getMetricDisplayNames((${expression}).displayNameList, [${JSON.stringify(
                     metric.id
                   )}])[0] %>`,
                 }),
@@ -240,7 +245,7 @@ export default async function convertDashboard(
       children: [
         {
           brick: ":forEach",
-          dataSource: `<%= CTX.__builtin_fn_groupMetricData(CTX.__builtin_fn_extractList((${expression})), ${JSON.stringify(groupField)}) %>`,
+          dataSource: `<%= FN._helper_groupMetricData(FN._helper_extractList((${expression})), ${JSON.stringify(groupField)}) %>`,
           children: [
             {
               brick: "div",
@@ -278,7 +283,7 @@ export default async function convertDashboard(
                       : metric.unit === "percent(100)" || metric.unit === "%"
                         ? { min: 0, max: 100 }
                         : { min: 0 }),
-                    value: `<%= CTX.__builtin_fn_getLatestMetricValue(ITEM.list, ${JSON.stringify(
+                    value: `<%= FN._helper_getLatestMetricValue(ITEM.list, ${JSON.stringify(
                       {
                         metric,
                         precision,
@@ -320,9 +325,9 @@ export default async function convertDashboard(
             : metric.unit === "percent(100)" || metric.unit === "%"
               ? { min: 0, max: 100 }
               : { min: 0 }),
-          value: `<%= CTX.__builtin_fn_getLatestMetricValue((${
+          value: `<%= FN._helper_getLatestMetricValue((${
             isString
-              ? `CTX.__builtin_fn_extractList((${expression}))`
+              ? `FN._helper_extractList((${expression}))`
               : JSON.stringify(dataSource ?? null)
           }), ${JSON.stringify({
             metric,

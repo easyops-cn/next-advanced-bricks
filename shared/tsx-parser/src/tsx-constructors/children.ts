@@ -76,13 +76,13 @@ export function constructChildren(
     (child) => !!child && child.type !== "component"
   );
   if (onlyLooseTextChildren) {
-    const text = mergeTexts(
+    const text = constructMergeTexts(
       rawChildren.flatMap((child) =>
         child!.type === "merged"
           ? (child as ChildMerged).children
           : (child as ChildText)
       ),
-      result.source
+      result
     );
     const textContent = replaceVariables(
       replaceGlobals(text, result),
@@ -106,7 +106,7 @@ export function constructChildren(
                       replaceGlobals(
                         child.type === "expression"
                           ? `<%= ${removeTypeAnnotations(result.source, child.expression)} %>`
-                          : mergeTexts(child.children, result.source),
+                          : constructMergeTexts(child.children, result),
                         result
                       ),
                       valueOptions?.replacePatterns
@@ -118,12 +118,16 @@ export function constructChildren(
   return { children };
 }
 
-function mergeTexts(elements: (ChildText | ChildExpression)[], source: string) {
-  return `<%= CTX.__builtin_fn_mergeTexts(${elements
+function constructMergeTexts(
+  elements: (ChildText | ChildExpression)[],
+  result: ParseResult
+) {
+  result.usedHelpers.add("_helper_mergeTexts");
+  return `<%= FN._helper_mergeTexts(${elements
     .map((elem) =>
       elem.type === "text"
         ? JSON.stringify(elem)
-        : `{type:"expression",value:(${removeTypeAnnotations(source, elem.expression)})}`
+        : `{type:"expression",value:(${removeTypeAnnotations(result.source, elem.expression)})}`
     )
     .join(", ")}) %>`;
 }
