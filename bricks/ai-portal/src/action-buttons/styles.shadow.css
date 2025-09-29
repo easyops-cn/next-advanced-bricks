@@ -20,5 +20,17 @@
   &.active::part(button) {
     color: var(--elevo-color-brand);
     background-color: rgba(var(--elevo-color-brand-rgb-channel), 0.04);
+    border-color: #c9d7ff;
   }
+}
+
+.icon {
+  font-size: 16px;
+  margin-right: 4px;
+}
+
+.remove {
+  padding: 1px;
+  font-size: 14px;
+  margin-left: 10px;
 }
