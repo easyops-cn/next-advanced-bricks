@@ -55,7 +55,7 @@
     "@milkdown/preset-gfm": "^7.3.5",
     "@milkdown/react": "^7.3.5",
     "@milkdown/theme-nord": "^7.3.5",
-    "@next-core/build-next-bricks": "^1.23.14",
+    "@next-core/build-next-bricks": "^1.24.0",
     "@next-core/test-next": "^2.0.1"
   },
   "peerDependencies": {

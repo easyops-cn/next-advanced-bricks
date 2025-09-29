@@ -78,7 +78,7 @@
     "yaml": "^2.5.1"
   },
   "devDependencies": {
-    "@next-core/build-next-bricks": "^1.23.14",
+    "@next-core/build-next-bricks": "^1.24.0",
     "@next-core/test-next": "^2.0.1",
     "resize-observer-polyfill": "^1.5.1"
   },

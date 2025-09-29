@@ -52,7 +52,7 @@
     "react": "0.0.0-experimental-ee8509801-20230117"
   },
   "devDependencies": {
-    "@next-core/build-next-bricks": "^1.23.14"
+    "@next-core/build-next-bricks": "^1.24.0"
   },
   "peerDependencies": {
     "@next-bricks/vs": "*"
