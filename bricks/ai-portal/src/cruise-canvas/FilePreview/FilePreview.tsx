@@ -54,27 +54,33 @@ export function FilePreview({ file }: FilePreviewProps) {
     "loading"
   );
 
+  // For PDF, content is the object URL or data URL
+  // For markdown, content is the content text
   const [content, setContent] = useState<string | undefined>();
-  useEffect(() => {
-    if (type === "application/pdf") {
-      setStatus(uri || bytes ? "loaded" : "error");
-      return;
-    }
 
+  useEffect(() => {
+    // When using `<embed>` to display PDF from a URL, which responses with
+    // `Content-Disposition: attachment`, the PDF will be downloaded instead of
+    // being displayed by the browser. So we need to fetch the file and create an object URL.
     setStatus("loading");
-    if (type !== "text/markdown") {
+    if (type !== "text/markdown" && type !== "application/pdf") {
       setStatus("error");
       return;
     }
 
     if (bytes) {
-      setContent(atob(bytes));
+      if (type === "application/pdf") {
+        setContent(`data:application/pdf;base64,${bytes}`);
+      } else {
+        setContent(atob(bytes));
+      }
       setStatus("loaded");
       return;
     }
 
     if (uri) {
       let ignore = false;
+      let revokeUrl: string | undefined;
       (async () => {
         try {
           const response = await fetch(
@@ -83,7 +89,13 @@ export function FilePreview({ file }: FilePreviewProps) {
           if (!response.ok) {
             throw new Error(`Failed to fetch file: ${response.statusText}`);
           }
-          const text = await response.text();
+          let text: string;
+          if (type === "application/pdf") {
+            const blob = await response.blob();
+            revokeUrl = text = URL.createObjectURL(blob);
+          } else {
+            text = await response.text();
+          }
           if (ignore) {
             return;
           }
@@ -97,6 +109,9 @@ export function FilePreview({ file }: FilePreviewProps) {
       })();
       return () => {
         ignore = true;
+        if (revokeUrl) {
+          URL.revokeObjectURL(revokeUrl);
+        }
       };
     }
   }, [bytes, type, uri]);
@@ -182,11 +197,7 @@ export function FilePreview({ file }: FilePreviewProps) {
       ) : type === "application/pdf" ? (
         <embed
           className={styles.embed}
-          src={
-            uri
-              ? new URL(uri, `${location.origin}${getBasePath()}`).toString()
-              : `data:application/pdf;base64,${bytes}`
-          }
+          src={content}
           type={type}
           title={name}
           width="100%"
