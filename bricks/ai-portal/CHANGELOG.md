@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.48.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.48.0...@next-bricks/ai-portal@0.48.1) (2025-09-29)
+
+
+### Bug Fixes
+
+* **chat-box:** focusOnInput ([35f1b13](https://github.com/easyops-cn/next-advanced-bricks/commit/35f1b13b22ec6deadd19f4b142b55656dc6a040c))
+
+
+
+
+
 # [0.48.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.47.3...@next-bricks/ai-portal@0.48.0) (2025-09-28)
 
 

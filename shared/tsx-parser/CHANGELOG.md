@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-parser@0.4.0...@next-shared/tsx-parser@0.4.1) (2025-09-29)
+
+
+### Bug Fixes
+
+* fix events converting ([b336944](https://github.com/easyops-cn/next-advanced-bricks/commit/b33694429631af872bb37f0cd538de0bd17f41a6))
+* support if statements in event handlers ([577b70a](https://github.com/easyops-cn/next-advanced-bricks/commit/577b70ac66d32d432b2e3ef562d031cfee7f675f))
+* use helpers as functions instead of context ([99a6e65](https://github.com/easyops-cn/next-advanced-bricks/commit/99a6e65baf3d33a2871da0d5a939389d49778c57))
+
+
+
+
+
 # [0.4.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-parser@0.3.0...@next-shared/tsx-parser@0.4.0) (2025-09-28)
 
 
