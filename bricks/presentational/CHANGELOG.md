@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.21.1...@next-bricks/presentational@1.21.2) (2025-09-29)
+
+
+### Bug Fixes
+
+* fix description item content overflow ([f34b858](https://github.com/easyops-cn/next-advanced-bricks/commit/f34b858cae9ea1d6f166bdb5434c44c03e6efc3f))
+
+
+
+
+
 ## [1.21.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/presentational@1.21.0...@next-bricks/presentational@1.21.1) (2025-09-28)
 
 **Note:** Version bump only for package @next-bricks/presentational

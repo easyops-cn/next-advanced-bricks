@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.48.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.48.1...@next-bricks/ai-portal@0.48.2) (2025-09-29)
+
+
+### Bug Fixes
+
+* handle scroll in canvas ([d2ad014](https://github.com/easyops-cn/next-advanced-bricks/commit/d2ad014ed60662ab8f5d0d99fddab6e5b6bfbdbd))
+* refactor action-buttons ([7ed1cde](https://github.com/easyops-cn/next-advanced-bricks/commit/7ed1cde70f7422b35e501cc370ace64f788bfd4c))
+
+
+
+
+
 ## [0.48.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.48.0...@next-bricks/ai-portal@0.48.1) (2025-09-29)
 
 
