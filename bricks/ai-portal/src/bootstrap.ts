@@ -23,3 +23,4 @@ import "./chat-input/index.js";
 import "./elevo-logo/index.js";
 import "./show-case/index.js";
 import "./data-providers/call-tool.js";
+import "./blank-state/index.js";
