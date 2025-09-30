@@ -16,6 +16,10 @@ import type {
   TabListMapping,
   TabListProps,
 } from "../tab-list/index.js";
+import type {
+  StickyContainer,
+  StickyContainerProps,
+} from "../sticky-container/index.js";
 
 initializeI18n(NS, locales);
 
@@ -84,13 +88,15 @@ const WrappedTabList = wrapBrick<
 >("ai-portal.tab-list", {
   onTabClick: "tab.click",
 });
+const WrappedStickyContainer = wrapBrick<StickyContainer, StickyContainerProps>(
+  "ai-portal.sticky-container"
+);
 
 const { defineElement, property } = createDecorators();
 
 export interface McpToolsProps {
   list?: McpTool[];
-  /** @deprecated */
-  withContainer?: boolean;
+  stickyTop?: number;
 }
 
 export interface McpTool {
@@ -117,18 +123,15 @@ class McpTools extends ReactNextElement implements McpToolsProps {
   @property({ attribute: false })
   accessor list: McpTool[] | undefined;
 
-  /** @deprecated */
-  @property({ type: Boolean })
-  accessor withContainer = true;
+  @property({ type: Number })
+  accessor stickyTop: number | undefined;
 
   render() {
-    return (
-      <McpToolsComponent list={this.list} withContainer={this.withContainer} />
-    );
+    return <McpToolsComponent list={this.list} stickyTop={this.stickyTop} />;
   }
 }
 
-function McpToolsComponent({ list, withContainer }: McpToolsProps) {
+function McpToolsComponent({ list, stickyTop }: McpToolsProps) {
   // Grouping the list by server name
   const [groupMap, platformMap] = useMemo(() => {
     const map = new Map<string, McpTool[]>();
@@ -202,13 +205,26 @@ function McpToolsComponent({ list, withContainer }: McpToolsProps) {
     }));
   }, [platforms]);
 
-  const node = (
+  const tabsNode = (
+    <WrappedTabList
+      tabs={tabs}
+      activeTab={activePlatform}
+      onTabClick={(event) => setActivePlatform(event.detail.id)}
+    />
+  );
+
+  return (
     <>
-      <WrappedTabList
-        tabs={tabs}
-        activeTab={activePlatform}
-        onTabClick={(event) => setActivePlatform(event.detail.id)}
-      />
+      {stickyTop == null ? (
+        <div className="non-sticky-tabs">{tabsNode}</div>
+      ) : (
+        <WrappedStickyContainer
+          className="sticky-tabs"
+          style={{ top: stickyTop }}
+        >
+          {tabsNode}
+        </WrappedStickyContainer>
+      )}
       <ul className="groups">
         {filteredGroups?.map(([groupName, items]) => (
           <li key={groupName} className="group">
@@ -232,16 +248,5 @@ function McpToolsComponent({ list, withContainer }: McpToolsProps) {
         ))}
       </ul>
     </>
-  );
-
-  if (!withContainer) {
-    return node;
-  }
-
-  return (
-    <div className="container">
-      <h1>{t(K.MCP_HUB)}</h1>
-      {node}
-    </div>
   );
 }
