@@ -119,6 +119,7 @@ export function CruiseCanvasComponent(
     showCases,
     exampleProjects,
     tryItOutUrl,
+    separateInstructions,
     onShare,
     onTerminate,
     onSubmitFeedback,
@@ -146,6 +147,7 @@ export function CruiseCanvasComponent(
   const graph = useConversationGraph(conversation, tasks, errors, {
     showHiddenJobs,
     showHumanActions,
+    separateInstructions,
   });
   const rawNodes = graph?.nodes;
   const rawEdges = graph?.edges;
@@ -641,6 +643,7 @@ export function CruiseCanvasComponent(
           };
         }
       },
+      separateInstructions,
     }),
     [
       conversationId,
@@ -675,6 +678,7 @@ export function CruiseCanvasComponent(
       setCentered,
       userInput,
       tryItOutUrl,
+      separateInstructions,
     ]
   );
 

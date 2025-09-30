@@ -71,6 +71,7 @@ export interface SidebarLink {
 const ElevoSidebarComponent = forwardRef(LegacyElevoSidebarComponent);
 
 interface ElevoSidebarRef extends ChatHistoryRef {
+  open: () => void;
   close: () => void;
 }
 
@@ -163,6 +164,11 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
     setTimeout(() => {
       this.#ref.current?.pull();
     }, delay);
+  }
+
+  @method()
+  open() {
+    this.#ref.current?.open();
   }
 
   @method()
@@ -306,6 +312,9 @@ function LegacyElevoSidebarComponent(
       },
       moveConversation: (conversationId: string) => {
         historyRef.current?.moveConversation?.(conversationId);
+      },
+      open: () => {
+        setCollapsed(false);
       },
     }),
     []

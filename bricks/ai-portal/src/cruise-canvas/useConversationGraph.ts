@@ -20,8 +20,12 @@ export function useConversationGraph(
   options?: {
     showHiddenJobs?: boolean;
     showHumanActions?: boolean;
+    separateInstructions?: boolean;
   }
 ) {
+  const { showHiddenJobs, showHumanActions, separateInstructions } =
+    options ?? {};
+
   return useMemo(() => {
     if (!conversation) {
       return null;
@@ -39,7 +43,7 @@ export function useConversationGraph(
       levels: jobLevels,
       downstreamMap,
       jobsWithFollowingErrors,
-    } = getFlatOrderedJobs(tasks, errors, options);
+    } = getFlatOrderedJobs(tasks, errors, { showHiddenJobs });
 
     const jobNodesMap = new Map<string, string[]>();
     const userInputNodes: string[] = [];
@@ -76,15 +80,16 @@ export function useConversationGraph(
       }
 
       if (job.instruction) {
-        const instructionNodeId = `instruction:${jobId}`;
-        nodes.push({
-          type: "instruction",
-          id: instructionNodeId,
-          job,
-          state: job.state,
-        });
-
-        nodeIds.push(instructionNodeId);
+        if (separateInstructions || !job.toolCall) {
+          const instructionNodeId = `instruction:${jobId}`;
+          nodes.push({
+            type: "instruction",
+            id: instructionNodeId,
+            job,
+            state: job.state,
+          });
+          nodeIds.push(instructionNodeId);
+        }
 
         nav.push({
           id: job.id,
@@ -140,7 +145,7 @@ export function useConversationGraph(
         nodeIds.push(errorNodeId);
       }
 
-      if (options?.showHumanActions && job.humanAction) {
+      if (showHumanActions && job.humanAction) {
         const humanActionNodeId = `human-action:${job.id}`;
         nodes.push({
           type: "requirement",
@@ -219,5 +224,12 @@ export function useConversationGraph(
       jobMap,
       jobLevels,
     };
-  }, [conversation, tasks]);
+  }, [
+    conversation,
+    errors,
+    separateInstructions,
+    showHiddenJobs,
+    showHumanActions,
+    tasks,
+  ]);
 }
