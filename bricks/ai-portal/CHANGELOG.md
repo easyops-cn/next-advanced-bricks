@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.49.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.48.5...@next-bricks/ai-portal@0.49.0) (2025-09-30)
+
+
+### Bug Fixes
+
+* refine helpers building ([4f5c3e9](https://github.com/easyops-cn/next-advanced-bricks/commit/4f5c3e9e61d8d41143229c1b8667028ac2fc443e))
+* show instructions as tool title by default ([3bc2e49](https://github.com/easyops-cn/next-advanced-bricks/commit/3bc2e495d9e869a11117fc7d99031746a14979ea))
+* **sidebar:** support open method ([057acff](https://github.com/easyops-cn/next-advanced-bricks/commit/057acffb4e4b3b42ff86e1dc33688368a3aa6306))
+
+
+### Features
+
+* new brick: blank-state ([bd36594](https://github.com/easyops-cn/next-advanced-bricks/commit/bd36594b080757d7eef89369942355c3f3bd27a8))
+
+
+
+
+
 ## [0.48.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.48.4...@next-bricks/ai-portal@0.48.5) (2025-09-29)
 
 **Note:** Version bump only for package @next-bricks/ai-portal

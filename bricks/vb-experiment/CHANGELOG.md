@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.12](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.3.11...@next-bricks/vb-experiment@1.3.12) (2025-09-30)
+
+
+### Bug Fixes
+
+* refine helpers building ([4f5c3e9](https://github.com/easyops-cn/next-advanced-bricks/commit/4f5c3e9e61d8d41143229c1b8667028ac2fc443e))
+
+
+
+
+
 ## [1.3.11](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.3.10...@next-bricks/vb-experiment@1.3.11) (2025-09-29)
 
 **Note:** Version bump only for package @next-bricks/vb-experiment
