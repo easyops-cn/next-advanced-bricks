@@ -34,6 +34,7 @@ export interface CruiseCanvasProps {
   showCases?: ShowCaseType[];
   exampleProjects?: ExampleProject[];
   tryItOutUrl?: string;
+  separateInstructions?: boolean;
 }
 
 export interface ConversationDetail {
@@ -108,6 +109,9 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
 
   @property()
   accessor tryItOutUrl: string | undefined;
+
+  @property({ type: Boolean })
+  accessor separateInstructions: boolean | undefined;
 
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
@@ -192,6 +196,7 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         showCases={this.showCases}
         exampleProjects={this.exampleProjects}
         tryItOutUrl={this.tryItOutUrl}
+        separateInstructions={this.separateInstructions}
         onShare={this.#onShare}
         onTerminate={this.#onTerminate}
         onSubmitFeedback={this.#onSubmitFeedback}

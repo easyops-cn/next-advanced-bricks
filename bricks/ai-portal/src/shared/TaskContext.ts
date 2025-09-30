@@ -42,6 +42,7 @@ export interface TaskContextValue {
   skipToResults?: () => void;
   watchAgain?: () => void;
   tryItOut?: () => void;
+  separateInstructions?: boolean;
 }
 
 export const TaskContext = createContext<TaskContextValue>({

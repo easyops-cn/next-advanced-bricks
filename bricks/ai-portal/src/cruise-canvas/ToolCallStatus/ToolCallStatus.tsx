@@ -18,9 +18,13 @@ export function ToolCallStatus({
   job,
   variant,
 }: NodeJobToolCallProps): JSX.Element {
-  const { setActiveToolCallJobId } = useContext(TaskContext);
+  const { setActiveToolCallJobId, separateInstructions } =
+    useContext(TaskContext);
   const toolCall = job.toolCall!;
-  const toolTitle = toolCall.annotations?.title;
+  const toolTitle = toolCall.annotations?.title || toolCall.name;
+  const jobTitle = separateInstructions
+    ? toolTitle
+    : job.instruction || toolTitle;
   const [progress, hasToolCallResponse] = useMemo(() => {
     const toolCallMessages = job.messages?.filter((msg) => msg.role === "tool");
     return [
@@ -104,7 +108,7 @@ export function ToolCallStatus({
           />
         )}
         <span className={styles.name}>
-          {variant === "read-only" ? toolCall.name : toolTitle || toolCall.name}
+          {variant === "read-only" ? toolTitle : jobTitle}
         </span>
         {job.startTime ? (
           <span className={styles.timing}>

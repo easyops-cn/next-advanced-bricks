@@ -3,6 +3,7 @@ import { useConversationGraph } from "./useConversationGraph";
 import { LOADING_NODE_ID } from "./constants";
 import type {
   ConversationBaseDetail,
+  ConversationError,
   GeneratedView,
   Job,
   Task,
@@ -379,9 +380,13 @@ describe("useConversationGraph", () => {
         ],
       },
     ] as Task[];
+    const errors: ConversationError[] = [];
 
     const { result, rerender } = renderHook(
-      ({ conv, taskList }) => useConversationGraph(conv, taskList, []),
+      ({ conv, taskList }) =>
+        useConversationGraph(conv, taskList, errors, {
+          separateInstructions: true,
+        }),
       { initialProps: { conv: conversation, taskList: tasks } }
     );
 
