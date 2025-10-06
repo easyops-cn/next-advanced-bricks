@@ -1,5 +1,6 @@
 import type { ParseResult as BabelParseResult } from "@babel/parser";
-import traverse, { type NodePath } from "@babel/traverse";
+import BabelTraverse from "@babel/traverse";
+import type { NodePath } from "@babel/traverse";
 import type * as t from "@babel/types";
 import type {
   BindingInfo,
@@ -12,6 +13,9 @@ import type {
 } from "./interfaces.js";
 import { parseChildren } from "./parseChildren.js";
 import { parseJsValue } from "./parseJsValue.js";
+
+const traverse = (BabelTraverse as unknown as { default: typeof BabelTraverse })
+  .default;
 
 export function parseLegacyModule(
   source: string,

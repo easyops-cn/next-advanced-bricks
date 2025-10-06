@@ -4,8 +4,8 @@ import type {
   ComponentChild,
   ParseJsValueOptions,
   ParseModuleState,
-} from "./interfaces";
-import { parseLowLevelChildren } from "./parseLowLevelChildren";
+} from "./interfaces.js";
+import { parseLowLevelChildren } from "./parseLowLevelChildren.js";
 
 export function parseChildren(
   path: NodePath<t.Node>,

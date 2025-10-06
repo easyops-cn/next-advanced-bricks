@@ -18,7 +18,7 @@ import type {
   ExtraLib,
   ExtraMarker,
 } from "@next-bricks/vs/code-editor";
-import actionsDefinition from "@next-shared/tsx-converter/lib/actions.d.ts?raw";
+import nextTsxDefinition from "@next-shared/tsx-parser/lib/next-tsx.d.ts?raw";
 import componentsDefinition from "@next-shared/tsx-converter/lib/components.d.ts?raw";
 import { convertTsx, type ConvertResult } from "@next-shared/tsx-converter";
 import type { ParseResult } from "@next-shared/tsx-parser";
@@ -48,17 +48,20 @@ const AsyncWrappedCodeEditor = React.lazy(async () => ({
 
 const BUILTIN_LIBS: ExtraLib[] = [
   {
-    filePath: "tsx-view/actions.d.ts",
-    content: actionsDefinition,
-  },
-  {
-    filePath: "tsx-view/components.d.ts",
+    filePath: "/node_modules/next-tsx/components.d.ts",
     content: componentsDefinition.replaceAll("export interface", "interface"),
   },
-  // {
-  //   filePath: "tsx-view/contracts.d.ts",
-  //   content: `type ContractMap = Record<string, any>;`,
-  // },
+  {
+    filePath: "/node_modules/next-tsx/package.json",
+    content: JSON.stringify({
+      name: "next-tsx",
+      types: "./index.d.ts",
+    }),
+  },
+  {
+    filePath: "/node_modules/next-tsx/index.d.ts",
+    content: nextTsxDefinition,
+  },
 ];
 
 const { defineElement, property, event } = createDecorators();

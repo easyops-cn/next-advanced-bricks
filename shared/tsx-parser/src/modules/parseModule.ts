@@ -1,5 +1,6 @@
 import type { ParseResult as BabelParseResult } from "@babel/parser";
-import traverse, { type NodePath } from "@babel/traverse";
+import BabelTraverse from "@babel/traverse";
+import type { NodePath } from "@babel/traverse";
 import type * as t from "@babel/types";
 import { parseComponent } from "./parseComponent.js";
 import type {
@@ -9,6 +10,9 @@ import type {
   ParseModuleState,
 } from "./interfaces.js";
 import { parseFunction } from "./parseFunction.js";
+
+const traverse = (BabelTraverse as unknown as { default: typeof BabelTraverse })
+  .default;
 
 export function parseModule(
   source: string,

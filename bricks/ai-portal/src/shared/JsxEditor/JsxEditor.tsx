@@ -1,7 +1,7 @@
 import React, { Suspense, useContext, useMemo, useState } from "react";
 import { asyncWrapBrick } from "@next-core/react-runtime";
 import type { CodeEditor, CodeEditorProps } from "@next-bricks/vs/code-editor";
-import actionsDefinition from "@next-shared/tsx-converter/lib/actions.d.ts?raw";
+import nextTsxDefinition from "@next-shared/tsx-parser/lib/next-tsx.d.ts?raw";
 import componentsDefinition from "@next-shared/tsx-converter/lib/components.d.ts?raw";
 import styles from "./JsxEditor.module.css";
 import { WrappedButton, WrappedIconButton } from "../bricks";
@@ -19,15 +19,22 @@ interface CodeEditorMapEvents {
 
 const editorLibs: CodeEditorProps["extraLibs"] = [
   {
-    filePath: "tsx-view/actions.d.ts",
-    content: actionsDefinition,
-  },
-  {
-    filePath: "tsx-view/components.d.ts",
+    filePath: "/node_modules/next-tsx/components.d.ts",
     content: componentsDefinition.replaceAll("export interface", "interface"),
   },
   {
-    filePath: "tsx-view/contracts.d.ts",
+    filePath: "/node_modules/next-tsx/package.json",
+    content: JSON.stringify({
+      name: "next-tsx",
+      types: "./index.d.ts",
+    }),
+  },
+  {
+    filePath: "/node_modules/next-tsx/index.d.ts",
+    content: nextTsxDefinition,
+  },
+  {
+    filePath: "/node_modules/next-tsx/contracts.d.ts",
     content: `type ContractMap = Record<string, any>;`,
   },
 ];

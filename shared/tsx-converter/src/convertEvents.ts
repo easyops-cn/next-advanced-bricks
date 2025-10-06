@@ -133,12 +133,6 @@ function convertEventHandler(
         },
       };
     }
-    case "call_component":
-      return {
-        target: `[data-root-id="${options.rootId}"] [data-component-id="${handler.payload.componentId}"]`,
-        method: handler.payload.method,
-        args: handler.payload.args,
-      };
     case "call_ref":
       return {
         ...(handler.payload.scope === "template"
