@@ -4,14 +4,14 @@ import type {
   DataSource,
   DataSourceConfig,
   ParseOptions,
-  ParseResult,
+  ParseState,
 } from "../interfaces.js";
 import { removeTypeAnnotations } from "./values.js";
 import { replaceVariables } from "./replaceVariables.js";
 
 export function parseDataSourceCall(
   call: t.Expression,
-  result: ParseResult,
+  result: ParseState,
   options: ParseOptions | undefined,
   name: string,
   transformArgs?: t.CallExpression["arguments"],
@@ -59,7 +59,7 @@ export function parseDataSourceCall(
 
 function parsePromiseCallback(
   callback: t.ArgumentPlaceholder | t.SpreadElement | t.Expression,
-  result: ParseResult
+  result: ParseState
 ): string | null {
   if (!t.isArrowFunctionExpression(callback)) {
     result.errors.push({

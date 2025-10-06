@@ -3,7 +3,7 @@ import type {
   DataSource,
   DataSourceConfig,
   ParseOptions,
-  ParseResult,
+  ParseState,
   Variable,
 } from "../interfaces.js";
 import { constructJsValue } from "../tsx-constructors/values.js";
@@ -12,7 +12,7 @@ import { parseDataSourceCall } from "../tsx-constructors/dataSource.js";
 
 export function constructFunctionComponent(
   fn: t.FunctionDeclaration,
-  result: ParseResult,
+  result: ParseState,
   scope: "view" | "template",
   options?: ParseOptions
 ) {

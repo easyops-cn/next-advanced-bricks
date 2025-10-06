@@ -15,14 +15,18 @@ export interface ParseResult {
   componentsMap: Map<string, Component>;
   contracts: Set<string>;
   errors: ParseError[];
+  functions: StoryboardFunction[];
+  usedHelpers: Set<string>;
+  templates: Template[];
+}
+
+export interface ParseState extends ParseResult {
+  contracts: Set<string>;
   contexts: string[];
   contextSetters: Map<string, string>;
   refs: string[];
   globals: Map<string, string>;
   functionNames: string[];
-  functions: StoryboardFunction[];
-  usedHelpers: Set<string>;
-  templates: Template[];
   templateCollection?: TemplateCollection;
 }
 

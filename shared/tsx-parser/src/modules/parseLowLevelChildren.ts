@@ -1,27 +1,29 @@
-import * as t from "@babel/types";
+import type { NodePath } from "@babel/traverse";
+import type * as t from "@babel/types";
 import type {
   ChildElement,
   ChildExpression,
   ChildMerged,
   ChildText,
-  ConstructJsValueOptions,
+} from "./internal-interfaces.js";
+import type {
+  ComponentChild,
+  ParseJsValueOptions,
+  ParseModuleState,
 } from "./interfaces.js";
-import type { Component, ParseState, ParseOptions } from "../interfaces.js";
-import { constructTsxElement } from "./element.js";
-import { replaceGlobals, replaceVariables } from "./replaceVariables.js";
-import { removeTypeAnnotations } from "./values.js";
+import { parseElement } from "./parseElement.js";
+import { parseEmbedded } from "./parseEmbedded.js";
 
-export function constructChildren(
-  nodes: t.Node[],
-  result: ParseState,
-  options?: ParseOptions,
-  valueOptions?: ConstructJsValueOptions
+export function parseLowLevelChildren(
+  paths: NodePath<t.Node>[],
+  state: ParseModuleState,
+  options: ParseJsValueOptions
 ): {
   textContent?: string;
-  children?: Component[];
+  children?: ComponentChild[];
 } {
-  let rawChildren: (ChildElement | ChildMerged)[] = nodes.flatMap((node) =>
-    constructTsxElement(node, result, options, valueOptions)
+  let rawChildren: (ChildElement | ChildMerged)[] = paths.flatMap((p) =>
+    parseElement(p, state, options)
   );
 
   let onlyTextChildren = rawChildren.every((child) => child?.type === "text");
@@ -76,17 +78,14 @@ export function constructChildren(
     (child) => !!child && child.type !== "component"
   );
   if (onlyLooseTextChildren) {
-    const text = constructMergeTexts(
+    const textContent = constructMergeTexts(
       rawChildren.flatMap((child) =>
         child!.type === "merged"
           ? (child as ChildMerged).children
           : (child as ChildText)
       ),
-      result
-    );
-    const textContent = replaceVariables(
-      replaceGlobals(text, result),
-      valueOptions?.replacePatterns
+      state,
+      options
     );
     return { textContent };
   }
@@ -102,15 +101,12 @@ export function constructChildren(
               textContent:
                 child.type === "text"
                   ? child.text
-                  : replaceVariables(
-                      replaceGlobals(
-                        child.type === "expression"
-                          ? `<%= ${removeTypeAnnotations(result.source, child.expression)} %>`
-                          : constructMergeTexts(child.children, result),
-                        result
-                      ),
-                      valueOptions?.replacePatterns
-                    ),
+                  : child.type === "expression"
+                    ? parseEmbedded(child.expression, state, {
+                        ...options,
+                        modifier: "=",
+                      })
+                    : constructMergeTexts(child.children, state, options),
             },
           }
     );
@@ -120,14 +116,15 @@ export function constructChildren(
 
 function constructMergeTexts(
   elements: (ChildText | ChildExpression)[],
-  result: ParseState
+  state: ParseModuleState,
+  options: ParseJsValueOptions
 ) {
-  result.usedHelpers.add("_helper_mergeTexts");
+  state.usedHelpers.add("_helper_mergeTexts");
   return `<%= FN._helper_mergeTexts(${elements
     .map((elem) =>
       elem.type === "text"
         ? JSON.stringify(elem)
-        : `{type:"expression",value:(${removeTypeAnnotations(result.source, elem.expression)})}`
+        : `{type:"expression",value:(${parseEmbedded(elem.expression, state, options, true)})}`
     )
     .join(", ")}) %>`;
 }

@@ -1,6 +1,6 @@
 import type { ParseResult as BabelParseResult } from "@babel/parser";
 import * as t from "@babel/types";
-import type { ParseResult, ParseOptions } from "./interfaces.js";
+import type { ParseState, ParseOptions } from "./interfaces.js";
 import { constructJsValue } from "./tsx-constructors/values.js";
 import { constructFunction } from "./tsx-constructors/function.js";
 import { parseDataSourceCall } from "./tsx-constructors/dataSource.js";
@@ -8,7 +8,7 @@ import { constructComponents } from "./tsx-constructors/components.js";
 
 export function parseLegacy(
   ast: BabelParseResult<t.File>,
-  result: ParseResult,
+  result: ParseState,
   options?: ParseOptions
 ): void {
   const { errors, contexts, functionNames, variables } = result;

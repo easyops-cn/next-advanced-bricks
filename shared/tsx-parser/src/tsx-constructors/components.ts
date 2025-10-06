@@ -1,11 +1,11 @@
 import * as t from "@babel/types";
 import type { ConstructJsValueOptions } from "./interfaces.js";
-import type { Component, ParseResult, ParseOptions } from "../interfaces.js";
+import type { Component, ParseState, ParseOptions } from "../interfaces.js";
 import { constructChildren } from "./children.js";
 
 export function constructComponents(
   nodes: t.Node[],
-  result: ParseResult,
+  result: ParseState,
   options?: ParseOptions,
   valueOptions?: ConstructJsValueOptions
 ): Component[] {

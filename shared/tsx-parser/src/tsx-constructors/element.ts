@@ -2,7 +2,7 @@ import * as t from "@babel/types";
 import type { ChildElement, ConstructJsValueOptions } from "./interfaces.js";
 import type {
   Component,
-  ParseResult,
+  ParseState,
   Events,
   ParseOptions,
   EventHandler,
@@ -19,7 +19,7 @@ import { constructComponents } from "./components.js";
 
 export function constructTsxElement(
   node: t.Node,
-  result: ParseResult,
+  result: ParseState,
   options?: ParseOptions,
   valueOptions?: ConstructJsValueOptions
 ): ChildElement | null | (ChildElement | null)[] {

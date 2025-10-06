@@ -1,7 +1,7 @@
 import * as t from "@babel/types";
 import { isExpressionString, isNilNode } from "../utils.js";
 import type { ConstructJsValueOptions } from "./interfaces.js";
-import type { ParseResult, ParseOptions, ToolInfo } from "../interfaces.js";
+import type { ParseState, ParseOptions, ToolInfo } from "../interfaces.js";
 import { constructJsValue } from "./values.js";
 
 export interface CallApiPayload {
@@ -21,7 +21,7 @@ const EXPECTED_ARGS = {
 
 export function parseTsxCallApi(
   call: t.Expression,
-  result: ParseResult,
+  result: ParseState,
   options?: ParseOptions,
   jsValueOptions?: ConstructJsValueOptions
 ): CallApiPayload | null {

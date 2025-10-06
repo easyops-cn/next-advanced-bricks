@@ -5,14 +5,14 @@ import {
   type PreevaluateResult,
   type PrecookFunctionResult,
 } from "@next-core/cook";
-import type { ParseResult } from "../interfaces.js";
+import type { ParseState } from "../interfaces.js";
 
 interface Replacement {
   id: t.Identifier;
   shorthand?: boolean;
 }
 
-export function replaceGlobals(expr: string, result: ParseResult): string {
+export function replaceGlobals(expr: string, result: ParseState): string {
   const patterns = new Map([
     ...(result.templateCollection
       ? result.templateCollection.identifiers.map(
@@ -27,7 +27,7 @@ export function replaceGlobals(expr: string, result: ParseResult): string {
 
 export function replaceGlobalsInFunction(
   source: string,
-  result: ParseResult,
+  result: ParseState,
   selfName: string
 ): string {
   const patterns = new Map(

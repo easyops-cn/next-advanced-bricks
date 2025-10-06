@@ -1,6 +1,6 @@
 import * as t from "@babel/types";
 import type { ConstructJsValueOptions } from "./interfaces.js";
-import type { ParseResult, RenderUseBrick } from "../interfaces.js";
+import type { ParseState, RenderUseBrick } from "../interfaces.js";
 import { validateExpression } from "../utils.js";
 import { replaceGlobals, replaceVariables } from "./replaceVariables.js";
 import { constructComponents } from "./components.js";
@@ -9,7 +9,7 @@ const ambiguousSymbol = Symbol("ambiguous");
 
 export function constructJsValue(
   node: t.Node,
-  state: ParseResult,
+  state: ParseState,
   options: ConstructJsValueOptions
 ): unknown {
   if (t.isObjectExpression(node)) {
@@ -97,7 +97,7 @@ export function constructJsValue(
 
 export function constructPropValue(
   expr: t.Expression,
-  state: ParseResult,
+  state: ParseState,
   options: ConstructJsValueOptions
 ) {
   let shouldCompute = false;
@@ -170,7 +170,7 @@ export function removeTypeAnnotations(source: string, expr: t.Expression) {
 
 function constructJsObject(
   node: t.ObjectExpression,
-  state: ParseResult,
+  state: ParseState,
   options: ConstructJsValueOptions
 ): string | Record<string, unknown> {
   if (node.properties.some((prop) => t.isSpreadElement(prop))) {
@@ -237,7 +237,7 @@ function constructJsObject(
 
 function constructJsArray(
   node: t.ArrayExpression,
-  state: ParseResult,
+  state: ParseState,
   options: ConstructJsValueOptions
 ): string | unknown[] {
   if (node.elements.some((elem) => t.isSpreadElement(elem))) {

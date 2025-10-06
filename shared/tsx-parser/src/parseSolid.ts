@@ -1,12 +1,12 @@
 import type { ParseResult as BabelParseResult } from "@babel/parser";
 import * as t from "@babel/types";
-import type { ParseOptions, ParseResult } from "./interfaces.js";
+import type { ParseOptions, ParseState } from "./interfaces.js";
 import { constructFunction } from "./tsx-constructors/function.js";
 import { constructFunctionComponent } from "./solid/functionComponent.js";
 
 export function parseSolid(
   ast: BabelParseResult<t.File>,
-  result: ParseResult,
+  result: ParseState,
   options?: ParseOptions
 ): void {
   for (const stmt of ast.program.body) {

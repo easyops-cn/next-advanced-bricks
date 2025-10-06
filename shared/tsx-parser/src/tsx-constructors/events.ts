@@ -1,7 +1,7 @@
 import * as t from "@babel/types";
 import type { ConstructJsValueOptions } from "./interfaces.js";
 import type {
-  ParseResult,
+  ParseState,
   EventHandler,
   ParseOptions,
   TypeEventHandlerOfShowMessage,
@@ -11,7 +11,7 @@ import { parseTsxCallApi } from "./api.js";
 
 export function constructTsxEvent(
   node: t.Expression | t.ArgumentPlaceholder | t.SpreadElement,
-  result: ParseResult,
+  result: ParseState,
   options?: ParseOptions,
   valueOptions?: ConstructJsValueOptions,
   isCallback?: boolean
@@ -85,7 +85,7 @@ export function constructTsxEvent(
 
 function constructEventHandler(
   stmt: t.Statement,
-  result: ParseResult,
+  result: ParseState,
   replacePatterns: Map<string, string>,
   options?: ParseOptions,
   valueOptions?: ConstructJsValueOptions

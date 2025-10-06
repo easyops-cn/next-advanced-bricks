@@ -1,10 +1,10 @@
 import * as t from "@babel/types";
-import type { ParseResult } from "../interfaces.js";
+import type { ParseState } from "../interfaces.js";
 import { replaceGlobalsInFunction } from "./replaceVariables.js";
 
 export function constructFunction(
   fn: t.FunctionDeclaration,
-  result: ParseResult
+  result: ParseState
 ) {
   if (fn.async || fn.generator) {
     result.errors.push({
