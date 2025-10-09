@@ -61,6 +61,7 @@ textarea:focus {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
+  gap: 6px;
 }
 
 .btn-send {

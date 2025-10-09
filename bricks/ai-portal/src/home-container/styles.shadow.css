@@ -3,6 +3,10 @@
   padding: 24px 54px 72px;
 }
 
+:host([sticky]) {
+  padding-top: 0;
+}
+
 :host([hidden]) {
   display: none;
 }

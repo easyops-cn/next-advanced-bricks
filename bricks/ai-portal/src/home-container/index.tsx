@@ -4,7 +4,7 @@ import { ReactNextElement } from "@next-core/react-element";
 import "@next-core/theme";
 import styleText from "./styles.shadow.css";
 
-const { defineElement } = createDecorators();
+const { defineElement, property } = createDecorators();
 
 /**
  * 构件 `ai-portal.home-container`
@@ -14,6 +14,9 @@ export
   styleTexts: [styleText],
 })
 class HomeContainer extends ReactNextElement {
+  @property({ type: Boolean, render: false })
+  accessor sticky: boolean | undefined;
+
   render() {
     return <HomeContainerComponent />;
   }

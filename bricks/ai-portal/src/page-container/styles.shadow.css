@@ -11,7 +11,7 @@
   background-position: center;
   background-attachment: fixed;
   color: #262626;
-  padding: 17px 54px 48px;
+  padding: 0 54px 48px;
   overflow-y: auto;
 }
 
@@ -32,8 +32,16 @@
   max-width: 1000px;
 }
 
+.sticky-header {
+  margin: 0 -24px;
+  padding: 17px 24px 30px;
+}
+
+.non-sticky-header {
+  padding: 17px 0 30px;
+}
+
 .header {
-  margin-bottom: 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -45,6 +53,8 @@ nav {
   line-height: 28px;
   display: flex;
   min-width: 0;
+  white-space: nowrap;
+  flex-wrap: wrap;
 }
 
 h1 {
@@ -78,7 +88,7 @@ h1 {
     padding-left: 24px;
     padding-right: 24px;
   }
-  .header {
+  nav {
     margin-left: 40px;
   }
 }

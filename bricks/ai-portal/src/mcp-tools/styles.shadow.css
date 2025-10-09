@@ -6,44 +6,13 @@
   display: none;
 }
 
-:host([with-container]) {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background-color: rgb(205, 206, 207);
-  background-image: url("../page-container/images/background.png");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
-  color: #262626;
-  padding: 48px 24px;
-  overflow-y: auto;
-}
-
 * {
   box-sizing: border-box;
 }
 
-.container {
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-h1,
 h2 {
   font-weight: 500;
   margin: 0;
-}
-
-h1 {
-  font-size: 20px;
-  line-height: 28px;
-  margin-bottom: 17px;
-}
-
-h2 {
   font-size: 16px;
   line-height: 22px;
 }
@@ -56,7 +25,7 @@ h2 {
 }
 
 .groups {
-  margin-top: 27px;
+  margin-top: 17px;
 }
 
 .group + .group {
@@ -107,4 +76,13 @@ h2 {
   line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.sticky-tabs {
+  margin: 0 -24px;
+  padding: 0 24px 10px;
+}
+
+.non-sticky-tabs {
+  padding: 0 0 10px;
 }
