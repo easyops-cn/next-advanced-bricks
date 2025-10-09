@@ -119,15 +119,6 @@ export function useConversationGraph(
 
       const view = job.generatedView;
       if (view) {
-        // Add view node for job
-        const viewNodeId = `view:${job.id}`;
-        nodes.push({
-          type: "view",
-          id: viewNodeId,
-          job,
-        });
-        nodeIds.push(viewNodeId);
-
         views.push({
           id: job.id,
           view,

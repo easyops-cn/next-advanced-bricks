@@ -12,6 +12,8 @@
       position: fixed
       inset: 0
     source: |
+      import { useState } from "next-tsx";
+
       const RESPONSE = {
         "list": [
           {

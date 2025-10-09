@@ -32,7 +32,7 @@ describe("setExtraLibs", () => {
   it("should dispose previous libs if they exist", () => {
     // Call once to set previousDisposables
     const libs = [
-      { filePath: "test.d.ts", content: "declare const test: string;" },
+      { filePath: "/test.d.ts", content: "declare const test: string;" },
     ];
     setExtraLibs(libs, { languageDefaults: "typescriptDefaults" });
 
@@ -49,8 +49,8 @@ describe("setExtraLibs", () => {
 
   it("should add extraLibs for typescript", () => {
     const libs = [
-      { filePath: "test1.d.ts", content: "declare const test1: string;" },
-      { filePath: "test2.d.ts", content: "declare const test2: number;" },
+      { filePath: "/test1.d.ts", content: "declare const test1: string;" },
+      { filePath: "/test2.d.ts", content: "declare const test2: number;" },
     ];
 
     setExtraLibs(libs, { languageDefaults: "typescriptDefaults" });
@@ -62,24 +62,24 @@ describe("setExtraLibs", () => {
       monaco.languages.typescript.typescriptDefaults.addExtraLib
     ).toHaveBeenCalledWith(
       "declare const test1: string;",
-      "file://libs/test1.d.ts"
+      "file:///test1.d.ts"
     );
     expect(
       monaco.languages.typescript.typescriptDefaults.addExtraLib
     ).toHaveBeenCalledWith(
       "declare const test2: number;",
-      "file://libs/test2.d.ts"
+      "file:///test2.d.ts"
     );
   });
 
   it("should add extraLibs for javascript", () => {
-    const libs = [{ filePath: "test.js", content: "const test = 'hello';" }];
+    const libs = [{ filePath: "/test.js", content: "const test = 'hello';" }];
 
     setExtraLibs(libs, { languageDefaults: "javascriptDefaults" });
 
     expect(
       monaco.languages.typescript.javascriptDefaults.addExtraLib
-    ).toHaveBeenCalledWith("const test = 'hello';", "file://libs/test.js");
+    ).toHaveBeenCalledWith("const test = 'hello';", "file:///test.js");
   });
 
   it("should handle undefined libs", () => {

@@ -120,14 +120,6 @@ export async function convertComponent(
     return [];
   }
 
-  // Set [data-component-id] for the brick
-  if (component.componentId) {
-    brick.properties ??= {};
-    brick.properties.dataset ??= {};
-    (brick.properties.dataset as Record<string, string>).componentId =
-      component.componentId;
-  }
-
   if (component.ref) {
     if (scope === "template") {
       (brick as { ref?: string }).ref = component.ref;

@@ -11,7 +11,8 @@
   "sideEffects": false,
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "lib"
   ],
   "exports": {
     ".": {
@@ -19,6 +20,7 @@
       "import": "./dist/esm/index.js",
       "require": "./dist/cjs/index.js"
     },
+    "./lib/*": "./lib/*",
     "./package.json": "./package.json"
   },
   "scripts": {
@@ -36,8 +38,8 @@
   },
   "dependencies": {
     "@babel/parser": "^7.27.2",
+    "@babel/traverse": "^7.27.4",
     "@babel/types": "^7.27.7",
-    "@next-core/cook": "^2.5.12",
     "@next-core/types": "^1.17.0"
   },
   "devDependencies": {

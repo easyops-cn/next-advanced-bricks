@@ -1,51 +1,12 @@
 import { parse, type ParseResult as BabelParseResult } from "@babel/parser";
 import * as t from "@babel/types";
-import type { StoryboardFunction } from "@next-core/types";
-import type {
-  Component,
-  ParseResult,
-  DataSource,
-  ParseError,
-  ParseOptions,
-  Variable,
-  Template,
-} from "./interfaces.js";
-import { parseLegacy } from "./parseLegacy.js";
-import { parseSolid } from "./parseSolid.js";
+import type { ParseOptions, ParseResult } from "./interfaces.js";
+import { parseModule } from "./modules/parseModule.js";
+import { moduleToCompatible } from "./modules/moduleToCompatible.js";
+import { parseLegacyModule } from "./modules/parseLegacyModule.js";
+import type { ParsedModule } from "./modules/interfaces.js";
 
 export function parseTsx(source: string, options?: ParseOptions): ParseResult {
-  const dataSources: DataSource[] = [];
-  const variables: Variable[] = [];
-  const components: Component[] = [];
-  const errors: ParseError[] = [];
-  const componentsMap = new Map<string, Component>();
-  const contexts: string[] = options?.withContexts ?? [];
-  const contextSetters = new Map<string, string>();
-  const refs: string[] = [];
-  const globals = new Map<string, string>();
-  const functions: StoryboardFunction[] = [];
-  const functionNames: string[] = [];
-  const contracts = new Set<string>();
-  const templates: Template[] = [];
-  const usedHelpers = new Set<string>();
-  const result: ParseResult = {
-    source,
-    dataSources,
-    variables,
-    components,
-    componentsMap,
-    errors,
-    contexts,
-    contextSetters,
-    refs,
-    globals,
-    functionNames,
-    functions,
-    contracts,
-    templates,
-    usedHelpers,
-  };
-
   let ast: BabelParseResult<t.File> | undefined;
   try {
     ast = parse(source, {
@@ -54,35 +15,40 @@ export function parseTsx(source: string, options?: ParseOptions): ParseResult {
       errorRecovery: true,
     });
   } catch (error) {
-    errors.push({
-      message: `Failed to parse TSX: ${error}`,
-      node: null,
-      severity: "fatal",
-    });
-
-    return result;
+    return {
+      source,
+      dataSources: [],
+      variables: [],
+      components: [],
+      componentsMap: new Map(),
+      contracts: new Set(),
+      errors: [
+        {
+          message: `Failed to parse TSX: ${error}`,
+          node: null,
+          severity: "fatal",
+        },
+      ],
+      functions: [],
+      usedHelpers: new Set(),
+      templates: [],
+    };
   }
 
-  if (ast.errors?.length) {
-    for (const error of ast.errors) {
-      errors.push({
-        message: `${error.code}: ${error.reasonCode}`,
-        node: null,
-        severity: "error",
-      });
-    }
-  }
+  let mod: ParsedModule | undefined;
 
   for (const stmt of ast.program.body) {
     if (t.isExportDefaultDeclaration(stmt)) {
       if (t.isFunctionDeclaration(stmt.declaration)) {
-        parseSolid(ast, result, options);
-        return result;
+        mod = parseModule(source, ast, options);
       }
       break;
     }
   }
 
-  parseLegacy(ast, result, options);
-  return result;
+  if (!mod) {
+    mod = parseLegacyModule(source, ast, options);
+  }
+
+  return moduleToCompatible(mod);
 }

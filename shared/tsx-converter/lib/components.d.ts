@@ -6,7 +6,6 @@ export interface ViewProps {
 }
 
 export interface BaseProps {
-  componentId?: string;
   key?: string | number;
 }
 

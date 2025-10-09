@@ -14,7 +14,7 @@ export function setExtraLibs(
   }
 
   previousDisposables = libs?.map((lib) => {
-    const uri = monaco.Uri.file(`libs/${lib.filePath}`);
+    const uri = monaco.Uri.file(lib.filePath);
     const uriString = uri.toString();
     return monaco.languages.typescript[options.languageDefaults].addExtraLib(
       lib.content,

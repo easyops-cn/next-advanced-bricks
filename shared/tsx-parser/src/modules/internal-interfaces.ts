@@ -1,13 +1,6 @@
+import type { NodePath } from "@babel/traverse";
 import * as t from "@babel/types";
 import type { Component } from "../interfaces.js";
-
-export interface ConstructJsValueOptions {
-  allowExpression?: boolean;
-  allowUseBrick?: boolean;
-  ambiguous?: boolean;
-  modifier?: string;
-  replacePatterns?: Map<string, string>;
-}
 
 export type ChildElement = ChildComponent | ChildText | ChildExpression | null;
 
@@ -23,7 +16,7 @@ export interface ChildText {
 
 export interface ChildExpression {
   type: "expression";
-  expression: t.Expression;
+  expression: NodePath<t.Expression>;
 }
 
 export type ChildMerged = {
