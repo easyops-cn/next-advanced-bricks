@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.13](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.3.12...@next-bricks/vb-experiment@1.3.13) (2025-10-09)
+
+
+### Bug Fixes
+
+* remove unused files ([b9e59df](https://github.com/easyops-cn/next-advanced-bricks/commit/b9e59df65a020196c7b0acf21095da0de91ed4bd))
+
+
+
+
+
 ## [1.3.12](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.3.11...@next-bricks/vb-experiment@1.3.12) (2025-09-30)
 
 

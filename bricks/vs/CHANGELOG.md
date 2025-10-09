@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.18.5...@next-bricks/vs@1.18.6) (2025-10-09)
+
+
+### Bug Fixes
+
+* handle testing env ([2db41ba](https://github.com/easyops-cn/next-advanced-bricks/commit/2db41ba24569703d4ba830fce2c8456aa7d3106b))
+* no prefix `libs/` for extra libs ([7974b8b](https://github.com/easyops-cn/next-advanced-bricks/commit/7974b8bd476d0ab8f283a7f8a039e330f9ff7d7b))
+
+
+
+
+
 ## [1.18.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.18.4...@next-bricks/vs@1.18.5) (2025-09-30)
 
 **Note:** Version bump only for package @next-bricks/vs

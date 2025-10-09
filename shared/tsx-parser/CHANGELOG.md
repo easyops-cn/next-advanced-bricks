@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-parser@0.4.1...@next-shared/tsx-parser@0.5.0) (2025-10-09)
+
+
+### Bug Fixes
+
+* handle testing env ([2db41ba](https://github.com/easyops-cn/next-advanced-bricks/commit/2db41ba24569703d4ba830fce2c8456aa7d3106b))
+* remove unused files ([b9e59df](https://github.com/easyops-cn/next-advanced-bricks/commit/b9e59df65a020196c7b0acf21095da0de91ed4bd))
+
+
+### Features
+
+* refactor as module ([1b85ff0](https://github.com/easyops-cn/next-advanced-bricks/commit/1b85ff085f998ad36df72df680bb829c05af2814))
+
+
+### BREAKING CHANGES
+
+* drop support for some legacy features, such as await exprs, getComponent
+
+
+
+
+
 ## [0.4.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-parser@0.4.0...@next-shared/tsx-parser@0.4.1) (2025-09-29)
 
 
