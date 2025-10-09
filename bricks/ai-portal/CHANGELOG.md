@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.50.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.49.0...@next-bricks/ai-portal@0.50.0) (2025-10-09)
+
+
+### Features
+
+* sticky container ([d8c7653](https://github.com/easyops-cn/next-advanced-bricks/commit/d8c7653bd8098e03a3a0bd7c2cc3362daff13d4a))
+
+
+
+
+
 # [0.49.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.48.5...@next-bricks/ai-portal@0.49.0) (2025-09-30)
 
 
