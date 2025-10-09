@@ -24,3 +24,4 @@ import "./elevo-logo/index.js";
 import "./show-case/index.js";
 import "./data-providers/call-tool.js";
 import "./blank-state/index.js";
+import "./sticky-container/index.js";

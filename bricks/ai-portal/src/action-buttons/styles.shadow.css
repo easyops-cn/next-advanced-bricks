@@ -12,6 +12,11 @@
 }
 
 .action {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+
   &::part(button) {
     height: 28px;
     font-size: 13px;
