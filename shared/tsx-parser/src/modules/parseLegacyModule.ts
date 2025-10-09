@@ -14,8 +14,10 @@ import type {
 import { parseChildren } from "./parseChildren.js";
 import { parseJsValue } from "./parseJsValue.js";
 
-const traverse = (BabelTraverse as unknown as { default: typeof BabelTraverse })
-  .default;
+const traverse =
+  process.env.NODE_ENV === "test"
+    ? BabelTraverse
+    : (BabelTraverse as unknown as { default: typeof BabelTraverse }).default;
 
 export function parseLegacyModule(
   source: string,

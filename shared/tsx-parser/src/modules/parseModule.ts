@@ -11,8 +11,10 @@ import type {
 } from "./interfaces.js";
 import { parseFunction } from "./parseFunction.js";
 
-const traverse = (BabelTraverse as unknown as { default: typeof BabelTraverse })
-  .default;
+const traverse =
+  process.env.NODE_ENV === "test"
+    ? BabelTraverse
+    : (BabelTraverse as unknown as { default: typeof BabelTraverse }).default;
 
 export function parseModule(
   source: string,
