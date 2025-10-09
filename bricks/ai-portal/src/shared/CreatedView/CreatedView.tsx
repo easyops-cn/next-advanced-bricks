@@ -1,60 +1,37 @@
 // istanbul ignore file: experimental
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { getBasePath, unstable_createRoot } from "@next-core/runtime";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { unstable_createRoot } from "@next-core/runtime";
 import classNames from "classnames";
 import { uniqueId } from "lodash";
-import { initializeI18n } from "@next-core/i18n";
 import { convertTsx, getViewTitle } from "@next-shared/tsx-converter";
 import type { Component } from "@next-shared/tsx-parser";
 import styles from "./CreatedView.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
 import type { Job, ParsedView } from "../../shared/interfaces";
 import { WrappedIcon } from "../../shared/bricks";
-import { K, locales, NS, t } from "./i18n";
 import { createPortal } from "../../cruise-canvas/utils/createPortal";
 import { TaskContext } from "../TaskContext";
-import { ICON_FEEDBACK, ICON_LOADING } from "../constants";
-import { useViewFeedbackDone } from "../useViewFeedbackDone";
-import { parseTemplate } from "../parseTemplate";
-
-initializeI18n(NS, locales);
+import { ICON_LOADING } from "../constants";
+import { ViewToolbar } from "./ViewToolbar";
 
 export interface CreatedViewProps {
   job: Job;
+  noHeading?: boolean;
   onSizeChange?: (size: "medium" | "large") => void;
 }
 
 export function CreatedView({
   job,
+  noHeading,
   onSizeChange,
 }: CreatedViewProps): JSX.Element {
   const rootId = useMemo(() => uniqueId(), []);
-  const {
-    workspace,
-    previewUrlTemplate,
-    showJsxEditor,
-    setActiveExpandedViewJobId,
-    setActiveJsxEditorJob,
-    manuallyUpdatedViews,
-    showFeedbackOnView,
-    onFeedbackOnView,
-    feedbackDoneViews,
-  } = useContext(TaskContext);
+  const { workspace, manuallyUpdatedViews } = useContext(TaskContext);
   const ref = useRef<HTMLDivElement>(null);
   const rootRef = useRef<Awaited<
     ReturnType<typeof unstable_createRoot>
   > | null>(null);
   const generatedView = manuallyUpdatedViews?.get(job.id) ?? job.generatedView!;
-  const feedbackDone =
-    useViewFeedbackDone(generatedView.viewId, showFeedbackOnView) ||
-    feedbackDoneViews?.has(generatedView.viewId);
   const [view, setView] = useState<ParsedView | null>(null);
   const canFeedback =
     !!view && !!generatedView.viewId && generatedView.from !== "config";
@@ -153,76 +130,24 @@ export function CreatedView({
     onSizeChange?.(sizeLarge ? "large" : "medium");
   }, [onSizeChange, sizeLarge]);
 
-  const handleExpandClick = useCallback(() => {
-    setActiveExpandedViewJobId(job.id);
-  }, [job.id, setActiveExpandedViewJobId]);
-
   const viewTitle = useMemo(() => getViewTitle(view), [view]);
 
   return (
-    <div>
-      <div className={styles.heading}>
-        <div
-          className={classNames(styles.title, {
-            [sharedStyles["shine-text"]]: view && loading,
-          })}
-        >
-          {view ? viewTitle : <WrappedIcon {...ICON_LOADING} />}
-        </div>
-        <div className={styles.buttons}>
-          {showJsxEditor && (
-            <button
-              className={styles.button}
-              onClick={() => {
-                setActiveJsxEditorJob?.(job);
-              }}
-            >
-              <WrappedIcon lib="antd" icon="bug" />
-            </button>
-          )}
-          {showFeedbackOnView && !feedbackDone && canFeedback && (
-            <button
-              className={`${styles.button} ${styles["button-lucide"]}`}
-              title={t(K.FEEDBACK)}
-              onClick={() => onFeedbackOnView?.(generatedView.viewId)}
-            >
-              <WrappedIcon {...ICON_FEEDBACK} />
-            </button>
-          )}
-          {!!(
-            generatedView.viewId &&
-            !generatedView.withContexts &&
-            previewUrlTemplate
-          ) && (
-            <button
-              className={`${styles.button} ${styles["button-lucide"]}`}
-              title={t(K.OPEN_PREVIEW)}
-              onClick={() => {
-                window.open(
-                  `${getBasePath().slice(0, -1)}${parseTemplate(
-                    previewUrlTemplate,
-                    {
-                      viewId: generatedView.viewId,
-                    }
-                  )}`,
-                  "_blank"
-                );
-              }}
-            >
-              <WrappedIcon lib="lucide" icon="external-link" />
-            </button>
-          )}
-          <button
-            className={styles.button}
-            title={t(K.FULLSCREEN)}
-            onClick={handleExpandClick}
+    <>
+      {noHeading ? null : (
+        <div className={styles.heading}>
+          <div
+            className={classNames(styles.title, {
+              [sharedStyles["shine-text"]]: view && loading,
+            })}
           >
-            <WrappedIcon lib="easyops" icon="expand" />
-          </button>
+            {view ? viewTitle : <WrappedIcon {...ICON_LOADING} />}
+          </div>
+          <ViewToolbar job={job} canFeedback={canFeedback} />
         </div>
-      </div>
+      )}
       <div data-root-id={rootId} ref={ref} />
-    </div>
+    </>
   );
 }
 

@@ -20,7 +20,6 @@ export type GraphNode =
   | LoadingGraphNode
   | InstructionGraphNode
   | JobGraphNode
-  | ViewGraphNode
   | StartGraphNode
   | EndGraphNode
   | ErrorGraphNode
@@ -44,11 +43,6 @@ export interface InstructionGraphNode extends BaseGraphNode {
 
 export interface JobGraphNode extends BaseGraphNode {
   type: "job";
-  job: Job;
-}
-
-export interface ViewGraphNode extends BaseGraphNode {
-  type: "view";
   job: Job;
 }
 

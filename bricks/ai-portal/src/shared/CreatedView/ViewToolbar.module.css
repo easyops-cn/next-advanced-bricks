@@ -1,0 +1,23 @@
+.view-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.button {
+  display: flex;
+  background: none;
+  border: none;
+  padding: 3px;
+  cursor: pointer;
+  color: #595959;
+}
+
+.button-lucide {
+  font-size: 16px;
+  padding: 2px;
+}
+
+.button:hover {
+  color: var(--elevo-color-brand);
+}

@@ -36,7 +36,6 @@ import { NodeRequirement } from "./NodeRequirement/NodeRequirement.js";
 import { NodeInstruction } from "./NodeInstruction/NodeInstruction.js";
 import { NodeJob } from "./NodeJob/NodeJob.js";
 import { NodeEnd } from "./NodeEnd/NodeEnd.js";
-import { NodeView } from "./NodeView/NodeView.js";
 import {
   CANVAS_PADDING_BOTTOM,
   CANVAS_PADDING_LEFT,
@@ -740,13 +739,7 @@ export function CruiseCanvasComponent(
       if (action === "scroll") {
         scrollBy(keyboardAction.direction, keyboardAction.range);
       } else if (action === "enter") {
-        if (node.type !== "job" && node.type !== "view") {
-          return;
-        }
-        const askUser = node.job.toolCall?.name === "ask_human";
-        const askUserPlan =
-          node.job.toolCall?.name === "ask_human_confirming_plan";
-        if (askUser || askUserPlan) {
+        if (node.type !== "job") {
           return;
         }
       }
@@ -754,15 +747,11 @@ export function CruiseCanvasComponent(
       e.stopPropagation();
 
       if (action === "enter") {
-        if (node.type === "view") {
-          setActiveExpandedViewJobId(node.job.id);
-        } else {
-          setActiveToolCallJobId((node as JobGraphNode).job.id);
-        }
+        setActiveToolCallJobId((node as JobGraphNode).job.id);
       } else if (action === "switch-active-node") {
         if (node) {
           setActiveNodeId(node.id);
-          if (node.type === "job" || node.type === "view") {
+          if (node.type === "job") {
             scrollTo({
               jobId: node.job.id,
               behavior: "smooth",
@@ -1006,8 +995,6 @@ function NodeComponent({
           content={job!.instruction}
           loading={instructionLoading}
         />
-      ) : type === "view" ? (
-        <NodeView job={job!} active={active} />
       ) : (
         <NodeJob job={job!} active={active} isLeaf={isLeaf} />
       )}

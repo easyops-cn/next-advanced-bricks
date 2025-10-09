@@ -54,6 +54,7 @@
 .heading {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 5px 5px;
   font-size: 13px;
   color: #8c8c8c;
@@ -126,4 +127,8 @@
   *::-webkit-scrollbar-track {
     background: transparent; /* 轨道背景透明 */
   }
+}
+
+.view-container {
+  margin-top: 10px;
 }

@@ -134,7 +134,7 @@ describe("useConversationGraph", () => {
     });
   });
 
-  it("should create view node when job has generatedView", () => {
+  it("should collect views when job has generatedView", () => {
     const conversation = { id: "conv-1" } as ConversationBaseDetail;
     const tasks: Task[] = [
       {
@@ -153,12 +153,6 @@ describe("useConversationGraph", () => {
     const { result } = renderHook(() =>
       useConversationGraph(conversation, tasks, [])
     );
-
-    expect(result.current?.nodes).toContainEqual({
-      type: "view",
-      id: "view:job-1",
-      job: expect.objectContaining({ id: "job-1" }),
-    });
 
     expect(result.current?.views).toContainEqual({
       id: "job-1",
@@ -254,11 +248,6 @@ describe("useConversationGraph", () => {
     expect(result.current?.edges).toContainEqual({
       source: "instruction:job-1",
       target: "job:job-1",
-    });
-
-    expect(result.current?.edges).toContainEqual({
-      source: "job:job-1",
-      target: "view:job-1",
     });
   });
 
