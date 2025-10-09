@@ -41,6 +41,7 @@ export interface DataDefinition {
 export interface ExtraLib {
   filePath: string;
   content: string;
+  module?: boolean;
 }
 
 export interface ExtraMarker

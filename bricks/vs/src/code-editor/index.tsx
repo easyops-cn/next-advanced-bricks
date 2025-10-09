@@ -898,6 +898,8 @@ export function CodeEditorComponent({
           lib: domLibsEnabled ? undefined : ["esnext"],
           target: monaco.languages.typescript.ScriptTarget.ESNext,
           module: monaco.languages.typescript.ModuleKind.ESNext,
+          moduleResolution:
+            monaco.languages.typescript.ModuleResolutionKind.NodeJs,
           jsx: monaco.languages.typescript.JsxEmit.Preserve,
           skipLibCheck: true,
           skipDefaultLibCheck: true,
