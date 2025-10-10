@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.50.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.50.1...@next-bricks/ai-portal@0.50.2) (2025-10-10)
+
+
+### Bug Fixes
+
+* fix elevo theme variant ([ec661da](https://github.com/easyops-cn/next-advanced-bricks/commit/ec661da9028f2dec2d675fce94acfb6718fea3db))
+* get a deterministic class based on the caseTitle ([9415e41](https://github.com/easyops-cn/next-advanced-bricks/commit/9415e41e934b6423881319c0536a84bb66dbf778))
+
+
+
+
+
 ## [0.50.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.50.0...@next-bricks/ai-portal@0.50.1) (2025-10-09)
 
 

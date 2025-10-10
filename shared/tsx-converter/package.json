@@ -1,6 +1,6 @@
 {
   "name": "@next-shared/tsx-converter",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "homepage": "https://github.com/easyops-cn/next-advanced-bricks/tree/master/shared/tsx-converter",
   "repository": {
     "type": "git",

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-converter@0.4.4...@next-shared/tsx-converter@0.4.5) (2025-10-10)
+
+
+### Bug Fixes
+
+* refine select props ([24f452c](https://github.com/easyops-cn/next-advanced-bricks/commit/24f452c5884e409713b58d5ce5d4171dab22258e))
+
+
+
+
+
 ## [0.4.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-converter@0.4.3...@next-shared/tsx-converter@0.4.4) (2025-10-09)
 
 
