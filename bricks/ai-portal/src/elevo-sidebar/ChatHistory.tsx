@@ -366,6 +366,7 @@ export function LowLevelChatHistory(
                   <WrappedMiniActions
                     className="actions"
                     actions={projectActions}
+                    themeVariant="elevo"
                     onActionClick={(e) => {
                       onProjectActionClick({ action: e.detail, project });
                     }}

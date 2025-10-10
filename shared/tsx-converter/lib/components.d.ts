@@ -92,7 +92,7 @@ export interface NumberInputProps extends InputProps {
 export interface TextareaProps extends InputProps {}
 
 export interface SelectProps extends InputProps {
-  options: FormItemOptions[];
+  options: (FormItemOptions | string)[];
   onChange?: (e: CustomEvent<string | number | boolean | null>) => void;
 }
 

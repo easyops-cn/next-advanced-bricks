@@ -39,7 +39,7 @@ export const WrappedEasyopsAvatar = wrapBrick<
 >("eo-easyops-avatar");
 export const WrappedMiniActions = wrapBrick<
   EoMiniActions,
-  EoMiniActionsProps,
+  EoMiniActionsProps & { themeVariant?: "default" | "elevo" },
   EoMiniActionsEvents,
   EoMiniActionsEventsMapping
 >("eo-mini-actions", {
