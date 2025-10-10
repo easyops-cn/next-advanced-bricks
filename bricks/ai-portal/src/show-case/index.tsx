@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { createDecorators } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
@@ -54,11 +54,19 @@ class ShowCase extends ReactNextElement implements ShowCaseProps {
 }
 
 function ShowCaseComponent({ caseTitle, summary, url }: ShowCaseProps) {
+  const bgClass = useMemo(() => {
+    // Get a deterministic class based on the caseTitle
+    if (!caseTitle) return bgClasses[0];
+    let hash = 0;
+    for (let i = 0; i < caseTitle.length; i++) {
+      hash = caseTitle.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % bgClasses.length;
+    return bgClasses[index];
+  }, [caseTitle]);
+
   return (
-    <WrappedLink
-      className={`link ${bgClasses[Math.floor(Math.random() * bgClasses.length)]}`}
-      url={url}
-    >
+    <WrappedLink className={`link ${bgClass}`} url={url}>
       <span className="title">{caseTitle}</span>
       <span className="description">{summary}</span>
       <span className="mask" />
