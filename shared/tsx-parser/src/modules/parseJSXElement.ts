@@ -6,7 +6,7 @@ import type {
   EventHandler,
   Events,
   ParseJsValueOptions,
-  ParseModuleState,
+  ParsedModule,
 } from "./interfaces.js";
 import { parsePropValue } from "./parseJsValue.js";
 import { parseLowLevelChildren } from "./parseLowLevelChildren.js";
@@ -14,10 +14,11 @@ import type { ChildElement } from "./internal-interfaces.js";
 import { parseElement } from "./parseElement.js";
 import { parseEvent } from "./parseEvent.js";
 import { validateGlobalApi } from "./validations.js";
+import { getComponentReference } from "./getComponentReference.js";
 
 export function parseJSXElement(
   path: NodePath<t.JSXElement>,
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions
 ): ChildElement | null | (ChildElement | null)[] {
   const openingElement = path.get("openingElement");
@@ -52,10 +53,13 @@ export function parseJSXElement(
       .flatMap((child) => parseElement(child, state, options));
   }
 
+  const reference = getComponentReference(tagName, state, options);
   const properties: Record<string, unknown> = {};
-  const ambiguousProps: Record<string, unknown> = {};
+  // const ambiguousProps: Record<string, unknown> = {};
   let events: Events | undefined;
   let ref: string | undefined;
+
+  const isRoute = validateGlobalApi(tagName, "Route");
 
   for (const attr of openingElement.get("attributes")) {
     if (attr.isJSXSpreadAttribute()) {
@@ -81,6 +85,58 @@ export function parseJSXElement(
       continue;
     }
     const attrValuePath = (attr as NodePath<t.JSXAttribute>).get("value");
+
+    if (isRoute) {
+      if (attrName === "component") {
+        if (!attrValuePath.isJSXExpressionContainer()) {
+          state.errors.push({
+            message: `The "component" attribute in Route expects a JSXExpressionContainer, but got ${attrValuePath.node?.type}`,
+            node: attrValuePath.node ?? attrValuePath.parent,
+            severity: "error",
+          });
+          continue;
+        }
+        const exprPath = attrValuePath.get("expression");
+        if (!exprPath.isIdentifier()) {
+          state.errors.push({
+            message: `The "component" attribute in Route expects an identifier, but got ${exprPath.node.type}`,
+            node: exprPath.node,
+            severity: "error",
+          });
+          continue;
+        }
+        const reference = getComponentReference(exprPath, state, options);
+        if (!reference) {
+          state.errors.push({
+            message: `The component "${exprPath.node.name}" is not defined`,
+            node: exprPath.node,
+            severity: "error",
+          });
+          continue;
+        }
+        properties.component = {
+          name: exprPath.node.name,
+          reference,
+        };
+      } else if (attrName === "path") {
+        if (!attrValuePath.isStringLiteral()) {
+          state.errors.push({
+            message: `The "path" attribute in Route expects a string literal, but got ${attrValuePath.node?.type}`,
+            node: attrValuePath.node ?? attrValuePath.parent,
+            severity: "error",
+          });
+          continue;
+        }
+        properties.path = attrValuePath.node.value;
+      } else {
+        state.errors.push({
+          message: `Unsupported attribute "${attrName}" in Route`,
+          node: attrNamePath.node,
+          severity: "error",
+        });
+      }
+      continue;
+    }
 
     if (attrName === "ref") {
       ref = parseRefAttribute(attrValuePath, state, options);
@@ -139,7 +195,7 @@ export function parseJSXElement(
         properties[attrName] = true;
       } else if (attrValuePath.isStringLiteral()) {
         properties[attrName] = attrValuePath.node.value;
-        ambiguousProps[attrName] = attrValuePath.node.value;
+        // ambiguousProps[attrName] = attrValuePath.node.value;
       } else if (attrValuePath.isJSXExpressionContainer()) {
         const exprPath = attrValuePath.get("expression");
         if (exprPath.isJSXEmptyExpression()) {
@@ -182,6 +238,7 @@ export function parseJSXElement(
 
   const child: ComponentChild = {
     name: tagName.node.name,
+    reference,
     properties,
     ref,
     events,
@@ -196,7 +253,7 @@ export function parseJSXElement(
 
 function parseRefAttribute(
   attrValuePath: NodePath<t.Node | null | undefined>,
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions
 ): string | undefined {
   if (!attrValuePath.isJSXExpressionContainer()) {

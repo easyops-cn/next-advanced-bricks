@@ -5,7 +5,7 @@ import type {
   BindingMap,
   ParsedComponent,
   ParseJsValueOptions,
-  ParseModuleState,
+  ParsedModule,
 } from "./interfaces.js";
 import { validateFunction, validateGlobalApi } from "./validations.js";
 import { parseJsValue } from "./parseJsValue.js";
@@ -14,8 +14,8 @@ import { parseUseResource } from "./parseUseResource.js";
 
 export function parseComponent(
   fn: NodePath<t.FunctionDeclaration>,
-  state: ParseModuleState,
-  type: "template" | "view",
+  state: ParsedModule,
+  type: "template" | "view" | "page",
   globalOptions?: ParseJsValueOptions
 ): ParsedComponent | null {
   if (!validateFunction(fn.node, state)) {
@@ -26,6 +26,7 @@ export function parseComponent(
   const component: ParsedComponent = {
     bindingMap,
     type,
+    id: fn.node.id,
   };
   const options: ParseJsValueOptions = { ...globalOptions, component };
 
@@ -121,7 +122,7 @@ export function parseComponent(
   } else if (params.length > 0) {
     state.errors.push({
       message: `Page function cannot have parameters, received ${params.length}`,
-      node: fn.node,
+      node: params[0].node,
       severity: "error",
     });
     return null;

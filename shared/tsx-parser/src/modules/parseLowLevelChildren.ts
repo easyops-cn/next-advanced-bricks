@@ -9,14 +9,14 @@ import type {
 import type {
   ComponentChild,
   ParseJsValueOptions,
-  ParseModuleState,
+  ParsedModule,
 } from "./interfaces.js";
 import { parseElement } from "./parseElement.js";
 import { parseEmbedded } from "./parseEmbedded.js";
 
 export function parseLowLevelChildren(
   paths: NodePath<t.Node>[],
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions
 ): {
   textContent?: string;
@@ -116,7 +116,7 @@ export function parseLowLevelChildren(
 
 function constructMergeTexts(
   elements: (ChildText | ChildExpression)[],
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions
 ) {
   state.usedHelpers.add("_helper_mergeTexts");

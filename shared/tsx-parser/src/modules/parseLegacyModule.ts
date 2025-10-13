@@ -5,14 +5,17 @@ import type * as t from "@babel/types";
 import type {
   BindingInfo,
   BindingMap,
+  ParsedApp,
   ParsedComponent,
-  ParsedModule,
   ParseJsValueOptions,
   ParseModuleOptions,
-  ParseModuleState,
+  ParsedModule,
+  ModulePartOfComponent,
 } from "./interfaces.js";
 import { parseChildren } from "./parseChildren.js";
 import { parseJsValue } from "./parseJsValue.js";
+import { getViewTitle } from "./getViewTitle.js";
+import type { ParseError } from "../interfaces.js";
 
 const traverse =
   process.env.NODE_ENV === "test"
@@ -20,20 +23,15 @@ const traverse =
     : (BabelTraverse as unknown as { default: typeof BabelTraverse }).default;
 
 export function parseLegacyModule(
-  source: string,
+  filePath: string,
+  app: ParsedApp,
   ast: BabelParseResult<t.File>,
   options?: ParseModuleOptions
-): ParsedModule {
-  const state: ParseModuleState = {
-    source,
-    errors: [],
-    usedHelpers: new Set(),
-    contracts: new Set(),
-  };
-
+): void {
+  const errors: ParseError[] = [];
   if (ast.errors?.length) {
     for (const error of ast.errors) {
-      state.errors.push({
+      errors.push({
         message: `${error.code}: ${error.reasonCode}`,
         node: null,
         severity: "error",
@@ -50,15 +48,20 @@ export function parseLegacyModule(
     component,
     contextBindings: options?.withContexts,
   };
-  const parsed: ParsedModule = {
-    source,
-    filename: options?.filename,
-    defaultExport: component,
-    internalComponents: [],
-    internalFunctions: [],
-    errors: state.errors,
-    contracts: state.contracts,
-    usedHelpers: state.usedHelpers,
+  const file = app.files.find((f) => f.filePath === filePath)!;
+  const mod: ParsedModule = {
+    source: file.content,
+    filePath,
+    moduleType: "entry",
+    defaultExport: {
+      type: "view",
+      component,
+    },
+    internals: [],
+    namedExports: new Map(),
+    errors: errors,
+    contracts: new Set(),
+    usedHelpers: new Set(),
   };
 
   traverse(ast, {
@@ -68,7 +71,7 @@ export function parseLegacyModule(
       for (const stmt of body) {
         if (stmt.isVariableDeclaration()) {
           if (exported) {
-            state.errors.push({
+            errors.push({
               message: `Unexpected variable declaration after export`,
               node: stmt.node,
               severity: "error",
@@ -76,7 +79,7 @@ export function parseLegacyModule(
             continue;
           }
           if (stmt.node.kind !== "const") {
-            state.errors.push({
+            errors.push({
               message: `Only "const" variable declaration is allowed, received: ${stmt.node.kind}`,
               node: stmt.node,
               severity: "error",
@@ -86,7 +89,7 @@ export function parseLegacyModule(
           for (const decl of stmt.get("declarations")) {
             const declId = decl.get("id");
             if (!declId.isIdentifier()) {
-              state.errors.push({
+              errors.push({
                 message: `Unsupported variable declaration pattern, expected: Identifier, received: ${declId.type}`,
                 node: declId.node,
                 severity: "error",
@@ -99,7 +102,7 @@ export function parseLegacyModule(
             if (init.node) {
               binding.initialValue = parseJsValue(
                 init as NodePath<t.Node>,
-                state,
+                mod,
                 globalOptions
               );
             }
@@ -109,13 +112,13 @@ export function parseLegacyModule(
           exported = true;
           const decl = stmt.get("declaration");
           if (!decl.isJSXElement()) {
-            state.errors.push({
+            errors.push({
               message: `Default export must be a JSX element, received: ${decl.type}`,
               node: stmt.node,
               severity: "error",
             });
           } else {
-            component.children = parseChildren(decl, state, globalOptions);
+            component.children = parseChildren(decl, mod, globalOptions);
           }
           break;
         }
@@ -125,5 +128,7 @@ export function parseLegacyModule(
     },
   });
 
-  return parsed;
+  (mod.defaultExport as ModulePartOfComponent).title = getViewTitle(component);
+
+  app.entry = mod;
 }

@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { parseTsx } from "@next-shared/tsx-parser";
-import { convertTsx } from "./convertTsx.js";
+import { parseView } from "@next-shared/tsx-parser";
+import { convertView } from "./modules/convertView.js";
 
 describe("convertTsx", () => {
   test("should work", async () => {
@@ -10,8 +10,8 @@ describe("convertTsx", () => {
       "utf-8"
     );
 
-    const parseResult = parseTsx(code);
-    const result = await convertTsx(parseResult, { rootId: "test-root" });
+    const view = parseView(code);
+    const result = await convertView(view, { rootId: "test-root" });
     expect(result).toMatchSnapshot();
   });
 });

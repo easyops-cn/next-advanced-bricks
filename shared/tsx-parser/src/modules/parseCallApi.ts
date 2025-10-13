@@ -2,12 +2,15 @@ import type { NodePath } from "@babel/traverse";
 import type * as t from "@babel/types";
 import type {
   ParseJsValueOptions,
-  ParseModuleState,
+  ParsedModule,
   ToolInfo,
 } from "./interfaces.js";
 import { parseJsValue } from "./parseJsValue.js";
-import { isNilPath, validateGlobalApi } from "./validations.js";
-import { isExpressionString } from "../utils.js";
+import {
+  isExpressionString,
+  isNilPath,
+  validateGlobalApi,
+} from "./validations.js";
 import { CALL_API_LIST } from "./constants.js";
 
 export interface CallApiPayload {
@@ -27,7 +30,7 @@ const EXPECTED_ARGS = {
 
 export function parseCallApi(
   path: NodePath<t.Expression>,
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions
 ): CallApiPayload | null {
   if (!(path.isCallExpression() || path.isOptionalCallExpression())) {

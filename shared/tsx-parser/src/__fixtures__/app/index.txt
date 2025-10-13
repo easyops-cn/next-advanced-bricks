@@ -1,0 +1,17 @@
+/* eslint-disable */
+// @ts-nocheck
+
+import { render, Routes, Route } from "next-tsx";
+import Layout1, { Page503 as Page403 } from "./Pages/Test";
+
+render(
+  <Routes>
+    <Route path="/" component={Layout1} />
+    <Route path="/404" component={Page403} />
+  </Routes>
+);
+
+// utils/sayHello.ts
+function sayHello(name: string) {
+  return `Hello, ${name}!`;
+}

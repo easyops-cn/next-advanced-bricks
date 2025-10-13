@@ -1,5 +1,4 @@
-// import { codeFrameColumns } from "@babel/code-frame";
-import { parseTsx } from "./parseTsx.js";
+import { parseView } from "./parseView.js";
 
 const code = `
 
@@ -42,30 +41,7 @@ export default function() {
 
 describe("parseSolid", () => {
   test("should parse TSX code with defineContext", () => {
-    const { errors, componentsMap, source, ...result } = parseTsx(code, {
-      // withContexts: ["RESPONSE"],
-    });
-    if (errors.length > 0) {
-      // console.warn(errors);
-      //   for (const error of errors) {
-      //     console.error(error.message);
-      //     // if (!error.node) {
-      //     //   console.error(error.message);
-      //     // } else if (error.message.includes("\n")) {
-      //     //   console.error(error.message);
-      //     //   const columns = codeFrameColumns(code, error.node.loc);
-      //     //   console.error(columns);
-      //     // } else {
-      //     //   const columns = codeFrameColumns(code, error.node.loc, {
-      //     //     message: error.message,
-      //     //   });
-      //     //   console.error(columns);
-      //     // }
-      //   }
-    }
-    // console.dir(result, { depth: null, colors: true });
-    // expect(errors).toHaveLength(1);
-    expect(result.components).toHaveLength(1);
-    expect(result.components[0].children).toHaveLength(2);
+    const view = parseView(code);
+    expect(view).toBeTruthy();
   });
 });

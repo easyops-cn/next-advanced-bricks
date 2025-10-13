@@ -1,5 +1,5 @@
-import { strictCollectMemberUsage } from "@next-core/utils/storyboard";
-import type { DataSource, Variable } from "@next-shared/tsx-parser";
+// import { strictCollectMemberUsage } from "@next-core/utils/storyboard";
+import type { DataSource } from "@next-shared/tsx-parser";
 
 /**
  * Find the object ID associated with the used data contexts.
@@ -8,8 +8,8 @@ import type { DataSource, Variable } from "@next-shared/tsx-parser";
  */
 export function findObjectIdByUsedDataContexts(
   usedContexts: Set<string> | undefined,
-  dataSources: DataSource[] | undefined,
-  variables: Variable[] | undefined
+  dataSources: DataSource[] | undefined /* ,
+  variables: Variable[] | undefined */
 ) {
   let objectId: string | undefined;
   if (usedContexts?.size && dataSources?.length) {
@@ -21,10 +21,10 @@ export function findObjectIdByUsedDataContexts(
     }
 
     const variableDepsMap = new Map<string, Set<string>>();
-    for (const variable of variables ?? []) {
-      const deps = strictCollectMemberUsage(variable.value, "CTX");
-      variableDepsMap.set(variable.name, deps);
-    }
+    // for (const variable of variables ?? []) {
+    //   const deps = strictCollectMemberUsage(variable.value, "CTX");
+    //   variableDepsMap.set(variable.name, deps);
+    // }
 
     const processedContexts = new Set<string>();
 

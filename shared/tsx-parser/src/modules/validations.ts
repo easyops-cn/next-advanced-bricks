@@ -1,11 +1,11 @@
 import type { NodePath } from "@babel/traverse";
 import * as t from "@babel/types";
-import type { ParseModuleState } from "./interfaces.js";
+import type { ComponentChild, ParsedModule } from "./interfaces.js";
 import { MODULE_SOURCE } from "./constants.js";
 
 export function validateFunction(
   fn: t.FunctionDeclaration | t.FunctionExpression | t.ArrowFunctionExpression,
-  state: ParseModuleState
+  state: ParsedModule
 ): boolean {
   if (fn.async || fn.generator) {
     state.errors.push({
@@ -32,7 +32,7 @@ export function validateGlobalApi(
 
 export function validateEmbeddedExpression(
   expr: t.Expression,
-  state: ParseModuleState | null
+  state: ParsedModule | null
 ): boolean {
   let invalidNode: t.Node | null = null;
 
@@ -87,5 +87,20 @@ export function isExpressionString(value: unknown): value is string {
   const trimmed = value.trim();
   return (
     EXPRESSION_PREFIX_REG.test(trimmed) && EXPRESSION_SUFFIX_REG.test(trimmed)
+  );
+}
+
+export function isAnyOfficialComponent(child: ComponentChild) {
+  return (
+    !child.reference ||
+    (child.reference.type === "imported" &&
+      child.reference.importSource === MODULE_SOURCE)
+  );
+}
+
+export function isOfficialComponent(child: ComponentChild, name: string) {
+  return (
+    isAnyOfficialComponent(child) &&
+    (child.reference ? child.reference.name === name : child.name === name)
   );
 }

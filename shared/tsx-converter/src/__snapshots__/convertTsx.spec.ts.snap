@@ -341,6 +341,30 @@ exports[`convertTsx should work 1`] = `
   },
   "context": [
     {
+      "expose": false,
+      "name": "logId",
+      "track": true,
+      "value": "<% QUERY.logId %>",
+    },
+    {
+      "expose": false,
+      "name": "allExpanded",
+      "track": true,
+      "value": false,
+    },
+    {
+      "expose": false,
+      "name": "expandedSet",
+      "track": true,
+      "value": "<% new Set() %>",
+    },
+    {
+      "expose": false,
+      "name": "detailLog",
+      "track": true,
+      "value": null,
+    },
+    {
       "name": "logs",
       "resolve": {
         "args": [
@@ -353,30 +377,6 @@ exports[`convertTsx should work 1`] = `
         },
         "useProvider": "basic.http-request",
       },
-      "track": true,
-      "value": null,
-    },
-    {
-      "expose": undefined,
-      "name": "logId",
-      "track": true,
-      "value": "<% QUERY.logId %>",
-    },
-    {
-      "expose": undefined,
-      "name": "allExpanded",
-      "track": true,
-      "value": false,
-    },
-    {
-      "expose": undefined,
-      "name": "expandedSet",
-      "track": true,
-      "value": "<% new Set() %>",
-    },
-    {
-      "expose": undefined,
-      "name": "detailLog",
       "track": true,
       "value": null,
     },
