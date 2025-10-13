@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.25.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.24.11...@next-bricks/nav@1.25.0) (2025-10-13)
+
+
+### Features
+
+* portal 构件国际化 ([04d8cfd](https://github.com/easyops-cn/next-advanced-bricks/commit/04d8cfdd7a184799874f7f7c299e24067a7e71c7))
+
+
+
+
+
 ## [1.24.11](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.24.10...@next-bricks/nav@1.24.11) (2025-09-30)
 
 **Note:** Version bump only for package @next-bricks/nav
