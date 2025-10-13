@@ -9,6 +9,10 @@ import { useLaunchpadInfo } from "../launchpad-button-v2/useLaunchpadInfo";
 import { MenuGroup } from "../launchpad-button-v2/MenuGroup";
 import { GeneralIcon, GeneralIconProps } from "@next-bricks/icons/general-icon";
 import "./host-context.css";
+import { K, NS, locales } from "./i18n.js";
+import { useTranslation, initializeReactI18n } from "@next-core/i18n/react";
+
+initializeReactI18n(NS, locales);
 
 export const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
@@ -61,6 +65,7 @@ export function EoSearchLaunchpadComponent({
     isStarred,
   } = useLaunchpadInfo(active);
   const searching = !!q;
+  const { t } = useTranslation(NS);
 
   const handleSearch = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,7 +98,7 @@ export function EoSearchLaunchpadComponent({
           />
           <input
             ref={searchInputRef}
-            placeholder="搜索产品/微应用"
+            placeholder={t(K.SEARCH_PLACEHOLDER) as string}
             value={q}
             onChange={handleSearch}
             className="search-input"

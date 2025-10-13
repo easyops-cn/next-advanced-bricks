@@ -41,6 +41,10 @@ import { getLayoutDefaultCardConfig } from "./utils";
 import styles from "./styles.module.css";
 import layoutItemStyles from "./DroppableComponentLayoutItem.module.css";
 import "./styles.css";
+import { K, NS, locales } from "./i18n.js";
+import { useTranslation, initializeReactI18n } from "@next-core/i18n/react";
+
+initializeReactI18n(NS, locales);
 
 const { defineElement, property, event, method } = createDecorators();
 
@@ -110,6 +114,7 @@ export const EoWorkbenchLayoutComponent = forwardRef<
     () => WidthProvider(Responsive),
     []
   );
+  const { t } = useTranslation(NS);
   const gridLayoutRef = useRef<HTMLDivElement>(null);
   const layoutWrapperRef = useRef<HTMLDivElement>(null);
   const layoutCacheRef = useRef<ExtraLayout[]>(layoutsProps ?? []);
@@ -220,8 +225,8 @@ export const EoWorkbenchLayoutComponent = forwardRef<
       case "clear":
         showDialog({
           type: "confirm",
-          title: "清空确认",
-          content: "将清空所有卡片，从零开始编辑，该操作无法撤回。",
+          title: t(K.CLEAR_CONFIRM) as string,
+          content: t(K.CLEAR_CONFIRM_MESSAGE),
         }).then(handleClearLayout);
         break;
       default:
@@ -416,26 +421,26 @@ export const EoWorkbenchLayoutComponent = forwardRef<
         {isEdit && (
           <div className={styles.actionsWrapper}>
             <WrappedButton type="primary" onClick={handleSave}>
-              保存
+              {t(K.SAVE)}
             </WrappedButton>
-            <WrappedButton onClick={handleCancel}>取消</WrappedButton>
+            <WrappedButton onClick={handleCancel}>{t(K.CANCEL)}</WrappedButton>
             {showSettingButton && (
               <WrappedButton
                 data-testid="setting-button"
                 onClick={handleSetting}
               >
-                设置
+                {t(K.SETTING)}
               </WrappedButton>
             )}
             <WrappedDropdownButton
-              btnText="更多"
+              btnText={t(K.MORE) as string}
               icon={{ lib: "antd", icon: "down" }}
               actions={[
                 ...(isAdmin
-                  ? [{ text: "另存为模板", event: "saveAsTemplate" }]
+                  ? [{ text: t(K.SAVE_AS_TEMPLATE), event: "saveAsTemplate" }]
                   : []),
-                { text: "从模板加载", event: "loadFromTemplate" },
-                { text: "清空所有", danger: true, event: "clear" },
+                { text: t(K.LOAD_FROM_TEMPLATE), event: "loadFromTemplate" },
+                { text: t(K.CLEAR_ALL), danger: true, event: "clear" },
               ]}
               onActionClick={(e) => {
                 handleActionClick(e.detail);
