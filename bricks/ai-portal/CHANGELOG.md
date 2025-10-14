@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.50.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.50.2...@next-bricks/ai-portal@0.50.3) (2025-10-14)
+
+
+### Bug Fixes
+
+* fix ai-employee avatar border radius ([f4fc941](https://github.com/easyops-cn/next-advanced-bricks/commit/f4fc9419586f6d3b120e0c9485c1cf563d379cb5))
+* fix import resolve ([7349832](https://github.com/easyops-cn/next-advanced-bricks/commit/734983221ee79f15e240d71b0f3d7acb326f1a6c))
+* prefer sidebar as default instead of drawer except for chat page ([8847bf5](https://github.com/easyops-cn/next-advanced-bricks/commit/8847bf5ca7c8e1c684bbbe5153b100423ff4a2af))
+* refactor tsx view ([04729f1](https://github.com/easyops-cn/next-advanced-bricks/commit/04729f1580ec56767165ec259aefd837b119a98b))
+* refine app previewer api ([d9f5edb](https://github.com/easyops-cn/next-advanced-bricks/commit/d9f5edb7116df1d1d5c3d6635085687c42b10aa8))
+
+
+
+
+
 ## [0.50.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.50.1...@next-bricks/ai-portal@0.50.2) (2025-10-10)
 
 

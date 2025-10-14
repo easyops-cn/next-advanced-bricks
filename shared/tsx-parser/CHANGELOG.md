@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.6.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-parser@0.5.0...@next-shared/tsx-parser@0.6.0) (2025-10-14)
+
+
+### Bug Fixes
+
+* fix import resolve ([7349832](https://github.com/easyops-cn/next-advanced-bricks/commit/734983221ee79f15e240d71b0f3d7acb326f1a6c))
+
+
+### Features
+
+* refactor tsx parser/converter, make it work with apps ([e61386e](https://github.com/easyops-cn/next-advanced-bricks/commit/e61386e9c4b4d9e282dcf7a417e5086bf08f1b1e))
+
+
+### BREAKING CHANGES
+
+* changed api
+
+
+
+
+
 # [0.5.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-parser@0.4.1...@next-shared/tsx-parser@0.5.0) (2025-10-09)
 
 
