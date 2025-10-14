@@ -21,6 +21,7 @@ export interface PageContainerProps {
   pageTitle?: string;
   breadcrumbs?: Breadcrumb[];
   size?: "medium" | "small";
+  variant?: "default" | "form";
   sticky?: boolean;
 }
 
@@ -48,6 +49,9 @@ class PageContainer extends ReactNextElement implements PageContainerProps {
 
   @property({ render: false })
   accessor size: "medium" | "small" | undefined;
+
+  @property({ render: false })
+  accessor variant: "default" | "form" | undefined;
 
   @property({ type: Boolean })
   accessor sticky: boolean | undefined;
