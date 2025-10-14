@@ -37,12 +37,10 @@ function resolvePath(path: string, files: SourceFile[]): string {
   if (files.some((f) => f.filePath === path)) {
     return path;
   }
-  if (
-    files.some((f) =>
-      resolveExtensions.some((ext) => f.filePath === `${path}${ext}`)
-    )
-  ) {
-    return `${path}.tsx`;
+  for (const ext of resolveExtensions) {
+    if (files.some((f) => f.filePath === `${path}${ext}`)) {
+      return `${path}${ext}`;
+    }
   }
   return path;
 }

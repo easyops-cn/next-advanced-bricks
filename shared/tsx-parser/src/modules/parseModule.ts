@@ -218,6 +218,14 @@ export function parseModule(
   });
 }
 
+/**
+ * Checks if a given identifier is a component.
+ *
+ * Convention: components have names starting with uppercase letter
+ * e.g. MyComponent, HelloWorld
+ * functions have names starting with lowercase letter
+ * e.g. myFunction, helloWorld
+ */
 function isComponent(id: t.Identifier) {
   return id.name[0] >= "A" && id.name[0] <= "Z";
 }

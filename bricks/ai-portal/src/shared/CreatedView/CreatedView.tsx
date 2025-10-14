@@ -137,10 +137,12 @@ export function CreatedView({
 
 function traverseBricks(
   bricks: BrickConf[],
-  callback: (bricks: BrickConf) => void
+  callback: (bricks: BrickConf) => boolean
 ) {
   for (const brick of bricks) {
-    callback(brick);
+    if (callback(brick)) {
+      break;
+    }
     if (Array.isArray(brick.children)) {
       traverseBricks(brick.children, callback);
     }
@@ -152,7 +154,9 @@ function preferSizeLarge(brick: BrickConf): boolean {
   traverseBricks([brick], (b) => {
     if (b.brick === "eo-next-table") {
       large = true;
-    } else if (
+      return true;
+    }
+    if (
       b.brick === "div" &&
       (b.properties?.dataset as Record<string, string>)?.component ===
         "dashboard"
@@ -160,8 +164,10 @@ function preferSizeLarge(brick: BrickConf): boolean {
       const widgets = b.children;
       if (Array.isArray(widgets) && widgets.length >= 7) {
         large = true;
+        return true;
       }
     }
+    return false;
   });
   return large;
 }
