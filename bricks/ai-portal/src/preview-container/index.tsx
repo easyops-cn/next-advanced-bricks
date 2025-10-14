@@ -4,12 +4,8 @@ import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import { unstable_createRoot } from "@next-core/runtime";
-import type { ParseResult } from "@next-shared/tsx-parser";
-import {
-  convertTsx,
-  getViewTitle,
-  type ConvertResult,
-} from "@next-shared/tsx-converter";
+import type { ModulePartOfComponent, ParsedApp } from "@next-shared/tsx-parser";
+import { convertView, type ConvertResult } from "@next-shared/tsx-converter";
 import type {
   GeneralIcon,
   GeneralIconProps,
@@ -117,7 +113,7 @@ function PreviewContainerComponent({
     if (!parsedResult) {
       return Promise.resolve(null);
     }
-    return convertTsx(parsedResult, {
+    return convertView(parsedResult, {
       rootId,
       expanded: true,
     }).catch((error) => {
@@ -129,7 +125,10 @@ function PreviewContainerComponent({
 
   const convertedResult = use(convertedResultPromise);
 
-  const viewTitle = useMemo(() => getViewTitle(parsedResult), [parsedResult]);
+  const viewTitle = useMemo(
+    () => (parsedResult?.entry?.defaultExport as ModulePartOfComponent)?.title,
+    [parsedResult]
+  );
 
   return (
     <RenderComponent
@@ -198,8 +197,8 @@ function RenderComponent({
   );
 }
 
-async function parse(source: string): Promise<ParseResult> {
+async function parse(source: string): Promise<ParsedApp> {
   const worker = await getRemoteTsxParserWorker();
-  const result = await worker.parse(source);
+  const result = await worker.parseView(source);
   return result;
 }

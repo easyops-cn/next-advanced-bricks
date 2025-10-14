@@ -4,13 +4,12 @@ import React, {
   useDeferredValue,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import { createDecorators, type EventEmitter } from "@next-core/element";
-import { httpErrorToString, unstable_createRoot } from "@next-core/runtime";
-import { ReactNextElement } from "@next-core/react-element";
+import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import { asyncWrapBrick } from "@next-core/react-runtime";
+import type { Storyboard } from "@next-core/types";
 import { uniqueId } from "lodash";
 import type {
   CodeEditor,
@@ -20,12 +19,12 @@ import type {
 } from "@next-bricks/vs/code-editor";
 import nextTsxDefinition from "@next-shared/tsx-parser/lib/next-tsx.d.ts?raw";
 import componentsDefinition from "@next-shared/tsx-converter/lib/components.d.ts?raw";
-import { convertView, type ConvertResult } from "@next-shared/tsx-converter";
+import { convertApp, type ConvertedApp } from "@next-shared/tsx-converter";
 import type { ParsedApp } from "@next-shared/tsx-parser";
 import "@next-core/theme";
 import styles from "./styles.module.css";
-import { getRemoteTsxParserWorker } from "./workers/tsxParser.js";
-import { createPortal } from "./createPortal.js";
+import { getRemoteTsxParserWorker } from "../tsx-playground/workers/tsxParser.js";
+import type { AppPreview, AppPreviewProps } from "../app-preview/index.js";
 
 interface CodeEditorEvents {
   "code.change": CustomEvent<string>;
@@ -45,6 +44,10 @@ const AsyncWrappedCodeEditor = React.lazy(async () => ({
     onCodeChange: "code.change",
   }),
 }));
+
+const WrappedAppPreview = wrapBrick<AppPreview, AppPreviewProps>(
+  "vb-experiment.app-preview"
+);
 
 const BUILTIN_LIBS: ExtraLib[] = [
   {
@@ -66,20 +69,20 @@ const BUILTIN_LIBS: ExtraLib[] = [
 
 const { defineElement, property, event } = createDecorators();
 
-export interface TsxPlaygroundProps {
+export interface AppPlaygroundProps {
   source?: string;
   extraLibs?: ExtraLib[];
 }
 
 /**
- * 构件 `vb-experiment.tsx-playground`
+ * 构件 `vb-experiment.app-playground`
  */
 export
-@defineElement("vb-experiment.tsx-playground", {
+@defineElement("vb-experiment.app-playground", {
   // Monaco editor does not work well with shadow DOM
   shadowOptions: false,
 })
-class TsxPlayground extends ReactNextElement implements TsxPlaygroundProps {
+class AppPlayground extends ReactNextElement implements AppPlaygroundProps {
   /** 仅初始有效 */
   @property({ attribute: false })
   accessor source: string | undefined;
@@ -96,7 +99,7 @@ class TsxPlayground extends ReactNextElement implements TsxPlaygroundProps {
 
   render() {
     return (
-      <TsxPlaygroundComponent
+      <AppPlaygroundComponent
         source={this.source}
         extraLibs={this.extraLibs}
         onChange={this.#handleChange}
@@ -105,7 +108,7 @@ class TsxPlayground extends ReactNextElement implements TsxPlaygroundProps {
   }
 }
 
-interface TsxPlaygroundComponentProps extends TsxPlaygroundProps {
+interface AppPlaygroundComponentProps extends AppPlaygroundProps {
   onChange: (value: string) => void;
 }
 
@@ -125,11 +128,11 @@ function convertSeverity(
   return severity;
 }
 
-function TsxPlaygroundComponent({
+function AppPlaygroundComponent({
   source,
   extraLibs,
   onChange,
-}: TsxPlaygroundComponentProps) {
+}: AppPlaygroundComponentProps) {
   const [code, setCode] = useState(source ?? "");
   const deferredCode = useDeferredValue(code);
   const [markers, setMarkers] = useState<ExtraMarker[] | undefined>();
@@ -154,7 +157,12 @@ function TsxPlaygroundComponent({
       if (ignore) {
         return;
       }
-      const result = await worker.parseView(deferredCode);
+      const result = await worker.parseApp([
+        {
+          filePath: "index.tsx",
+          content: deferredCode,
+        },
+      ]);
       if (ignore) {
         return;
       }
@@ -184,31 +192,10 @@ function TsxPlaygroundComponent({
   }, [deferredCode]);
 
   const rootId = useMemo(() => uniqueId(), []);
-  const ref = useRef<HTMLDivElement>(null);
-  const rootRef = useRef<Awaited<
-    ReturnType<typeof unstable_createRoot>
-  > | null>(null);
-
-  useEffect(() => {
-    const container = ref.current;
-    if (!container) {
-      return;
-    }
-    const portal = createPortal(rootId);
-    const root = unstable_createRoot(container, {
-      portal,
-      supportsUseChildren: true,
-    } as any);
-    rootRef.current = root;
-
-    return () => {
-      root.unmount();
-      portal.remove();
-      rootRef.current = null;
-    };
-  }, [rootId]);
 
   // const [loading, setLoading] = useState(true);
+
+  const [storyboard, setStoryboard] = useState<Storyboard | undefined>();
 
   useEffect(() => {
     let ignore = false;
@@ -217,43 +204,16 @@ function TsxPlaygroundComponent({
         return;
       }
       // setLoading(true);
-      let convertedView: ConvertResult | undefined;
+      let convertedApp: ConvertedApp | undefined;
       try {
-        convertedView = await convertView(view, { rootId, expanded: true });
+        convertedApp = await convertApp(view, { rootId, expanded: true });
         if (ignore) {
           return;
         }
-        const { brick, context, functions, templates } = convertedView ?? {};
-        await rootRef.current?.render(brick ?? [], {
-          context,
-          functions,
-          templates,
-        });
+        setStoryboard(convertedApp as Partial<Storyboard> as Storyboard);
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.error("Failed to render view:", error);
-        rootRef.current?.render({
-          brick: customElements.get("easyops-default-error")
-            ? "easyops-default-error"
-            : "div",
-          properties: {
-            errorTitle: "解析失败",
-            dataset: {
-              errorBoundary: "",
-            },
-            style: {
-              color: "var(--color-error)",
-            },
-          },
-          children: [
-            {
-              brick: "div",
-              properties: {
-                textContent: httpErrorToString(error),
-              },
-            },
-          ],
-        });
+        console.error("Failed to render app:", error);
       }
       // if (!ignore) {
       //   setLoading(false);
@@ -283,7 +243,7 @@ function TsxPlaygroundComponent({
         </Suspense>
       </div>
       <div className={styles.preview}>
-        <div data-root-id={rootId} ref={ref} />
+        <WrappedAppPreview storyboard={storyboard} />
       </div>
     </div>
   );

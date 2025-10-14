@@ -9,7 +9,7 @@ import React, {
 import classNames from "classnames";
 import { getBasePath, unstable_createRoot } from "@next-core/runtime";
 import { uniqueId } from "lodash";
-import { convertTsx, getViewTitle } from "@next-shared/tsx-converter";
+import { convertView } from "@next-shared/tsx-converter";
 import type { GraphGeneratedView } from "../../cruise-canvas/interfaces";
 import styles from "./ExpandedView.module.css";
 import { WrappedIcon, WrappedIconButton } from "../../shared/bricks";
@@ -19,6 +19,7 @@ import { TaskContext } from "../TaskContext";
 import { useViewFeedbackDone } from "../useViewFeedbackDone";
 import { parseTemplate } from "../parseTemplate";
 import type { ParsedView } from "../interfaces";
+import type { ModulePartOfComponent } from "@next-shared/tsx-parser";
 
 export interface ExpandedViewProps {
   views: GraphGeneratedView[];
@@ -78,32 +79,13 @@ export function ExpandedView({ views }: ExpandedViewProps) {
         const view = await v.view.asyncConstructedView;
         return {
           ...v,
-          title: getViewTitle(view),
+          title: (view?.entry?.defaultExport as ModulePartOfComponent)?.title,
         };
       })
     ).then((result) => {
       setViewsWithTitle(result);
     });
   }, [views]);
-
-  const sizeSmall = useMemo(() => {
-    let hasForm = false;
-    if (view) {
-      for (const component of view?.components ?? []) {
-        switch (component.name) {
-          case "Form":
-          case "eo-form":
-          case "Button":
-          case "eo-button":
-            hasForm = true;
-            break;
-          default:
-            return false;
-        }
-      }
-    }
-    return hasForm;
-  }, [view]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -134,7 +116,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
     let ignore = false;
     (async () => {
       try {
-        const convertedView = await convertTsx(view, {
+        const convertedView = await convertView(view, {
           rootId,
           workspace,
           expanded: true,
@@ -193,7 +175,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
       )}
       <div
         className={classNames(styles.body, {
-          [styles.small]: sizeSmall,
+          // [styles.small]: sizeSmall,
         })}
         ref={containerRef}
         data-root-id={rootId}

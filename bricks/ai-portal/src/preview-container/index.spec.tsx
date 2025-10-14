@@ -1,7 +1,7 @@
 import { describe, test, expect, jest } from "@jest/globals";
 import { act } from "react-dom/test-utils";
 import type { EoPageTitle } from "@next-bricks/basic/page-title";
-import type { ParseResult } from "@next-shared/tsx-parser";
+import type { ModulePartOfComponent, ParsedApp } from "@next-shared/tsx-parser";
 import "./";
 import type { PreviewContainer } from "./index.js";
 
@@ -9,33 +9,29 @@ jest.mock("@next-core/theme", () => ({}));
 jest.mock("../shared/workers/tsxParser.js", () => ({
   getRemoteTsxParserWorker: jest.fn(() =>
     Promise.resolve({
-      async parse(source: string) {
+      async parseView(source: string) {
         if (source.includes("parse-error")) {
           throw new Error("Parse error");
         }
         return {
-          components: [
-            {
-              name: "View",
-              properties: { title: source.match(/title="([^"]+)"/)?.[1] },
+          entry: {
+            defaultExport: {
+              title: source.match(/title="([^"]+)"/)?.[1],
             },
-          ],
+          },
         };
       },
     })
   ),
 }));
 jest.mock("@next-shared/tsx-converter", () => ({
-  convertTsx: jest.fn((parsedResult: ParseResult) =>
-    (parsedResult.components[0]?.properties?.title as string)?.includes(
-      "convert-error"
-    )
+  convertView: jest.fn((parsedResult: ParsedApp) =>
+    (
+      (parsedResult.entry?.defaultExport as ModulePartOfComponent)
+        ?.title as string
+    )?.includes("convert-error")
       ? Promise.reject(new Error("Convert error"))
       : Promise.resolve(null)
-  ),
-  getViewTitle: jest.fn(
-    (parsedResult: ParseResult | null | undefined) =>
-      parsedResult?.components[0]?.properties?.title
   ),
 }));
 jest.mock("@next-core/runtime", () => ({

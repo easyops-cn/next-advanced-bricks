@@ -3,8 +3,8 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { unstable_createRoot } from "@next-core/runtime";
 import classNames from "classnames";
 import { uniqueId } from "lodash";
-import { convertTsx, getViewTitle } from "@next-shared/tsx-converter";
-import type { Component } from "@next-shared/tsx-parser";
+import { convertView } from "@next-shared/tsx-converter";
+import type { ModulePartOfComponent } from "@next-shared/tsx-parser";
 import styles from "./CreatedView.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
 import type { Job, ParsedView } from "../../shared/interfaces";
@@ -13,6 +13,7 @@ import { createPortal } from "../../cruise-canvas/utils/createPortal";
 import { TaskContext } from "../TaskContext";
 import { ICON_LOADING } from "../constants";
 import { ViewToolbar } from "./ViewToolbar";
+import type { BrickConf } from "@next-core/types";
 
 export interface CreatedViewProps {
   job: Job;
@@ -69,6 +70,7 @@ export function CreatedView({
   }, [rootId]);
 
   const [loading, setLoading] = useState(true);
+  const [sizeLarge, setSizeLarge] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -78,7 +80,7 @@ export function CreatedView({
     let ignore = false;
     (async () => {
       try {
-        const convertedView = await convertTsx(view, {
+        const convertedView = await convertView(view, {
           rootId,
           workspace,
           withContexts: view.withContexts,
@@ -87,6 +89,9 @@ export function CreatedView({
           return;
         }
         const { brick, context, functions, templates } = convertedView;
+
+        setSizeLarge(preferSizeLarge(brick));
+
         await rootRef.current?.render(brick, { context, functions, templates });
       } catch (error) {
         // eslint-disable-next-line no-console
@@ -102,35 +107,14 @@ export function CreatedView({
     };
   }, [rootId, workspace, view]);
 
-  const sizeLarge = useMemo(() => {
-    let large = false;
-    traverseComponents(view?.components ?? [], (component) => {
-      if (large) {
-        return;
-      }
-      if (component.name === "Table" || component.name === "eo-table") {
-        large = true;
-      } else if (
-        component.name === "Dashboard" ||
-        component.name === "eo-dashboard"
-      ) {
-        const widgets = component?.properties?.widgets;
-        if (
-          Array.isArray(widgets) &&
-          widgets.length >= (component.properties!.groupField ? 3 : 7)
-        ) {
-          large = true;
-        }
-      }
-    });
-    return large;
-  }, [view]);
-
   useEffect(() => {
     onSizeChange?.(sizeLarge ? "large" : "medium");
   }, [onSizeChange, sizeLarge]);
 
-  const viewTitle = useMemo(() => getViewTitle(view), [view]);
+  const viewTitle = useMemo(
+    () => (view?.entry?.defaultExport as ModulePartOfComponent)?.title,
+    [view]
+  );
 
   return (
     <>
@@ -151,12 +135,33 @@ export function CreatedView({
   );
 }
 
-function traverseComponents(
-  components: Component[],
-  callback: (component: Component) => void
+function traverseBricks(
+  bricks: BrickConf[],
+  callback: (bricks: BrickConf) => void
 ) {
-  for (const component of components) {
-    callback(component);
-    traverseComponents(component.children ?? [], callback);
+  for (const brick of bricks) {
+    callback(brick);
+    if (Array.isArray(brick.children)) {
+      traverseBricks(brick.children, callback);
+    }
   }
+}
+
+function preferSizeLarge(brick: BrickConf): boolean {
+  let large = false;
+  traverseBricks([brick], (b) => {
+    if (b.brick === "eo-next-table") {
+      large = true;
+    } else if (
+      b.brick === "div" &&
+      (b.properties?.dataset as Record<string, string>)?.component ===
+        "dashboard"
+    ) {
+      const widgets = b.children;
+      if (Array.isArray(widgets) && widgets.length >= 7) {
+        large = true;
+      }
+    }
+  });
+  return large;
 }

@@ -1,10 +1,19 @@
 // istanbul ignore file
-import { parseTsx, type ParseOptions } from "@next-shared/tsx-parser";
+import {
+  parseApp,
+  parseView,
+  type ParseOptions,
+  type SourceFile,
+} from "@next-shared/tsx-parser";
 import { expose } from "comlink";
 
 class TsxParserWorker {
-  parse(source: string, options?: ParseOptions) {
-    return parseTsx(source, options);
+  parseView(source: string, options?: ParseOptions) {
+    return parseView(source, options);
+  }
+
+  parseApp(files: SourceFile[]) {
+    return parseApp(files);
   }
 }
 
