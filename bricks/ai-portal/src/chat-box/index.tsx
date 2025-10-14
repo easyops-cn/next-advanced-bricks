@@ -8,6 +8,7 @@ import React, {
   createRef,
   useMemo,
 } from "react";
+import { createPortal } from "react-dom";
 import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import {
@@ -28,6 +29,7 @@ import type {
   ActionsProps,
   EoActions,
   SimpleAction,
+  SubMenuAction,
 } from "@next-bricks/basic/actions";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
@@ -55,6 +57,7 @@ export interface ChatBoxProps {
   placeholder?: string;
   autoFocus?: boolean;
   aiEmployees?: AIEmployee[];
+  commands?: Command[];
 }
 
 export interface AIEmployee {
@@ -67,6 +70,16 @@ export interface ChatBoxRef {
   getValue: () => string;
   focusOnInput: () => void;
 }
+
+export interface Command {
+  label: string;
+  value: string;
+  options?: Command[];
+}
+
+type ActionWithAncestors = SimpleAction & {
+  ancestors?: Command[];
+};
 
 /**
  * 构件 `ai-portal.chat-box`
@@ -93,6 +106,34 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
   @property({ attribute: false })
   accessor aiEmployees: AIEmployee[] | undefined;
 
+  @property({ attribute: false })
+  accessor commands: Command[] | undefined = [
+    {
+      label: "select serviceflow",
+      value: "select serviceflow",
+      options: [
+        {
+          label: "hr",
+          value: "HR",
+          options: [
+            {
+              label: "employee onboarding",
+              value: "Employee Onboarding",
+            },
+            {
+              label: "employee offboarding",
+              value: "Employee Offboarding",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      label: "create project",
+      value: "create project",
+    },
+  ];
+
   @event({ type: "message.submit" })
   accessor #messageSubmit!: EventEmitter<string>;
 
@@ -105,6 +146,13 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
 
   #handleEmployeeMention = (employee: AIEmployee | null) => {
     this.#employeeMention.emit(employee);
+  };
+
+  @event({ type: "command.select" })
+  accessor #commandSelect!: EventEmitter<string | null>;
+
+  #handleCommandSelect = (command: string | null) => {
+    this.#commandSelect.emit(command);
   };
 
   @method()
@@ -129,8 +177,10 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
         placeholder={this.placeholder}
         autoFocus={this.autoFocus}
         aiEmployees={this.aiEmployees}
+        commands={this.commands}
         onSubmit={this.#handleMessageSubmit}
         onEmployeeMention={this.#handleEmployeeMention}
+        onCommandSelect={this.#handleCommandSelect}
         ref={this.ref}
       />
     );
@@ -140,19 +190,17 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
 interface ChatBoxComponentProps extends ChatBoxProps {
   onSubmit: (value: string) => void;
   onEmployeeMention: (employee: AIEmployee | null) => void;
+  onCommandSelect: (command: string | null) => void;
   ref?: React.Ref<ChatBoxRef>;
 }
 
 interface MentionPopover {
-  position: {
-    left: number;
-    top: number;
-  };
+  style: React.CSSProperties;
   range: {
     start: number;
     end: number;
   };
-  actions: SimpleAction[];
+  actions: ActionWithAncestors[];
 }
 
 function LegacyChatBoxComponent(
@@ -161,8 +209,10 @@ function LegacyChatBoxComponent(
     placeholder,
     autoFocus,
     aiEmployees,
+    commands,
     onSubmit,
     onEmployeeMention,
+    onCommandSelect,
   }: ChatBoxComponentProps,
   ref: React.Ref<ChatBoxRef>
 ) {
@@ -175,6 +225,11 @@ function LegacyChatBoxComponent(
   );
   const [mentionedText, setMentionedText] = useState("");
   const [activeActionIndex, setActiveActionIndex] = useState(0);
+  const [activeActionIndexes, setActiveActionIndexes] = useState<number[]>([0]);
+  const [commandPopover, setCommandPopover] = useState<MentionPopover | null>(
+    null
+  );
+  const [commandText, setCommandText] = useState("");
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
 
   useEffect(() => {
@@ -201,13 +256,20 @@ function LegacyChatBoxComponent(
     },
   }));
 
+  const submitWithoutCommand = useCallback(
+    (value: string) => {
+      onSubmit(value.slice(commandText?.length ?? 0));
+    },
+    [commandText?.length, onSubmit]
+  );
+
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLTextAreaElement>) => {
       if (e.currentTarget.value) {
-        onSubmit(e.currentTarget.value);
+        submitWithoutCommand(e.currentTarget.value);
       }
     },
-    [onSubmit]
+    [submitWithoutCommand]
   );
 
   const handleChange = useCallback(
@@ -228,10 +290,6 @@ function LegacyChatBoxComponent(
           const mentionText = previousContent
             .slice(mentionIndex + 1)
             .toLowerCase();
-          const position = getCaretPositionInTextarea(
-            e.currentTarget,
-            selectionStart
-          );
           const matchedEmployees = aiEmployees
             .filter(
               (employee) =>
@@ -240,10 +298,17 @@ function LegacyChatBoxComponent(
             )
             .slice(0, 10);
           if (matchedEmployees.length > 0) {
+            const position = getCaretPositionInTextarea(
+              e.currentTarget,
+              selectionStart
+            );
+            const textareaRect = e.currentTarget.getBoundingClientRect();
             setMentionPopover({
-              position: {
-                left: position.left + 10,
-                top: position.top + 22,
+              style: {
+                left: position.left + 10 + textareaRect.left,
+                top: position.top + 22 + textareaRect.top,
+                position: "absolute",
+                zIndex: 1,
               },
               range: { start: mentionIndex, end: selectionStart },
               actions: matchedEmployees.map((employee) => ({
@@ -258,8 +323,50 @@ function LegacyChatBoxComponent(
         }
       }
       setMentionPopover(null);
+
+      if (
+        selectionStart !== null &&
+        selectionStart === selectionEnd &&
+        commands?.length
+      ) {
+        const previousContent = value.slice(0, selectionStart);
+        if (previousContent.startsWith("/")) {
+          const commandText = previousContent.slice(1).toLowerCase();
+          const matchedCommands = commands
+            .filter((command) =>
+              command.label.toLowerCase().includes(commandText)
+            )
+            .slice(0, 10);
+          if (matchedCommands.length > 0) {
+            const position = getCaretPositionInTextarea(
+              e.currentTarget,
+              selectionStart
+            );
+            const textareaRect = e.currentTarget.getBoundingClientRect();
+            setCommandPopover({
+              style: {
+                left: position.left + 10 + textareaRect.left,
+                top: position.top + 22 + textareaRect.top,
+                position: "absolute",
+                zIndex: 1,
+              },
+              range: { start: 0, end: selectionStart },
+              actions: matchedCommands.map((command) => ({
+                key: command.label,
+                text: command.label,
+                data: command,
+                ancestors: [],
+                items: getCommandSubMenu(command, []),
+              })),
+            });
+            setActiveActionIndexes([0]);
+            return;
+          }
+        }
+      }
+      setCommandPopover(null);
     },
-    [aiEmployees, mentionedText]
+    [aiEmployees, commands, mentionedText]
   );
 
   useEffect(() => {
@@ -269,9 +376,16 @@ function LegacyChatBoxComponent(
     }
   }, [mentionedText, onEmployeeMention, value]);
 
+  useEffect(() => {
+    if (commandText && !value.includes(commandText)) {
+      setCommandText("");
+      onCommandSelect(null);
+    }
+  }, [commandText, onCommandSelect, value]);
+
   const handleSubmitClick = useCallback(() => {
-    onSubmit(valueRef.current);
-  }, [onSubmit]);
+    submitWithoutCommand(valueRef.current);
+  }, [submitWithoutCommand]);
 
   useEffect(
     () => {
@@ -317,6 +431,25 @@ function LegacyChatBoxComponent(
     };
   }, [mentionedText, mentionPrefix]);
 
+  const commandOverlay = useMemo(() => {
+    const element = textareaRef.current?.element;
+    if (!commandText || !element) {
+      return null;
+    }
+    const rect = getContentRectInTextarea(
+      element,
+      "",
+      // Ignore the last space
+      commandText.slice(0, -1)
+    );
+    return {
+      left: rect.left - 1,
+      top: rect.top - 1,
+      width: rect.width + 4,
+      height: rect.height + 4,
+    };
+  }, [commandText]);
+
   const handleMention = useCallback(
     (action: SimpleAction) => {
       const mention = `@${action.text} `;
@@ -328,70 +461,133 @@ function LegacyChatBoxComponent(
       setMentionedText(mention);
       setMentionPopover(null);
       onEmployeeMention((action as { data?: AIEmployee }).data!);
+      textareaRef.current?.focus();
     },
     [mentionPopover, onEmployeeMention]
+  );
+
+  const handleSelectCommand = useCallback(
+    (action: ActionWithAncestors) => {
+      const command = `/${[...action.ancestors!.map((an) => an.label), action.text].join(": ")} `;
+      const prefix = `${valueRef.current.slice(0, commandPopover!.range.start)}${command}`;
+      const newValue = `${prefix}${valueRef.current.slice(commandPopover!.range.end)}`;
+      valueRef.current = newValue;
+      selectionRef.current = { start: prefix.length, end: prefix.length };
+      setValue(newValue);
+      setCommandText(command);
+      setCommandPopover(null);
+      onCommandSelect(action.text);
+      textareaRef.current?.focus();
+    },
+    [commandPopover, onCommandSelect]
   );
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       switch (e.key) {
         case "Escape":
-          if (!mentionPopover) {
+          if (!mentionPopover && !commandPopover) {
             return;
           }
           e.preventDefault();
           e.stopPropagation();
           e.nativeEvent.stopImmediatePropagation();
           setMentionPopover(null);
+          setCommandPopover(null);
           return false;
         case "ArrowUp":
         case "ArrowDown": {
-          if (!mentionPopover) {
+          if (!mentionPopover && !commandPopover) {
             return;
           }
           e.preventDefault();
           e.stopPropagation();
           e.nativeEvent.stopImmediatePropagation();
-          setActiveActionIndex((prev) => {
-            const nextIndex = prev + (e.key === "ArrowUp" ? -1 : 1);
-            const total = mentionPopover.actions.length;
-            const next = (total + nextIndex) % total;
-            return next;
-          });
+          if (mentionPopover) {
+            setActiveActionIndex((prev) => {
+              const nextIndex = prev + (e.key === "ArrowUp" ? -1 : 1);
+              const total = mentionPopover.actions.length;
+              const next = (total + nextIndex) % total;
+              return next;
+            });
+          } else {
+            setActiveActionIndexes((prev) => {
+              let cursor = 0;
+              let actions = commandPopover!.actions;
+              const list: number[] = [];
+              while (cursor < prev.length - 1) {
+                const action = actions[prev[cursor]];
+                if (isSubMenuAction(action)) {
+                  actions = action.items;
+                } else {
+                  break;
+                }
+                list.push(prev[cursor]);
+                cursor += 1;
+              }
+              const nextIndex = prev[cursor] + (e.key === "ArrowUp" ? -1 : 1);
+              const total = actions.length;
+              const next = (total + nextIndex) % total;
+              list.push(next);
+              return list;
+            });
+          }
           return false;
         }
         case "Enter":
-          if (!mentionPopover) {
+          if (!mentionPopover && !commandPopover) {
             return;
           }
           e.preventDefault();
           e.stopPropagation();
           e.nativeEvent.stopImmediatePropagation();
-          handleMention(mentionPopover.actions[activeActionIndex]);
+          if (mentionPopover) {
+            handleMention(mentionPopover.actions[activeActionIndex]);
+          } else {
+            const action = commandPopover!.actions[activeActionIndexes[0]];
+            if (isSubMenuAction(action)) {
+              setActiveActionIndexes((prev) => [...prev, 0]);
+            } else {
+              handleSelectCommand(action);
+            }
+          }
           return false;
         case "Delete":
         case "Backspace": {
-          if (mentionedText?.length) {
-            let { selectionStart, selectionEnd } = e.currentTarget;
-            if (selectionStart === selectionEnd) {
-              if (e.key === "Backspace") {
-                selectionStart -= 1;
-              } else {
-                selectionEnd += 1;
+          const popovers = [
+            {
+              textLength: mentionedText?.length,
+              prefixLength: mentionPrefix.length,
+            },
+            {
+              textLength: commandText?.length,
+              prefixLength: 0,
+            },
+          ];
+
+          for (const { textLength, prefixLength } of popovers) {
+            if (textLength) {
+              let { selectionStart, selectionEnd } = e.currentTarget;
+              if (selectionStart === selectionEnd) {
+                if (e.key === "Backspace") {
+                  selectionStart -= 1;
+                } else {
+                  selectionEnd += 1;
+                }
               }
-            }
-            const currentStart = mentionPrefix.length;
-            const currentEnd = currentStart + mentionedText.length;
-            if (selectionStart < currentEnd && selectionEnd > currentStart) {
-              const start = Math.min(selectionStart, currentStart);
-              const end = Math.max(selectionEnd, currentEnd);
-              const newValue = `${valueRef.current.slice(0, start)}${valueRef.current.slice(end)}`;
-              valueRef.current = newValue;
-              selectionRef.current = { start, end: start };
-              setValue(newValue);
-              e.preventDefault();
-              e.stopPropagation();
-              return false;
+              const currentStart = prefixLength;
+              const currentEnd = currentStart + textLength;
+              if (selectionStart < currentEnd && selectionEnd > currentStart) {
+                const start = Math.min(selectionStart, currentStart);
+                const end = Math.max(selectionEnd, currentEnd);
+                const newValue = `${valueRef.current.slice(0, start)}${valueRef.current.slice(end)}`;
+                valueRef.current = newValue;
+                selectionRef.current = { start, end: start };
+                setValue(newValue);
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+              }
             }
           }
           break;
@@ -400,7 +596,11 @@ function LegacyChatBoxComponent(
     },
     [
       activeActionIndex,
+      activeActionIndexes,
+      commandPopover,
+      commandText?.length,
       handleMention,
+      handleSelectCommand,
       mentionPopover,
       mentionPrefix.length,
       mentionedText?.length,
@@ -437,19 +637,85 @@ function LegacyChatBoxComponent(
             <WrappedIcon lib="fa" prefix="fas" icon="arrow-up" />
           </button>
         </div>
-        {mentionPopover && (
-          <WrappedActions
-            className="mentions"
-            actions={mentionPopover.actions}
-            style={mentionPopover.position}
-            onActionClick={(e) => handleMention(e.detail)}
-            checkedKeys={[mentionPopover.actions[activeActionIndex].key!]}
-          />
-        )}
         {mentionOverlay && (
           <div className="mention-overlay" style={mentionOverlay} />
         )}
+        {commandOverlay && (
+          <div className="mention-overlay" style={commandOverlay} />
+        )}
+        {mentionPopover &&
+          createPortal(
+            <WrappedActions
+              actions={mentionPopover.actions}
+              style={mentionPopover.style}
+              checkedKeys={[mentionPopover.actions[activeActionIndex].key!]}
+              onActionClick={(e) => handleMention(e.detail)}
+            />,
+            document.body
+          )}
+        {commandPopover &&
+          createPortal(
+            <WrappedActions
+              actions={commandPopover.actions}
+              style={commandPopover.style}
+              // checkedKeys={[commandPopover.actions[activeActionIndex].key!]}
+              // noCheckSign
+              {...getOpenedAndCheckedKeys(
+                commandPopover.actions,
+                activeActionIndexes
+              )}
+              onActionClick={(e) => handleSelectCommand(e.detail)}
+            />,
+            document.body
+          )}
       </div>
     </div>
   );
+}
+
+function getCommandSubMenu(
+  command: Command,
+  ancestors: Command[]
+): SimpleAction[] | undefined {
+  return command.options?.map((subCommand) => {
+    const nextAncestors = [...ancestors, command];
+    return {
+      key: subCommand.value,
+      text: subCommand.label,
+      data: subCommand,
+      ancestors: nextAncestors,
+      items: getCommandSubMenu(subCommand, nextAncestors),
+    };
+  });
+}
+
+function getOpenedAndCheckedKeys(
+  actions: ActionWithAncestors[],
+  activeIndexes: number[]
+) {
+  const openedKeys: (string | number)[] = [];
+  let checkedKeys: (string | number)[] = [];
+  let currentActions = actions;
+  for (let i = 0; i < activeIndexes.length; i += 1) {
+    const index = activeIndexes[i];
+    const action = currentActions[index];
+    if (action) {
+      if (isSubMenuAction(action)) {
+        openedKeys.push(action.key!);
+        currentActions = action.items;
+      } else {
+        checkedKeys = [action.key!];
+        break;
+      }
+    } else {
+      break;
+    }
+  }
+  return { openedKeys, checkedKeys };
+}
+
+function isSubMenuAction(
+  action: SimpleAction | SubMenuAction
+): action is SubMenuAction {
+  return !!(action as SubMenuAction).items?.length;
 }
