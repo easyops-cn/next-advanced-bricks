@@ -1,4 +1,4 @@
-import type { ParseResult } from "@next-shared/tsx-parser";
+import type { ParsedApp } from "@next-shared/tsx-parser";
 
 export interface Conversation {
   // Conversation ID
@@ -209,7 +209,7 @@ export interface GeneratedView {
   asyncConstructedView?: Promise<ParsedView | null>;
 }
 
-export interface ParsedView extends ParseResult {
+export interface ParsedView extends ParsedApp {
   viewId: string;
   withContexts?: Record<string, unknown>;
 }

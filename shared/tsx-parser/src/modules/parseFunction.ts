@@ -1,7 +1,7 @@
 import type { NodePath } from "@babel/traverse";
 import type * as t from "@babel/types";
 import type { StoryboardFunction } from "@next-core/types";
-import type { ParseJsValueOptions, ParseModuleState } from "./interfaces.js";
+import type { ParseJsValueOptions, ParsedModule } from "./interfaces.js";
 import { validateFunction } from "./validations.js";
 
 interface Replacement {
@@ -14,7 +14,7 @@ interface Replacement {
 
 export function parseFunction(
   fn: NodePath<t.FunctionDeclaration>,
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions
 ): StoryboardFunction | null {
   if (!validateFunction(fn.node, state)) {

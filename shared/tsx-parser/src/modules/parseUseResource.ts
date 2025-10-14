@@ -1,7 +1,7 @@
 import type { NodePath } from "@babel/traverse";
 import type * as t from "@babel/types";
 import type {
-  ParseModuleState,
+  ParsedModule,
   DataSourceConfig,
   ParseJsValueOptions,
   DataSource,
@@ -14,7 +14,7 @@ import { parseResourceCall } from "./parseResourceCall.js";
 export function parseUseResource(
   decl: NodePath<t.VariableDeclarator>,
   args: NodePath<t.Expression | t.SpreadElement | t.ArgumentPlaceholder>[],
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions
 ): BindingInfo | null {
   const declId = decl.get("id");

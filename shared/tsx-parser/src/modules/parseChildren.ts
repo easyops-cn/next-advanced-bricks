@@ -3,13 +3,13 @@ import type * as t from "@babel/types";
 import type {
   ComponentChild,
   ParseJsValueOptions,
-  ParseModuleState,
+  ParsedModule,
 } from "./interfaces.js";
 import { parseLowLevelChildren } from "./parseLowLevelChildren.js";
 
 export function parseChildren(
   path: NodePath<t.Node>,
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions
 ): ComponentChild[] {
   const { textContent, children } = parseLowLevelChildren(

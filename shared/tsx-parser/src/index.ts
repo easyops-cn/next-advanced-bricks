@@ -1,4 +1,9 @@
-export { parseTsx } from "./parseTsx.js";
+export { parseView } from "./parseView.js";
+export { parseApp } from "./parseApp.js";
 export * from "./interfaces.js";
-
-export { isExpressionString } from "./utils.js";
+export { MODULE_SOURCE } from "./modules/constants.js";
+export {
+  isExpressionString,
+  isAnyOfficialComponent,
+  isOfficialComponent,
+} from "./modules/validations.js";

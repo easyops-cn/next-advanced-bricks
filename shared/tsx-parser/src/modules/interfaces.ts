@@ -2,28 +2,56 @@ import * as t from "@babel/types";
 import type { StoryboardFunction } from "@next-core/types";
 import type { DataSource, Events, ParseError } from "../interfaces.js";
 
+export interface ParsedApp {
+  appType: "app" | "view";
+  entry?: ParsedModule;
+  modules: Map<string, ParsedModule | null>;
+  files: SourceFile[];
+  errors: ParseError[];
+}
+
+export interface SourceFile {
+  filePath: string;
+  content: string;
+}
+
 export interface ParseModuleOptions {
-  filename?: string;
   withContexts?: string[];
   // reward?: boolean;
 }
 
-export type ParseModuleState = {
-  source: string;
-  errors: ParseError[];
-  contracts: Set<string>;
-  usedHelpers: Set<string>;
-};
-
 export interface ParsedModule {
   source: string;
-  filename?: string;
-  defaultExport: ParsedComponent | null;
-  internalComponents: ParsedComponent[];
-  internalFunctions: StoryboardFunction[];
+  filePath: string;
+  moduleType: ModuleType;
+  defaultExport: ModulePart | null;
+  namedExports: Map<string, ModulePart>;
+  internals: ModulePart[];
+  render?: ParsedRender;
   errors: ParseError[];
   contracts: Set<string>;
   usedHelpers: Set<string>;
+}
+
+export type ModuleType = "entry" | "page" | "template" | "unknown";
+
+export type ModulePart = ModulePartOfComponent | ModulePartOfFunction;
+
+export interface ModulePartOfComponent {
+  type: "page" | "view" | "template";
+  component: ParsedComponent;
+  /** For views only */
+  title?: string;
+}
+
+export interface ModulePartOfFunction {
+  type: "function";
+  function: StoryboardFunction;
+}
+
+export interface ParsedRender {
+  type: "render";
+  children: ComponentChild[];
 }
 
 export type BindingMap = Map<t.Identifier, BindingInfo>;
@@ -63,10 +91,9 @@ export interface DataBindingInfo {
 
 export interface ParsedComponent {
   bindingMap: BindingMap;
-  type: "template" | "view";
+  type: "template" | "view" | "page";
   children?: ComponentChild[];
-  /** For type "template" */
-  id?: t.Identifier;
+  id?: t.Identifier | null;
 }
 
 export interface ParsedFunction {
@@ -80,6 +107,7 @@ export interface ParseJsValueOptions {
   forEachBinding?: ForEachBindingInfo;
   dataBinding?: DataBindingInfo;
   functionBindings?: Set<t.Identifier>;
+  componentBindings?: Set<t.Identifier>;
   contextBindings?: string[];
   allowUseBrick?: boolean;
   ambiguous?: boolean;
@@ -88,12 +116,26 @@ export interface ParseJsValueOptions {
 
 export interface ComponentChild {
   name: string;
+  reference?: ComponentReference | null;
   properties: Record<string, unknown>;
   ambiguousProps?: Record<string, unknown>;
   events?: Events;
   slot?: string;
   ref?: string;
   children?: ComponentChild[];
+}
+
+export interface ComponentReference {
+  type: "imported" | "local";
+  /**
+   * For type "local", it's the local component name;
+   * For type "imported", it's the imported name (can be undefined for default import).
+   */
+  name?: string;
+  /**
+   * Only for type "imported", the source module path.
+   */
+  importSource?: string;
 }
 
 export type { Events };

@@ -4,14 +4,14 @@ import type {
   DataSource,
   DataSourceConfig,
   ParseJsValueOptions,
-  ParseModuleState,
+  ParsedModule,
 } from "./interfaces.js";
 import { parseCallApi } from "./parseCallApi.js";
 import { parseEmbedded } from "./parseEmbedded.js";
 
 export function parseResourceCall(
   path: NodePath<t.Expression>,
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions,
   name: string,
   config?: DataSourceConfig,
@@ -60,7 +60,7 @@ export function parseResourceCall(
 
 function parsePromiseCallback(
   callback: NodePath<t.ArgumentPlaceholder | t.SpreadElement | t.Expression>,
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions
 ): string | null {
   if (!callback.isArrowFunctionExpression()) {

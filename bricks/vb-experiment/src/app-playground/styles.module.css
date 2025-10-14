@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+  height: 100%;
+}
+
+.editor,
+.preview {
+  flex: 1;
+  min-width: 0;
+}
+
+.preview {
+  padding: 0;
+  height: 100%;
+}

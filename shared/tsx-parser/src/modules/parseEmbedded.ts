@@ -1,6 +1,6 @@
 import type { NodePath, Visitor } from "@babel/traverse";
 import type * as t from "@babel/types";
-import type { ParseJsValueOptions, ParseModuleState } from "./interfaces.js";
+import type { ParseJsValueOptions, ParsedModule } from "./interfaces.js";
 
 type Replacement = IdReplacement | Annotation;
 
@@ -20,7 +20,7 @@ interface Annotation {
 
 export function parseEmbedded(
   path: NodePath<t.Expression | t.FunctionDeclaration>,
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions,
   noWrapping?: boolean
 ): string {

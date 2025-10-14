@@ -1,25 +1,26 @@
 import type { BrickConf } from "@next-core/types";
 import type {
-  Component,
-  ParseResult,
+  ComponentChild,
+  ParsedModule,
   RenderUseBrick,
 } from "@next-shared/tsx-parser";
 import type { TableColumn, TableProps } from "../lib/components.js";
-import type { ConvertOptions } from "./interfaces.js";
-import { lowLevelConvertToStoryboard } from "./raw-data-generate/convert.js";
+import type { ConvertState, ConvertOptions } from "./interfaces.js";
+// import { lowLevelConvertToStoryboard } from "./raw-data-generate/convert.js";
 import { parseDataSource } from "./expressions.js";
-import { getPreGeneratedAttrViews } from "./getPreGeneratedAttrViews.js";
-import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
+// import { getPreGeneratedAttrViews } from "./getPreGeneratedAttrViews.js";
+// import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
 import { convertComponent } from "./convertComponent.js";
 import { deepReplaceVariables } from "./deepReplaceVariables.js";
 
 const columnUseBrickParams = ["cellData", "rowData"];
 
 export default async function convertTable(
-  component: Component,
-  view: ParseResult,
+  component: ComponentChild,
+  mod: ParsedModule,
+  state: ConvertState,
   options: ConvertOptions,
-  scope: "view" | "template"
+  scope: "page" | "view" | "template"
 ): Promise<BrickConf> {
   const { properties } = component;
   const { dataSource, size, columns, rowKey, pagination, ...restProps } =
@@ -38,33 +39,33 @@ export default async function convertTable(
 
   const parsedDataSource = parseDataSource(dataSource);
 
-  const objectId = findObjectIdByUsedDataContexts(
-    parsedDataSource.usedContexts,
-    view.dataSources,
-    view.variables
-  );
+  // const objectId = findObjectIdByUsedDataContexts(
+  //   parsedDataSource.usedContexts,
+  //   view.dataSources,
+  //   view.variables
+  // );
 
-  const attrViews = objectId
-    ? await getPreGeneratedAttrViews(objectId)
-    : undefined;
+  // const attrViews = objectId
+  //   ? await getPreGeneratedAttrViews(objectId)
+  //   : undefined;
 
   const configuredColumns = new Map<string, BrickConf>();
 
-  if (attrViews?.size && Array.isArray(columns)) {
-    for (const column of columns) {
-      if (column.render || typeof column.dataIndex !== "string") {
-        continue;
-      }
-      const candidate = attrViews.get(column.dataIndex);
-      if (candidate) {
-        const brick = lowLevelConvertToStoryboard(candidate, ".cellData");
-        if (brick) {
-          brick.slot = `[${column.dataIndex}]`;
-          configuredColumns.set(column.dataIndex, brick);
-        }
-      }
-    }
-  }
+  // if (attrViews?.size && Array.isArray(columns)) {
+  //   for (const column of columns) {
+  //     if (column.render || typeof column.dataIndex !== "string") {
+  //       continue;
+  //     }
+  //     const candidate = attrViews.get(column.dataIndex);
+  //     if (candidate) {
+  //       const brick = lowLevelConvertToStoryboard(candidate, ".cellData");
+  //       if (brick) {
+  //         brick.slot = `[${column.dataIndex}]`;
+  //         configuredColumns.set(column.dataIndex, brick);
+  //       }
+  //     }
+  //   }
+  // }
 
   const convertedColumns = Array.isArray(columns)
     ? await Promise.all(
@@ -82,7 +83,7 @@ export default async function convertTable(
             const useBrick = (
               await Promise.all(
                 render.children.map((child) =>
-                  convertComponent(child, view, options, scope)
+                  convertComponent(child, mod, state, options, scope)
                 )
               )
             ).flatMap((child) => deepReplaceVariables(child, patterns));

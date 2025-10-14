@@ -1,8 +1,13 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component, ParseResult } from "@next-shared/tsx-parser";
-import convertList from "./convertList.js";
-import type { ConvertOptions } from "./interfaces.js";
+import {
+  isAnyOfficialComponent,
+  type ComponentChild,
+  type ModulePart,
+  type ParsedModule,
+} from "@next-shared/tsx-parser";
+import type { ConvertState, ConvertOptions } from "./interfaces.js";
 import { convertEvents } from "./convertEvents.js";
+import convertList from "./convertList.js";
 import convertTable from "./convertTable.js";
 import convertDescriptions from "./convertDescriptions.js";
 import convertDashboard from "./convertDashboard.js";
@@ -20,41 +25,43 @@ import convertLink from "./convertLink.js";
 import convertTag from "./convertTag.js";
 import convertAvatar from "./convertAvatar.js";
 import convertAvatarGroup from "./convertAvatarGroup.js";
-import {
-  getTplNamePrefixByRootId,
-  getTplNameSuffix,
-} from "./convertTemplates.js";
 import convertCodeBlock from "./convertCodeBlock.js";
+import { getAppTplName, getViewTplName } from "./modules/getTplName.js";
 
 export async function convertComponent(
-  component: Component,
-  result: ParseResult,
+  component: ComponentChild,
+  mod: ParsedModule,
+  state: ConvertState,
   options: ConvertOptions,
-  scope: "view" | "template"
+  scope: "page" | "view" | "template"
 ): Promise<BrickConf | BrickConf[]> {
   let brick: BrickConf | null = null;
-  const tpl = result.templates.find((t) => t.name === component.name);
-  if (tpl) {
-    brick = {
-      brick: `${getTplNamePrefixByRootId(options.rootId)}${getTplNameSuffix(tpl.name)}`,
-      properties: component.properties,
-    };
-  } else {
-    switch (component.name) {
+
+  if (isAnyOfficialComponent(component)) {
+    const componentName = component.reference
+      ? component.reference.name
+      : component.name;
+    switch (componentName) {
       case "List":
         brick = await convertList(component);
         break;
       case "Table":
-        brick = await convertTable(component, result, options, scope);
+        brick = await convertTable(component, mod, state, options, scope);
         break;
       case "Descriptions":
-        brick = await convertDescriptions(component, result, options, scope);
+        brick = await convertDescriptions(
+          component,
+          mod,
+          state,
+          options,
+          scope
+        );
         break;
       case "Card":
         brick = await convertCard(component);
         break;
       case "Dashboard":
-        brick = await convertDashboard(component, result, options);
+        brick = await convertDashboard(component, mod, state, options);
         break;
       case "Button":
         brick = await convertButton(component);
@@ -72,7 +79,7 @@ export async function convertComponent(
         brick = await convertText(component);
         break;
       case "Link":
-        brick = await convertLink(component);
+        brick = await convertLink(component, mod, state);
         break;
       case "Output":
         brick = await convertOutput(component);
@@ -111,8 +118,48 @@ export async function convertComponent(
         brick = await convertIf(component);
         break;
       default:
-        // eslint-disable-next-line no-console
-        console.error("Unsupported component:", component.name);
+        if (
+          state.app.appType === "app" &&
+          component.name.toLowerCase() === component.name
+        ) {
+          // Assume it's a native HTML element
+          brick = {
+            brick: component.name,
+            properties: component.properties,
+          };
+        } else {
+          // eslint-disable-next-line no-console
+          console.error("Unknown component:", component.name);
+        }
+    }
+  } else {
+    const { type, importSource, name } = component.reference!;
+    let refPart: ModulePart | null | undefined;
+    if (type === "imported") {
+      const imported = state.app.modules.get(importSource!);
+      refPart = name
+        ? imported?.namedExports.get(name)
+        : imported?.defaultExport;
+    } else {
+      const parts = [...mod.internals, ...mod.namedExports.values()];
+      refPart = parts.find(
+        (part) => part.type === "template" && part.component.id?.name === name
+      );
+    }
+    if (refPart?.type === "template") {
+      const tplName = refPart.component.id!.name;
+      brick = {
+        brick:
+          state.app.appType === "app"
+            ? getAppTplName(tplName)
+            : getViewTplName(tplName, options.rootId),
+        properties: component.properties,
+      };
+    } else {
+      // eslint-disable-next-line no-console
+      console.error(
+        `Cannot find the component "${component.reference!.name}".`
+      );
     }
   }
 
@@ -140,7 +187,7 @@ export async function convertComponent(
     brick.children = (
       await Promise.all(
         component.children.map((child) =>
-          convertComponent(child, result, options, scope)
+          convertComponent(child, mod, state, options, scope)
         )
       )
     ).flat();

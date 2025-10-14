@@ -1,17 +1,17 @@
 import type { BrickConf } from "@next-core/types";
 import type {
   Component,
-  ParseResult,
+  ParsedModule,
   RenderUseBrick,
 } from "@next-shared/tsx-parser";
 import type { DescriptionsProps } from "../lib/components.js";
-import { convertToStoryboard } from "./raw-data-generate/convert.js";
-import { getPreGeneratedAttrViews } from "./getPreGeneratedAttrViews.js";
+// import { convertToStoryboard } from "./raw-data-generate/convert.js";
+// import { getPreGeneratedAttrViews } from "./getPreGeneratedAttrViews.js";
 import { parseDataSource } from "./expressions.js";
-import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
+// import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
 import { convertComponent } from "./convertComponent.js";
 import { deepReplaceVariables } from "./deepReplaceVariables.js";
-import type { ConvertOptions } from "./interfaces.js";
+import type { ConvertState, ConvertOptions } from "./interfaces.js";
 
 interface DescriptionItem {
   label: string;
@@ -22,9 +22,10 @@ interface DescriptionItem {
 
 export default async function convertDescriptions(
   { properties }: Component,
-  view: ParseResult,
+  mod: ParsedModule,
+  state: ConvertState,
   options: ConvertOptions,
-  scope: "view" | "template"
+  scope: "page" | "view" | "template"
 ): Promise<BrickConf> {
   const { dataSource, title, list, columns, ...restProps } =
     properties as Partial<DescriptionsProps<object>> as Omit<
@@ -38,35 +39,35 @@ export default async function convertDescriptions(
 
   const parsedDataSource = parseDataSource(dataSource);
 
-  const objectId = findObjectIdByUsedDataContexts(
-    parsedDataSource.usedContexts,
-    view.dataSources,
-    view.variables
-  );
+  // const objectId = findObjectIdByUsedDataContexts(
+  //   parsedDataSource.usedContexts,
+  //   view.dataSources,
+  //   view.variables
+  // );
 
-  const attrViews = objectId
-    ? await getPreGeneratedAttrViews(objectId)
-    : undefined;
+  // const attrViews = objectId
+  //   ? await getPreGeneratedAttrViews(objectId)
+  //   : undefined;
 
   const configuredItems = new Map<string, BrickConf>();
 
-  if (attrViews?.size && Array.isArray(list)) {
-    for (const item of list) {
-      if (item.render) {
-        continue;
-      }
-      if (item.field) {
-        const candidate = attrViews.get(item.field);
-        if (candidate) {
-          const brick = convertToStoryboard(candidate, item.field);
-          if (brick) {
-            brick.slot = `[${item.field}]`;
-            configuredItems.set(item.field, brick);
-          }
-        }
-      }
-    }
-  }
+  // if (attrViews?.size && Array.isArray(list)) {
+  //   for (const item of list) {
+  //     if (item.render) {
+  //       continue;
+  //     }
+  //     if (item.field) {
+  //       const candidate = attrViews.get(item.field);
+  //       if (candidate) {
+  //         const brick = convertToStoryboard(candidate, item.field);
+  //         if (brick) {
+  //           brick.slot = `[${item.field}]`;
+  //           configuredItems.set(item.field, brick);
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
   const convertedList = Array.isArray(list)
     ? await Promise.all(
@@ -80,7 +81,7 @@ export default async function convertDescriptions(
             const useBrick = (
               await Promise.all(
                 render.children.map((child) =>
-                  convertComponent(child, view, options, scope)
+                  convertComponent(child, mod, state, options, scope)
                 )
               )
             ).flatMap((child) => deepReplaceVariables(child, patterns));

@@ -1,6 +1,6 @@
 import type { NodePath } from "@babel/traverse";
 import * as t from "@babel/types";
-import type { ParseJsValueOptions, ParseModuleState } from "./interfaces.js";
+import type { ParseJsValueOptions, ParsedModule } from "./interfaces.js";
 import { validateEmbeddedExpression } from "./validations.js";
 import type { ChildElement } from "./internal-interfaces.js";
 import { parseJSXElement } from "./parseJSXElement.js";
@@ -9,7 +9,7 @@ import { parseChildren } from "./parseChildren.js";
 
 export function parseElement(
   path: NodePath<t.Node>,
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions
 ): ChildElement | null | (ChildElement | null)[] {
   if (path.isJSXFragment()) {

@@ -4,7 +4,7 @@ import type {
   BindingInfo,
   EventHandler,
   ParseJsValueOptions,
-  ParseModuleState,
+  ParsedModule,
   TypeEventHandlerOfShowMessage,
 } from "./interfaces.js";
 import { parseJsValue } from "./parseJsValue.js";
@@ -14,7 +14,7 @@ import { validateGlobalApi } from "./validations.js";
 
 export function parseEvent(
   path: NodePath<t.Node>,
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions,
   isCallback?: boolean
 ): EventHandler[] | null {
@@ -66,7 +66,7 @@ export function parseEvent(
 
 function parseEventHandler(
   path: NodePath<t.Statement | t.Expression | null | undefined>,
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions
 ): EventHandler | EventHandler[] | null {
   if (path.isBlockStatement()) {
@@ -255,7 +255,10 @@ function parseEventHandler(
                 ref: refBinding.id.name,
                 method: property.node.name,
                 args: args.map((arg) => parseJsValue(arg, state, options)),
-                scope: options.component?.type,
+                scope:
+                  options.component?.type === "template"
+                    ? "template"
+                    : "global",
               },
             };
           }

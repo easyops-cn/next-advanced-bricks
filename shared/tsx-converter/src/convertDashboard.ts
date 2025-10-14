@@ -1,10 +1,12 @@
 import type { BrickConf } from "@next-core/types";
-import type { Component, ParseResult } from "@next-shared/tsx-parser";
+import type { Component, ParsedModule } from "@next-shared/tsx-parser";
 import type { DashboardProps, DashboardWidget } from "../lib/components.js";
 import { parseDataSource } from "./expressions.js";
-import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
-import { getPreGeneratedMetricGroups } from "./getPreGeneratedMetricGroups.js";
-import type { ConvertOptions } from "./interfaces.js";
+// import { findObjectIdByUsedDataContexts } from "./findObjectIdByUsedDataContexts.js";
+import {
+  /* getPreGeneratedMetricGroups, */ type MetricWithGroup,
+} from "./getPreGeneratedMetricGroups.js";
+import type { ConvertState, ConvertOptions } from "./interfaces.js";
 
 const COLORS = [
   "#336EF4",
@@ -37,7 +39,8 @@ interface MergedWidget extends DashboardWidget {
 
 export default async function convertDashboard(
   { properties }: Component,
-  view: ParseResult,
+  mod: ParsedModule,
+  state: ConvertState,
   options: ConvertOptions
 ): Promise<BrickConf> {
   const {
@@ -48,14 +51,15 @@ export default async function convertDashboard(
     dataSource: string | object;
   };
 
-  view.usedHelpers.add("_helper_getLatestMetricValue");
-  view.usedHelpers.add("_helper_extractList");
-  view.usedHelpers.add("_helper_groupMetricData");
-  view.usedHelpers.add("_helper_getMetricDisplayNames");
+  state.usedHelpers.add("_helper_getLatestMetricValue");
+  state.usedHelpers.add("_helper_extractList");
+  state.usedHelpers.add("_helper_groupMetricData");
+  state.usedHelpers.add("_helper_getMetricDisplayNames");
 
   const groupField = _groupField ? "#showKey" : undefined;
 
-  const { isString, expression, usedContexts } = parseDataSource(dataSource);
+  const { isString, expression /* , usedContexts */ } =
+    parseDataSource(dataSource);
 
   const chartData = isString
     ? `<%= FN._helper_extractList((${expression})) %>`
@@ -63,14 +67,15 @@ export default async function convertDashboard(
 
   if (options.expanded) {
     let mergedWidgets = widgets as MergedWidget[];
-    const objectId = findObjectIdByUsedDataContexts(
-      usedContexts,
-      view.dataSources,
-      view.variables
-    );
-    const metricGroups = objectId
-      ? await getPreGeneratedMetricGroups(objectId)
-      : [];
+    // const objectId = findObjectIdByUsedDataContexts(
+    //   usedContexts,
+    //   view.dataSources,
+    //   view.variables
+    // );
+    // const metricGroups = objectId
+    //   ? await getPreGeneratedMetricGroups(objectId)
+    //   : [];
+    const metricGroups: MetricWithGroup[] = [];
 
     if (metricGroups.length > 0) {
       mergedWidgets = [];
@@ -109,6 +114,9 @@ export default async function convertDashboard(
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(500px, 1fr))",
           gap: "16px",
+        },
+        dataset: {
+          component: "dashboard",
         },
       },
       children: mergedWidgets.map((widget) => {
@@ -265,6 +273,9 @@ export default async function convertDashboard(
                   gap: "10px",
                   marginBottom: "8px",
                 },
+                dataset: {
+                  component: "dashboard",
+                },
               },
               children: widgets.map((widget, i) => {
                 const { title, /* type, */ metric, precision } = widget;
@@ -306,6 +317,9 @@ export default async function convertDashboard(
         display: "grid",
         gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
         gap: "10px",
+      },
+      dataset: {
+        component: "dashboard",
       },
     },
     children: widgets.map((widget, i) => {

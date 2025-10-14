@@ -1,30 +1,10 @@
 import type * as t from "@babel/types";
-import type { StoryboardFunction } from "@next-core/types";
+import type { ComponentChild } from "./modules/interfaces.js";
 
 export interface ParseOptions {
   reward?: boolean;
   workspace?: string;
   withContexts?: string[];
-}
-
-export interface ParseResult {
-  source: string;
-  dataSources: DataSource[];
-  variables: Variable[];
-  components: Component[];
-  componentsMap: Map<string, Component>;
-  contracts: Set<string>;
-  errors: ParseError[];
-  functions: StoryboardFunction[];
-  usedHelpers: Set<string>;
-  templates: Template[];
-}
-
-export interface Template {
-  name: string;
-  variables: Variable[];
-  dataSources: DataSource[];
-  components: Component[];
 }
 
 export interface ParseError {
@@ -33,11 +13,7 @@ export interface ParseError {
   severity: "notice" | "warning" | "error" | "fatal";
 }
 
-export interface Variable {
-  name: string;
-  value?: unknown;
-  expose?: boolean;
-}
+export type { ComponentChild as Component };
 
 export interface DataSource {
   name: string;
@@ -49,7 +25,7 @@ export interface DataSource {
   ambiguousParams?: unknown;
   transform?: string;
   rejectTransform?: string;
-  scope?: "view" | "template";
+  scope?: "global" | "template";
   config?: DataSourceConfig;
 }
 
@@ -61,16 +37,6 @@ export interface ToolInfo {
 export interface DataSourceConfig {
   enabled?: unknown;
   fallback?: unknown;
-}
-
-export interface Component {
-  name: string;
-  ref?: string;
-  slot?: string;
-  properties: Record<string, unknown>;
-  ambiguousProps?: Record<string, unknown>;
-  events?: Events;
-  children?: Component[];
 }
 
 export interface Events {
@@ -92,7 +58,7 @@ export interface TypeEventHandlerOfUpdateVariable {
   payload: {
     name: string;
     value: any;
-    scope?: "view" | "template";
+    scope?: "global" | "template";
   };
 }
 
@@ -100,7 +66,7 @@ export interface TypeEventHandlerOfRefreshDataSource {
   action: "refresh_data_source";
   payload: {
     name: string;
-    scope?: "view" | "template";
+    scope?: "global" | "template";
   };
 }
 
@@ -110,7 +76,7 @@ export interface TypeEventHandlerOfCallRef {
     ref: string;
     method: string;
     args?: any[];
-    scope?: "view" | "template";
+    scope?: "global" | "template";
   };
 }
 
@@ -167,5 +133,16 @@ export interface TypeEventHandlerCallback {
 
 export interface RenderUseBrick {
   params: string[];
-  children: Component[];
+  children: ComponentChild[];
 }
+
+export type {
+  ParsedApp,
+  ParsedModule,
+  ComponentChild,
+  SourceFile,
+  ComponentReference,
+  ModulePart,
+  ModulePartOfComponent,
+  ModulePartOfFunction,
+} from "./modules/interfaces.js";

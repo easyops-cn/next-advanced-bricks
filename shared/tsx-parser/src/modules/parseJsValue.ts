@@ -2,7 +2,7 @@ import type { NodePath } from "@babel/traverse";
 import * as t from "@babel/types";
 import type {
   ParseJsValueOptions,
-  ParseModuleState,
+  ParsedModule,
   RenderUseBrick,
 } from "./interfaces.js";
 import { validateEmbeddedExpression } from "./validations.js";
@@ -13,7 +13,7 @@ const ambiguousSymbol = Symbol("ambiguous");
 
 export function parseJsValue(
   path: NodePath<t.Node>,
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions
 ): unknown {
   if (path.isTSAsExpression()) {
@@ -99,7 +99,7 @@ export function parseJsValue(
 
 export function parsePropValue(
   path: NodePath<t.Expression>,
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions
 ) {
   let shouldCompute = false;
@@ -137,7 +137,7 @@ export function parsePropValue(
 
 function parseJsObject(
   path: NodePath<t.ObjectExpression>,
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions
 ) {
   const props = path.get("properties");
@@ -199,7 +199,7 @@ function parseJsObject(
 
 function parseJsArray(
   path: NodePath<t.ArrayExpression>,
-  state: ParseModuleState,
+  state: ParsedModule,
   options: ParseJsValueOptions
 ) {
   const elements = path.get("elements");

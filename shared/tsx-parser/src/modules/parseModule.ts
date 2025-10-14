@@ -4,103 +4,110 @@ import type { NodePath } from "@babel/traverse";
 import type * as t from "@babel/types";
 import { parseComponent } from "./parseComponent.js";
 import type {
-  ParsedModule,
+  ModulePart,
+  ParsedApp,
   ParseJsValueOptions,
   ParseModuleOptions,
-  ParseModuleState,
+  ParsedModule,
 } from "./interfaces.js";
 import { parseFunction } from "./parseFunction.js";
+import { validateGlobalApi } from "./validations.js";
+import { parseChildren } from "./parseChildren.js";
+import { parseFile } from "./parseFile.js";
+import { getFilePath } from "./getFilePath.js";
+import { getViewTitle } from "./getViewTitle.js";
 
 const traverse =
   process.env.NODE_ENV === "test"
     ? BabelTraverse
     : (BabelTraverse as unknown as { default: typeof BabelTraverse }).default;
 
+enum FunctionScope {
+  TopLevelStatement = "top level statement",
+  NamedExportDeclaration = "named export declaration",
+  DefaultExportDeclaration = "default export declaration",
+}
+
 export function parseModule(
-  source: string,
+  mod: ParsedModule,
+  app: ParsedApp,
   ast: BabelParseResult<t.File>,
   options?: ParseModuleOptions
-) {
-  const state: ParseModuleState = {
-    source,
-    errors: [],
-    usedHelpers: new Set(),
-    contracts: new Set(),
-  };
-
-  if (ast.errors?.length) {
-    for (const error of ast.errors) {
-      state.errors.push({
-        message: `${error.code}: ${error.reasonCode}`,
-        node: null,
-        severity: "error",
-      });
-    }
-  }
-
-  const parsed: ParsedModule = {
-    source,
-    filename: options?.filename,
-    defaultExport: null,
-    internalComponents: [],
-    internalFunctions: [],
-    errors: state.errors,
-    contracts: state.contracts,
-    usedHelpers: state.usedHelpers,
-  };
+): void {
   const functionBindings = new Set<t.Identifier>();
+  const componentBindings = new Set<t.Identifier>();
   const globalOptions: ParseJsValueOptions = {
     functionBindings,
+    componentBindings,
     contextBindings: options?.withContexts,
   };
 
   traverse(ast, {
     Program(path) {
       const body = path.get("body");
-      const functions: NodePath<t.FunctionDeclaration>[] = [];
-      const internalComponents: NodePath<t.FunctionDeclaration>[] = [];
-      let defaultExport: NodePath<t.FunctionDeclaration> | null = null;
+      const functionNodes: Array<{
+        func: NodePath<t.FunctionDeclaration>;
+        exported?: boolean;
+      }> = [];
+      let defaultExportNode: NodePath<t.FunctionDeclaration> | null = null;
+      let renderNode: NodePath<t.Node> | null = null;
+      const imports: string[] = [];
 
       const collectFunctions = (
-        stmt: NodePath<t.Statement | t.Declaration | null | undefined>,
-        level: string
+        stmt: NodePath<t.Node | null | undefined>,
+        scope: FunctionScope
       ) => {
-        if (stmt.isExportNamedDeclaration()) {
-          const decl = stmt.get("declaration");
-          collectFunctions(decl, "exported");
-        } else if (stmt.isFunctionDeclaration()) {
+        if (stmt.isFunctionDeclaration()) {
           const id = stmt.node.id;
+          if (id) {
+            if (isComponent(id)) {
+              componentBindings.add(id);
+            } else {
+              functionBindings.add(id);
+            }
+          }
+          if (scope === FunctionScope.DefaultExportDeclaration) {
+            if (app.appType === "app" && mod.moduleType === "entry") {
+              mod.errors.push({
+                message: `The entry module in an app cannot have a default export declaration.`,
+                node: stmt.node,
+                severity: "error",
+              });
+            } else {
+              defaultExportNode = stmt;
+            }
+            return;
+          }
           if (!id) {
-            state.errors.push({
+            mod.errors.push({
               message: `Function declaration must have a name`,
               node: stmt.node,
               severity: "error",
             });
             return;
           }
-          if (isTemplate(id)) {
-            internalComponents.push(stmt);
+          if (scope === FunctionScope.NamedExportDeclaration) {
+            functionNodes.push({ func: stmt, exported: true });
           } else {
-            functionBindings.add(id);
-            functions.push(stmt);
+            functionNodes.push({ func: stmt });
           }
         } else if (stmt.isExportDefaultDeclaration()) {
           const decl = stmt.get("declaration");
-          if (decl.isFunctionDeclaration()) {
-            defaultExport = decl;
-          } else {
-            state.errors.push({
-              message: `Expected function declaration as default export, but got ${decl.type}`,
-              node: decl.node,
-              severity: "error",
-            });
+          collectFunctions(decl, FunctionScope.DefaultExportDeclaration);
+        } else if (stmt.isExportNamedDeclaration()) {
+          const decl = stmt.get("declaration");
+          collectFunctions(decl, FunctionScope.NamedExportDeclaration);
+        } else if (stmt.isImportDeclaration()) {
+          const importSource = stmt.node.source.value;
+          if (importSource.startsWith(".") || importSource.startsWith("/")) {
+            imports.push(importSource);
           }
         } else if (
           !stmt.isTSInterfaceDeclaration &&
           !stmt.isTSTypeAliasDeclaration()
         ) {
-          state.errors.push({
-            message: `Unsupported ${level} statement type: ${stmt.type}`,
+          mod.errors.push({
+            message: `Unsupported ${scope} type: ${stmt.type}`,
             node: stmt.node,
             severity: "error",
           });
@@ -108,40 +115,117 @@ export function parseModule(
       };
 
       for (const stmt of body) {
-        collectFunctions(stmt, "top level");
+        if (
+          app.appType === "app" &&
+          mod === app.entry &&
+          stmt.isExpressionStatement()
+        ) {
+          const expr = stmt.get("expression");
+          if (expr.isCallExpression()) {
+            const callee = expr.get("callee");
+            if (callee.isIdentifier() && validateGlobalApi(callee, "render")) {
+              const args = expr.get("arguments");
+              if (args.length !== 1) {
+                mod.errors.push({
+                  message: `render() expects exactly one argument, received: ${args.length}`,
+                  node: expr.node,
+                  severity: "error",
+                });
+                continue;
+              }
+              renderNode = args[0];
+              continue;
+            }
+          }
+        }
+
+        collectFunctions(stmt, FunctionScope.TopLevelStatement);
       }
 
-      for (const fn of functions) {
-        const func = parseFunction(fn, state, globalOptions);
-        if (func) {
-          parsed.internalFunctions.push(func);
+      for (const importSource of imports) {
+        parseFile(
+          getFilePath(importSource, mod.filePath, app.files),
+          app,
+          undefined,
+          options
+        );
+      }
+
+      for (const { func: item, exported } of functionNodes) {
+        const id = item.node.id!;
+        if (isComponent(id)) {
+          const type =
+            app.appType === "app" && mod.moduleType === "entry"
+              ? "page"
+              : "template";
+          const component = parseComponent(item, mod, type, globalOptions);
+          if (component) {
+            const part: ModulePart = {
+              type,
+              component,
+            };
+            if (exported) {
+              mod.namedExports.set(id.name, part);
+            } else {
+              mod.internals.push(part);
+            }
+          }
+        } else {
+          const func = parseFunction(item, mod, globalOptions);
+          if (func) {
+            const part: ModulePart = {
+              type: "function",
+              function: func,
+            };
+            if (exported) {
+              mod.namedExports.set(id.name, part);
+            } else {
+              mod.internals.push(part);
+            }
+          }
         }
       }
-      for (const ic of internalComponents) {
-        const component = parseComponent(ic, state, "template", globalOptions);
-        if (component) {
-          parsed.internalComponents.push({ ...component, id: ic.node.id! });
-        }
-      }
-      if (defaultExport) {
+
+      if (defaultExportNode) {
+        const type =
+          mod.moduleType === "entry"
+            ? "view"
+            : mod.moduleType === "page"
+              ? "page"
+              : "template";
         const component = parseComponent(
-          defaultExport,
-          state,
-          "view",
+          defaultExportNode,
+          mod,
+          type,
           globalOptions
         );
         if (component) {
-          parsed.defaultExport = component;
+          mod.defaultExport = {
+            type,
+            component,
+            ...(type === "view" ? { title: getViewTitle(component) } : {}),
+          };
         }
+      }
+
+      if (renderNode) {
+        const children = parseChildren(renderNode, mod, globalOptions);
+        mod.render = { type: "render", children };
       }
 
       path.stop();
     },
   });
-
-  return parsed;
 }
 
-function isTemplate(id: t.Identifier) {
+/**
+ * Checks if a given identifier is a component.
+ *
+ * Convention: components have names starting with uppercase letter
+ * e.g. MyComponent, HelloWorld
+ * functions have names starting with lowercase letter
+ * e.g. myFunction, helloWorld
+ */
+function isComponent(id: t.Identifier) {
   return id.name[0] >= "A" && id.name[0] <= "Z";
 }

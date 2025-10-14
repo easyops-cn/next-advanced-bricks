@@ -1,9 +1,14 @@
 // istanbul ignore file
-import type { ParseResult, ParseOptions } from "@next-shared/tsx-parser";
+import type {
+  ParsedApp,
+  ParseOptions,
+  SourceFile,
+} from "@next-shared/tsx-parser";
 import { wrap } from "comlink";
 
 export interface RemoteTsxParserWorker {
-  parse(source: string, options?: ParseOptions): Promise<ParseResult>;
+  parseView(source: string, options?: ParseOptions): Promise<ParsedApp>;
+  parseApp(files: SourceFile[]): Promise<ParsedApp>;
 }
 
 let remoteWorkerPromise: Promise<RemoteTsxParserWorker> | undefined;

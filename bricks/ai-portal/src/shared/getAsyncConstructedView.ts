@@ -7,7 +7,7 @@ export async function getAsyncConstructedView(
 ): Promise<ParsedView | null> {
   try {
     const worker = await getRemoteTsxParserWorker();
-    const result = await worker.parse(generatedView.code, {
+    const result = await worker.parseView(generatedView.code, {
       workspace,
       withContexts: generatedView.withContexts
         ? Object.keys(generatedView.withContexts)

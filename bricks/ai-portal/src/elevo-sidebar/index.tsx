@@ -48,7 +48,6 @@ const { defineElement, property, event, method } = createDecorators();
 export interface ElevoSidebarProps {
   userInstanceId?: string;
   behavior?: "default" | "drawer";
-  bordered?: boolean;
   logoUrl?: string;
   newChatUrl?: string;
   newChatLinkWhenCollapsed?: boolean;
@@ -88,9 +87,6 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
 
   @property()
   accessor behavior: "default" | "drawer" | undefined;
-
-  @property({ type: Boolean, render: false })
-  accessor bordered: boolean | undefined;
 
   @property()
   accessor logoUrl: string | undefined;

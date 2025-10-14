@@ -20,8 +20,8 @@ import type {
 } from "@next-bricks/vs/code-editor";
 import nextTsxDefinition from "@next-shared/tsx-parser/lib/next-tsx.d.ts?raw";
 import componentsDefinition from "@next-shared/tsx-converter/lib/components.d.ts?raw";
-import { convertTsx, type ConvertResult } from "@next-shared/tsx-converter";
-import type { ParseResult } from "@next-shared/tsx-parser";
+import { convertView, type ConvertResult } from "@next-shared/tsx-converter";
+import type { ParsedApp } from "@next-shared/tsx-parser";
 import "@next-core/theme";
 import styles from "./styles.module.css";
 import { getRemoteTsxParserWorker } from "./workers/tsxParser.js";
@@ -133,7 +133,7 @@ function TsxPlaygroundComponent({
   const [code, setCode] = useState(source ?? "");
   const deferredCode = useDeferredValue(code);
   const [markers, setMarkers] = useState<ExtraMarker[] | undefined>();
-  const [view, setView] = useState<ParseResult | undefined>();
+  const [view, setView] = useState<ParsedApp | undefined>();
 
   const allLibs = useMemo(
     () => [...BUILTIN_LIBS, ...(extraLibs ?? [])],
@@ -154,7 +154,7 @@ function TsxPlaygroundComponent({
       if (ignore) {
         return;
       }
-      const result = await worker.parse(deferredCode);
+      const result = await worker.parseView(deferredCode);
       if (ignore) {
         return;
       }
@@ -219,7 +219,7 @@ function TsxPlaygroundComponent({
       // setLoading(true);
       let convertedView: ConvertResult | undefined;
       try {
-        convertedView = await convertTsx(view, { rootId, expanded: true });
+        convertedView = await convertView(view, { rootId, expanded: true });
         if (ignore) {
           return;
         }
