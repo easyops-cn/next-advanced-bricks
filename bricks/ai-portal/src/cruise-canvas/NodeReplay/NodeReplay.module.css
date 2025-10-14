@@ -11,6 +11,10 @@
   max-width: 90vw;
 }
 
+.node-replay.chat {
+  margin-top: 14px;
+}
+
 .bar {
   background: rgba(184, 187, 205, 0.3);
   border-radius: 8px;

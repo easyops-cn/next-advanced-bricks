@@ -29,26 +29,29 @@ class AppPreview extends ReactNextElement {
 }
 
 interface PreviewWindow extends Window {
-  _preview_only_setupAppPreview?(
-    data: BootstrapData,
-    url: string
-  ): Promise<void>;
-  _preview_only_updateApp?(
-    appId: string,
-    storyboard: Partial<Storyboard>
-  ): void;
-  _preview_only_reload?(): void;
+  _preview_only_appPreviewer?: AppPreviewer;
+}
+
+interface AppPreviewer {
+  setup(data: BootstrapData, url: string): Promise<void>;
+  update(appId: string, storyboard: Partial<Storyboard>): void;
+  reload(): void;
+  push(url: string): void;
+  replace(url: string): void;
+  goBack(): void;
+  goForward(): void;
 }
 
 function AppPreviewComponent({ storyboard }: AppPreviewProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [ready, setReady] = useState(false);
+  const [appPreviewer, setAppPreviewer] = useState<AppPreviewer | null>(null);
 
   const handleIframeLoad = useCallback(() => {
     const check = () => {
-      const iframeWin = iframeRef.current?.contentWindow as PreviewWindow;
-      if (iframeWin?._preview_only_setupAppPreview) {
-        setReady(true);
+      const previewer = (iframeRef.current?.contentWindow as PreviewWindow)
+        ?._preview_only_appPreviewer;
+      if (previewer) {
+        setAppPreviewer(previewer);
       } else {
         setTimeout(check, 100);
       }
@@ -59,10 +62,9 @@ function AppPreviewComponent({ storyboard }: AppPreviewProps) {
   const setupRef = useRef<Promise<void> | null>(null);
 
   useEffect(() => {
-    if (!ready || !storyboard) {
+    if (!appPreviewer || !storyboard) {
       return;
     }
-    const iframe = iframeRef.current!.contentWindow as PreviewWindow;
 
     const app: MicroApp = {
       id: "lab-app-preview",
@@ -76,14 +78,14 @@ function AppPreviewComponent({ storyboard }: AppPreviewProps) {
         if (ignore) {
           return;
         }
-        iframe._preview_only_updateApp?.(app.id, { ...storyboard, app });
-        iframe._preview_only_reload?.();
+        appPreviewer.update(app.id, { ...storyboard, app });
+        appPreviewer.reload();
       });
       return () => {
         ignore = true;
       };
     } else {
-      setupRef.current = iframe._preview_only_setupAppPreview!(
+      setupRef.current = appPreviewer.setup(
         {
           brickPackages: (__secret_internals as any).getBrickPackages(),
           storyboards: [
@@ -96,7 +98,7 @@ function AppPreviewComponent({ storyboard }: AppPreviewProps) {
         app.homepage
       );
     }
-  }, [ready, storyboard]);
+  }, [appPreviewer, storyboard]);
 
   return (
     <div className="container">
