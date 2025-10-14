@@ -17,6 +17,7 @@ const { defineElement, property } = createDecorators();
 export interface IconButtonProps {
   icon?: GeneralIconProps;
   tooltip?: string;
+  tooltipHoist?: boolean;
   disabled?: boolean;
   variant?: IconButtonVariant;
 }
@@ -43,6 +44,9 @@ class IconButton extends ReactNextElement implements IconButtonProps {
   accessor tooltip: string | undefined;
 
   @property({ type: Boolean })
+  accessor tooltipHoist: boolean | undefined;
+
+  @property({ type: Boolean })
   accessor disabled: boolean | undefined;
 
   @property({ render: false })
@@ -53,13 +57,19 @@ class IconButton extends ReactNextElement implements IconButtonProps {
       <IconButtonComponent
         icon={this.icon}
         tooltip={this.tooltip}
+        tooltipHoist={this.tooltipHoist}
         disabled={this.disabled}
       />
     );
   }
 }
 
-function IconButtonComponent({ icon, tooltip, disabled }: IconButtonProps) {
+function IconButtonComponent({
+  icon,
+  tooltip,
+  tooltipHoist,
+  disabled,
+}: IconButtonProps) {
   const btn = (
     <button disabled={disabled}>
       <WrappedIcon {...icon} />
@@ -67,7 +77,11 @@ function IconButtonComponent({ icon, tooltip, disabled }: IconButtonProps) {
   );
 
   if (tooltip) {
-    return <WrappedTooltip content={tooltip}>{btn}</WrappedTooltip>;
+    return (
+      <WrappedTooltip content={tooltip} hoist={tooltipHoist}>
+        {btn}
+      </WrappedTooltip>
+    );
   }
 
   return btn;

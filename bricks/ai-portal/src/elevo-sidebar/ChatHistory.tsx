@@ -6,6 +6,8 @@ import React, {
   useMemo,
   useRef,
   useState,
+  type MutableRefObject,
+  type PropsWithChildren,
 } from "react";
 import classNames from "classnames";
 import {
@@ -18,7 +20,7 @@ import type {
   SimpleActionType,
 } from "@next-bricks/basic/mini-actions";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
-import { isEqual } from "lodash";
+import { isEqual, throttle } from "lodash";
 import { K, t } from "./i18n.js";
 import {
   WrappedIcon,
@@ -327,23 +329,22 @@ export function LowLevelChatHistory(
   return (
     <div className="history" ref={rootRef}>
       <div className={classNames("section", { collapsed: projectsCollapsed })}>
-        <div className="section-title">
-          <div
-            className="section-label"
-            onClick={() => setProjectsCollapsed((prev) => !prev)}
-          >
-            {t(K.PROJECTS)}
-            <WrappedIcon lib="fa" icon="angle-down" />
-          </div>
+        <SectionTitle
+          rootRef={rootRef}
+          title={t(K.PROJECTS)}
+          onToggle={() => setProjectsCollapsed((prev) => !prev)}
+        >
           {canAddProject && (
             <WrappedIconButton
               icon={ADD_ICON}
               variant="mini-light"
               tooltip={t(K.CREATE_PROJECT)}
+              tooltipHoist={true}
+              className="button"
               onClick={onAddProject}
             />
           )}
-        </div>
+        </SectionTitle>
         <ul className="items">
           {projectsError ? (
             <li className="error">Failed to load project</li>
@@ -390,15 +391,11 @@ export function LowLevelChatHistory(
         </ul>
       </div>
       <div className={classNames("section", { collapsed: historyCollapsed })}>
-        <div className="section-title">
-          <div
-            className="section-label"
-            onClick={() => setHistoryCollapsed((prev) => !prev)}
-          >
-            {t(K.HISTORY)}
-            <WrappedIcon lib="fa" icon="angle-down" />
-          </div>
-        </div>
+        <SectionTitle
+          rootRef={rootRef}
+          title={t(K.HISTORY)}
+          onToggle={() => setHistoryCollapsed((prev) => !prev)}
+        />
         <ul className="items">
           {filteredHistoryList ? (
             filteredHistoryList.map((item) => (
@@ -452,6 +449,54 @@ export function LowLevelChatHistory(
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+interface SectionTitleProps {
+  rootRef: MutableRefObject<HTMLDivElement | null>;
+  title: string;
+  onToggle: () => void;
+}
+
+function SectionTitle({
+  rootRef,
+  title,
+  children,
+  onToggle,
+}: PropsWithChildren<SectionTitleProps>) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [stickyActive, setStickyActive] = useState(false);
+
+  useEffect(() => {
+    const parent = rootRef.current;
+    const element = ref.current;
+    const sibling = element?.nextElementSibling as HTMLElement | null;
+    if (!parent || !element || !sibling) {
+      return;
+    }
+    const onScroll = throttle(() => {
+      const rect = element.getBoundingClientRect();
+      const siblingRect = sibling.getBoundingClientRect();
+      const diff = siblingRect.top - rect.top - rect.height;
+      setStickyActive(diff < 1);
+    }, 100);
+    parent.addEventListener("scroll", onScroll);
+    return () => {
+      parent.removeEventListener("scroll", onScroll);
+    };
+  }, [rootRef]);
+
+  return (
+    <div
+      className={classNames("section-title", { sticky: stickyActive })}
+      ref={ref}
+    >
+      <div className="section-label" onClick={onToggle}>
+        {title}
+        <WrappedIcon lib="fa" icon="angle-down" />
+      </div>
+      {children}
     </div>
   );
 }
