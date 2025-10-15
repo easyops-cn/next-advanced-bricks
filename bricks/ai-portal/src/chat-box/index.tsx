@@ -109,32 +109,7 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
   accessor aiEmployees: AIEmployee[] | undefined;
 
   @property({ attribute: false })
-  accessor commands: Command[] | undefined = [
-    {
-      label: "select serviceflow",
-      value: "select serviceflow",
-      options: [
-        {
-          label: "hr",
-          value: "HR",
-          options: [
-            {
-              label: "employee onboarding",
-              value: "Employee Onboarding",
-            },
-            {
-              label: "employee offboarding",
-              value: "Employee Offboarding",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      label: "create project",
-      value: "create project",
-    },
-  ];
+  accessor commands: Command[] | undefined;
 
   @event({ type: "message.submit" })
   accessor #messageSubmit!: EventEmitter<string>;
