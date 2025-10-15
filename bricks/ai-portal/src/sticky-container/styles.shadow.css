@@ -15,7 +15,7 @@
   inset: 0;
   z-index: -1;
   background-color: rgb(205, 206, 207);
-  background-image: url("../page-container/images/background.png");
+  background-image: url("../home-container/images/background.png");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -25,5 +25,4 @@
 
 :host([variant="home"])::before {
   background-color: #f1f1f1;
-  background-image: url("../home-container/images/background.png");
 }

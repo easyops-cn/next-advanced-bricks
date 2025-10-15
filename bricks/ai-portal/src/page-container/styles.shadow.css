@@ -15,7 +15,7 @@
   z-index: -1;
   inset: 0;
   background-color: rgb(205, 206, 207);
-  background-image: url("./images/background.png");
+  background-image: url("../home-container/images/background.png");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;

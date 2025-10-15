@@ -5,7 +5,7 @@ ai-portal\.chat-stream {
   height: 100%;
   overflow: hidden;
   background-color: #f3f3f4;
-  background-image: url("./images/background.png");
+  background-image: url("../home-container/images/background.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

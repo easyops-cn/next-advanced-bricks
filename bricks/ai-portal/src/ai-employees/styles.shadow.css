@@ -12,7 +12,7 @@
   height: 100%;
   overflow: hidden;
   background-color: rgb(205, 206, 207);
-  background-image: url("../page-container/images/background.png");
+  background-image: url("../home-container/images/background.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

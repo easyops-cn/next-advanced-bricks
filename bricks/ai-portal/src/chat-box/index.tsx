@@ -39,7 +39,7 @@ initializeI18n(NS, locales);
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 const WrappedActions = wrapBrick<
   EoActions,
-  ActionsProps,
+  ActionsProps & { activeKeys?: (string | number)[] },
   ActionsEvents,
   ActionsEventsMapping
 >("eo-actions", {
@@ -78,7 +78,9 @@ export interface Command {
 }
 
 type ActionWithAncestors = SimpleAction & {
+  key: string | number;
   ancestors?: Command[];
+  items?: ActionWithAncestors[];
 };
 
 /**
@@ -352,7 +354,7 @@ function LegacyChatBoxComponent(
               },
               range: { start: 0, end: selectionStart },
               actions: matchedCommands.map((command) => ({
-                key: command.label,
+                key: command.value,
                 text: command.label,
                 data: command,
                 ancestors: [],
@@ -513,7 +515,7 @@ function LegacyChatBoxComponent(
           } else {
             setActiveActionIndexes((prev) => {
               let cursor = 0;
-              let actions = commandPopover!.actions;
+              let { actions } = commandPopover!;
               const list: number[] = [];
               while (cursor < prev.length - 1) {
                 const action = actions[prev[cursor]];
@@ -535,23 +537,50 @@ function LegacyChatBoxComponent(
           return false;
         }
         case "Enter":
-          if (!mentionPopover && !commandPopover) {
-            return;
-          }
-          e.preventDefault();
-          e.stopPropagation();
-          e.nativeEvent.stopImmediatePropagation();
+        case "ArrowLeft":
+        case "ArrowRight":
           if (mentionPopover) {
-            handleMention(mentionPopover.actions[activeActionIndex]);
-          } else {
-            const action = commandPopover!.actions[activeActionIndexes[0]];
-            if (isSubMenuAction(action)) {
-              setActiveActionIndexes((prev) => [...prev, 0]);
-            } else {
-              handleSelectCommand(action);
+            if (e.key === "Enter") {
+              e.preventDefault();
+              e.stopPropagation();
+              e.nativeEvent.stopImmediatePropagation();
+              handleMention(mentionPopover.actions[activeActionIndex]);
+              return false;
             }
+          } else if (commandPopover) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.nativeEvent.stopImmediatePropagation();
+
+            if (e.key === "ArrowLeft") {
+              if (activeActionIndexes.length > 1) {
+                setActiveActionIndexes((prev) => prev.slice(0, -1));
+              }
+              return false;
+            }
+
+            let cursor = 0;
+            let { actions } = commandPopover!;
+            let action: ActionWithAncestors | undefined;
+            while (cursor < activeActionIndexes.length) {
+              action = actions[activeActionIndexes[cursor]];
+              if (isSubMenuAction(action)) {
+                actions = action.items;
+              } else {
+                break;
+              }
+              cursor += 1;
+            }
+            if (action) {
+              if (isSubMenuAction(action)) {
+                setActiveActionIndexes((prev) => [...prev, 0]);
+              } else if (e.key === "Enter") {
+                handleSelectCommand(action);
+              }
+            }
+            return false;
           }
-          return false;
+          break;
         case "Delete":
         case "Backspace": {
           const popovers = [
@@ -607,6 +636,30 @@ function LegacyChatBoxComponent(
     ]
   );
 
+  const commandCheckedKeys = useMemo(() => {
+    if (!commandPopover) {
+      return [];
+    }
+    let actions = commandPopover.actions;
+    const checkedKeys: (string | number)[] = [];
+    for (let i = 0; i < activeActionIndexes.length; i += 1) {
+      const index = activeActionIndexes[i];
+      const action = actions[index];
+      if (action) {
+        if (isSubMenuAction(action)) {
+          checkedKeys.push(action.key!);
+          actions = action.items;
+        } else {
+          checkedKeys.push(action.key!);
+          break;
+        }
+      } else {
+        break;
+      }
+    }
+    return checkedKeys;
+  }, [activeActionIndexes, commandPopover]);
+
   return (
     <div className="root">
       <div className="container" ref={containerRef}>
@@ -648,7 +701,7 @@ function LegacyChatBoxComponent(
             <WrappedActions
               actions={mentionPopover.actions}
               style={mentionPopover.style}
-              checkedKeys={[mentionPopover.actions[activeActionIndex].key!]}
+              activeKeys={[mentionPopover.actions[activeActionIndex].key!]}
               onActionClick={(e) => handleMention(e.detail)}
             />,
             document.body
@@ -658,13 +711,10 @@ function LegacyChatBoxComponent(
             <WrappedActions
               actions={commandPopover.actions}
               style={commandPopover.style}
-              // checkedKeys={[commandPopover.actions[activeActionIndex].key!]}
-              // noCheckSign
-              {...getOpenedAndCheckedKeys(
-                commandPopover.actions,
-                activeActionIndexes
-              )}
-              onActionClick={(e) => handleSelectCommand(e.detail)}
+              activeKeys={commandCheckedKeys}
+              onActionClick={(e) =>
+                handleSelectCommand(e.detail as ActionWithAncestors)
+              }
             />,
             document.body
           )}
@@ -676,7 +726,7 @@ function LegacyChatBoxComponent(
 function getCommandSubMenu(
   command: Command,
   ancestors: Command[]
-): SimpleAction[] | undefined {
+): ActionWithAncestors[] | undefined {
   return command.options?.map((subCommand) => {
     const nextAncestors = [...ancestors, command];
     return {
@@ -687,31 +737,6 @@ function getCommandSubMenu(
       items: getCommandSubMenu(subCommand, nextAncestors),
     };
   });
-}
-
-function getOpenedAndCheckedKeys(
-  actions: ActionWithAncestors[],
-  activeIndexes: number[]
-) {
-  const openedKeys: (string | number)[] = [];
-  let checkedKeys: (string | number)[] = [];
-  let currentActions = actions;
-  for (let i = 0; i < activeIndexes.length; i += 1) {
-    const index = activeIndexes[i];
-    const action = currentActions[index];
-    if (action) {
-      if (isSubMenuAction(action)) {
-        openedKeys.push(action.key!);
-        currentActions = action.items;
-      } else {
-        checkedKeys = [action.key!];
-        break;
-      }
-    } else {
-      break;
-    }
-  }
-  return { openedKeys, checkedKeys };
 }
 
 function isSubMenuAction(
