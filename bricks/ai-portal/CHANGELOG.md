@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.51.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.50.3...@next-bricks/ai-portal@0.51.0) (2025-10-15)
+
+
+### Bug Fixes
+
+* add my links ([ada402d](https://github.com/easyops-cn/next-advanced-bricks/commit/ada402d391a91a2e08d0cd7a689e89a1fc0d2279))
+* make sidebar section title sticky ([45aedf7](https://github.com/easyops-cn/next-advanced-bricks/commit/45aedf765e27dbbdaaad35b70a809cbe7fea4ce2))
+* remove testing prop value ([37dc479](https://github.com/easyops-cn/next-advanced-bricks/commit/37dc4793b4ac6eec40221e77fa5649dea413ca4d))
+* sync page background image ([4073a36](https://github.com/easyops-cn/next-advanced-bricks/commit/4073a362d7991beae951bcad2d68ede64dc027d9))
+
+
+### Features
+
+* elevo-card ([b1b819e](https://github.com/easyops-cn/next-advanced-bricks/commit/b1b819eb35e6ff4b0483a9e2d996b3c4996c1258))
+* support commands in chat-box ([b62b78a](https://github.com/easyops-cn/next-advanced-bricks/commit/b62b78a815d8e97138de4a788d1fb59fd6048579))
+
+
+
+
+
 ## [0.50.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.50.2...@next-bricks/ai-portal@0.50.3) (2025-10-14)
 
 
