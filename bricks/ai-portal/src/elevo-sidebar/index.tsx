@@ -33,6 +33,7 @@ import {
   type Project,
   type ProjectActionClickDetail,
 } from "./ChatHistory.js";
+import { NavLink } from "./NavLink.js";
 
 initializeI18n(NS, locales);
 
@@ -59,12 +60,14 @@ export interface ElevoSidebarProps {
   projectActions?: ActionType[];
   links?: SidebarLink[];
   canAddProject?: boolean;
+  myLinks?: SidebarLink[];
 }
 
 export interface SidebarLink {
   title: string;
   url: string;
-  icon: GeneralIconProps;
+  icon?: GeneralIconProps;
+  activeIncludes?: string[];
 }
 
 const ElevoSidebarComponent = forwardRef(LegacyElevoSidebarComponent);
@@ -98,16 +101,10 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
   accessor newChatLinkWhenCollapsed: boolean | undefined;
 
   @property()
-  accessor historyActiveId: string | undefined;
-
-  @property()
   accessor historyUrlTemplate: string | undefined;
 
   @property({ attribute: false })
   accessor historyActions: ActionType[] | undefined;
-
-  @property()
-  accessor projectActiveId: string | undefined;
 
   @property()
   accessor projectUrlTemplate: string | undefined;
@@ -120,6 +117,9 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
 
   @property({ type: Boolean })
   accessor canAddProject: boolean | undefined = true;
+
+  @property({ attribute: false })
+  accessor myLinks: SidebarLink[] | undefined;
 
   @event({ type: "logout" })
   accessor #logout!: EventEmitter<void>;
@@ -196,14 +196,13 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
         logoUrl={this.logoUrl}
         newChatUrl={this.newChatUrl}
         newChatLinkWhenCollapsed={this.newChatLinkWhenCollapsed}
-        historyActiveId={this.historyActiveId}
         historyUrlTemplate={this.historyUrlTemplate}
         historyActions={this.historyActions}
-        projectActiveId={this.projectActiveId}
         projectUrlTemplate={this.projectUrlTemplate}
         projectActions={this.projectActions}
         links={this.links}
         canAddProject={this.canAddProject}
+        myLinks={this.myLinks}
         onLogout={this.#handleLogout}
         onActionClick={this.#handleActionClick}
         onProjectActionClick={this.#handleProjectActionClick}
@@ -227,14 +226,13 @@ function LegacyElevoSidebarComponent(
     logoUrl,
     newChatUrl,
     newChatLinkWhenCollapsed,
-    historyActiveId,
     historyUrlTemplate,
     historyActions,
-    projectActiveId,
     projectUrlTemplate,
     projectActions,
     links,
     canAddProject,
+    myLinks,
     onLogout,
     onActionClick,
     onProjectActionClick,
@@ -360,22 +358,32 @@ function LegacyElevoSidebarComponent(
         {links?.length ? (
           <div className="links">
             {links.map((link, index) => (
-              <WrappedLink className="link" key={index} url={link.url}>
-                <WrappedIcon className="icon" {...link.icon} />
-                <span className="title">{link.title}</span>
-              </WrappedLink>
+              <NavLink
+                key={index}
+                url={link.url}
+                activeIncludes={link.activeIncludes}
+                render={({ active }) => (
+                  <WrappedLink
+                    key={index}
+                    className={classNames("link", { active })}
+                    url={link.url}
+                  >
+                    <WrappedIcon className="icon" {...link.icon} />
+                    <span className="title">{link.title}</span>
+                  </WrappedLink>
+                )}
+              />
             ))}
           </div>
         ) : null}
         <ChatHistory
           ref={historyRef}
           canAddProject={canAddProject}
-          historyActiveId={historyActiveId}
           historyUrlTemplate={historyUrlTemplate}
           historyActions={historyActions}
-          projectActiveId={projectActiveId}
           projectUrlTemplate={projectUrlTemplate}
           projectActions={projectActions}
+          myLinks={myLinks}
           onActionClick={onActionClick}
           onHistoryClick={handleHistoryClick}
           onProjectActionClick={onProjectActionClick}

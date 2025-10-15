@@ -93,10 +93,6 @@ textarea:focus {
   background: #1e33cc;
 }
 
-.mentions {
-  position: absolute;
-}
-
 .mention-overlay {
   position: absolute;
   border-radius: 4px;

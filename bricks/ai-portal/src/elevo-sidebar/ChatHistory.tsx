@@ -6,6 +6,8 @@ import React, {
   useMemo,
   useRef,
   useState,
+  type MutableRefObject,
+  type PropsWithChildren,
 } from "react";
 import classNames from "classnames";
 import {
@@ -18,7 +20,7 @@ import type {
   SimpleActionType,
 } from "@next-bricks/basic/mini-actions";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
-import { isEqual } from "lodash";
+import { isEqual, throttle } from "lodash";
 import { K, t } from "./i18n.js";
 import {
   WrappedIcon,
@@ -29,6 +31,8 @@ import {
 import { DONE_STATES } from "../shared/constants.js";
 import { parseTemplate } from "../shared/parseTemplate.js";
 import type { ConversationState } from "../shared/interfaces.js";
+import type { SidebarLink } from "./index.js";
+import { NavLink } from "./NavLink.js";
 
 const ADD_ICON: GeneralIconProps = {
   lib: "fa",
@@ -80,13 +84,12 @@ export interface Project {
 }
 
 export interface ChatHistoryProps {
-  historyActiveId?: string;
   historyUrlTemplate?: string;
   historyActions?: ActionType[];
-  projectActiveId?: string;
   projectUrlTemplate?: string;
   projectActions?: ActionType[];
   canAddProject?: boolean;
+  myLinks?: SidebarLink[];
   onActionClick: (detail: ActionClickDetail) => void;
   onHistoryClick: () => void;
   onProjectActionClick: (detail: ProjectActionClickDetail) => void;
@@ -104,13 +107,12 @@ export const ChatHistory = forwardRef(LowLevelChatHistory);
 
 export function LowLevelChatHistory(
   {
-    historyActiveId,
     historyActions,
     historyUrlTemplate,
-    projectActiveId,
     projectUrlTemplate,
     projectActions,
     canAddProject,
+    myLinks,
     onActionClick,
     onHistoryClick,
     onProjectActionClick,
@@ -119,6 +121,7 @@ export function LowLevelChatHistory(
   ref: React.Ref<ChatHistoryRef>
 ) {
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const [myCollapsed, setMyCollapsed] = useState(false);
   const [projects, setProjects] = useState<Project[] | null>(null);
   const [projectsCollapsed, setProjectsCollapsed] = useState(false);
   const [projectsError, setProjectsError] = useState(false);
@@ -326,57 +329,94 @@ export function LowLevelChatHistory(
 
   return (
     <div className="history" ref={rootRef}>
+      {myLinks?.length ? (
+        <div className={classNames("section", { collapsed: myCollapsed })}>
+          <SectionTitle
+            rootRef={rootRef}
+            title={t(K.MY)}
+            onToggle={() => setMyCollapsed((prev) => !prev)}
+          />
+          <ul className="items">
+            {myLinks.map((link, index) => (
+              <li key={index}>
+                <NavLink
+                  url={link.url}
+                  activeIncludes={link.activeIncludes}
+                  render={({ active }) => (
+                    <WrappedLink
+                      className={classNames("item", { active })}
+                      url={link.url}
+                    >
+                      <div className="item-title">{link.title}</div>
+                    </WrappedLink>
+                  )}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
       <div className={classNames("section", { collapsed: projectsCollapsed })}>
-        <div className="section-title">
-          <div
-            className="section-label"
-            onClick={() => setProjectsCollapsed((prev) => !prev)}
-          >
-            {t(K.PROJECTS)}
-            <WrappedIcon lib="fa" icon="angle-down" />
-          </div>
+        <SectionTitle
+          rootRef={rootRef}
+          title={t(K.PROJECTS)}
+          onToggle={() => setProjectsCollapsed((prev) => !prev)}
+        >
           {canAddProject && (
             <WrappedIconButton
               icon={ADD_ICON}
               variant="mini-light"
               tooltip={t(K.CREATE_PROJECT)}
+              tooltipHoist={true}
+              className="button"
               onClick={onAddProject}
             />
           )}
-        </div>
+        </SectionTitle>
         <ul className="items">
           {projectsError ? (
             <li className="error">Failed to load project</li>
           ) : projects ? (
-            projects.map((project) => (
-              <li key={project.instanceId}>
-                <WrappedLink
-                  className={classNames("item", {
-                    "actions-active": project.instanceId === actionsVisible,
-                    active: project.instanceId === projectActiveId,
-                  })}
-                  onClick={onHistoryClick}
-                  {...(projectUrlTemplate
-                    ? { url: parseTemplate(projectUrlTemplate, project) }
-                    : null)}
-                >
-                  <div className="item-title" title={project.name}>
-                    {project.name || t(K.UNNAMED)}
-                  </div>
-                  <WrappedMiniActions
-                    className="actions"
-                    actions={projectActions}
-                    themeVariant="elevo"
-                    onActionClick={(e) => {
-                      onProjectActionClick({ action: e.detail, project });
-                    }}
-                    onVisibleChange={(e) => {
-                      setActionsVisible(e.detail ? project.instanceId : null);
-                    }}
+            projects.map((project) => {
+              const url = projectUrlTemplate
+                ? parseTemplate(projectUrlTemplate, project)
+                : undefined;
+              return (
+                <li key={project.instanceId}>
+                  <NavLink
+                    url={url}
+                    render={({ active }) => (
+                      <WrappedLink
+                        className={classNames("item", {
+                          "actions-active":
+                            project.instanceId === actionsVisible,
+                          active,
+                        })}
+                        onClick={onHistoryClick}
+                        {...(url ? { url } : null)}
+                      >
+                        <div className="item-title" title={project.name}>
+                          {project.name || t(K.UNNAMED)}
+                        </div>
+                        <WrappedMiniActions
+                          className="actions"
+                          actions={projectActions}
+                          themeVariant="elevo"
+                          onActionClick={(e) => {
+                            onProjectActionClick({ action: e.detail, project });
+                          }}
+                          onVisibleChange={(e) => {
+                            setActionsVisible(
+                              e.detail ? project.instanceId : null
+                            );
+                          }}
+                        />
+                      </WrappedLink>
+                    )}
                   />
-                </WrappedLink>
-              </li>
-            ))
+                </li>
+              );
+            })
           ) : (
             <li className="loading">
               <WrappedIcon
@@ -390,48 +430,57 @@ export function LowLevelChatHistory(
         </ul>
       </div>
       <div className={classNames("section", { collapsed: historyCollapsed })}>
-        <div className="section-title">
-          <div
-            className="section-label"
-            onClick={() => setHistoryCollapsed((prev) => !prev)}
-          >
-            {t(K.HISTORY)}
-            <WrappedIcon lib="fa" icon="angle-down" />
-          </div>
-        </div>
+        <SectionTitle
+          rootRef={rootRef}
+          title={t(K.HISTORY)}
+          onToggle={() => setHistoryCollapsed((prev) => !prev)}
+        />
         <ul className="items">
           {filteredHistoryList ? (
-            filteredHistoryList.map((item) => (
-              <li key={item.conversationId}>
-                <WrappedLink
-                  className={classNames("item", {
-                    "actions-active": item.conversationId === actionsVisible,
-                    active: item.conversationId === historyActiveId,
-                  })}
-                  onClick={onHistoryClick}
-                  {...(historyUrlTemplate
-                    ? { url: parseTemplate(historyUrlTemplate, item) }
-                    : null)}
-                >
-                  <div className="item-title" title={item.title}>
-                    {item.title || t(K.UNTITLED)}
-                  </div>
-                  <WrappedMiniActions
-                    className="actions"
-                    actions={mergedHistoryActions}
-                    onActionClick={(e) => {
-                      onActionClick({ action: e.detail, item });
-                    }}
-                    onVisibleChange={(e) => {
-                      setActionsVisible(e.detail ? item.conversationId : null);
-                    }}
+            filteredHistoryList.map((item) => {
+              const url = historyUrlTemplate
+                ? parseTemplate(historyUrlTemplate, item)
+                : undefined;
+              return (
+                <li key={item.conversationId}>
+                  <NavLink
+                    url={url}
+                    render={({ active }) => (
+                      <WrappedLink
+                        className={classNames("item", {
+                          "actions-active":
+                            item.conversationId === actionsVisible,
+                          active,
+                        })}
+                        onClick={onHistoryClick}
+                        {...(historyUrlTemplate
+                          ? { url: parseTemplate(historyUrlTemplate, item) }
+                          : null)}
+                      >
+                        <div className="item-title" title={item.title}>
+                          {item.title || t(K.UNTITLED)}
+                        </div>
+                        <WrappedMiniActions
+                          className="actions"
+                          actions={mergedHistoryActions}
+                          onActionClick={(e) => {
+                            onActionClick({ action: e.detail, item });
+                          }}
+                          onVisibleChange={(e) => {
+                            setActionsVisible(
+                              e.detail ? item.conversationId : null
+                            );
+                          }}
+                        />
+                        {!DONE_STATES.includes(item.state!) && (
+                          <div className="working"></div>
+                        )}
+                      </WrappedLink>
+                    )}
                   />
-                  {!DONE_STATES.includes(item.state!) && (
-                    <div className="working"></div>
-                  )}
-                </WrappedLink>
-              </li>
-            ))
+                </li>
+              );
+            })
           ) : (
             <li className="loading">
               <WrappedIcon
@@ -452,6 +501,54 @@ export function LowLevelChatHistory(
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+interface SectionTitleProps {
+  rootRef: MutableRefObject<HTMLDivElement | null>;
+  title: string;
+  onToggle: () => void;
+}
+
+function SectionTitle({
+  rootRef,
+  title,
+  children,
+  onToggle,
+}: PropsWithChildren<SectionTitleProps>) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [stickyActive, setStickyActive] = useState(false);
+
+  useEffect(() => {
+    const parent = rootRef.current;
+    const element = ref.current;
+    const sibling = element?.nextElementSibling as HTMLElement | null;
+    if (!parent || !element || !sibling) {
+      return;
+    }
+    const onScroll = throttle(() => {
+      const rect = element.getBoundingClientRect();
+      const siblingRect = sibling.getBoundingClientRect();
+      const diff = siblingRect.top - rect.top - rect.height;
+      setStickyActive(diff < 1);
+    }, 100);
+    parent.addEventListener("scroll", onScroll);
+    return () => {
+      parent.removeEventListener("scroll", onScroll);
+    };
+  }, [rootRef]);
+
+  return (
+    <div
+      className={classNames("section-title", { sticky: stickyActive })}
+      ref={ref}
+    >
+      <div className="section-label" onClick={onToggle}>
+        {title}
+        <WrappedIcon lib="fa" icon="angle-down" />
+      </div>
+      {children}
     </div>
   );
 }

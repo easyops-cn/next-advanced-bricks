@@ -4,6 +4,7 @@ import { ReactNextElement } from "@next-core/react-element";
 import "@next-core/theme";
 import imageGoals from "./images/goals@2x.png";
 import imageActivities from "./images/activities@2x.png";
+import imageSpaces from "./images/spaces@2x.png";
 import styleText from "./styles.shadow.css";
 
 const { defineElement, property } = createDecorators();
@@ -13,7 +14,10 @@ export interface BlankStateProps {
   description?: string;
 }
 
-export type BlankStateIllustration = "goals" | "activities";
+export type BlankStateIllustration =
+  | "goals"
+  | "activities"
+  | "collaboration-spaces";
 
 /**
  * 构件 `ai-portal.blank-state`
@@ -52,6 +56,8 @@ function getIllustrationSrc(illustration?: BlankStateIllustration) {
   switch (illustration) {
     case "goals":
       return imageGoals;
+    case "collaboration-spaces":
+      return imageSpaces;
     default:
       return imageActivities;
   }

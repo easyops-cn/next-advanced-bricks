@@ -182,6 +182,7 @@
     color: #000;
   }
 
+  &.active::part(link),
   &::part(link):hover {
     background: rgba(0, 0, 0, 0.04);
   }
@@ -223,6 +224,17 @@
     height: 30px;
     margin-bottom: 6px;
     padding: 0 8px;
+    position: sticky;
+    top: 0;
+  }
+
+  .section-title.sticky::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgb(229, 228, 234);
+    border-radius: 8px;
+    z-index: -1;
   }
 
   .section-label {
@@ -345,4 +357,8 @@
     align-items: center;
     height: 36px;
   }
+}
+
+.button {
+  display: flex;
 }
