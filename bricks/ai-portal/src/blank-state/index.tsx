@@ -5,6 +5,7 @@ import "@next-core/theme";
 import imageGoals from "./images/goals@2x.png";
 import imageActivities from "./images/activities@2x.png";
 import imageSpaces from "./images/spaces@2x.png";
+import imageServiceflows from "./images/serviceflows@2x.png";
 import styleText from "./styles.shadow.css";
 
 const { defineElement, property } = createDecorators();
@@ -17,7 +18,8 @@ export interface BlankStateProps {
 export type BlankStateIllustration =
   | "goals"
   | "activities"
-  | "collaboration-spaces";
+  | "collaboration-spaces"
+  | "serviceflows";
 
 /**
  * 构件 `ai-portal.blank-state`
@@ -58,6 +60,8 @@ function getIllustrationSrc(illustration?: BlankStateIllustration) {
       return imageGoals;
     case "collaboration-spaces":
       return imageSpaces;
+    case "serviceflows":
+      return imageServiceflows;
     default:
       return imageActivities;
   }

@@ -43,6 +43,10 @@
   max-width: 1000px;
 }
 
+:host([size="full"]) .container {
+  max-width: 100%;
+}
+
 .sticky-header {
   margin: 0 -24px;
   padding: 17px 24px 30px;

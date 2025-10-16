@@ -1,0 +1,59 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  position: relative;
+}
+
+.bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  backdrop-filter: blur(10px);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tabs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+
+  a {
+    display: block;
+    padding: 9px 27px;
+    color: rgba(0, 0, 0, 0.55);
+    line-height: 20px;
+    cursor: pointer;
+  }
+
+  .active a {
+    font-weight: 500;
+    color: #262626;
+  }
+}
+
+.body {
+  padding: 23px 27px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

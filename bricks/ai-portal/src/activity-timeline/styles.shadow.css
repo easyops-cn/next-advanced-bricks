@@ -89,6 +89,10 @@ ul {
   bottom: auto;
 }
 
+.activity:first-child:last-child .guide-line::before {
+  height: 0;
+}
+
 .comment {
   position: relative;
   font-size: 13px;
