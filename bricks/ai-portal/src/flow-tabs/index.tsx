@@ -4,8 +4,8 @@ import { ReactNextElement } from "@next-core/react-element";
 import "@next-core/theme";
 import classNames from "classnames";
 import ResizeObserver from "resize-observer-polyfill";
-import styleText from "./styles.shadow.css";
 import drawBg from "./drawBg";
+import styleText from "./styles.shadow.css";
 
 const { defineElement, property, event } = createDecorators();
 
@@ -89,16 +89,14 @@ function FlowTabsComponent({
         }
       }
 
-      const firstTabWidth = nav
-        .querySelector(".tab")!
-        .getBoundingClientRect().width;
       const tabElements = Array.from(nav.querySelectorAll(".tab"));
       const activeTabElement = tabElements.find((tab) =>
         tab.classList.contains("active")
       );
-      const activeTabIndex = activeTabElement
-        ? tabElements.indexOf(activeTabElement)
-        : 0;
+      if (!activeTabElement) return;
+
+      const tabWidth = activeTabElement.getBoundingClientRect().width;
+      const activeTabIndex = tabElements.indexOf(activeTabElement);
       const isFirstTab = activeTabIndex === 0;
       let tabOffset = 0;
       if (!isFirstTab) {
@@ -119,7 +117,7 @@ function FlowTabsComponent({
             rootSize[1],
             isFirstTab,
             tabOffset,
-            firstTabWidth
+            tabWidth
           );
         }
       });

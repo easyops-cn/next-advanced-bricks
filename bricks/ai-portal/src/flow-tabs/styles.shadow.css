@@ -34,9 +34,13 @@
   margin: 0;
   display: flex;
 
+  .tab {
+    padding: 0 18px;
+  }
+
   a {
     display: block;
-    padding: 9px 27px;
+    padding: 9px 10px;
     color: rgba(0, 0, 0, 0.55);
     line-height: 20px;
     cursor: pointer;
@@ -50,6 +54,7 @@
 
 .body {
   padding: 23px 27px;
+  overflow-x: auto;
 }
 
 .toolbar {
