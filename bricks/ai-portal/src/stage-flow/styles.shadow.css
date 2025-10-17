@@ -1,0 +1,251 @@
+:host {
+  display: block;
+
+  --stage-flow-lane-width: 268px;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.button:focus {
+  outline: none;
+}
+
+.nav,
+.lanes {
+  display: flex;
+  gap: 40px;
+}
+
+.nav-item,
+.nav-add,
+.lane {
+  width: var(--stage-flow-lane-width);
+  flex-shrink: 0;
+}
+
+.nav-item {
+  position: relative;
+  background-color: var(--stage-flow-nav-bg);
+  --stage-flow-nav-bg: rgba(37, 64, 255, 0.1);
+}
+
+.nav-item:first-child {
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+.nav-item.pending {
+  --stage-flow-nav-bg: rgba(0, 0, 0, 0.04);
+}
+
+.nav-item::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -20px;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 20px 0 20px 20px;
+  border-left-color: var(--stage-flow-nav-bg);
+}
+
+.nav-item:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -30px;
+  width: 30px;
+  height: 40px;
+  background-color: var(--stage-flow-nav-bg);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 20px 50%);
+}
+
+.nav-link,
+.btn-add-stage {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  font-size: 16px;
+}
+
+.nav-item.pending:first-child .input-new-stage {
+  padding-left: 20px;
+}
+
+.nav-link {
+  font-weight: 600;
+  color: #000;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.btn-add-stage {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.65);
+  gap: 8px;
+  position: relative;
+
+  .plus {
+    margin-right: 8px;
+    font-size: 14px;
+  }
+}
+
+.nav-add:first-child .btn-add-stage {
+  border-radius: 20px;
+  border: 1px dashed rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+}
+
+.nav-add:not(:first-child) .btn-add-stage {
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -30px;
+    right: -20px;
+    pointer-events: none;
+    background: url("./images/add-stage.svg") center center no-repeat;
+  }
+
+  &:hover::before {
+    background-image: url("./images/add-stage-hover.svg");
+  }
+}
+
+.input-new-stage {
+  width: 100%;
+  border: none;
+  background: none;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #000;
+
+  &::placeholder {
+    color: #8c8c8c;
+    font-weight: 400;
+  }
+}
+
+.input-new-stage:focus {
+  outline: none;
+}
+
+.lanes {
+  margin-top: 16px;
+}
+
+.lane {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.activity {
+  background: #ffffff;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 12px 14px 10px;
+  cursor: pointer;
+
+  .title {
+    font-weight: 600;
+    color: #000000;
+    line-height: 20px;
+    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.assignee {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #000000;
+  line-height: 17px;
+  margin-top: 10px;
+}
+
+.assignee-icon {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.btn-add-activity {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 34px;
+  border: 1px dashed rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  color: rgba(0, 0, 0, 0.45);
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: rgba(0, 0, 0, 0.65);
+  }
+}
+
+.stage-settings {
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+
+  eo-input {
+    margin-bottom: 5px;
+  }
+
+  .divider {
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  button {
+    color: var(--color-error);
+    border-radius: 6px;
+    padding: 5px 8px;
+    font-size: 14px;
+    line-height: 22px;
+    text-align: left;
+
+    &:hover {
+      background-color: var(--left-sidebar-item-hover-bg);
+    }
+  }
+}
