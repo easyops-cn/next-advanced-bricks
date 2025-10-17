@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.52.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.51.0...@next-bricks/ai-portal@0.52.0) (2025-10-17)
+
+
+### Features
+
+* support flow tabs ([04f588e](https://github.com/easyops-cn/next-advanced-bricks/commit/04f588e403e26fd34c29ab4356aa2c3c442608ec))
+
+
+
+
+
 # [0.51.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.50.3...@next-bricks/ai-portal@0.51.0) (2025-10-15)
 
 

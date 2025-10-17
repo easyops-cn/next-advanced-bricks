@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/v2-adapter@1.4.5...@next-bricks/v2-adapter@1.4.6) (2025-10-17)
+
+**Note:** Version bump only for package @next-bricks/v2-adapter
+
+
+
+
+
 ## [1.4.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/v2-adapter@1.4.4...@next-bricks/v2-adapter@1.4.5) (2025-09-30)
 
 **Note:** Version bump only for package @next-bricks/v2-adapter

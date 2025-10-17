@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.24](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/widget-editors@1.0.23...@next-bricks/widget-editors@1.0.24) (2025-10-17)
+
+**Note:** Version bump only for package @next-bricks/widget-editors
+
+
+
+
+
 ## [1.0.23](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/widget-editors@1.0.22...@next-bricks/widget-editors@1.0.23) (2025-09-30)
 
 **Note:** Version bump only for package @next-bricks/widget-editors
