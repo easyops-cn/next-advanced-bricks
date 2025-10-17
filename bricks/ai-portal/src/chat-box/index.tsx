@@ -33,6 +33,10 @@ import type {
 } from "@next-bricks/basic/actions";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
+import {
+  getChatCommand,
+  setChatCommand,
+} from "../data-providers/set-chat-command.js";
 
 initializeI18n(NS, locales);
 
@@ -206,6 +210,8 @@ function LegacyChatBoxComponent(
   const [commandPopover, setCommandPopover] = useState<MentionPopover | null>(
     null
   );
+  const [commandOverlay, setCommandOverlay] =
+    useState<React.CSSProperties | null>(null);
   const [commandText, setCommandText] = useState("");
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
 
@@ -408,10 +414,11 @@ function LegacyChatBoxComponent(
     };
   }, [mentionedText, mentionPrefix]);
 
-  const commandOverlay = useMemo(() => {
+  useEffect(() => {
     const element = textareaRef.current?.element;
     if (!commandText || !element) {
-      return null;
+      setCommandOverlay(null);
+      return;
     }
     const rect = getContentRectInTextarea(
       element,
@@ -419,13 +426,47 @@ function LegacyChatBoxComponent(
       // Ignore the last space
       commandText.slice(0, -1)
     );
-    return {
+    setCommandOverlay({
       left: rect.left - 1,
       top: rect.top - 1,
       width: rect.width + 4,
       height: rect.height + 4,
-    };
+    });
   }, [commandText]);
+
+  const chatCommand = useMemo(() => {
+    const command = getChatCommand();
+    if (command) {
+      setChatCommand(null);
+    }
+    return command;
+  }, []);
+
+  useEffect(() => {
+    const element = textareaRef.current?.element;
+    if (chatCommand && element) {
+      const commandStr = `/${chatCommand.command} `;
+      const rect = getContentRectInTextarea(
+        element,
+        "",
+        // Ignore the last space
+        commandStr.slice(0, -1)
+      );
+      setCommandOverlay({
+        left: rect.left - 1,
+        top: rect.top - 1,
+        width: rect.width + 4,
+        height: rect.height + 4,
+      });
+      valueRef.current = commandStr;
+      selectionRef.current = {
+        start: commandStr.length,
+        end: commandStr.length,
+      };
+      setValue(commandStr);
+      setCommandText(commandStr);
+    }
+  }, [chatCommand]);
 
   const handleMention = useCallback(
     (action: SimpleAction) => {

@@ -8,6 +8,8 @@ export enum K {
   DELETE_STAGE_TIPS = "DELETE_STAGE_TIPS",
   DELETE = "DELETE",
   ADD_ACTIVITY = "ADD_ACTIVITY",
+  STAGE_NAME_EXISTS = "STAGE_NAME_EXISTS",
+  ACTIVITY_NAME_EXISTS = "ACTIVITY_NAME_EXISTS",
 }
 
 const en: Locale = {
@@ -18,6 +20,8 @@ const en: Locale = {
   [K.DELETE_STAGE_TIPS]: 'Are you sure you want to delete stage "{{ name }}"?',
   [K.DELETE]: "Delete",
   [K.ADD_ACTIVITY]: "Add activity",
+  [K.STAGE_NAME_EXISTS]: 'Stage with name "{{ name }}" already exists.',
+  [K.ACTIVITY_NAME_EXISTS]: 'Activity with name "{{ name }}" already exists.',
 };
 
 const zh: Locale = {
@@ -28,6 +32,8 @@ const zh: Locale = {
   [K.DELETE_STAGE_TIPS]: "您确定要删除阶段 “{{ name }}” 吗？",
   [K.DELETE]: "删除",
   [K.ADD_ACTIVITY]: "添加活动",
+  [K.STAGE_NAME_EXISTS]: '阶段名称 "{{ name }}" 已存在。',
+  [K.ACTIVITY_NAME_EXISTS]: '活动名称 "{{ name }}" 已存在。',
 };
 
 export const NS = "bricks/ai-portal/stage-flow";
