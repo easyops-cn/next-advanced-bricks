@@ -20,7 +20,7 @@ const { defineElement, property } = createDecorators();
 export interface PageContainerProps {
   pageTitle?: string;
   breadcrumbs?: Breadcrumb[];
-  size?: "medium" | "small";
+  size?: "medium" | "small" | "full";
   variant?: "default" | "form";
   sticky?: boolean;
 }
@@ -48,7 +48,7 @@ class PageContainer extends ReactNextElement implements PageContainerProps {
   accessor breadcrumbs: Breadcrumb[] | undefined;
 
   @property({ render: false })
-  accessor size: "medium" | "small" | undefined;
+  accessor size: "medium" | "small" | "full" | undefined;
 
   @property({ render: false })
   accessor variant: "default" | "form" | undefined;
