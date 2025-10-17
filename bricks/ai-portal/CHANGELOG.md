@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.53.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.52.0...@next-bricks/ai-portal@0.53.0) (2025-10-17)
+
+
+### Features
+
+* new brick: stage flow ([6808315](https://github.com/easyops-cn/next-advanced-bricks/commit/6808315aa8d473251d290bf1f6baa84f95f24896))
+
+
+
+
+
 # [0.52.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.51.0...@next-bricks/ai-portal@0.52.0) (2025-10-17)
 
 
