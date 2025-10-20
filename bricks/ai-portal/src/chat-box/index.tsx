@@ -13,7 +13,7 @@ import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import {
   getCaretPositionInTextarea,
-  getContentRectInTextarea,
+  getContentRectsInTextarea,
   TextareaAutoResize,
   type TextareaAutoResizeRef,
 } from "@next-shared/form";
@@ -33,6 +33,11 @@ import type {
 } from "@next-bricks/basic/actions";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
+import {
+  getChatCommand,
+  setChatCommand,
+} from "../data-providers/set-chat-command.js";
+import type { CommandPayload } from "../shared/interfaces.js";
 
 initializeI18n(NS, locales);
 
@@ -75,12 +80,14 @@ export interface Command {
   label: string;
   value: string;
   options?: Command[];
+  payload?: CommandPayload;
 }
 
 type ActionWithAncestors = SimpleAction & {
   key: string | number;
   ancestors?: Command[];
   items?: ActionWithAncestors[];
+  payload?: CommandPayload;
 };
 
 /**
@@ -126,9 +133,9 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
   };
 
   @event({ type: "command.select" })
-  accessor #commandSelect!: EventEmitter<string | null>;
+  accessor #commandSelect!: EventEmitter<CommandPayload | null>;
 
-  #handleCommandSelect = (command: string | null) => {
+  #handleCommandSelect = (command: CommandPayload | null) => {
     this.#commandSelect.emit(command);
   };
 
@@ -167,7 +174,7 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
 interface ChatBoxComponentProps extends ChatBoxProps {
   onSubmit: (value: string) => void;
   onEmployeeMention: (employee: AIEmployee | null) => void;
-  onCommandSelect: (command: string | null) => void;
+  onCommandSelect: (command: CommandPayload | null) => void;
   ref?: React.Ref<ChatBoxRef>;
 }
 
@@ -206,6 +213,9 @@ function LegacyChatBoxComponent(
   const [commandPopover, setCommandPopover] = useState<MentionPopover | null>(
     null
   );
+  const [commandOverlay, setCommandOverlay] = useState<
+    React.CSSProperties[] | null
+  >(null);
   const [commandText, setCommandText] = useState("");
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
 
@@ -334,6 +344,7 @@ function LegacyChatBoxComponent(
                 data: command,
                 ancestors: [],
                 items: getCommandSubMenu(command, []),
+                payload: command.payload,
               })),
             });
             setActiveActionIndexes([0]);
@@ -394,38 +405,83 @@ function LegacyChatBoxComponent(
     if (!mentionedText || !element) {
       return null;
     }
-    const rect = getContentRectInTextarea(
+    const rects = getContentRectsInTextarea(
       element,
       mentionPrefix,
       // Ignore the last space
       mentionedText.slice(0, -1)
     );
-    return {
+    return rects.map((rect) => ({
       left: rect.left - 1,
       top: rect.top - 1,
       width: rect.width + 4,
       height: rect.height + 4,
-    };
+    }));
   }, [mentionedText, mentionPrefix]);
 
-  const commandOverlay = useMemo(() => {
+  useEffect(() => {
     const element = textareaRef.current?.element;
     if (!commandText || !element) {
-      return null;
+      setCommandOverlay(null);
+      return;
     }
-    const rect = getContentRectInTextarea(
+    const rects = getContentRectsInTextarea(
       element,
       "",
       // Ignore the last space
       commandText.slice(0, -1)
     );
-    return {
-      left: rect.left - 1,
-      top: rect.top - 1,
-      width: rect.width + 4,
-      height: rect.height + 4,
-    };
+    setCommandOverlay(
+      rects.map((rect) => ({
+        left: rect.left - 1,
+        top: rect.top - 1,
+        width: rect.width + 4,
+        height: rect.height + 4,
+      }))
+    );
   }, [commandText]);
+
+  const chatCommand = useMemo(() => {
+    const command = getChatCommand();
+    if (command) {
+      setChatCommand(null);
+    }
+    return command;
+  }, []);
+
+  useEffect(() => {
+    if (chatCommand) {
+      onCommandSelect(chatCommand.payload);
+    }
+  }, [chatCommand, onCommandSelect]);
+
+  useEffect(() => {
+    const element = textareaRef.current?.element;
+    if (chatCommand && element) {
+      const commandStr = `/${chatCommand.command} `;
+      const rects = getContentRectsInTextarea(
+        element,
+        "",
+        // Ignore the last space
+        commandStr.slice(0, -1)
+      );
+      setCommandOverlay(
+        rects.map((rect) => ({
+          left: rect.left - 1,
+          top: rect.top - 1,
+          width: rect.width + 4,
+          height: rect.height + 4,
+        }))
+      );
+      valueRef.current = commandStr;
+      selectionRef.current = {
+        start: commandStr.length,
+        end: commandStr.length,
+      };
+      setValue(commandStr);
+      setCommandText(commandStr);
+    }
+  }, [chatCommand]);
 
   const handleMention = useCallback(
     (action: SimpleAction) => {
@@ -453,7 +509,7 @@ function LegacyChatBoxComponent(
       setValue(newValue);
       setCommandText(command);
       setCommandPopover(null);
-      onCommandSelect(action.text);
+      onCommandSelect(action.payload!);
       textareaRef.current?.focus();
     },
     [commandPopover, onCommandSelect]
@@ -665,12 +721,12 @@ function LegacyChatBoxComponent(
             <WrappedIcon lib="fa" prefix="fas" icon="arrow-up" />
           </button>
         </div>
-        {mentionOverlay && (
-          <div className="mention-overlay" style={mentionOverlay} />
-        )}
-        {commandOverlay && (
-          <div className="mention-overlay" style={commandOverlay} />
-        )}
+        {mentionOverlay?.map((overlay, index) => (
+          <div key={index} className="mention-overlay" style={overlay} />
+        ))}
+        {commandOverlay?.map((overlay, index) => (
+          <div key={index} className="mention-overlay" style={overlay} />
+        ))}
         {mentionPopover &&
           createPortal(
             <WrappedActions
@@ -710,6 +766,7 @@ function getCommandSubMenu(
       data: subCommand,
       ancestors: nextAncestors,
       items: getCommandSubMenu(subCommand, nextAncestors),
+      payload: subCommand.payload,
     };
   });
 }

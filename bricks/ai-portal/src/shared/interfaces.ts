@@ -198,6 +198,7 @@ export interface JobPatch extends Partial<Job> {
 export interface RequestStore {
   conversationId: string;
   content: string;
+  cmd?: CommandPayload;
 }
 
 export interface GeneratedView {
@@ -231,4 +232,14 @@ export interface ExampleProject {
 export interface ConversationError {
   jobs: string[];
   error?: string;
+}
+
+export type CommandPayload = CommandPayloadServiceFlowStarting;
+
+export interface CommandPayloadServiceFlowStarting {
+  type: "serviceFlowStarting";
+  serviceFlowStarting: {
+    spaceInstanceId: string;
+    flowInstanceId?: string;
+  };
 }
