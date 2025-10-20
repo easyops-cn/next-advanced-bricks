@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.9.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/form@0.9.2...@next-shared/form@0.9.3) (2025-10-20)
+
+
+### Bug Fixes
+
+* handle mention overlay crossing multiple lines ([a1b280a](https://github.com/easyops-cn/next-advanced-bricks/commit/a1b280a78556e2c49f78b1c187065683660c2e90))
+
+
+
+
+
 ## [0.9.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/form@0.9.1...@next-shared/form@0.9.2) (2025-10-17)
 
 **Note:** Version bump only for package @next-shared/form

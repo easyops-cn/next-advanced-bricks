@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.54.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.53.0...@next-bricks/ai-portal@0.54.0) (2025-10-20)
+
+
+### Bug Fixes
+
+* check duplicated stages/activities ([a8122d7](https://github.com/easyops-cn/next-advanced-bricks/commit/a8122d7979009d1d3e29ba1c3684b28e0bc386a1))
+* handle mention overlay crossing multiple lines ([a1b280a](https://github.com/easyops-cn/next-advanced-bricks/commit/a1b280a78556e2c49f78b1c187065683660c2e90))
+
+
+### Features
+
+* support chat commands ([1a70209](https://github.com/easyops-cn/next-advanced-bricks/commit/1a70209102d9ef699804c54774b027beda136e63))
+
+
+
+
+
 # [0.53.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.52.0...@next-bricks/ai-portal@0.53.0) (2025-10-17)
 
 
