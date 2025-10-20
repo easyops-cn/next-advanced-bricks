@@ -221,10 +221,18 @@ function LegacyStageFlowComponent(
             return prevList;
           }
           const updatedStage = { ...prevList[stageIndex] };
-          const updatedActivities = [
-            ...(updatedStage.serviceFlowActivities ?? []),
-            activity,
-          ];
+          const prevActivities = updatedStage.serviceFlowActivities ?? [];
+
+          if (prevActivities.find((a) => a.name === activity.name)) {
+            // Activity with the same name already exists, return previous state
+            showDialog({
+              type: "warn",
+              content: t(K.ACTIVITY_NAME_EXISTS, { name: activity.name }),
+            });
+            return prevList;
+          }
+
+          const updatedActivities = [...prevActivities, activity];
           updatedStage.serviceFlowActivities = updatedActivities;
           const newStages = [...prevList];
           newStages[stageIndex] = updatedStage;
@@ -244,9 +252,22 @@ function LegacyStageFlowComponent(
             return prevList;
           }
           const updatedStage = { ...prevList[stageIndex] };
-          const updatedActivities = [
-            ...(updatedStage.serviceFlowActivities ?? []),
-          ];
+          const prevActivities = updatedStage.serviceFlowActivities ?? [];
+
+          if (
+            prevActivities.find(
+              (a, index) => a.name === activity.name && index !== activityIndex
+            )
+          ) {
+            // Activity with the same name already exists, return previous state
+            showDialog({
+              type: "warn",
+              content: t(K.ACTIVITY_NAME_EXISTS, { name: activity.name }),
+            });
+            return prevList;
+          }
+
+          const updatedActivities = [...prevActivities];
           if (activityIndex < 0 || activityIndex >= updatedActivities.length) {
             // Activity index out of bounds, return previous state
             return prevList;
@@ -292,6 +313,9 @@ function LegacyStageFlowComponent(
           <StageNavItem
             key={index}
             stage={stage}
+            otherStageNames={stages
+              .filter((s) => s !== stage)
+              .map((s) => s.name)}
             onNameChange={(newName) => {
               setStages((prev) => {
                 const prevList = prev ?? [];
@@ -322,6 +346,10 @@ function LegacyStageFlowComponent(
                     const prevList = prev ?? [];
                     if (prevList.find((s) => s.name === stageName)) {
                       // Stage with the same name already exists
+                      showDialog({
+                        type: "warn",
+                        content: t(K.STAGE_NAME_EXISTS, { name: stageName }),
+                      });
                       return prevList;
                     }
                     return [...prevList, { name: stageName }];
@@ -423,11 +451,17 @@ function StageNameInput({ onDone }: StageNameInputProps) {
 
 interface StageNavItemProps {
   stage: Stage;
+  otherStageNames: string[];
   onNameChange: (name: string) => void;
   onDelete: (stage: Stage) => void;
 }
 
-function StageNavItem({ stage, onNameChange, onDelete }: StageNavItemProps) {
+function StageNavItem({
+  stage,
+  otherStageNames,
+  onNameChange,
+  onDelete,
+}: StageNavItemProps) {
   const compositionRef = useRef(false);
   const popoverRef = useRef<Popover>(null);
 
@@ -458,7 +492,16 @@ function StageNavItem({ stage, onNameChange, onDelete }: StageNavItemProps) {
             onBlur={(e) => {
               const newValue = (e.currentTarget as Input).value?.trim();
               if (newValue && newValue !== stage.name) {
-                onNameChange(newValue);
+                if (otherStageNames.includes(newValue)) {
+                  // Stage with the same name already exists
+                  showDialog({
+                    type: "warn",
+                    content: t(K.STAGE_NAME_EXISTS, { name: newValue }),
+                  });
+                  (e.currentTarget as Input).value = stage.name;
+                } else {
+                  onNameChange(newValue);
+                }
               } else if (!newValue) {
                 (e.currentTarget as Input).value = stage.name;
               }
@@ -470,12 +513,6 @@ function StageNavItem({ stage, onNameChange, onDelete }: StageNavItemProps) {
               }
               if (e.key === "Enter") {
                 e.preventDefault();
-                const stageName = (e.target as HTMLInputElement).value.trim();
-                if (stageName && stageName !== stage.name) {
-                  onNameChange(stageName);
-                } else if (!stageName) {
-                  (e.target as HTMLInputElement).value = stage.name;
-                }
                 popoverRef.current!.active = false;
               }
             }}
