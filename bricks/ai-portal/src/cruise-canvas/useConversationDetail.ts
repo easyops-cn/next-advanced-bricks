@@ -3,7 +3,11 @@ import { useCallback, useEffect, useReducer, useRef } from "react";
 import { createSSEStream } from "@next-core/utils/general";
 import { getBasePath, handleHttpError } from "@next-core/runtime";
 import { rootReducer } from "./reducers";
-import type { ConversationPatch, RequestStore } from "../shared/interfaces";
+import type {
+  CommandPayload,
+  ConversationPatch,
+  RequestStore,
+} from "../shared/interfaces";
 
 const MINIMAL_DELAY = 500;
 
@@ -79,7 +83,11 @@ export function useConversationDetail(
     let requesting = false;
     let ctrl: AbortController | undefined;
 
-    const makeRequest = async (content: string | null, action?: string) => {
+    const makeRequest = async (
+      content: string | null,
+      action?: string,
+      cmd?: CommandPayload
+    ) => {
       if (requesting) {
         return;
       }
@@ -99,7 +107,7 @@ export function useConversationDetail(
               {
                 signal: ctrl.signal,
                 method: "POST",
-                body: JSON.stringify(action ? { action } : { content }),
+                body: JSON.stringify(action ? { action } : { content, cmd }),
                 headers: {
                   "Content-Type": "application/json",
                 },
@@ -155,11 +163,11 @@ export function useConversationDetail(
       makeRequest(content, action);
     };
 
-    makeRequest(
-      initialRequest?.conversationId === conversationId
-        ? initialRequest.content
-        : null
-    );
+    if (initialRequest?.conversationId === conversationId) {
+      makeRequest(initialRequest.content, undefined, initialRequest.cmd);
+    } else {
+      makeRequest(null);
+    }
 
     return () => {
       ignore = true;
