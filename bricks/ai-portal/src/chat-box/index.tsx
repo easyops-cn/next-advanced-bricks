@@ -13,7 +13,7 @@ import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import {
   getCaretPositionInTextarea,
-  getContentRectInTextarea,
+  getContentRectsInTextarea,
   TextareaAutoResize,
   type TextareaAutoResizeRef,
 } from "@next-shared/form";
@@ -213,8 +213,9 @@ function LegacyChatBoxComponent(
   const [commandPopover, setCommandPopover] = useState<MentionPopover | null>(
     null
   );
-  const [commandOverlay, setCommandOverlay] =
-    useState<React.CSSProperties | null>(null);
+  const [commandOverlay, setCommandOverlay] = useState<
+    React.CSSProperties[] | null
+  >(null);
   const [commandText, setCommandText] = useState("");
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
 
@@ -404,18 +405,18 @@ function LegacyChatBoxComponent(
     if (!mentionedText || !element) {
       return null;
     }
-    const rect = getContentRectInTextarea(
+    const rects = getContentRectsInTextarea(
       element,
       mentionPrefix,
       // Ignore the last space
       mentionedText.slice(0, -1)
     );
-    return {
+    return rects.map((rect) => ({
       left: rect.left - 1,
       top: rect.top - 1,
       width: rect.width + 4,
       height: rect.height + 4,
-    };
+    }));
   }, [mentionedText, mentionPrefix]);
 
   useEffect(() => {
@@ -424,18 +425,20 @@ function LegacyChatBoxComponent(
       setCommandOverlay(null);
       return;
     }
-    const rect = getContentRectInTextarea(
+    const rects = getContentRectsInTextarea(
       element,
       "",
       // Ignore the last space
       commandText.slice(0, -1)
     );
-    setCommandOverlay({
-      left: rect.left - 1,
-      top: rect.top - 1,
-      width: rect.width + 4,
-      height: rect.height + 4,
-    });
+    setCommandOverlay(
+      rects.map((rect) => ({
+        left: rect.left - 1,
+        top: rect.top - 1,
+        width: rect.width + 4,
+        height: rect.height + 4,
+      }))
+    );
   }, [commandText]);
 
   const chatCommand = useMemo(() => {
@@ -456,18 +459,20 @@ function LegacyChatBoxComponent(
     const element = textareaRef.current?.element;
     if (chatCommand && element) {
       const commandStr = `/${chatCommand.command} `;
-      const rect = getContentRectInTextarea(
+      const rects = getContentRectsInTextarea(
         element,
         "",
         // Ignore the last space
         commandStr.slice(0, -1)
       );
-      setCommandOverlay({
-        left: rect.left - 1,
-        top: rect.top - 1,
-        width: rect.width + 4,
-        height: rect.height + 4,
-      });
+      setCommandOverlay(
+        rects.map((rect) => ({
+          left: rect.left - 1,
+          top: rect.top - 1,
+          width: rect.width + 4,
+          height: rect.height + 4,
+        }))
+      );
       valueRef.current = commandStr;
       selectionRef.current = {
         start: commandStr.length,
@@ -716,12 +721,12 @@ function LegacyChatBoxComponent(
             <WrappedIcon lib="fa" prefix="fas" icon="arrow-up" />
           </button>
         </div>
-        {mentionOverlay && (
-          <div className="mention-overlay" style={mentionOverlay} />
-        )}
-        {commandOverlay && (
-          <div className="mention-overlay" style={commandOverlay} />
-        )}
+        {mentionOverlay?.map((overlay, index) => (
+          <div key={index} className="mention-overlay" style={overlay} />
+        ))}
+        {commandOverlay?.map((overlay, index) => (
+          <div key={index} className="mention-overlay" style={overlay} />
+        ))}
         {mentionPopover &&
           createPortal(
             <WrappedActions
