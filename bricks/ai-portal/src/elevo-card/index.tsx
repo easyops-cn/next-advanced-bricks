@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import { createDecorators } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
@@ -8,6 +8,7 @@ import type {
 } from "@next-bricks/icons/general-icon";
 import type { Link, LinkProps } from "@next-bricks/basic/link";
 import classNames from "classnames";
+import { useHasAssignedNodes } from "@next-shared/hooks";
 import styleText from "./styles.shadow.css";
 
 const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
@@ -115,30 +116,4 @@ function IconAvatar({ color, ...iconProps }: IconWithColor) {
       <WrappedIcon {...iconProps} />
     </div>
   );
-}
-
-function useHasAssignedNodes(slotRef: React.RefObject<HTMLSlotElement>) {
-  const [hasAssignedNodes, setHasAssignedNodes] = useState(false);
-
-  useEffect(() => {
-    const slotElement = slotRef.current;
-
-    /* istanbul ignore if */
-    if (!slotElement) {
-      return;
-    }
-
-    const listener = () => {
-      setHasAssignedNodes(slotElement.assignedNodes().length > 0);
-    };
-
-    listener();
-    slotElement.addEventListener("slotchange", listener);
-
-    return () => {
-      slotElement.removeEventListener("slotchange", listener);
-    };
-  }, [slotRef]);
-
-  return hasAssignedNodes;
 }
