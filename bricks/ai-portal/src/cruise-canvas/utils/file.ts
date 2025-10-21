@@ -36,6 +36,10 @@ export function getFileTypeAndIcon(
 ): [type: string, icon: string] {
   const type = mimeType || getMimeTypeByFilename(filename);
 
+  if (type.startsWith("image/")) {
+    return ["Image", fileOther];
+  }
+
   switch (type) {
     case "text/markdown":
       return ["Markdown", fileText];
@@ -43,13 +47,13 @@ export function getFileTypeAndIcon(
       return ["PDF", filePdf];
     case "application/msword":
     case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-      return ["Word Document", fileDoc];
+      return ["Word", fileDoc];
     case "application/vnd.ms-excel":
     case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-      return ["Excel Spreadsheet", fileXls];
+      return ["Excel", fileXls];
     case "application/vnd.ms-powerpoint":
     case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
-      return ["PowerPoint Presentation", filePpt];
+      return ["PowerPoint", filePpt];
   }
 
   if (type.startsWith("text/")) {

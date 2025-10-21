@@ -104,7 +104,7 @@ function FileComponent({
   return (
     <li className={classNames("file", { failed: status === "failed" })}>
       {isImage ? (
-        <img className="file-image" src={image} width={44} height={44} />
+        <img className="file-image" src={image} />
       ) : (
         <img className="file-icon" src={icon} width={26} height={32} />
       )}

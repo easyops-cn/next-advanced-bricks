@@ -161,6 +161,9 @@ button {
 .file-image {
   margin-right: 8px;
   object-fit: cover;
+  border-radius: 4px;
+  max-width: 44px;
+  max-height: 44px;
 }
 
 .file-name,
