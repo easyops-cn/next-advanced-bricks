@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createDecorators } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
@@ -70,6 +70,12 @@ function ElevoCardComponent({
   avatar,
   avatarType,
 }: ElevoCardProps) {
+  const footerRef = useRef<HTMLSlotElement>(null);
+  const hasFooter = useHasAssignedNodes(footerRef);
+
+  const actionsRef = useRef<HTMLSlotElement>(null);
+  const hasActions = useHasAssignedNodes(actionsRef);
+
   return (
     <WrappedLink className={classNames("card", { clickable: !!url })} url={url}>
       <div className="header">
@@ -81,13 +87,13 @@ function ElevoCardComponent({
           )}
           <div className="title">{cardTitle}</div>
         </div>
-        <div className="actions">
-          <slot name="actions" />
+        <div className="actions" hidden={!hasActions}>
+          <slot name="actions" ref={actionsRef} />
         </div>
       </div>
       <div className="body">{description}</div>
-      <div className="footer">
-        <slot name="footer" />
+      <div className="footer" hidden={!hasFooter}>
+        <slot name="footer" ref={footerRef} />
       </div>
     </WrappedLink>
   );
@@ -109,4 +115,30 @@ function IconAvatar({ color, ...iconProps }: IconWithColor) {
       <WrappedIcon {...iconProps} />
     </div>
   );
+}
+
+function useHasAssignedNodes(slotRef: React.RefObject<HTMLSlotElement>) {
+  const [hasAssignedNodes, setHasAssignedNodes] = useState(false);
+
+  useEffect(() => {
+    const slotElement = slotRef.current;
+
+    /* istanbul ignore if */
+    if (!slotElement) {
+      return;
+    }
+
+    const listener = () => {
+      setHasAssignedNodes(slotElement.assignedNodes().length > 0);
+    };
+
+    listener();
+    slotElement.addEventListener("slotchange", listener);
+
+    return () => {
+      slotElement.removeEventListener("slotchange", listener);
+    };
+  }, [slotRef]);
+
+  return hasAssignedNodes;
 }
