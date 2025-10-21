@@ -3,7 +3,7 @@ import type { StoryboardFunction } from "@next-core/types";
 import type { DataSource, Events, ParseError } from "../interfaces.js";
 
 export interface ParsedApp {
-  appType: "app" | "view";
+  appType: "app" | "view" | "template";
   entry?: ParsedModule;
   modules: Map<string, ParsedModule | null>;
   files: SourceFile[];

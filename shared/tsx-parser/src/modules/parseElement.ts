@@ -1,7 +1,15 @@
 import type { NodePath } from "@babel/traverse";
 import * as t from "@babel/types";
-import type { ParseJsValueOptions, ParsedModule } from "./interfaces.js";
-import { validateEmbeddedExpression } from "./validations.js";
+import type {
+  ParseJsValueOptions,
+  ParsedApp,
+  ParsedModule,
+} from "./interfaces.js";
+import {
+  isGeneralCallExpression,
+  isGeneralMemberExpression,
+  validateEmbeddedExpression,
+} from "./validations.js";
 import type { ChildElement } from "./internal-interfaces.js";
 import { parseJSXElement } from "./parseJSXElement.js";
 import { parsePropValue } from "./parseJsValue.js";
@@ -10,11 +18,14 @@ import { parseChildren } from "./parseChildren.js";
 export function parseElement(
   path: NodePath<t.Node>,
   state: ParsedModule,
+  app: ParsedApp,
   options: ParseJsValueOptions
 ): ChildElement | null | (ChildElement | null)[] {
   if (path.isJSXFragment()) {
     const children = path.get("children");
-    return children.flatMap((child) => parseElement(child, state, options));
+    return children.flatMap((child) =>
+      parseElement(child, state, app, options)
+    );
   }
 
   if (path.isJSXText()) {
@@ -28,7 +39,7 @@ export function parseElement(
   }
 
   if (path.isJSXExpressionContainer()) {
-    return parseElement(path.get("expression"), state, options);
+    return parseElement(path.get("expression"), state, app, options);
   }
 
   if (path.isJSXEmptyExpression()) {
@@ -36,13 +47,13 @@ export function parseElement(
   }
 
   if (path.isJSXElement()) {
-    return parseJSXElement(path, state, options);
+    return parseJSXElement(path, state, app, options);
   }
 
-  if (path.isCallExpression()) {
+  if (isGeneralCallExpression(path)) {
     const callee = path.get("callee");
-    if (callee.isMemberExpression() || callee.isOptionalMemberExpression()) {
-      const property = callee.get("property") as NodePath<t.Identifier>;
+    if (isGeneralMemberExpression(callee)) {
+      const property = callee.get("property");
       if (property.isIdentifier() && property.node.name === "map") {
         const args = path.get("arguments");
         if (args.length > 0) {
@@ -50,7 +61,7 @@ export function parseElement(
           if (func.isArrowFunctionExpression()) {
             const body = func.get("body");
             if (body.isExpression() && containsJsxNode(body.node)) {
-              const object = callee.get("object") as NodePath<t.Expression>;
+              const object = callee.get("object");
               if (!validateEmbeddedExpression(object.node, state)) {
                 return null;
               }
@@ -90,7 +101,7 @@ export function parseElement(
                 component: {
                   name: "ForEach",
                   properties: {
-                    dataSource: parsePropValue(object, state, {
+                    dataSource: parsePropValue(object, state, app, {
                       ...options,
                       modifier: "=",
                     }),
@@ -98,6 +109,7 @@ export function parseElement(
                   children: parseChildren(
                     func.get("body"),
                     state,
+                    app,
                     forEachOptions
                   ),
                 },
@@ -120,17 +132,19 @@ export function parseElement(
         component: {
           name: "If",
           properties: {
-            dataSource: parsePropValue(test, state, {
+            dataSource: parsePropValue(test, state, app, {
               ...options,
               modifier: "=",
             }),
           },
           children: [
-            ...parseChildren(consequent, state, options),
-            ...parseChildren(alternate, state, options).map((component) => ({
-              ...component,
-              slot: "else",
-            })),
+            ...parseChildren(consequent, state, app, options),
+            ...parseChildren(alternate, state, app, options).map(
+              (component) => ({
+                ...component,
+                slot: "else",
+              })
+            ),
           ],
         },
       };
@@ -146,13 +160,13 @@ export function parseElement(
       if (!validateEmbeddedExpression(left.node, state)) {
         return null;
       }
-      const children = parseChildren(right, state, options);
+      const children = parseChildren(right, state, app, options);
       return {
         type: "component",
         component: {
           name: "If",
           properties: {
-            dataSource: parsePropValue(left, state, {
+            dataSource: parsePropValue(left, state, app, {
               ...options,
               modifier: "=",
             }),

@@ -242,6 +242,8 @@
     }
 
     .ant-table.ant-table-bordered {
+      background: #fff;
+
       .ant-table-thead > tr > th {
         color: #262626;
         background: #f3f6fa;

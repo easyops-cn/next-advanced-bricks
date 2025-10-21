@@ -103,6 +103,7 @@ export function parseLegacyModule(
               binding.initialValue = parseJsValue(
                 init as NodePath<t.Node>,
                 mod,
+                app,
                 globalOptions
               );
             }
@@ -118,7 +119,7 @@ export function parseLegacyModule(
               severity: "error",
             });
           } else {
-            component.children = parseChildren(decl, mod, globalOptions);
+            component.children = parseChildren(decl, mod, app, globalOptions);
           }
           break;
         }
@@ -130,5 +131,6 @@ export function parseLegacyModule(
 
   (mod.defaultExport as ModulePartOfComponent).title = getViewTitle(component);
 
+  app.modules.set(filePath, mod);
   app.entry = mod;
 }

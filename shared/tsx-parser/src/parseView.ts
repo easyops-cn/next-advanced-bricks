@@ -11,9 +11,10 @@ export function parseView(source: string, options?: ParseOptions): ParsedApp {
     modules: new Map(),
     files: [
       {
-        filePath: "View.tsx",
+        filePath: "/View.tsx",
         content: source,
       },
+      ...(options?.libs ?? []),
     ],
     errors: [],
   };
@@ -37,13 +38,13 @@ export function parseView(source: string, options?: ParseOptions): ParsedApp {
   for (const stmt of ast.program.body) {
     if (t.isExportDefaultDeclaration(stmt)) {
       if (t.isFunctionDeclaration(stmt.declaration)) {
-        parseFile("View.tsx", app, ast, options);
+        parseFile("/View.tsx", app, ast, options);
         return app;
       }
       break;
     }
   }
 
-  parseLegacyModule("View.tsx", app, ast, options);
+  parseLegacyModule("/View.tsx", app, ast, options);
   return app;
 }

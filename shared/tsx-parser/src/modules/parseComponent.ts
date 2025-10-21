@@ -6,15 +6,22 @@ import type {
   ParsedComponent,
   ParseJsValueOptions,
   ParsedModule,
+  ParsedApp,
+  ComponentChild,
 } from "./interfaces.js";
-import { validateFunction, validateGlobalApi } from "./validations.js";
-import { parseJsValue } from "./parseJsValue.js";
+import {
+  validateEmbeddedExpression,
+  validateFunction,
+  validateGlobalApi,
+} from "./validations.js";
+import { parseJsValue, parsePropValue } from "./parseJsValue.js";
 import { parseChildren } from "./parseChildren.js";
 import { parseUseResource } from "./parseUseResource.js";
 
 export function parseComponent(
   fn: NodePath<t.FunctionDeclaration>,
   state: ParsedModule,
+  app: ParsedApp,
   type: "template" | "view" | "page",
   globalOptions?: ParseJsValueOptions
 ): ParsedComponent | null {
@@ -97,7 +104,12 @@ export function parseComponent(
             const left = value.get("left");
             if (left.isIdentifier()) {
               bindingId = left.node;
-              initialValue = parseJsValue(value.get("right"), state, options);
+              initialValue = parseJsValue(
+                value.get("right"),
+                state,
+                app,
+                options
+              );
             }
           } else if (value.isIdentifier()) {
             bindingId = value.node;
@@ -127,6 +139,9 @@ export function parseComponent(
     });
     return null;
   }
+
+  let prevSlot: string | undefined;
+  let prevParent: ParsedComponent | ComponentChild = component;
 
   const stmts = fn.get("body").get("body");
   for (const stmt of stmts) {
@@ -180,7 +195,12 @@ export function parseComponent(
                 kind: "setState",
               });
               if (args.length > 0) {
-                stateInfo.initialValue = parseJsValue(args[0], state, options);
+                stateInfo.initialValue = parseJsValue(
+                  args[0],
+                  state,
+                  app,
+                  options
+                );
               }
               if (args.length > 1) {
                 state.errors.push({
@@ -191,7 +211,13 @@ export function parseComponent(
               }
               continue;
             } else if (validateGlobalApi(callee, "useResource")) {
-              const bindingInfo = parseUseResource(decl, args, state, options);
+              const bindingInfo = parseUseResource(
+                decl,
+                args,
+                state,
+                app,
+                options
+              );
               if (bindingInfo) {
                 bindingMap.set(bindingInfo.id, bindingInfo);
               }
@@ -263,21 +289,72 @@ export function parseComponent(
           binding.initialValue = parseJsValue(
             init as NodePath<t.Expression>,
             state,
+            app,
             options
           );
         }
       }
     } else if (stmt.isReturnStatement()) {
-      const arg = stmt.get("argument");
-      if (!arg.isJSXElement() && !arg.isJSXFragment()) {
-        state.errors.push({
-          message: `Expect JSX element or fragment as the return value, received ${arg.type}`,
-          node: arg.node,
-          severity: "error",
-        });
-        continue;
+      const children = parseReturnStatement(stmt, state, app, options);
+      if (children) {
+        prevParent.children ??= [];
+        prevParent.children.push(
+          ...(prevSlot
+            ? children.map((child) => ({ ...child, slot: prevSlot }))
+            : children)
+        );
       }
-      component.children = parseChildren(arg, state, options);
+      break;
+    } else if (stmt.isIfStatement()) {
+      const test = stmt.get("test");
+      if (!validateEmbeddedExpression(test.node, state)) {
+        return null;
+      }
+      const consequent = stmt.get("consequent");
+      const alternate = stmt.get("alternate");
+
+      const consequentChildren = parseIfStatementChildren(
+        consequent,
+        state,
+        app,
+        options
+      );
+      const alternateChildren = alternate
+        ? parseIfStatementChildren(
+            alternate as NodePath<t.Statement>,
+            state,
+            app,
+            options
+          )
+        : null;
+
+      prevParent.children ??= [];
+      const ifComponent: ComponentChild = {
+        name: "If",
+        properties: {
+          dataSource: parsePropValue(test, state, app, {
+            ...options,
+            modifier: "=",
+          }),
+        },
+        children: [
+          ...(consequentChildren ?? []),
+          ...(alternateChildren ?? []).map((child) => ({
+            ...child,
+            slot: "else",
+          })),
+        ],
+        slot: prevSlot,
+      };
+      prevParent.children.push(ifComponent);
+      prevParent = ifComponent;
+      if (consequentChildren) {
+        prevSlot = "else";
+
+        if (alternateChildren) {
+          break;
+        }
+      }
     } else if (
       !stmt.isTSInterfaceDeclaration() &&
       !stmt.isTSTypeAliasDeclaration()
@@ -291,4 +368,61 @@ export function parseComponent(
   }
 
   return component;
+}
+
+function parseReturnStatement(
+  stmt: NodePath<t.ReturnStatement>,
+  state: ParsedModule,
+  app: ParsedApp,
+  options: ParseJsValueOptions
+): ComponentChild[] | null {
+  const arg = stmt.get("argument");
+  if (!arg.node) {
+    state.errors.push({
+      message: `Return statement in component function must have an argument`,
+      node: stmt,
+      severity: "error",
+    });
+    return null;
+  }
+  return parseChildren(arg as NodePath<t.Expression>, state, app, options);
+}
+
+function parseIfStatementChildren(
+  stmt: NodePath<t.Statement>,
+  state: ParsedModule,
+  app: ParsedApp,
+  options: ParseJsValueOptions
+): ComponentChild[] | null {
+  if (stmt.isBlockStatement()) {
+    const body = stmt.get("body");
+    if (body.length === 0) {
+      state.errors.push({
+        message: `If statement block must contain a return statement`,
+        node: stmt.node,
+        severity: "error",
+      });
+      return null;
+    }
+
+    let children: ComponentChild[] | null = null;
+    for (const st of body) {
+      const maybeChildren = parseIfStatementChildren(st, state, app, options);
+      if (maybeChildren) {
+        children = maybeChildren;
+      }
+    }
+    return children;
+  }
+
+  if (stmt.isReturnStatement()) {
+    return parseReturnStatement(stmt, state, app, options);
+  }
+
+  state.errors.push({
+    message: `Only return statement is allowed in if statement, but received: ${stmt.type}`,
+    node: stmt.node,
+    severity: "error",
+  });
+  return null;
 }

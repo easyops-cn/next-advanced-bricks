@@ -874,7 +874,7 @@ exports[`parseView should work 1`] = `
       "type": "view",
     },
     "errors": [],
-    "filePath": "View.tsx",
+    "filePath": "/View.tsx",
     "internals": [
       {
         "component": {

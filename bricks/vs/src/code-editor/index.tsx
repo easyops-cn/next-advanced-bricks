@@ -852,24 +852,6 @@ export function CodeEditorComponent({
     language === "typescript" ? "typescriptDefaults" : "javascriptDefaults";
 
   useEffect(() => {
-    if (
-      language === "javascript" ||
-      language === "typescript" ||
-      language === "brick_next_yaml"
-    ) {
-      monaco.languages.typescript[languageDefaults].setCompilerOptions({
-        allowNonTsExtensions: true,
-        lib: domLibsEnabled ? undefined : ["esnext"],
-        target: monaco.languages.typescript.ScriptTarget.ESNext,
-        module: monaco.languages.typescript.ModuleKind.ESNext,
-        jsx: monaco.languages.typescript.JsxEmit.Preserve,
-        skipLibCheck: true,
-        skipDefaultLibCheck: true,
-      });
-    }
-  }, [language, domLibsEnabled, languageDefaults]);
-
-  useEffect(() => {
     const editor = editorRef.current;
     if (!editor) {
       return;

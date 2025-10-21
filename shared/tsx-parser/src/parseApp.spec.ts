@@ -15,11 +15,11 @@ describe("parseApp", () => {
 
     const files = [
       {
-        filePath: "index.tsx",
+        filePath: "/index.tsx",
         content: indexContent,
       },
       {
-        filePath: "Pages/Test.tsx",
+        filePath: "/Pages/Test.tsx",
         content: testContent,
       },
     ];

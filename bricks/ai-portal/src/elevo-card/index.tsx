@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { createDecorators } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
@@ -8,6 +8,7 @@ import type {
 } from "@next-bricks/icons/general-icon";
 import type { Link, LinkProps } from "@next-bricks/basic/link";
 import classNames from "classnames";
+import { useHasAssignedNodes } from "@next-shared/hooks";
 import styleText from "./styles.shadow.css";
 
 const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
@@ -70,6 +71,12 @@ function ElevoCardComponent({
   avatar,
   avatarType,
 }: ElevoCardProps) {
+  const footerRef = useRef<HTMLSlotElement>(null);
+  const hasFooter = useHasAssignedNodes(footerRef);
+
+  const actionsRef = useRef<HTMLSlotElement>(null);
+  const hasActions = useHasAssignedNodes(actionsRef);
+
   return (
     <WrappedLink className={classNames("card", { clickable: !!url })} url={url}>
       <div className="header">
@@ -81,13 +88,13 @@ function ElevoCardComponent({
           )}
           <div className="title">{cardTitle}</div>
         </div>
-        <div className="actions">
-          <slot name="actions" />
+        <div className="actions" hidden={!hasActions}>
+          <slot name="actions" ref={actionsRef} />
         </div>
       </div>
       <div className="body">{description}</div>
-      <div className="footer">
-        <slot name="footer" />
+      <div className="footer" hidden={!hasFooter}>
+        <slot name="footer" ref={footerRef} />
       </div>
     </WrappedLink>
   );

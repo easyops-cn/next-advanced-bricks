@@ -10,7 +10,9 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 import { createDecorators, type EventEmitter } from "@next-core/element";
-import { ReactNextElement, wrapBrick } from "@next-core/react-element";
+import { ReactNextElement } from "@next-core/react-element";
+import { http } from "@next-core/http";
+import { handleHttpError } from "@next-core/runtime";
 import {
   getCaretPositionInTextarea,
   getContentRectsInTextarea,
@@ -19,18 +21,7 @@ import {
 } from "@next-shared/form";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
-import type {
-  GeneralIcon,
-  GeneralIconProps,
-} from "@next-bricks/icons/general-icon";
-import type {
-  ActionsEvents,
-  ActionsEventsMapping,
-  ActionsProps,
-  EoActions,
-  SimpleAction,
-  SubMenuAction,
-} from "@next-bricks/basic/actions";
+import type { SimpleAction, SubMenuAction } from "@next-bricks/basic/actions";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
 import {
@@ -38,20 +29,12 @@ import {
   setChatCommand,
 } from "../data-providers/set-chat-command.js";
 import type { CommandPayload } from "../shared/interfaces.js";
+import { UploadButton, type UploadButtonRef } from "./UploadButton.js";
+import { FileListComponent } from "./FileListComponent.js";
+import { WrappedActions, WrappedIcon } from "./bricks.js";
+import type { FileItem } from "./interfaces.js";
 
 initializeI18n(NS, locales);
-
-const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
-const WrappedActions = wrapBrick<
-  EoActions,
-  ActionsProps & { activeKeys?: (string | number)[] },
-  ActionsEvents,
-  ActionsEventsMapping
->("eo-actions", {
-  onActionClick: "action.click",
-  onItemDragEnd: "item.drag.end",
-  onItemDragStart: "item.drag.start",
-});
 
 const { defineElement, property, event, method } = createDecorators();
 
@@ -63,6 +46,7 @@ export interface ChatBoxProps {
   autoFocus?: boolean;
   aiEmployees?: AIEmployee[];
   commands?: Command[];
+  uploadBucket?: string;
 }
 
 export interface AIEmployee {
@@ -118,6 +102,9 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
   @property({ attribute: false })
   accessor commands: Command[] | undefined;
 
+  @property()
+  accessor uploadBucket: string | undefined;
+
   @event({ type: "message.submit" })
   accessor #messageSubmit!: EventEmitter<string>;
 
@@ -137,6 +124,13 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
 
   #handleCommandSelect = (command: CommandPayload | null) => {
     this.#commandSelect.emit(command);
+  };
+
+  @event({ type: "files.change" })
+  accessor #filesChange!: EventEmitter<string[] | null | undefined>;
+
+  #handleFilesChange = (files: string[] | null | undefined) => {
+    this.#filesChange.emit(files);
   };
 
   @method()
@@ -162,9 +156,11 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
         autoFocus={this.autoFocus}
         aiEmployees={this.aiEmployees}
         commands={this.commands}
+        uploadBucket={this.uploadBucket}
         onSubmit={this.#handleMessageSubmit}
         onEmployeeMention={this.#handleEmployeeMention}
         onCommandSelect={this.#handleCommandSelect}
+        onFilesChange={this.#handleFilesChange}
         ref={this.ref}
       />
     );
@@ -175,6 +171,7 @@ interface ChatBoxComponentProps extends ChatBoxProps {
   onSubmit: (value: string) => void;
   onEmployeeMention: (employee: AIEmployee | null) => void;
   onCommandSelect: (command: CommandPayload | null) => void;
+  onFilesChange: (files: string[] | null | undefined) => void;
   ref?: React.Ref<ChatBoxRef>;
 }
 
@@ -194,9 +191,11 @@ function LegacyChatBoxComponent(
     autoFocus,
     aiEmployees,
     commands,
+    uploadBucket,
     onSubmit,
     onEmployeeMention,
     onCommandSelect,
+    onFilesChange,
   }: ChatBoxComponentProps,
   ref: React.Ref<ChatBoxRef>
 ) {
@@ -218,6 +217,79 @@ function LegacyChatBoxComponent(
   >(null);
   const [commandText, setCommandText] = useState("");
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
+
+  const [files, setFiles] = useState<FileItem[] | undefined>();
+  const hasFiles = !!files && files.length > 0;
+
+  useEffect(() => {
+    files?.forEach(async (fileItem) => {
+      if (fileItem.status === "ready") {
+        const abortController = new AbortController();
+
+        setFiles((prevFiles) => {
+          return prevFiles?.map((item) => {
+            if (item.uid === fileItem.uid) {
+              return { ...item, status: "uploading", abortController };
+            }
+            return item;
+          });
+        });
+
+        try {
+          const formData = new FormData();
+          formData.append("file", fileItem.file);
+
+          const response = await http.request<{ data: { objectName: string } }>(
+            `api/gateway/object_store.object_store.PutObject/api/v1/objectStore/bucket/${uploadBucket}/object`,
+            {
+              method: "PUT",
+              body: formData,
+              signal: abortController.signal,
+            }
+          );
+
+          setFiles((prevFiles) => {
+            return prevFiles?.map((item) => {
+              if (item.uid === fileItem.uid) {
+                return {
+                  ...item,
+                  status: "done",
+                  uploadedName: response.data.objectName,
+                };
+              }
+              return item;
+            });
+          });
+        } catch (error) {
+          setFiles((prevFiles) => {
+            return prevFiles?.map((item) => {
+              if (item.uid === fileItem.uid) {
+                return { ...item, status: "failed" };
+              }
+              return item;
+            });
+          });
+          handleHttpError(error);
+        }
+      }
+    });
+  }, [files, uploadBucket]);
+
+  const [allFilesDone, setAllFilesDone] = useState(true);
+  const initialRef = useRef(true);
+
+  useEffect(() => {
+    const allFilesDone =
+      !files || files.every((file) => file.status === "done");
+    setAllFilesDone(allFilesDone);
+    if (initialRef.current) {
+      initialRef.current = false;
+      return;
+    }
+    if (allFilesDone) {
+      onFilesChange(files?.map((file) => file.uploadedName!));
+    }
+  }, [files, onFilesChange]);
 
   useEffect(() => {
     const store = window.__elevo_try_it_out;
@@ -252,11 +324,11 @@ function LegacyChatBoxComponent(
 
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLTextAreaElement>) => {
-      if (e.currentTarget.value) {
+      if (e.currentTarget.value && allFilesDone) {
         submitWithoutCommand(e.currentTarget.value);
       }
     },
-    [submitWithoutCommand]
+    [submitWithoutCommand, allFilesDone]
   );
 
   const handleChange = useCallback(
@@ -691,6 +763,8 @@ function LegacyChatBoxComponent(
     return checkedKeys;
   }, [activeActionIndexes, commandPopover]);
 
+  const uploadButtonRef = useRef<UploadButtonRef>(null);
+
   return (
     <div className="root">
       <div className="container" ref={containerRef}>
@@ -699,7 +773,7 @@ function LegacyChatBoxComponent(
           ref={textareaRef}
           value={value}
           minRows={58 / 22}
-          paddingSize={60}
+          paddingSize={hasFiles ? 144 : 60}
           autoResize
           disabled={disabled}
           placeholder={placeholder ?? t(K.ASK_ANY_THING)}
@@ -708,18 +782,51 @@ function LegacyChatBoxComponent(
           onSubmit={handleSubmit}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
+          style={{
+            paddingTop: hasFiles ? 94 : 10,
+          }}
         />
+        {hasFiles && (
+          <FileListComponent
+            files={files!}
+            onRemove={(uid, abortController) => {
+              setFiles((prevFiles) =>
+                prevFiles?.filter((item) => item.uid !== uid)
+              );
+              abortController?.abort();
+            }}
+            onAdd={() => {
+              uploadButtonRef.current?.requestUpload();
+            }}
+          />
+        )}
         <div className="actions-bar">
           <div>
             <slot name="actions"></slot>
           </div>
-          <button
-            className="btn-send"
-            disabled={!value}
-            onClick={handleSubmitClick}
-          >
-            <WrappedIcon lib="fa" prefix="fas" icon="arrow-up" />
-          </button>
+          <div className="buttons">
+            {uploadBucket ? (
+              <>
+                <UploadButton
+                  ref={uploadButtonRef}
+                  onChange={(files) =>
+                    setFiles((prevFiles) => [
+                      ...(prevFiles ?? []),
+                      ...(files ?? []),
+                    ])
+                  }
+                />
+                <div className="btn-divider"></div>
+              </>
+            ) : null}
+            <button
+              className="btn-send"
+              disabled={!value || !allFilesDone}
+              onClick={handleSubmitClick}
+            >
+              <WrappedIcon lib="fa" prefix="fas" icon="arrow-up" />
+            </button>
+          </div>
         </div>
         {mentionOverlay?.map((overlay, index) => (
           <div key={index} className="mention-overlay" style={overlay} />

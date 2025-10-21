@@ -4,6 +4,7 @@ import type {
   DataSource,
   DataSourceConfig,
   ParseJsValueOptions,
+  ParsedApp,
   ParsedModule,
 } from "./interfaces.js";
 import { parseCallApi } from "./parseCallApi.js";
@@ -12,6 +13,7 @@ import { parseEmbedded } from "./parseEmbedded.js";
 export function parseResourceCall(
   path: NodePath<t.Expression>,
   state: ParsedModule,
+  app: ParsedApp,
   options: ParseJsValueOptions,
   name: string,
   config?: DataSourceConfig,
@@ -20,7 +22,7 @@ export function parseResourceCall(
   >[],
   method?: "then" | "catch"
 ): DataSource | null {
-  const payload = parseCallApi(path, state, options);
+  const payload = parseCallApi(path, state, app, options);
   if (!payload) {
     return null;
   }

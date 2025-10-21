@@ -21,7 +21,7 @@ import type {
 import nextTsxDefinition from "@next-shared/tsx-parser/lib/next-tsx.d.ts?raw";
 import componentsDefinition from "@next-shared/tsx-converter/lib/components.d.ts?raw";
 import { convertView, type ConvertResult } from "@next-shared/tsx-converter";
-import type { ParsedApp } from "@next-shared/tsx-parser";
+import type { ParsedApp, SourceFile } from "@next-shared/tsx-parser";
 import "@next-core/theme";
 import styles from "./styles.module.css";
 import { getRemoteTsxParserWorker } from "./workers/tsxParser.js";
@@ -69,6 +69,9 @@ const { defineElement, property, event } = createDecorators();
 export interface TsxPlaygroundProps {
   source?: string;
   extraLibs?: ExtraLib[];
+  viewLibs?: SourceFile[];
+  withoutWrapper?: boolean;
+  allowAnyBricks?: boolean;
 }
 
 /**
@@ -87,6 +90,15 @@ class TsxPlayground extends ReactNextElement implements TsxPlaygroundProps {
   @property({ attribute: false })
   accessor extraLibs: ExtraLib[] | undefined;
 
+  @property({ attribute: false })
+  accessor viewLibs: SourceFile[] | undefined;
+
+  @property({ type: Boolean })
+  accessor withoutWrapper: boolean | undefined;
+
+  @property({ type: Boolean })
+  accessor allowAnyBricks: boolean | undefined;
+
   @event({ type: "change" })
   accessor #change!: EventEmitter<string>;
 
@@ -99,6 +111,9 @@ class TsxPlayground extends ReactNextElement implements TsxPlaygroundProps {
       <TsxPlaygroundComponent
         source={this.source}
         extraLibs={this.extraLibs}
+        viewLibs={this.viewLibs}
+        withoutWrapper={this.withoutWrapper}
+        allowAnyBricks={this.allowAnyBricks}
         onChange={this.#handleChange}
       />
     );
@@ -128,6 +143,9 @@ function convertSeverity(
 function TsxPlaygroundComponent({
   source,
   extraLibs,
+  withoutWrapper,
+  allowAnyBricks,
+  viewLibs,
   onChange,
 }: TsxPlaygroundComponentProps) {
   const [code, setCode] = useState(source ?? "");
@@ -136,8 +154,8 @@ function TsxPlaygroundComponent({
   const [view, setView] = useState<ParsedApp | undefined>();
 
   const allLibs = useMemo(
-    () => [...BUILTIN_LIBS, ...(extraLibs ?? [])],
-    [extraLibs]
+    () => [...BUILTIN_LIBS, ...(extraLibs ?? []), ...(viewLibs ?? [])],
+    [extraLibs, viewLibs]
   );
 
   const handleCodeChange = useCallback(
@@ -154,7 +172,7 @@ function TsxPlaygroundComponent({
       if (ignore) {
         return;
       }
-      const result = await worker.parseView(deferredCode);
+      const result = await worker.parseView(deferredCode, { libs: viewLibs });
       if (ignore) {
         return;
       }
@@ -219,7 +237,12 @@ function TsxPlaygroundComponent({
       // setLoading(true);
       let convertedView: ConvertResult | undefined;
       try {
-        convertedView = await convertView(view, { rootId, expanded: true });
+        convertedView = await convertView(view, {
+          rootId,
+          expanded: true,
+          withoutWrapper,
+          allowAnyBricks,
+        });
         if (ignore) {
           return;
         }
@@ -263,7 +286,7 @@ function TsxPlaygroundComponent({
     return () => {
       ignore = true;
     };
-  }, [rootId, view]);
+  }, [rootId, view, withoutWrapper, allowAnyBricks]);
 
   return (
     <div className={styles.container}>
@@ -273,7 +296,7 @@ function TsxPlaygroundComponent({
             value={source}
             onCodeChange={handleCodeChange}
             language="typescript"
-            uri="file:///view.tsx"
+            uri="file:///View.tsx"
             automaticLayout="fit-container"
             theme="tm-vs-dark"
             extraLibs={allLibs}

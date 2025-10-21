@@ -4,17 +4,23 @@ import type {
   BindingInfo,
   EventHandler,
   ParseJsValueOptions,
+  ParsedApp,
   ParsedModule,
   TypeEventHandlerOfShowMessage,
 } from "./interfaces.js";
 import { parseJsValue } from "./parseJsValue.js";
 import { CALL_API_LIST } from "./constants.js";
 import { parseCallApi } from "./parseCallApi.js";
-import { validateGlobalApi } from "./validations.js";
+import {
+  isGeneralCallExpression,
+  isGeneralMemberExpression,
+  validateGlobalApi,
+} from "./validations.js";
 
 export function parseEvent(
   path: NodePath<t.Node>,
   state: ParsedModule,
+  app: ParsedApp,
   options: ParseJsValueOptions,
   isCallback?: boolean
 ): EventHandler[] | null {
@@ -56,7 +62,7 @@ export function parseEvent(
   }
 
   const body = path.get("body");
-  const handler = parseEventHandler(body, state, eventOptions);
+  const handler = parseEventHandler(body, state, app, eventOptions);
   if (!handler) {
     return null;
   }
@@ -67,17 +73,18 @@ export function parseEvent(
 function parseEventHandler(
   path: NodePath<t.Statement | t.Expression | null | undefined>,
   state: ParsedModule,
+  app: ParsedApp,
   options: ParseJsValueOptions
 ): EventHandler | EventHandler[] | null {
   if (path.isBlockStatement()) {
     return path
       .get("body")
-      .flatMap((stmtPath) => parseEventHandler(stmtPath, state, options))
+      .flatMap((stmtPath) => parseEventHandler(stmtPath, state, app, options))
       .filter((h): h is EventHandler => h !== null);
   }
 
   if (path.isIfStatement()) {
-    const test = parseJsValue(path.get("test"), state, options) as
+    const test = parseJsValue(path.get("test"), state, app, options) as
       | string
       | boolean
       | undefined;
@@ -85,23 +92,26 @@ function parseEventHandler(
       action: "conditional",
       payload: {
         test,
-        consequent: parseEventHandler(path.get("consequent"), state, options),
+        consequent: parseEventHandler(
+          path.get("consequent"),
+          state,
+          app,
+          options
+        ),
         alternate: path.node.alternate
-          ? parseEventHandler(path.get("alternate"), state, options)
+          ? parseEventHandler(path.get("alternate"), state, app, options)
           : null,
       },
     };
   }
 
   if (path.isExpressionStatement()) {
-    return parseEventHandler(path.get("expression"), state, options);
+    return parseEventHandler(path.get("expression"), state, app, options);
   }
 
-  if (path.isCallExpression() || path.isOptionalCallExpression()) {
-    const callee = (path as NodePath<t.CallExpression>).get("callee");
-    const args = (path as NodePath<t.CallExpression>).get(
-      "arguments"
-    ) as NodePath<t.Expression | t.SpreadElement>[];
+  if (isGeneralCallExpression(path)) {
+    const callee = path.get("callee");
+    const args = path.get("arguments");
     if (callee.isIdentifier()) {
       if (validateGlobalApi(callee, "showMessage")) {
         if (args.length !== 1) {
@@ -112,7 +122,7 @@ function parseEventHandler(
           });
           return null;
         }
-        const payload = parseJsValue(args[0], state, options);
+        const payload = parseJsValue(args[0], state, app, options);
         return {
           action: "show_message",
           payload,
@@ -128,7 +138,9 @@ function parseEventHandler(
           });
           return null;
         }
-        const queryArgs = args.map((arg) => parseJsValue(arg, state, options));
+        const queryArgs = args.map((arg) =>
+          parseJsValue(arg, state, app, options)
+        );
         return {
           action: "update_query",
           payload: {
@@ -140,7 +152,7 @@ function parseEventHandler(
 
       for (const name of CALL_API_LIST) {
         if (validateGlobalApi(callee, name)) {
-          const payload = parseCallApi(path, state, options);
+          const payload = parseCallApi(path, state, app, options);
           if (!payload) {
             return null;
           }
@@ -175,7 +187,7 @@ function parseEventHandler(
               value:
                 args[0] === undefined
                   ? undefined
-                  : parseJsValue(args[0], state, {
+                  : parseJsValue(args[0], state, app, {
                       ...options,
                       modifier: undefined,
                     }),
@@ -189,10 +201,7 @@ function parseEventHandler(
           });
           return null;
       }
-    } else if (
-      callee.isMemberExpression() ||
-      callee.isOptionalMemberExpression()
-    ) {
+    } else if (isGeneralMemberExpression(callee)) {
       if (callee.node.computed) {
         state.errors.push({
           message: `Event handler call expression with computed member expression is not supported`,
@@ -201,19 +210,15 @@ function parseEventHandler(
         });
         return null;
       }
-      const object = (callee as NodePath<t.MemberExpression>).get("object");
-      if (object.isMemberExpression() || object.isOptionalMemberExpression()) {
-        const property = (object as NodePath<t.MemberExpression>).get(
-          "property"
-        );
+      const object = callee.get("object");
+      if (isGeneralMemberExpression(object)) {
+        const property = object.get("property");
         if (
           !object.node.computed &&
           property.isIdentifier() &&
           property.node.name === "current"
         ) {
-          const refObject = (object as NodePath<t.MemberExpression>).get(
-            "object"
-          );
+          const refObject = object.get("object");
           if (refObject.isIdentifier()) {
             const refBindingId = refObject.scope.getBindingIdentifier(
               refObject.node.name
@@ -238,9 +243,7 @@ function parseEventHandler(
               });
               return null;
             }
-            const property = (callee as NodePath<t.MemberExpression>).get(
-              "property"
-            );
+            const property = callee.get("property");
             if (!property.isIdentifier()) {
               state.errors.push({
                 message: `Event handler call expression with non-identifier property is not supported`,
@@ -254,7 +257,7 @@ function parseEventHandler(
               payload: {
                 ref: refBinding.id.name,
                 method: property.node.name,
-                args: args.map((arg) => parseJsValue(arg, state, options)),
+                args: args.map((arg) => parseJsValue(arg, state, app, options)),
                 scope:
                   options.component?.type === "template"
                     ? "template"
@@ -282,7 +285,7 @@ function parseEventHandler(
         });
         return null;
       }
-      const property = (callee as NodePath<t.MemberExpression>).get("property");
+      const property = callee.get("property");
       if (!property.isIdentifier()) {
         state.errors.push({
           message: `Member expression in event handler expects an identifier as property, but got ${property.type}`,
@@ -316,12 +319,12 @@ function parseEventHandler(
           });
           return null;
         }
-        const payload = parseCallApi(object, state, options);
+        const payload = parseCallApi(object, state, app, options);
         if (!payload) {
           return null;
         }
         state.contracts.add(payload.api);
-        const successCallback = parseEvent(args[0], state, options, true);
+        const successCallback = parseEvent(args[0], state, app, options, true);
         return {
           action: "call_api",
           payload,

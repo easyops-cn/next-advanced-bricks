@@ -1,0 +1,287 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`parseTemplate should work 1`] = `
+{
+  "appType": "template",
+  "entry": {
+    "contracts": Set {},
+    "defaultExport": {
+      "component": {
+        "bindingMap": Map {
+          Node {
+            "end": 62,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "index": 62,
+                "line": 3,
+              },
+              "filename": undefined,
+              "identifierName": "expanded",
+              "start": Position {
+                "column": 2,
+                "index": 54,
+                "line": 3,
+              },
+            },
+            "name": "expanded",
+            "range": undefined,
+            "start": 54,
+            "type": "Identifier",
+          } => {
+            "id": Node {
+              "end": 62,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "index": 62,
+                  "line": 3,
+                },
+                "filename": undefined,
+                "identifierName": "expanded",
+                "start": Position {
+                  "column": 2,
+                  "index": 54,
+                  "line": 3,
+                },
+              },
+              "name": "expanded",
+              "range": undefined,
+              "start": 54,
+              "type": "Identifier",
+            },
+            "initialValue": undefined,
+            "kind": "param",
+          },
+          Node {
+            "end": 77,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 13,
+                "index": 77,
+                "line": 4,
+              },
+              "filename": undefined,
+              "identifierName": "allExpanded",
+              "start": Position {
+                "column": 2,
+                "index": 66,
+                "line": 4,
+              },
+            },
+            "name": "allExpanded",
+            "range": undefined,
+            "start": 66,
+            "type": "Identifier",
+          } => {
+            "id": Node {
+              "end": 77,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 13,
+                  "index": 77,
+                  "line": 4,
+                },
+                "filename": undefined,
+                "identifierName": "allExpanded",
+                "start": Position {
+                  "column": 2,
+                  "index": 66,
+                  "line": 4,
+                },
+              },
+              "name": "allExpanded",
+              "range": undefined,
+              "start": 66,
+              "type": "Identifier",
+            },
+            "initialValue": undefined,
+            "kind": "param",
+          },
+          Node {
+            "end": 89,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 10,
+                "index": 89,
+                "line": 5,
+              },
+              "filename": undefined,
+              "identifierName": "onToggle",
+              "start": Position {
+                "column": 2,
+                "index": 81,
+                "line": 5,
+              },
+            },
+            "name": "onToggle",
+            "range": undefined,
+            "start": 81,
+            "type": "Identifier",
+          } => {
+            "id": Node {
+              "end": 89,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 10,
+                  "index": 89,
+                  "line": 5,
+                },
+                "filename": undefined,
+                "identifierName": "onToggle",
+                "start": Position {
+                  "column": 2,
+                  "index": 81,
+                  "line": 5,
+                },
+              },
+              "name": "onToggle",
+              "range": undefined,
+              "start": 81,
+              "type": "Identifier",
+            },
+            "kind": "eventHandler",
+          },
+          Node {
+            "end": 105,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 14,
+                "index": 105,
+                "line": 6,
+              },
+              "filename": undefined,
+              "identifierName": "onOpenDetail",
+              "start": Position {
+                "column": 2,
+                "index": 93,
+                "line": 6,
+              },
+            },
+            "name": "onOpenDetail",
+            "range": undefined,
+            "start": 93,
+            "type": "Identifier",
+          } => {
+            "id": Node {
+              "end": 105,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 14,
+                  "index": 105,
+                  "line": 6,
+                },
+                "filename": undefined,
+                "identifierName": "onOpenDetail",
+                "start": Position {
+                  "column": 2,
+                  "index": 93,
+                  "line": 6,
+                },
+              },
+              "name": "onOpenDetail",
+              "range": undefined,
+              "start": 93,
+              "type": "Identifier",
+            },
+            "kind": "eventHandler",
+          },
+        },
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": undefined,
+                    "events": {
+                      "click": [
+                        {
+                          "action": "dispatch_event",
+                          "payload": {
+                            "detail": "<% EVENT.detail %>",
+                            "type": "toggle",
+                          },
+                        },
+                      ],
+                    },
+                    "name": "Button",
+                    "properties": {
+                      "textContent": "<%= FN._helper_mergeTexts({type:"expression",value:(STATE.expanded ? "收起" : "展开")}) %>",
+                    },
+                    "ref": undefined,
+                    "reference": null,
+                  },
+                ],
+                "name": "If",
+                "properties": {
+                  "dataSource": "<%= !STATE.allExpanded %>",
+                },
+              },
+              {
+                "children": undefined,
+                "events": {
+                  "click": [
+                    {
+                      "action": "dispatch_event",
+                      "payload": {
+                        "detail": "<% EVENT.detail %>",
+                        "type": "open.detail",
+                      },
+                    },
+                  ],
+                },
+                "name": "Button",
+                "properties": {
+                  "textContent": "详情",
+                },
+                "ref": undefined,
+                "reference": null,
+              },
+            ],
+            "events": undefined,
+            "name": "Toolbar",
+            "properties": {},
+            "ref": undefined,
+            "reference": null,
+          },
+        ],
+        "id": Node {
+          "end": 49,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 34,
+              "index": 49,
+              "line": 2,
+            },
+            "filename": undefined,
+            "identifierName": "Operations",
+            "start": Position {
+              "column": 24,
+              "index": 39,
+              "line": 2,
+            },
+          },
+          "name": "Operations",
+          "start": 39,
+          "type": "Identifier",
+        },
+        "type": "template",
+      },
+      "type": "template",
+    },
+    "errors": [],
+    "filePath": "/Template.tsx",
+    "internals": [],
+    "moduleType": "entry",
+    "namedExports": Map {},
+    "source": undefined,
+    "usedHelpers": Set {
+      "_helper_mergeTexts",
+    },
+  },
+  "errors": [],
+  "files": undefined,
+  "modules": [],
+}
+`;

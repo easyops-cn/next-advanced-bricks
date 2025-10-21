@@ -104,3 +104,15 @@ export function isOfficialComponent(child: ComponentChild, name: string) {
     (child.reference ? child.reference.name === name : child.name === name)
   );
 }
+
+export function isGeneralCallExpression(
+  path: NodePath<t.Node | null | undefined>
+): path is NodePath<t.CallExpression | t.OptionalCallExpression> {
+  return path.isCallExpression() || path.isOptionalCallExpression();
+}
+
+export function isGeneralMemberExpression(
+  path: NodePath<t.Node | null | undefined>
+): path is NodePath<t.MemberExpression | t.OptionalMemberExpression> {
+  return path.isMemberExpression() || path.isOptionalMemberExpression();
+}
