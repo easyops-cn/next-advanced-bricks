@@ -288,15 +288,20 @@ export function parseComponent(
       }
     } else if (stmt.isReturnStatement()) {
       const arg = stmt.get("argument");
-      if (!arg.isJSXElement() && !arg.isJSXFragment()) {
+      if (!arg.node) {
         state.errors.push({
-          message: `Expect JSX element or fragment as the return value, received ${arg.type}`,
-          node: arg.node,
+          message: `Return statement in component function must have an argument`,
+          node: stmt,
           severity: "error",
         });
         continue;
       }
-      component.children = parseChildren(arg, state, app, options);
+      component.children = parseChildren(
+        arg as NodePath<t.Expression>,
+        state,
+        app,
+        options
+      );
     } else if (
       !stmt.isTSInterfaceDeclaration() &&
       !stmt.isTSTypeAliasDeclaration()
