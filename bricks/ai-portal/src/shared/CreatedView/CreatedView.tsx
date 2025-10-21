@@ -149,9 +149,9 @@ function traverseBricks(
   }
 }
 
-function preferSizeLarge(brick: BrickConf): boolean {
+function preferSizeLarge(brick: BrickConf | BrickConf[]): boolean {
   let large = false;
-  traverseBricks([brick], (b) => {
+  traverseBricks(([] as BrickConf[]).concat(brick), (b) => {
     if (b.brick === "eo-next-table") {
       large = true;
       return true;
