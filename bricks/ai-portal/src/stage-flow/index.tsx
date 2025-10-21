@@ -60,6 +60,7 @@ const { defineElement, property, event, method } = createDecorators();
 export interface StageFlowProps {
   spec?: Stage[];
   aiEmployees?: AIEmployee[];
+  readOnly?: boolean;
 }
 
 export interface Stage {
@@ -101,6 +102,9 @@ class StageFlow extends ReactNextElement implements StageFlowProps {
 
   @property({ attribute: false })
   accessor aiEmployees: AIEmployee[] | undefined;
+
+  @property({ type: Boolean })
+  accessor readOnly: boolean | undefined;
 
   @event({ type: "change" })
   accessor #change!: EventEmitter<Stage[]>;
@@ -146,6 +150,7 @@ class StageFlow extends ReactNextElement implements StageFlowProps {
         ref={this.#ref}
         spec={this.spec}
         aiEmployees={this.aiEmployees}
+        readOnly={this.readOnly}
         onChange={this.#handleChange}
         onAddActivity={this.#handleAddActivity}
         onEditActivity={this.#handleEditActivity}
@@ -174,6 +179,7 @@ function LegacyStageFlowComponent(
   {
     spec,
     aiEmployees,
+    readOnly,
     onChange,
     onAddActivity,
     onEditActivity,
@@ -313,6 +319,7 @@ function LegacyStageFlowComponent(
           <StageNavItem
             key={index}
             stage={stage}
+            readOnly={readOnly}
             otherStageNames={stages
               .filter((s) => s !== stage)
               .map((s) => s.name)}
@@ -359,15 +366,17 @@ function LegacyStageFlowComponent(
             />
           </li>
         )}
-        <li className="nav-add">
-          <button
-            className="btn-add-stage"
-            onClick={() => setAddingStage(true)}
-          >
-            <WrappedIcon lib="antd" icon="plus" className="plus" />
-            {t(K.ADD_STAGE)}
-          </button>
-        </li>
+        {!readOnly && (
+          <li className="nav-add">
+            <button
+              className="btn-add-stage"
+              onClick={() => setAddingStage(true)}
+            >
+              <WrappedIcon lib="antd" icon="plus" className="plus" />
+              {t(K.ADD_STAGE)}
+            </button>
+          </li>
+        )}
       </ul>
       <div className="lanes">
         {stages?.map((stage, index) => (
@@ -377,7 +386,9 @@ function LegacyStageFlowComponent(
                 <div
                   className="activity"
                   onClick={() => {
-                    onEditActivity({ stage, activity, activityIndex });
+                    if (!readOnly) {
+                      onEditActivity({ stage, activity, activityIndex });
+                    }
                   }}
                 >
                   <div className="title">{activity.name}</div>
@@ -392,15 +403,17 @@ function LegacyStageFlowComponent(
                 </div>
               </li>
             ))}
-            <li>
-              <button
-                className="btn-add-activity"
-                onClick={() => onAddActivity(stage)}
-              >
-                <WrappedIcon lib="antd" icon="plus" />
-                {t(K.ADD_ACTIVITY)}
-              </button>
-            </li>
+            {!readOnly && (
+              <li>
+                <button
+                  className="btn-add-activity"
+                  onClick={() => onAddActivity(stage)}
+                >
+                  <WrappedIcon lib="antd" icon="plus" />
+                  {t(K.ADD_ACTIVITY)}
+                </button>
+              </li>
+            )}
           </ul>
         ))}
       </div>
@@ -452,6 +465,7 @@ function StageNameInput({ onDone }: StageNameInputProps) {
 interface StageNavItemProps {
   stage: Stage;
   otherStageNames: string[];
+  readOnly?: boolean;
   onNameChange: (name: string) => void;
   onDelete: (stage: Stage) => void;
 }
@@ -459,11 +473,22 @@ interface StageNavItemProps {
 function StageNavItem({
   stage,
   otherStageNames,
+  readOnly,
   onNameChange,
   onDelete,
 }: StageNavItemProps) {
   const compositionRef = useRef(false);
   const popoverRef = useRef<Popover>(null);
+
+  if (readOnly) {
+    return (
+      <li className="nav-item">
+        <span className="nav-link">
+          <span>{stage.name}</span>
+        </span>
+      </li>
+    );
+  }
 
   return (
     <li className="nav-item">
