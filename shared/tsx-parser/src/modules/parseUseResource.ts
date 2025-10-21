@@ -6,6 +6,7 @@ import type {
   ParseJsValueOptions,
   DataSource,
   BindingInfo,
+  ParsedApp,
 } from "./interfaces.js";
 import { validateFunction } from "./validations.js";
 import { parseJsValue } from "./parseJsValue.js";
@@ -15,6 +16,7 @@ export function parseUseResource(
   decl: NodePath<t.VariableDeclarator>,
   args: NodePath<t.Expression | t.SpreadElement | t.ArgumentPlaceholder>[],
   state: ParsedModule,
+  app: ParsedApp,
   options: ParseJsValueOptions
 ): BindingInfo | null {
   const declId = decl.get("id");
@@ -96,7 +98,12 @@ export function parseUseResource(
         return null;
       }
       config ??= {};
-      config[key.node.name] = parseJsValue(prop.get("value"), state, options);
+      config[key.node.name] = parseJsValue(
+        prop.get("value"),
+        state,
+        app,
+        options
+      );
     }
   }
 
@@ -118,6 +125,7 @@ export function parseUseResource(
     resource = parseResourceCall(
       callee.get("object"),
       state,
+      app,
       options,
       resourceVar.node.name,
       config,
@@ -128,6 +136,7 @@ export function parseUseResource(
     resource = parseResourceCall(
       call,
       state,
+      app,
       options,
       resourceVar.node.name,
       config

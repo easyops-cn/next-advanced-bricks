@@ -42,9 +42,9 @@ export function parseFile(
 
   const moduleType: ModuleType = isEntry
     ? "entry"
-    : file.filePath.startsWith("Pages/")
+    : file.filePath.startsWith("/Pages/")
       ? "page"
-      : file.filePath.startsWith("Components/")
+      : file.filePath.startsWith("/Components/")
         ? "template"
         : "unknown";
 

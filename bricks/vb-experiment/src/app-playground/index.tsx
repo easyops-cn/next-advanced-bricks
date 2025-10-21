@@ -159,7 +159,7 @@ function AppPlaygroundComponent({
       }
       const result = await worker.parseApp([
         {
-          filePath: "index.tsx",
+          filePath: "/index.tsx",
           content: deferredCode,
         },
       ]);
@@ -233,7 +233,7 @@ function AppPlaygroundComponent({
             value={source}
             onCodeChange={handleCodeChange}
             language="typescript"
-            uri="file:///view.tsx"
+            uri="file:///index.tsx"
             automaticLayout="fit-container"
             theme="tm-vs-dark"
             extraLibs={allLibs}

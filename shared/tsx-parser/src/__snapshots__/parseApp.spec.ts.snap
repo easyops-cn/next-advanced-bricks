@@ -7,7 +7,7 @@ exports[`parseApp should work 1`] = `
     "contracts": Set {},
     "defaultExport": null,
     "errors": [],
-    "filePath": "index.tsx",
+    "filePath": "/index.tsx",
     "internals": [
       {
         "function": {
@@ -34,7 +34,7 @@ exports[`parseApp should work 1`] = `
                 "component": {
                   "name": "Layout1",
                   "reference": {
-                    "importSource": "./Pages/Test",
+                    "importSource": "/Pages/Test.tsx",
                     "type": "imported",
                   },
                 },
@@ -55,7 +55,7 @@ exports[`parseApp should work 1`] = `
                 "component": {
                   "name": "Page403",
                   "reference": {
-                    "importSource": "./Pages/Test",
+                    "importSource": "/Pages/Test.tsx",
                     "name": "Page503",
                     "type": "imported",
                   },
@@ -89,11 +89,11 @@ exports[`parseApp should work 1`] = `
   "errors": [],
   "files": undefined,
   "modules": Map {
-    "index.tsx" => {
+    "/index.tsx" => {
       "contracts": Set {},
       "defaultExport": null,
       "errors": [],
-      "filePath": "index.tsx",
+      "filePath": "/index.tsx",
       "internals": [
         {
           "function": {
@@ -120,7 +120,7 @@ exports[`parseApp should work 1`] = `
                   "component": {
                     "name": "Layout1",
                     "reference": {
-                      "importSource": "./Pages/Test",
+                      "importSource": "/Pages/Test.tsx",
                       "type": "imported",
                     },
                   },
@@ -141,7 +141,7 @@ exports[`parseApp should work 1`] = `
                   "component": {
                     "name": "Page403",
                     "reference": {
-                      "importSource": "./Pages/Test",
+                      "importSource": "/Pages/Test.tsx",
                       "name": "Page503",
                       "type": "imported",
                     },
@@ -172,7 +172,7 @@ exports[`parseApp should work 1`] = `
       "source": undefined,
       "usedHelpers": Set {},
     },
-    "Pages/Test.tsx" => {
+    "/Pages/Test.tsx" => {
       "contracts": Set {},
       "defaultExport": {
         "component": {
@@ -375,7 +375,7 @@ exports[`parseApp should work 1`] = `
           "severity": "error",
         },
       ],
-      "filePath": "Pages/Test.tsx",
+      "filePath": "/Pages/Test.tsx",
       "internals": [
         {
           "component": {

@@ -3,12 +3,15 @@ import type * as t from "@babel/types";
 import type {
   ComponentReference,
   ParseJsValueOptions,
+  ParsedApp,
   ParsedModule,
 } from "./interfaces.js";
+import { resolveImportSource } from "./resolveImportSource.js";
 
 export function getComponentReference(
   path: NodePath<t.Identifier | t.JSXIdentifier>,
   state: ParsedModule,
+  app: ParsedApp,
   options: ParseJsValueOptions
 ): ComponentReference | null {
   if (!path.isReferencedIdentifier()) {
@@ -46,7 +49,11 @@ export function getComponentReference(
       return {
         type: "imported",
         name: imported.node.name,
-        importSource: source.node.value,
+        importSource: resolveImportSource(
+          source.node.value,
+          state.filePath,
+          app.files
+        ),
       };
     }
 
@@ -57,7 +64,11 @@ export function getComponentReference(
       const source = binding.path.parentPath.get("source");
       return {
         type: "imported",
-        importSource: source.node.value,
+        importSource: resolveImportSource(
+          source.node.value,
+          state.filePath,
+          app.files
+        ),
       };
     }
   }

@@ -9,6 +9,7 @@ import type {
 import type {
   ComponentChild,
   ParseJsValueOptions,
+  ParsedApp,
   ParsedModule,
 } from "./interfaces.js";
 import { parseElement } from "./parseElement.js";
@@ -17,13 +18,14 @@ import { parseEmbedded } from "./parseEmbedded.js";
 export function parseLowLevelChildren(
   paths: NodePath<t.Node>[],
   state: ParsedModule,
+  app: ParsedApp,
   options: ParseJsValueOptions
 ): {
   textContent?: string;
   children?: ComponentChild[];
 } {
   let rawChildren: (ChildElement | ChildMerged)[] = paths.flatMap((p) =>
-    parseElement(p, state, options)
+    parseElement(p, state, app, options)
   );
 
   let onlyTextChildren = rawChildren.every((child) => child?.type === "text");

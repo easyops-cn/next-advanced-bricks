@@ -6,6 +6,7 @@ import type {
   EventHandler,
   Events,
   ParseJsValueOptions,
+  ParsedApp,
   ParsedModule,
 } from "./interfaces.js";
 import { parsePropValue } from "./parseJsValue.js";
@@ -19,6 +20,7 @@ import { getComponentReference } from "./getComponentReference.js";
 export function parseJSXElement(
   path: NodePath<t.JSXElement>,
   state: ParsedModule,
+  app: ParsedApp,
   options: ParseJsValueOptions
 ): ChildElement | null | (ChildElement | null)[] {
   const openingElement = path.get("openingElement");
@@ -50,10 +52,10 @@ export function parseJSXElement(
     }
     return path
       .get("children")
-      .flatMap((child) => parseElement(child, state, options));
+      .flatMap((child) => parseElement(child, state, app, options));
   }
 
-  const reference = getComponentReference(tagName, state, options);
+  const reference = getComponentReference(tagName, state, app, options);
   const properties: Record<string, unknown> = {};
   // const ambiguousProps: Record<string, unknown> = {};
   let events: Events | undefined;
@@ -105,7 +107,7 @@ export function parseJSXElement(
           });
           continue;
         }
-        const reference = getComponentReference(exprPath, state, options);
+        const reference = getComponentReference(exprPath, state, app, options);
         if (!reference) {
           state.errors.push({
             message: `The component "${exprPath.node.name}" is not defined`,
@@ -184,7 +186,7 @@ export function parseJSXElement(
         }
       }
       if (!handler) {
-        handler = parseEvent(exprPath, state, options);
+        handler = parseEvent(exprPath, state, app, options);
       }
       if (handler) {
         events ??= {};
@@ -208,6 +210,7 @@ export function parseJSXElement(
           properties[attrName] = parsePropValue(
             exprPath as NodePath<t.Expression>,
             state,
+            app,
             {
               ...options,
               allowUseBrick: true,
@@ -229,6 +232,7 @@ export function parseJSXElement(
   const { textContent, children } = parseLowLevelChildren(
     path.get("children"),
     state,
+    app,
     options
   );
 

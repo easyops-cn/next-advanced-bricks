@@ -2,6 +2,7 @@ import type { NodePath } from "@babel/traverse";
 import * as t from "@babel/types";
 import type {
   ParseJsValueOptions,
+  ParsedApp,
   ParsedModule,
   RenderUseBrick,
 } from "./interfaces.js";
@@ -14,18 +15,19 @@ const ambiguousSymbol = Symbol("ambiguous");
 export function parseJsValue(
   path: NodePath<t.Node>,
   state: ParsedModule,
+  app: ParsedApp,
   options: ParseJsValueOptions
 ): unknown {
   if (path.isTSAsExpression()) {
-    return parseJsValue(path.get("expression"), state, options);
+    return parseJsValue(path.get("expression"), state, app, options);
   }
 
   if (path.isObjectExpression()) {
-    return parseJsObject(path, state, options);
+    return parseJsObject(path, state, app, options);
   }
 
   if (path.isArrayExpression()) {
-    return parseJsArray(path, state, options);
+    return parseJsArray(path, state, app, options);
   }
 
   if (
@@ -73,7 +75,7 @@ export function parseJsValue(
     }
     return {
       params: paramNames,
-      children: parseChildren(expr, state, options),
+      children: parseChildren(expr, state, app, options),
     } as RenderUseBrick;
   }
 
@@ -100,6 +102,7 @@ export function parseJsValue(
 export function parsePropValue(
   path: NodePath<t.Expression>,
   state: ParsedModule,
+  app: ParsedApp,
   options: ParseJsValueOptions
 ) {
   let shouldCompute = false;
@@ -132,12 +135,13 @@ export function parsePropValue(
     return parseEmbedded(path, state, options);
   }
 
-  return parseJsValue(path, state, options);
+  return parseJsValue(path, state, app, options);
 }
 
 function parseJsObject(
   path: NodePath<t.ObjectExpression>,
   state: ParsedModule,
+  app: ParsedApp,
   options: ParseJsValueOptions
 ) {
   const props = path.get("properties");
@@ -191,7 +195,7 @@ function parseJsObject(
       continue;
     }
 
-    result[key] = parseJsValue(prop.get("value"), state, options);
+    result[key] = parseJsValue(prop.get("value"), state, app, options);
   }
 
   return result;
@@ -200,6 +204,7 @@ function parseJsObject(
 function parseJsArray(
   path: NodePath<t.ArrayExpression>,
   state: ParsedModule,
+  app: ParsedApp,
   options: ParseJsValueOptions
 ) {
   const elements = path.get("elements");
@@ -232,7 +237,9 @@ function parseJsArray(
       });
       continue;
     }
-    result.push(parseJsValue(elem as NodePath<t.Expression>, state, options));
+    result.push(
+      parseJsValue(elem as NodePath<t.Expression>, state, app, options)
+    );
   }
 
   return result;

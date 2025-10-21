@@ -6,6 +6,7 @@ import type {
   ParsedComponent,
   ParseJsValueOptions,
   ParsedModule,
+  ParsedApp,
 } from "./interfaces.js";
 import { validateFunction, validateGlobalApi } from "./validations.js";
 import { parseJsValue } from "./parseJsValue.js";
@@ -15,6 +16,7 @@ import { parseUseResource } from "./parseUseResource.js";
 export function parseComponent(
   fn: NodePath<t.FunctionDeclaration>,
   state: ParsedModule,
+  app: ParsedApp,
   type: "template" | "view" | "page",
   globalOptions?: ParseJsValueOptions
 ): ParsedComponent | null {
@@ -97,7 +99,12 @@ export function parseComponent(
             const left = value.get("left");
             if (left.isIdentifier()) {
               bindingId = left.node;
-              initialValue = parseJsValue(value.get("right"), state, options);
+              initialValue = parseJsValue(
+                value.get("right"),
+                state,
+                app,
+                options
+              );
             }
           } else if (value.isIdentifier()) {
             bindingId = value.node;
@@ -180,7 +187,12 @@ export function parseComponent(
                 kind: "setState",
               });
               if (args.length > 0) {
-                stateInfo.initialValue = parseJsValue(args[0], state, options);
+                stateInfo.initialValue = parseJsValue(
+                  args[0],
+                  state,
+                  app,
+                  options
+                );
               }
               if (args.length > 1) {
                 state.errors.push({
@@ -191,7 +203,13 @@ export function parseComponent(
               }
               continue;
             } else if (validateGlobalApi(callee, "useResource")) {
-              const bindingInfo = parseUseResource(decl, args, state, options);
+              const bindingInfo = parseUseResource(
+                decl,
+                args,
+                state,
+                app,
+                options
+              );
               if (bindingInfo) {
                 bindingMap.set(bindingInfo.id, bindingInfo);
               }
@@ -263,6 +281,7 @@ export function parseComponent(
           binding.initialValue = parseJsValue(
             init as NodePath<t.Expression>,
             state,
+            app,
             options
           );
         }
@@ -277,7 +296,7 @@ export function parseComponent(
         });
         continue;
       }
-      component.children = parseChildren(arg, state, options);
+      component.children = parseChildren(arg, state, app, options);
     } else if (
       !stmt.isTSInterfaceDeclaration() &&
       !stmt.isTSTypeAliasDeclaration()

@@ -2,12 +2,14 @@ import type { NodePath } from "@babel/traverse";
 import type * as t from "@babel/types";
 import type {
   ParseJsValueOptions,
+  ParsedApp,
   ParsedModule,
   ToolInfo,
 } from "./interfaces.js";
 import { parseJsValue } from "./parseJsValue.js";
 import {
   isExpressionString,
+  isGeneralCallExpression,
   isNilPath,
   validateGlobalApi,
 } from "./validations.js";
@@ -31,9 +33,10 @@ const EXPECTED_ARGS = {
 export function parseCallApi(
   path: NodePath<t.Expression>,
   state: ParsedModule,
+  app: ParsedApp,
   options: ParseJsValueOptions
 ): CallApiPayload | null {
-  if (!(path.isCallExpression() || path.isOptionalCallExpression())) {
+  if (!isGeneralCallExpression(path)) {
     state.errors.push({
       message: `Await expression must be a call expression, received ${path.node.type}`,
       node: path.node,
@@ -41,7 +44,7 @@ export function parseCallApi(
     });
     return null;
   }
-  const callee = path.get("callee") as NodePath<t.Expression>;
+  const callee = path.get("callee");
   let calleeName: "callApi" | "callHttp" | "callTool" | undefined;
   if (callee.isIdentifier()) {
     for (const name of CALL_API_LIST) {
@@ -69,9 +72,7 @@ export function parseCallApi(
 
   const expectedArgs = EXPECTED_ARGS[calleeName];
 
-  const args = path.get("arguments") as NodePath<
-    t.Expression | t.SpreadElement | t.ArgumentPlaceholder
-  >[];
+  const args = path.get("arguments");
   const missingArgs = args.length < expectedArgs[0];
   if (missingArgs || !expectedArgs.includes(args.length)) {
     state.errors.push({
@@ -88,7 +89,7 @@ export function parseCallApi(
   const firstArg = args[0];
 
   if (calleeName === "callHttp") {
-    const value = parseJsValue(firstArg, state, options);
+    const value = parseJsValue(firstArg, state, app, options);
     if (typeof value !== "string") {
       state.errors.push({
         message: `"${calleeName}()" expects a string value as the first argument, but got ${typeof value}`,
@@ -114,7 +115,7 @@ export function parseCallApi(
       api: firstArg.node.value,
     };
   } else {
-    const conversationId = parseJsValue(firstArg, state, options);
+    const conversationId = parseJsValue(firstArg, state, app, options);
     if (typeof conversationId !== "string") {
       state.errors.push({
         message: `"${calleeName}()" expects a string value as the first argument, but got ${typeof conversationId}`,
@@ -125,7 +126,7 @@ export function parseCallApi(
     }
 
     const secondArg = args[1];
-    const stepId = parseJsValue(secondArg, state, options);
+    const stepId = parseJsValue(secondArg, state, app, options);
     if (typeof stepId !== "string") {
       state.errors.push({
         message: `"${calleeName}()" expects a string value as the second argument, but got ${typeof stepId}`,
@@ -138,7 +139,7 @@ export function parseCallApi(
     const paramsNode = args[2];
     let params: string | Record<string, unknown> | undefined;
     if (paramsNode) {
-      params = parseJsValue(paramsNode, state, options) as
+      params = parseJsValue(paramsNode, state, app, options) as
         | string
         | Record<string, unknown>;
     }
@@ -160,7 +161,7 @@ export function parseCallApi(
           severity: "notice",
         });
       }
-      const params = parseJsValue(valuePath, state, options);
+      const params = parseJsValue(valuePath, state, app, options);
       if (
         isExpressionString(params) ||
         (typeof params === "object" && params !== null)

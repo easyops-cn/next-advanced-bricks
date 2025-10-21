@@ -14,7 +14,7 @@ import { parseFunction } from "./parseFunction.js";
 import { validateGlobalApi } from "./validations.js";
 import { parseChildren } from "./parseChildren.js";
 import { parseFile } from "./parseFile.js";
-import { getFilePath } from "./getFilePath.js";
+import { resolveImportSource } from "./resolveImportSource.js";
 import { getViewTitle } from "./getViewTitle.js";
 
 const traverse =
@@ -144,7 +144,7 @@ export function parseModule(
 
       for (const importSource of imports) {
         parseFile(
-          getFilePath(importSource, mod.filePath, app.files),
+          resolveImportSource(importSource, mod.filePath, app.files),
           app,
           undefined,
           options
@@ -158,7 +158,7 @@ export function parseModule(
             app.appType === "app" && mod.moduleType === "entry"
               ? "page"
               : "template";
-          const component = parseComponent(item, mod, type, globalOptions);
+          const component = parseComponent(item, mod, app, type, globalOptions);
           if (component) {
             const part: ModulePart = {
               type,
@@ -189,13 +189,16 @@ export function parseModule(
       if (defaultExportNode) {
         const type =
           mod.moduleType === "entry"
-            ? "view"
+            ? app.appType === "template"
+              ? "template"
+              : "view"
             : mod.moduleType === "page"
               ? "page"
               : "template";
         const component = parseComponent(
           defaultExportNode,
           mod,
+          app,
           type,
           globalOptions
         );
@@ -209,7 +212,7 @@ export function parseModule(
       }
 
       if (renderNode) {
-        const children = parseChildren(renderNode, mod, globalOptions);
+        const children = parseChildren(renderNode, mod, app, globalOptions);
         mod.render = { type: "render", children };
       }
 

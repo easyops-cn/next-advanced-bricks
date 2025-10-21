@@ -12,11 +12,13 @@ export interface ConvertOptions {
   workspace?: string;
   expanded?: boolean;
   withContexts?: Record<string, unknown>;
+  allowAnyBricks?: boolean;
+  withoutWrapper?: boolean;
 }
 
 export interface ConvertResult {
   title?: string;
-  brick: BrickConf;
+  brick: BrickConf | BrickConf[];
   context?: ContextConf[];
   functions?: StoryboardFunction[];
   templates?: CustomTemplate[];

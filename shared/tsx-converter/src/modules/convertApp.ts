@@ -73,15 +73,19 @@ export async function convertApp(
         for (const part of [
           ...converted.internals,
           ...converted.namedExports.values(),
+          converted.defaultExport,
         ]) {
-          if (part.type === "function") {
-            functions.push(part.function);
-          } else if (part.type === "template") {
-            templates.push({
-              name: getAppTplName(part.name!),
-              bricks: part.bricks as BrickConfInTemplate[],
-              state: part.context,
-            });
+          switch (part?.type) {
+            case "function":
+              functions.push(part.function);
+              break;
+            case "template":
+              templates.push({
+                name: getAppTplName(part.name!),
+                bricks: part.bricks as BrickConfInTemplate[],
+                state: part.context,
+              });
+              break;
           }
         }
       }

@@ -119,12 +119,12 @@ export async function convertComponent(
         break;
       default:
         if (
-          state.app.appType === "app" &&
+          (state.app.appType === "app" || options.allowAnyBricks) &&
           component.name.toLowerCase() === component.name
         ) {
-          // Assume it's a native HTML element
+          // Allow any bricks in app mode or when allowAnyBricks is true
           brick = {
-            brick: component.name,
+            brick: component.name.replaceAll("_", ".").replaceAll("--", "."),
             properties: component.properties,
           };
         } else {

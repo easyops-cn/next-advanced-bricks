@@ -1,10 +1,11 @@
 import type * as t from "@babel/types";
-import type { ComponentChild } from "./modules/interfaces.js";
+import type { ComponentChild, SourceFile } from "./modules/interfaces.js";
 
 export interface ParseOptions {
   reward?: boolean;
   workspace?: string;
   withContexts?: string[];
+  libs?: SourceFile[];
 }
 
 export interface ParseError {

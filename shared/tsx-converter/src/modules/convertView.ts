@@ -5,6 +5,7 @@ import type {
 } from "@next-core/types";
 import type { ParsedApp } from "@next-shared/tsx-parser";
 import convertModule, {
+  type ConvertedModule,
   type ConvertedPartOfComponent,
 } from "./convertModule.js";
 import type {
@@ -25,31 +26,48 @@ export async function convertView(
     throw new Error("No entry module found in the view.");
   }
 
+  let convertedEntry: ConvertedModule | undefined;
+  const convertedModules = new Map<string, ConvertedModule>();
   const state: ConvertState = {
     usedHelpers: new Set(),
     app: view,
   };
-  const convertedEntry = await convertModule(entry, state, options);
-
-  const { defaultExport, internals, namedExports } = convertedEntry;
-
-  if (!defaultExport) {
-    throw new Error("No view found in the entry module.");
-  }
 
   const functions: StoryboardFunction[] = [];
   const templates: CustomTemplate[] = [];
 
-  for (const part of [...internals, ...namedExports.values()]) {
-    if (part.type === "function") {
-      functions.push(part.function);
-    } else if (part.type === "template") {
-      templates.push({
-        name: getViewTplName(part.name!, options.rootId),
-        bricks: part.bricks as BrickConfInTemplate[],
-        state: part.context,
-      });
-    }
+  await Promise.all(
+    Array.from(view.modules).map(async ([filePath, mod]) => {
+      if (mod) {
+        const converted = await convertModule(mod, state, options);
+        convertedModules.set(filePath, converted);
+        if (mod === entry) {
+          convertedEntry = converted;
+        }
+        for (const part of [
+          ...converted.internals,
+          ...converted.namedExports.values(),
+          converted.defaultExport,
+        ]) {
+          switch (part?.type) {
+            case "function":
+              functions.push(part.function);
+              break;
+            case "template":
+              templates.push({
+                name: getViewTplName(part.name!, options.rootId),
+                bricks: part.bricks as BrickConfInTemplate[],
+                state: part.context,
+              });
+              break;
+          }
+        }
+      }
+    })
+  );
+
+  if (!convertedEntry?.defaultExport) {
+    throw new Error("No view found in the entry module.");
   }
 
   const helpers = Array.from(state.usedHelpers).map<StoryboardFunction>(
@@ -66,18 +84,22 @@ export async function convertView(
     }
   );
 
-  const { title, bricks, context } = defaultExport as ConvertedPartOfComponent;
+  const { title, bricks, context } =
+    convertedEntry.defaultExport as ConvertedPartOfComponent;
 
-  const needBox = bricks.every((brick) =>
-    ["eo-form", "eo-descriptions", "eo-button"].includes(brick.brick)
-  );
+  const needBox = () =>
+    bricks.every((brick) =>
+      ["eo-form", "eo-descriptions", "eo-button"].includes(brick.brick)
+    );
 
   return {
     title,
-    brick: {
-      brick: "eo-content-layout",
-      children: needBox ? [withBox(bricks, options)] : bricks,
-    },
+    brick: options.withoutWrapper
+      ? bricks
+      : {
+          brick: "eo-content-layout",
+          children: needBox() ? [withBox(bricks, options)] : bricks,
+        },
     context: [
       ...context,
       ...(options.withContexts

@@ -9,7 +9,7 @@ export function parseApp(files: SourceFile[]) {
     errors: [],
   };
 
-  parseFile("index.tsx", app);
+  parseFile("/index.tsx", app);
 
   return app;
 }
