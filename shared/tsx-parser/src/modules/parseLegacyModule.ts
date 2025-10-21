@@ -131,5 +131,6 @@ export function parseLegacyModule(
 
   (mod.defaultExport as ModulePartOfComponent).title = getViewTitle(component);
 
+  app.modules.set(filePath, mod);
   app.entry = mod;
 }
