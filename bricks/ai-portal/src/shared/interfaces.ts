@@ -204,7 +204,7 @@ export interface RequestStore {
 }
 
 export interface GeneratedView {
-  viewId: string;
+  viewId?: string;
   code: string;
   isStaticData?: boolean;
   from?: "generate" | "config";
@@ -213,7 +213,7 @@ export interface GeneratedView {
 }
 
 export interface ParsedView extends ParsedApp {
-  viewId: string;
+  viewId?: string;
   withContexts?: Record<string, unknown>;
 }
 

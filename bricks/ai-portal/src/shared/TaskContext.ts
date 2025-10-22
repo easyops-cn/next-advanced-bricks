@@ -1,4 +1,5 @@
 import { createContext, type Dispatch } from "react";
+import type { SourceFile } from "@next-shared/tsx-parser";
 import type { FeedbackDetail } from "../cruise-canvas/interfaces";
 import type {
   ExampleProject,
@@ -43,6 +44,7 @@ export interface TaskContextValue {
   watchAgain?: () => void;
   tryItOut?: () => void;
   separateInstructions?: boolean;
+  viewLibs?: SourceFile[];
 }
 
 export const TaskContext = createContext<TaskContextValue>({

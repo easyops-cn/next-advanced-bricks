@@ -5,6 +5,7 @@ import classNames from "classnames";
 import { uniqueId } from "lodash";
 import { convertView } from "@next-shared/tsx-converter";
 import type { ModulePartOfComponent } from "@next-shared/tsx-parser";
+import type { BrickConf } from "@next-core/types";
 import styles from "./CreatedView.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
 import type { Job, ParsedView } from "../../shared/interfaces";
@@ -13,7 +14,6 @@ import { createPortal } from "../../cruise-canvas/utils/createPortal";
 import { TaskContext } from "../TaskContext";
 import { ICON_LOADING } from "../constants";
 import { ViewToolbar } from "./ViewToolbar";
-import type { BrickConf } from "@next-core/types";
 
 export interface CreatedViewProps {
   job: Job;
@@ -84,6 +84,8 @@ export function CreatedView({
           rootId,
           workspace,
           withContexts: view.withContexts,
+          // withoutWrapper: true,
+          allowAnyBricks: true,
         });
         if (ignore) {
           return;
@@ -153,6 +155,10 @@ function preferSizeLarge(brick: BrickConf | BrickConf[]): boolean {
   let large = false;
   traverseBricks(([] as BrickConf[]).concat(brick), (b) => {
     if (b.brick === "eo-next-table") {
+      large = true;
+      return true;
+    }
+    if (b.brick.startsWith("isolated-tpl-")) {
       large = true;
       return true;
     }

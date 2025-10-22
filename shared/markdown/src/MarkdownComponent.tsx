@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";
-import { unified } from "unified";
+import { unified, type PluggableList } from "unified";
 import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
 import remarkToRehype from "remark-rehype";
@@ -19,6 +19,7 @@ export interface MarkdownComponentProps {
     /** @default "dark-plus" */
     theme?: "light-plus" | "dark-plus";
   };
+  rehypePlugins?: PluggableList;
 }
 
 // Reference https://github.com/remarkjs/react-remark/blob/39553e5f5c9e9b903bebf261788ff45130668de0/src/index.ts
@@ -26,6 +27,7 @@ export function MarkdownComponent({
   content,
   components,
   shiki,
+  rehypePlugins,
 }: MarkdownComponentProps): JSX.Element | null {
   const [reactContent, setReactContent] = useState<JSX.Element | null>(null);
   const theme = shiki?.theme ?? "dark-plus";
@@ -44,6 +46,7 @@ export function MarkdownComponent({
           .use(remarkParse)
           .use(remarkGfm)
           .use(remarkToRehype)
+          .use(rehypePlugins ?? [])
           .use(rehypeMermaid)
           .use(rehypeShikiFromHighlighter, highlighter as any, {
             theme,
@@ -70,7 +73,7 @@ export function MarkdownComponent({
     return () => {
       ignore = true;
     };
-  }, [components, content, theme]);
+  }, [components, content, theme, rehypePlugins]);
 
   return reactContent;
 }

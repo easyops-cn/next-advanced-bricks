@@ -119,6 +119,7 @@ export function CruiseCanvasComponent(
     showFeedbackOnView,
     showUiSwitch,
     showJsxEditor,
+    viewLibs,
     previewUrlTemplate,
     showCases,
     exampleProjects,
@@ -643,6 +644,7 @@ export function CruiseCanvasComponent(
         );
         if (win) {
           win.__elevo_try_it_out = {
+            viewLibs,
             content: userInput,
           };
         }
@@ -678,6 +680,7 @@ export function CruiseCanvasComponent(
       feedbackDoneViews,
 
       skipToResults,
+      viewLibs,
       watchAgain,
       setCentered,
       userInput,

@@ -1,5 +1,6 @@
 import type { Reducer } from "react";
 import { isMatch, pick } from "lodash";
+import type { SourceFile } from "@next-shared/tsx-parser";
 import type {
   DataPart,
   GeneratedView,
@@ -74,7 +75,8 @@ function mergeJobs(
   previousJobs: Job[] | undefined,
   jobsPatch: JobPatch[] | undefined,
   workspace: string,
-  aiEmployeeId: string | undefined
+  aiEmployeeId: string | undefined,
+  viewLibs?: SourceFile[]
 ): Job[] {
   let jobs = previousJobs ?? [];
   for (const jobPatch of jobsPatch ?? []) {
@@ -106,7 +108,11 @@ function mergeJobs(
         patch.toolCall?.name === "create_view" &&
         patch.state === "completed"
       ) {
-        const generatedView = getJobGeneratedView(messagesPatch, workspace);
+        const generatedView = getJobGeneratedView(
+          messagesPatch,
+          workspace,
+          viewLibs
+        );
         if (generatedView) {
           patch.generatedView = generatedView;
         }
@@ -157,7 +163,11 @@ function mergeJobs(
         ) &&
         (restMessagesPatch.state ?? previousJob.state) === "completed"
       ) {
-        const generatedView = getJobGeneratedView(messagesPatch, workspace);
+        const generatedView = getJobGeneratedView(
+          messagesPatch,
+          workspace,
+          viewLibs
+        );
         if (generatedView) {
           restMessagesPatch.generatedView = generatedView;
         }
@@ -169,7 +179,11 @@ function mergeJobs(
           view.withContexts = {
             RESPONSE: getJobStaticDataResponse(restMessagesPatch.messages!),
           };
-          view.asyncConstructedView = getAsyncConstructedView(view, workspace);
+          view.asyncConstructedView = getAsyncConstructedView(
+            view,
+            workspace,
+            viewLibs
+          );
           restMessagesPatch.generatedView = view;
         }
       }
@@ -237,7 +251,8 @@ function mergeMessageParts(parts: Part[]): Part[] {
 
 function getJobGeneratedView(
   messages: Message[] | undefined,
-  workspace: string
+  workspace: string,
+  viewLibs?: SourceFile[]
 ): GeneratedView | undefined {
   if (!messages) {
     return;
@@ -251,7 +266,8 @@ function getJobGeneratedView(
             const view = JSON.parse(part.text) as GeneratedView;
             view.asyncConstructedView = getAsyncConstructedView(
               view,
-              workspace
+              workspace,
+              viewLibs
             );
             return view;
           } catch {

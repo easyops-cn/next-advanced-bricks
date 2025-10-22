@@ -2,6 +2,7 @@
 import React, { createRef, forwardRef } from "react";
 import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
+import type { SourceFile } from "@next-shared/tsx-parser";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import { NS, locales } from "./i18n.js";
@@ -32,6 +33,7 @@ export interface ChatStreamProps {
   showCases?: ShowCaseType[];
   exampleProjects?: ExampleProject[];
   tryItOutUrl?: string;
+  viewLibs?: SourceFile[];
 }
 
 export interface ConversationDetail {
@@ -100,6 +102,9 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
 
   @property()
   accessor tryItOutUrl: string | undefined;
+
+  @property({ attribute: false })
+  accessor viewLibs: SourceFile[] | undefined;
 
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
@@ -182,6 +187,7 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
         showCases={this.showCases}
         exampleProjects={this.exampleProjects}
         tryItOutUrl={this.tryItOutUrl}
+        viewLibs={this.viewLibs}
         onShare={this.#onShare}
         onTerminate={this.#onTerminate}
         onSubmitFeedback={this.#onSubmitFeedback}

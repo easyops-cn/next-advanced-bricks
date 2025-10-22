@@ -61,6 +61,7 @@ export function ChatStreamComponent(
     showCases,
     exampleProjects,
     tryItOutUrl,
+    viewLibs,
     onShare,
     onTerminate,
     onSubmitFeedback,
@@ -244,6 +245,7 @@ export function ChatStreamComponent(
           };
         }
       },
+      viewLibs,
     }),
     [
       conversationId,
@@ -272,6 +274,7 @@ export function ChatStreamComponent(
       watchAgain,
       userInput,
       tryItOutUrl,
+      viewLibs,
     ]
   );
 

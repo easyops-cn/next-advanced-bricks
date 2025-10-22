@@ -57,6 +57,7 @@ export function JsxEditor() {
     updateView,
     activeJsxEditorJob,
     setActiveJsxEditorJob,
+    viewLibs,
   } = useContext(TaskContext);
   const view =
     manuallyUpdatedViews?.get(activeJsxEditorJob!.id) ??
@@ -75,10 +76,11 @@ export function JsxEditor() {
 
 declare const RESPONSE: typeof RESPONSE_VALUE;`,
         },
+        ...(viewLibs ?? []),
       ];
     }
     return commonLibs;
-  }, [view.withContexts?.RESPONSE]);
+  }, [view.withContexts?.RESPONSE, viewLibs]);
 
   return (
     <div className={styles.container}>
@@ -121,7 +123,8 @@ declare const RESPONSE: typeof RESPONSE_VALUE;`,
               };
               newView.asyncConstructedView = getAsyncConstructedView(
                 newView,
-                workspace
+                workspace,
+                viewLibs
               );
               updateView?.(activeJsxEditorJob!.id, newView);
               setActiveJsxEditorJob?.(undefined);

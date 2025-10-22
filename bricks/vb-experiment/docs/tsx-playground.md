@@ -176,3 +176,182 @@
         border: none!important;
       }
 ```
+
+```tsx
+// /Components/CollaborationSpaceList.tsx
+/**
+ * 列出协作空间列表，可以：
+ * 1. 指定预设参数自动查询我创建的或者我参与的协作空间列表；
+ * 2. 直接传递查询好的空间列表数据。
+ */
+export default function CollaborationSpaceList({
+  preset,
+  spaces,
+}: SpaceListProps) {
+  const [fetchedSpaces] = useResource(
+    () =>
+      callApi("easyops.api.llm.elevo_space@ListElevoSpace", {
+        page: 1,
+        page_size: 3000,
+      }).then((data) => data.list),
+    {
+      enabled: !!preset,
+    }
+  );
+
+  const filteredSpaces = fetchedSpaces?.filter((space) =>
+    filterSpace(space, preset, SYS.userInstanceId)
+  );
+
+  const fixedSpaces = filteredSpaces || spaces;
+
+  if (fixedSpaces?.length) {
+    return (
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+          gap: "20px",
+        }}
+      >
+        {fixedSpaces?.map((space) => (
+          <ai-portal--elevo-card
+            cardTitle={space.name}
+            description={space.description}
+            avatar={space.icon}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <ai-portal--blank-state
+      illustration="collaboration-spaces"
+      description="No spaces."
+    />
+  );
+}
+
+function filterSpace(
+  space: Space,
+  preset: "owned" | "related",
+  userInstanceId: string
+) {
+  console.log("space", space);
+  console.log("userInstanceId", userInstanceId);
+  const isOwned = space.owner?.[0]?.instanceId === userInstanceId;
+  console.log("isOwned", isOwned);
+  return preset === "related" ? !isOwned : isOwned;
+}
+
+export interface SpaceListProps {
+  preset?: "owned" | "related";
+  spaces?: Space[];
+}
+
+export interface Space {
+  instanceId: string;
+  name: string;
+  description?: string;
+  icon?: object;
+}
+```
+
+```tsx
+// /Components/ServiceFlow.tsx
+interface ServiceFlowProps {
+  spaceId?: string;
+  flowId?: string;
+  spec?: FlowStage[];
+}
+
+interface FlowStage {
+  name: string;
+  serviceFlowActivities?: FlowActivity[];
+}
+
+interface FlowActivity {
+  name: string;
+  description?: string;
+  aiEmployeeId?: string;
+  hilRules?: string;
+  hilUser?: string;
+}
+
+export default function ServiceFlow({
+  spaceId,
+  flowId,
+  spec,
+}: ServiceFlowProps) {
+  const [flow] = useResource(
+    () =>
+      callApi("easyops.api.llm.elevo_space@GetServiceFlow", {
+        spaceId,
+        instanceId: flowId,
+      }),
+    { enabled: !spec && spaceId && flowId }
+  );
+
+  const fixedSpec = spec || flow.spec;
+
+  return (
+    <div style={{ maxWidth: "100%", overflowX: "auto" }} data-scrollable="true">
+      <ai-portal--stage-flow spec={fixedSpec} readOnly />
+    </div>
+  );
+}
+```
+
+```ts
+declare module "./Components/CollaborationSpaceList" {
+  /**
+   * 列出协作空间列表，可以：
+   * 1. 指定预设参数自动查询我创建的或者我参与的协作空间列表；
+   * 2. 直接传递查询好的空间列表数据。
+   */
+  export default function CollaborationSpaceList({
+    preset,
+    spaces,
+  }: SpaceListProps): any;
+
+  export interface SpaceListProps {
+    preset?: "owned" | "related";
+    spaces?: Space[];
+  }
+
+  export interface Space {
+    instanceId: string;
+    name: string;
+    description?: string;
+    icon?: object;
+  }
+}
+```
+
+```tsx
+import SpaceList from "./Components/SpaceList";
+
+export default function () {
+  const spaces = [];
+  return (
+    <View title="demo">
+      <ai-portal--page-container>
+        <SpaceList spaces={spaces} />
+      </ai-portal--page-container>
+    </View>
+  );
+}
+```
+
+```tsx
+import ServiceFlow from "./Components/ServiceFlow";
+
+export default function () {
+  return (
+    <View title="demo">
+      <ServiceFlow spaceId="6412dd7c6f0c5" flowId="64145411c9c11" />
+    </View>
+  );
+}
+```

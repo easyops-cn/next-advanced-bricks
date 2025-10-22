@@ -5,21 +5,28 @@ import {
 } from "@next-shared/markdown";
 import { CanvasContext } from "../CanvasContext";
 import { MarkdownPre } from "../../shared/MarkdownPre";
+import { RenderView } from "../../shared/RenderView/RenderView";
+import { rehypeRenderView } from "../../shared/RenderView/rehypeRenderView";
 
 const components: MarkdownComponentProps["components"] = {
   pre: MarkdownPre,
-};
+  "elevo-render-view": RenderView,
+} as any;
 
 const shikiOptions: MarkdownComponentProps["shiki"] = {
   theme: "light-plus",
 };
 
+const rehypePluginsWithRenderView = [rehypeRenderView];
+
 export interface EnhancedMarkdownProps extends MarkdownComponentProps {
   className?: string;
+  withRenderView?: boolean;
 }
 
 export function EnhancedMarkdown({
   className,
+  withRenderView,
   ...props
 }: EnhancedMarkdownProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -59,6 +66,7 @@ export function EnhancedMarkdown({
         {...props}
         components={components}
         shiki={shikiOptions}
+        rehypePlugins={withRenderView ? rehypePluginsWithRenderView : undefined}
       />
     </div>
   );

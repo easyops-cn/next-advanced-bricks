@@ -31,7 +31,6 @@ const ICON_UP: GeneralIconProps = {
 export function NodeJob({ job, taskState }: NodeJobProps) {
   const toolCall = job.toolCall;
   const toolTitle = toolCall?.annotations?.title || toolCall?.name;
-  const toolName = toolCall?.name;
   const showToolCall = !!toolCall;
   const { setActiveToolCallJobId } = useContext(TaskContext);
   const { lastToolCallJobId, setUserClosedAside } = useContext(StreamContext);
@@ -45,7 +44,6 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
       const contents: string[] = [];
       const instanceDetails: CmdbInstanceDetailData[] = [];
       const files: FileInfo[] = [];
-      let large = toolName === "llm_answer";
       job.messages?.forEach((message) => {
         if (message.role === "tool") {
           for (const part of message.parts) {
@@ -56,14 +54,6 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
                   break;
                 case "cmdb_instance_detail":
                   instanceDetails.push(part.data as CmdbInstanceDetailData);
-                  if (!large) {
-                    large =
-                      Object.keys(
-                        part.data?.outputSchema?.type === "object"
-                          ? part.data.outputSchema.properties
-                          : part.data.detail
-                      ).length > 6;
-                  }
                   break;
               }
             } else if (part.type === "file") {
@@ -76,7 +66,7 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
       const markdownContent = contents.join("");
 
       return [markdownContent, instanceDetails, files] as const;
-    }, [job.messages, toolName]);
+    }, [job.messages]);
 
   const [collapsed, setCollapsed] = useState(false);
 
@@ -98,6 +88,7 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
                         sharedStyles["markdown-wrapper"]
                       )}
                       content={part.text}
+                      withRenderView
                     />
                   )}
                 </React.Fragment>

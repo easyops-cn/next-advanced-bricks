@@ -63,6 +63,16 @@ export function NodeJob({ job, active, isLeaf }: NodeJobProps): JSX.Element {
               files.push(part.file);
             }
           }
+        } else if (message.role === "assistant") {
+          if (
+            message.parts.some(
+              (part) =>
+                part.type === "text" &&
+                part.text.includes('```tsx render="view"')
+            )
+          ) {
+            large = true;
+          }
         }
       });
 
@@ -111,6 +121,7 @@ export function NodeJob({ job, active, isLeaf }: NodeJobProps): JSX.Element {
                     <EnhancedMarkdown
                       className={sharedStyles["markdown-wrapper"]}
                       content={part.text}
+                      withRenderView
                     />
                   )}
                 </React.Fragment>
@@ -167,7 +178,7 @@ function ViewContainer({ job, onSizeChange }: ViewContainerProps) {
         if (!(el instanceof HTMLElement)) {
           continue;
         }
-        if (el.tagName === "PRE") {
+        if (el.tagName === "PRE" || el.dataset.scrollable === "true") {
           if (el.scrollWidth > el.clientWidth) {
             found = true;
             break;

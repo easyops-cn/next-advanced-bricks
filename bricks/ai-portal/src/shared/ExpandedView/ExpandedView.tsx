@@ -48,7 +48,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
     : null;
   const feedbackDone =
     useViewFeedbackDone(generatedView?.viewId, showFeedbackOnView) ||
-    (generatedView && feedbackDoneViews?.has(generatedView.viewId));
+    (generatedView?.viewId && feedbackDoneViews?.has(generatedView.viewId));
   const [view, setView] = useState<ParsedView | null>(null);
   const canFeedback =
     !!view && !!generatedView?.viewId && generatedView.from !== "config";
@@ -121,6 +121,8 @@ export function ExpandedView({ views }: ExpandedViewProps) {
           workspace,
           expanded: true,
           withContexts: view.withContexts,
+          // withoutWrapper: true,
+          allowAnyBricks: true,
         });
         if (ignore) {
           return;
@@ -198,7 +200,7 @@ export function ExpandedView({ views }: ExpandedViewProps) {
         {showFeedbackOnView && !feedbackDone && canFeedback && (
           <WrappedIconButton
             icon={ICON_FEEDBACK}
-            onClick={() => onFeedbackOnView?.(generatedView.viewId)}
+            onClick={() => onFeedbackOnView?.(generatedView.viewId!)}
           />
         )}
         {!!(
