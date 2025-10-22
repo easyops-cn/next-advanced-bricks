@@ -109,6 +109,8 @@ export interface Job {
   aiEmployeeId?: string;
 
   username?: string;
+
+  cmd?: CommandPayload;
 }
 
 export type HumanAction = HumanActionConfirm | HumanActionSelect;
@@ -240,6 +242,8 @@ export interface CommandPayloadServiceFlowStarting {
   type: "serviceFlowStarting";
   serviceFlowStarting: {
     spaceInstanceId: string;
+    spaceName?: string;
     flowInstanceId?: string;
+    flowName?: string;
   };
 }

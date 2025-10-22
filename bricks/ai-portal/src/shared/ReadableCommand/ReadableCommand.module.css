@@ -1,0 +1,12 @@
+.command {
+  display: inline-block;
+  background: rgba(37, 64, 255, 0.06);
+  border-radius: 8px;
+  color: #2540ff;
+  padding: 4px 6px;
+  line-height: 22px;
+}
+
+.small {
+  padding: 2px 6px;
+}
