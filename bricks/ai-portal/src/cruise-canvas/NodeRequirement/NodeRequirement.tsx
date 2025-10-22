@@ -8,6 +8,8 @@ import type {
 import moment from "moment";
 import classNames from "classnames";
 import styles from "./NodeRequirement.module.css";
+import type { CommandPayload } from "../../shared/interfaces";
+import { ReadableCommand } from "../../shared/ReadableCommand/ReadableCommand";
 
 const WrappedEasyOpsAvatar = wrapBrick<EoEasyopsAvatar, EoEasyopsAvatarProps>(
   "eo-easyops-avatar"
@@ -18,6 +20,7 @@ export interface NodeRequirementProps {
   content?: string;
   startTime?: number;
   active?: boolean;
+  cmd?: CommandPayload;
 }
 
 export function NodeRequirement({
@@ -25,6 +28,7 @@ export function NodeRequirement({
   content,
   startTime,
   active,
+  cmd,
 }: NodeRequirementProps): JSX.Element {
   return (
     <div
@@ -43,7 +47,10 @@ export function NodeRequirement({
           {startTime && moment(startTime * 1000).format("MM-DD HH:mm")}
         </div>
       </div>
-      <div className={styles.body}>{content}</div>
+      <div className={styles.body}>
+        {cmd && <ReadableCommand cmd={cmd} size="small" />}
+        {content}
+      </div>
     </div>
   );
 }

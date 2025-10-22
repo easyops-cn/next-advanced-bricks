@@ -60,7 +60,12 @@ import { TaskContext } from "../shared/TaskContext.js";
 import { NodeLoading } from "./NodeLoading/NodeLoading.js";
 import { JsxEditor } from "../shared/JsxEditor/JsxEditor.js";
 import { NodeError } from "./NodeError/NodeError.js";
-import type { GeneratedView, FileInfo, Job } from "../shared/interfaces";
+import type {
+  GeneratedView,
+  FileInfo,
+  Job,
+  CommandPayload,
+} from "../shared/interfaces";
 import { NodeReplay } from "./NodeReplay/NodeReplay.js";
 import type { ConversationDetail, CruiseCanvasProps } from ".";
 
@@ -837,6 +842,7 @@ export function CruiseCanvasComponent(
                 type={node.type}
                 username={(node as RequirementGraphNode).username}
                 content={(node as RequirementGraphNode).content}
+                cmd={(node as RequirementGraphNode).cmd}
                 job={(node as JobGraphNode).job}
                 startTime={conversation?.startTime}
                 instructionLoading={
@@ -906,6 +912,7 @@ interface NodeComponentProps {
   x?: number;
   y?: number;
   active?: boolean;
+  cmd?: CommandPayload;
 }
 
 function NodeComponent({
@@ -920,6 +927,7 @@ function NodeComponent({
   x,
   y,
   active,
+  cmd,
 }: NodeComponentProps) {
   const nodeRef = useRef<HTMLDivElement>(null);
   const { onNodeResize, setActiveNodeId } = useContext(CanvasContext);
@@ -983,6 +991,7 @@ function NodeComponent({
           content={content}
           startTime={startTime}
           active={active}
+          cmd={cmd}
         />
       ) : type === "loading" ? (
         <NodeLoading />

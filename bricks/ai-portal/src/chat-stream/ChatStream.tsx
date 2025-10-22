@@ -379,7 +379,7 @@ export function ChatStreamComponent(
                   {messages.map((msg, index, list) => (
                     <div className={styles.message} key={index}>
                       {msg.role === "user" ? (
-                        <UserMessage content={msg.content} />
+                        <UserMessage content={msg.content} cmd={msg.cmd} />
                       ) : (
                         <AssistantMessage
                           jobs={msg.jobs}

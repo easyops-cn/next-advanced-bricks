@@ -1,5 +1,10 @@
 import type { JSONSchema } from "./json-schema";
-import type { GeneratedView, Job, JobState } from "../shared/interfaces";
+import type {
+  CommandPayload,
+  GeneratedView,
+  Job,
+  JobState,
+} from "../shared/interfaces";
 
 export type RangeTuple = [min: number, max: number];
 export type SizeTuple = [width: number, height: number];
@@ -30,6 +35,7 @@ export interface RequirementGraphNode extends BaseGraphNode {
   type: "requirement";
   content: string;
   username?: string;
+  cmd?: CommandPayload;
 }
 
 export interface LoadingGraphNode extends BaseGraphNode {

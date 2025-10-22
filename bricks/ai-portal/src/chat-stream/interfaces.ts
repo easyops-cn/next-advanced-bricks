@@ -1,10 +1,11 @@
-import type { Job } from "../shared/interfaces.js";
+import type { CommandPayload, Job } from "../shared/interfaces.js";
 
 export type ChatMessage = MessageFromUser | MessageFromAssistant;
 
 export interface MessageFromUser {
   role: "user";
   content: string;
+  cmd?: CommandPayload;
 }
 
 export interface MessageFromAssistant {

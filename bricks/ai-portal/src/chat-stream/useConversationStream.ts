@@ -61,6 +61,7 @@ export function useConversationStream(
               msg.parts.map((part) => (part.type === "text" ? part.text : ""))
             )
             .join(""),
+          cmd: job.cmd,
         });
         prevAssistantMessage = {
           role: "assistant",

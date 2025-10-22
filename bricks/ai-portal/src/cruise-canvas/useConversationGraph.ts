@@ -85,6 +85,7 @@ export function useConversationGraph(
           id: requirementId,
           content: userInput,
           username,
+          cmd: job.cmd,
         });
         nodeIds.push(requirementId);
         userInputNodes.push(requirementId);

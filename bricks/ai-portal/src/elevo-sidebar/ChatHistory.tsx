@@ -334,6 +334,7 @@ export function LowLevelChatHistory(
           <SectionTitle
             rootRef={rootRef}
             title={t(K.MY)}
+            collapsed={myCollapsed}
             onToggle={() => setMyCollapsed((prev) => !prev)}
           />
           <ul className="items">
@@ -360,6 +361,7 @@ export function LowLevelChatHistory(
         <SectionTitle
           rootRef={rootRef}
           title={t(K.PROJECTS)}
+          collapsed={projectsCollapsed}
           onToggle={() => setProjectsCollapsed((prev) => !prev)}
         >
           {canAddProject && (
@@ -433,6 +435,7 @@ export function LowLevelChatHistory(
         <SectionTitle
           rootRef={rootRef}
           title={t(K.HISTORY)}
+          collapsed={historyCollapsed}
           onToggle={() => setHistoryCollapsed((prev) => !prev)}
         />
         <ul className="items">
@@ -508,12 +511,14 @@ export function LowLevelChatHistory(
 interface SectionTitleProps {
   rootRef: MutableRefObject<HTMLDivElement | null>;
   title: string;
+  collapsed: boolean;
   onToggle: () => void;
 }
 
 function SectionTitle({
   rootRef,
   title,
+  collapsed,
   children,
   onToggle,
 }: PropsWithChildren<SectionTitleProps>) {
@@ -521,6 +526,10 @@ function SectionTitle({
   const [stickyActive, setStickyActive] = useState(false);
 
   useEffect(() => {
+    if (collapsed) {
+      setStickyActive(false);
+      return;
+    }
     const parent = rootRef.current;
     const element = ref.current;
     const sibling = element?.nextElementSibling as HTMLElement | null;
@@ -537,7 +546,7 @@ function SectionTitle({
     return () => {
       parent.removeEventListener("scroll", onScroll);
     };
-  }, [rootRef]);
+  }, [collapsed, rootRef]);
 
   return (
     <div
