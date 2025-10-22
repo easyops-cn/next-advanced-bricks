@@ -49,6 +49,19 @@ export function useConversationGraph(
     const userInputNodes: string[] = [];
     let username: string | undefined;
 
+    const addFollowingError = (jobId: string, nodeIds: string[]) => {
+      const followingError = jobsWithFollowingErrors.get(jobId);
+      if (followingError) {
+        const errorNodeId = `error:${jobId}`;
+        nodes.push({
+          type: "error",
+          id: errorNodeId,
+          content: followingError,
+        });
+        nodeIds.push(errorNodeId);
+      }
+    };
+
     for (const jobId of list) {
       const job = jobMap.get(jobId)!;
       const { messages } = job;
@@ -74,8 +87,9 @@ export function useConversationGraph(
           username,
         });
         nodeIds.push(requirementId);
-        jobNodesMap.set(jobId, nodeIds);
         userInputNodes.push(requirementId);
+        addFollowingError(jobId, nodeIds);
+        jobNodesMap.set(jobId, nodeIds);
         continue;
       }
 
@@ -125,16 +139,7 @@ export function useConversationGraph(
         });
       }
 
-      const followingError = jobsWithFollowingErrors.get(jobId);
-      if (followingError) {
-        const errorNodeId = `error:${jobId}`;
-        nodes.push({
-          type: "error",
-          id: errorNodeId,
-          content: followingError,
-        });
-        nodeIds.push(errorNodeId);
-      }
+      addFollowingError(jobId, nodeIds);
 
       if (showHumanActions && job.humanAction) {
         const humanActionNodeId = `human-action:${job.id}`;
