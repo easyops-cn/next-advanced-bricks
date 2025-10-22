@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/hooks@0.0.19...@next-shared/hooks@0.1.0) (2025-10-22)
+
+
+### Features
+
+* new hook: useHasAssignedNodes ([5e24b17](https://github.com/easyops-cn/next-advanced-bricks/commit/5e24b173961f9f0730bd40cf7ff9ecc2ad73f941))
+
+
+
+
+
 ## [0.0.19](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/hooks@0.0.18...@next-shared/hooks@0.0.19) (2025-09-26)
 
 **Note:** Version bump only for package @next-shared/hooks

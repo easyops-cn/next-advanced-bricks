@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.55.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.54.0...@next-bricks/ai-portal@0.55.0) (2025-10-22)
+
+
+### Bug Fixes
+
+* check if slot has assigned nodes ([3717a72](https://github.com/easyops-cn/next-advanced-bricks/commit/3717a727bacf20b55e4c8ff850db230a4f256aa3))
+* fix file icon ([ef930df](https://github.com/easyops-cn/next-advanced-bricks/commit/ef930dfba3e24df56cbbf853ab713a83ef5e0e61))
+* handle when brick is an array ([22447b9](https://github.com/easyops-cn/next-advanced-bricks/commit/22447b908aaba84429ebde63f92fc79678a7246b))
+* show errors followed after user input ([51102ff](https://github.com/easyops-cn/next-advanced-bricks/commit/51102ff7c06cfb56409488fad6650f8a820a625d))
+* **stage-flow:** support readOnly ([ec3745a](https://github.com/easyops-cn/next-advanced-bricks/commit/ec3745a99ce40182515aacc6651db2c006d024be))
+* use shared hook ([4bc4d88](https://github.com/easyops-cn/next-advanced-bricks/commit/4bc4d88d2166966d2e30cafb9d0b3ed1131949d3))
+
+
+### Features
+
+* **chat-box:** support upload files ([bf3d4ac](https://github.com/easyops-cn/next-advanced-bricks/commit/bf3d4ace5a0907058f0a7fe3589db22c9f596192))
+
+
+
+
+
 # [0.54.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.53.0...@next-bricks/ai-portal@0.54.0) (2025-10-20)
 
 

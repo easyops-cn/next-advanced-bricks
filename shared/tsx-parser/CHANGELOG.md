@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-parser@0.6.1...@next-shared/tsx-parser@0.6.2) (2025-10-22)
+
+
+### Bug Fixes
+
+* fix import resolving ([d45b3af](https://github.com/easyops-cn/next-advanced-bricks/commit/d45b3af08247864b908858678379b76097372ac9))
+* fix legacy module ([dcaf76a](https://github.com/easyops-cn/next-advanced-bricks/commit/dcaf76a02c13a7fa1e80e4655bce82d80c0fd888))
+* handle more types as return argument ([a0040fd](https://github.com/easyops-cn/next-advanced-bricks/commit/a0040fd87c92ee52f70e8536469e11cca1d7c134))
+* support if statements ([6567d19](https://github.com/easyops-cn/next-advanced-bricks/commit/6567d1986b529b83019dbbf6a1790f594dd9e50c))
+
+
+
+
+
 ## [0.6.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/tsx-parser@0.6.0...@next-shared/tsx-parser@0.6.1) (2025-10-17)
 
 **Note:** Version bump only for package @next-shared/tsx-parser

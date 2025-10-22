@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.17](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.3.16...@next-bricks/vb-experiment@1.3.17) (2025-10-22)
+
+
+### Bug Fixes
+
+* fix import resolving ([d45b3af](https://github.com/easyops-cn/next-advanced-bricks/commit/d45b3af08247864b908858678379b76097372ac9))
+* support if statements ([6567d19](https://github.com/easyops-cn/next-advanced-bricks/commit/6567d1986b529b83019dbbf6a1790f594dd9e50c))
+
+
+
+
+
 ## [1.3.16](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.3.15...@next-bricks/vb-experiment@1.3.16) (2025-10-17)
 
 **Note:** Version bump only for package @next-bricks/vb-experiment

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.18.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.18.8...@next-bricks/vs@1.18.9) (2025-10-22)
+
+
+### Bug Fixes
+
+* set compiler options only for current editor ([a77e4e1](https://github.com/easyops-cn/next-advanced-bricks/commit/a77e4e159e138ef718862bce7bd79926b9687c0b))
+
+
+
+
+
 ## [1.18.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vs@1.18.7...@next-bricks/vs@1.18.8) (2025-10-20)
 
 **Note:** Version bump only for package @next-bricks/vs

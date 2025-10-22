@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.50.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.50.1...@next-bricks/advanced@0.50.2) (2025-10-22)
+
+
+### Bug Fixes
+
+* make bordered table bg opaque ([168c50d](https://github.com/easyops-cn/next-advanced-bricks/commit/168c50dfe123215a995d444a66d10177e3e649ca))
+
+
+
+
+
 ## [0.50.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.50.0...@next-bricks/advanced@0.50.1) (2025-10-17)
 
 **Note:** Version bump only for package @next-bricks/advanced
