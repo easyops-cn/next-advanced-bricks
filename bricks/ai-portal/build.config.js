@@ -3,6 +3,7 @@ import webpack from "webpack";
 
 /** @type {import("@next-core/build-next-bricks").BuildNextBricksConfig} */
 export default {
+  svgAsReactComponent: true,
   oneOfRulesForBabel: [
     {
       test: /\.[tj]sx?$/,
