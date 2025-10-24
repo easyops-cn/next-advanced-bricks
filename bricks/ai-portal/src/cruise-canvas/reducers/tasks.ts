@@ -47,7 +47,7 @@ export const tasks: Reducer<Task[], CruiseCanvasAction> = (state, action) => {
         );
 
         if (previousTaskIndex === -1) {
-          tasks = [...tasks, { ...taskPatch } as Task];
+          tasks = [...tasks, taskPatch as Task];
         } else {
           if (!isMatch(previousTask, taskPatch)) {
             tasks = [

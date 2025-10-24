@@ -33,7 +33,7 @@ function getDrawerWidth() {
 }
 
 export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
-  const { setActiveToolCallJobId } = useContext(TaskContext);
+  const { setActiveDetail } = useContext(TaskContext);
   const toolCall = job.toolCall!;
   const toolTitle = toolCall.annotations?.title;
 
@@ -69,9 +69,9 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
 
   const handleClose = useCallback(() => {
     setTimeout(() => {
-      setActiveToolCallJobId(null);
+      setActiveDetail(null);
     }, 300);
-  }, [setActiveToolCallJobId]);
+  }, [setActiveDetail]);
 
   const ref = useRef<Drawer>(null);
 

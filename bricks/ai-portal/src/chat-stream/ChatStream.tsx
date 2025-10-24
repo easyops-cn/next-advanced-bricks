@@ -29,6 +29,9 @@ import styles from "./styles.module.css";
 import toolbarStyles from "../cruise-canvas/toolbar.module.css";
 import { K, t } from "./i18n.js";
 import { NodeReplay } from "../cruise-canvas/NodeReplay/NodeReplay.js";
+import type { ActiveDetail } from "../shared/interfaces.js";
+import { useFlowAndActivityMap } from "../shared/useFlowAndActivityMap.js";
+import { useFulfilledActiveDetail } from "../shared/useFulfilledActiveDetail.js";
 
 const ICON_SHARE: GeneralIconProps = {
   lib: "easyops",
@@ -73,6 +76,7 @@ export function ChatStreamComponent(
   const {
     conversation,
     tasks,
+    serviceFlows,
     errors,
     humanInputRef,
     skipToResults,
@@ -87,10 +91,13 @@ export function ChatStreamComponent(
   const conversationState = conversation?.state;
   const conversationDone = DONE_STATES.includes(conversationState!);
   const canChat = conversationDone || conversationState === "input-required";
-  const { messages, jobMap, lastToolCallJobId } = useConversationStream(
-    conversation,
+  const { flowMap, activityMap } = useFlowAndActivityMap(serviceFlows);
+  const { messages, jobMap, lastDetail } = useConversationStream(
+    !!conversation,
     tasks,
     errors,
+    flowMap,
+    activityMap,
     { showHumanActions }
   );
 
@@ -159,9 +166,7 @@ export function ChatStreamComponent(
     string | null
   >(null);
 
-  const [activeToolCallJobId, setActiveToolCallJobId] = useState<string | null>(
-    null
-  );
+  const [activeDetail, setActiveDetail] = useState<ActiveDetail | null>(null);
   const [userClosedAside, setUserClosedAside] = useState(false);
   // Delay flag to prevent aside from auto opened for a completed task
   const delayRef = useRef(false);
@@ -179,10 +184,10 @@ export function ChatStreamComponent(
   }, [conversationAvailable]);
 
   useEffect(() => {
-    if (delayRef.current && lastToolCallJobId && !userClosedAside) {
-      setActiveToolCallJobId(lastToolCallJobId);
+    if (delayRef.current && lastDetail && !userClosedAside) {
+      setActiveDetail(lastDetail);
     }
-  }, [lastToolCallJobId, userClosedAside]);
+  }, [lastDetail, userClosedAside]);
 
   useEffect(() => {
     getRuntime().applyPageTitle(pageTitle);
@@ -207,6 +212,9 @@ export function ChatStreamComponent(
   const taskContextValue = useMemo(
     () => ({
       conversationId,
+      conversationState,
+      tasks,
+      errors,
       workspace,
       previewUrlTemplate,
       replay,
@@ -220,8 +228,8 @@ export function ChatStreamComponent(
 
       activeExpandedViewJobId,
       setActiveExpandedViewJobId,
-      activeToolCallJobId,
-      setActiveToolCallJobId,
+      activeDetail,
+      setActiveDetail,
 
       submittingFeedback,
       submittedFeedback,
@@ -247,6 +255,9 @@ export function ChatStreamComponent(
     }),
     [
       conversationId,
+      conversationState,
+      tasks,
+      errors,
       workspace,
       previewUrlTemplate,
       replay,
@@ -259,7 +270,7 @@ export function ChatStreamComponent(
       supports,
 
       activeExpandedViewJobId,
-      activeToolCallJobId,
+      activeDetail,
 
       submittingFeedback,
       submittedFeedback,
@@ -277,10 +288,10 @@ export function ChatStreamComponent(
 
   const streamContextValue = useMemo(
     () => ({
-      lastToolCallJobId,
+      lastDetail,
       setUserClosedAside,
     }),
-    [lastToolCallJobId]
+    [lastDetail]
   );
 
   const detectScrolledUpRef = useRef(false);
@@ -341,12 +352,12 @@ export function ChatStreamComponent(
     });
   }, []);
 
-  const activeToolCallJob = useMemo(() => {
-    if (!activeToolCallJobId) {
-      return null;
-    }
-    return jobMap?.get(activeToolCallJobId) || null;
-  }, [activeToolCallJobId, jobMap]);
+  const fulfilledActiveDetail = useFulfilledActiveDetail(
+    activeDetail,
+    jobMap,
+    flowMap,
+    activityMap
+  );
 
   return (
     <TaskContext.Provider value={taskContextValue}>
@@ -382,9 +393,7 @@ export function ChatStreamComponent(
                         <UserMessage content={msg.content} cmd={msg.cmd} />
                       ) : (
                         <AssistantMessage
-                          jobs={msg.jobs}
-                          taskState={conversationState}
-                          error={msg.error}
+                          chunks={msg.chunks}
                           isLatest={index === list.length - 1}
                         />
                       )}
@@ -432,13 +441,15 @@ export function ChatStreamComponent(
             </div>
           )}
         </div>
-        <div
-          className={classNames(styles.aside, {
-            [styles.expanded]: !!activeToolCallJob,
-          })}
-        >
-          {activeToolCallJob && <Aside job={activeToolCallJob!} />}
-        </div>
+        {
+          <div
+            className={classNames(styles.aside, {
+              [styles.expanded]: !!fulfilledActiveDetail,
+            })}
+          >
+            {fulfilledActiveDetail && <Aside detail={fulfilledActiveDetail} />}
+          </div>
+        }
         {activeExpandedViewJobId && <ExpandedView views={views!} />}
         {showUiSwitch && (
           <div className={classNames(toolbarStyles.toolbar, styles.toolbar)}>

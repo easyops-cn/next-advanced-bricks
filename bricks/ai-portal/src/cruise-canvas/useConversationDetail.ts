@@ -17,12 +17,13 @@ export function useConversationDetail(
   replay?: boolean,
   replayDelay?: number
 ) {
-  const [{ conversation, tasks, errors }, dispatch] = useReducer(
+  const [{ conversation, tasks, serviceFlows, errors }, dispatch] = useReducer(
     rootReducer,
     null,
     () => ({
       conversation: null,
       tasks: [],
+      serviceFlows: [],
       errors: [],
     })
   );
@@ -178,6 +179,7 @@ export function useConversationDetail(
   return {
     conversation,
     tasks,
+    serviceFlows,
     errors,
     humanInputRef,
     skipToResults,

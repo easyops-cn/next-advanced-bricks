@@ -25,6 +25,8 @@ import type {
   JobGraphNode,
   ZoomAction,
   FeedbackDetail,
+  FlowGraphNode,
+  ActivityGraphNode,
 } from "./interfaces.js";
 import { useAutoCenter } from "./useAutoCenter.js";
 import { useLayout } from "./useLayout.js";
@@ -65,9 +67,15 @@ import type {
   FileInfo,
   Job,
   CommandPayload,
+  ActiveDetail,
+  ServiceFlowRun,
+  ActivityRun,
 } from "../shared/interfaces";
 import { NodeReplay } from "./NodeReplay/NodeReplay.js";
 import type { ConversationDetail, CruiseCanvasProps } from ".";
+import { useFlowAndActivityMap } from "../shared/useFlowAndActivityMap";
+import { useFulfilledActiveDetail } from "../shared/useFulfilledActiveDetail";
+import { NodeChunk } from "./NodeChunk/NodeChunk";
 
 const MemoizedNodeComponent = memo(NodeComponent);
 
@@ -137,6 +145,7 @@ export function CruiseCanvasComponent(
   const {
     conversation,
     tasks,
+    serviceFlows,
     errors,
     humanInputRef,
     skipToResults,
@@ -148,11 +157,19 @@ export function CruiseCanvasComponent(
     replayDelay
   );
   const plan = tasks[tasks.length - 1]?.plan;
-  const graph = useConversationGraph(conversation, tasks, errors, {
-    showHiddenJobs,
-    showHumanActions,
-    separateInstructions,
-  });
+  const { flowMap, activityMap } = useFlowAndActivityMap(serviceFlows);
+  const graph = useConversationGraph(
+    conversation,
+    tasks,
+    errors,
+    flowMap,
+    activityMap,
+    {
+      showHiddenJobs,
+      showHumanActions,
+      separateInstructions,
+    }
+  );
   const rawNodes = graph?.nodes;
   const rawEdges = graph?.edges;
   const nav = graph?.nav;
@@ -566,9 +583,7 @@ export function CruiseCanvasComponent(
     [nodes, pushZoomTransition, sizeReady, transformRef]
   );
 
-  const [activeToolCallJobId, setActiveToolCallJobId] = useState<string | null>(
-    null
-  );
+  const [activeDetail, setActiveDetail] = useState<ActiveDetail | null>(null);
 
   const [activeExpandedViewJobId, setActiveExpandedViewJobId] = useState<
     string | null
@@ -601,6 +616,9 @@ export function CruiseCanvasComponent(
   const taskContextValue = useMemo(
     () => ({
       conversationId,
+      conversationState,
+      tasks,
+      errors,
       workspace,
       previewUrlTemplate,
       replay,
@@ -614,8 +632,8 @@ export function CruiseCanvasComponent(
 
       activeExpandedViewJobId,
       setActiveExpandedViewJobId,
-      activeToolCallJobId,
-      setActiveToolCallJobId,
+      activeDetail,
+      setActiveDetail,
 
       submittingFeedback,
       submittedFeedback,
@@ -651,6 +669,9 @@ export function CruiseCanvasComponent(
     }),
     [
       conversationId,
+      conversationState,
+      tasks,
+      errors,
       workspace,
       previewUrlTemplate,
       replay,
@@ -663,7 +684,7 @@ export function CruiseCanvasComponent(
       supports,
 
       activeExpandedViewJobId,
-      activeToolCallJobId,
+      activeDetail,
 
       submittingFeedback,
       submittedFeedback,
@@ -697,12 +718,12 @@ export function CruiseCanvasComponent(
     [hoverOnScrollableContent, onNodeResize]
   );
 
-  const activeToolCallJob = useMemo(() => {
-    if (!activeToolCallJobId) {
-      return null;
-    }
-    return jobMap?.get(activeToolCallJobId) || null;
-  }, [activeToolCallJobId, jobMap]);
+  const fulfilledActiveDetail = useFulfilledActiveDetail(
+    activeDetail,
+    jobMap,
+    flowMap,
+    activityMap
+  );
 
   const handleRootClick = useCallback((e: React.MouseEvent) => {
     for (const element of e.nativeEvent.composedPath()) {
@@ -722,7 +743,12 @@ export function CruiseCanvasComponent(
 
   useEffect(() => {
     const root = rootRef.current;
-    if (!root || activeToolCallJob || activeExpandedViewJobId || activeFile) {
+    if (
+      !root ||
+      fulfilledActiveDetail ||
+      activeExpandedViewJobId ||
+      activeFile
+    ) {
       return;
     }
 
@@ -744,7 +770,11 @@ export function CruiseCanvasComponent(
       if (action === "scroll") {
         scrollBy(keyboardAction.direction, keyboardAction.range);
       } else if (action === "enter") {
-        if (node.type !== "job") {
+        if (
+          node.type !== "job" /* &&
+          node.type !== "flow" &&
+          node.type !== "activity" */
+        ) {
           return;
         }
       }
@@ -752,7 +782,17 @@ export function CruiseCanvasComponent(
       e.stopPropagation();
 
       if (action === "enter") {
-        setActiveToolCallJobId((node as JobGraphNode).job.id);
+        if (node.type === "job") {
+          setActiveDetail({
+            type: node.type,
+            id: (node as JobGraphNode).job.id,
+          });
+        } /* else {
+          setActiveDetail({
+            type: node.type as "flow",
+            id: (node as FlowGraphNode).taskId,
+          });
+        } */
       } else if (action === "switch-active-node") {
         if (node) {
           setActiveNodeId(node.id);
@@ -777,8 +817,9 @@ export function CruiseCanvasComponent(
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [
+    activeDetail,
+    fulfilledActiveDetail,
     activeNodeId,
-    activeToolCallJob,
     activeExpandedViewJobId,
     activeFile,
     nodes,
@@ -844,6 +885,8 @@ export function CruiseCanvasComponent(
                 content={(node as RequirementGraphNode).content}
                 cmd={(node as RequirementGraphNode).cmd}
                 job={(node as JobGraphNode).job}
+                flow={(node as FlowGraphNode).flow}
+                activity={(node as ActivityGraphNode).activity}
                 startTime={conversation?.startTime}
                 instructionLoading={
                   node.type === "instruction" &&
@@ -891,7 +934,9 @@ export function CruiseCanvasComponent(
             </div>
           ) : null}
         </div>
-        {activeToolCallJob && <ToolCallDetail job={activeToolCallJob} />}
+        {fulfilledActiveDetail?.type === "job" && (
+          <ToolCallDetail job={fulfilledActiveDetail.job} />
+        )}
         {activeExpandedViewJobId && <ExpandedView views={views!} />}
         {activeFile && <FilePreview file={activeFile} />}
         {showJsxEditor && activeJsxEditorJob && <JsxEditor />}
@@ -906,6 +951,8 @@ interface NodeComponentProps {
   username?: string;
   content?: string;
   job?: Job;
+  flow?: ServiceFlowRun;
+  activity?: ActivityRun;
   startTime?: number;
   instructionLoading?: boolean;
   isLeaf?: boolean;
@@ -919,6 +966,8 @@ function NodeComponent({
   id,
   type,
   job,
+  flow,
+  activity,
   username,
   content,
   startTime,
@@ -999,6 +1048,13 @@ function NodeComponent({
         <NodeError content={content!} />
       ) : type === "replay" ? (
         <NodeReplay finished />
+      ) : type === "flow" || type === "activity" ? (
+        <NodeChunk
+          type={type}
+          active={active}
+          flow={flow!}
+          activity={activity}
+        />
       ) : type === "instruction" ? (
         <NodeInstruction
           content={job!.instruction}

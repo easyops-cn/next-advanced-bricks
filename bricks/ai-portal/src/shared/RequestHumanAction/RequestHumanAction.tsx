@@ -5,11 +5,14 @@ import styles from "./RequestHumanAction.module.css";
 import { WrappedButton } from "../bricks";
 import { TaskContext } from "../TaskContext";
 import type { HumanAction } from "../interfaces";
+import classNames from "classnames";
 
 export function RequestHumanAction({
   action,
+  ui,
 }: {
   action: HumanAction;
+  ui?: "canvas" | "chat";
 }): JSX.Element | null {
   const { humanInput, replay } = useContext(TaskContext);
   const [disabled, setDisabled] = useState(false);
@@ -19,11 +22,15 @@ export function RequestHumanAction({
   }
 
   return (
-    <div className={styles["human-action"]}>
+    <div
+      className={classNames(styles["human-action"], {
+        [styles.canvas]: ui !== "chat",
+      })}
+    >
       <WrappedButton
         type="primary"
         themeVariant="elevo"
-        shape="round"
+        shape={ui === "chat" ? undefined : "round"}
         disabled={disabled}
         onClick={() => {
           if (replay) {

@@ -7,23 +7,28 @@ import type {
 } from "./interfaces";
 import { LOADING_NODE_ID } from "./constants";
 import type {
+  ActivityWithFlow,
   ConversationBaseDetail,
   ConversationError,
+  Job,
+  ServiceFlowRun,
   Task,
 } from "../shared/interfaces";
-import { getFlatOrderedJobs } from "./getFlatOrderedJobs";
+import { getFlatChunks } from "../shared/getFlatChunks";
 
 export function useConversationGraph(
   conversation: ConversationBaseDetail | null | undefined,
   tasks: Task[],
   errors: ConversationError[],
+  flowMap?: Map<string, ServiceFlowRun>,
+  activityMap?: Map<string, ActivityWithFlow>,
   options?: {
     showHiddenJobs?: boolean;
     showHumanActions?: boolean;
     separateInstructions?: boolean;
   }
 ) {
-  const { showHiddenJobs, showHumanActions, separateInstructions } =
+  const { /* showHiddenJobs, */ showHumanActions, separateInstructions } =
     options ?? {};
 
   return useMemo(() => {
@@ -31,158 +36,156 @@ export function useConversationGraph(
       return null;
     }
 
+    const chunks = getFlatChunks(tasks, errors, flowMap, activityMap);
+
     const nodes: GraphNode[] = [];
     const edges: GraphEdge[] = [];
     const nav: GraphNavItem[] = [];
     const views: GraphGeneratedView[] = [];
+    const jobMap = new Map<string, Job>();
+    const jobLevels = new Map<string, number>();
 
-    const {
-      list,
-      roots: jobRoots,
-      map: jobMap,
-      levels: jobLevels,
-      downstreamMap,
-      jobsWithFollowingErrors,
-    } = getFlatOrderedJobs(tasks, errors, { showHiddenJobs });
-
-    const jobNodesMap = new Map<string, string[]>();
     const userInputNodes: string[] = [];
     let username: string | undefined;
+    let previousNodeId: string | undefined;
 
-    const addFollowingError = (jobId: string, nodeIds: string[]) => {
-      const followingError = jobsWithFollowingErrors.get(jobId);
-      if (followingError) {
-        const errorNodeId = `error:${jobId}`;
+    for (const chunk of chunks) {
+      const nodeIds: string[] = [];
+
+      if (chunk.type === "job") {
+        const job = chunk.job;
+        jobMap.set(job.id, job);
+        jobLevels.set(job.id, chunk.level);
+        const { messages } = job;
+        const hasMessages =
+          (Array.isArray(messages) && messages.length > 0) || job.toolCall;
+
+        const userInput = messages
+          ?.find((msg) => msg.role === "user")
+          ?.parts?.find((part) => part.type === "text")?.text;
+
+        const isRequirementJob =
+          userInput !== undefined &&
+          (chunk === chunks[0] || messages!.length === 1);
+        if (isRequirementJob) {
+          const requirementId = `requirement:${job.id}`;
+          username = job.username;
+          nodes.push({
+            type: "requirement",
+            id: requirementId,
+            content: userInput,
+            username,
+            cmd: job.cmd,
+          });
+          nodeIds.push(requirementId);
+          userInputNodes.push(requirementId);
+        } else {
+          if (job.instruction) {
+            if (separateInstructions || !job.toolCall) {
+              const instructionNodeId = `instruction:${job.id}`;
+              nodes.push({
+                type: "instruction",
+                id: instructionNodeId,
+                job,
+                state: job.state,
+              });
+              nodeIds.push(instructionNodeId);
+            }
+
+            nav.push({
+              id: job.id,
+              title: job.instruction,
+              state: job.state,
+              level: chunk.level,
+            });
+          } else if (job.toolCall?.annotations?.title) {
+            nav.push({
+              id: job.id,
+              title: job.toolCall.annotations.title,
+              state: job.state,
+              level: chunk.level,
+            });
+          }
+
+          const jobNodeId = `job:${job.id}`;
+          if (hasMessages) {
+            nodes.push({
+              type: "job",
+              id: jobNodeId,
+              job,
+              state: job.state,
+            });
+            nodeIds.push(jobNodeId);
+          }
+
+          const view = job.generatedView;
+          if (view) {
+            views.push({
+              id: job.id,
+              view,
+            });
+          }
+
+          if (showHumanActions && job.humanAction) {
+            const humanActionNodeId = `human-action:${job.id}`;
+            nodes.push({
+              type: "requirement",
+              id: humanActionNodeId,
+              content: job.humanAction,
+              username,
+            });
+            nodeIds.push(humanActionNodeId);
+          }
+
+          // Make sure every job in the list has at least one corresponding node
+          if (nodeIds.length === 0) {
+            nodes.push({
+              type: "job",
+              id: jobNodeId,
+              job,
+              state: job.state,
+            });
+            nodeIds.push(jobNodeId);
+          }
+
+          if (userInput !== undefined && job.state === "completed") {
+            userInputNodes.push(nodeIds[nodeIds.length - 1]);
+          }
+        }
+      } else if (chunk.type === "error") {
+        const errorNodeId = `error:${nodes.length}`;
         nodes.push({
           type: "error",
           id: errorNodeId,
-          content: followingError,
+          content: chunk.error,
         });
         nodeIds.push(errorNodeId);
-      }
-    };
-
-    for (const jobId of list) {
-      const job = jobMap.get(jobId)!;
-      const { messages } = job;
-      const hasMessages =
-        (Array.isArray(messages) && messages.length > 0) || job.toolCall;
-
-      const nodeIds: string[] = [];
-
-      const userInput = messages
-        ?.find((msg) => msg.role === "user")
-        ?.parts?.find((part) => part.type === "text")?.text;
-
-      const isRequirementJob =
-        userInput !== undefined &&
-        (jobRoots.includes(jobId) || messages!.length === 1);
-      if (isRequirementJob) {
-        const requirementId = `requirement:${jobId}`;
-        username = job.username;
+      } else {
+        const nodeId = `${chunk.type}:${chunk.task.id}`;
         nodes.push({
-          type: "requirement",
-          id: requirementId,
-          content: userInput,
-          username,
-          cmd: job.cmd,
-        });
-        nodeIds.push(requirementId);
-        userInputNodes.push(requirementId);
-        addFollowingError(jobId, nodeIds);
-        jobNodesMap.set(jobId, nodeIds);
-        continue;
+          type: chunk.type,
+          id: nodeId,
+          taskId: chunk.task.id,
+          flow: chunk.flow,
+          ...(chunk.type === "activity" ? { activity: chunk.activity } : null),
+        } as GraphNode);
+        nodeIds.push(nodeId);
       }
 
-      if (job.instruction) {
-        if (separateInstructions || !job.toolCall) {
-          const instructionNodeId = `instruction:${jobId}`;
-          nodes.push({
-            type: "instruction",
-            id: instructionNodeId,
-            job,
-            state: job.state,
-          });
-          nodeIds.push(instructionNodeId);
-        }
-
-        nav.push({
-          id: job.id,
-          title: job.instruction,
-          state: job.state,
-          level: jobLevels.get(job.id)!,
-        });
-      } else if (job.toolCall?.annotations?.title) {
-        nav.push({
-          id: job.id,
-          title: job.toolCall.annotations.title,
-          state: job.state,
-          level: jobLevels.get(job.id)!,
-        });
-      }
-
-      const jobNodeId = `job:${job.id}`;
-      if (hasMessages) {
-        nodes.push({
-          type: "job",
-          id: jobNodeId,
-          job,
-          state: job.state,
-        });
-        nodeIds.push(jobNodeId);
-      }
-
-      const view = job.generatedView;
-      if (view) {
-        views.push({
-          id: job.id,
-          view,
-        });
-      }
-
-      addFollowingError(jobId, nodeIds);
-
-      if (showHumanActions && job.humanAction) {
-        const humanActionNodeId = `human-action:${job.id}`;
-        nodes.push({
-          type: "requirement",
-          id: humanActionNodeId,
-          content: job.humanAction,
-          username,
-        });
-        nodeIds.push(humanActionNodeId);
-      }
-
-      // Make sure every job in the list has at least one corresponding node
-      if (nodeIds.length === 0) {
-        nodes.push({
-          type: "job",
-          id: jobNodeId,
-          job,
-          state: job.state,
-        });
-        nodeIds.push(jobNodeId);
-      }
-
-      jobNodesMap.set(jobId, nodeIds);
-      if (userInput !== undefined && job.state === "completed") {
-        userInputNodes.push(nodeIds[nodeIds.length - 1]);
-      }
-    }
-
-    for (const jobId of list) {
-      const nodeIds = jobNodesMap.get(jobId)!;
       for (let i = 1; i < nodeIds.length; i++) {
         edges.push({
           source: nodeIds[i - 1],
           target: nodeIds[i],
         });
       }
-      const source = nodeIds[nodeIds.length - 1];
-      const downstreams = downstreamMap.get(jobId) ?? [];
-      for (const targetJobId of downstreams) {
-        const targetNodeIds = jobNodesMap.get(targetJobId)!;
-        edges.push({ source, target: targetNodeIds[0] });
+      if (nodeIds.length > 0) {
+        if (previousNodeId) {
+          edges.push({
+            source: previousNodeId,
+            target: nodeIds[0],
+          });
+        }
+        previousNodeId = nodeIds[nodeIds.length - 1];
       }
     }
 
@@ -225,8 +228,10 @@ export function useConversationGraph(
     conversation,
     errors,
     separateInstructions,
-    showHiddenJobs,
+    // showHiddenJobs,
     showHumanActions,
     tasks,
+    flowMap,
+    activityMap,
   ]);
 }

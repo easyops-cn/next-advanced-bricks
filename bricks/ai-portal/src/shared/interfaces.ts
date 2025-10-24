@@ -13,6 +13,8 @@ export interface Conversation {
 
   tasks: Task[];
 
+  serviceFlows: ServiceFlowRun[];
+
   startTime: number;
   endTime?: number;
   finished?: boolean;
@@ -59,6 +61,7 @@ export type TaskState =
   | "free"
   | "confirming"
   | "executing"
+  | "input-required"
   | "completed"
   | "failed";
 
@@ -75,6 +78,9 @@ export type JobState =
 export interface Job {
   // Job ID
   id: string;
+
+  // When setting `type: subTask` or `type: serviceFlow`, the job is a container job.
+  type?: "default" | "subTask" | "serviceFlow";
 
   // Upstream job IDs
   upstream?: string[];
@@ -105,6 +111,12 @@ export interface Job {
 
   // 用户选择的动作
   humanAction?: string;
+
+  // Human in-the-loop 信息
+  hil?: {
+    userInstanceId: string;
+    username: string;
+  };
 
   aiEmployeeId?: string;
 
@@ -180,12 +192,15 @@ export interface ToolCall {
 export type ConversationBaseDetail = Omit<Conversation, "tasks">;
 
 export interface ConversationPatch
-  extends Omit<Partial<Conversation>, "tasks"> {
+  extends Omit<Partial<Conversation>, "tasks" | "serviceFlows"> {
   tasks?: TaskPatch[];
 
   error?: string;
 
   time?: number;
+
+  // 新增返回运行的 service flows
+  serviceFlows?: ServiceFlowPatch[];
 }
 
 export interface TaskPatch extends Omit<Partial<Task>, "jobs"> {
@@ -232,7 +247,7 @@ export interface ExampleProject {
 }
 
 export interface ConversationError {
-  jobs: string[];
+  taskId?: string;
   error?: string;
 }
 
@@ -246,4 +261,78 @@ export interface CommandPayloadServiceFlowStarting {
     flowInstanceId?: string;
     flowName?: string;
   };
+}
+
+export interface ServiceFlowRun {
+  taskId: string;
+  // Flow 定义的实例 ID
+  flowInstanceId: string;
+  name: string;
+
+  // 增量 spec 或全量 fullSpec 根据情况选择其中一种返回
+  spec: StageRun[];
+
+  space: CollaborationSpace;
+}
+
+export interface StageRun {
+  name: string;
+  serviceFlowActivities: ActivityRun[];
+}
+
+export interface ActivityRun {
+  taskId?: string;
+  name: string;
+}
+
+export interface CollaborationSpace {
+  instanceId: string;
+  name: string;
+}
+
+export interface ServiceFlowPatch
+  extends Partial<Omit<ServiceFlowRun, "spec">> {
+  taskId: string;
+
+  // 增量 spec 或全量 fullSpec 根据情况选择其中一种返回
+  spec?: StagePatch[];
+  fullSpec?: StageRun[];
+
+  space?: CollaborationSpace;
+}
+
+export interface StagePatch {
+  name: string;
+  serviceFlowActivities?: ActivityRun[];
+}
+
+export interface ActivityWithFlow {
+  flow: ServiceFlowRun;
+  activity: ActivityRun;
+}
+
+export interface ActiveDetail {
+  type: "job" | "flow" | "activity";
+  id: string;
+}
+
+export type FulfilledActiveDetail =
+  | ActiveDetailOfJob
+  | ActiveDetailOfFlow
+  | ActiveDetailOfActivity;
+
+export interface ActiveDetailOfJob {
+  type: "job";
+  job: Job;
+}
+
+export interface ActiveDetailOfFlow {
+  type: "flow";
+  flow: ServiceFlowRun;
+}
+
+export interface ActiveDetailOfActivity {
+  type: "activity";
+  activity: ActivityRun;
+  flow: ServiceFlowRun;
 }

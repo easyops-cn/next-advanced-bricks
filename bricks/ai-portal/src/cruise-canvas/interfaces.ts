@@ -1,9 +1,11 @@
 import type { JSONSchema } from "./json-schema";
 import type {
+  ActivityRun,
   CommandPayload,
   GeneratedView,
   Job,
   JobState,
+  ServiceFlowRun,
 } from "../shared/interfaces";
 
 export type RangeTuple = [min: number, max: number];
@@ -29,7 +31,9 @@ export type GraphNode =
   | EndGraphNode
   | ErrorGraphNode
   | FeedbackGraphNode
-  | ReplayGraphNode;
+  | ReplayGraphNode
+  | FlowGraphNode
+  | ActivityGraphNode;
 
 export interface RequirementGraphNode extends BaseGraphNode {
   type: "requirement";
@@ -71,6 +75,19 @@ export interface FeedbackGraphNode extends BaseGraphNode {
 
 export interface ReplayGraphNode extends BaseGraphNode {
   type: "replay";
+}
+
+export interface FlowGraphNode extends BaseGraphNode {
+  type: "flow";
+  flow: ServiceFlowRun;
+  taskId: string;
+}
+
+export interface ActivityGraphNode extends BaseGraphNode {
+  type: "activity";
+  activity: ActivityRun;
+  flow: ServiceFlowRun;
+  taskId: string;
 }
 
 export interface BaseGraphNode {

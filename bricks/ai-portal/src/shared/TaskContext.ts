@@ -1,14 +1,21 @@
 import { createContext, type Dispatch } from "react";
 import type { FeedbackDetail } from "../cruise-canvas/interfaces";
 import type {
+  ActiveDetail,
+  ConversationError,
+  ConversationState,
   ExampleProject,
   GeneratedView,
   Job,
   ShowCaseType,
+  Task,
 } from "./interfaces";
 
 export interface TaskContextValue {
   conversationId?: string;
+  conversationState?: ConversationState;
+  tasks: Task[];
+  errors: ConversationError[];
   workspace?: string;
   previewUrlTemplate?: string;
   replay?: boolean;
@@ -22,8 +29,8 @@ export interface TaskContextValue {
 
   activeExpandedViewJobId: string | null;
   setActiveExpandedViewJobId: Dispatch<React.SetStateAction<string | null>>;
-  activeToolCallJobId: string | null;
-  setActiveToolCallJobId: Dispatch<React.SetStateAction<string | null>>;
+  activeDetail: ActiveDetail | null;
+  setActiveDetail: Dispatch<React.SetStateAction<ActiveDetail | null>>;
 
   submittingFeedback: boolean;
   submittedFeedback: boolean;
@@ -46,13 +53,15 @@ export interface TaskContextValue {
 }
 
 export const TaskContext = createContext<TaskContextValue>({
+  tasks: [],
+  errors: [],
   humanInput: () => {},
   onShare: () => {},
   onTerminate: () => {},
   activeExpandedViewJobId: null,
   setActiveExpandedViewJobId: () => {},
-  activeToolCallJobId: null,
-  setActiveToolCallJobId: () => {},
+  activeDetail: null,
+  setActiveDetail: () => {},
   submittingFeedback: false,
   submittedFeedback: false,
   onSubmitFeedback: () => {},
