@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.56.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.55.1...@next-bricks/ai-portal@0.56.0) (2025-10-24)
+
+
+### Features
+
+* chat with service flows ([2965792](https://github.com/easyops-cn/next-advanced-bricks/commit/296579266c8ba8e5be1c1a70c37b0b7d3edbec9f))
+* new brick: running flow ([9bf9268](https://github.com/easyops-cn/next-advanced-bricks/commit/9bf9268a883462e4e403ca6a4cc88b89803dea90))
+
+
+
+
+
 ## [0.55.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.55.0...@next-bricks/ai-portal@0.55.1) (2025-10-22)
 
 
