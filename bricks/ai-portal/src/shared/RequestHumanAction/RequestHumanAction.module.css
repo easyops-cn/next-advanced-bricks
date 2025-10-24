@@ -1,4 +1,8 @@
 .human-action {
+  margin-top: 22px;
+}
+
+.canvas {
   display: flex;
   justify-content: center;
   align-items: center;

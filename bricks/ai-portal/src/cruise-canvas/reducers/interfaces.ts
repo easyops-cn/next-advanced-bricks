@@ -3,11 +3,13 @@ import type {
   ConversationPatch,
   ConversationError,
   Task,
+  ServiceFlowRun,
 } from "../../shared/interfaces";
 
 export interface CruiseCanvasState {
   conversation: ConversationBaseDetail | null;
   tasks: Task[];
+  serviceFlows: ServiceFlowRun[];
   errors: ConversationError[];
 }
 

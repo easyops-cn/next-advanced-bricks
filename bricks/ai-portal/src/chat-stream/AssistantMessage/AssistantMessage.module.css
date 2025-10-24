@@ -19,11 +19,6 @@
   white-space: pre;
 }
 
-.error {
-  color: var(--color-error);
-  white-space: pre-wrap;
-}
-
 .avatar {
   font-size: 32px;
 }

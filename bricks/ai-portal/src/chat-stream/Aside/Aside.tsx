@@ -8,7 +8,12 @@ import type { CmdbInstanceDetailData } from "../../cruise-canvas/interfaces";
 import { ToolCallStatus } from "../../cruise-canvas/ToolCallStatus/ToolCallStatus";
 import { TaskContext } from "../../shared/TaskContext";
 import { StreamContext } from "../StreamContext";
-import type { FileInfo, Job } from "../../shared/interfaces";
+import type {
+  ActiveDetailOfActivity,
+  FileInfo,
+  FulfilledActiveDetail,
+} from "../../shared/interfaces";
+import { FlowApp } from "./FlowApp/FlowApp";
 
 const ICON_SHRINK: GeneralIconProps = {
   lib: "easyops",
@@ -16,11 +21,11 @@ const ICON_SHRINK: GeneralIconProps = {
 };
 
 export interface AsideProps {
-  job: Job;
+  detail: FulfilledActiveDetail;
 }
 
-export function Aside({ job }: AsideProps) {
-  const { setActiveToolCallJobId } = useContext(TaskContext);
+export function Aside({ detail }: AsideProps) {
+  const { setActiveDetail } = useContext(TaskContext);
   const { setUserClosedAside } = useContext(StreamContext);
 
   const [toolMarkdownContent, cmdbInstanceDetails /* , files */] =
@@ -28,29 +33,32 @@ export function Aside({ job }: AsideProps) {
       const contents: string[] = [];
       const instanceDetails: CmdbInstanceDetailData[] = [];
       const files: FileInfo[] = [];
-      job.messages?.forEach((message) => {
-        if (message.role === "tool") {
-          for (const part of message.parts) {
-            if (part.type === "data") {
-              switch (part.data?.type) {
-                case "markdown":
-                  contents.push(part.data.content);
-                  break;
-                case "cmdb_instance_detail":
-                  instanceDetails.push(part.data as CmdbInstanceDetailData);
-                  break;
+
+      if (detail.type === "job") {
+        detail.job.messages?.forEach((message) => {
+          if (message.role === "tool") {
+            for (const part of message.parts) {
+              if (part.type === "data") {
+                switch (part.data?.type) {
+                  case "markdown":
+                    contents.push(part.data.content);
+                    break;
+                  case "cmdb_instance_detail":
+                    instanceDetails.push(part.data as CmdbInstanceDetailData);
+                    break;
+                }
+              } else if (part.type === "file") {
+                files.push(part.file);
               }
-            } else if (part.type === "file") {
-              files.push(part.file);
             }
           }
-        }
-      });
+        });
+      }
 
       const markdownContent = contents.join("");
 
       return [markdownContent, instanceDetails, files] as const;
-    }, [job.messages]);
+    }, [detail]);
 
   return (
     <div className={styles.aside}>
@@ -61,32 +69,41 @@ export function Aside({ job }: AsideProps) {
             icon={ICON_SHRINK}
             variant="mini"
             onClick={() => {
-              setActiveToolCallJobId(null);
+              setActiveDetail(null);
               setUserClosedAside(true);
             }}
           />
         </div>
         <div className={styles.body}>
-          <ToolCallStatus job={job} variant="read-only" />
-          {job.generatedView ? (
-            <EditorApp
-              name="View"
-              source={job.generatedView.code}
-              language="jsx"
+          {detail.type === "job" ? (
+            <>
+              <ToolCallStatus job={detail.job} variant="read-only" />
+              {detail.job.generatedView ? (
+                <EditorApp
+                  name="View"
+                  source={detail.job.generatedView.code}
+                  language="jsx"
+                />
+              ) : toolMarkdownContent ? (
+                <EditorApp
+                  name="Content"
+                  source={toolMarkdownContent}
+                  language="md"
+                />
+              ) : cmdbInstanceDetails.length > 0 ? (
+                <EditorApp
+                  name="CMDB"
+                  source={JSON.stringify(cmdbInstanceDetails, null, 2)}
+                  language="json"
+                />
+              ) : null}
+            </>
+          ) : (
+            <FlowApp
+              flow={detail.flow}
+              activity={(detail as ActiveDetailOfActivity).activity}
             />
-          ) : toolMarkdownContent ? (
-            <EditorApp
-              name="Content"
-              source={toolMarkdownContent}
-              language="md"
-            />
-          ) : cmdbInstanceDetails.length > 0 ? (
-            <EditorApp
-              name="CMDB"
-              source={JSON.stringify(cmdbInstanceDetails, null, 2)}
-              language="json"
-            />
-          ) : null}
+          )}
         </div>
       </div>
     </div>

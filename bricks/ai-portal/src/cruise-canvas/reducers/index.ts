@@ -3,6 +3,7 @@ import type { CruiseCanvasAction, CruiseCanvasState } from "./interfaces";
 import { tasks } from "./tasks";
 import { conversation } from "./conversation";
 import { errors } from "./errors";
+import { serviceFlows } from "./serviceFlows";
 
 type ReducersMapObject<S, A> = {
   [K in keyof S]: Reducer<S[K], A>;
@@ -27,4 +28,5 @@ export const rootReducer = combineReducers<
   conversation,
   tasks,
   errors,
+  serviceFlows,
 });

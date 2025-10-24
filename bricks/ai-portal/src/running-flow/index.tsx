@@ -60,7 +60,7 @@ class RunningFlow extends ReactNextElement implements RunningFlowProps {
   @event({ type: "active.change" })
   accessor #activeChange!: EventEmitter<string | null>;
 
-  #handleActiveChnage = (activityId: string | null) => {
+  #handleActiveChange = (activityId: string | null) => {
     this.#activeChange?.emit(activityId);
   };
 
@@ -69,7 +69,7 @@ class RunningFlow extends ReactNextElement implements RunningFlowProps {
       <RunningFlowComponent
         spec={this.spec}
         activeActivityId={this.activeActivityId}
-        onActiveChange={this.#handleActiveChnage}
+        onActiveChange={this.#handleActiveChange}
       />
     );
   }

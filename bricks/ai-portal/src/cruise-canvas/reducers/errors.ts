@@ -11,43 +11,36 @@ export const errors: Reducer<ConversationError[], CruiseCanvasAction> = (
       const { error, tasks } = action.payload;
       const lastError = state[state.length - 1];
 
+      let taskId: string | undefined;
+      if (tasks?.length) {
+        taskId = tasks[tasks.length - 1].id;
+      } else {
+        taskId = lastError?.taskId;
+      }
+
       if (typeof error === "string" && error) {
         if (lastError) {
           return state.slice(0, -1).concat(
             {
-              ...lastError,
+              taskId,
               error,
             },
-            { jobs: [] }
+            { taskId }
           );
         }
-        return [{ jobs: [], error }, { jobs: [] }];
-      }
-
-      const previousJobs = new Set(state.flatMap((e) => Array.from(e.jobs)));
-      const jobs = new Set<string>();
-      for (const task of tasks ?? []) {
-        for (const job of task.jobs ?? []) {
-          if (!previousJobs.has(job.id)) {
-            jobs.add(job.id);
-          }
-        }
-      }
-
-      const newJobs = Array.from(jobs);
-
-      if (newJobs.length === 0) {
-        return state;
       }
 
       if (lastError) {
-        return state.slice(0, -1).concat({
-          ...lastError,
-          jobs: [...lastError.jobs, ...newJobs],
-        });
+        if (lastError.error) {
+          return state.concat({ taskId });
+        }
+        if (lastError.taskId !== taskId) {
+          return state.slice(0, -1).concat({ taskId });
+        }
+        return state;
       }
 
-      return [{ jobs: newJobs }];
+      return taskId ? [{ taskId }] : state;
     }
 
     case "reset": {

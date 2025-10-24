@@ -343,7 +343,9 @@ describe("useConversationGraph", () => {
     ] as Task[];
 
     const { result } = renderHook(() =>
-      useConversationGraph(conversation, tasks, [], { showHiddenJobs: true })
+      useConversationGraph(conversation, tasks, [], undefined, undefined, {
+        showHiddenJobs: true,
+      })
     );
 
     expect(result.current?.nodes).toContainEqual({
@@ -373,7 +375,7 @@ describe("useConversationGraph", () => {
 
     const { result, rerender } = renderHook(
       ({ conv, taskList }) =>
-        useConversationGraph(conv, taskList, errors, {
+        useConversationGraph(conv, taskList, errors, undefined, undefined, {
           separateInstructions: true,
         }),
       { initialProps: { conv: conversation, taskList: tasks } }

@@ -31,6 +31,13 @@ import type {
   ChatInputProps,
 } from "../chat-input";
 import type { ShowCase, ShowCaseProps } from "../show-case";
+import type {
+  RunningFlow,
+  RunningFlowEvents,
+  RunningFlowMapEvents,
+  RunningFlowProps,
+} from "../running-flow";
+import type { BlankState, BlankStateProps } from "../blank-state";
 
 export const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
@@ -73,6 +80,19 @@ export const WrappedShowCase = wrapBrick<ShowCase, ShowCaseProps>(
 export const WrappedCodeBlock = wrapBrick<CodeBlock, CodeBlockProps>(
   "eo-code-block"
 );
+
+export const WrappedBlankState = wrapBrick<BlankState, BlankStateProps>(
+  "ai-portal.blank-state"
+);
+
+export const WrappedRunningFlow = wrapBrick<
+  RunningFlow,
+  RunningFlowProps,
+  RunningFlowEvents,
+  RunningFlowMapEvents
+>("ai-portal.running-flow", {
+  onActiveChange: "active.change",
+});
 
 export const showDialog =
   unwrapProvider<typeof _showDialog>("basic.show-dialog");

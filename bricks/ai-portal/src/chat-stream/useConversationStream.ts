@@ -1,101 +1,130 @@
 import { useMemo } from "react";
-import type { ChatMessage } from "./interfaces.js";
+import type { ChatMessage, MessageFromAssistant } from "./interfaces.js";
 import type {
-  ConversationBaseDetail,
+  ActiveDetail,
+  ActivityWithFlow,
   ConversationError,
+  Job,
+  ServiceFlowRun,
   Task,
 } from "../shared/interfaces.js";
-import { getFlatOrderedJobs } from "../cruise-canvas/getFlatOrderedJobs.js";
+import { getFlatChunks } from "../shared/getFlatChunks.js";
 
 export function useConversationStream(
-  conversation: ConversationBaseDetail | null | undefined,
+  conversationAvailable: boolean,
   tasks: Task[],
   errors: ConversationError[],
+  flowMap?: Map<string, ServiceFlowRun>,
+  activityMap?: Map<string, ActivityWithFlow>,
   options?: {
     showHumanActions?: boolean;
   }
 ) {
+  const showHumanActions = options?.showHumanActions;
+
   return useMemo(() => {
-    if (!conversation) {
+    if (!conversationAvailable) {
       return {
         messages: [],
-        lastToolCallJobId: null,
+        lastDetail: null,
       };
     }
 
+    const chunks = getFlatChunks(tasks, errors, flowMap, activityMap, true);
+    const jobMap = new Map<string, Job>();
     const messages: ChatMessage[] = [];
 
-    const {
-      list,
-      map: jobMap,
-      jobsWithFollowingErrors,
-    } = getFlatOrderedJobs(tasks, errors);
-
-    let prevAssistantMessage: ChatMessage = {
+    let prevAssistantMessage: MessageFromAssistant = {
       role: "assistant",
-      jobs: [],
+      chunks: [],
     };
-    let lastToolCallJobId: string | null = null;
-    for (const jobId of list) {
-      const job = jobMap.get(jobId)!;
-
-      if (job.toolCall) {
-        lastToolCallJobId = jobId;
-      }
-
-      if (
-        job.state === "completed" &&
-        job.messages?.length &&
-        job.messages.every((msg) => msg.role === "user")
-      ) {
-        if (
-          prevAssistantMessage.jobs.length > 0 ||
-          prevAssistantMessage.error
-        ) {
-          messages.push(prevAssistantMessage);
+    let lastDetail: ActiveDetail | null = null;
+    for (const chunk of chunks) {
+      if (chunk.type === "job") {
+        const job = chunk.job;
+        jobMap.set(job.id, job);
+        if (job.toolCall) {
+          lastDetail = {
+            type: "job",
+            id: job.id,
+          };
         }
-        messages.push({
-          role: "user",
-          content: job.messages
-            .flatMap((msg) =>
-              msg.parts.map((part) => (part.type === "text" ? part.text : ""))
-            )
-            .join(""),
-          cmd: job.cmd,
-        });
-        prevAssistantMessage = {
-          role: "assistant",
-          jobs: [],
-        };
+
+        if (
+          job.state === "completed" &&
+          job.messages?.length &&
+          job.messages.every((msg) => msg.role === "user")
+        ) {
+          if (prevAssistantMessage.chunks.length > 0) {
+            messages.push(prevAssistantMessage);
+          }
+          messages.push({
+            role: "user",
+            content: job.messages
+              .flatMap((msg) =>
+                msg.parts.map((part) => (part.type === "text" ? part.text : ""))
+              )
+              .join(""),
+            cmd: job.cmd,
+            fromSkippedSubTask: chunk.fromSkippedSubTask,
+          });
+          prevAssistantMessage = {
+            role: "assistant",
+            chunks: [],
+          };
+        } else {
+          prevAssistantMessage.chunks.push(chunk);
+        }
+
+        if (job.humanAction) {
+          if (prevAssistantMessage.chunks.length > 0) {
+            messages.push(prevAssistantMessage);
+          }
+          if (showHumanActions) {
+            messages.push({
+              role: "user",
+              content: job.humanAction,
+            });
+          }
+          prevAssistantMessage = {
+            role: "assistant",
+            chunks: [],
+          };
+        }
       } else {
-        prevAssistantMessage.jobs.push(job);
-      }
-
-      const followingError = jobsWithFollowingErrors.get(jobId);
-      if (followingError) {
-        prevAssistantMessage.error = followingError;
-      }
-
-      if (options?.showHumanActions && job.humanAction) {
-        if (
-          prevAssistantMessage.jobs.length > 0 ||
-          prevAssistantMessage.error
-        ) {
-          messages.push(prevAssistantMessage);
+        prevAssistantMessage.chunks.push(chunk);
+        if (chunk.type !== "error") {
+          lastDetail = {
+            type: chunk.type,
+            id: chunk.task.id,
+          };
         }
-        messages.push({
-          role: "user",
-          content: job.humanAction,
-        });
-        prevAssistantMessage = {
-          role: "assistant",
-          jobs: [],
-        };
       }
     }
 
-    messages.push(prevAssistantMessage);
+    let shouldAppendMessage = messages.length > 0;
+    if (
+      shouldAppendMessage &&
+      prevAssistantMessage.role === "assistant" &&
+      prevAssistantMessage.chunks.length === 0
+    ) {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage.role === "user" && lastMessage.fromSkippedSubTask) {
+        shouldAppendMessage = false;
+      }
+    }
 
-    return { messages, jobMap, lastToolCallJobId };
-  }, [conversation, tasks, errors]);
+    if (shouldAppendMessage) {
+      messages.push(prevAssistantMessage);
+    }
+
+    return { messages, jobMap, lastDetail };
+  }, [
+    conversationAvailable,
+    tasks,
+    flowMap,
+    activityMap,
+    errors,
+    showHumanActions,
+  ]);
 }

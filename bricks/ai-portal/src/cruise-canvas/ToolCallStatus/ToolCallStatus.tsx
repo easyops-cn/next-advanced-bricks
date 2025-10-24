@@ -1,13 +1,14 @@
 import React, { useCallback, useContext, useMemo } from "react";
 import classNames from "classnames";
 import moment from "moment";
+import { isEqual } from "lodash";
 import { humanizeTime, HumanizeTimeFormat } from "@next-shared/datetime";
 import styles from "./ToolCallStatus.module.css";
 import { WrappedIcon } from "../../shared/bricks";
 import { TaskContext } from "../../shared/TaskContext";
 import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
 import { getToolDataProgress } from "../utils/getToolDataProgress";
-import type { Job, JobState } from "../../shared/interfaces";
+import type { ActiveDetail, Job, JobState } from "../../shared/interfaces";
 
 export interface NodeJobToolCallProps {
   job: Job;
@@ -18,8 +19,7 @@ export function ToolCallStatus({
   job,
   variant,
 }: NodeJobToolCallProps): JSX.Element {
-  const { setActiveToolCallJobId, separateInstructions } =
-    useContext(TaskContext);
+  const { setActiveDetail, separateInstructions } = useContext(TaskContext);
   const toolCall = job.toolCall!;
   const toolTitle = toolCall.annotations?.title || toolCall.name;
   const jobTitle = separateInstructions
@@ -43,8 +43,14 @@ export function ToolCallStatus({
     if (variant === "read-only") {
       return;
     }
-    setActiveToolCallJobId(job.id);
-  }, [job.id, variant, setActiveToolCallJobId]);
+    const newActiveDetail: ActiveDetail = {
+      type: "job",
+      id: job.id,
+    };
+    setActiveDetail((prev) =>
+      isEqual(prev, newActiveDetail) ? prev : newActiveDetail
+    );
+  }, [job.id, variant, setActiveDetail]);
 
   const toolState =
     ["working", "input-required"].includes(job.state) && hasToolCallResponse

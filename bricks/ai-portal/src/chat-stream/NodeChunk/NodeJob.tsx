@@ -1,8 +1,8 @@
 import React, { useContext, useMemo, useState } from "react";
 import classNames from "classnames";
-import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
+import { isEqual } from "lodash";
 import type { CmdbInstanceDetailData } from "../../cruise-canvas/interfaces.js";
-import styles from "./NodeJob.module.css";
+import styles from "./NodeChunk.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
 import { WrappedIcon } from "../../shared/bricks.js";
 import { EnhancedMarkdown } from "../../cruise-canvas/EnhancedMarkdown/EnhancedMarkdown.js";
@@ -10,35 +10,25 @@ import { CmdbInstanceDetail } from "../../cruise-canvas/CmdbInstanceDetail/CmdbI
 import { NodeView } from "../NodeView/NodeView.js";
 import { TaskContext } from "../../shared/TaskContext.js";
 import { StreamContext } from "../StreamContext.js";
-import type {
-  ConversationState,
-  FileInfo,
-  Job,
-  JobState,
-  TaskState,
-} from "../../shared/interfaces.js";
+import type { ActiveDetail, FileInfo, Job } from "../../shared/interfaces.js";
+import { getStateDisplay } from "./getStateDisplay.js";
+import { ICON_UP } from "../../shared/constants.js";
 
 export interface NodeJobProps {
   job: Job;
-  taskState: TaskState | ConversationState | undefined;
 }
 
-const ICON_UP: GeneralIconProps = {
-  lib: "fa",
-  icon: "angle-up",
-};
-
-export function NodeJob({ job, taskState }: NodeJobProps) {
+export function NodeJob({ job }: NodeJobProps) {
   const toolCall = job.toolCall;
   const toolTitle = toolCall?.annotations?.title || toolCall?.name;
   const toolName = toolCall?.name;
   const showToolCall = !!toolCall;
-  const { setActiveToolCallJobId } = useContext(TaskContext);
-  const { lastToolCallJobId, setUserClosedAside } = useContext(StreamContext);
+  const { conversationState, setActiveDetail } = useContext(TaskContext);
+  const { lastDetail, setUserClosedAside } = useContext(StreamContext);
 
   const { className, icon } = useMemo(() => {
-    return getClassNameAndIconProps(job.state, taskState);
-  }, [job.state, taskState]);
+    return getStateDisplay(job.state, conversationState);
+  }, [job.state, conversationState]);
 
   const [toolMarkdownContent, cmdbInstanceDetails /* , files */] =
     useMemo(() => {
@@ -122,12 +112,19 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
             <div
               className={styles.tool}
               onClick={() => {
-                setActiveToolCallJobId(job.id);
-                if (job.id === lastToolCallJobId) {
+                const detail: ActiveDetail = {
+                  type: "job",
+                  id: job.id,
+                };
+                setActiveDetail((prev) =>
+                  isEqual(prev, detail) ? prev : detail
+                );
+                if (isEqual(detail, lastDetail)) {
                   setUserClosedAside(false);
                 }
               }}
             >
+              <WrappedIcon lib="lucide" icon="square-chevron-right" />
               {toolTitle}
             </div>
             <div className={styles.content}>
@@ -153,85 +150,4 @@ export function NodeJob({ job, taskState }: NodeJobProps) {
       )}
     </div>
   );
-}
-
-function getClassNameAndIconProps(
-  state: JobState | undefined,
-  taskState: TaskState | ConversationState | undefined
-) {
-  switch (state) {
-    case "completed":
-      return {
-        className: styles.completed,
-        icon: {
-          lib: "antd",
-          theme: "filled",
-          icon: "check-circle",
-        },
-      };
-    case "submitted":
-    case "working":
-      if (taskState === "terminated") {
-        return {
-          icon: {
-            lib: "fa",
-            prefix: "far",
-            icon: "circle-stop",
-          },
-        };
-      }
-      return {
-        className: styles.working,
-        icon: {
-          lib: "antd",
-          theme: "outlined",
-          icon: "loading-3-quarters",
-          spinning: true,
-        },
-      };
-    case "input-required":
-      return {
-        className: styles["input-required"],
-        icon: {
-          lib: "fa",
-          prefix: "far",
-          icon: "circle-user",
-        },
-      };
-    case "failed":
-      return {
-        className: styles.failed,
-        icon: {
-          lib: "fa",
-          prefix: "fas",
-          icon: "xmark",
-        },
-      };
-    case "canceled":
-    case "terminated" as JobState:
-      return {
-        className: styles.canceled,
-        icon: {
-          lib: "fa",
-          prefix: "far",
-          icon: "circle-stop",
-        },
-      };
-    case "skipped":
-      return {
-        icon: {
-          lib: "fa",
-          prefix: "fas",
-          icon: "ban",
-        },
-      };
-    default:
-      return {
-        icon: {
-          lib: "fa",
-          prefix: "far",
-          icon: "clock",
-        },
-      };
-  }
 }

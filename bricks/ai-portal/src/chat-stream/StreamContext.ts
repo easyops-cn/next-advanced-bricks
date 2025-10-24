@@ -1,11 +1,12 @@
 import { createContext, type Dispatch } from "react";
+import type { ActiveDetail } from "../shared/interfaces";
 
 export interface StreamContextValue {
-  lastToolCallJobId: string | null;
+  lastDetail: ActiveDetail | null;
   setUserClosedAside: Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const StreamContext = createContext<StreamContextValue>({
-  lastToolCallJobId: null,
+  lastDetail: null,
   setUserClosedAside: () => {},
 });
