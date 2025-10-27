@@ -19,8 +19,8 @@ export enum K {
   FILE_PREVIEW_UNPREVIEWABLE_TIP_PREFIX = "FILE_PREVIEW_UNPREVIEWABLE_TIP_PREFIX",
   FILE_PREVIEW_UNPREVIEWABLE_TIP_SUFFIX = "FILE_PREVIEW_UNPREVIEWABLE_TIP_SUFFIX",
   DOWNLOAD = "DOWNLOAD",
-  START_SERVICE_FLOW = "START_SERVICE_FLOW",
-  START_SERVICE_FLOW_ACTIVITY = "START_SERVICE_FLOW_ACTIVITY",
+  INITIATING_SERVICE_FLOW = "INITIATING_SERVICE_FLOW",
+  STARTING_SERVICE_FLOW_ACTIVITY = "STARTING_SERVICE_FLOW_ACTIVITY",
 }
 
 const en: Locale = {
@@ -43,8 +43,8 @@ const en: Locale = {
     "This file is unpreviewable currently, you can",
   FILE_PREVIEW_UNPREVIEWABLE_TIP_SUFFIX: "and view it locally.",
   DOWNLOAD: "Download",
-  START_SERVICE_FLOW: "Start service flow: {{ name }}",
-  START_SERVICE_FLOW_ACTIVITY: "Start service flow activity: {{ name }}",
+  INITIATING_SERVICE_FLOW: "Initiating service flow: {{ name }}",
+  STARTING_SERVICE_FLOW_ACTIVITY: "Starting service flow activity: {{ name }}",
 };
 
 const zh: Locale = {
@@ -66,8 +66,8 @@ const zh: Locale = {
   FILE_PREVIEW_UNPREVIEWABLE_TIP_PREFIX: "该类型文件暂不支持预览，您可以",
   FILE_PREVIEW_UNPREVIEWABLE_TIP_SUFFIX: "查看。",
   DOWNLOAD: "下载",
-  START_SERVICE_FLOW: "开始业务流：{{ name }}",
-  START_SERVICE_FLOW_ACTIVITY: "开始业务流活动：{{ name }}",
+  INITIATING_SERVICE_FLOW: "发起业务流：{{ name }}",
+  STARTING_SERVICE_FLOW_ACTIVITY: "开始业务流活动：{{ name }}",
 };
 
 export const NS = "bricks/ai-portal/cruise-canvas";

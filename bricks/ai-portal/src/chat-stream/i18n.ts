@@ -2,26 +2,23 @@ import { i18n } from "@next-core/i18n";
 
 export enum K {
   SWITCH_TO_CANVAS = "SWITCH_TO_CANVAS",
-  START_SERVICE_FLOW = "START_SERVICE_FLOW",
-  START_SERVICE_FLOW_ACTIVITY = "START_SERVICE_FLOW_ACTIVITY",
-  SERVICE_FLOW = "SERVICE_FLOW",
-  SERVICE_FLOW_ACTIVITY = "SERVICE_FLOW_ACTIVITY",
+  INITIATING_SERVICE_FLOW = "INITIATING_SERVICE_FLOW",
+  STARTING_SERVICE_FLOW_ACTIVITY = "STARTING_SERVICE_FLOW_ACTIVITY",
+  HIL_TIPS = "HIL_TIPS",
 }
 
 const en: Locale = {
   SWITCH_TO_CANVAS: "Switch to canvas",
-  START_SERVICE_FLOW: "Start service flow: {{ name }}",
-  START_SERVICE_FLOW_ACTIVITY: "Start service flow activity: {{ name }}",
-  SERVICE_FLOW: "Service flow: {{ name }}",
-  SERVICE_FLOW_ACTIVITY: "Service flow activity: {{ name }}",
+  INITIATING_SERVICE_FLOW: "Initiating service flow: {{ name }}",
+  STARTING_SERVICE_FLOW_ACTIVITY: "Starting service flow activity: {{ name }}",
+  HIL_TIPS: "Triggered HIL rule, waiting for {{ name }} to process.",
 };
 
 const zh: Locale = {
   SWITCH_TO_CANVAS: "切换为画布",
-  START_SERVICE_FLOW: "开始业务流：{{ name }}",
-  START_SERVICE_FLOW_ACTIVITY: "开始业务流活动：{{ name }}",
-  SERVICE_FLOW: "业务流：{{ name }}",
-  SERVICE_FLOW_ACTIVITY: "业务流活动：{{ name }}",
+  INITIATING_SERVICE_FLOW: "发起业务流：{{ name }}",
+  STARTING_SERVICE_FLOW_ACTIVITY: "开始业务流活动：{{ name }}",
+  HIL_TIPS: "触发 HIL 规则，等待 {{ name }} 处理。",
 };
 
 export const NS = "bricks/ai-portal/chat-stream";

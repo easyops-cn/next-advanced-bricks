@@ -14,6 +14,7 @@ import { WrappedIcon } from "../../shared/bricks.js";
 import type { MessageChunk } from "../interfaces";
 import { RequestHumanAction } from "../../shared/RequestHumanAction/RequestHumanAction";
 import { NodeChunk } from "../NodeChunk/NodeChunk";
+import { HumanInTheLoop } from "../HumanInTheLoop/HumanInTheLoop";
 
 export interface AssistantMessageProps {
   chunks: MessageChunk[];
@@ -35,9 +36,7 @@ export function AssistantMessage({
       switch (lastChunk.type) {
         case "flow":
         case "activity":
-          lastJob = lastChunk.task.jobs.findLast(
-            (job) => job.state === "working"
-          );
+          lastJob = lastChunk.task.jobs[lastChunk.task.jobs.length - 1];
           break;
         case "job":
           lastJob = lastChunk.job;
@@ -86,13 +85,19 @@ export function AssistantMessage({
         {working && <div className={styles.texting}></div>}
         {isLatest &&
           lastJob &&
-          !lastJob.humanAction &&
-          lastJob.requestHumanAction &&
           !GENERAL_DONE_STATES.includes(scopeState) &&
-          (lastJob.state === "working" ||
-            lastJob.state === "input-required") && (
-            <RequestHumanAction action={lastJob.requestHumanAction} ui="chat" />
-          )}
+          (lastJob.state === "working" || lastJob.state === "input-required") &&
+          !lastJob.humanAction &&
+          (lastJob.hil ? (
+            <HumanInTheLoop job={lastJob} />
+          ) : (
+            lastJob.requestHumanAction && (
+              <RequestHumanAction
+                action={lastJob.requestHumanAction}
+                ui="chat"
+              />
+            )
+          ))}
       </div>
     </div>
   );

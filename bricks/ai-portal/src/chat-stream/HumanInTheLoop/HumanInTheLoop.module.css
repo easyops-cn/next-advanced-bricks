@@ -1,0 +1,24 @@
+.hil {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  border: 1px solid #ffffff;
+  backdrop-filter: blur(10px);
+  padding: 13px 16px;
+  margin-top: 12px;
+}
+
+.content,
+.actions {
+  display: flex;
+  align-items: center;
+}
+
+.content {
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.actions {
+  justify-content: flex-end;
+  margin-top: -3px;
+}
