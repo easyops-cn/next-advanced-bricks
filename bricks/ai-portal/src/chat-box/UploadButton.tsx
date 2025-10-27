@@ -11,6 +11,7 @@ const ICON_UPLOAD: GeneralIconProps = {
 let uid = 0;
 
 export interface UploadButtonProps {
+  accept?: string;
   onChange?: (files: FileItem[] | undefined) => void;
 }
 
@@ -21,7 +22,7 @@ export interface UploadButtonRef {
 export const UploadButton = forwardRef(LegacyUploadButton);
 
 function LegacyUploadButton(
-  { onChange }: UploadButtonProps,
+  { accept, onChange }: UploadButtonProps,
   ref: React.Ref<UploadButtonRef>
 ) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -50,6 +51,7 @@ function LegacyUploadButton(
     <>
       <input
         type="file"
+        accept={accept}
         multiple
         hidden
         ref={inputRef}

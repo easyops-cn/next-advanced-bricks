@@ -7,6 +7,7 @@ import type {
   CommandPayload,
   ConversationPatch,
   RequestStore,
+  UploadFileInfo,
 } from "../shared/interfaces";
 
 const MINIMAL_DELAY = 500;
@@ -87,7 +88,8 @@ export function useConversationDetail(
     const makeRequest = async (
       content: string | null,
       action?: string,
-      cmd?: CommandPayload
+      cmd?: CommandPayload,
+      files?: UploadFileInfo[]
     ) => {
       if (requesting) {
         return;
@@ -108,7 +110,9 @@ export function useConversationDetail(
               {
                 signal: ctrl.signal,
                 method: "POST",
-                body: JSON.stringify(action ? { action } : { content, cmd }),
+                body: JSON.stringify(
+                  action ? { action } : { content, cmd, files }
+                ),
                 headers: {
                   "Content-Type": "application/json",
                 },
@@ -165,7 +169,12 @@ export function useConversationDetail(
     };
 
     if (initialRequest?.conversationId === conversationId) {
-      makeRequest(initialRequest.content, undefined, initialRequest.cmd);
+      makeRequest(
+        initialRequest.content,
+        undefined,
+        initialRequest.cmd,
+        initialRequest.files
+      );
     } else {
       makeRequest(null);
     }
