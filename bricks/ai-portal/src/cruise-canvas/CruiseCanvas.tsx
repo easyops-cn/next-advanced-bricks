@@ -584,6 +584,9 @@ export function CruiseCanvasComponent(
   );
 
   const [activeDetail, setActiveDetail] = useState<ActiveDetail | null>(null);
+  const [subActiveDetail, setSubActiveDetail] = useState<ActiveDetail | null>(
+    null
+  );
 
   const [activeExpandedViewJobId, setActiveExpandedViewJobId] = useState<
     string | null
@@ -634,6 +637,8 @@ export function CruiseCanvasComponent(
       setActiveExpandedViewJobId,
       activeDetail,
       setActiveDetail,
+      subActiveDetail,
+      setSubActiveDetail,
 
       submittingFeedback,
       submittedFeedback,
@@ -685,6 +690,7 @@ export function CruiseCanvasComponent(
 
       activeExpandedViewJobId,
       activeDetail,
+      subActiveDetail,
 
       submittingFeedback,
       submittedFeedback,

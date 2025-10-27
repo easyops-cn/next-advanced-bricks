@@ -22,10 +22,12 @@ const ICON_SHRINK: GeneralIconProps = {
 
 export interface AsideProps {
   detail: FulfilledActiveDetail;
+  isSubTask?: boolean;
+  faded?: boolean;
 }
 
-export function Aside({ detail }: AsideProps) {
-  const { setActiveDetail } = useContext(TaskContext);
+export function Aside({ detail, isSubTask, faded }: AsideProps) {
+  const { setActiveDetail, setSubActiveDetail } = useContext(TaskContext);
   const { setUserClosedAside } = useContext(StreamContext);
 
   const [toolMarkdownContent, cmdbInstanceDetails /* , files */] =
@@ -61,7 +63,12 @@ export function Aside({ detail }: AsideProps) {
     }, [detail]);
 
   return (
-    <div className={styles.aside}>
+    <div
+      className={classNames(styles.aside, {
+        [styles.sub]: isSubTask,
+        [styles.faded]: faded,
+      })}
+    >
       <div className={styles.box}>
         <div className={styles.header}>
           <div className={styles.title}>Elevo&#39;s Computer</div>
@@ -69,8 +76,12 @@ export function Aside({ detail }: AsideProps) {
             icon={ICON_SHRINK}
             variant="mini"
             onClick={() => {
-              setActiveDetail(null);
-              setUserClosedAside(true);
+              if (isSubTask) {
+                setSubActiveDetail(null);
+              } else {
+                setActiveDetail(null);
+                setUserClosedAside(true);
+              }
             }}
           />
         </div>

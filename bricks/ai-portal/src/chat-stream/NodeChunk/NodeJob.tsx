@@ -16,14 +16,16 @@ import { ICON_UP } from "../../shared/constants.js";
 
 export interface NodeJobProps {
   job: Job;
+  isSubTask?: boolean;
 }
 
-export function NodeJob({ job }: NodeJobProps) {
+export function NodeJob({ job, isSubTask }: NodeJobProps) {
   const toolCall = job.toolCall;
   const toolTitle = toolCall?.annotations?.title || toolCall?.name;
   const toolName = toolCall?.name;
   const showToolCall = !!toolCall;
-  const { conversationState, setActiveDetail } = useContext(TaskContext);
+  const { conversationState, setActiveDetail, setSubActiveDetail } =
+    useContext(TaskContext);
   const { lastDetail, setUserClosedAside } = useContext(StreamContext);
 
   const { className, icon } = useMemo(() => {
@@ -116,7 +118,7 @@ export function NodeJob({ job }: NodeJobProps) {
                   type: "job",
                   id: job.id,
                 };
-                setActiveDetail((prev) =>
+                (isSubTask ? setSubActiveDetail : setActiveDetail)((prev) =>
                   isEqual(prev, detail) ? prev : detail
                 );
                 if (isEqual(detail, lastDetail)) {

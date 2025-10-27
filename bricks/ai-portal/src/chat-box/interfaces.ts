@@ -1,8 +1,10 @@
+import type { UploadFileInfo } from "../shared/interfaces";
+
 export interface FileItem {
   uid: number;
   file: File;
   status: FileStatus;
-  uploadedName?: string;
+  fileInfo?: UploadFileInfo;
   abortController?: AbortController;
 }
 

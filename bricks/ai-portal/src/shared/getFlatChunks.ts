@@ -4,6 +4,7 @@ import type {
   ServiceFlowRun,
   ActivityWithFlow,
   ConversationError,
+  Job,
 } from "../shared/interfaces";
 import { getTaskTree, type TaskTreeNode } from "./getTaskTree";
 
@@ -15,14 +16,15 @@ export function getFlatChunks(
   skipActivitySubTasks?: boolean
 ) {
   const taskTree = getTaskTree(tasks);
-  const flatChunks: MessageChunk[] = [];
+  const chunks: MessageChunk[] = [];
+  const jobMap = new Map<string, Job>();
 
-  const traverseJobNodes = (taskNode: TaskTreeNode, level: number) => {
+  const collectChunks = (taskNode: TaskTreeNode, level: number) => {
     const flow = flowMap?.get(taskNode.task.id);
 
     const activityWithFlow = activityMap?.get(taskNode.task.id);
     if (activityWithFlow) {
-      flatChunks.push({
+      chunks.push({
         type: "activity",
         activity: activityWithFlow.activity,
         flow: activityWithFlow.flow,
@@ -39,7 +41,7 @@ export function getFlatChunks(
           job.messages?.length &&
           job.messages.every((msg) => msg.role === "user")
         ) {
-          flatChunks.push({
+          chunks.push({
             type: "job",
             job,
             level,
@@ -51,16 +53,16 @@ export function getFlatChunks(
 
       if (job.type === "serviceFlow") {
         if (flow) {
-          flatChunks.push({
+          chunks.push({
             type: "flow",
             flow,
             task: taskNode.task,
           });
         }
       } else if (subTask) {
-        traverseJobNodes(subTask, level + 1);
+        collectChunks(subTask, level + 1);
       } else {
-        flatChunks.push({
+        chunks.push({
           type: "job",
           job,
           level,
@@ -72,26 +74,36 @@ export function getFlatChunks(
       (error) => error.taskId === taskNode.task.id && error.error
     );
     for (const error of taskErrors) {
-      flatChunks.push({
+      chunks.push({
         type: "error",
         error: error.error!,
       });
     }
   };
 
+  const collectJobs = (taskNode: TaskTreeNode) => {
+    for (const { job, subTask } of taskNode.children) {
+      jobMap.set(job.id, job);
+      if (subTask) {
+        collectJobs(subTask);
+      }
+    }
+  };
+
   // Get flattened jobs
   for (const taskNode of taskTree) {
-    traverseJobNodes(taskNode, 0);
+    collectChunks(taskNode, 0);
+    collectJobs(taskNode);
   }
 
   for (const error of errors) {
     if (!error.taskId && error.error) {
-      flatChunks.push({
+      chunks.push({
         type: "error",
         error: error.error,
       });
     }
   }
 
-  return flatChunks;
+  return { chunks, jobMap };
 }

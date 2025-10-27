@@ -17,26 +17,29 @@ import { K, t } from "../i18n";
 
 export interface NodeChunkProps {
   chunk: MessageChunk;
+  isSubTask?: boolean;
 }
 
-export function NodeChunk({ chunk }: NodeChunkProps) {
+export function NodeChunk({ chunk, isSubTask }: NodeChunkProps) {
   if (chunk.type === "job") {
-    return <NodeJob job={chunk.job} />;
+    return <NodeJob job={chunk.job} isSubTask={isSubTask} />;
   }
 
   if (chunk.type === "error") {
     return <div className={styles.error}>{chunk.error}</div>;
   }
 
-  return <NodeTask chunk={chunk} />;
+  return <NodeTask chunk={chunk} isSubTask={isSubTask} />;
 }
 
 interface NodeTaskProps {
   chunk: MessageChunkOfFlow | MessageChunkOfActivity;
+  isSubTask?: boolean;
 }
 
-function NodeTask({ chunk }: NodeTaskProps) {
-  const { conversationState, setActiveDetail } = useContext(TaskContext);
+function NodeTask({ chunk, isSubTask }: NodeTaskProps) {
+  const { conversationState, setActiveDetail, setSubActiveDetail } =
+    useContext(TaskContext);
   const { setUserClosedAside, lastDetail } = useContext(StreamContext);
   const [collapsed, setCollapsed] = useState(false);
   const { type, task } = chunk;
@@ -72,7 +75,9 @@ function NodeTask({ chunk }: NodeTaskProps) {
               type: chunk.type,
               id: chunk.task.id,
             };
-            setActiveDetail((prev) => (isEqual(prev, detail) ? prev : detail));
+            (isSubTask ? setSubActiveDetail : setActiveDetail)((prev) =>
+              isEqual(prev, detail) ? prev : detail
+            );
             if (isEqual(detail, lastDetail)) {
               setUserClosedAside(false);
             }

@@ -131,4 +131,5 @@ ai-portal\.chat-stream[hide-mermaid] .content .markdown :global(.mermaid) {
 .error {
   color: var(--color-error);
   white-space: pre-wrap;
+  word-break: break-word;
 }

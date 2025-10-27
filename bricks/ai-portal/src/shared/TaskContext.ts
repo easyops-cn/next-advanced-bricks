@@ -31,6 +31,8 @@ export interface TaskContextValue {
   setActiveExpandedViewJobId: Dispatch<React.SetStateAction<string | null>>;
   activeDetail: ActiveDetail | null;
   setActiveDetail: Dispatch<React.SetStateAction<ActiveDetail | null>>;
+  subActiveDetail: ActiveDetail | null;
+  setSubActiveDetail: Dispatch<React.SetStateAction<ActiveDetail | null>>;
 
   submittingFeedback: boolean;
   submittedFeedback: boolean;
@@ -62,6 +64,8 @@ export const TaskContext = createContext<TaskContextValue>({
   setActiveExpandedViewJobId: () => {},
   activeDetail: null,
   setActiveDetail: () => {},
+  subActiveDetail: null,
+  setSubActiveDetail: () => {},
   submittingFeedback: false,
   submittedFeedback: false,
   onSubmitFeedback: () => {},

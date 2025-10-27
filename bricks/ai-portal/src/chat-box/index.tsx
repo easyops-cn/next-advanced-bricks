@@ -28,7 +28,7 @@ import {
   getChatCommand,
   setChatCommand,
 } from "../data-providers/set-chat-command.js";
-import type { CommandPayload } from "../shared/interfaces.js";
+import type { CommandPayload, UploadFileInfo } from "../shared/interfaces.js";
 import { UploadButton, type UploadButtonRef } from "./UploadButton.js";
 import { FileListComponent } from "./FileListComponent.js";
 import { WrappedActions, WrappedIcon } from "./bricks.js";
@@ -46,7 +46,7 @@ export interface ChatBoxProps {
   autoFocus?: boolean;
   aiEmployees?: AIEmployee[];
   commands?: Command[];
-  uploadBucket?: string;
+  uploadFiles?: UploadFileOptions;
 }
 
 export interface AIEmployee {
@@ -65,6 +65,16 @@ export interface Command {
   value: string;
   options?: Command[];
   payload?: CommandPayload;
+}
+
+export interface UploadFileOptions {
+  enabled?: boolean;
+  accept?: string;
+}
+
+export interface ChatPayload {
+  content: string;
+  files?: UploadFileInfo[];
 }
 
 type ActionWithAncestors = SimpleAction & {
@@ -102,14 +112,24 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
   @property({ attribute: false })
   accessor commands: Command[] | undefined;
 
-  @property()
-  accessor uploadBucket: string | undefined;
+  @property({ attribute: false })
+  accessor uploadFiles: UploadFileOptions | undefined;
 
+  /**
+   * @deprecated Use `chat.submit` event instead
+   */
   @event({ type: "message.submit" })
   accessor #messageSubmit!: EventEmitter<string>;
 
   #handleMessageSubmit = (value: string) => {
     this.#messageSubmit.emit(value);
+  };
+
+  @event({ type: "chat.submit" })
+  accessor #chatSubmit!: EventEmitter<ChatPayload>;
+
+  #handleChatSubmit = (payload: ChatPayload) => {
+    this.#chatSubmit.emit(payload);
   };
 
   @event({ type: "ai-employee.mention" })
@@ -124,13 +144,6 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
 
   #handleCommandSelect = (command: CommandPayload | null) => {
     this.#commandSelect.emit(command);
-  };
-
-  @event({ type: "files.change" })
-  accessor #filesChange!: EventEmitter<string[] | null | undefined>;
-
-  #handleFilesChange = (files: string[] | null | undefined) => {
-    this.#filesChange.emit(files);
   };
 
   @method()
@@ -156,11 +169,11 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
         autoFocus={this.autoFocus}
         aiEmployees={this.aiEmployees}
         commands={this.commands}
-        uploadBucket={this.uploadBucket}
-        onSubmit={this.#handleMessageSubmit}
+        uploadFiles={this.uploadFiles}
+        onMessageSubmit={this.#handleMessageSubmit}
+        onChatSubmit={this.#handleChatSubmit}
         onEmployeeMention={this.#handleEmployeeMention}
         onCommandSelect={this.#handleCommandSelect}
-        onFilesChange={this.#handleFilesChange}
         ref={this.ref}
       />
     );
@@ -168,10 +181,10 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
 }
 
 interface ChatBoxComponentProps extends ChatBoxProps {
-  onSubmit: (value: string) => void;
+  onMessageSubmit: (value: string) => void;
+  onChatSubmit: (payload: ChatPayload) => void;
   onEmployeeMention: (employee: AIEmployee | null) => void;
   onCommandSelect: (command: CommandPayload | null) => void;
-  onFilesChange: (files: string[] | null | undefined) => void;
   ref?: React.Ref<ChatBoxRef>;
 }
 
@@ -191,11 +204,11 @@ function LegacyChatBoxComponent(
     autoFocus,
     aiEmployees,
     commands,
-    uploadBucket,
-    onSubmit,
+    uploadFiles,
+    onMessageSubmit,
+    onChatSubmit,
     onEmployeeMention,
     onCommandSelect,
-    onFilesChange,
   }: ChatBoxComponentProps,
   ref: React.Ref<ChatBoxRef>
 ) {
@@ -239,10 +252,10 @@ function LegacyChatBoxComponent(
           const formData = new FormData();
           formData.append("file", fileItem.file);
 
-          const response = await http.request<{ data: { objectName: string } }>(
-            `api/gateway/object_store.object_store.PutObject/api/v1/objectStore/bucket/${uploadBucket}/object`,
+          const response = await http.request<{ data: UploadFileInfo }>(
+            "api/gateway/logic.llm.aiops_service/api/v1/elevo/files/upload",
             {
-              method: "PUT",
+              method: "POST",
               body: formData,
               signal: abortController.signal,
             }
@@ -254,7 +267,7 @@ function LegacyChatBoxComponent(
                 return {
                   ...item,
                   status: "done",
-                  uploadedName: response.data.objectName,
+                  fileInfo: response.data,
                 };
               }
               return item;
@@ -273,23 +286,7 @@ function LegacyChatBoxComponent(
         }
       }
     });
-  }, [files, uploadBucket]);
-
-  const [allFilesDone, setAllFilesDone] = useState(true);
-  const initialRef = useRef(true);
-
-  useEffect(() => {
-    const allFilesDone =
-      !files || files.every((file) => file.status === "done");
-    setAllFilesDone(allFilesDone);
-    if (initialRef.current) {
-      initialRef.current = false;
-      return;
-    }
-    if (allFilesDone) {
-      onFilesChange(files?.map((file) => file.uploadedName!));
-    }
-  }, [files, onFilesChange]);
+  }, [files]);
 
   useEffect(() => {
     const store = window.__elevo_try_it_out;
@@ -315,20 +312,42 @@ function LegacyChatBoxComponent(
     },
   }));
 
-  const submitWithoutCommand = useCallback(
+  const [allFilesDone, setAllFilesDone] = useState(true);
+  const [fileInfos, setFileInfos] = useState<UploadFileInfo[] | undefined>();
+  const initialRef = useRef(true);
+
+  useEffect(() => {
+    const allFilesDone =
+      !files || files.every((file) => file.status === "done");
+    setAllFilesDone(allFilesDone);
+    if (initialRef.current) {
+      initialRef.current = false;
+      return;
+    }
+    if (allFilesDone) {
+      setFileInfos(files?.map((file) => file.fileInfo!));
+    }
+  }, [files]);
+
+  const doSubmit = useCallback(
     (value: string) => {
-      onSubmit(value.slice(commandText?.length ?? 0));
+      const content = value.slice(commandText?.length ?? 0);
+      onMessageSubmit(content);
+      onChatSubmit({
+        content,
+        files: fileInfos,
+      });
     },
-    [commandText?.length, onSubmit]
+    [commandText?.length, fileInfos, onChatSubmit, onMessageSubmit]
   );
 
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLTextAreaElement>) => {
       if (e.currentTarget.value && allFilesDone) {
-        submitWithoutCommand(e.currentTarget.value);
+        doSubmit(e.currentTarget.value);
       }
     },
-    [submitWithoutCommand, allFilesDone]
+    [doSubmit, allFilesDone]
   );
 
   const handleChange = useCallback(
@@ -444,8 +463,8 @@ function LegacyChatBoxComponent(
   }, [commandText, onCommandSelect, value]);
 
   const handleSubmitClick = useCallback(() => {
-    submitWithoutCommand(valueRef.current);
-  }, [submitWithoutCommand]);
+    doSubmit(valueRef.current);
+  }, [doSubmit]);
 
   useEffect(
     () => {
@@ -805,10 +824,11 @@ function LegacyChatBoxComponent(
             <slot name="actions"></slot>
           </div>
           <div className="buttons">
-            {uploadBucket ? (
+            {uploadFiles?.enabled ? (
               <>
                 <UploadButton
                   ref={uploadButtonRef}
+                  accept={uploadFiles?.accept}
                   onChange={(files) =>
                     setFiles((prevFiles) => [
                       ...(prevFiles ?? []),

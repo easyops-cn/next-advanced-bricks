@@ -15,6 +15,7 @@ const MIME_TYPES = new Map<string, string>([
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   ],
   ["txt", "text/plain"],
+  ["csv", "text/csv"],
   ["xls", "application/vnd.ms-excel"],
   ["xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"],
   ["ppt", "application/vnd.ms-powerpoint"],

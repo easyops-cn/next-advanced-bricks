@@ -13,7 +13,6 @@
 }
 
 .texting::after {
-  position: absolute;
   content: "   ";
   animation: texting 2s infinite;
   white-space: pre;
@@ -25,18 +24,18 @@
 
 @keyframes texting {
   0% {
-    content: "   ";
+    content: "\00a0\00a0\00a0";
   }
   25% {
-    content: ".  ";
+    content: ".\00a0\00a0";
   }
   50% {
-    content: ".. ";
+    content: "..\00a0";
   }
   75% {
     content: "...";
   }
   100% {
-    content: "   ";
+    content: "\00a0\00a0\00a0";
   }
 }

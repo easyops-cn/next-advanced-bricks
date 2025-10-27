@@ -216,6 +216,11 @@ export interface RequestStore {
   conversationId: string;
   content: string;
   cmd?: CommandPayload;
+  files?: UploadFileInfo[];
+}
+
+export interface UploadFileInfo {
+  fileId: string;
 }
 
 export interface GeneratedView {

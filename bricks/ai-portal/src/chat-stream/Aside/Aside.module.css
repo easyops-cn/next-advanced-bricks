@@ -3,6 +3,18 @@
   height: 100%;
 }
 
+.faded {
+  opacity: 0.4;
+}
+
+.sub {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  left: -16px;
+  height: calc(100% - 16px);
+}
+
 .box {
   background: #ffffff;
   box-shadow: 1px 1px 10px 0px rgba(0, 10, 26, 0.1);
