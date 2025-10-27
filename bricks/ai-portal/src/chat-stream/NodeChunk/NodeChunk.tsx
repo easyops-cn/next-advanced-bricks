@@ -62,8 +62,10 @@ function NodeTask({ chunk, isSubTask }: NodeTaskProps) {
         </div>
         <div className={styles.title}>
           {type === "flow"
-            ? t(K.START_SERVICE_FLOW, { name: chunk.flow.name })
-            : t(K.START_SERVICE_FLOW_ACTIVITY, { name: chunk.activity.name })}
+            ? t(K.INITIATING_SERVICE_FLOW, { name: chunk.flow.name })
+            : t(K.STARTING_SERVICE_FLOW_ACTIVITY, {
+                name: chunk.activity.name,
+              })}
         </div>
         <WrappedIcon className={styles.caret} {...ICON_UP} />
       </div>
@@ -85,8 +87,10 @@ function NodeTask({ chunk, isSubTask }: NodeTaskProps) {
         >
           <WrappedIcon lib="lucide" icon="route" />
           {type === "flow"
-            ? t(K.SERVICE_FLOW, { name: chunk.flow.name })
-            : t(K.SERVICE_FLOW_ACTIVITY, { name: chunk.activity.name })}
+            ? t(K.INITIATING_SERVICE_FLOW, { name: chunk.flow.name })
+            : t(K.STARTING_SERVICE_FLOW_ACTIVITY, {
+                name: chunk.activity.name,
+              })}
         </div>
       </div>
     </div>

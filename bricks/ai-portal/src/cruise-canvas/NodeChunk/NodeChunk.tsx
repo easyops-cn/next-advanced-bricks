@@ -21,8 +21,8 @@ export function NodeChunk({ type, active, flow, activity }: NodeChunkProps) {
       <div className={styles.background} />
       <div className={styles.body}>
         {type === "flow"
-          ? t(K.START_SERVICE_FLOW, { name: flow.name })
-          : t(K.START_SERVICE_FLOW_ACTIVITY, { name: activity!.name })}
+          ? t(K.INITIATING_SERVICE_FLOW, { name: flow.name })
+          : t(K.STARTING_SERVICE_FLOW_ACTIVITY, { name: activity!.name })}
       </div>
     </div>
   );
