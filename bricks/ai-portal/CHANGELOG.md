@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.56.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.56.1...@next-bricks/ai-portal@0.56.2) (2025-10-27)
+
+
+### Bug Fixes
+
+* refine human in the loop ([af3dfd1](https://github.com/easyops-cn/next-advanced-bricks/commit/af3dfd175c921871e7205ae529b868470d805e94))
+
+
+
+
+
 ## [0.56.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.56.0...@next-bricks/ai-portal@0.56.1) (2025-10-27)
 
 
