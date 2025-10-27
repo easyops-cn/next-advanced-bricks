@@ -10,7 +10,6 @@ import type {
   ActivityWithFlow,
   ConversationBaseDetail,
   ConversationError,
-  Job,
   ServiceFlowRun,
   Task,
 } from "../shared/interfaces";
@@ -36,13 +35,17 @@ export function useConversationGraph(
       return null;
     }
 
-    const chunks = getFlatChunks(tasks, errors, flowMap, activityMap);
+    const { chunks, jobMap } = getFlatChunks(
+      tasks,
+      errors,
+      flowMap,
+      activityMap
+    );
 
     const nodes: GraphNode[] = [];
     const edges: GraphEdge[] = [];
     const nav: GraphNavItem[] = [];
     const views: GraphGeneratedView[] = [];
-    const jobMap = new Map<string, Job>();
     const jobLevels = new Map<string, number>();
 
     const userInputNodes: string[] = [];
@@ -54,7 +57,6 @@ export function useConversationGraph(
 
       if (chunk.type === "job") {
         const job = chunk.job;
-        jobMap.set(job.id, job);
         jobLevels.set(job.id, chunk.level);
         const { messages } = job;
         const hasMessages =

@@ -8,7 +8,6 @@ import React, {
   useState,
 } from "react";
 import { getBasePath, getRuntime } from "@next-core/runtime";
-import ResizeObserver from "resize-observer-polyfill";
 import classNames from "classnames";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import { useConversationDetail } from "../cruise-canvas/useConversationDetail.js";
@@ -32,6 +31,8 @@ import { NodeReplay } from "../cruise-canvas/NodeReplay/NodeReplay.js";
 import type { ActiveDetail } from "../shared/interfaces.js";
 import { useFlowAndActivityMap } from "../shared/useFlowAndActivityMap.js";
 import { useFulfilledActiveDetail } from "../shared/useFulfilledActiveDetail.js";
+import { useAutoScroll } from "./useAutoScroll.js";
+import scrollStyles from "./ScrollDownButton.module.css";
 
 const ICON_SHARE: GeneralIconProps = {
   lib: "easyops",
@@ -98,7 +99,7 @@ export function ChatStreamComponent(
     errors,
     flowMap,
     activityMap,
-    { showHumanActions }
+    { showHumanActions, skipActivitySubTasks: true }
   );
 
   useEffect(() => {
@@ -167,6 +168,9 @@ export function ChatStreamComponent(
   >(null);
 
   const [activeDetail, setActiveDetail] = useState<ActiveDetail | null>(null);
+  const [subActiveDetail, setSubActiveDetail] = useState<ActiveDetail | null>(
+    null
+  );
   const [userClosedAside, setUserClosedAside] = useState(false);
   // Delay flag to prevent aside from auto opened for a completed task
   const delayRef = useRef(false);
@@ -230,6 +234,8 @@ export function ChatStreamComponent(
       setActiveExpandedViewJobId,
       activeDetail,
       setActiveDetail,
+      subActiveDetail,
+      setSubActiveDetail,
 
       submittingFeedback,
       submittedFeedback,
@@ -271,6 +277,7 @@ export function ChatStreamComponent(
 
       activeExpandedViewJobId,
       activeDetail,
+      subActiveDetail,
 
       submittingFeedback,
       submittedFeedback,
@@ -294,66 +301,24 @@ export function ChatStreamComponent(
     [lastDetail]
   );
 
-  const detectScrolledUpRef = useRef(false);
-  const manualScrolledRef = useRef(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [scrollable, setScrollable] = useState(false);
+  const scrollContentRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const scrollContainer = scrollContainerRef.current;
-    const contentContainer = scrollContainer?.firstElementChild;
-    if (manualScrolledRef.current || !scrollContainer || !contentContainer) {
-      return;
-    }
-
-    const handleScroll = () => {
-      setScrollable(
-        scrollContainer.scrollTop + scrollContainer.clientHeight! + 24 <
-          scrollContainer.scrollHeight
-      );
-      if (!detectScrolledUpRef.current) {
-        return;
-      }
-      manualScrolledRef.current =
-        scrollContainer.scrollTop + scrollContainer.clientHeight! + 6 <
-        scrollContainer.scrollHeight;
-    };
-    scrollContainer.addEventListener("scroll", handleScroll);
-
-    let timer: ReturnType<typeof setTimeout>;
-    const observer = new ResizeObserver(() => {
-      if (manualScrolledRef.current) {
-        return;
-      }
-      detectScrolledUpRef.current = false;
-      // Scroll to the bottom of the content container
-      scrollContainer.scrollTo({
-        top: contentContainer.scrollHeight,
-        behavior: "instant",
-      });
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        detectScrolledUpRef.current = true;
-      }, 100);
-    });
-    observer.observe(contentContainer);
-
-    return () => {
-      observer.disconnect();
-      scrollContainer.removeEventListener("scroll", handleScroll);
-    };
-  }, [conversationAvailable]);
-
-  const scrollToBottom = useCallback(() => {
-    const scrollContainer = scrollContainerRef.current;
-    scrollContainer?.scrollTo({
-      top: scrollContainer?.scrollHeight,
-      behavior: "instant",
-    });
-  }, []);
+  const { scrollable, scrollToBottom } = useAutoScroll(
+    conversationAvailable,
+    scrollContainerRef,
+    scrollContentRef
+  );
 
   const fulfilledActiveDetail = useFulfilledActiveDetail(
     activeDetail,
+    jobMap,
+    flowMap,
+    activityMap
+  );
+
+  const fulfilledSubActiveDetail = useFulfilledActiveDetail(
+    subActiveDetail,
     jobMap,
     flowMap,
     activityMap
@@ -386,7 +351,7 @@ export function ChatStreamComponent(
           {conversationAvailable ? (
             <>
               <div className={styles.main} ref={scrollContainerRef}>
-                <div className={styles.narrow}>
+                <div className={styles.narrow} ref={scrollContentRef}>
                   {messages.map((msg, index, list) => (
                     <div className={styles.message} key={index}>
                       {msg.role === "user" ? (
@@ -394,6 +359,7 @@ export function ChatStreamComponent(
                       ) : (
                         <AssistantMessage
                           chunks={msg.chunks}
+                          scopeState={conversationState}
                           isLatest={index === list.length - 1}
                         />
                       )}
@@ -412,7 +378,7 @@ export function ChatStreamComponent(
                 </div>
               </div>
               <div
-                className={styles["scroll-down"]}
+                className={scrollStyles["scroll-down"]}
                 hidden={!scrollable}
                 onClick={scrollToBottom}
               >
@@ -447,7 +413,15 @@ export function ChatStreamComponent(
               [styles.expanded]: !!fulfilledActiveDetail,
             })}
           >
-            {fulfilledActiveDetail && <Aside detail={fulfilledActiveDetail} />}
+            {fulfilledActiveDetail && (
+              <Aside
+                detail={fulfilledActiveDetail}
+                faded={!!fulfilledSubActiveDetail}
+              />
+            )}
+            {fulfilledSubActiveDetail && (
+              <Aside detail={fulfilledSubActiveDetail} isSubTask />
+            )}
           </div>
         }
         {activeExpandedViewJobId && <ExpandedView views={views!} />}

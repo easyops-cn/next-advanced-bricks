@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useMemo, useRef } from "react";
 import { initializeI18n } from "@next-core/i18n";
 import classNames from "classnames";
 import styles from "./FlowApp.module.css";
@@ -20,6 +20,8 @@ import { K, locales, NS, t } from "./i18n";
 import { useConversationStream } from "../../useConversationStream";
 import { UserMessage } from "../../UserMessage/UserMessage";
 import { AssistantMessage } from "../../AssistantMessage/AssistantMessage";
+import { useAutoScroll } from "../../useAutoScroll";
+import scrollStyles from "../../ScrollDownButton.module.css";
 
 initializeI18n(NS, locales);
 
@@ -121,25 +123,46 @@ function ActivityDetail({ activity }: ActivityDetailProps) {
 
   const { messages } = useConversationStream(true, fixedTasks, errors);
 
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const scrollContentRef = useRef<HTMLDivElement>(null);
+
+  const { scrollable, scrollToBottom } = useAutoScroll(
+    true,
+    scrollContainerRef,
+    scrollContentRef
+  );
+
   return (
     <>
       <div className={styles["activity-title"]}>
         <WrappedIcon {...icon} className={className} />
         {activity.name}
       </div>
-      <div className={styles.chat}>
-        {messages.map((msg, index, list) => (
-          <div className={styles.message} key={index}>
-            {msg.role === "user" ? (
-              <UserMessage content={msg.content} cmd={msg.cmd} />
-            ) : (
-              <AssistantMessage
-                chunks={msg.chunks}
-                isLatest={index === list.length - 1}
-              />
-            )}
-          </div>
-        ))}
+      <div className={styles.chat} ref={scrollContainerRef}>
+        <div className={styles.messages} ref={scrollContentRef}>
+          {messages.map((msg, index, list) => (
+            <div className={styles.message} key={index}>
+              {msg.role === "user" ? (
+                <UserMessage content={msg.content} cmd={msg.cmd} />
+              ) : (
+                <AssistantMessage
+                  chunks={msg.chunks}
+                  scopeState={activityTask.state}
+                  isLatest={index === list.length - 1}
+                  isSubTask
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div
+        className={scrollStyles["scroll-down"]}
+        style={{ bottom: "30px" }}
+        hidden={!scrollable}
+        onClick={scrollToBottom}
+      >
+        <WrappedIcon lib="antd" icon="down" />
       </div>
     </>
   );

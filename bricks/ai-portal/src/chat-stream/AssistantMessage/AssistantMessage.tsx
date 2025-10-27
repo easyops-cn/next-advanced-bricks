@@ -1,24 +1,33 @@
-import React, { useContext, useMemo } from "react";
+import React, { useMemo } from "react";
 import styles from "./AssistantMessage.module.css";
 import {
   GENERAL_DONE_STATES,
   NON_WORKING_STATES,
 } from "../../shared/constants.js";
-import type { Job } from "../../shared/interfaces.js";
+import type {
+  ConversationState,
+  Job,
+  JobState,
+  TaskState,
+} from "../../shared/interfaces.js";
 import { WrappedIcon } from "../../shared/bricks.js";
 import type { MessageChunk } from "../interfaces";
 import { RequestHumanAction } from "../../shared/RequestHumanAction/RequestHumanAction";
 import { NodeChunk } from "../NodeChunk/NodeChunk";
-import { TaskContext } from "../../shared/TaskContext";
 
 export interface AssistantMessageProps {
   chunks: MessageChunk[];
+  scopeState: ConversationState | TaskState | JobState | undefined;
   isLatest?: boolean;
+  isSubTask?: boolean;
 }
 
-export function AssistantMessage({ chunks, isLatest }: AssistantMessageProps) {
-  const { conversationState } = useContext(TaskContext);
-
+export function AssistantMessage({
+  chunks,
+  scopeState,
+  isLatest,
+  isSubTask,
+}: AssistantMessageProps) {
   const [working, lastJob] = useMemo(() => {
     const lastChunk = chunks[chunks.length - 1];
     let lastJob: Job | undefined;
@@ -38,7 +47,7 @@ export function AssistantMessage({ chunks, isLatest }: AssistantMessageProps) {
       }
     }
 
-    if (!isLatest || NON_WORKING_STATES.includes(conversationState!)) {
+    if (!isLatest || NON_WORKING_STATES.includes(scopeState!)) {
       return [false, lastJob];
     }
     for (const chunk of chunks) {
@@ -60,7 +69,7 @@ export function AssistantMessage({ chunks, isLatest }: AssistantMessageProps) {
     }
 
     return [true, lastJob];
-  }, [isLatest, chunks, conversationState]);
+  }, [isLatest, chunks, scopeState]);
 
   return (
     <div className={styles.assistant}>
@@ -72,14 +81,14 @@ export function AssistantMessage({ chunks, isLatest }: AssistantMessageProps) {
       />
       <div className={styles.body}>
         {chunks.map((chunk, index) => (
-          <NodeChunk key={index} chunk={chunk} />
+          <NodeChunk key={index} chunk={chunk} isSubTask={isSubTask} />
         ))}
         {working && <div className={styles.texting}></div>}
         {isLatest &&
           lastJob &&
           !lastJob.humanAction &&
           lastJob.requestHumanAction &&
-          !GENERAL_DONE_STATES.includes(conversationState) &&
+          !GENERAL_DONE_STATES.includes(scopeState) &&
           (lastJob.state === "working" ||
             lastJob.state === "input-required") && (
             <RequestHumanAction action={lastJob.requestHumanAction} ui="chat" />

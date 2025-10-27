@@ -4,7 +4,6 @@ import type {
   ActiveDetail,
   ActivityWithFlow,
   ConversationError,
-  Job,
   ServiceFlowRun,
   Task,
 } from "../shared/interfaces.js";
@@ -18,9 +17,11 @@ export function useConversationStream(
   activityMap?: Map<string, ActivityWithFlow>,
   options?: {
     showHumanActions?: boolean;
+    skipActivitySubTasks?: boolean;
   }
 ) {
   const showHumanActions = options?.showHumanActions;
+  const skipActivitySubTasks = options?.skipActivitySubTasks;
 
   return useMemo(() => {
     if (!conversationAvailable) {
@@ -30,8 +31,13 @@ export function useConversationStream(
       };
     }
 
-    const chunks = getFlatChunks(tasks, errors, flowMap, activityMap, true);
-    const jobMap = new Map<string, Job>();
+    const { chunks, jobMap } = getFlatChunks(
+      tasks,
+      errors,
+      flowMap,
+      activityMap,
+      skipActivitySubTasks
+    );
     const messages: ChatMessage[] = [];
 
     let prevAssistantMessage: MessageFromAssistant = {
@@ -42,7 +48,6 @@ export function useConversationStream(
     for (const chunk of chunks) {
       if (chunk.type === "job") {
         const job = chunk.job;
-        jobMap.set(job.id, job);
         if (job.toolCall) {
           lastDetail = {
             type: "job",
@@ -102,19 +107,19 @@ export function useConversationStream(
       }
     }
 
-    let shouldAppendMessage = messages.length > 0;
+    let shouldAppendEmptyMessage = messages.length > 0;
     if (
-      shouldAppendMessage &&
+      shouldAppendEmptyMessage &&
       prevAssistantMessage.role === "assistant" &&
       prevAssistantMessage.chunks.length === 0
     ) {
       const lastMessage = messages[messages.length - 1];
       if (lastMessage.role === "user" && lastMessage.fromSkippedSubTask) {
-        shouldAppendMessage = false;
+        shouldAppendEmptyMessage = false;
       }
     }
 
-    if (shouldAppendMessage) {
+    if (prevAssistantMessage.chunks.length > 0 || shouldAppendEmptyMessage) {
       messages.push(prevAssistantMessage);
     }
 
@@ -126,5 +131,6 @@ export function useConversationStream(
     activityMap,
     errors,
     showHumanActions,
+    skipActivitySubTasks,
   ]);
 }
