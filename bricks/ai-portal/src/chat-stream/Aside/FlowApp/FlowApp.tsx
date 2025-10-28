@@ -143,7 +143,11 @@ function ActivityDetail({ activity }: ActivityDetailProps) {
           {messages.map((msg, index, list) => (
             <div className={styles.message} key={index}>
               {msg.role === "user" ? (
-                <UserMessage content={msg.content} cmd={msg.cmd} />
+                <UserMessage
+                  content={msg.content}
+                  cmd={msg.cmd}
+                  files={msg.files}
+                />
               ) : (
                 <AssistantMessage
                   chunks={msg.chunks}

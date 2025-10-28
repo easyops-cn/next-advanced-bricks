@@ -1,5 +1,5 @@
 // istanbul ignore file: experimental
-import React from "react";
+import React, { useContext } from "react";
 import { wrapBrick } from "@next-core/react-element";
 import type {
   EoEasyopsAvatar,
@@ -11,6 +11,7 @@ import styles from "./NodeRequirement.module.css";
 import type { CommandPayload, FileInfo } from "../../shared/interfaces";
 import { ReadableCommand } from "../../shared/ReadableCommand/ReadableCommand";
 import { FileList } from "../FileList/FileList";
+import { TaskContext } from "../../shared/TaskContext";
 
 const WrappedEasyOpsAvatar = wrapBrick<EoEasyopsAvatar, EoEasyopsAvatarProps>(
   "eo-easyops-avatar"
@@ -33,6 +34,8 @@ export function NodeRequirement({
   cmd,
   files,
 }: NodeRequirementProps): JSX.Element {
+  const { setActiveFile } = useContext(TaskContext);
+
   return (
     <div
       className={classNames(styles["node-requirement"], {
@@ -53,8 +56,11 @@ export function NodeRequirement({
       <div className={styles.body}>
         {cmd && <ReadableCommand cmd={cmd} size="small" />}
         {content}
+
+        {files?.length ? (
+          <FileList files={files} onFileClick={setActiveFile} />
+        ) : null}
       </div>
-      {files?.length ? <FileList files={files} /> : null}
     </div>
   );
 }

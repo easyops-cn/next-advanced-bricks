@@ -51,7 +51,10 @@ export const WrappedPopover = wrapBrick<Popover, PopoverProps>("eo-popover");
 
 export const WrappedDrawer = wrapBrick<
   Drawer,
-  DrawerProps & { keyboard?: boolean },
+  DrawerProps & {
+    keyboard?: boolean;
+    themeVariant?: "default" | "elevo";
+  },
   DrawerEvents,
   DrawerMapEvents
 >("eo-drawer", {

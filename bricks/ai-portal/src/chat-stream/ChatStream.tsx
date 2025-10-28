@@ -28,13 +28,18 @@ import styles from "./styles.module.css";
 import toolbarStyles from "../cruise-canvas/toolbar.module.css";
 import { K, t } from "./i18n.js";
 import { NodeReplay } from "../cruise-canvas/NodeReplay/NodeReplay.js";
-import type { ActiveDetail, ExtraChatPayload } from "../shared/interfaces.js";
+import type {
+  ActiveDetail,
+  ExtraChatPayload,
+  FileInfo,
+} from "../shared/interfaces.js";
 import { useFlowAndActivityMap } from "../shared/useFlowAndActivityMap.js";
 import { useFulfilledActiveDetail } from "../shared/useFulfilledActiveDetail.js";
 import { useAutoScroll } from "./useAutoScroll.js";
 import scrollStyles from "./ScrollDownButton.module.css";
 import { PlanProgress } from "../shared/PlanProgress/PlanProgress.js";
 import { useServiceFlowPlan } from "../shared/useServiceFlowPlan.js";
+import { FilePreviewDrawer } from "../shared/FilePreview/FilePreviewDrawer.js";
 
 const ICON_SHARE: GeneralIconProps = {
   lib: "easyops",
@@ -216,7 +221,7 @@ export function ChatStreamComponent(
   }, [requirementMessage]);
 
   const workspace = conversationId;
-
+  const [activeFile, setActiveFile] = React.useState<FileInfo | null>(null);
   const taskContextValue = useMemo(
     () => ({
       conversationId,
@@ -263,6 +268,7 @@ export function ChatStreamComponent(
           };
         }
       },
+      setActiveFile,
     }),
     [
       conversationId,
@@ -361,7 +367,11 @@ export function ChatStreamComponent(
                   {messages.map((msg, index, list) => (
                     <div className={styles.message} key={index}>
                       {msg.role === "user" ? (
-                        <UserMessage content={msg.content} cmd={msg.cmd} />
+                        <UserMessage
+                          content={msg.content}
+                          cmd={msg.cmd}
+                          files={msg.files}
+                        />
                       ) : (
                         <AssistantMessage
                           chunks={msg.chunks}
@@ -452,6 +462,7 @@ export function ChatStreamComponent(
             />
           </div>
         )}
+        {activeFile && <FilePreviewDrawer file={activeFile} />}
       </StreamContext.Provider>
     </TaskContext.Provider>
   );

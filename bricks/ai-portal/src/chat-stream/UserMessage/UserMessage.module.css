@@ -10,3 +10,9 @@
   font-size: 16px;
   line-height: 26px;
 }
+
+.files {
+  margin-left: auto;
+  margin-bottom: 12px;
+  width: fit-content;
+}

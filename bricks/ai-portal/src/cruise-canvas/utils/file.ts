@@ -23,6 +23,13 @@ const MIME_TYPES = new Map<string, string>([
     "pptx",
     "application/vnd.openxmlformats-officedocument.presentationml.presentation",
   ],
+  ["jpg", "image/jpeg"],
+  ["jpeg", "image/jpeg"],
+  ["png", "image/png"],
+  ["gif", "image/gif"],
+  ["bmp", "image/bmp"],
+  ["webp", "image/webp"],
+  ["svg", "image/svg+xml"],
 ]);
 
 export function formatFileSize(size: number) {

@@ -6,6 +6,7 @@ import type {
   ConversationState,
   ExampleProject,
   ExtraChatPayload,
+  FileInfo,
   GeneratedView,
   Job,
   ShowCaseType,
@@ -59,6 +60,7 @@ export interface TaskContextValue {
   watchAgain?: () => void;
   tryItOut?: () => void;
   separateInstructions?: boolean;
+  setActiveFile: Dispatch<React.SetStateAction<FileInfo | null>>;
 }
 
 export const TaskContext = createContext<TaskContextValue>({
@@ -77,4 +79,5 @@ export const TaskContext = createContext<TaskContextValue>({
   submittedFeedback: false,
   onSubmitFeedback: () => {},
   setShowFeedback: () => {},
+  setActiveFile: () => {},
 });

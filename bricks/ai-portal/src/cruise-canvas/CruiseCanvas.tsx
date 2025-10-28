@@ -56,7 +56,6 @@ import { handleKeyboardNav } from "./utils/handleKeyboardNav.js";
 import { ExpandedView } from "../shared/ExpandedView/ExpandedView.js";
 import { Nav } from "./Nav/Nav.js";
 import { ChatBox } from "../shared/ChatBox/ChatBox.js";
-import { FilePreview } from "./FilePreview/FilePreview.js";
 import { NodeFeedback } from "../shared/NodeFeedback/NodeFeedback.js";
 import { TaskContext } from "../shared/TaskContext.js";
 import { NodeLoading } from "./NodeLoading/NodeLoading.js";
@@ -77,6 +76,7 @@ import type { ConversationDetail, CruiseCanvasProps } from ".";
 import { useFlowAndActivityMap } from "../shared/useFlowAndActivityMap";
 import { useFulfilledActiveDetail } from "../shared/useFulfilledActiveDetail";
 import { NodeChunk } from "./NodeChunk/NodeChunk";
+import { FilePreviewDrawer } from "../shared/FilePreview/FilePreviewDrawer";
 
 const MemoizedNodeComponent = memo(NodeComponent);
 
@@ -672,6 +672,7 @@ export function CruiseCanvasComponent(
         }
       },
       separateInstructions,
+      setActiveFile,
     }),
     [
       conversationId,
@@ -721,7 +722,6 @@ export function CruiseCanvasComponent(
       setActiveNodeId,
       hoverOnScrollableContent,
       setHoverOnScrollableContent,
-      setActiveFile,
     }),
     [hoverOnScrollableContent, onNodeResize]
   );
@@ -944,7 +944,7 @@ export function CruiseCanvasComponent(
           <ToolCallDetail job={fulfilledActiveDetail.job} />
         )}
         {activeExpandedViewJobId && <ExpandedView views={views!} />}
-        {activeFile && <FilePreview file={activeFile} />}
+        {activeFile && <FilePreviewDrawer file={activeFile} />}
         {showJsxEditor && activeJsxEditorJob && <JsxEditor />}
       </CanvasContext.Provider>
     </TaskContext.Provider>

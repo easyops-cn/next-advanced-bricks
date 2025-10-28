@@ -1,6 +1,5 @@
 import { createContext, type Dispatch } from "react";
 import type { SizeTuple } from "./interfaces";
-import type { FileInfo } from "../shared/interfaces";
 
 export interface CanvasContextValue {
   onNodeResize: (id: string, size: SizeTuple | null) => void;
@@ -8,7 +7,6 @@ export interface CanvasContextValue {
   hoverOnScrollableContent: boolean;
   setHoverOnScrollableContent: Dispatch<React.SetStateAction<boolean>>;
   supports?: Record<string, boolean>;
-  setActiveFile: Dispatch<React.SetStateAction<FileInfo | null>>;
 }
 
 export const CanvasContext = createContext<CanvasContextValue>({
@@ -16,5 +14,4 @@ export const CanvasContext = createContext<CanvasContextValue>({
   setActiveNodeId: () => {},
   hoverOnScrollableContent: false,
   setHoverOnScrollableContent: () => {},
-  setActiveFile: () => {},
 });
