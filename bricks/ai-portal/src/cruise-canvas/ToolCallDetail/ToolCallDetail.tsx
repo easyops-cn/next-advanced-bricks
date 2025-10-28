@@ -112,6 +112,7 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
       mask
       maskClosable
       keyboard
+      themeVariant="elevo"
       onClose={handleClose}
     >
       <ToolCallStatus job={job} variant="read-only" />

@@ -20,6 +20,7 @@ import { AIEmployeeAvatar } from "../AIEmployeeAvatar/AIEmployeeAvatar";
 import { CreatedView } from "../../shared/CreatedView/CreatedView";
 import { CanvasContext } from "../CanvasContext";
 import { ViewToolbar } from "../../shared/CreatedView/ViewToolbar";
+import { TaskContext } from "../../shared/TaskContext";
 
 // 当 markdown 中包含超过 4 列的表格时，对节点使用大尺寸样式
 const RegExpLargeTableInMarkdown = /^\s*\|(?:\s*:?-+:?\s*\|){4,}\s*$/m;
@@ -79,6 +80,8 @@ export function NodeJob({ job, active, isLeaf }: NodeJobProps): JSX.Element {
     setViewSize(value);
   }, []);
 
+  const { setActiveFile } = useContext(TaskContext);
+
   return (
     <div
       className={classNames(styles["node-job"], {
@@ -132,7 +135,13 @@ export function NodeJob({ job, active, isLeaf }: NodeJobProps): JSX.Element {
         {cmdbInstanceDetails.map((detail, index) => (
           <CmdbInstanceDetail key={index} {...detail} />
         ))}
-        {files.length > 0 && <FileList files={files} large={sizeLarge} />}
+        {files.length > 0 && (
+          <FileList
+            files={files}
+            large={sizeLarge}
+            onFileClick={setActiveFile}
+          />
+        )}
         {isLeaf &&
           !job.humanAction &&
           job.requestHumanAction &&

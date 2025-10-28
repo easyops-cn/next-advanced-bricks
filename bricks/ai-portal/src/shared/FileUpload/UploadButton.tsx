@@ -1,7 +1,13 @@
 import React, { forwardRef, useImperativeHandle, useRef } from "react";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
-import { WrappedIconButton } from "./bricks";
+import { wrapBrick } from "@next-core/react-element";
+import type { IconButton, IconButtonProps } from "../../icon-button";
 import type { FileItem } from "./interfaces";
+import { K, t } from "./i18n";
+
+const WrappedIconButton = wrapBrick<IconButton, IconButtonProps>(
+  "ai-portal.icon-button"
+);
 
 const ICON_UPLOAD: GeneralIconProps = {
   lib: "lucide",
@@ -10,8 +16,13 @@ const ICON_UPLOAD: GeneralIconProps = {
 
 let uid = 0;
 
+export function getNextUid() {
+  return uid++;
+}
+
 export interface UploadButtonProps {
   accept?: string;
+  disabled?: boolean;
   onChange?: (files: FileItem[] | undefined) => void;
 }
 
@@ -22,7 +33,7 @@ export interface UploadButtonRef {
 export const UploadButton = forwardRef(LegacyUploadButton);
 
 function LegacyUploadButton(
-  { accept, onChange }: UploadButtonProps,
+  { accept, disabled, onChange }: UploadButtonProps,
   ref: React.Ref<UploadButtonRef>
 ) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -32,7 +43,7 @@ function LegacyUploadButton(
     onChange?.(
       files
         ? Array.from(files).map((file) => ({
-            uid: uid++,
+            uid: getNextUid(),
             file,
             status: "ready",
           }))
@@ -56,13 +67,20 @@ function LegacyUploadButton(
         hidden
         ref={inputRef}
         onChange={handleInputChange}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
       />
       <WrappedIconButton
         variant="light"
         className="btn-upload"
         icon={ICON_UPLOAD}
-        tooltip="Upload files"
-        onClick={() => inputRef.current?.click()}
+        tooltip={t(K.UPLOAD_FILES)}
+        disabled={disabled}
+        onClick={(e) => {
+          e.stopPropagation();
+          inputRef.current?.click();
+        }}
       />
     </>
   );

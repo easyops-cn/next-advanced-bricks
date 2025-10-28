@@ -2,6 +2,7 @@ import type { JSONSchema } from "./json-schema";
 import type {
   ActivityRun,
   CommandPayload,
+  FileInfo,
   GeneratedView,
   Job,
   JobState,
@@ -40,6 +41,7 @@ export interface RequirementGraphNode extends BaseGraphNode {
   content: string;
   username?: string;
   cmd?: CommandPayload;
+  files?: FileInfo[];
 }
 
 export interface LoadingGraphNode extends BaseGraphNode {
@@ -109,14 +111,6 @@ export interface NodeRect extends NodePosition {
 
 export interface Edge {
   points: NodePosition[];
-}
-
-export interface Step {
-  // Pre-generated Job ID for this step
-  id: string;
-
-  // The instruction for this step
-  instruction: string;
 }
 
 export interface GraphNavItem {

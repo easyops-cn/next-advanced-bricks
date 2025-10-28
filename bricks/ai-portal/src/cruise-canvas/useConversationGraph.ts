@@ -78,6 +78,11 @@ export function useConversationGraph(
             content: userInput,
             username,
             cmd: job.cmd,
+            files: messages
+              ?.filter((msg) => msg.role === "user")
+              .flatMap((msg) => msg.parts)
+              .filter((part) => part.type === "file")
+              .map((part) => part.file),
           });
           nodeIds.push(requirementId);
           userInputNodes.push(requirementId);
@@ -224,7 +229,6 @@ export function useConversationGraph(
       nav,
       views,
       jobMap,
-      jobLevels,
     };
   }, [
     conversation,

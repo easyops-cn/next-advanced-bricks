@@ -56,7 +56,6 @@ import { handleKeyboardNav } from "./utils/handleKeyboardNav.js";
 import { ExpandedView } from "../shared/ExpandedView/ExpandedView.js";
 import { Nav } from "./Nav/Nav.js";
 import { ChatBox } from "../shared/ChatBox/ChatBox.js";
-import { FilePreview } from "./FilePreview/FilePreview.js";
 import { NodeFeedback } from "../shared/NodeFeedback/NodeFeedback.js";
 import { TaskContext } from "../shared/TaskContext.js";
 import { NodeLoading } from "./NodeLoading/NodeLoading.js";
@@ -70,12 +69,14 @@ import type {
   ActiveDetail,
   ServiceFlowRun,
   ActivityRun,
+  ExtraChatPayload,
 } from "../shared/interfaces";
 import { NodeReplay } from "./NodeReplay/NodeReplay.js";
 import type { ConversationDetail, CruiseCanvasProps } from ".";
 import { useFlowAndActivityMap } from "../shared/useFlowAndActivityMap";
 import { useFulfilledActiveDetail } from "../shared/useFulfilledActiveDetail";
 import { NodeChunk } from "./NodeChunk/NodeChunk";
+import { FilePreviewDrawer } from "../shared/FilePreview/FilePreviewDrawer";
 
 const MemoizedNodeComponent = memo(NodeComponent);
 
@@ -132,6 +133,7 @@ export function CruiseCanvasComponent(
     exampleProjects,
     tryItOutUrl,
     separateInstructions,
+    uploadOptions,
     onShare,
     onTerminate,
     onSubmitFeedback,
@@ -156,7 +158,6 @@ export function CruiseCanvasComponent(
     replay,
     replayDelay
   );
-  const plan = tasks[tasks.length - 1]?.plan;
   const { flowMap, activityMap } = useFlowAndActivityMap(serviceFlows);
   const graph = useConversationGraph(
     conversation,
@@ -175,7 +176,6 @@ export function CruiseCanvasComponent(
   const nav = graph?.nav;
   const views = graph?.views;
   const jobMap = graph?.jobMap;
-  const jobLevels = graph?.jobLevels;
   const pageTitle = conversation?.title ?? "";
   const conversationState = conversation?.state;
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
@@ -252,8 +252,8 @@ export function CruiseCanvasComponent(
   }, [pageTitle]);
 
   const humanInput = useCallback(
-    (jobId: string, input: string | null, action?: string) => {
-      humanInputRef.current?.(jobId, input, action);
+    (input: string | null, action?: string, extra?: ExtraChatPayload) => {
+      humanInputRef.current?.(input, action, extra);
     },
     [humanInputRef]
   );
@@ -627,6 +627,7 @@ export function CruiseCanvasComponent(
       replay,
       showCases,
       exampleProjects,
+      uploadOptions,
 
       humanInput,
       onShare,
@@ -671,6 +672,7 @@ export function CruiseCanvasComponent(
         }
       },
       separateInstructions,
+      setActiveFile,
     }),
     [
       conversationId,
@@ -682,6 +684,7 @@ export function CruiseCanvasComponent(
       replay,
       showCases,
       exampleProjects,
+      uploadOptions,
 
       humanInput,
       onTerminate,
@@ -719,7 +722,6 @@ export function CruiseCanvasComponent(
       setActiveNodeId,
       hoverOnScrollableContent,
       setHoverOnScrollableContent,
-      setActiveFile,
     }),
     [hoverOnScrollableContent, onNodeResize]
   );
@@ -890,6 +892,7 @@ export function CruiseCanvasComponent(
                 username={(node as RequirementGraphNode).username}
                 content={(node as RequirementGraphNode).content}
                 cmd={(node as RequirementGraphNode).cmd}
+                files={(node as RequirementGraphNode).files}
                 job={(node as JobGraphNode).job}
                 flow={(node as FlowGraphNode).flow}
                 activity={(node as ActivityGraphNode).activity}
@@ -911,9 +914,6 @@ export function CruiseCanvasComponent(
         <div className={styles.widgets}>
           <Nav
             nav={nav}
-            plan={plan}
-            jobMap={jobMap}
-            jobLevels={jobLevels}
             currentNavId={currentNavId}
             taskState={conversationState}
             onClick={(jobId: string) => {
@@ -944,7 +944,7 @@ export function CruiseCanvasComponent(
           <ToolCallDetail job={fulfilledActiveDetail.job} />
         )}
         {activeExpandedViewJobId && <ExpandedView views={views!} />}
-        {activeFile && <FilePreview file={activeFile} />}
+        {activeFile && <FilePreviewDrawer file={activeFile} />}
         {showJsxEditor && activeJsxEditorJob && <JsxEditor />}
       </CanvasContext.Provider>
     </TaskContext.Provider>
@@ -966,6 +966,7 @@ interface NodeComponentProps {
   y?: number;
   active?: boolean;
   cmd?: CommandPayload;
+  files?: FileInfo[];
 }
 
 function NodeComponent({
@@ -983,6 +984,7 @@ function NodeComponent({
   y,
   active,
   cmd,
+  files,
 }: NodeComponentProps) {
   const nodeRef = useRef<HTMLDivElement>(null);
   const { onNodeResize, setActiveNodeId } = useContext(CanvasContext);
@@ -1047,6 +1049,7 @@ function NodeComponent({
           startTime={startTime}
           active={active}
           cmd={cmd}
+          files={files}
         />
       ) : type === "loading" ? (
         <NodeLoading />

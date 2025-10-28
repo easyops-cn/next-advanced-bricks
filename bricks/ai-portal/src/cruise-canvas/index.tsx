@@ -11,6 +11,7 @@ import type {
   ExampleProject,
   RequestStore,
   ShowCaseType,
+  UploadOptions,
 } from "../shared/interfaces.js";
 
 initializeI18n(NS, locales);
@@ -35,6 +36,7 @@ export interface CruiseCanvasProps {
   exampleProjects?: ExampleProject[];
   tryItOutUrl?: string;
   separateInstructions?: boolean;
+  uploadOptions?: UploadOptions;
 }
 
 export interface ConversationDetail {
@@ -112,6 +114,9 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
 
   @property({ type: Boolean })
   accessor separateInstructions: boolean | undefined;
+
+  @property({ attribute: false })
+  accessor uploadOptions: UploadOptions | undefined;
 
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
@@ -197,6 +202,7 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         exampleProjects={this.exampleProjects}
         tryItOutUrl={this.tryItOutUrl}
         separateInstructions={this.separateInstructions}
+        uploadOptions={this.uploadOptions}
         onShare={this.#onShare}
         onTerminate={this.#onTerminate}
         onSubmitFeedback={this.#onSubmitFeedback}

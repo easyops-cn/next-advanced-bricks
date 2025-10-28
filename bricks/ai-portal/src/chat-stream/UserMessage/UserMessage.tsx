@@ -1,18 +1,30 @@
-import React from "react";
+import React, { useContext } from "react";
 import styles from "./UserMessage.module.css";
-import type { CommandPayload } from "../../shared/interfaces";
+import type { CommandPayload, FileInfo } from "../../shared/interfaces";
 import { ReadableCommand } from "../../shared/ReadableCommand/ReadableCommand";
+import { FileList } from "../../cruise-canvas/FileList/FileList";
+import { TaskContext } from "../../shared/TaskContext";
 
 export interface UserMessageProps {
   content: string;
   cmd?: CommandPayload;
+  files?: FileInfo[];
 }
 
-export function UserMessage({ content, cmd }: UserMessageProps) {
+export function UserMessage({ content, cmd, files }: UserMessageProps) {
+  const { setActiveFile } = useContext(TaskContext);
+
   return (
-    <div className={styles.user}>
-      {cmd && <ReadableCommand cmd={cmd} />}
-      {content}
-    </div>
+    <>
+      {files?.length ? (
+        <div className={styles.files}>
+          <FileList files={files} onFileClick={setActiveFile} large />
+        </div>
+      ) : null}
+      <div className={styles.user}>
+        {cmd && <ReadableCommand cmd={cmd} />}
+        {content}
+      </div>
+    </>
   );
 }

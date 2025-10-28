@@ -11,6 +11,7 @@ import type {
   ExampleProject,
   RequestStore,
   ShowCaseType,
+  UploadOptions,
 } from "../shared/interfaces.js";
 
 initializeI18n(NS, locales);
@@ -32,6 +33,7 @@ export interface ChatStreamProps {
   showCases?: ShowCaseType[];
   exampleProjects?: ExampleProject[];
   tryItOutUrl?: string;
+  uploadOptions?: UploadOptions;
 }
 
 export interface ConversationDetail {
@@ -100,6 +102,9 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
 
   @property()
   accessor tryItOutUrl: string | undefined;
+
+  @property({ attribute: false })
+  accessor uploadOptions: UploadOptions | undefined;
 
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
@@ -182,6 +187,7 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
         showCases={this.showCases}
         exampleProjects={this.exampleProjects}
         tryItOutUrl={this.tryItOutUrl}
+        uploadOptions={this.uploadOptions}
         onShare={this.#onShare}
         onTerminate={this.#onTerminate}
         onSubmitFeedback={this.#onSubmitFeedback}

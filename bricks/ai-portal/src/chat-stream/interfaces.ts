@@ -1,6 +1,7 @@
 import type {
   ActivityRun,
   CommandPayload,
+  FileInfo,
   Job,
   ServiceFlowRun,
   Task,
@@ -13,6 +14,7 @@ export interface MessageFromUser {
   content: string;
   cmd?: CommandPayload;
   fromSkippedSubTask?: boolean;
+  files?: FileInfo[];
 }
 
 export interface MessageFromAssistant {

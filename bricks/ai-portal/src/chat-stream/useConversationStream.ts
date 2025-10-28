@@ -72,6 +72,11 @@ export function useConversationStream(
               .join(""),
             cmd: job.cmd,
             fromSkippedSubTask: chunk.fromSkippedSubTask,
+            files: job.messages
+              ?.filter((msg) => msg.role === "user")
+              .flatMap((msg) => msg.parts)
+              .filter((part) => part.type === "file")
+              .map((part) => part.file),
           });
           prevAssistantMessage = {
             role: "assistant",

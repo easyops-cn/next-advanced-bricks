@@ -1,0 +1,137 @@
+.files {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0 0;
+  position: absolute;
+  display: flex;
+  gap: 8px;
+  top: 10px;
+  left: 16px;
+  right: 16px;
+  overflow-x: auto;
+}
+
+.file {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
+  display: flex;
+  width: 200px;
+  height: 60px;
+  align-items: center;
+  padding: 0 8px;
+  position: relative;
+}
+
+/* .file:hover {
+  background: rgba(0, 0, 0, 0.08);
+} */
+
+.file-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.file-icon {
+  margin: 0 11px 0 6px;
+}
+
+.file-image {
+  margin-right: 8px;
+  object-fit: cover;
+  border-radius: 4px;
+  max-width: 44px;
+  max-height: 44px;
+}
+
+.file-name,
+.file-metadata {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-name {
+  color: rgba(0, 0, 0, 0.88);
+}
+
+.file-metadata {
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.file-remove {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  font-size: 12px;
+  padding: 1px;
+  display: flex;
+  color: rgba(0, 0, 0, 0.88);
+  cursor: pointer;
+  background: #fff;
+  border-radius: 14px;
+}
+
+.file:not(:hover) .file-remove {
+  display: none;
+}
+
+.btn-add-file {
+  border-radius: 8px;
+  border: 1px dashed rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 16px;
+  display: flex;
+  width: 60px;
+  height: 60px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+}
+
+.file.failed .file-status {
+  color: var(--color-error);
+}
+
+.file.as-image {
+  width: 60px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0;
+  background: none;
+  justify-content: center;
+
+  .file-image {
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    border-radius: 8px;
+  }
+
+  &.failed {
+    border-color: #f24c25;
+  }
+}
+
+.file-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 10, 26, 0.45);
+  border-radius: 8px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 20px;
+}
+
+.file.failed .file-overlay {
+  background: rgba(0, 10, 26, 0.7);
+  color: #ff754f;
+  font-size: 12px;
+}

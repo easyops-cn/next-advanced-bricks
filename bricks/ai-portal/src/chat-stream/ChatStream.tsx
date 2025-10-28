@@ -28,11 +28,18 @@ import styles from "./styles.module.css";
 import toolbarStyles from "../cruise-canvas/toolbar.module.css";
 import { K, t } from "./i18n.js";
 import { NodeReplay } from "../cruise-canvas/NodeReplay/NodeReplay.js";
-import type { ActiveDetail } from "../shared/interfaces.js";
+import type {
+  ActiveDetail,
+  ExtraChatPayload,
+  FileInfo,
+} from "../shared/interfaces.js";
 import { useFlowAndActivityMap } from "../shared/useFlowAndActivityMap.js";
 import { useFulfilledActiveDetail } from "../shared/useFulfilledActiveDetail.js";
 import { useAutoScroll } from "./useAutoScroll.js";
 import scrollStyles from "./ScrollDownButton.module.css";
+import { PlanProgress } from "../shared/PlanProgress/PlanProgress.js";
+import { useServiceFlowPlan } from "../shared/useServiceFlowPlan.js";
+import { FilePreviewDrawer } from "../shared/FilePreview/FilePreviewDrawer.js";
 
 const ICON_SHARE: GeneralIconProps = {
   lib: "easyops",
@@ -65,6 +72,7 @@ export function ChatStreamComponent(
     showCases,
     exampleProjects,
     tryItOutUrl,
+    uploadOptions,
     onShare,
     onTerminate,
     onSubmitFeedback,
@@ -92,6 +100,7 @@ export function ChatStreamComponent(
   const conversationState = conversation?.state;
   const conversationDone = DONE_STATES.includes(conversationState!);
   const canChat = conversationDone || conversationState === "input-required";
+  const plan = useServiceFlowPlan(serviceFlows, tasks);
   const { flowMap, activityMap } = useFlowAndActivityMap(serviceFlows);
   const { messages, jobMap, lastDetail } = useConversationStream(
     !!conversation,
@@ -198,8 +207,8 @@ export function ChatStreamComponent(
   }, [pageTitle]);
 
   const humanInput = useCallback(
-    (jobId: string, input: string | null, action?: string) => {
-      humanInputRef.current?.(jobId, input, action);
+    (input: string | null, action?: string, extra?: ExtraChatPayload) => {
+      humanInputRef.current?.(input, action, extra);
     },
     [humanInputRef]
   );
@@ -212,7 +221,7 @@ export function ChatStreamComponent(
   }, [requirementMessage]);
 
   const workspace = conversationId;
-
+  const [activeFile, setActiveFile] = React.useState<FileInfo | null>(null);
   const taskContextValue = useMemo(
     () => ({
       conversationId,
@@ -224,6 +233,7 @@ export function ChatStreamComponent(
       replay,
       showCases,
       exampleProjects,
+      uploadOptions,
 
       humanInput,
       onShare,
@@ -258,6 +268,7 @@ export function ChatStreamComponent(
           };
         }
       },
+      setActiveFile,
     }),
     [
       conversationId,
@@ -269,6 +280,7 @@ export function ChatStreamComponent(
       replay,
       showCases,
       exampleProjects,
+      uploadOptions,
 
       humanInput,
       onShare,
@@ -355,7 +367,11 @@ export function ChatStreamComponent(
                   {messages.map((msg, index, list) => (
                     <div className={styles.message} key={index}>
                       {msg.role === "user" ? (
-                        <UserMessage content={msg.content} cmd={msg.cmd} />
+                        <UserMessage
+                          content={msg.content}
+                          cmd={msg.cmd}
+                          files={msg.files}
+                        />
                       ) : (
                         <AssistantMessage
                           chunks={msg.chunks}
@@ -367,7 +383,14 @@ export function ChatStreamComponent(
                   ))}
                   {replay
                     ? conversation?.finished && (
-                        <NodeReplay finished ui="chat" />
+                        <>
+                          <PlanProgress
+                            plan={plan}
+                            conversationState={conversationState}
+                            style={{ marginTop: 14 }}
+                          />
+                          <NodeReplay finished ui="chat" />
+                        </>
                       )
                     : showFeedback &&
                       (conversationState === "completed" ||
@@ -387,6 +410,10 @@ export function ChatStreamComponent(
               {(replay ? !conversation?.finished : supports?.chat) ? (
                 <div className={styles.footer}>
                   <div className={styles.narrow}>
+                    <PlanProgress
+                      plan={plan}
+                      conversationState={conversationState}
+                    />
                     {replay ? (
                       <NodeReplay />
                     ) : (
@@ -435,6 +462,7 @@ export function ChatStreamComponent(
             />
           </div>
         )}
+        {activeFile && <FilePreviewDrawer file={activeFile} />}
       </StreamContext.Provider>
     </TaskContext.Provider>
   );

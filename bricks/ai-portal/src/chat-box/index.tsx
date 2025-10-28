@@ -11,8 +11,6 @@ import React, {
 import { createPortal } from "react-dom";
 import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
-import { http } from "@next-core/http";
-import { handleHttpError } from "@next-core/runtime";
 import {
   getCaretPositionInTextarea,
   getContentRectsInTextarea,
@@ -28,11 +26,21 @@ import {
   getChatCommand,
   setChatCommand,
 } from "../data-providers/set-chat-command.js";
-import type { CommandPayload, UploadFileInfo } from "../shared/interfaces.js";
-import { UploadButton, type UploadButtonRef } from "./UploadButton.js";
-import { FileListComponent } from "./FileListComponent.js";
+import type {
+  ChatPayload,
+  CommandPayload,
+  UploadOptions,
+} from "../shared/interfaces.js";
+import {
+  getNextUid,
+  UploadButton,
+  type UploadButtonRef,
+} from "../shared/FileUpload/UploadButton.js";
+import { UploadedFiles } from "../shared/FileUpload/UploadedFiles.js";
+import UploadedFilesStyleText from "../shared/FileUpload/UploadedFiles.shadow.css";
 import { WrappedActions, WrappedIcon } from "./bricks.js";
-import type { FileItem } from "./interfaces.js";
+import { useFilesUploading } from "../shared/useFilesUploading.js";
+import GlobalDragOverlay from "../shared/FileUpload/GlobalDragOverlay.js";
 
 initializeI18n(NS, locales);
 
@@ -46,7 +54,7 @@ export interface ChatBoxProps {
   autoFocus?: boolean;
   aiEmployees?: AIEmployee[];
   commands?: Command[];
-  uploadFiles?: UploadFileOptions;
+  uploadOptions?: UploadOptions;
 }
 
 export interface AIEmployee {
@@ -67,16 +75,6 @@ export interface Command {
   payload?: CommandPayload;
 }
 
-export interface UploadFileOptions {
-  enabled?: boolean;
-  accept?: string;
-}
-
-export interface ChatPayload {
-  content: string;
-  files?: UploadFileInfo[];
-}
-
 type ActionWithAncestors = SimpleAction & {
   key: string | number;
   ancestors?: Command[];
@@ -89,7 +87,7 @@ type ActionWithAncestors = SimpleAction & {
  */
 export
 @defineElement("ai-portal.chat-box", {
-  styleTexts: [styleText],
+  styleTexts: [styleText, UploadedFilesStyleText],
   shadowOptions: {
     delegatesFocus: true,
   },
@@ -113,7 +111,7 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
   accessor commands: Command[] | undefined;
 
   @property({ attribute: false })
-  accessor uploadFiles: UploadFileOptions | undefined;
+  accessor uploadOptions: UploadOptions | undefined;
 
   /**
    * @deprecated Use `chat.submit` event instead
@@ -130,13 +128,6 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
 
   #handleChatSubmit = (payload: ChatPayload) => {
     this.#chatSubmit.emit(payload);
-  };
-
-  @event({ type: "ai-employee.mention" })
-  accessor #employeeMention!: EventEmitter<AIEmployee | null>;
-
-  #handleEmployeeMention = (employee: AIEmployee | null) => {
-    this.#employeeMention.emit(employee);
   };
 
   @event({ type: "command.select" })
@@ -169,10 +160,9 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
         autoFocus={this.autoFocus}
         aiEmployees={this.aiEmployees}
         commands={this.commands}
-        uploadFiles={this.uploadFiles}
+        uploadOptions={this.uploadOptions}
         onMessageSubmit={this.#handleMessageSubmit}
         onChatSubmit={this.#handleChatSubmit}
-        onEmployeeMention={this.#handleEmployeeMention}
         onCommandSelect={this.#handleCommandSelect}
         ref={this.ref}
       />
@@ -183,7 +173,6 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
 interface ChatBoxComponentProps extends ChatBoxProps {
   onMessageSubmit: (value: string) => void;
   onChatSubmit: (payload: ChatPayload) => void;
-  onEmployeeMention: (employee: AIEmployee | null) => void;
   onCommandSelect: (command: CommandPayload | null) => void;
   ref?: React.Ref<ChatBoxRef>;
 }
@@ -204,10 +193,9 @@ function LegacyChatBoxComponent(
     autoFocus,
     aiEmployees,
     commands,
-    uploadFiles,
+    uploadOptions,
     onMessageSubmit,
     onChatSubmit,
-    onEmployeeMention,
     onCommandSelect,
   }: ChatBoxComponentProps,
   ref: React.Ref<ChatBoxRef>
@@ -222,6 +210,8 @@ function LegacyChatBoxComponent(
   const [mentionedText, setMentionedText] = useState("");
   const [activeActionIndex, setActiveActionIndex] = useState(0);
   const [activeActionIndexes, setActiveActionIndexes] = useState<number[]>([0]);
+  const [command, setCommand] = useState<CommandPayload | null>(null);
+  const [mentioned, setMentioned] = useState<string | null>(null);
   const [commandPopover, setCommandPopover] = useState<MentionPopover | null>(
     null
   );
@@ -231,62 +221,23 @@ function LegacyChatBoxComponent(
   const [commandText, setCommandText] = useState("");
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
 
-  const [files, setFiles] = useState<FileItem[] | undefined>();
-  const hasFiles = !!files && files.length > 0;
+  const uploadEnabled = uploadOptions?.enabled;
+  const {
+    files,
+    resetFiles,
+    appendFiles,
+    removeFile,
+    hasFiles,
+    allFilesDone,
+    fileInfos,
+    exceeded,
+  } = useFilesUploading(uploadOptions?.maxFiles);
 
   useEffect(() => {
-    files?.forEach(async (fileItem) => {
-      if (fileItem.status === "ready") {
-        const abortController = new AbortController();
-
-        setFiles((prevFiles) => {
-          return prevFiles?.map((item) => {
-            if (item.uid === fileItem.uid) {
-              return { ...item, status: "uploading", abortController };
-            }
-            return item;
-          });
-        });
-
-        try {
-          const formData = new FormData();
-          formData.append("file", fileItem.file);
-
-          const response = await http.request<{ data: UploadFileInfo }>(
-            "api/gateway/logic.llm.aiops_service/api/v1/elevo/files/upload",
-            {
-              method: "POST",
-              body: formData,
-              signal: abortController.signal,
-            }
-          );
-
-          setFiles((prevFiles) => {
-            return prevFiles?.map((item) => {
-              if (item.uid === fileItem.uid) {
-                return {
-                  ...item,
-                  status: "done",
-                  fileInfo: response.data,
-                };
-              }
-              return item;
-            });
-          });
-        } catch (error) {
-          setFiles((prevFiles) => {
-            return prevFiles?.map((item) => {
-              if (item.uid === fileItem.uid) {
-                return { ...item, status: "failed" };
-              }
-              return item;
-            });
-          });
-          handleHttpError(error);
-        }
-      }
-    });
-  }, [files]);
+    if (!uploadEnabled) {
+      resetFiles();
+    }
+  }, [uploadEnabled, resetFiles]);
 
   useEffect(() => {
     const store = window.__elevo_try_it_out;
@@ -312,33 +263,26 @@ function LegacyChatBoxComponent(
     },
   }));
 
-  const [allFilesDone, setAllFilesDone] = useState(true);
-  const [fileInfos, setFileInfos] = useState<UploadFileInfo[] | undefined>();
-  const initialRef = useRef(true);
-
-  useEffect(() => {
-    const allFilesDone =
-      !files || files.every((file) => file.status === "done");
-    setAllFilesDone(allFilesDone);
-    if (initialRef.current) {
-      initialRef.current = false;
-      return;
-    }
-    if (allFilesDone) {
-      setFileInfos(files?.map((file) => file.fileInfo!));
-    }
-  }, [files]);
-
   const doSubmit = useCallback(
     (value: string) => {
-      const content = value.slice(commandText?.length ?? 0);
+      const content = value.slice(commandText.length || mentionedText.length);
       onMessageSubmit(content);
       onChatSubmit({
         content,
         files: fileInfos,
+        cmd: command,
+        aiEmployeeId: mentioned,
       });
     },
-    [commandText?.length, fileInfos, onChatSubmit, onMessageSubmit]
+    [
+      commandText.length,
+      mentionedText.length,
+      command,
+      fileInfos,
+      mentioned,
+      onChatSubmit,
+      onMessageSubmit,
+    ]
   );
 
   const handleSubmit = useCallback(
@@ -357,17 +301,13 @@ function LegacyChatBoxComponent(
       setValue(value);
 
       if (
-        !mentionedText &&
         selectionStart !== null &&
         selectionStart === selectionEnd &&
         aiEmployees?.length
       ) {
         const previousContent = value.slice(0, selectionStart);
-        const mentionIndex = previousContent.lastIndexOf("@");
-        if (mentionIndex >= 0) {
-          const mentionText = previousContent
-            .slice(mentionIndex + 1)
-            .toLowerCase();
+        if (previousContent.startsWith("@")) {
+          const mentionText = previousContent.slice(1).toLowerCase();
           const matchedEmployees = aiEmployees
             .filter(
               (employee) =>
@@ -388,7 +328,7 @@ function LegacyChatBoxComponent(
                 position: "absolute",
                 zIndex: 1,
               },
-              range: { start: mentionIndex, end: selectionStart },
+              range: { start: 0, end: selectionStart },
               actions: matchedEmployees.map((employee) => ({
                 key: employee.employeeId,
                 text: employee.name,
@@ -445,19 +385,20 @@ function LegacyChatBoxComponent(
       }
       setCommandPopover(null);
     },
-    [aiEmployees, commands, mentionedText]
+    [aiEmployees, commands]
   );
 
   useEffect(() => {
     if (mentionedText && !value.includes(mentionedText)) {
       setMentionedText("");
-      onEmployeeMention(null);
+      setMentioned(null);
     }
-  }, [mentionedText, onEmployeeMention, value]);
+  }, [mentionedText, value]);
 
   useEffect(() => {
     if (commandText && !value.includes(commandText)) {
       setCommandText("");
+      setCommand(null);
       onCommandSelect(null);
     }
   }, [commandText, onCommandSelect, value]);
@@ -542,6 +483,7 @@ function LegacyChatBoxComponent(
 
   useEffect(() => {
     if (chatCommand) {
+      setCommand(chatCommand.payload);
       onCommandSelect(chatCommand.payload);
     }
   }, [chatCommand, onCommandSelect]);
@@ -584,10 +526,10 @@ function LegacyChatBoxComponent(
       setValue(newValue);
       setMentionedText(mention);
       setMentionPopover(null);
-      onEmployeeMention((action as { data?: AIEmployee }).data!);
+      setMentioned((action as { data?: AIEmployee }).data!.employeeId);
       textareaRef.current?.focus();
     },
-    [mentionPopover, onEmployeeMention]
+    [mentionPopover]
   );
 
   const handleSelectCommand = useCallback(
@@ -600,6 +542,7 @@ function LegacyChatBoxComponent(
       setValue(newValue);
       setCommandText(command);
       setCommandPopover(null);
+      setCommand(action.payload!);
       onCommandSelect(action.payload!);
       textareaRef.current?.focus();
     },
@@ -784,100 +727,119 @@ function LegacyChatBoxComponent(
 
   const uploadButtonRef = useRef<UploadButtonRef>(null);
 
+  const onFilesDropped = useCallback(
+    (files: File[]) => {
+      appendFiles(
+        files.map((file) => ({
+          uid: getNextUid(),
+          file,
+          status: "ready",
+        }))
+      );
+      textareaRef.current?.focus();
+    },
+    [appendFiles]
+  );
+
   return (
-    <div className="root">
-      <div className="container" ref={containerRef}>
-        <TextareaAutoResize
-          containerRef={containerRef}
-          ref={textareaRef}
-          value={value}
-          minRows={58 / 22}
-          paddingSize={hasFiles ? 144 : 60}
-          autoResize
-          disabled={disabled}
-          placeholder={placeholder ?? t(K.ASK_ANY_THING)}
-          submitWhen="enter-without-shift"
-          desiredSelectionRef={selectionRef}
-          onSubmit={handleSubmit}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          style={{
-            paddingTop: hasFiles ? 94 : 10,
-          }}
-        />
-        {hasFiles && (
-          <FileListComponent
-            files={files!}
-            onRemove={(uid, abortController) => {
-              setFiles((prevFiles) =>
-                prevFiles?.filter((item) => item.uid !== uid)
-              );
-              abortController?.abort();
-            }}
-            onAdd={() => {
-              uploadButtonRef.current?.requestUpload();
+    <>
+      <div className="root">
+        <div className="container" ref={containerRef}>
+          <TextareaAutoResize
+            containerRef={containerRef}
+            ref={textareaRef}
+            value={value}
+            minRows={58 / 22}
+            paddingSize={hasFiles ? 144 : 60}
+            autoResize
+            disabled={disabled}
+            placeholder={placeholder ?? t(K.ASK_ANY_THING)}
+            submitWhen="enter-without-shift"
+            desiredSelectionRef={selectionRef}
+            onSubmit={handleSubmit}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            style={{
+              paddingTop: hasFiles ? 94 : 10,
             }}
           />
-        )}
-        <div className="actions-bar">
-          <div>
-            <slot name="actions"></slot>
+          {hasFiles && (
+            <UploadedFiles
+              files={files!}
+              onRemove={(uid, abortController) => {
+                removeFile(uid);
+                abortController?.abort();
+              }}
+              onAdd={() => {
+                uploadButtonRef.current?.requestUpload();
+              }}
+            />
+          )}
+          <div className="actions-bar">
+            <div>
+              <slot name="actions"></slot>
+            </div>
+            <div className="buttons">
+              {uploadEnabled ? (
+                <>
+                  <UploadButton
+                    ref={uploadButtonRef}
+                    accept={uploadOptions?.accept}
+                    disabled={exceeded}
+                    onChange={(files) => {
+                      appendFiles(files);
+                      textareaRef.current?.focus();
+                    }}
+                  />
+                  <div className="btn-divider"></div>
+                </>
+              ) : null}
+              <button
+                className="btn-send"
+                disabled={!value || !allFilesDone}
+                onClick={handleSubmitClick}
+              >
+                <WrappedIcon lib="fa" prefix="fas" icon="arrow-up" />
+              </button>
+            </div>
           </div>
-          <div className="buttons">
-            {uploadFiles?.enabled ? (
-              <>
-                <UploadButton
-                  ref={uploadButtonRef}
-                  accept={uploadFiles?.accept}
-                  onChange={(files) =>
-                    setFiles((prevFiles) => [
-                      ...(prevFiles ?? []),
-                      ...(files ?? []),
-                    ])
-                  }
-                />
-                <div className="btn-divider"></div>
-              </>
-            ) : null}
-            <button
-              className="btn-send"
-              disabled={!value || !allFilesDone}
-              onClick={handleSubmitClick}
-            >
-              <WrappedIcon lib="fa" prefix="fas" icon="arrow-up" />
-            </button>
-          </div>
+          {mentionOverlay?.map((overlay, index) => (
+            <div key={index} className="mention-overlay" style={overlay} />
+          ))}
+          {commandOverlay?.map((overlay, index) => (
+            <div key={index} className="mention-overlay" style={overlay} />
+          ))}
+          {mentionPopover &&
+            createPortal(
+              <WrappedActions
+                actions={mentionPopover.actions}
+                style={mentionPopover.style}
+                activeKeys={[mentionPopover.actions[activeActionIndex].key!]}
+                onActionClick={(e) => handleMention(e.detail)}
+              />,
+              document.body
+            )}
+          {commandPopover &&
+            createPortal(
+              <WrappedActions
+                actions={commandPopover.actions}
+                style={commandPopover.style}
+                activeKeys={commandCheckedKeys}
+                onActionClick={(e) =>
+                  handleSelectCommand(e.detail as ActionWithAncestors)
+                }
+              />,
+              document.body
+            )}
         </div>
-        {mentionOverlay?.map((overlay, index) => (
-          <div key={index} className="mention-overlay" style={overlay} />
-        ))}
-        {commandOverlay?.map((overlay, index) => (
-          <div key={index} className="mention-overlay" style={overlay} />
-        ))}
-        {mentionPopover &&
-          createPortal(
-            <WrappedActions
-              actions={mentionPopover.actions}
-              style={mentionPopover.style}
-              activeKeys={[mentionPopover.actions[activeActionIndex].key!]}
-              onActionClick={(e) => handleMention(e.detail)}
-            />,
-            document.body
-          )}
-        {commandPopover &&
-          createPortal(
-            <WrappedActions
-              actions={commandPopover.actions}
-              style={commandPopover.style}
-              activeKeys={commandCheckedKeys}
-              onActionClick={(e) =>
-                handleSelectCommand(e.detail as ActionWithAncestors)
-              }
-            />,
-            document.body
-          )}
       </div>
-    </div>
+      <GlobalDragOverlay
+        disabled={!uploadEnabled || exceeded}
+        accept={uploadOptions?.accept}
+        dragTips={uploadOptions?.dragTips}
+        onFilesDropped={onFilesDropped}
+      />
+    </>
   );
 }
 

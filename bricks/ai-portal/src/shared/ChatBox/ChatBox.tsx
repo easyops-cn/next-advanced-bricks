@@ -13,7 +13,8 @@ export interface ChatBoxProps {
 }
 
 export function ChatBox({ state, canChat }: ChatBoxProps): JSX.Element {
-  const { humanInput, onTerminate, supports } = useContext(TaskContext);
+  const { humanInput, onTerminate, supports, uploadOptions } =
+    useContext(TaskContext);
 
   const [terminating, setTerminating] = useState(false);
 
@@ -42,8 +43,10 @@ export function ChatBox({ state, canChat }: ChatBoxProps): JSX.Element {
       submitDisabled={!canChat}
       supportsTerminate={supports?.intercept}
       terminating={terminating}
-      onMessageSubmit={(e) => {
-        humanInput("", e.detail);
+      uploadOptions={uploadOptions}
+      onChatSubmit={(e) => {
+        const { content, ...extra } = e.detail;
+        humanInput(content, undefined, extra);
       }}
       onTerminate={handleTerminate}
     />

@@ -36,11 +36,7 @@ export interface Task {
   // User requirement
   // requirement: string;
 
-  // attachments?: File[];
-
   state: TaskState;
-
-  plan: Step[];
 
   jobs: Job[];
 
@@ -57,13 +53,7 @@ export type ConversationState =
   | "input-required"
   | "terminated";
 
-export type TaskState =
-  | "free"
-  | "confirming"
-  | "executing"
-  | "input-required"
-  | "completed"
-  | "failed";
+export type TaskState = "working" | "input-required" | "completed" | "failed";
 
 export type JobState =
   | "submitted"
@@ -123,6 +113,9 @@ export interface Job {
   username?: string;
 
   cmd?: CommandPayload;
+
+  // @ 的数字人 ID
+  mentionedAiEmployeeId?: string;
 }
 
 export type HumanAction = HumanActionConfirm | HumanActionSelect;
@@ -212,15 +205,31 @@ export interface JobPatch extends Partial<Job> {
   id: string;
 }
 
-export interface RequestStore {
+export interface RequestStore extends ExtraChatPayload {
   conversationId: string;
   content: string;
-  cmd?: CommandPayload;
-  files?: UploadFileInfo[];
 }
 
 export interface UploadFileInfo {
   fileId: string;
+}
+
+export interface UploadOptions {
+  enabled?: boolean;
+  dragDisabled?: boolean;
+  dragTips?: string;
+  accept?: string;
+  maxFiles?: number;
+}
+
+export interface ChatPayload extends ExtraChatPayload {
+  content: string;
+}
+
+export interface ExtraChatPayload {
+  files?: UploadFileInfo[];
+  cmd?: CommandPayload | null;
+  aiEmployeeId?: string | null;
 }
 
 export interface GeneratedView {
@@ -340,4 +349,10 @@ export interface ActiveDetailOfActivity {
   type: "activity";
   activity: ActivityRun;
   flow: ServiceFlowRun;
+}
+
+export interface PlanStep {
+  name: string;
+  taskId?: string;
+  state?: TaskState;
 }

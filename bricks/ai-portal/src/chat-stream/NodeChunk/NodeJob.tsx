@@ -13,6 +13,7 @@ import { StreamContext } from "../StreamContext.js";
 import type { ActiveDetail, FileInfo, Job } from "../../shared/interfaces.js";
 import { getStateDisplay } from "./getStateDisplay.js";
 import { ICON_UP } from "../../shared/constants.js";
+import { FileList } from "../../cruise-canvas/FileList/FileList.js";
 
 export interface NodeJobProps {
   job: Job;
@@ -24,51 +25,54 @@ export function NodeJob({ job, isSubTask }: NodeJobProps) {
   const toolTitle = toolCall?.annotations?.title || toolCall?.name;
   const toolName = toolCall?.name;
   const showToolCall = !!toolCall;
-  const { conversationState, setActiveDetail, setSubActiveDetail } =
-    useContext(TaskContext);
+  const {
+    conversationState,
+    setActiveDetail,
+    setSubActiveDetail,
+    setActiveFile,
+  } = useContext(TaskContext);
   const { lastDetail, setUserClosedAside } = useContext(StreamContext);
 
   const { className, icon } = useMemo(() => {
     return getStateDisplay(job.state, conversationState);
   }, [job.state, conversationState]);
 
-  const [toolMarkdownContent, cmdbInstanceDetails /* , files */] =
-    useMemo(() => {
-      const contents: string[] = [];
-      const instanceDetails: CmdbInstanceDetailData[] = [];
-      const files: FileInfo[] = [];
-      let large = toolName === "llm_answer";
-      job.messages?.forEach((message) => {
-        if (message.role === "tool") {
-          for (const part of message.parts) {
-            if (part.type === "data") {
-              switch (part.data?.type) {
-                case "markdown":
-                  contents.push(part.data.content);
-                  break;
-                case "cmdb_instance_detail":
-                  instanceDetails.push(part.data as CmdbInstanceDetailData);
-                  if (!large) {
-                    large =
-                      Object.keys(
-                        part.data?.outputSchema?.type === "object"
-                          ? part.data.outputSchema.properties
-                          : part.data.detail
-                      ).length > 6;
-                  }
-                  break;
-              }
-            } else if (part.type === "file") {
-              files.push(part.file);
+  const [toolMarkdownContent, cmdbInstanceDetails, files] = useMemo(() => {
+    const contents: string[] = [];
+    const instanceDetails: CmdbInstanceDetailData[] = [];
+    const files: FileInfo[] = [];
+    let large = toolName === "llm_answer";
+    job.messages?.forEach((message) => {
+      if (message.role === "tool") {
+        for (const part of message.parts) {
+          if (part.type === "data") {
+            switch (part.data?.type) {
+              case "markdown":
+                contents.push(part.data.content);
+                break;
+              case "cmdb_instance_detail":
+                instanceDetails.push(part.data as CmdbInstanceDetailData);
+                if (!large) {
+                  large =
+                    Object.keys(
+                      part.data?.outputSchema?.type === "object"
+                        ? part.data.outputSchema.properties
+                        : part.data.detail
+                    ).length > 6;
+                }
+                break;
             }
+          } else if (part.type === "file") {
+            files.push(part.file);
           }
         }
-      });
+      }
+    });
 
-      const markdownContent = contents.join("");
+    const markdownContent = contents.join("");
 
-      return [markdownContent, instanceDetails, files] as const;
-    }, [job.messages, toolName]);
+    return [markdownContent, instanceDetails, files] as const;
+  }, [job.messages, toolName]);
 
   const [collapsed, setCollapsed] = useState(false);
 
@@ -146,6 +150,9 @@ export function NodeJob({ job, isSubTask }: NodeJobProps) {
                 </div>
               ))}
               {job.generatedView ? <NodeView job={job} /> : null}
+              {files.length > 0 && (
+                <FileList files={files} onFileClick={setActiveFile} />
+              )}
             </div>
           </div>
         </>

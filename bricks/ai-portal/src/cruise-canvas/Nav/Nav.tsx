@@ -1,21 +1,17 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import classNames from "classnames";
 import styles from "./Nav.module.css";
-import type { GraphNavItem, Step } from "../interfaces";
+import type { GraphNavItem } from "../interfaces";
 import { WrappedIcon } from "../../shared/bricks";
 import { DONE_STATES } from "../../shared/constants";
 import type {
   ConversationState,
-  Job,
   JobState,
   TaskState,
 } from "../../shared/interfaces";
 
 export interface NavProps {
   nav: GraphNavItem[] | undefined;
-  plan: Step[] | undefined;
-  jobMap: Map<string, Job> | undefined;
-  jobLevels: Map<string, number> | undefined;
   currentNavId: string | null;
   taskState: TaskState | ConversationState | undefined;
   onClick: (jobId: string) => void;
@@ -26,112 +22,47 @@ interface MergedNavItem extends Omit<GraphNavItem, "state"> {
   state?: JobState;
 }
 
-export function Nav({
-  nav,
-  plan,
-  jobMap,
-  jobLevels,
-  currentNavId,
-  taskState,
-  onClick,
-}: NavProps) {
-  const mergedNav = useMemo<MergedNavItem[] | undefined>(() => {
-    const unmatchedSteps = plan?.filter(
-      (step) => !nav?.find((job) => job.id === step.id)
-    );
-
-    if (!unmatchedSteps?.length) {
-      return nav;
-    }
-
-    // For the steps in plan that are not matched in nav,
-    // We need to insert them into the nav at the correct position
-    const insertsBefore = new Map<string | null, Step[]>();
-    let cursor: string | null = null;
-
-    for (let index = plan!.length - 1; index >= 0; index--) {
-      const step = plan![index];
-      if (unmatchedSteps.includes(step)) {
-        let list = insertsBefore.get(cursor);
-        if (!list) {
-          insertsBefore.set(cursor, (list = []));
-        }
-        list.unshift(step);
-      } else {
-        cursor = step.id;
-      }
-    }
-
-    const fixedNav = nav ?? [];
-    const mergedNav: MergedNavItem[] = [...fixedNav];
-    for (const [cursor, steps] of insertsBefore.entries()) {
-      const cursorIndex =
-        cursor === null
-          ? mergedNav.length
-          : mergedNav.findIndex((item) => item.id === cursor);
-
-      // If the next step state is done, mark the inserted plan steps as skipped
-      const nextStep = mergedNav[cursorIndex];
-      const skipped = DONE_STATES.includes(nextStep?.state || "unknown");
-
-      mergedNav.splice(
-        cursorIndex,
-        0,
-        ...steps.map<MergedNavItem>((step) => {
-          const job = jobMap?.get(step.id);
-          const level = jobLevels?.get(step.id);
-          return {
-            id: step.id,
-            title: step.instruction,
-            state: job?.state ?? (skipped ? "skipped" : undefined),
-            level: level ?? 0,
-            disabled: true,
-          };
-        })
-      );
-    }
-
-    return mergedNav;
-  }, [nav, plan, jobMap, jobLevels]);
-
+export function Nav({ nav, currentNavId, taskState, onClick }: NavProps) {
   const ref = useRef<HTMLUListElement>(null);
   useEffect(() => {
-    const nav = ref.current;
-    if (!nav || !currentNavId) {
+    const navElement = ref.current;
+    if (!navElement || !currentNavId) {
       return;
     }
-    nav.querySelector(`[data-job-id="${currentNavId}"]`)?.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-    });
+    navElement
+      .querySelector(`[data-job-id="${currentNavId}"]`)
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
   }, [currentNavId]);
 
   useEffect(() => {
-    const nav = ref.current;
-    if (!nav || currentNavId) {
+    const navElement = ref.current;
+    if (!navElement || currentNavId) {
       return;
     }
 
-    const lastActiveItem = mergedNav?.findLast(
+    const lastActiveItem = nav?.findLast(
       (item) =>
         DONE_STATES.includes(item.state || "unknown") ||
         item.state === "working" ||
         item.state === "input-required"
     );
     if (lastActiveItem) {
-      nav
+      navElement
         .querySelector(`[data-job-id="${lastActiveItem.id}"]`)
         ?.scrollIntoView({
           behavior: "smooth",
           block: "nearest",
         });
     }
-  }, [currentNavId, mergedNav]);
+  }, [currentNavId, nav]);
 
   return (
     <div className={styles.container}>
       <ul className={styles.nav} ref={ref}>
-        {mergedNav?.map((item) => (
+        {nav?.map((item) => (
           <NavItem
             key={item.id}
             {...item}

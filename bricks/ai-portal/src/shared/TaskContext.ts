@@ -5,10 +5,13 @@ import type {
   ConversationError,
   ConversationState,
   ExampleProject,
+  ExtraChatPayload,
+  FileInfo,
   GeneratedView,
   Job,
   ShowCaseType,
   Task,
+  UploadOptions,
 } from "./interfaces";
 
 export interface TaskContextValue {
@@ -21,8 +24,13 @@ export interface TaskContextValue {
   replay?: boolean;
   showCases?: ShowCaseType[];
   exampleProjects?: ExampleProject[];
+  uploadOptions?: UploadOptions;
 
-  humanInput: (jobId: string, input: string | null, action?: string) => void;
+  humanInput: (
+    input: string | null,
+    action?: string,
+    extra?: ExtraChatPayload
+  ) => void;
   onShare: () => void;
   onTerminate: () => void;
   supports?: Record<string, boolean>;
@@ -52,6 +60,7 @@ export interface TaskContextValue {
   watchAgain?: () => void;
   tryItOut?: () => void;
   separateInstructions?: boolean;
+  setActiveFile: Dispatch<React.SetStateAction<FileInfo | null>>;
 }
 
 export const TaskContext = createContext<TaskContextValue>({
@@ -70,4 +79,5 @@ export const TaskContext = createContext<TaskContextValue>({
   submittedFeedback: false,
   onSubmitFeedback: () => {},
   setShowFeedback: () => {},
+  setActiveFile: () => {},
 });

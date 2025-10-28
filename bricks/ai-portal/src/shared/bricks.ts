@@ -51,7 +51,10 @@ export const WrappedPopover = wrapBrick<Popover, PopoverProps>("eo-popover");
 
 export const WrappedDrawer = wrapBrick<
   Drawer,
-  DrawerProps & { keyboard?: boolean },
+  DrawerProps & {
+    keyboard?: boolean;
+    themeVariant?: "default" | "elevo";
+  },
   DrawerEvents,
   DrawerMapEvents
 >("eo-drawer", {
@@ -69,7 +72,7 @@ export const WrappedChatInput = wrapBrick<
   ChatInputEvents,
   ChatInputMapEvents
 >("ai-portal.chat-input", {
-  onMessageSubmit: "message.submit",
+  onChatSubmit: "chat.submit",
   onTerminate: "terminate",
 });
 

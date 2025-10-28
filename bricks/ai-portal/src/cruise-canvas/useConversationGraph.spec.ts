@@ -39,7 +39,6 @@ describe("useConversationGraph", () => {
       nav: [],
       views: [],
       jobMap: new Map(),
-      jobLevels: new Map(),
     });
   });
 
@@ -71,6 +70,8 @@ describe("useConversationGraph", () => {
       type: "requirement",
       id: "requirement:job-1",
       content: "Create a component",
+      cmd: undefined,
+      files: [],
     });
   });
 
@@ -312,6 +313,7 @@ describe("useConversationGraph", () => {
       type: "requirement",
       id: "requirement:job-1",
       content: "User input",
+      files: [],
     });
 
     expect(result.current?.nodes).toContainEqual({
