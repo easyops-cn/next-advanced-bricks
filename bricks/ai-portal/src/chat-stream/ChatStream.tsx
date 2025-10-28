@@ -28,7 +28,7 @@ import styles from "./styles.module.css";
 import toolbarStyles from "../cruise-canvas/toolbar.module.css";
 import { K, t } from "./i18n.js";
 import { NodeReplay } from "../cruise-canvas/NodeReplay/NodeReplay.js";
-import type { ActiveDetail } from "../shared/interfaces.js";
+import type { ActiveDetail, ExtraChatPayload } from "../shared/interfaces.js";
 import { useFlowAndActivityMap } from "../shared/useFlowAndActivityMap.js";
 import { useFulfilledActiveDetail } from "../shared/useFulfilledActiveDetail.js";
 import { useAutoScroll } from "./useAutoScroll.js";
@@ -202,8 +202,8 @@ export function ChatStreamComponent(
   }, [pageTitle]);
 
   const humanInput = useCallback(
-    (jobId: string, input: string | null, action?: string) => {
-      humanInputRef.current?.(jobId, input, action);
+    (input: string | null, action?: string, extra?: ExtraChatPayload) => {
+      humanInputRef.current?.(input, action, extra);
     },
     [humanInputRef]
   );

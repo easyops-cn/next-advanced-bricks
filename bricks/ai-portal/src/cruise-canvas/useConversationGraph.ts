@@ -78,25 +78,11 @@ export function useConversationGraph(
             content: userInput,
             username,
             cmd: job.cmd,
-            // files: messages
-            //   ?.filter((msg) => msg.role === "user")
-            //   .flatMap((msg) => msg.parts)
-            //   .filter((part) => part.type === "file")
-            //   .map((part) => part.file),
-            files: [
-              {
-                name: "Test.png",
-                size: 1038,
-              },
-              {
-                name: "Test.pdf",
-                size: 1038,
-              },
-              {
-                name: "Test.doc",
-                size: 1038,
-              },
-            ],
+            files: messages
+              ?.filter((msg) => msg.role === "user")
+              .flatMap((msg) => msg.parts)
+              .filter((part) => part.type === "file")
+              .map((part) => part.file),
           });
           nodeIds.push(requirementId);
           userInputNodes.push(requirementId);

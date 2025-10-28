@@ -16,6 +16,7 @@ const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
 export interface UploadedFilesProps {
   files: FileItem[];
+  maxFiles?: number;
   className?: string;
   onRemove: (uid: number, abortController: AbortController | undefined) => void;
   onAdd: () => void;
@@ -23,6 +24,7 @@ export interface UploadedFilesProps {
 
 export function UploadedFiles({
   files,
+  maxFiles,
   className,
   onRemove,
   onAdd,
@@ -46,11 +48,13 @@ export function UploadedFiles({
           onRemove={onRemove}
         />
       ))}
-      <li>
-        <button className="btn-add-file" onClick={onAdd}>
-          <WrappedIcon lib="antd" icon="plus" />
-        </button>
-      </li>
+      {!maxFiles || files.length < maxFiles ? (
+        <li>
+          <button className="btn-add-file" onClick={onAdd}>
+            <WrappedIcon lib="antd" icon="plus" />
+          </button>
+        </li>
+      ) : null}
     </ul>
   );
 }

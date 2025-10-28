@@ -36,7 +36,7 @@ export function RequestHumanAction({
           if (replay) {
             return;
           }
-          humanInput("", null, action.confirmText || "确认");
+          humanInput(null, action.confirmText || "确认");
           setDisabled(true);
         }}
       >

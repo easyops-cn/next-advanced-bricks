@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { handleHttpError } from "@next-core/runtime";
 import { http } from "@next-core/http";
 import type { FileItem } from "./FileUpload/interfaces";
 import type { UploadFileInfo } from "./interfaces";
 
-export function useFilesUploading() {
+export function useFilesUploading(maxFiles?: number) {
   const [files, setFiles] = useState<FileItem[] | undefined>();
   const hasFiles = !!files && files.length > 0;
 
@@ -79,5 +79,40 @@ export function useFilesUploading() {
     }
   }, [files]);
 
-  return { files, setFiles, hasFiles, allFilesDone, fileInfos };
+  const appendFiles = useCallback(
+    (newFiles: FileItem[] | undefined) => {
+      setFiles((prev) => {
+        if (!newFiles) {
+          return prev;
+        }
+        const list = [...(prev ?? []), ...newFiles];
+        if (maxFiles && list.length > maxFiles) {
+          return list.slice(0, maxFiles);
+        }
+        return list;
+      });
+    },
+    [maxFiles]
+  );
+
+  const resetFiles = useCallback(() => {
+    setFiles(undefined);
+  }, []);
+
+  const removeFile = useCallback((uid: number) => {
+    setFiles((prev) => prev?.filter((file) => file.uid !== uid));
+  }, []);
+
+  const exceeded = !!maxFiles && !!files && files.length >= maxFiles;
+
+  return {
+    files,
+    resetFiles,
+    appendFiles,
+    removeFile,
+    hasFiles,
+    allFilesDone,
+    fileInfos,
+    exceeded,
+  };
 }

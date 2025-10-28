@@ -45,7 +45,8 @@ export function ChatBox({ state, canChat }: ChatBoxProps): JSX.Element {
       terminating={terminating}
       uploadOptions={uploadOptions}
       onChatSubmit={(e) => {
-        humanInput("", e.detail.content, undefined, undefined, e.detail.files);
+        const { content, ...extra } = e.detail;
+        humanInput(content, undefined, extra);
       }}
       onTerminate={handleTerminate}
     />

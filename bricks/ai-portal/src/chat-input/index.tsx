@@ -20,10 +20,12 @@ import { UploadedFiles } from "../shared/FileUpload/UploadedFiles.js";
 import UploadedFilesStyleText from "../shared/FileUpload/UploadedFiles.shadow.css";
 import { useFilesUploading } from "../shared/useFilesUploading.js";
 import {
+  getNextUid,
   UploadButton,
   type UploadButtonRef,
 } from "../shared/FileUpload/UploadButton.js";
 import type { ChatPayload, UploadOptions } from "../shared/interfaces.js";
+import GlobalDragOverlay from "../shared/FileUpload/GlobalDragOverlay.js";
 
 initializeI18n(NS, locales);
 
@@ -157,16 +159,24 @@ function ChatInputComponent({
   const [value, setValue] = useState("");
   const valueRef = useRef("");
   const [wrap, setWrap] = useState(false);
-  const { files, setFiles, hasFiles, allFilesDone, fileInfos } =
-    useFilesUploading();
-  const uploadButtonRef = useRef<UploadButtonRef>(null);
   const uploadEnabled = uploadOptions?.enabled;
+  const {
+    files,
+    resetFiles,
+    appendFiles,
+    removeFile,
+    hasFiles,
+    allFilesDone,
+    fileInfos,
+    exceeded,
+  } = useFilesUploading(uploadOptions?.maxFiles);
+  const uploadButtonRef = useRef<UploadButtonRef>(null);
 
   useEffect(() => {
     if (!uploadEnabled) {
-      setFiles(undefined);
+      resetFiles();
     }
-  }, [uploadEnabled, setFiles]);
+  }, [uploadEnabled, resetFiles]);
 
   useEffect(() => {
     if (autoFocus && !submitDisabled) {
@@ -184,8 +194,16 @@ function ChatInputComponent({
       onChatSubmit({ content: value, files: fileInfos });
       valueRef.current = "";
       setValue("");
+      resetFiles();
     },
-    [allFilesDone, submitDisabled, onMessageSubmit, onChatSubmit, fileInfos]
+    [
+      allFilesDone,
+      submitDisabled,
+      onMessageSubmit,
+      onChatSubmit,
+      fileInfos,
+      resetFiles,
+    ]
   );
 
   const handleSubmit = useCallback(
@@ -256,82 +274,101 @@ function ChatInputComponent({
     textareaRef.current?.focus();
   }, []);
 
+  const onFilesDropped = useCallback(
+    (files: File[]) => {
+      appendFiles(
+        files.map((file) => ({
+          uid: getNextUid(),
+          file,
+          status: "ready",
+        }))
+      );
+      textareaRef.current?.focus();
+    },
+    [appendFiles]
+  );
+
   return (
-    <div className="container" onClick={handleContainerClick}>
-      <div className={classNames("box", { wrap })}>
-        <div className="input" ref={containerRef}>
-          <TextareaAutoResize
-            containerRef={containerRef}
-            ref={textareaRef}
-            value={value}
-            minRows={1}
-            maxRows={4}
-            borderSize={0}
-            paddingSize={hasFiles ? 86 : 16}
-            autoResize
-            placeholder={placeholder}
-            submitWhen="enter-without-shift"
-            onSubmit={handleSubmit}
-            onChange={handleChange}
-            style={{
-              paddingTop: hasFiles ? 78 : 8,
-            }}
-          />
-          {hasFiles && (
-            <UploadedFiles
-              files={files!}
-              className="condensed"
-              onRemove={(uid, abortController) => {
-                setFiles((prevFiles) =>
-                  prevFiles?.filter((item) => item.uid !== uid)
-                );
-                abortController?.abort();
-              }}
-              onAdd={() => {
-                uploadButtonRef.current?.requestUpload();
+    <>
+      <div className="container" onClick={handleContainerClick}>
+        <div className={classNames("box", { wrap })}>
+          <div className="input" ref={containerRef}>
+            <TextareaAutoResize
+              containerRef={containerRef}
+              ref={textareaRef}
+              value={value}
+              minRows={1}
+              maxRows={4}
+              borderSize={0}
+              paddingSize={hasFiles ? 86 : 16}
+              autoResize
+              placeholder={placeholder}
+              submitWhen="enter-without-shift"
+              onSubmit={handleSubmit}
+              onChange={handleChange}
+              style={{
+                paddingTop: hasFiles ? 78 : 8,
               }}
             />
-          )}
-        </div>
-        <div className="toolbar">
-          {uploadEnabled ? (
-            <>
-              <UploadButton
-                ref={uploadButtonRef}
-                accept={uploadOptions?.accept}
-                onChange={(files) =>
-                  setFiles((prevFiles) => [
-                    ...(prevFiles ?? []),
-                    ...(files ?? []),
-                  ])
-                }
+            {hasFiles && (
+              <UploadedFiles
+                files={files!}
+                className="condensed"
+                onRemove={(uid, abortController) => {
+                  removeFile(uid);
+                  abortController?.abort();
+                }}
+                onAdd={() => {
+                  uploadButtonRef.current?.requestUpload();
+                }}
               />
-              <div className="btn-divider"></div>
-            </>
-          ) : null}
-          {!submitDisabled || !supportsTerminate ? (
-            <button
-              className="btn-send"
-              disabled={submitDisabled || !value || !allFilesDone}
-              onClick={handleSubmitClick}
-            >
-              <WrappedIcon lib="fa" icon="arrow-up" />
-            </button>
-          ) : (
-            <>
-              {terminating ? (
-                <WrappedIconButton icon={ICON_LOADING} disabled />
-              ) : (
-                <WrappedIconButton
-                  icon={ICON_STOP}
-                  tooltip={t(K.TERMINATE_THE_TASK)}
-                  onClick={onTerminate}
+            )}
+          </div>
+          <div className="toolbar">
+            {uploadEnabled ? (
+              <>
+                <UploadButton
+                  ref={uploadButtonRef}
+                  accept={uploadOptions?.accept}
+                  disabled={exceeded}
+                  onChange={(files) => {
+                    appendFiles(files);
+                    textareaRef.current?.focus();
+                  }}
                 />
-              )}
-            </>
-          )}
+                <div className="btn-divider"></div>
+              </>
+            ) : null}
+            {!submitDisabled || !supportsTerminate ? (
+              <button
+                className="btn-send"
+                disabled={submitDisabled || !value || !allFilesDone}
+                onClick={handleSubmitClick}
+              >
+                <WrappedIcon lib="fa" icon="arrow-up" />
+              </button>
+            ) : (
+              <>
+                {terminating ? (
+                  <WrappedIconButton icon={ICON_LOADING} disabled />
+                ) : (
+                  <WrappedIconButton
+                    icon={ICON_STOP}
+                    tooltip={t(K.TERMINATE_THE_TASK)}
+                    onClick={onTerminate}
+                  />
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+      <GlobalDragOverlay
+        disabled={!uploadEnabled || exceeded || uploadOptions?.dragDisabled}
+        accept={uploadOptions?.accept}
+        dragTips={uploadOptions?.dragTips}
+        onFilesDropped={onFilesDropped}
+      />
+    </>
   );
 }

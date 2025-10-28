@@ -70,6 +70,7 @@ import type {
   ActiveDetail,
   ServiceFlowRun,
   ActivityRun,
+  ExtraChatPayload,
 } from "../shared/interfaces";
 import { NodeReplay } from "./NodeReplay/NodeReplay.js";
 import type { ConversationDetail, CruiseCanvasProps } from ".";
@@ -251,8 +252,8 @@ export function CruiseCanvasComponent(
   }, [pageTitle]);
 
   const humanInput = useCallback(
-    (jobId: string, input: string | null, action?: string) => {
-      humanInputRef.current?.(jobId, input, action);
+    (input: string | null, action?: string, extra?: ExtraChatPayload) => {
+      humanInputRef.current?.(input, action, extra);
     },
     [humanInputRef]
   );

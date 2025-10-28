@@ -1,0 +1,25 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 9999;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 20px;
+  color: rgba(0, 0, 0, 0.88);
+  line-height: 28px;
+  margin-top: 17px;
+}
+
+.description {
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 14px;
+  margin-top: 11px;
+}

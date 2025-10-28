@@ -205,11 +205,9 @@ export interface JobPatch extends Partial<Job> {
   id: string;
 }
 
-export interface RequestStore {
+export interface RequestStore extends ExtraChatPayload {
   conversationId: string;
   content: string;
-  cmd?: CommandPayload;
-  files?: UploadFileInfo[];
 }
 
 export interface UploadFileInfo {
@@ -218,12 +216,20 @@ export interface UploadFileInfo {
 
 export interface UploadOptions {
   enabled?: boolean;
+  dragDisabled?: boolean;
+  dragTips?: string;
   accept?: string;
+  maxFiles?: number;
 }
 
-export interface ChatPayload {
+export interface ChatPayload extends ExtraChatPayload {
   content: string;
+}
+
+export interface ExtraChatPayload {
   files?: UploadFileInfo[];
+  cmd?: CommandPayload | null;
+  aiEmployeeId?: string | null;
 }
 
 export interface GeneratedView {

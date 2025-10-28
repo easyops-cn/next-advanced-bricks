@@ -16,8 +16,13 @@ const ICON_UPLOAD: GeneralIconProps = {
 
 let uid = 0;
 
+export function getNextUid() {
+  return uid++;
+}
+
 export interface UploadButtonProps {
   accept?: string;
+  disabled?: boolean;
   onChange?: (files: FileItem[] | undefined) => void;
 }
 
@@ -28,7 +33,7 @@ export interface UploadButtonRef {
 export const UploadButton = forwardRef(LegacyUploadButton);
 
 function LegacyUploadButton(
-  { accept, onChange }: UploadButtonProps,
+  { accept, disabled, onChange }: UploadButtonProps,
   ref: React.Ref<UploadButtonRef>
 ) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -38,7 +43,7 @@ function LegacyUploadButton(
     onChange?.(
       files
         ? Array.from(files).map((file) => ({
-            uid: uid++,
+            uid: getNextUid(),
             file,
             status: "ready",
           }))
@@ -71,6 +76,7 @@ function LegacyUploadButton(
         className="btn-upload"
         icon={ICON_UPLOAD}
         tooltip={t(K.UPLOAD_FILES)}
+        disabled={disabled}
         onClick={(e) => {
           e.stopPropagation();
           inputRef.current?.click();

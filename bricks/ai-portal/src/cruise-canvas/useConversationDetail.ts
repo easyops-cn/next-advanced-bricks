@@ -4,10 +4,9 @@ import { createSSEStream } from "@next-core/utils/general";
 import { getBasePath, handleHttpError } from "@next-core/runtime";
 import { rootReducer } from "./reducers";
 import type {
-  CommandPayload,
   ConversationPatch,
+  ExtraChatPayload,
   RequestStore,
-  UploadFileInfo,
 } from "../shared/interfaces";
 
 const MINIMAL_DELAY = 500;
@@ -30,7 +29,9 @@ export function useConversationDetail(
   );
 
   const humanInputRef =
-    useRef<(jobId: string, input: string | null, action?: string) => void>();
+    useRef<
+      (input: string | null, action?: string, extra?: ExtraChatPayload) => void
+    >();
 
   const replayListRef = useRef<ConversationPatch[]>([]);
   const replayRef = useRef(replay);
@@ -88,8 +89,7 @@ export function useConversationDetail(
     const makeRequest = async (
       content: string | null,
       action?: string,
-      cmd?: CommandPayload,
-      files?: UploadFileInfo[]
+      extra?: ExtraChatPayload
     ) => {
       if (requesting) {
         return;
@@ -111,7 +111,7 @@ export function useConversationDetail(
                 signal: ctrl.signal,
                 method: "POST",
                 body: JSON.stringify(
-                  action ? { action } : { content, cmd, files }
+                  action ? { action } : { content, ...extra }
                 ),
                 headers: {
                   "Content-Type": "application/json",
@@ -161,22 +161,19 @@ export function useConversationDetail(
     };
 
     humanInputRef.current = async (
-      jobId: string,
       content: string | null,
       action?: string,
-      cmd?: CommandPayload,
-      files?: UploadFileInfo[]
+      extra?: ExtraChatPayload
     ) => {
-      makeRequest(content, action, cmd, files);
+      makeRequest(content, action, extra);
     };
 
     if (initialRequest?.conversationId === conversationId) {
-      makeRequest(
-        initialRequest.content,
-        undefined,
-        initialRequest.cmd,
-        initialRequest.files
-      );
+      makeRequest(initialRequest.content, undefined, {
+        cmd: initialRequest.cmd,
+        files: initialRequest.files,
+        aiEmployeeId: initialRequest.aiEmployeeId,
+      });
     } else {
       makeRequest(null);
     }

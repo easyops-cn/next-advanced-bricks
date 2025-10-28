@@ -2,15 +2,14 @@ import { createContext, type Dispatch } from "react";
 import type { FeedbackDetail } from "../cruise-canvas/interfaces";
 import type {
   ActiveDetail,
-  CommandPayload,
   ConversationError,
   ConversationState,
   ExampleProject,
+  ExtraChatPayload,
   GeneratedView,
   Job,
   ShowCaseType,
   Task,
-  UploadFileInfo,
   UploadOptions,
 } from "./interfaces";
 
@@ -27,11 +26,9 @@ export interface TaskContextValue {
   uploadOptions?: UploadOptions;
 
   humanInput: (
-    jobId: string,
     input: string | null,
     action?: string,
-    cmd?: CommandPayload,
-    files?: UploadFileInfo[]
+    extra?: ExtraChatPayload
   ) => void;
   onShare: () => void;
   onTerminate: () => void;
