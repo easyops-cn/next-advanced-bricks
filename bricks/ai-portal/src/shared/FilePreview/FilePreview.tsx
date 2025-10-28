@@ -48,7 +48,7 @@ function LegacyFilePreview(
   const [content, setContent] = useState<string | undefined>();
 
   const isMarkdown = type === "text/markdown";
-  const isPdf = type === "application/pdf";
+  const embeddable = type === "application/pdf";
   const isImage = type.startsWith("image/");
 
   useEffect(() => {
@@ -57,7 +57,7 @@ function LegacyFilePreview(
     // being displayed by the browser. So we need to fetch the file and create an object URL.
     setStatus("loading");
 
-    if (!isMarkdown && !isPdf && !isImage) {
+    if (!isMarkdown && !embeddable && !isImage) {
       setStatus("error");
       return;
     }
@@ -108,7 +108,7 @@ function LegacyFilePreview(
         }
       };
     }
-  }, [bytes, isImage, isMarkdown, isPdf, uri]);
+  }, [bytes, isImage, isMarkdown, embeddable, uri]);
 
   const download = useCallback(() => {
     const { bytes, uri, mimeType, name } = file;
@@ -157,7 +157,7 @@ function LegacyFilePreview(
     <div className={styles.image}>
       <img src={content} alt={name} />
     </div>
-  ) : isPdf ? (
+  ) : embeddable ? (
     <embed
       className={styles.embed}
       src={content}
