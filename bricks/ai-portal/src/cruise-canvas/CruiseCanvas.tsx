@@ -892,6 +892,9 @@ export function CruiseCanvasComponent(
                 username={(node as RequirementGraphNode).username}
                 content={(node as RequirementGraphNode).content}
                 cmd={(node as RequirementGraphNode).cmd}
+                mentionedAiEmployeeId={
+                  (node as RequirementGraphNode).mentionedAiEmployeeId
+                }
                 files={(node as RequirementGraphNode).files}
                 job={(node as JobGraphNode).job}
                 flow={(node as FlowGraphNode).flow}
@@ -966,6 +969,7 @@ interface NodeComponentProps {
   y?: number;
   active?: boolean;
   cmd?: CommandPayload;
+  mentionedAiEmployeeId?: string;
   files?: FileInfo[];
 }
 
@@ -984,6 +988,7 @@ function NodeComponent({
   y,
   active,
   cmd,
+  mentionedAiEmployeeId,
   files,
 }: NodeComponentProps) {
   const nodeRef = useRef<HTMLDivElement>(null);
@@ -1049,6 +1054,7 @@ function NodeComponent({
           startTime={startTime}
           active={active}
           cmd={cmd}
+          mentionedAiEmployeeId={mentionedAiEmployeeId}
           files={files}
         />
       ) : type === "loading" ? (

@@ -75,88 +75,87 @@ export function NodeJob({ job, isSubTask }: NodeJobProps) {
   }, [job.messages, toolName]);
 
   const [collapsed, setCollapsed] = useState(false);
+  const showHeading = showToolCall || !!job.instruction;
 
   return (
     <div className={classNames({ [styles.collapsed]: collapsed })}>
-      <div className={styles.main}>
-        {job.messages?.map((message, index) =>
-          message.role === "tool" ? null : (
-            <div
-              key={index}
-              className={classNames(styles.message, sharedStyles.markdown)}
-            >
-              {message.parts?.map((part, partIndex) => (
-                <React.Fragment key={partIndex}>
-                  {part.type === "text" && (
-                    <EnhancedMarkdown
-                      className={classNames(
-                        styles["message-part"],
-                        sharedStyles["markdown-wrapper"]
-                      )}
-                      content={part.text}
-                    />
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
-          )
-        )}
-      </div>
-      {showToolCall && (
-        <>
-          <div
-            className={classNames(styles.heading, className)}
-            onClick={() => setCollapsed((prev) => !prev)}
-          >
-            <div className={styles.icon}>
-              <WrappedIcon {...icon} />
-            </div>
-            <div className={styles.title}>{job.instruction || toolTitle}</div>
-            <WrappedIcon className={styles.caret} {...ICON_UP} />
+      {showHeading && (
+        <div
+          className={classNames(styles.heading, className)}
+          onClick={() => setCollapsed((prev) => !prev)}
+        >
+          <div className={styles.icon}>
+            <WrappedIcon {...icon} />
           </div>
-          <div className={styles.body}>
-            <div
-              className={styles.tool}
-              onClick={() => {
-                const detail: ActiveDetail = {
-                  type: "job",
-                  id: job.id,
-                };
-                (isSubTask ? setSubActiveDetail : setActiveDetail)((prev) =>
-                  isEqual(prev, detail) ? prev : detail
-                );
-                if (isEqual(detail, lastDetail)) {
-                  setUserClosedAside(false);
-                }
-              }}
-            >
-              <WrappedIcon lib="lucide" icon="square-chevron-right" />
-              {toolTitle}
-            </div>
-            <div className={styles.content}>
-              {toolMarkdownContent && (
-                <div
-                  className={classNames(styles.markdown, sharedStyles.markdown)}
-                >
-                  <EnhancedMarkdown
-                    className={sharedStyles["markdown-wrapper"]}
-                    content={toolMarkdownContent}
-                  />
-                </div>
-              )}
-              {cmdbInstanceDetails.map((detail, index) => (
-                <div key={index} className={styles.box}>
-                  <CmdbInstanceDetail {...detail} />
-                </div>
-              ))}
-              {job.generatedView ? <NodeView job={job} /> : null}
-              {files.length > 0 && (
-                <FileList files={files} onFileClick={setActiveFile} />
-              )}
-            </div>
-          </div>
-        </>
+          <div className={styles.title}>{job.instruction || toolTitle}</div>
+          <WrappedIcon className={styles.caret} {...ICON_UP} />
+        </div>
       )}
+      <div className={styles.body}>
+        {showToolCall && (
+          <div
+            className={styles.tool}
+            onClick={() => {
+              const detail: ActiveDetail = {
+                type: "job",
+                id: job.id,
+              };
+              (isSubTask ? setSubActiveDetail : setActiveDetail)((prev) =>
+                isEqual(prev, detail) ? prev : detail
+              );
+              if (isEqual(detail, lastDetail)) {
+                setUserClosedAside(false);
+              }
+            }}
+          >
+            <WrappedIcon lib="lucide" icon="square-chevron-right" />
+            {toolTitle}
+          </div>
+        )}
+        <div className={styles.main}>
+          {job.messages?.map((message, index) =>
+            message.role === "tool" ? null : (
+              <div
+                key={index}
+                className={classNames(styles.message, sharedStyles.markdown)}
+              >
+                {message.parts?.map((part, partIndex) => (
+                  <React.Fragment key={partIndex}>
+                    {part.type === "text" && (
+                      <EnhancedMarkdown
+                        className={classNames(
+                          styles["message-part"],
+                          sharedStyles["markdown-wrapper"]
+                        )}
+                        content={part.text}
+                      />
+                    )}
+                  </React.Fragment>
+                ))}
+              </div>
+            )
+          )}
+        </div>
+        <div className={styles.content}>
+          {toolMarkdownContent && (
+            <div className={classNames(styles.markdown, sharedStyles.markdown)}>
+              <EnhancedMarkdown
+                className={sharedStyles["markdown-wrapper"]}
+                content={toolMarkdownContent}
+              />
+            </div>
+          )}
+          {cmdbInstanceDetails.map((detail, index) => (
+            <div key={index} className={styles.box}>
+              <CmdbInstanceDetail {...detail} />
+            </div>
+          ))}
+          {job.generatedView ? <NodeView job={job} /> : null}
+          {files.length > 0 && (
+            <FileList files={files} onFileClick={setActiveFile} />
+          )}
+        </div>
+      </div>
     </div>
   );
 }

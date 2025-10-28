@@ -8,10 +8,16 @@ import { TaskContext } from "../../shared/TaskContext";
 export interface UserMessageProps {
   content: string;
   cmd?: CommandPayload;
+  mentionedAiEmployeeId?: string;
   files?: FileInfo[];
 }
 
-export function UserMessage({ content, cmd, files }: UserMessageProps) {
+export function UserMessage({
+  content,
+  cmd,
+  mentionedAiEmployeeId,
+  files,
+}: UserMessageProps) {
   const { setActiveFile } = useContext(TaskContext);
 
   return (
@@ -22,7 +28,12 @@ export function UserMessage({ content, cmd, files }: UserMessageProps) {
         </div>
       ) : null}
       <div className={styles.user}>
-        {cmd && <ReadableCommand cmd={cmd} />}
+        {(cmd || mentionedAiEmployeeId) && (
+          <ReadableCommand
+            cmd={cmd}
+            mentionedAiEmployeeId={mentionedAiEmployeeId}
+          />
+        )}
         {content}
       </div>
     </>

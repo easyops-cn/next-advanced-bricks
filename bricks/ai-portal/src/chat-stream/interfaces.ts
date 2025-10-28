@@ -13,6 +13,7 @@ export interface MessageFromUser {
   role: "user";
   content: string;
   cmd?: CommandPayload;
+  mentionedAiEmployeeId?: string;
   fromSkippedSubTask?: boolean;
   files?: FileInfo[];
 }

@@ -41,6 +41,7 @@ export interface RequirementGraphNode extends BaseGraphNode {
   content: string;
   username?: string;
   cmd?: CommandPayload;
+  mentionedAiEmployeeId?: string;
   files?: FileInfo[];
 }
 

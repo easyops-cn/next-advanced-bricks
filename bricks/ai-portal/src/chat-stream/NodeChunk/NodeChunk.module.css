@@ -54,6 +54,7 @@
   display: flex;
   align-items: center;
   gap: 7px;
+  margin-bottom: 12px;
 
   eo-icon {
     font-size: 14px;
@@ -62,8 +63,11 @@
 }
 
 .body {
-  padding-left: 26px;
   margin-bottom: 20px;
+}
+
+.heading + .body {
+  padding-left: 26px;
 }
 
 .collapsed {

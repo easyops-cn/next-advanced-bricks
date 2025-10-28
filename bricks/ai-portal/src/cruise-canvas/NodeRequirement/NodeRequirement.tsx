@@ -23,6 +23,7 @@ export interface NodeRequirementProps {
   startTime?: number;
   active?: boolean;
   cmd?: CommandPayload;
+  mentionedAiEmployeeId?: string;
   files?: FileInfo[];
 }
 
@@ -32,6 +33,7 @@ export function NodeRequirement({
   startTime,
   active,
   cmd,
+  mentionedAiEmployeeId,
   files,
 }: NodeRequirementProps): JSX.Element {
   const { setActiveFile } = useContext(TaskContext);
@@ -54,9 +56,14 @@ export function NodeRequirement({
         </div>
       </div>
       <div className={styles.body}>
-        {cmd && <ReadableCommand cmd={cmd} size="small" />}
+        {(cmd || mentionedAiEmployeeId) && (
+          <ReadableCommand
+            cmd={cmd}
+            mentionedAiEmployeeId={mentionedAiEmployeeId}
+            size="small"
+          />
+        )}
         {content}
-
         {files?.length ? (
           <FileList files={files} onFileClick={setActiveFile} />
         ) : null}
