@@ -139,6 +139,7 @@ function mergeJobs(
         "humanAction",
         "username",
         "cmd",
+        "mentionedAiEmployeeId",
         "hil",
       ]);
       if (aiEmployeeId !== undefined) {

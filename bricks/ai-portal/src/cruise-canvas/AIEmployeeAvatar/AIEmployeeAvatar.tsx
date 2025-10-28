@@ -1,19 +1,12 @@
 import React, { Suspense, use, useMemo } from "react";
 import { wrapBrick } from "@next-core/react-element";
 import type { AvatarProps, EoAvatar } from "@next-bricks/basic/avatar";
-import {
-  ElevoApi_listElevoAiEmployees,
-  type ElevoApi_ListElevoAiEmployeesResponseItem,
-} from "@next-api-sdk/llm-sdk";
+import type { ElevoApi_ListElevoAiEmployeesResponseItem } from "@next-api-sdk/llm-sdk";
 import fallbackAvatar from "./fallback-avatar.png";
 import styles from "./AIEmployeeAvatar.module.css";
+import { fetchEmployee } from "../../shared/fetchEmployee";
 
 const WrappedAvatar = wrapBrick<EoAvatar, AvatarProps>("eo-avatar");
-
-const cache = new Map<
-  string,
-  Promise<ElevoApi_ListElevoAiEmployeesResponseItem | undefined>
->();
 
 export interface AIEmployeeAvatarProps {
   aiEmployeeId: string;
@@ -39,13 +32,7 @@ export function AIEmployeeAvatar({ aiEmployeeId }: AIEmployeeAvatarProps) {
 
 function LegacyAIEmployeeAvatar({ aiEmployeeId }: AIEmployeeAvatarProps) {
   const employeePromise = useMemo(() => {
-    const cached = cache.get(aiEmployeeId);
-    if (cached) {
-      return cached;
-    }
-    const promise = fetchEmployee(aiEmployeeId);
-    cache.set(aiEmployeeId, promise);
-    return promise;
+    return fetchEmployee(aiEmployeeId);
   }, [aiEmployeeId]);
 
   const employee = use(employeePromise);
@@ -73,12 +60,4 @@ function LegacyAIEmployeeAvatar({ aiEmployeeId }: AIEmployeeAvatarProps) {
   return (
     <WrappedAvatar className={styles.avatar} showName size="xs" {...props} />
   );
-}
-
-async function fetchEmployee(aiEmployeeId: string) {
-  const response = await ElevoApi_listElevoAiEmployees({
-    employeeId: aiEmployeeId,
-  } as any);
-  const employee = response.list?.[0];
-  return employee?.employeeId === aiEmployeeId ? employee : undefined;
 }

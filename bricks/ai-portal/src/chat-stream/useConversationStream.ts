@@ -71,6 +71,7 @@ export function useConversationStream(
               )
               .join(""),
             cmd: job.cmd,
+            mentionedAiEmployeeId: job.mentionedAiEmployeeId,
             fromSkippedSubTask: chunk.fromSkippedSubTask,
             files: job.messages
               ?.filter((msg) => msg.role === "user")

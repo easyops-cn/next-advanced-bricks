@@ -370,6 +370,7 @@ export function ChatStreamComponent(
                         <UserMessage
                           content={msg.content}
                           cmd={msg.cmd}
+                          mentionedAiEmployeeId={msg.mentionedAiEmployeeId}
                           files={msg.files}
                         />
                       ) : (

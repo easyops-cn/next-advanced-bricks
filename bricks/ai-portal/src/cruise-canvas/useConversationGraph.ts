@@ -78,6 +78,7 @@ export function useConversationGraph(
             content: userInput,
             username,
             cmd: job.cmd,
+            mentionedAiEmployeeId: job.mentionedAiEmployeeId,
             files: messages
               ?.filter((msg) => msg.role === "user")
               .flatMap((msg) => msg.parts)
