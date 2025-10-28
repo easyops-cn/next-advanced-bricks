@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>图标/消息通知-协作</title>
+    <defs>
+        <path d="M0,0 L24,0 L24,24 L0,24 L0,0 Z" id="path-1"></path>
+    </defs>
+    <g id="图标/消息通知-协作" stroke="none" fill="none" xlink:href="#path-1" fill-rule="evenodd" stroke-width="1">
+        <g id="图形" transform="translate(2, 2)" stroke="#8E6BFF">
+            <g id="编组" transform="translate(2.5, 2.5)">
+                <circle id="椭圆形" stroke-width="1.6" cx="4.16666667" cy="1.66666667" r="1.66666667"></circle>
+                <path d="M9.16666667,13.3333333 L2.91683333,13.3333333 C1.25015417,13.3333333 0.000154166667,12.1180417 0,10.4166667 C-0.000154166667,8.71529167 1.25015417,7.5 2.91683333,7.5 L5.83333333,7.5" id="路径" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M5.83345833,7.5 L12.0832083,7.5 C13.749875,7.5 14.9998333,6.28470833 15,4.58333333 C15.0001667,2.88195833 13.749875,1.66666667 12.0832083,1.66666667 L5.83333333,1.66666667" id="路径" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+                <line x1="0" y1="1.66666667" x2="2.5" y2="1.66666667" id="路径" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></line>
+                <line x1="12.5" y1="13.3333333" x2="15" y2="13.3333333" id="路径" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></line>
+                <circle id="椭圆形" stroke-width="1.6" cx="10.8333333" cy="13.3333333" r="1.66666667"></circle>
+            </g>
+        </g>
+    </g>
+</svg>
