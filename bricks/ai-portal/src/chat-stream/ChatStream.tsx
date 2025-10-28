@@ -12,7 +12,11 @@ import classNames from "classnames";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import { useConversationDetail } from "../cruise-canvas/useConversationDetail.js";
 import { useConversationStream } from "./useConversationStream.js";
-import { WrappedIcon, WrappedIconButton } from "../shared/bricks.js";
+import {
+  WrappedIcon,
+  WrappedIconButton,
+  WrappedNoticeDropdown,
+} from "../shared/bricks.js";
 import { UserMessage } from "./UserMessage/UserMessage.js";
 import { AssistantMessage } from "./AssistantMessage/AssistantMessage.js";
 import { TaskContext } from "../shared/TaskContext.js";
@@ -54,6 +58,7 @@ interface ChatStreamComponentProps extends ChatStreamProps {
   onSwitchToCanvas: () => void;
   onFeedbackOnView: (viewId: string) => void;
   onDetailChange: (detail: ConversationDetail) => void;
+  onMarkNoticesRead: () => void;
 }
 
 export function ChatStreamComponent(
@@ -70,7 +75,9 @@ export function ChatStreamComponent(
     showUiSwitch,
     previewUrlTemplate,
     showCases,
+    showNoticeIcon,
     exampleProjects,
+    notices,
     tryItOutUrl,
     uploadOptions,
     onShare,
@@ -79,6 +86,7 @@ export function ChatStreamComponent(
     onSwitchToCanvas,
     onFeedbackOnView,
     onDetailChange,
+    onMarkNoticesRead,
   }: ChatStreamComponentProps,
   ref: React.Ref<ChatStreamRef>
 ) {
@@ -353,6 +361,15 @@ export function ChatStreamComponent(
                   onClick={onSwitchToCanvas}
                 />
               )}
+              {showNoticeIcon && (
+                <WrappedNoticeDropdown
+                  dataSource={notices}
+                  dropdownContentStyle={{ minWidth: 300 }}
+                  hideNotifyCenterButton={true}
+                  onMarkAllRead={onMarkNoticesRead}
+                />
+              )}
+
               <WrappedIconButton
                 icon={ICON_SHARE}
                 variant="mini"

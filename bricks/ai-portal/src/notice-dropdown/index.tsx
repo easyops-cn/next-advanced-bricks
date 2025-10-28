@@ -17,6 +17,7 @@ import { Link, LinkProps } from "@next-bricks/basic/link";
 import { Button, ButtonProps } from "@next-bricks/basic/button";
 import { EoCounterBadge, BadgeProps } from "@next-bricks/basic/counter-badge";
 import { IconButton, IconButtonProps } from "../icon-button/index.js";
+import { NoticeItem } from "../shared/interfaces.js";
 
 import { parseTemplate } from "../shared/parseTemplate.js";
 import projectNotifySvg from "./images/project-notify.svg?url";
@@ -47,19 +48,6 @@ const WrapperCounterBadge = wrapBrick<EoCounterBadge, BadgeProps>(
 const WrapperIconButton = wrapBrick<IconButton, IconButtonProps>(
   "ai-portal.icon-button"
 );
-
-export interface NoticeItem {
-  /** 消息唯一标识 */
-  id: string;
-  /** 消息类型 */
-  type: string;
-  /** 是否未读 */
-  isUnread: boolean;
-  /** 主标题 */
-  title: string;
-  /** 副标题/描述 */
-  description: string;
-}
 
 export interface NoticeDropdownProps {
   /** 消息数据列表 */
