@@ -111,14 +111,6 @@ export interface Edge {
   points: NodePosition[];
 }
 
-export interface Step {
-  // Pre-generated Job ID for this step
-  id: string;
-
-  // The instruction for this step
-  instruction: string;
-}
-
 export interface GraphNavItem {
   id: string;
   title: string;

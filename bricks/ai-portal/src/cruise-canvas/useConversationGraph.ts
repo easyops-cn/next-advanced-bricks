@@ -224,7 +224,6 @@ export function useConversationGraph(
       nav,
       views,
       jobMap,
-      jobLevels,
     };
   }, [
     conversation,

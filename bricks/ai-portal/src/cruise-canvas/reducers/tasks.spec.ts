@@ -29,7 +29,7 @@ describe("tasks reducer", () => {
 
   it("should clear tasks on reset action when state has tasks", () => {
     const initialState: Task[] = [
-      { id: "task-1", state: "executing", jobs: [] } as Partial<Task>,
+      { id: "task-1", state: "working", jobs: [] } as Partial<Task>,
     ] as Task[];
     const action: CruiseCanvasAction = { type: "reset" };
 
@@ -68,7 +68,7 @@ describe("tasks reducer", () => {
     const initialState: Task[] = [];
     const newTask = {
       id: "task-1",
-      state: "executing",
+      state: "working",
       jobs: [],
     } as Partial<Task> as Task;
     const action: CruiseCanvasAction = {
@@ -86,7 +86,7 @@ describe("tasks reducer", () => {
   it("should update existing task when properties change", () => {
     const existingTask: Task = {
       id: "task-1",
-      state: "executing",
+      state: "working",
       jobs: [],
     } as Partial<Task> as Task;
     const initialState: Task[] = [existingTask];
@@ -111,13 +111,13 @@ describe("tasks reducer", () => {
   it("should not update task when no changes detected", () => {
     const existingTask: Task = {
       id: "task-1",
-      state: "executing",
+      state: "working",
       jobs: [],
     } as Partial<Task> as Task;
     const initialState: Task[] = [existingTask];
     const taskUpdate = {
       id: "task-1",
-      state: "executing",
+      state: "working",
     } as Partial<Task> as Task;
     const action: CruiseCanvasAction = {
       type: "sse",
@@ -138,7 +138,7 @@ describe("tasks reducer", () => {
     } as Partial<Job> as Job;
     const existingTask: Task = {
       id: "task-1",
-      state: "executing",
+      state: "working",
       jobs: [existingJob],
     } as Partial<Task> as Task;
     const initialState: Task[] = [existingTask];
@@ -379,7 +379,7 @@ describe("tasks reducer", () => {
     const initialState: Task[] = [
       {
         id: "task-1",
-        state: "executing",
+        state: "working",
         jobs: [
           {
             id: "job-1",
@@ -438,7 +438,7 @@ describe("tasks reducer", () => {
               "state": "completed",
             },
           ],
-          "state": "executing",
+          "state": "working",
         },
       ]
     `);

@@ -40,8 +40,6 @@ export interface Task {
 
   state: TaskState;
 
-  plan: Step[];
-
   jobs: Job[];
 
   startTime: number;
@@ -57,13 +55,7 @@ export type ConversationState =
   | "input-required"
   | "terminated";
 
-export type TaskState =
-  | "free"
-  | "confirming"
-  | "executing"
-  | "input-required"
-  | "completed"
-  | "failed";
+export type TaskState = "working" | "input-required" | "completed" | "failed";
 
 export type JobState =
   | "submitted"
@@ -340,4 +332,10 @@ export interface ActiveDetailOfActivity {
   type: "activity";
   activity: ActivityRun;
   flow: ServiceFlowRun;
+}
+
+export interface PlanStep {
+  name: string;
+  taskId?: string;
+  state?: TaskState;
 }

@@ -156,7 +156,6 @@ export function CruiseCanvasComponent(
     replay,
     replayDelay
   );
-  const plan = tasks[tasks.length - 1]?.plan;
   const { flowMap, activityMap } = useFlowAndActivityMap(serviceFlows);
   const graph = useConversationGraph(
     conversation,
@@ -175,7 +174,6 @@ export function CruiseCanvasComponent(
   const nav = graph?.nav;
   const views = graph?.views;
   const jobMap = graph?.jobMap;
-  const jobLevels = graph?.jobLevels;
   const pageTitle = conversation?.title ?? "";
   const conversationState = conversation?.state;
   const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
@@ -911,9 +909,6 @@ export function CruiseCanvasComponent(
         <div className={styles.widgets}>
           <Nav
             nav={nav}
-            plan={plan}
-            jobMap={jobMap}
-            jobLevels={jobLevels}
             currentNavId={currentNavId}
             taskState={conversationState}
             onClick={(jobId: string) => {
