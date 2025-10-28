@@ -36,8 +36,6 @@ export interface Task {
   // User requirement
   // requirement: string;
 
-  // attachments?: File[];
-
   state: TaskState;
 
   jobs: Job[];
@@ -115,6 +113,9 @@ export interface Job {
   username?: string;
 
   cmd?: CommandPayload;
+
+  // @ 的数字人 ID
+  mentionedAiEmployeeId?: string;
 }
 
 export type HumanAction = HumanActionConfirm | HumanActionSelect;
@@ -213,6 +214,16 @@ export interface RequestStore {
 
 export interface UploadFileInfo {
   fileId: string;
+}
+
+export interface UploadOptions {
+  enabled?: boolean;
+  accept?: string;
+}
+
+export interface ChatPayload {
+  content: string;
+  files?: UploadFileInfo[];
 }
 
 export interface GeneratedView {

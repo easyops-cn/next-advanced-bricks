@@ -69,7 +69,7 @@ export const WrappedChatInput = wrapBrick<
   ChatInputEvents,
   ChatInputMapEvents
 >("ai-portal.chat-input", {
-  onMessageSubmit: "message.submit",
+  onChatSubmit: "chat.submit",
   onTerminate: "terminate",
 });
 

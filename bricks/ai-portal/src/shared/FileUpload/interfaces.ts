@@ -1,4 +1,4 @@
-import type { UploadFileInfo } from "../shared/interfaces";
+import type { UploadFileInfo } from "../interfaces";
 
 export interface FileItem {
   uid: number;

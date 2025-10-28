@@ -16,6 +16,14 @@ import classNames from "classnames";
 import { K, NS, locales, t } from "./i18n.js";
 import type { IconButton, IconButtonProps } from "../icon-button";
 import styleText from "./styles.shadow.css";
+import { UploadedFiles } from "../shared/FileUpload/UploadedFiles.js";
+import UploadedFilesStyleText from "../shared/FileUpload/UploadedFiles.shadow.css";
+import { useFilesUploading } from "../shared/useFilesUploading.js";
+import {
+  UploadButton,
+  type UploadButtonRef,
+} from "../shared/FileUpload/UploadButton.js";
+import type { ChatPayload, UploadOptions } from "../shared/interfaces.js";
 
 initializeI18n(NS, locales);
 
@@ -44,15 +52,16 @@ export interface ChatInputProps {
   submitDisabled?: boolean;
   supportsTerminate?: boolean;
   terminating?: boolean;
+  uploadOptions?: UploadOptions;
 }
 
 export interface ChatInputEvents {
-  "message.submit": CustomEvent<string>;
+  "chat.submit": CustomEvent<ChatPayload>;
   terminate: Event;
 }
 
 export interface ChatInputMapEvents {
-  onMessageSubmit: "message.submit";
+  onChatSubmit: "chat.submit";
   onTerminate: "terminate";
 }
 
@@ -61,7 +70,7 @@ export interface ChatInputMapEvents {
  */
 export
 @defineElement("ai-portal.chat-input", {
-  styleTexts: [styleText],
+  styleTexts: [styleText, UploadedFilesStyleText],
   shadowOptions: {
     delegatesFocus: true,
   },
@@ -82,11 +91,24 @@ class ChatInput extends ReactNextElement implements ChatInputProps {
   @property({ type: Boolean })
   accessor terminating: boolean | undefined;
 
+  @property({ attribute: false })
+  accessor uploadOptions: UploadOptions | undefined;
+
+  /**
+   * @deprecated Use `chat.submit` event instead
+   */
   @event({ type: "message.submit" })
   accessor #messageSubmit!: EventEmitter<string>;
 
   #handleMessageSubmit = (value: string) => {
     this.#messageSubmit.emit(value);
+  };
+
+  @event({ type: "chat.submit" })
+  accessor #chatSubmit!: EventEmitter<ChatPayload>;
+
+  #handleChatSubmit = (payload: ChatPayload) => {
+    this.#chatSubmit.emit(payload);
   };
 
   @event({ type: "terminate" })
@@ -104,7 +126,9 @@ class ChatInput extends ReactNextElement implements ChatInputProps {
         submitDisabled={this.submitDisabled}
         supportsTerminate={this.supportsTerminate}
         terminating={this.terminating}
-        onSubmit={this.#handleMessageSubmit}
+        uploadOptions={this.uploadOptions}
+        onMessageSubmit={this.#handleMessageSubmit}
+        onChatSubmit={this.#handleChatSubmit}
         onTerminate={this.#handleTerminate}
       />
     );
@@ -112,7 +136,8 @@ class ChatInput extends ReactNextElement implements ChatInputProps {
 }
 
 interface ChatInputComponentProps extends ChatInputProps {
-  onSubmit: (value: string) => void;
+  onMessageSubmit: (value: string) => void;
+  onChatSubmit: (payload: ChatPayload) => void;
   onTerminate: () => void;
 }
 
@@ -122,7 +147,9 @@ function ChatInputComponent({
   submitDisabled,
   supportsTerminate,
   terminating,
-  onSubmit,
+  uploadOptions,
+  onMessageSubmit,
+  onChatSubmit,
   onTerminate,
 }: ChatInputComponentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -130,6 +157,16 @@ function ChatInputComponent({
   const [value, setValue] = useState("");
   const valueRef = useRef("");
   const [wrap, setWrap] = useState(false);
+  const { files, setFiles, hasFiles, allFilesDone, fileInfos } =
+    useFilesUploading();
+  const uploadButtonRef = useRef<UploadButtonRef>(null);
+  const uploadEnabled = uploadOptions?.enabled;
+
+  useEffect(() => {
+    if (!uploadEnabled) {
+      setFiles(undefined);
+    }
+  }, [uploadEnabled, setFiles]);
 
   useEffect(() => {
     if (autoFocus && !submitDisabled) {
@@ -139,15 +176,16 @@ function ChatInputComponent({
 
   const onBeforeSubmit = useCallback(
     (value: string) => {
-      if (submitDisabled || !value) {
+      if (submitDisabled || !value || !allFilesDone) {
         return;
       }
 
-      onSubmit(value);
+      onMessageSubmit(value);
+      onChatSubmit({ content: value, files: fileInfos });
       valueRef.current = "";
       setValue("");
     },
-    [submitDisabled, onSubmit]
+    [allFilesDone, submitDisabled, onMessageSubmit, onChatSubmit, fileInfos]
   );
 
   const handleSubmit = useCallback(
@@ -171,6 +209,10 @@ function ChatInputComponent({
 
   // istanbul ignore next
   useEffect(() => {
+    if (hasFiles) {
+      setWrap(true);
+      return;
+    }
     const container = containerRef?.current;
     if (!container) {
       return;
@@ -194,13 +236,13 @@ function ChatInputComponent({
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [hasFiles]);
 
   useEffect(() => {
-    if (!value) {
+    if (!value && !hasFiles) {
       setWrap(false);
     }
-  }, [value]);
+  }, [value, hasFiles]);
 
   const handleContainerClick = useCallback((e: React.MouseEvent) => {
     for (const item of e.nativeEvent.composedPath()) {
@@ -225,19 +267,52 @@ function ChatInputComponent({
             minRows={1}
             maxRows={4}
             borderSize={0}
-            paddingSize={16}
+            paddingSize={hasFiles ? 86 : 16}
             autoResize
             placeholder={placeholder}
             submitWhen="enter-without-shift"
             onSubmit={handleSubmit}
             onChange={handleChange}
+            style={{
+              paddingTop: hasFiles ? 78 : 8,
+            }}
           />
+          {hasFiles && (
+            <UploadedFiles
+              files={files!}
+              className="condensed"
+              onRemove={(uid, abortController) => {
+                setFiles((prevFiles) =>
+                  prevFiles?.filter((item) => item.uid !== uid)
+                );
+                abortController?.abort();
+              }}
+              onAdd={() => {
+                uploadButtonRef.current?.requestUpload();
+              }}
+            />
+          )}
         </div>
         <div className="toolbar">
+          {uploadEnabled ? (
+            <>
+              <UploadButton
+                ref={uploadButtonRef}
+                accept={uploadOptions?.accept}
+                onChange={(files) =>
+                  setFiles((prevFiles) => [
+                    ...(prevFiles ?? []),
+                    ...(files ?? []),
+                  ])
+                }
+              />
+              <div className="btn-divider"></div>
+            </>
+          ) : null}
           {!submitDisabled || !supportsTerminate ? (
             <button
               className="btn-send"
-              disabled={submitDisabled || !value}
+              disabled={submitDisabled || !value || !allFilesDone}
               onClick={handleSubmitClick}
             >
               <WrappedIcon lib="fa" icon="arrow-up" />

@@ -1,29 +1,43 @@
 import React, { useEffect, useState } from "react";
 import classNames from "classnames";
-import { WrappedIcon } from "./bricks";
+import { wrapBrick } from "@next-core/react-element";
+import type {
+  GeneralIcon,
+  GeneralIconProps,
+} from "@next-bricks/icons/general-icon";
 import type { FileItem } from "./interfaces";
 import {
   formatFileSize,
   getFileTypeAndIcon,
-} from "../cruise-canvas/utils/file";
+} from "../../cruise-canvas/utils/file";
+import { K, t } from "./i18n";
 
-export interface FileListComponentProps {
+const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
+
+export interface UploadedFilesProps {
   files: FileItem[];
+  className?: string;
   onRemove: (uid: number, abortController: AbortController | undefined) => void;
   onAdd: () => void;
 }
 
-export function FileListComponent({
+export function UploadedFiles({
   files,
+  className,
   onRemove,
   onAdd,
-}: FileListComponentProps) {
+}: UploadedFilesProps) {
   const showAsImage = files.every((file) =>
     file.file.type.startsWith("image/")
   );
 
   return (
-    <ul className="files">
+    <ul
+      className={classNames("files", className)}
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+    >
       {files.map((file) => (
         <FileComponent
           {...file}
@@ -94,7 +108,7 @@ function FileComponent({
           </div>
         )}
         {status === "failed" && (
-          <div className="file-overlay">Upload failed</div>
+          <div className="file-overlay">{t(K.UPLOAD_FAILED)}</div>
         )}
         {buttonRemove}
       </li>
@@ -112,7 +126,7 @@ function FileComponent({
         <div className="file-name">{file.name}</div>
         <div className="file-metadata">
           <span className="file-status">
-            {`${status === "uploading" ? "Uploading..." : status === "failed" ? "Upload failed" : type}`}
+            {`${status === "uploading" ? t(K.UPLOADING) : status === "failed" ? t(K.UPLOAD_FAILED) : type}`}
           </span>
           {` · ${size}`}
         </div>

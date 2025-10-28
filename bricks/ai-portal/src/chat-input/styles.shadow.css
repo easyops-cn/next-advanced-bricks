@@ -10,6 +10,19 @@
   box-sizing: border-box;
 }
 
+button:focus,
+textarea:focus {
+  outline: none;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  background: none;
+  border: none;
+}
+
 .container {
   background-color: #fff;
   border: 2px solid #7891ff;
@@ -35,6 +48,7 @@
 }
 
 .input {
+  position: relative;
   min-width: 0;
   flex: 1;
 }
@@ -62,16 +76,11 @@
 }
 
 .toolbar {
-  padding: 5px 0 5px 8px;
+  padding: 6px 0 6px 8px;
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 2px;
-}
-
-.btn-send:focus,
-textarea:focus {
-  outline: none;
+  gap: 12px;
 }
 
 .btn-send {
@@ -81,7 +90,6 @@ textarea:focus {
   align-items: center;
   justify-content: center;
   background: var(--elevo-color-brand);
-  border: none;
   border-radius: 8px;
   color: #fff;
 }
@@ -100,4 +108,16 @@ textarea:focus {
 
 .btn-send:not(:disabled):active {
   background: #1e33cc;
+}
+
+.btn-divider {
+  width: 1px;
+  height: 16px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.files.condensed {
+  top: 2px;
+  left: 8px;
+  right: 8px;
 }

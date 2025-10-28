@@ -163,9 +163,11 @@ export function useConversationDetail(
     humanInputRef.current = async (
       jobId: string,
       content: string | null,
-      action?: string
+      action?: string,
+      cmd?: CommandPayload,
+      files?: UploadFileInfo[]
     ) => {
-      makeRequest(content, action);
+      makeRequest(content, action, cmd, files);
     };
 
     if (initialRequest?.conversationId === conversationId) {

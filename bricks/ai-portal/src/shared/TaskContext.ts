@@ -2,6 +2,7 @@ import { createContext, type Dispatch } from "react";
 import type { FeedbackDetail } from "../cruise-canvas/interfaces";
 import type {
   ActiveDetail,
+  CommandPayload,
   ConversationError,
   ConversationState,
   ExampleProject,
@@ -9,6 +10,8 @@ import type {
   Job,
   ShowCaseType,
   Task,
+  UploadFileInfo,
+  UploadOptions,
 } from "./interfaces";
 
 export interface TaskContextValue {
@@ -21,8 +24,15 @@ export interface TaskContextValue {
   replay?: boolean;
   showCases?: ShowCaseType[];
   exampleProjects?: ExampleProject[];
+  uploadOptions?: UploadOptions;
 
-  humanInput: (jobId: string, input: string | null, action?: string) => void;
+  humanInput: (
+    jobId: string,
+    input: string | null,
+    action?: string,
+    cmd?: CommandPayload,
+    files?: UploadFileInfo[]
+  ) => void;
   onShare: () => void;
   onTerminate: () => void;
   supports?: Record<string, boolean>;

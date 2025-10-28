@@ -79,6 +79,8 @@ export function NodeJob({ job, active, isLeaf }: NodeJobProps): JSX.Element {
     setViewSize(value);
   }, []);
 
+  const { setActiveFile } = useContext(CanvasContext);
+
   return (
     <div
       className={classNames(styles["node-job"], {
@@ -132,7 +134,15 @@ export function NodeJob({ job, active, isLeaf }: NodeJobProps): JSX.Element {
         {cmdbInstanceDetails.map((detail, index) => (
           <CmdbInstanceDetail key={index} {...detail} />
         ))}
-        {files.length > 0 && <FileList files={files} large={sizeLarge} />}
+        {files.length > 0 && (
+          <FileList
+            files={files}
+            large={sizeLarge}
+            onFileClick={(file) => {
+              setActiveFile(file);
+            }}
+          />
+        )}
         {isLeaf &&
           !job.humanAction &&
           job.requestHumanAction &&

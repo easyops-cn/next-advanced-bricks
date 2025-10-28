@@ -8,8 +8,9 @@ import type {
 import moment from "moment";
 import classNames from "classnames";
 import styles from "./NodeRequirement.module.css";
-import type { CommandPayload } from "../../shared/interfaces";
+import type { CommandPayload, FileInfo } from "../../shared/interfaces";
 import { ReadableCommand } from "../../shared/ReadableCommand/ReadableCommand";
+import { FileList } from "../FileList/FileList";
 
 const WrappedEasyOpsAvatar = wrapBrick<EoEasyopsAvatar, EoEasyopsAvatarProps>(
   "eo-easyops-avatar"
@@ -21,6 +22,7 @@ export interface NodeRequirementProps {
   startTime?: number;
   active?: boolean;
   cmd?: CommandPayload;
+  files?: FileInfo[];
 }
 
 export function NodeRequirement({
@@ -29,6 +31,7 @@ export function NodeRequirement({
   startTime,
   active,
   cmd,
+  files,
 }: NodeRequirementProps): JSX.Element {
   return (
     <div
@@ -51,6 +54,7 @@ export function NodeRequirement({
         {cmd && <ReadableCommand cmd={cmd} size="small" />}
         {content}
       </div>
+      {files?.length ? <FileList files={files} /> : null}
     </div>
   );
 }

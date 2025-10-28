@@ -39,7 +39,6 @@ describe("useConversationGraph", () => {
       nav: [],
       views: [],
       jobMap: new Map(),
-      jobLevels: new Map(),
     });
   });
 

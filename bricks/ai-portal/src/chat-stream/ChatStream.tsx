@@ -67,6 +67,7 @@ export function ChatStreamComponent(
     showCases,
     exampleProjects,
     tryItOutUrl,
+    uploadOptions,
     onShare,
     onTerminate,
     onSubmitFeedback,
@@ -227,6 +228,7 @@ export function ChatStreamComponent(
       replay,
       showCases,
       exampleProjects,
+      uploadOptions,
 
       humanInput,
       onShare,
@@ -272,6 +274,7 @@ export function ChatStreamComponent(
       replay,
       showCases,
       exampleProjects,
+      uploadOptions,
 
       humanInput,
       onShare,

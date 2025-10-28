@@ -11,8 +11,6 @@ import React, {
 import { createPortal } from "react-dom";
 import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
-import { http } from "@next-core/http";
-import { handleHttpError } from "@next-core/runtime";
 import {
   getCaretPositionInTextarea,
   getContentRectsInTextarea,
@@ -28,11 +26,19 @@ import {
   getChatCommand,
   setChatCommand,
 } from "../data-providers/set-chat-command.js";
-import type { CommandPayload, UploadFileInfo } from "../shared/interfaces.js";
-import { UploadButton, type UploadButtonRef } from "./UploadButton.js";
-import { FileListComponent } from "./FileListComponent.js";
+import type {
+  ChatPayload,
+  CommandPayload,
+  UploadOptions,
+} from "../shared/interfaces.js";
+import {
+  UploadButton,
+  type UploadButtonRef,
+} from "../shared/FileUpload/UploadButton.js";
+import { UploadedFiles } from "../shared/FileUpload/UploadedFiles.js";
+import UploadedFilesStyleText from "../shared/FileUpload/UploadedFiles.shadow.css";
 import { WrappedActions, WrappedIcon } from "./bricks.js";
-import type { FileItem } from "./interfaces.js";
+import { useFilesUploading } from "../shared/useFilesUploading.js";
 
 initializeI18n(NS, locales);
 
@@ -46,7 +52,7 @@ export interface ChatBoxProps {
   autoFocus?: boolean;
   aiEmployees?: AIEmployee[];
   commands?: Command[];
-  uploadFiles?: UploadFileOptions;
+  uploadOptions?: UploadOptions;
 }
 
 export interface AIEmployee {
@@ -67,16 +73,6 @@ export interface Command {
   payload?: CommandPayload;
 }
 
-export interface UploadFileOptions {
-  enabled?: boolean;
-  accept?: string;
-}
-
-export interface ChatPayload {
-  content: string;
-  files?: UploadFileInfo[];
-}
-
 type ActionWithAncestors = SimpleAction & {
   key: string | number;
   ancestors?: Command[];
@@ -89,7 +85,7 @@ type ActionWithAncestors = SimpleAction & {
  */
 export
 @defineElement("ai-portal.chat-box", {
-  styleTexts: [styleText],
+  styleTexts: [styleText, UploadedFilesStyleText],
   shadowOptions: {
     delegatesFocus: true,
   },
@@ -113,7 +109,7 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
   accessor commands: Command[] | undefined;
 
   @property({ attribute: false })
-  accessor uploadFiles: UploadFileOptions | undefined;
+  accessor uploadOptions: UploadOptions | undefined;
 
   /**
    * @deprecated Use `chat.submit` event instead
@@ -169,7 +165,7 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
         autoFocus={this.autoFocus}
         aiEmployees={this.aiEmployees}
         commands={this.commands}
-        uploadFiles={this.uploadFiles}
+        uploadOptions={this.uploadOptions}
         onMessageSubmit={this.#handleMessageSubmit}
         onChatSubmit={this.#handleChatSubmit}
         onEmployeeMention={this.#handleEmployeeMention}
@@ -204,7 +200,7 @@ function LegacyChatBoxComponent(
     autoFocus,
     aiEmployees,
     commands,
-    uploadFiles,
+    uploadOptions,
     onMessageSubmit,
     onChatSubmit,
     onEmployeeMention,
@@ -231,62 +227,15 @@ function LegacyChatBoxComponent(
   const [commandText, setCommandText] = useState("");
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
 
-  const [files, setFiles] = useState<FileItem[] | undefined>();
-  const hasFiles = !!files && files.length > 0;
+  const { files, setFiles, hasFiles, allFilesDone, fileInfos } =
+    useFilesUploading();
+  const uploadEnabled = uploadOptions?.enabled;
 
   useEffect(() => {
-    files?.forEach(async (fileItem) => {
-      if (fileItem.status === "ready") {
-        const abortController = new AbortController();
-
-        setFiles((prevFiles) => {
-          return prevFiles?.map((item) => {
-            if (item.uid === fileItem.uid) {
-              return { ...item, status: "uploading", abortController };
-            }
-            return item;
-          });
-        });
-
-        try {
-          const formData = new FormData();
-          formData.append("file", fileItem.file);
-
-          const response = await http.request<{ data: UploadFileInfo }>(
-            "api/gateway/logic.llm.aiops_service/api/v1/elevo/files/upload",
-            {
-              method: "POST",
-              body: formData,
-              signal: abortController.signal,
-            }
-          );
-
-          setFiles((prevFiles) => {
-            return prevFiles?.map((item) => {
-              if (item.uid === fileItem.uid) {
-                return {
-                  ...item,
-                  status: "done",
-                  fileInfo: response.data,
-                };
-              }
-              return item;
-            });
-          });
-        } catch (error) {
-          setFiles((prevFiles) => {
-            return prevFiles?.map((item) => {
-              if (item.uid === fileItem.uid) {
-                return { ...item, status: "failed" };
-              }
-              return item;
-            });
-          });
-          handleHttpError(error);
-        }
-      }
-    });
-  }, [files]);
+    if (!uploadEnabled) {
+      setFiles(undefined);
+    }
+  }, [uploadEnabled, setFiles]);
 
   useEffect(() => {
     const store = window.__elevo_try_it_out;
@@ -311,23 +260,6 @@ function LegacyChatBoxComponent(
       textareaRef.current?.focus();
     },
   }));
-
-  const [allFilesDone, setAllFilesDone] = useState(true);
-  const [fileInfos, setFileInfos] = useState<UploadFileInfo[] | undefined>();
-  const initialRef = useRef(true);
-
-  useEffect(() => {
-    const allFilesDone =
-      !files || files.every((file) => file.status === "done");
-    setAllFilesDone(allFilesDone);
-    if (initialRef.current) {
-      initialRef.current = false;
-      return;
-    }
-    if (allFilesDone) {
-      setFileInfos(files?.map((file) => file.fileInfo!));
-    }
-  }, [files]);
 
   const doSubmit = useCallback(
     (value: string) => {
@@ -806,7 +738,7 @@ function LegacyChatBoxComponent(
           }}
         />
         {hasFiles && (
-          <FileListComponent
+          <UploadedFiles
             files={files!}
             onRemove={(uid, abortController) => {
               setFiles((prevFiles) =>
@@ -824,11 +756,11 @@ function LegacyChatBoxComponent(
             <slot name="actions"></slot>
           </div>
           <div className="buttons">
-            {uploadFiles?.enabled ? (
+            {uploadEnabled ? (
               <>
                 <UploadButton
                   ref={uploadButtonRef}
-                  accept={uploadFiles?.accept}
+                  accept={uploadOptions?.accept}
                   onChange={(files) =>
                     setFiles((prevFiles) => [
                       ...(prevFiles ?? []),

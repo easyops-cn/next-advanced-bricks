@@ -132,6 +132,7 @@ export function CruiseCanvasComponent(
     exampleProjects,
     tryItOutUrl,
     separateInstructions,
+    uploadOptions,
     onShare,
     onTerminate,
     onSubmitFeedback,
@@ -625,6 +626,7 @@ export function CruiseCanvasComponent(
       replay,
       showCases,
       exampleProjects,
+      uploadOptions,
 
       humanInput,
       onShare,
@@ -680,6 +682,7 @@ export function CruiseCanvasComponent(
       replay,
       showCases,
       exampleProjects,
+      uploadOptions,
 
       humanInput,
       onTerminate,
@@ -888,6 +891,7 @@ export function CruiseCanvasComponent(
                 username={(node as RequirementGraphNode).username}
                 content={(node as RequirementGraphNode).content}
                 cmd={(node as RequirementGraphNode).cmd}
+                files={(node as RequirementGraphNode).files}
                 job={(node as JobGraphNode).job}
                 flow={(node as FlowGraphNode).flow}
                 activity={(node as ActivityGraphNode).activity}
@@ -961,6 +965,7 @@ interface NodeComponentProps {
   y?: number;
   active?: boolean;
   cmd?: CommandPayload;
+  files?: FileInfo[];
 }
 
 function NodeComponent({
@@ -978,6 +983,7 @@ function NodeComponent({
   y,
   active,
   cmd,
+  files,
 }: NodeComponentProps) {
   const nodeRef = useRef<HTMLDivElement>(null);
   const { onNodeResize, setActiveNodeId } = useContext(CanvasContext);
@@ -1042,6 +1048,7 @@ function NodeComponent({
           startTime={startTime}
           active={active}
           cmd={cmd}
+          files={files}
         />
       ) : type === "loading" ? (
         <NodeLoading />
