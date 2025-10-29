@@ -27,6 +27,7 @@ export interface UseLayoutOptions {
   showFeedback?: boolean;
   showFeedbackAfterFailed?: boolean;
   replay?: boolean;
+  noTasks?: boolean;
 }
 
 export function useLayout({
@@ -39,6 +40,7 @@ export function useLayout({
   showFeedback,
   showFeedbackAfterFailed,
   replay,
+  noTasks,
 }: UseLayoutOptions) {
   const memoizedPositionsRef = useRef<Map<string, NodePosition> | null>(null);
 
@@ -56,7 +58,9 @@ export function useLayout({
 
     const hasSource = new Set<string>(rawEdges.map((edge) => edge.target));
     const failedFeedback = failed && showFeedback && showFeedbackAfterFailed;
-    const shouldAppend = replay ? finished : completed || failedFeedback;
+    const shouldAppend = replay
+      ? finished
+      : !noTasks && (completed || failedFeedback);
     const hasTarget = shouldAppend
       ? new Set<string>(rawEdges.map((edge) => edge.source))
       : null;
@@ -80,27 +84,25 @@ export function useLayout({
     if (finishedNodeIds.length > 0) {
       let sourceIds = finishedNodeIds;
 
-      if (replay) {
-        if (finished) {
-          initialNodes.push({
-            id: END_NODE_ID,
-            type: "end",
-          });
-          initialEdges.push(
-            ...sourceIds.map((id) => ({
-              source: id,
-              target: END_NODE_ID,
-            }))
-          );
-          initialNodes.push({
-            id: REPLAY_NODE_ID,
-            type: "replay",
-          });
-          initialEdges.push({
-            source: END_NODE_ID,
-            target: REPLAY_NODE_ID,
-          });
-        }
+      if (replay && finished) {
+        initialNodes.push({
+          id: END_NODE_ID,
+          type: "end",
+        });
+        initialEdges.push(
+          ...sourceIds.map((id) => ({
+            source: id,
+            target: END_NODE_ID,
+          }))
+        );
+        initialNodes.push({
+          id: REPLAY_NODE_ID,
+          type: "replay",
+        });
+        initialEdges.push({
+          source: END_NODE_ID,
+          target: REPLAY_NODE_ID,
+        });
       } else {
         if (completed) {
           initialNodes.push({
@@ -116,7 +118,7 @@ export function useLayout({
           sourceIds = [END_NODE_ID];
         }
 
-        if (showFeedback && (completed || failedFeedback)) {
+        if (showFeedback && !noTasks && (completed || failedFeedback)) {
           initialNodes.push({
             id: FEEDBACK_NODE_ID,
             type: "feedback",

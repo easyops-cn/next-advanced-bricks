@@ -6,11 +6,11 @@ import { WrappedIcon } from "../../shared/bricks";
 import { TaskContext } from "../../shared/TaskContext";
 
 export function NodeEnd(): JSX.Element {
-  const { onShare, replay } = useContext(TaskContext);
+  const { onShare, replay, conversationState } = useContext(TaskContext);
 
   return (
     <div className={styles["node-end"]}>
-      {replay && (
+      {replay && conversationState === "completed" && (
         <div className={styles.content}>
           <span className={styles.icon}>
             <WrappedIcon lib="fa" prefix="fas" icon="check" />

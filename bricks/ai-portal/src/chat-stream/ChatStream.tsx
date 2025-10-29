@@ -431,7 +431,8 @@ export function ChatStreamComponent(
                     : showFeedback &&
                       (conversationState === "completed" ||
                         (conversationState === "failed" &&
-                          showFeedbackAfterFailed)) && (
+                          showFeedbackAfterFailed)) &&
+                      tasks.length > 0 && (
                         <NodeFeedback className={styles.feedback} />
                       )}
                 </div>
