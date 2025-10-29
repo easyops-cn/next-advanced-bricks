@@ -220,6 +220,10 @@ export interface UploadOptions {
   dragTips?: string;
   accept?: string;
   maxFiles?: number;
+  /** In bytes */
+  maxSize?: number;
+  readableAccept?: string;
+  readableMaxSize?: string;
 }
 
 export interface ChatPayload extends ExtraChatPayload {

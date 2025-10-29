@@ -23,9 +23,7 @@ export function UserMessage({
   return (
     <>
       {files?.length ? (
-        <div className={styles.files}>
-          <FileList files={files} onFileClick={setActiveFile} large />
-        </div>
+        <FileList files={files} ui="chat" onFileClick={setActiveFile} />
       ) : null}
       <div className={styles.user}>
         {(cmd || mentionedAiEmployeeId) && (

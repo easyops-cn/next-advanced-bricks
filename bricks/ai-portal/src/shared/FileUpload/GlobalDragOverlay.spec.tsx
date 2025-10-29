@@ -129,7 +129,10 @@ describe("GlobalDragOverlay", () => {
 
   it("should call onFilesDropped when files are dropped", () => {
     const { unmount } = render(
-      <GlobalDragOverlay onFilesDropped={mockOnFilesDropped} />
+      <GlobalDragOverlay
+        uploadOptions={{ enabled: true }}
+        onFilesDropped={mockOnFilesDropped}
+      />
     );
 
     const file = new File(["content"], "test.txt", { type: "text/plain" });
@@ -151,8 +154,11 @@ describe("GlobalDragOverlay", () => {
   it("should validate files with accept prop", () => {
     const { unmount } = render(
       <GlobalDragOverlay
-        accept=".txt"
-        dragTips="Only txt files"
+        uploadOptions={{
+          enabled: true,
+          accept: ".txt",
+          dragTips: "Only txt files",
+        }}
         onFilesDropped={mockOnFilesDropped}
       />
     );
@@ -169,7 +175,9 @@ describe("GlobalDragOverlay", () => {
 
     fireEvent(window, dropEvent);
 
-    expect(handleHttpError).toHaveBeenCalledWith("Only txt files");
+    expect(handleHttpError).toHaveBeenCalledWith(
+      "Some files have unsupported file types."
+    );
     expect(mockOnFilesDropped).not.toHaveBeenCalled();
     unmount();
   });
@@ -226,7 +234,9 @@ describe("GlobalDragOverlay", () => {
 
   it("should display drag tips in overlay", async () => {
     const { unmount } = render(
-      <GlobalDragOverlay dragTips="Drop your files here" />
+      <GlobalDragOverlay
+        uploadOptions={{ enabled: true, dragTips: "Drop your files here" }}
+      />
     );
 
     const dragEvent = new DragEvent("dragenter", {

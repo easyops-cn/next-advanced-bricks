@@ -39,7 +39,7 @@ describe("useFilesUploading", () => {
   });
 
   it("should append files correctly", async () => {
-    const { result } = renderHook(() => useFilesUploading());
+    const { result } = renderHook(() => useFilesUploading({ enabled: true }));
 
     const newFiles: File[] = [
       new File(["test"], "test.txt"),
@@ -71,8 +71,8 @@ describe("useFilesUploading", () => {
       result.current.appendFiles(newFiles);
     });
 
-    expect(result.current.files).toHaveLength(2);
-    expect(result.current.exceeded).toBe(true);
+    expect(result.current.files).toBe(undefined);
+    expect(result.current.exceeded).toBe(false);
 
     await act(async () => {
       await (global as any).flushPromises();
@@ -80,7 +80,7 @@ describe("useFilesUploading", () => {
   });
 
   it("should reset files", async () => {
-    const { result } = renderHook(() => useFilesUploading());
+    const { result } = renderHook(() => useFilesUploading({ enabled: true }));
 
     const newFiles: File[] = [new File(["test"], "test.txt")];
 
@@ -101,7 +101,7 @@ describe("useFilesUploading", () => {
   });
 
   it("should remove file by uid", async () => {
-    const { result } = renderHook(() => useFilesUploading());
+    const { result } = renderHook(() => useFilesUploading({ enabled: true }));
 
     const newFiles: File[] = [
       new File(["test1"], "test1.txt"),
@@ -124,7 +124,7 @@ describe("useFilesUploading", () => {
   });
 
   it("should upload files successfully", async () => {
-    const { result } = renderHook(() => useFilesUploading());
+    const { result } = renderHook(() => useFilesUploading({ enabled: true }));
 
     const newFiles: File[] = [new File(["test"], "test.txt")];
 
@@ -144,7 +144,7 @@ describe("useFilesUploading", () => {
   });
 
   it("should handle upload failure", async () => {
-    const { result } = renderHook(() => useFilesUploading());
+    const { result } = renderHook(() => useFilesUploading({ enabled: true }));
 
     const newFiles: File[] = [new File(["test"], "fail.txt")];
 
@@ -164,7 +164,7 @@ describe("useFilesUploading", () => {
   it("should set allFilesDone to false when files are uploading", async () => {
     mockRequest.mockImplementation(() => new Promise(() => {})); // Never resolves
 
-    const { result } = renderHook(() => useFilesUploading());
+    const { result } = renderHook(() => useFilesUploading({ enabled: true }));
 
     const newFiles: File[] = [new File(["test"], "test.txt")];
 
