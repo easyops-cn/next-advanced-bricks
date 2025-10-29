@@ -10,6 +10,7 @@ import React, {
 import { getBasePath, getRuntime } from "@next-core/runtime";
 import classNames from "classnames";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
+import { preloadHighlighter } from "@next-shared/markdown";
 import { useConversationDetail } from "../cruise-canvas/useConversationDetail.js";
 import { useConversationStream } from "./useConversationStream.js";
 import { WrappedIcon, WrappedIconButton } from "../shared/bricks.js";
@@ -336,6 +337,19 @@ export function ChatStreamComponent(
     activityMap
   );
 
+  const [depsReady, setDepsReady] = useState(false);
+  useEffect(() => {
+    let ignore = false;
+    preloadHighlighter("light-plus").finally(() => {
+      if (!ignore) {
+        setDepsReady(true);
+      }
+    });
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
   return (
     <TaskContext.Provider value={taskContextValue}>
       <StreamContext.Provider value={streamContextValue}>
@@ -360,7 +374,7 @@ export function ChatStreamComponent(
               />
             </div>
           </div>
-          {conversationAvailable ? (
+          {conversationAvailable && depsReady ? (
             <>
               <div className={styles.main} ref={scrollContainerRef}>
                 <div className={styles.narrow} ref={scrollContentRef}>
