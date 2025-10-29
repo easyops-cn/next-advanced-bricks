@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { createDecorators } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
@@ -8,6 +8,7 @@ import type {
 } from "@next-bricks/icons/general-icon";
 import type { EoTooltip, ToolTipProps } from "@next-bricks/basic/tooltip";
 import styleText from "./styles.shadow.css";
+import { useHasAssignedNodes } from "@next-shared/hooks";
 
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 const WrappedTooltip = wrapBrick<EoTooltip, ToolTipProps>("eo-tooltip");
@@ -70,9 +71,13 @@ function IconButtonComponent({
   tooltipHoist,
   disabled,
 }: IconButtonProps) {
+  const slotRef = useRef<HTMLSlotElement>(null);
+  const hasSlotted = useHasAssignedNodes(slotRef);
+
   const btn = (
-    <button disabled={disabled}>
-      <WrappedIcon {...icon} />
+    <button disabled={disabled} className={hasSlotted ? "has-slotted" : ""}>
+      <WrappedIcon className="icon" {...icon} />
+      <slot ref={slotRef} />
     </button>
   );
 

@@ -35,6 +35,7 @@ import { K, t } from "./i18n.js";
 import { NodeReplay } from "../cruise-canvas/NodeReplay/NodeReplay.js";
 import type {
   ActiveDetail,
+  ActiveImages,
   ExtraChatPayload,
   FileInfo,
   NoticeItem,
@@ -43,9 +44,11 @@ import { useFlowAndActivityMap } from "../shared/useFlowAndActivityMap.js";
 import { useFulfilledActiveDetail } from "../shared/useFulfilledActiveDetail.js";
 import { useAutoScroll } from "./useAutoScroll.js";
 import scrollStyles from "./ScrollDownButton.module.css";
+import floatingStyles from "../shared/FloatingButton.module.css";
 import { PlanProgress } from "../shared/PlanProgress/PlanProgress.js";
 import { useServiceFlowPlan } from "../shared/useServiceFlowPlan.js";
 import { FilePreviewDrawer } from "../shared/FilePreview/FilePreviewDrawer.js";
+import { ImagesPreview } from "../shared/FilePreview/ImagesPreview.js";
 
 const ICON_SHARE: GeneralIconProps = {
   lib: "easyops",
@@ -232,8 +235,10 @@ export function ChatStreamComponent(
     }
   }, [requirementMessage]);
 
+  const [activeImages, setActiveImages] = useState<ActiveImages | null>(null);
+
   const workspace = conversationId;
-  const [activeFile, setActiveFile] = React.useState<FileInfo | null>(null);
+  const [activeFile, setActiveFile] = useState<FileInfo | null>(null);
   const taskContextValue = useMemo(
     () => ({
       conversationId,
@@ -281,6 +286,8 @@ export function ChatStreamComponent(
         }
       },
       setActiveFile,
+      activeImages,
+      setActiveImages,
     }),
     [
       conversationId,
@@ -314,6 +321,7 @@ export function ChatStreamComponent(
       watchAgain,
       userInput,
       tryItOutUrl,
+      activeImages,
     ]
   );
 
@@ -443,13 +451,13 @@ export function ChatStreamComponent(
                       )}
                 </div>
               </div>
-              <div
-                className={scrollStyles["scroll-down"]}
+              <button
+                className={`${scrollStyles["scroll-down"]} ${floatingStyles["floating-button"]}`}
                 hidden={!scrollable}
                 onClick={scrollToBottom}
               >
                 <WrappedIcon lib="antd" icon="down" />
-              </div>
+              </button>
               {(replay ? !conversation?.finished : supports?.chat) ? (
                 <div className={styles.footer}>
                   <div className={styles.narrow}>
@@ -506,6 +514,7 @@ export function ChatStreamComponent(
           </div>
         )}
         {activeFile && <FilePreviewDrawer file={activeFile} />}
+        {activeImages && <ImagesPreview images={activeImages} />}
       </StreamContext.Provider>
     </TaskContext.Provider>
   );

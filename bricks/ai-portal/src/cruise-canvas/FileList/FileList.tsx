@@ -1,19 +1,21 @@
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import classNames from "classnames";
 import type { FileInfo } from "../../shared/interfaces";
 import styles from "./FileList.module.css";
 import { K, t } from "../i18n";
 import { formatFileSize, getFileTypeAndIcon } from "../utils/file";
-import { getBasePath } from "@next-core/runtime";
+import { getImageUrl } from "../../shared/FilePreview/getImageUrl";
+import { TaskContext } from "../../shared/TaskContext";
 
 export interface FileListProps {
   files: FileInfo[];
   large?: boolean;
   ui?: "canvas" | "chat";
-  onFileClick?: (file: FileInfo) => void;
 }
 
-export function FileList({ files, large, ui, onFileClick }: FileListProps) {
+export function FileList({ files, large, ui }: FileListProps) {
+  const { setActiveFile, setActiveImages } = useContext(TaskContext);
+
   const filesWithDisplayInfo = useMemo(() => {
     return files.map((file) => {
       const [displayType, icon] = getFileTypeAndIcon(file.mimeType, file.name);
@@ -25,9 +27,10 @@ export function FileList({ files, large, ui, onFileClick }: FileListProps) {
     });
   }, [files]);
 
-  const allImages = filesWithDisplayInfo.every(
-    (file) => file.displayType === "Image" && file.file.uri
-  );
+  const imageFiles = filesWithDisplayInfo
+    .filter((file) => file.displayType === "Image" && file.file.uri)
+    .map((f) => f.file);
+  const allImages = imageFiles.length === files.length;
 
   return (
     <ul
@@ -43,16 +46,19 @@ export function FileList({ files, large, ui, onFileClick }: FileListProps) {
           <li key={index}>
             <a
               className={allImages ? styles.image : styles.file}
-              onClick={() => onFileClick?.(file)}
+              onClick={() => {
+                if (displayType === "Image" && file.uri) {
+                  setActiveImages({
+                    files: imageFiles,
+                    file,
+                  });
+                } else {
+                  setActiveFile(file);
+                }
+              }}
             >
               {allImages ? (
-                <img
-                  src={new URL(
-                    file.uri!,
-                    `${location.origin}${getBasePath()}`
-                  ).toString()}
-                  fetchPriority="low"
-                />
+                <img src={getImageUrl(file.uri!)} fetchPriority="low" />
               ) : (
                 <>
                   <img

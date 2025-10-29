@@ -5,9 +5,7 @@ import React, {
   useState,
   type Ref,
 } from "react";
-import { getBasePath } from "@next-core/runtime";
 import classNames from "classnames";
-import { saveAs } from "file-saver";
 import { initializeI18n } from "@next-core/i18n";
 import type { FileInfo } from "../../shared/interfaces";
 import { WrappedIcon, WrappedButton } from "../../shared/bricks";
@@ -18,6 +16,8 @@ import { K, locales, NS, t } from "./i18n";
 import { ICON_LOADING } from "../../shared/constants";
 import { getMimeTypeByFilename } from "../../cruise-canvas/utils/file";
 import imageUnpreviewable from "./unpreviewable.png";
+import { downloadFile } from "./downloadFile";
+import { getImageUrl } from "./getImageUrl";
 
 initializeI18n(NS, locales);
 
@@ -77,9 +77,7 @@ function LegacyFilePreview(
       let revokeUrl: string | undefined;
       (async () => {
         try {
-          const response = await fetch(
-            new URL(uri, `${location.origin}${getBasePath()}`)
-          );
+          const response = await fetch(getImageUrl(uri));
           if (!response.ok) {
             throw new Error(`Failed to fetch file: ${response.statusText}`);
           }
@@ -111,18 +109,7 @@ function LegacyFilePreview(
   }, [bytes, isImage, isMarkdown, embeddable, uri]);
 
   const download = useCallback(() => {
-    const { bytes, uri, mimeType, name } = file;
-    const filename = name || t(K.UNTITLED);
-    if (bytes) {
-      saveAs(new Blob([atob(bytes)], { type: mimeType }), filename);
-    } else if (uri) {
-      const link = document.createElement("a");
-      link.href = new URL(uri, `${location.origin}${getBasePath()}`).toString();
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+    downloadFile(file);
   }, [file]);
 
   useImperativeHandle(

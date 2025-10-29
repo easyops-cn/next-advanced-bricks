@@ -6,20 +6,14 @@ import React, {
   useState,
 } from "react";
 import type { Drawer } from "@next-bricks/containers/drawer";
-import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import type { FileInfo } from "../interfaces";
 import { WrappedDrawer, WrappedIconButton } from "../bricks";
 import styles from "./FilePreviewDrawer.module.css";
 import toolbarStyles from "../../cruise-canvas/toolbar.module.css";
 import { K, t } from "./i18n";
-import { ICON_CLOSE } from "../constants";
+import { ICON_CLOSE, ICON_DOWNLOAD } from "../constants";
 import { TaskContext } from "../TaskContext";
 import { FilePreview, FilePreviewRef } from "../FilePreview/FilePreview";
-
-const ICON_DOWNLOAD: GeneralIconProps = {
-  lib: "antd",
-  icon: "download",
-};
 
 export interface FilePreviewDrawerProps {
   file: FileInfo;

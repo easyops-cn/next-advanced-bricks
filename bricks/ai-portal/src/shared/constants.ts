@@ -52,3 +52,8 @@ export const ICON_UP: GeneralIconProps = {
   lib: "fa",
   icon: "angle-up",
 };
+
+export const ICON_DOWNLOAD: GeneralIconProps = {
+  lib: "antd",
+  icon: "download",
+};

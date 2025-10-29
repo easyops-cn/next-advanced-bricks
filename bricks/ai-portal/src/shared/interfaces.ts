@@ -368,3 +368,8 @@ export interface NoticeItem {
   title: string;
   description: string;
 }
+
+export interface ActiveImages {
+  files: FileInfo[];
+  file: FileInfo;
+}

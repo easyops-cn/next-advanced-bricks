@@ -70,6 +70,7 @@ import type {
   ServiceFlowRun,
   ActivityRun,
   ExtraChatPayload,
+  ActiveImages,
 } from "../shared/interfaces";
 import { NodeReplay } from "./NodeReplay/NodeReplay.js";
 import type { ConversationDetail, CruiseCanvasProps } from ".";
@@ -78,6 +79,7 @@ import { useFulfilledActiveDetail } from "../shared/useFulfilledActiveDetail";
 import { NodeChunk } from "./NodeChunk/NodeChunk";
 import { FilePreviewDrawer } from "../shared/FilePreview/FilePreviewDrawer";
 import { ReactUseMultipleBricks } from "@next-core/react-runtime";
+import { ImagesPreview } from "../shared/FilePreview/ImagesPreview";
 
 const MemoizedNodeComponent = memo(NodeComponent);
 
@@ -617,6 +619,8 @@ export function CruiseCanvasComponent(
     }
   }, [requirementNode]);
 
+  const [activeImages, setActiveImages] = useState<ActiveImages | null>(null);
+
   const workspace = conversationId;
 
   const taskContextValue = useMemo(
@@ -676,6 +680,8 @@ export function CruiseCanvasComponent(
       },
       separateInstructions,
       setActiveFile,
+      activeImages,
+      setActiveImages,
     }),
     [
       conversationId,
@@ -716,6 +722,7 @@ export function CruiseCanvasComponent(
       userInput,
       tryItOutUrl,
       separateInstructions,
+      activeImages,
     ]
   );
 
@@ -956,6 +963,7 @@ export function CruiseCanvasComponent(
         )}
         {activeExpandedViewJobId && <ExpandedView views={views!} />}
         {activeFile && <FilePreviewDrawer file={activeFile} />}
+        {activeImages && <ImagesPreview images={activeImages} />}
         {showJsxEditor && activeJsxEditorJob && <JsxEditor />}
       </CanvasContext.Provider>
     </TaskContext.Provider>
