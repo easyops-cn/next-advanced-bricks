@@ -32,7 +32,6 @@ import type {
   UploadOptions,
 } from "../shared/interfaces.js";
 import {
-  getNextUid,
   UploadButton,
   type UploadButtonRef,
 } from "../shared/FileUpload/UploadButton.js";
@@ -724,13 +723,7 @@ function LegacyChatBoxComponent(
 
   const onFilesDropped = useCallback(
     (files: File[]) => {
-      appendFiles(
-        files.map((file) => ({
-          uid: getNextUid(),
-          file,
-          status: "ready",
-        }))
-      );
+      appendFiles(files);
       textareaRef.current?.focus();
     },
     [appendFiles]

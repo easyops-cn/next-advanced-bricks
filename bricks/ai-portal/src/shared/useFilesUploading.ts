@@ -4,7 +4,13 @@ import { http } from "@next-core/http";
 import type { FileItem } from "./FileUpload/interfaces";
 import type { UploadFileInfo, UploadOptions } from "./interfaces";
 import { acceptFiles } from "./FileUpload/acceptFiles";
-import { getNextUid } from "./FileUpload/UploadButton";
+// import { getNextUid } from "./FileUpload/UploadButton";
+
+let uid = 0;
+
+export function getNextUid() {
+  return uid++;
+}
 
 export function useFilesUploading(options?: UploadOptions) {
   const enabled = options?.enabled;
@@ -86,12 +92,16 @@ export function useFilesUploading(options?: UploadOptions) {
   }, [files]);
 
   const appendFiles = useCallback(
-    (newFiles: FileItem[] | undefined) => {
+    (newFiles: File[]) => {
       setFiles((prev) => {
-        if (!newFiles) {
-          return prev;
-        }
-        const list = [...(prev ?? []), ...newFiles];
+        const list = [
+          ...(prev ?? []),
+          ...newFiles.map<FileItem>((file) => ({
+            uid: getNextUid(),
+            file,
+            status: "ready",
+          })),
+        ];
         if (maxFiles && list.length > maxFiles) {
           return list.slice(0, maxFiles);
         }
@@ -128,13 +138,7 @@ export function useFilesUploading(options?: UploadOptions) {
             return;
           }
         }
-        appendFiles(
-          files.map((file) => ({
-            uid: getNextUid(),
-            file,
-            status: "ready",
-          }))
-        );
+        appendFiles(files);
       }
     },
     [enabled, accept, dragTips, appendFiles]

@@ -20,7 +20,6 @@ import { UploadedFiles } from "../shared/FileUpload/UploadedFiles.js";
 import UploadedFilesStyleText from "../shared/FileUpload/UploadedFiles.shadow.css";
 import { useFilesUploading } from "../shared/useFilesUploading.js";
 import {
-  getNextUid,
   UploadButton,
   type UploadButtonRef,
 } from "../shared/FileUpload/UploadButton.js";
@@ -278,13 +277,7 @@ function ChatInputComponent({
 
   const onFilesDropped = useCallback(
     (files: File[]) => {
-      appendFiles(
-        files.map((file) => ({
-          uid: getNextUid(),
-          file,
-          status: "ready",
-        }))
-      );
+      appendFiles(files);
       textareaRef.current?.focus();
     },
     [appendFiles]
