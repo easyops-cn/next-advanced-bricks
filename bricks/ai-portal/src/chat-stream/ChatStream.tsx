@@ -119,6 +119,7 @@ export function ChatStreamComponent(
   const { flowMap, activityMap } = useFlowAndActivityMap(serviceFlows);
   const { messages, jobMap, lastDetail } = useConversationStream(
     !!conversation,
+    conversation?.state,
     tasks,
     errors,
     flowMap,

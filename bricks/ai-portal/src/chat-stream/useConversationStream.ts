@@ -4,13 +4,17 @@ import type {
   ActiveDetail,
   ActivityWithFlow,
   ConversationError,
+  ConversationState,
   ServiceFlowRun,
   Task,
+  TaskState,
 } from "../shared/interfaces.js";
 import { getFlatChunks } from "../shared/getFlatChunks.js";
+import { DONE_STATES } from "../shared/constants.js";
 
 export function useConversationStream(
   conversationAvailable: boolean,
+  state: ConversationState | TaskState | undefined,
   tasks: Task[],
   errors: ConversationError[],
   flowMap?: Map<string, ServiceFlowRun>,
@@ -113,7 +117,8 @@ export function useConversationStream(
       }
     }
 
-    let shouldAppendEmptyMessage = messages.length > 0;
+    let shouldAppendEmptyMessage =
+      messages.length > 0 && !DONE_STATES.includes(state);
     if (
       shouldAppendEmptyMessage &&
       prevAssistantMessage.role === "assistant" &&
@@ -132,6 +137,7 @@ export function useConversationStream(
     return { messages, jobMap, lastDetail };
   }, [
     conversationAvailable,
+    state,
     tasks,
     flowMap,
     activityMap,

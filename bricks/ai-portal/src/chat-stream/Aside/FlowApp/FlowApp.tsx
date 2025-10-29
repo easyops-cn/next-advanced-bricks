@@ -122,7 +122,12 @@ function ActivityDetail({ activity }: ActivityDetailProps) {
     ];
   }, [activityTask]);
 
-  const { messages } = useConversationStream(true, fixedTasks, errors);
+  const { messages } = useConversationStream(
+    true,
+    activityTask.state,
+    fixedTasks,
+    errors
+  );
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const scrollContentRef = useRef<HTMLDivElement>(null);

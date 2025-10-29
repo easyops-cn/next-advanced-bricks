@@ -14,6 +14,7 @@ import type {
   Task,
 } from "../shared/interfaces";
 import { getFlatChunks } from "../shared/getFlatChunks";
+import { DONE_STATES } from "../shared/constants";
 
 export function useConversationGraph(
   conversation: ConversationBaseDetail | null | undefined,
@@ -197,10 +198,7 @@ export function useConversationGraph(
       }
     }
 
-    if (
-      conversation.state !== "terminated" &&
-      conversation.state !== "failed"
-    ) {
+    if (!DONE_STATES.includes(conversation.state)) {
       if (nodes.length === 0) {
         nodes.push({
           type: "loading",

@@ -182,7 +182,10 @@ export interface ToolCall {
   };
 }
 
-export type ConversationBaseDetail = Omit<Conversation, "tasks">;
+export type ConversationBaseDetail = Omit<
+  Conversation,
+  "tasks" | "serviceFlows"
+>;
 
 export interface ConversationPatch
   extends Omit<Partial<Conversation>, "tasks" | "serviceFlows"> {
