@@ -37,6 +37,7 @@ import type {
   ActiveDetail,
   ExtraChatPayload,
   FileInfo,
+  NoticeItem,
 } from "../shared/interfaces.js";
 import { useFlowAndActivityMap } from "../shared/useFlowAndActivityMap.js";
 import { useFulfilledActiveDetail } from "../shared/useFulfilledActiveDetail.js";
@@ -60,6 +61,7 @@ interface ChatStreamComponentProps extends ChatStreamProps {
   onFeedbackOnView: (viewId: string) => void;
   onDetailChange: (detail: ConversationDetail) => void;
   onMarkNoticesRead: () => void;
+  onNoticeClick: (item: NoticeItem) => void;
 }
 
 export function ChatStreamComponent(
@@ -88,6 +90,7 @@ export function ChatStreamComponent(
     onFeedbackOnView,
     onDetailChange,
     onMarkNoticesRead,
+    onNoticeClick,
   }: ChatStreamComponentProps,
   ref: React.Ref<ChatStreamRef>
 ) {
@@ -384,6 +387,9 @@ export function ChatStreamComponent(
                   dataSource={notices}
                   dropdownContentStyle={{ minWidth: 300 }}
                   hideNotifyCenterButton={true}
+                  urlTarget="_blank"
+                  urlTemplate="/elevo/conv/{{extInfo.conversationId}}"
+                  onNoticeClick={(e) => onNoticeClick(e.detail)}
                   onMarkAllRead={onMarkNoticesRead}
                 />
               )}

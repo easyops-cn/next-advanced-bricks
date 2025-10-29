@@ -39,6 +39,7 @@ import type {
 } from "../running-flow";
 import type { BlankState, BlankStateProps } from "../blank-state";
 import { NoticeDropdown, NoticeDropdownProps } from "../notice-dropdown";
+import { NoticeItem } from "./interfaces.js";
 
 export const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
@@ -105,7 +106,7 @@ export const copyToClipboard = unwrapProvider<typeof _copyToClipboard>(
   "basic.copy-to-clipboard"
 );
 export interface NoticeDropdownEvents {
-  "notice.click": CustomEvent<string>;
+  "notice.click": CustomEvent<NoticeItem>;
   "mark.all.read": CustomEvent<void>;
 }
 
