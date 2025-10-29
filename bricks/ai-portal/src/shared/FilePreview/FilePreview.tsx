@@ -47,7 +47,7 @@ function LegacyFilePreview(
   // For markdown, content is the content text
   const [content, setContent] = useState<string | undefined>();
 
-  const isMarkdown = type === "text/markdown";
+  const isMarkdown = type === "text/markdown" || type === "text/x-markdown";
   const embeddable = type === "application/pdf";
   const isImage = type.startsWith("image/");
 

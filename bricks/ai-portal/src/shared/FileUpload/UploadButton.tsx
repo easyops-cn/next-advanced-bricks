@@ -2,7 +2,6 @@ import React, { forwardRef, useImperativeHandle, useRef } from "react";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import { wrapBrick } from "@next-core/react-element";
 import type { IconButton, IconButtonProps } from "../../icon-button";
-import type { FileItem } from "./interfaces";
 import { K, t } from "./i18n";
 
 const WrappedIconButton = wrapBrick<IconButton, IconButtonProps>(
@@ -14,16 +13,10 @@ const ICON_UPLOAD: GeneralIconProps = {
   icon: "paperclip",
 };
 
-let uid = 0;
-
-export function getNextUid() {
-  return uid++;
-}
-
 export interface UploadButtonProps {
   accept?: string;
   disabled?: boolean;
-  onChange?: (files: FileItem[] | undefined) => void;
+  onChange?: (files: File[]) => void;
 }
 
 export interface UploadButtonRef {
@@ -40,15 +33,9 @@ function LegacyUploadButton(
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    onChange?.(
-      files
-        ? Array.from(files).map((file) => ({
-            uid: getNextUid(),
-            file,
-            status: "ready",
-          }))
-        : undefined
-    );
+    if (files) {
+      onChange?.(Array.from(files));
+    }
     e.target.value = "";
   };
 

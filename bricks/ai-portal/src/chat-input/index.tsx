@@ -20,7 +20,6 @@ import { UploadedFiles } from "../shared/FileUpload/UploadedFiles.js";
 import UploadedFilesStyleText from "../shared/FileUpload/UploadedFiles.shadow.css";
 import { useFilesUploading } from "../shared/useFilesUploading.js";
 import {
-  getNextUid,
   UploadButton,
   type UploadButtonRef,
 } from "../shared/FileUpload/UploadButton.js";
@@ -160,6 +159,7 @@ function ChatInputComponent({
   const valueRef = useRef("");
   const [wrap, setWrap] = useState(false);
   const uploadEnabled = uploadOptions?.enabled;
+  const uploadAccept = uploadOptions?.accept;
   const {
     files,
     resetFiles,
@@ -169,7 +169,8 @@ function ChatInputComponent({
     allFilesDone,
     fileInfos,
     exceeded,
-  } = useFilesUploading(uploadOptions?.maxFiles);
+    paste,
+  } = useFilesUploading(uploadOptions);
   const uploadButtonRef = useRef<UploadButtonRef>(null);
 
   useEffect(() => {
@@ -276,13 +277,7 @@ function ChatInputComponent({
 
   const onFilesDropped = useCallback(
     (files: File[]) => {
-      appendFiles(
-        files.map((file) => ({
-          uid: getNextUid(),
-          file,
-          status: "ready",
-        }))
-      );
+      appendFiles(files);
       textareaRef.current?.focus();
     },
     [appendFiles]
@@ -306,6 +301,7 @@ function ChatInputComponent({
               submitWhen="enter-without-shift"
               onSubmit={handleSubmit}
               onChange={handleChange}
+              onPaste={paste}
               style={{
                 paddingTop: hasFiles ? 78 : 8,
               }}
@@ -329,7 +325,7 @@ function ChatInputComponent({
               <>
                 <UploadButton
                   ref={uploadButtonRef}
-                  accept={uploadOptions?.accept}
+                  accept={uploadAccept}
                   disabled={exceeded}
                   onChange={(files) => {
                     appendFiles(files);
@@ -365,7 +361,7 @@ function ChatInputComponent({
       </div>
       <GlobalDragOverlay
         disabled={!uploadEnabled || exceeded || uploadOptions?.dragDisabled}
-        accept={uploadOptions?.accept}
+        accept={uploadAccept}
         dragTips={uploadOptions?.dragTips}
         onFilesDropped={onFilesDropped}
       />

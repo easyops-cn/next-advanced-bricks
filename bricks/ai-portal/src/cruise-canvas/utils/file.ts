@@ -50,6 +50,7 @@ export function getFileTypeAndIcon(
 
   switch (type) {
     case "text/markdown":
+    case "text/x-markdown":
       return ["Markdown", fileText];
     case "application/pdf":
       return ["PDF", filePdf];

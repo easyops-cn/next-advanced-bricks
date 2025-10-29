@@ -21,6 +21,14 @@ export interface MarkdownComponentProps {
   };
 }
 
+export async function preloadHighlighter(
+  theme: "light-plus" | "dark-plus"
+): Promise<void> {
+  await getSingletonHighlighter({
+    themes: [theme],
+  });
+}
+
 // Reference https://github.com/remarkjs/react-remark/blob/39553e5f5c9e9b903bebf261788ff45130668de0/src/index.ts
 export function MarkdownComponent({
   content,

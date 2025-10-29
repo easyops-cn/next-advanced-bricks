@@ -120,7 +120,12 @@ function FileComponent({
   }
 
   return (
-    <li className={classNames("file", { failed: status === "failed" })}>
+    <li
+      className={classNames("file", {
+        failed: status === "failed",
+        uploading: status === "uploading",
+      })}
+    >
       {isImage ? (
         <img className="file-image" src={image} />
       ) : (

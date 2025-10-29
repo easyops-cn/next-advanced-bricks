@@ -2,9 +2,21 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { handleHttpError } from "@next-core/runtime";
 import { http } from "@next-core/http";
 import type { FileItem } from "./FileUpload/interfaces";
-import type { UploadFileInfo } from "./interfaces";
+import type { UploadFileInfo, UploadOptions } from "./interfaces";
+import { acceptFiles } from "./FileUpload/acceptFiles";
+// import { getNextUid } from "./FileUpload/UploadButton";
 
-export function useFilesUploading(maxFiles?: number) {
+let uid = 0;
+
+export function getNextUid() {
+  return uid++;
+}
+
+export function useFilesUploading(options?: UploadOptions) {
+  const enabled = options?.enabled;
+  const accept = options?.accept;
+  const maxFiles = options?.maxFiles;
+  const dragTips = options?.dragTips;
   const [files, setFiles] = useState<FileItem[] | undefined>();
   const hasFiles = !!files && files.length > 0;
 
@@ -80,12 +92,16 @@ export function useFilesUploading(maxFiles?: number) {
   }, [files]);
 
   const appendFiles = useCallback(
-    (newFiles: FileItem[] | undefined) => {
+    (newFiles: File[]) => {
       setFiles((prev) => {
-        if (!newFiles) {
-          return prev;
-        }
-        const list = [...(prev ?? []), ...newFiles];
+        const list = [
+          ...(prev ?? []),
+          ...newFiles.map<FileItem>((file) => ({
+            uid: getNextUid(),
+            file,
+            status: "ready",
+          })),
+        ];
         if (maxFiles && list.length > maxFiles) {
           return list.slice(0, maxFiles);
         }
@@ -105,6 +121,29 @@ export function useFilesUploading(maxFiles?: number) {
 
   const exceeded = !!maxFiles && !!files && files.length >= maxFiles;
 
+  const paste = useCallback(
+    (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+      if (!enabled) {
+        return;
+      }
+      const fileList = e.clipboardData.files;
+      if (fileList.length > 0 && enabled) {
+        e.preventDefault();
+        e.stopPropagation();
+        const files = [...fileList];
+        if (accept) {
+          const allFilesAccepted = acceptFiles(accept, files);
+          if (!allFilesAccepted) {
+            handleHttpError(dragTips!);
+            return;
+          }
+        }
+        appendFiles(files);
+      }
+    },
+    [enabled, accept, dragTips, appendFiles]
+  );
+
   return {
     files,
     resetFiles,
@@ -114,5 +153,6 @@ export function useFilesUploading(maxFiles?: number) {
     allFilesDone,
     fileInfos,
     exceeded,
+    paste,
   };
 }
