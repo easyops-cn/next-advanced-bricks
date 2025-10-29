@@ -47,7 +47,7 @@ import scrollStyles from "./ScrollDownButton.module.css";
 import floatingStyles from "../shared/FloatingButton.module.css";
 import { PlanProgress } from "../shared/PlanProgress/PlanProgress.js";
 import { useServiceFlowPlan } from "../shared/useServiceFlowPlan.js";
-import { FilePreviewDrawer } from "../shared/FilePreview/FilePreviewDrawer.js";
+import { FilePreview } from "../shared/FilePreview/FilePreview.js";
 import { ImagesPreview } from "../shared/FilePreview/ImagesPreview.js";
 
 const ICON_SHARE: GeneralIconProps = {
@@ -513,7 +513,7 @@ export function ChatStreamComponent(
             />
           </div>
         )}
-        {activeFile && <FilePreviewDrawer file={activeFile} />}
+        {activeFile && <FilePreview file={activeFile} />}
         {activeImages && <ImagesPreview images={activeImages} />}
       </StreamContext.Provider>
     </TaskContext.Provider>

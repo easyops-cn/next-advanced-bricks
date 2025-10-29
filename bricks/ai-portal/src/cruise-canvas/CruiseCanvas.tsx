@@ -77,7 +77,7 @@ import type { ConversationDetail, CruiseCanvasProps } from ".";
 import { useFlowAndActivityMap } from "../shared/useFlowAndActivityMap";
 import { useFulfilledActiveDetail } from "../shared/useFulfilledActiveDetail";
 import { NodeChunk } from "./NodeChunk/NodeChunk";
-import { FilePreviewDrawer } from "../shared/FilePreview/FilePreviewDrawer";
+import { FilePreview } from "../shared/FilePreview/FilePreview";
 import { ReactUseMultipleBricks } from "@next-core/react-runtime";
 import { ImagesPreview } from "../shared/FilePreview/ImagesPreview";
 
@@ -962,7 +962,7 @@ export function CruiseCanvasComponent(
           <ToolCallDetail job={fulfilledActiveDetail.job} />
         )}
         {activeExpandedViewJobId && <ExpandedView views={views!} />}
-        {activeFile && <FilePreviewDrawer file={activeFile} />}
+        {activeFile && <FilePreview file={activeFile} />}
         {activeImages && <ImagesPreview images={activeImages} />}
         {showJsxEditor && activeJsxEditorJob && <JsxEditor />}
       </CanvasContext.Provider>
