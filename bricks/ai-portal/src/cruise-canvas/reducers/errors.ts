@@ -19,15 +19,13 @@ export const errors: Reducer<ConversationError[], CruiseCanvasAction> = (
       }
 
       if (typeof error === "string" && error) {
-        if (lastError) {
-          return state.slice(0, -1).concat(
-            {
-              taskId,
-              error,
-            },
-            { taskId }
-          );
-        }
+        return state.slice(0, -1).concat(
+          {
+            taskId,
+            error,
+          },
+          { taskId }
+        );
       }
 
       if (lastError) {

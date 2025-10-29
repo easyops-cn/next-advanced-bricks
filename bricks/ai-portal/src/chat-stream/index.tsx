@@ -213,6 +213,7 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
         onFeedbackOnView={this.#onFeedbackOnView}
         onDetailChange={this.#onDetailChange}
         onMarkNoticesRead={this.#onMarkNoticesRead}
+        ref={this.#ref}
       />
     );
   }
