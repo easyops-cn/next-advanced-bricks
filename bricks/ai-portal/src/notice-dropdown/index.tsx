@@ -13,7 +13,7 @@ import {
   Placement,
 } from "@next-bricks/basic/popover";
 import { GeneralIcon, GeneralIconProps } from "@next-bricks/icons/general-icon";
-import { Link, LinkProps } from "@next-bricks/basic/link";
+import { Link, LinkProps, Target } from "@next-bricks/basic/link";
 import { Button, ButtonProps } from "@next-bricks/basic/button";
 import { EoCounterBadge, BadgeProps } from "@next-bricks/basic/counter-badge";
 import { IconButton, IconButtonProps } from "../icon-button/index.js";
@@ -66,6 +66,8 @@ export interface NoticeDropdownProps {
   dropdownContentStyle?: React.CSSProperties;
   /** 是否隐藏进入消息中心按钮 */
   hideNotifyCenterButton?: boolean;
+  /** 详情链接目标 */
+  urlTarget?: Target;
 }
 
 /**
@@ -100,6 +102,10 @@ class NoticeDropdown extends ReactNextElement implements NoticeDropdownProps {
   @property()
   accessor urlTemplate: string | undefined;
 
+  /** 详情链接目标 */
+  @property()
+  accessor urlTarget: Target | undefined;
+
   /** 下拉框最大宽度 */
   @property()
   accessor dropdownMaxWidth: string | number | undefined;
@@ -117,7 +123,7 @@ class NoticeDropdown extends ReactNextElement implements NoticeDropdownProps {
    * @detail 消息 ID
    */
   @event({ type: "notice.click" })
-  accessor #noticeClickEvent!: EventEmitter<string>;
+  accessor #noticeClickEvent!: EventEmitter<NoticeItem>;
 
   /**
    * 全部已读点击事件
@@ -125,8 +131,8 @@ class NoticeDropdown extends ReactNextElement implements NoticeDropdownProps {
   @event({ type: "mark.all.read" })
   accessor #markAllReadEvent!: EventEmitter<void>;
 
-  #handleNoticeClick = (id: string) => {
-    this.#noticeClickEvent.emit(id);
+  #handleNoticeClick = (item: NoticeItem) => {
+    this.#noticeClickEvent.emit(item);
   };
 
   #handleMarkAllRead = () => {
@@ -146,13 +152,14 @@ class NoticeDropdown extends ReactNextElement implements NoticeDropdownProps {
         dropdownContentStyle={this.dropdownContentStyle}
         onMarkAllRead={this.#handleMarkAllRead}
         hideNotifyCenterButton={this.hideNotifyCenterButton}
+        urlTarget={this.urlTarget}
       />
     );
   }
 }
 
 interface NoticeDropdownComponentProps extends NoticeDropdownProps {
-  onNoticeClick: (id: string) => void;
+  onNoticeClick: (item: NoticeItem) => void;
   onMarkAllRead: () => void;
 }
 
@@ -167,6 +174,7 @@ function NoticeDropdownComponent({
   onNoticeClick,
   onMarkAllRead,
   hideNotifyCenterButton,
+  urlTarget,
 }: NoticeDropdownComponentProps) {
   const [open, setOpen] = useState(false);
   const popoverRef = useRef(null);
@@ -179,8 +187,8 @@ function NoticeDropdownComponent({
   }, []);
 
   const handleNoticeItemClick = useCallback(
-    (id: string) => {
-      onNoticeClick(id);
+    (item: NoticeItem) => {
+      onNoticeClick(item);
     },
     [onNoticeClick]
   );
@@ -258,7 +266,8 @@ function NoticeDropdownComponent({
                   <WrappedLink
                     className="link"
                     url={parseTemplate(urlTemplate, item)}
-                    onClick={() => handleNoticeItemClick(item.id)}
+                    target={urlTarget}
+                    onClick={() => handleNoticeItemClick(item)}
                   >
                     <div className="icon-wrapper">
                       <WrappedIcon

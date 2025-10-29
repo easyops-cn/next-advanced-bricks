@@ -164,6 +164,13 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
     this.#markNoticesReadEvent.emit();
   };
 
+  @event({ type: "notice.click" })
+  accessor #noticeClickEvent!: EventEmitter<NoticeItem>;
+
+  #onNoticeClick = (item: NoticeItem) => {
+    this.#noticeClickEvent.emit(item);
+  };
+
   #ref = createRef<ChatStreamRef>();
 
   @method()
@@ -213,6 +220,7 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
         onFeedbackOnView={this.#onFeedbackOnView}
         onDetailChange={this.#onDetailChange}
         onMarkNoticesRead={this.#onMarkNoticesRead}
+        onNoticeClick={this.#onNoticeClick}
         ref={this.#ref}
       />
     );
