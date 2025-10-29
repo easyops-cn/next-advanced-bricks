@@ -103,7 +103,13 @@ export function NodeFeedback({ className }: NodeFeedbackProps): JSX.Element {
 
   if (submittedFeedback) {
     return (
-      <div className={`${styles["node-feedback"]} ${styles.submitted}`}>
+      <div
+        className={classNames(
+          styles["node-feedback"],
+          styles.submitted,
+          className
+        )}
+      >
         {t(K.THANKS_FOR_YOUR_FEEDBACK)}
       </div>
     );
