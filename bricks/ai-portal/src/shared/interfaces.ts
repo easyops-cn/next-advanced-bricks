@@ -356,3 +356,11 @@ export interface PlanStep {
   taskId?: string;
   state?: TaskState;
 }
+
+export interface NoticeItem {
+  id: string;
+  type: string;
+  isUnread: boolean;
+  title: string;
+  description: string;
+}

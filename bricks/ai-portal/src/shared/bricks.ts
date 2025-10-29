@@ -38,6 +38,7 @@ import type {
   RunningFlowProps,
 } from "../running-flow";
 import type { BlankState, BlankStateProps } from "../blank-state";
+import { NoticeDropdown, NoticeDropdownProps } from "../notice-dropdown";
 
 export const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
@@ -103,6 +104,25 @@ export const showDialog =
 export const copyToClipboard = unwrapProvider<typeof _copyToClipboard>(
   "basic.copy-to-clipboard"
 );
+export interface NoticeDropdownEvents {
+  "notice.click": CustomEvent<string>;
+  "mark.all.read": CustomEvent<void>;
+}
+
+export interface NoticeDropdownMapEvents {
+  onNoticeClick: "notice.click";
+  onMarkAllRead: "mark.all.read";
+}
+
+export const WrappedNoticeDropdown = wrapBrick<
+  NoticeDropdown,
+  NoticeDropdownProps,
+  NoticeDropdownEvents,
+  NoticeDropdownMapEvents
+>("ai-portal.notice-dropdown", {
+  onNoticeClick: "notice.click",
+  onMarkAllRead: "mark.all.read",
+});
 
 export const AsyncWrappedTable = React.lazy(async () => ({
   default: await asyncWrapBrick<EoNextTable, NextTableProps>("eo-next-table"),

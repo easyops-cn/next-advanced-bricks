@@ -77,6 +77,7 @@ import { useFlowAndActivityMap } from "../shared/useFlowAndActivityMap";
 import { useFulfilledActiveDetail } from "../shared/useFulfilledActiveDetail";
 import { NodeChunk } from "./NodeChunk/NodeChunk";
 import { FilePreviewDrawer } from "../shared/FilePreview/FilePreviewDrawer";
+import { ReactUseMultipleBricks } from "@next-core/react-runtime";
 
 const MemoizedNodeComponent = memo(NodeComponent);
 
@@ -134,6 +135,7 @@ export function CruiseCanvasComponent(
     tryItOutUrl,
     separateInstructions,
     uploadOptions,
+    toolbarBrick,
     onShare,
     onTerminate,
     onSubmitFeedback,
@@ -914,6 +916,11 @@ export function CruiseCanvasComponent(
             ))}
           </div>
         </div>
+        {toolbarBrick && (
+          <div className={styles.toolbar}>
+            <ReactUseMultipleBricks useBrick={toolbarBrick.useBrick} />
+          </div>
+        )}
         <div className={styles.widgets}>
           <Nav
             nav={nav}
