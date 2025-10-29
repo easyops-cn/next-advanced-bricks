@@ -160,6 +160,7 @@ function ChatInputComponent({
   const valueRef = useRef("");
   const [wrap, setWrap] = useState(false);
   const uploadEnabled = uploadOptions?.enabled;
+  const uploadAccept = uploadOptions?.accept;
   const {
     files,
     resetFiles,
@@ -169,7 +170,8 @@ function ChatInputComponent({
     allFilesDone,
     fileInfos,
     exceeded,
-  } = useFilesUploading(uploadOptions?.maxFiles);
+    paste,
+  } = useFilesUploading(uploadOptions);
   const uploadButtonRef = useRef<UploadButtonRef>(null);
 
   useEffect(() => {
@@ -306,6 +308,7 @@ function ChatInputComponent({
               submitWhen="enter-without-shift"
               onSubmit={handleSubmit}
               onChange={handleChange}
+              onPaste={paste}
               style={{
                 paddingTop: hasFiles ? 78 : 8,
               }}
@@ -329,7 +332,7 @@ function ChatInputComponent({
               <>
                 <UploadButton
                   ref={uploadButtonRef}
-                  accept={uploadOptions?.accept}
+                  accept={uploadAccept}
                   disabled={exceeded}
                   onChange={(files) => {
                     appendFiles(files);
@@ -365,7 +368,7 @@ function ChatInputComponent({
       </div>
       <GlobalDragOverlay
         disabled={!uploadEnabled || exceeded || uploadOptions?.dragDisabled}
-        accept={uploadOptions?.accept}
+        accept={uploadAccept}
         dragTips={uploadOptions?.dragTips}
         onFilesDropped={onFilesDropped}
       />

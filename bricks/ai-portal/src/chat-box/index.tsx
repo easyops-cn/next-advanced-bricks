@@ -207,6 +207,9 @@ function LegacyChatBoxComponent(
   const [mentionPopover, setMentionPopover] = useState<MentionPopover | null>(
     null
   );
+  const [mentionOverlay, setMentionOverlay] = useState<
+    React.CSSProperties[] | null
+  >(null);
   const [mentionedText, setMentionedText] = useState("");
   const [activeActionIndex, setActiveActionIndex] = useState(0);
   const [activeActionIndexes, setActiveActionIndexes] = useState<number[]>([0]);
@@ -222,6 +225,7 @@ function LegacyChatBoxComponent(
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
 
   const uploadEnabled = uploadOptions?.enabled;
+  const uploadAccept = uploadOptions?.accept;
   const {
     files,
     resetFiles,
@@ -231,7 +235,8 @@ function LegacyChatBoxComponent(
     allFilesDone,
     fileInfos,
     exceeded,
-  } = useFilesUploading(uploadOptions?.maxFiles);
+    paste,
+  } = useFilesUploading(uploadOptions);
 
   useEffect(() => {
     if (!uploadEnabled) {
@@ -420,36 +425,27 @@ function LegacyChatBoxComponent(
     []
   );
 
-  const mentionPrefix = useMemo(() => {
+  useEffect(() => {
     const element = textareaRef.current?.element;
     if (!mentionedText || !element) {
-      return "";
-    }
-    const index = value.indexOf(mentionedText);
-    if (index < 0) {
-      return "";
-    }
-    return value.slice(0, index);
-  }, [mentionedText, value]);
-
-  const mentionOverlay = useMemo(() => {
-    const element = textareaRef.current?.element;
-    if (!mentionedText || !element) {
-      return null;
+      setMentionOverlay(null);
+      return;
     }
     const rects = getContentRectsInTextarea(
       element,
-      mentionPrefix,
+      "",
       // Ignore the last space
       mentionedText.slice(0, -1)
     );
-    return rects.map((rect) => ({
-      left: rect.left - 1,
-      top: rect.top - 1,
-      width: rect.width + 4,
-      height: rect.height + 4,
-    }));
-  }, [mentionedText, mentionPrefix]);
+    setMentionOverlay(
+      rects.map((rect) => ({
+        left: rect.left - 1,
+        top: rect.top - 1,
+        width: rect.width + 4,
+        height: rect.height + 4,
+      }))
+    );
+  }, [mentionedText, hasFiles]);
 
   useEffect(() => {
     const element = textareaRef.current?.element;
@@ -471,7 +467,7 @@ function LegacyChatBoxComponent(
         height: rect.height + 4,
       }))
     );
-  }, [commandText]);
+  }, [commandText, hasFiles]);
 
   const chatCommand = useMemo(() => {
     const command = getChatCommand();
@@ -650,11 +646,11 @@ function LegacyChatBoxComponent(
         case "Backspace": {
           const popovers = [
             {
-              textLength: mentionedText?.length,
-              prefixLength: mentionPrefix.length,
+              textLength: mentionedText.length,
+              prefixLength: 0,
             },
             {
-              textLength: commandText?.length,
+              textLength: commandText.length,
               prefixLength: 0,
             },
           ];
@@ -692,12 +688,11 @@ function LegacyChatBoxComponent(
       activeActionIndex,
       activeActionIndexes,
       commandPopover,
-      commandText?.length,
+      commandText.length,
       handleMention,
       handleSelectCommand,
       mentionPopover,
-      mentionPrefix.length,
-      mentionedText?.length,
+      mentionedText.length,
     ]
   );
 
@@ -741,6 +736,12 @@ function LegacyChatBoxComponent(
     [appendFiles]
   );
 
+  const sendDisabled =
+    !value ||
+    !allFilesDone ||
+    (!!mentionedText && value.length <= mentionedText.length) ||
+    (!!commandText && value.length <= commandText.length);
+
   return (
     <>
       <div className="root">
@@ -759,6 +760,7 @@ function LegacyChatBoxComponent(
             onSubmit={handleSubmit}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
+            onPaste={paste}
             style={{
               paddingTop: hasFiles ? 94 : 10,
             }}
@@ -784,7 +786,7 @@ function LegacyChatBoxComponent(
                 <>
                   <UploadButton
                     ref={uploadButtonRef}
-                    accept={uploadOptions?.accept}
+                    accept={uploadAccept}
                     disabled={exceeded}
                     onChange={(files) => {
                       appendFiles(files);
@@ -796,7 +798,7 @@ function LegacyChatBoxComponent(
               ) : null}
               <button
                 className="btn-send"
-                disabled={!value || !allFilesDone}
+                disabled={sendDisabled}
                 onClick={handleSubmitClick}
               >
                 <WrappedIcon lib="fa" prefix="fas" icon="arrow-up" />
@@ -835,7 +837,7 @@ function LegacyChatBoxComponent(
       </div>
       <GlobalDragOverlay
         disabled={!uploadEnabled || exceeded}
-        accept={uploadOptions?.accept}
+        accept={uploadAccept}
         dragTips={uploadOptions?.dragTips}
         onFilesDropped={onFilesDropped}
       />

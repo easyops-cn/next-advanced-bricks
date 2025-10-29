@@ -340,7 +340,11 @@ export function ChatStreamComponent(
   const [depsReady, setDepsReady] = useState(false);
   useEffect(() => {
     let ignore = false;
-    preloadHighlighter("light-plus").finally(() => {
+    Promise.race([
+      preloadHighlighter("light-plus"),
+      // Wait at most 5s
+      new Promise((resolve) => setTimeout(resolve, 5000)),
+    ]).finally(() => {
       if (!ignore) {
         setDepsReady(true);
       }

@@ -60,7 +60,7 @@ describe("useFilesUploading", () => {
   });
 
   it("should handle maxFiles limit when appending", async () => {
-    const { result } = renderHook(() => useFilesUploading(2));
+    const { result } = renderHook(() => useFilesUploading({ maxFiles: 2 }));
 
     const newFiles: FileItem[] = [
       { uid: 1, file: new File(["test1"], "test1.txt"), status: "ready" },
