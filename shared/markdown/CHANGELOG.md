@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/markdown@0.7.2...@next-shared/markdown@0.7.3) (2025-10-29)
+
+
+### Bug Fixes
+
+* preload markdown highlighter ([dfecf69](https://github.com/easyops-cn/next-advanced-bricks/commit/dfecf69ba074853d3bdf26f9c0a5eb2dd9568162))
+
+
+
+
+
 ## [0.7.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/markdown@0.7.1...@next-shared/markdown@0.7.2) (2025-09-26)
 
 **Note:** Version bump only for package @next-shared/markdown

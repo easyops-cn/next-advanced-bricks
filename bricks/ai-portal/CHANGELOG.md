@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.58.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.58.2...@next-bricks/ai-portal@0.58.3) (2025-10-29)
+
+
+### Bug Fixes
+
+* preload markdown highlighter ([dfecf69](https://github.com/easyops-cn/next-advanced-bricks/commit/dfecf69ba074853d3bdf26f9c0a5eb2dd9568162))
+* show file uploading animation ([843b573](https://github.com/easyops-cn/next-advanced-bricks/commit/843b5734a768c16927e1b3afb3943031f15fe78f))
+* support pasting files ([c6c6b29](https://github.com/easyops-cn/next-advanced-bricks/commit/c6c6b299f36152007d811a9ecc5d65ad07f927d7))
+* 右上角工具栏增加通知消息展示 ([f697e67](https://github.com/easyops-cn/next-advanced-bricks/commit/f697e67b67cf851a851b3ebe8c37c80279a4253e))
+
+
+
+
+
 ## [0.58.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.58.1...@next-bricks/ai-portal@0.58.2) (2025-10-28)
 
 
