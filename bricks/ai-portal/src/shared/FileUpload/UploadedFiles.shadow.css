@@ -22,6 +22,24 @@
   position: relative;
 }
 
+.file.uploading::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+  animation: loadingAnimation 1.5s linear infinite;
+}
+
+@keyframes loadingAnimation {
+  0% {
+    right: 100%;
+  }
+  100% {
+    right: 0;
+  }
+}
+
 /* .file:hover {
   background: rgba(0, 0, 0, 0.08);
 } */
