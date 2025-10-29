@@ -3,8 +3,8 @@ import { handleHttpError } from "@next-core/runtime";
 import { http } from "@next-core/http";
 import type { FileItem } from "./FileUpload/interfaces";
 import type { UploadFileInfo, UploadOptions } from "./interfaces";
-import { acceptFiles } from "./FileUpload/acceptFiles";
-// import { getNextUid } from "./FileUpload/UploadButton";
+import { validateFiles } from "./FileUpload/validateFiles";
+import { K, t } from "./FileUpload/i18n";
 
 let uid = 0;
 
@@ -14,9 +14,7 @@ export function getNextUid() {
 
 export function useFilesUploading(options?: UploadOptions) {
   const enabled = options?.enabled;
-  const accept = options?.accept;
   const maxFiles = options?.maxFiles;
-  const dragTips = options?.dragTips;
   const [files, setFiles] = useState<FileItem[] | undefined>();
   const hasFiles = !!files && files.length > 0;
 
@@ -44,6 +42,11 @@ export function useFilesUploading(options?: UploadOptions) {
               method: "POST",
               body: formData,
               signal: abortController.signal,
+            },
+            {
+              interceptorParams: {
+                ignoreLoadingBar: true,
+              },
             }
           );
 
@@ -93,22 +96,27 @@ export function useFilesUploading(options?: UploadOptions) {
 
   const appendFiles = useCallback(
     (newFiles: File[]) => {
+      if (!validateFiles(newFiles, options!)) {
+        return;
+      }
+
       setFiles((prev) => {
-        const list = [
-          ...(prev ?? []),
+        const prevList = prev ?? [];
+        if (maxFiles && prevList.length + newFiles.length > maxFiles) {
+          handleHttpError(t(K.MAX_FILES_EXCEEDED, { count: maxFiles }));
+          return prev;
+        }
+        return [
+          ...prevList,
           ...newFiles.map<FileItem>((file) => ({
             uid: getNextUid(),
             file,
             status: "ready",
           })),
         ];
-        if (maxFiles && list.length > maxFiles) {
-          return list.slice(0, maxFiles);
-        }
-        return list;
       });
     },
-    [maxFiles]
+    [maxFiles, options]
   );
 
   const resetFiles = useCallback(() => {
@@ -131,17 +139,13 @@ export function useFilesUploading(options?: UploadOptions) {
         e.preventDefault();
         e.stopPropagation();
         const files = [...fileList];
-        if (accept) {
-          const allFilesAccepted = acceptFiles(accept, files);
-          if (!allFilesAccepted) {
-            handleHttpError(dragTips!);
-            return;
-          }
+        const allFilesAccepted = validateFiles(files, options!);
+        if (allFilesAccepted) {
+          appendFiles(files);
         }
-        appendFiles(files);
       }
     },
-    [enabled, accept, dragTips, appendFiles]
+    [enabled, options, appendFiles]
   );
 
   return {

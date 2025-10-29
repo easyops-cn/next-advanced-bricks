@@ -1,22 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { handleHttpError } from "@next-core/runtime";
 import dragImage from "./drag-file@2x.png";
 import { K, t } from "./i18n";
 import styles from "./GlobalDragOverlay.module.css";
-import { acceptFiles } from "./acceptFiles";
+import { validateFiles } from "./validateFiles";
+import type { UploadOptions } from "../interfaces";
 
 export interface GlobalDragOverlayProps {
   disabled?: boolean;
-  accept?: string;
-  dragTips?: string;
+  uploadOptions?: UploadOptions;
   onFilesDropped?: (files: File[]) => void;
 }
 
 export default function GlobalDragOverlay({
   disabled,
-  accept,
-  dragTips,
+  uploadOptions,
   onFilesDropped,
 }: GlobalDragOverlayProps) {
   const [isDragging, setIsDragging] = useState(false);
@@ -75,14 +73,10 @@ export default function GlobalDragOverlay({
 
       const files = Array.from(e.dataTransfer!.files);
       if (files.length > 0) {
-        if (accept) {
-          const allFilesAccepted = acceptFiles(accept, files);
-          if (!allFilesAccepted) {
-            handleHttpError(dragTips);
-            return;
-          }
+        const allFilesAccepted = validateFiles(files, uploadOptions!);
+        if (allFilesAccepted) {
+          onFilesDropped?.(files);
         }
-        onFilesDropped?.(files);
       }
     };
 
@@ -97,7 +91,7 @@ export default function GlobalDragOverlay({
       window.removeEventListener("dragover", handleDragOver);
       window.removeEventListener("drop", handleDrop);
     };
-  }, [accept, disabled, dragTips, onFilesDropped]);
+  }, [disabled, uploadOptions, onFilesDropped]);
 
   if (!isDragging) {
     return null;
@@ -107,7 +101,7 @@ export default function GlobalDragOverlay({
     <div className={styles.overlay}>
       <img src={dragImage} width="91" height="79" />
       <div className={styles.title}>{t(K.DROP_FILES_HERE)}</div>
-      <div className={styles.description}>{dragTips}</div>
+      <div className={styles.description}>{uploadOptions?.dragTips}</div>
     </div>,
     document.body
   );

@@ -361,8 +361,7 @@ function ChatInputComponent({
       </div>
       <GlobalDragOverlay
         disabled={!uploadEnabled || exceeded || uploadOptions?.dragDisabled}
-        accept={uploadAccept}
-        dragTips={uploadOptions?.dragTips}
+        uploadOptions={uploadOptions}
         onFilesDropped={onFilesDropped}
       />
     </>

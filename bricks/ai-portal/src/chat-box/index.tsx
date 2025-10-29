@@ -830,8 +830,7 @@ function LegacyChatBoxComponent(
       </div>
       <GlobalDragOverlay
         disabled={!uploadEnabled || exceeded}
-        accept={uploadAccept}
-        dragTips={uploadOptions?.dragTips}
+        uploadOptions={uploadOptions}
         onFilesDropped={onFilesDropped}
       />
     </>
