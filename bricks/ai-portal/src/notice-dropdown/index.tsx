@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { createDecorators, EventEmitter } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
@@ -169,7 +169,7 @@ function NoticeDropdownComponent({
   hideNotifyCenterButton,
 }: NoticeDropdownComponentProps) {
   const [open, setOpen] = useState(false);
-
+  const popoverRef = useRef(null);
   const handleBeforeVisibleChange = useCallback((e: CustomEvent<boolean>) => {
     setOpen(e.detail);
   }, []);
@@ -189,6 +189,33 @@ function NoticeDropdownComponent({
     onMarkAllRead();
   }, [onMarkAllRead]);
 
+  // 添加外部点击检测，兼容在某些场景下没有触发关闭浮层的问题
+  /* istanbul ignore next  */
+  useEffect(() => {
+    if (!open) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const path = event.composedPath?.() || [];
+
+      const isInsideNoticeDropdown = path.some((element) => {
+        if (element instanceof HTMLElement) {
+          return element === popoverRef.current;
+        }
+        return false;
+      });
+
+      if (!isInsideNoticeDropdown) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside, true);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside, true);
+    };
+  }, [open]);
+
   return (
     <WrappedPopover
       className="popover"
@@ -197,6 +224,7 @@ function NoticeDropdownComponent({
       active={open}
       arrow={false}
       distance={8}
+      ref={popoverRef}
       onBeforeVisibleChange={handleBeforeVisibleChange}
     >
       <span slot="anchor">
@@ -223,7 +251,7 @@ function NoticeDropdownComponent({
         </div>
 
         <div className="content" style={dropdownContentStyle}>
-          {dataSource.length > 0 ? (
+          {dataSource?.length > 0 ? (
             <ul className="message-list">
               {dataSource.map((item) => (
                 <li key={item.id}>
