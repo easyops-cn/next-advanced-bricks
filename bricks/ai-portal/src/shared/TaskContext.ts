@@ -2,6 +2,7 @@ import { createContext, type Dispatch } from "react";
 import type { FeedbackDetail } from "../cruise-canvas/interfaces";
 import type {
   ActiveDetail,
+  ActiveImages,
   ConversationError,
   ConversationState,
   ExampleProject,
@@ -61,6 +62,8 @@ export interface TaskContextValue {
   tryItOut?: () => void;
   separateInstructions?: boolean;
   setActiveFile: Dispatch<React.SetStateAction<FileInfo | null>>;
+  activeImages: ActiveImages | null;
+  setActiveImages: Dispatch<React.SetStateAction<ActiveImages | null>>;
 }
 
 export const TaskContext = createContext<TaskContextValue>({
@@ -80,4 +83,6 @@ export const TaskContext = createContext<TaskContextValue>({
   onSubmitFeedback: () => {},
   setShowFeedback: () => {},
   setActiveFile: () => {},
+  activeImages: null,
+  setActiveImages: () => {},
 });

@@ -1,7 +1,4 @@
 .scroll-down {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: absolute;
   left: 50%;
   bottom: 136px;
@@ -9,13 +6,4 @@
   width: 32px;
   height: 32px;
   font-size: 12px;
-  border-radius: 16px;
-  background: #ffffff;
-  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(0, 0, 0, 0.02);
-  cursor: pointer;
-}
-
-.scroll-down:hover {
-  box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.1);
 }

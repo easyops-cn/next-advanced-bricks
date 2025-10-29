@@ -1,23 +1,27 @@
-import React, {
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useState,
-  type Ref,
-} from "react";
-import { getBasePath } from "@next-core/runtime";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import classNames from "classnames";
-import { saveAs } from "file-saver";
 import { initializeI18n } from "@next-core/i18n";
 import type { FileInfo } from "../../shared/interfaces";
-import { WrappedIcon, WrappedButton } from "../../shared/bricks";
+import {
+  WrappedIcon,
+  WrappedButton,
+  WrappedIconButton,
+} from "../../shared/bricks";
 import styles from "./FilePreview.module.css";
 import shareStyles from "../../cruise-canvas/shared.module.css";
 import { EnhancedMarkdown } from "../../cruise-canvas/EnhancedMarkdown/EnhancedMarkdown";
 import { K, locales, NS, t } from "./i18n";
-import { ICON_LOADING } from "../../shared/constants";
+import {
+  ICON_CLOSE,
+  ICON_DOWNLOAD,
+  ICON_LOADING,
+} from "../../shared/constants";
 import { getMimeTypeByFilename } from "../../cruise-canvas/utils/file";
 import imageUnpreviewable from "./unpreviewable.png";
+import { downloadFile } from "./downloadFile";
+import { getImageUrl } from "./getImageUrl";
+import toolbarStyles from "../../cruise-canvas/toolbar.module.css";
+import { TaskContext } from "../TaskContext";
 
 initializeI18n(NS, locales);
 
@@ -25,18 +29,8 @@ export interface FilePreviewProps {
   file: FileInfo;
 }
 
-export interface FilePreviewRef {
-  download: () => void;
-}
-
-export const FilePreview = React.forwardRef<FilePreviewRef, FilePreviewProps>(
-  LegacyFilePreview
-);
-
-function LegacyFilePreview(
-  { file }: FilePreviewProps,
-  ref: Ref<FilePreviewRef>
-) {
+export function FilePreview({ file }: FilePreviewProps) {
+  const { setActiveFile } = useContext(TaskContext);
   const { bytes, uri, mimeType, name } = file;
   const type = mimeType || getMimeTypeByFilename(name);
   const [status, setStatus] = useState<"loading" | "loaded" | "error">(
@@ -77,9 +71,7 @@ function LegacyFilePreview(
       let revokeUrl: string | undefined;
       (async () => {
         try {
-          const response = await fetch(
-            new URL(uri, `${location.origin}${getBasePath()}`)
-          );
+          const response = await fetch(getImageUrl(uri));
           if (!response.ok) {
             throw new Error(`Failed to fetch file: ${response.statusText}`);
           }
@@ -111,64 +103,88 @@ function LegacyFilePreview(
   }, [bytes, isImage, isMarkdown, embeddable, uri]);
 
   const download = useCallback(() => {
-    const { bytes, uri, mimeType, name } = file;
-    const filename = name || t(K.UNTITLED);
-    if (bytes) {
-      saveAs(new Blob([atob(bytes)], { type: mimeType }), filename);
-    } else if (uri) {
-      const link = document.createElement("a");
-      link.href = new URL(uri, `${location.origin}${getBasePath()}`).toString();
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+    downloadFile(file);
   }, [file]);
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      download,
-    }),
-    [download]
-  );
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setActiveFile(null);
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
 
-  return status === "loading" ? (
-    <div className={styles.loading}>
-      <WrappedIcon {...ICON_LOADING} />
-    </div>
-  ) : status === "error" ? (
-    <div className={styles.error}>
-      <img
-        src={imageUnpreviewable}
-        alt="Unpreviewable"
-        width={591}
-        height={249}
-      />
-      <p>
-        {t(K.FILE_PREVIEW_UNPREVIEWABLE_TIP_PREFIX)}
-        <WrappedButton themeVariant="elevo" type="primary" onClick={download}>
-          {t(K.DOWNLOAD)}
-        </WrappedButton>
-        {t(K.FILE_PREVIEW_UNPREVIEWABLE_TIP_SUFFIX)}
-      </p>
-    </div>
-  ) : isImage ? (
-    <div className={styles.image}>
-      <img src={content} alt={name} />
-    </div>
-  ) : embeddable ? (
-    <embed
-      className={styles.embed}
-      src={content}
-      type={type}
-      title={name}
-      width="100%"
-      height="100%"
-    />
-  ) : (
-    <div className={classNames(styles.content, shareStyles.markdown)}>
-      <EnhancedMarkdown content={content} />
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [setActiveFile]);
+
+  return (
+    <div className={styles.preview}>
+      <div className={styles.header}>
+        <div className={styles.title}>{file.name || t(K.UNTITLED)}</div>
+        <div className={styles.toolbar}>
+          <WrappedIconButton
+            icon={ICON_DOWNLOAD}
+            onClick={() => {
+              download();
+            }}
+          />
+          <div className={toolbarStyles.divider} />
+          <WrappedIconButton
+            icon={ICON_CLOSE}
+            onClick={() => {
+              setActiveFile(null);
+            }}
+          />
+        </div>
+      </div>
+      <div className={styles.body}>
+        {status === "loading" ? (
+          <div className={styles.loading}>
+            <WrappedIcon {...ICON_LOADING} />
+          </div>
+        ) : status === "error" ? (
+          <div className={styles.error}>
+            <img
+              src={imageUnpreviewable}
+              alt="Unpreviewable"
+              width={591}
+              height={249}
+            />
+            <p>
+              {t(K.FILE_PREVIEW_UNPREVIEWABLE_TIP_PREFIX)}
+              <WrappedButton
+                themeVariant="elevo"
+                type="primary"
+                onClick={download}
+              >
+                {t(K.DOWNLOAD)}
+              </WrappedButton>
+              {t(K.FILE_PREVIEW_UNPREVIEWABLE_TIP_SUFFIX)}
+            </p>
+          </div>
+        ) : isImage ? (
+          <div className={styles.image}>
+            <img src={content} alt={name} />
+          </div>
+        ) : embeddable ? (
+          <embed
+            className={styles.embed}
+            src={content}
+            type={type}
+            title={name}
+            width="100%"
+            height="100%"
+          />
+        ) : (
+          <div className={classNames(styles.markdown, shareStyles.markdown)}>
+            <EnhancedMarkdown content={content} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

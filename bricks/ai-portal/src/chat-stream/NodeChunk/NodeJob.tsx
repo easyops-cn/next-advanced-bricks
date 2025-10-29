@@ -25,12 +25,8 @@ export function NodeJob({ job, isSubTask }: NodeJobProps) {
   const toolTitle = toolCall?.annotations?.title || toolCall?.name;
   const toolName = toolCall?.name;
   const showToolCall = !!toolCall;
-  const {
-    conversationState,
-    setActiveDetail,
-    setSubActiveDetail,
-    setActiveFile,
-  } = useContext(TaskContext);
+  const { conversationState, setActiveDetail, setSubActiveDetail } =
+    useContext(TaskContext);
   const { lastDetail, setUserClosedAside } = useContext(StreamContext);
 
   const { className, icon } = useMemo(() => {
@@ -151,9 +147,7 @@ export function NodeJob({ job, isSubTask }: NodeJobProps) {
             </div>
           ))}
           {job.generatedView ? <NodeView job={job} /> : null}
-          {files.length > 0 && (
-            <FileList files={files} onFileClick={setActiveFile} />
-          )}
+          {files.length > 0 && <FileList files={files} />}
         </div>
       </div>
     </div>

@@ -1,5 +1,7 @@
 :host {
   display: inline-block;
+
+  --elevo-icon-button-icon-size: 18px;
 }
 
 :host([hidden]) {
@@ -12,9 +14,9 @@ eo-tooltip {
 }
 
 button {
-  width: 28px;
   height: 28px;
-  font-size: 18px;
+  padding: 0 5px;
+  font-size: 14px;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -22,6 +24,10 @@ button {
   border: none;
   background: none;
   color: #333;
+}
+
+.icon {
+  font-size: var(--elevo-icon-button-icon-size);
 }
 
 button:disabled {
@@ -44,22 +50,26 @@ button:not(:disabled):active {
   background: rgba(0, 0, 0, 0.08);
 }
 
+.has-slotted .icon {
+  margin-right: 8px;
+}
+
 :host([variant="light"]) button {
   color: #595959;
 }
 
 :host([variant="mini"]) button {
-  width: 24px;
   height: 24px;
-  font-size: 16px;
+  --elevo-icon-button-icon-size: 16px;
+  padding: 0 4px;
   border-radius: 4px;
 }
 
 :host([variant="mini-light"]) button {
   color: #8c8c8c;
-  width: 20px;
   height: 20px;
-  font-size: 14px;
+  --elevo-icon-button-icon-size: 14px;
+  padding: 0 3px;
   border-radius: 4px;
 }
 
@@ -68,9 +78,13 @@ button:not(:disabled):active {
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   color: #595959;
-  width: 32px;
   height: 32px;
-  font-size: 18px;
+  --elevo-icon-button-icon-size: 18px;
+  padding: 0 7px;
+}
+
+button.has-slotted {
+  padding: 0 8px;
 }
 
 :host([variant="bordered"]) button:not(:disabled):hover {

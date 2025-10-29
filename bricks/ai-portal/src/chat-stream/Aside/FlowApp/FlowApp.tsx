@@ -22,6 +22,7 @@ import { UserMessage } from "../../UserMessage/UserMessage";
 import { AssistantMessage } from "../../AssistantMessage/AssistantMessage";
 import { useAutoScroll } from "../../useAutoScroll";
 import scrollStyles from "../../ScrollDownButton.module.css";
+import floatingStyles from "../../../shared/FloatingButton.module.css";
 
 initializeI18n(NS, locales);
 
@@ -160,14 +161,14 @@ function ActivityDetail({ activity }: ActivityDetailProps) {
           ))}
         </div>
       </div>
-      <div
-        className={scrollStyles["scroll-down"]}
+      <button
+        className={`${scrollStyles["scroll-down"]} ${floatingStyles["floating-button"]}`}
         style={{ bottom: "30px" }}
         hidden={!scrollable}
         onClick={scrollToBottom}
       >
         <WrappedIcon lib="antd" icon="down" />
-      </div>
+      </button>
     </>
   );
 }
