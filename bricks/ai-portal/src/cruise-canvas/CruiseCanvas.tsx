@@ -286,6 +286,7 @@ export function CruiseCanvasComponent(
     showFeedback,
     showFeedbackAfterFailed,
     replay,
+    noTasks: tasks.length === 0,
   });
 
   // Disable auto scroll when the user manually scrolled up
