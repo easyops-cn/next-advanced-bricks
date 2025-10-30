@@ -5,6 +5,8 @@ export enum K {
   FILE_PREVIEW_UNPREVIEWABLE_TIP_PREFIX = "FILE_PREVIEW_UNPREVIEWABLE_TIP_PREFIX",
   FILE_PREVIEW_UNPREVIEWABLE_TIP_SUFFIX = "FILE_PREVIEW_UNPREVIEWABLE_TIP_SUFFIX",
   DOWNLOAD = "DOWNLOAD",
+  SHOW_ALL_FILES = "SHOW_ALL_FILES",
+  COLLAPSE = "COLLAPSE",
 }
 
 const en: Locale = {
@@ -13,6 +15,8 @@ const en: Locale = {
     "This file is unpreviewable currently, you can",
   FILE_PREVIEW_UNPREVIEWABLE_TIP_SUFFIX: "and view it locally.",
   DOWNLOAD: "Download",
+  SHOW_ALL_FILES: "Show all files",
+  COLLAPSE: "Collapse",
 };
 
 const zh: Locale = {
@@ -20,6 +24,8 @@ const zh: Locale = {
   FILE_PREVIEW_UNPREVIEWABLE_TIP_PREFIX: "该类型文件暂不支持预览，您可以",
   FILE_PREVIEW_UNPREVIEWABLE_TIP_SUFFIX: "查看。",
   DOWNLOAD: "下载",
+  SHOW_ALL_FILES: "显示所有文件",
+  COLLAPSE: "收起",
 };
 
 export const NS = "bricks/ai-portal/FilePreview";

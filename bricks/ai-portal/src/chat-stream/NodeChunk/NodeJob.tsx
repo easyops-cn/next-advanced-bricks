@@ -13,7 +13,7 @@ import { StreamContext } from "../StreamContext.js";
 import type { ActiveDetail, FileInfo, Job } from "../../shared/interfaces.js";
 import { getStateDisplay } from "./getStateDisplay.js";
 import { ICON_UP } from "../../shared/constants.js";
-import { FileList } from "../../cruise-canvas/FileList/FileList.js";
+import { FileList } from "../../shared/FilePreview/FileList.js";
 
 export interface NodeJobProps {
   job: Job;

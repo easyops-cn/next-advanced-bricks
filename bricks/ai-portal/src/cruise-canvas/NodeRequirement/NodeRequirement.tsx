@@ -10,7 +10,7 @@ import classNames from "classnames";
 import styles from "./NodeRequirement.module.css";
 import type { CommandPayload, FileInfo } from "../../shared/interfaces";
 import { ReadableCommand } from "../../shared/ReadableCommand/ReadableCommand";
-import { FileList } from "../FileList/FileList";
+import { FileList } from "../../shared/FilePreview/FileList";
 
 const WrappedEasyOpsAvatar = wrapBrick<EoEasyopsAvatar, EoEasyopsAvatarProps>(
   "eo-easyops-avatar"
