@@ -501,7 +501,7 @@ function StageNavItem({
         themeVariant="elevo"
         ref={popoverRef}
       >
-        <button className="nav-link" slot="anchor">
+        <button className="nav-link" slot="anchor" title={stage.name}>
           <span>{stage.name}</span>
         </button>
         <div className="stage-settings">

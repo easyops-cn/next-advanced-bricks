@@ -7,7 +7,7 @@ dependencies:
   - name: "icons-NB"
     version: "^1.5.6"
   - name: "basic-NB"
-    version: "^1.56.0"
+    version: "^1.61.0"
   - name: "containers-NB"
     version: "^1.15.0"
   - name: "mini-chart-NB"

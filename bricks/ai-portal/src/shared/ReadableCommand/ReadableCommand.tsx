@@ -54,10 +54,11 @@ function getInitialContent(
     switch (cmd.type) {
       case "serviceFlowStarting":
         return `/start service flow${[
-          cmd.serviceFlowStarting.spaceName,
           cmd.serviceFlowStarting.flowName,
+          cmd.serviceFlowStarting.spaceName,
         ]
           .filter(Boolean)
+          .slice(0, 1)
           .map((name) => `: ${name}`)
           .join("")}`;
       default:
