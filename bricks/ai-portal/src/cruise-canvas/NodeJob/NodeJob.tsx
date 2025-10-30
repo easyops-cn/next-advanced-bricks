@@ -14,7 +14,7 @@ import { FileInfo, Job } from "../../shared/interfaces";
 import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus.js";
 import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
 import { CmdbInstanceDetail } from "../CmdbInstanceDetail/CmdbInstanceDetail";
-import { FileList } from "../FileList/FileList";
+import { FileList } from "../../shared/FilePreview/FileList";
 import { RequestHumanAction } from "../../shared/RequestHumanAction/RequestHumanAction";
 import { AIEmployeeAvatar } from "../AIEmployeeAvatar/AIEmployeeAvatar";
 import { CreatedView } from "../../shared/CreatedView/CreatedView";

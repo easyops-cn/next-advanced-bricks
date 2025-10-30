@@ -62,21 +62,29 @@
   margin: 0;
   padding: 38px 0;
   display: flex;
+  align-items: center;
+  height: 154px;
   gap: 8px;
 
   li {
     height: 60px;
-    width: fit-content;
+    width: 60px;
     border: 1px solid #e8e8e8;
     display: flex;
     align-items: center;
+    justify-content: center;
     border-radius: 8px;
     overflow: hidden;
     opacity: 0.5;
     cursor: pointer;
+    transition:
+      width 0.15s ease-in-out,
+      height 0.15s ease-in-out;
 
     &.active {
       opacity: 1;
+      height: 78px;
+      width: 78px;
     }
 
     &:not(.active):hover {
@@ -86,6 +94,7 @@
 
   img {
     max-height: 100%;
+    max-width: 100%;
     object-fit: contain;
   }
 }
