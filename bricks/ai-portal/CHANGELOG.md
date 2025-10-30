@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.58.10](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.58.9...@next-bricks/ai-portal@0.58.10) (2025-10-30)
+
+
+### Bug Fixes
+
+* do not show loading state after conversation is done ([3f12b79](https://github.com/easyops-cn/next-advanced-bricks/commit/3f12b792f93f2f1c18bd2e7ef6b935bbe7d85782))
+* limit file list ([1ed80f7](https://github.com/easyops-cn/next-advanced-bricks/commit/1ed80f7867d6dce34140c5791aee49bd4cf052f4))
+
+
+
+
+
 ## [0.58.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.58.8...@next-bricks/ai-portal@0.58.9) (2025-10-29)
 
 
