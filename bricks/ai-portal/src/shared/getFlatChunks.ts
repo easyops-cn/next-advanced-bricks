@@ -32,14 +32,15 @@ export function getFlatChunks(
       });
     }
 
-    const acceptOnlyUserMessages = activityWithFlow && skipActivitySubTasks;
+    const shouldSkip = activityWithFlow && skipActivitySubTasks;
 
     for (const { job, subTask } of taskNode.children) {
-      if (acceptOnlyUserMessages) {
+      if (shouldSkip) {
         if (
-          job.state === "completed" &&
-          job.messages?.length &&
-          job.messages.every((msg) => msg.role === "user")
+          (job.state === "completed" &&
+            job.messages?.length &&
+            job.messages.every((msg) => msg.role === "user")) ||
+          job.hil
         ) {
           chunks.push({
             type: "job",
