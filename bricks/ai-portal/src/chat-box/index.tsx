@@ -600,19 +600,23 @@ function LegacyChatBoxComponent(
           });
           return false;
         }
-        case "Enter":
+        case "Enter": {
           if (!mentionPopover && !commandPopover) {
             return;
           }
           e.preventDefault();
           e.stopPropagation();
           e.nativeEvent.stopImmediatePropagation();
+          const activeAction = getMeaningfulActions(
+            (mentionPopover || commandPopover)!.actions
+          )[activeActionIndex];
           if (mentionPopover) {
-            handleMention(mentionPopover.actions[activeActionIndex]);
+            handleMention(activeAction);
           } else {
-            handleSelectCommand(commandPopover!.actions[activeActionIndex]);
+            handleSelectCommand(activeAction);
           }
           return false;
+        }
         case "Delete":
         case "Backspace": {
           const popovers = [
