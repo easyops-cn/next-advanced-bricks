@@ -198,10 +198,10 @@ export function ChatStreamComponent(
     null
   );
   const [userClosedAside, setUserClosedAside] = useState(false);
+  const conversationAvailable = !!conversation;
+
   // Delay flag to prevent aside from auto opened for a completed task
   const delayRef = useRef(false);
-
-  const conversationAvailable = !!conversation;
   useEffect(() => {
     if (conversationAvailable) {
       const timer = setTimeout(() => {
@@ -213,11 +213,16 @@ export function ChatStreamComponent(
     }
   }, [conversationAvailable]);
 
+  const hasInitialRequest = !!initialRequest;
   useEffect(() => {
-    if (delayRef.current && lastDetail && !userClosedAside) {
+    if (
+      (delayRef.current || hasInitialRequest) &&
+      lastDetail &&
+      !userClosedAside
+    ) {
       setActiveDetail(lastDetail);
     }
-  }, [lastDetail, userClosedAside]);
+  }, [lastDetail, userClosedAside, hasInitialRequest]);
 
   useEffect(() => {
     getRuntime().applyPageTitle(pageTitle);
