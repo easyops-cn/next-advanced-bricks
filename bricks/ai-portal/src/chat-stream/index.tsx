@@ -32,6 +32,7 @@ export interface ChatStreamProps {
   showUiSwitch?: boolean;
   showNoticeIcon?: boolean;
   previewUrlTemplate?: string;
+  noticeUrlTemplate?: string;
   showCases?: ShowCaseType[];
   exampleProjects?: ExampleProject[];
   tryItOutUrl?: string;
@@ -114,6 +115,9 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
 
   @property({ type: Boolean })
   accessor showNoticeIcon: boolean | undefined;
+
+  @property()
+  accessor noticeUrlTemplate: string | undefined;
 
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
@@ -208,6 +212,7 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
         showUiSwitch={this.showUiSwitch}
         showNoticeIcon={this.showNoticeIcon}
         previewUrlTemplate={this.previewUrlTemplate}
+        noticeUrlTemplate={this.noticeUrlTemplate}
         showCases={this.showCases}
         exampleProjects={this.exampleProjects}
         tryItOutUrl={this.tryItOutUrl}

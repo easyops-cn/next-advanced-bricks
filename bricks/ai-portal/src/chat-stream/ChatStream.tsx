@@ -80,6 +80,7 @@ export function ChatStreamComponent(
     showFeedbackOnView,
     showUiSwitch,
     previewUrlTemplate,
+    noticeUrlTemplate,
     showCases,
     showNoticeIcon,
     exampleProjects,
@@ -397,7 +398,7 @@ export function ChatStreamComponent(
                   dropdownContentStyle={{ minWidth: 300 }}
                   hideNotifyCenterButton={true}
                   urlTarget="_blank"
-                  urlTemplate="/elevo/conv/{{extInfo.conversationId}}"
+                  urlTemplate={noticeUrlTemplate}
                   onNoticeClick={(e) => onNoticeClick(e.detail)}
                   onMarkAllRead={onMarkNoticesRead}
                 />
