@@ -31,3 +31,4 @@ import "./stage-flow/index.js";
 import "./data-providers/set-chat-command.js";
 import "./running-flow/index.js";
 import "./notice-dropdown/index.js";
+import "./notice-list/index.js";

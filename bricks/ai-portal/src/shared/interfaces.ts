@@ -369,7 +369,8 @@ export interface NoticeItem {
   type: string;
   isUnread: boolean;
   title: string;
-  description: string;
+  description?: string;
+  time: number;
 }
 
 export interface ActiveImages {
