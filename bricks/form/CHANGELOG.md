@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.20.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.20.7...@next-bricks/form@1.20.8) (2025-10-30)
+
+
+### Bug Fixes
+
+* refine form item label brick padding ([4175a7a](https://github.com/easyops-cn/next-advanced-bricks/commit/4175a7a7e589ae36db13a83e94f2b4d8392bb16f))
+
+
+
+
+
 ## [1.20.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.20.6...@next-bricks/form@1.20.7) (2025-10-22)
 
 **Note:** Version bump only for package @next-bricks/form
