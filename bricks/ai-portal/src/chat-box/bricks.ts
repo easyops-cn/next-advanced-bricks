@@ -14,7 +14,7 @@ import type { IconButton, IconButtonProps } from "../icon-button";
 export const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 export const WrappedActions = wrapBrick<
   EoActions,
-  ActionsProps & { activeKeys?: (string | number)[] },
+  ActionsProps & { activeKeys?: (string | number)[]; footerTips?: string },
   ActionsEvents,
   ActionsEventsMapping
 >("eo-actions", {

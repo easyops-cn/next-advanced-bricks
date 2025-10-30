@@ -143,7 +143,9 @@ function FlowTabsComponent({
               part="tab"
               className={classNames("tab", { active: tab.id === activeTab })}
             >
-              <a onClick={() => onTabClick(tab)}>{tab.label}</a>
+              <a onClick={() => onTabClick(tab)} title={tab.label}>
+                {tab.label}
+              </a>
             </li>
           ))}
         </ul>

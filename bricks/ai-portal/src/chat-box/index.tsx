@@ -19,7 +19,7 @@ import {
 } from "@next-shared/form";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
-import type { SimpleAction, SubMenuAction } from "@next-bricks/basic/actions";
+import type { SimpleAction } from "@next-bricks/basic/actions";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
 import {
@@ -42,6 +42,8 @@ import { useFilesUploading } from "../shared/useFilesUploading.js";
 import GlobalDragOverlay from "../shared/FileUpload/GlobalDragOverlay.js";
 
 initializeI18n(NS, locales);
+
+const MAX_SHOWN_COMMANDS = 10;
 
 const { defineElement, property, event, method } = createDecorators();
 
@@ -70,14 +72,15 @@ export interface ChatBoxRef {
 export interface Command {
   label: string;
   value: string;
-  options?: Command[];
+  groupKey?: string;
+  groupLabel?: string;
+  subCommands?: Command[];
   payload?: CommandPayload;
 }
 
-type ActionWithAncestors = SimpleAction & {
+type ActionWithSubCommands = SimpleAction & {
   key: string | number;
-  ancestors?: Command[];
-  items?: ActionWithAncestors[];
+  subCommands?: Command[];
   payload?: CommandPayload;
 };
 
@@ -182,7 +185,7 @@ interface MentionPopover {
     start: number;
     end: number;
   };
-  actions: ActionWithAncestors[];
+  actions: ActionWithSubCommands[];
 }
 
 function LegacyChatBoxComponent(
@@ -191,7 +194,7 @@ function LegacyChatBoxComponent(
     placeholder,
     autoFocus,
     aiEmployees,
-    commands,
+    commands: propCommands,
     uploadOptions,
     onMessageSubmit,
     onChatSubmit,
@@ -211,7 +214,8 @@ function LegacyChatBoxComponent(
   >(null);
   const [mentionedText, setMentionedText] = useState("");
   const [activeActionIndex, setActiveActionIndex] = useState(0);
-  const [activeActionIndexes, setActiveActionIndexes] = useState<number[]>([0]);
+  const [commandPrefix, setCommandPrefix] = useState("/");
+  const [commands, setCommands] = useState<Command[] | undefined>(propCommands);
   const [command, setCommand] = useState<CommandPayload | null>(null);
   const [mentioned, setMentioned] = useState<string | null>(null);
   const [commandPopover, setCommandPopover] = useState<MentionPopover | null>(
@@ -222,6 +226,10 @@ function LegacyChatBoxComponent(
   >(null);
   const [commandText, setCommandText] = useState("");
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
+
+  useEffect(() => {
+    setCommands(propCommands);
+  }, [propCommands]);
 
   const uploadEnabled = uploadOptions?.enabled;
   const uploadAccept = uploadOptions?.accept;
@@ -318,7 +326,7 @@ function LegacyChatBoxComponent(
                 employee.employeeId.toLowerCase().includes(mentionText) ||
                 employee.name.toLowerCase().includes(mentionText)
             )
-            .slice(0, 10);
+            .slice(0, MAX_SHOWN_COMMANDS);
           if (matchedEmployees.length > 0) {
             const position = getCaretPositionInTextarea(
               e.currentTarget,
@@ -352,60 +360,54 @@ function LegacyChatBoxComponent(
         commands?.length
       ) {
         const previousContent = value.slice(0, selectionStart);
-        if (previousContent.startsWith("/")) {
-          const commandText = previousContent.slice(1).toLowerCase();
+        if (previousContent.startsWith(commandPrefix)) {
+          const searchText = previousContent
+            .slice(commandPrefix.length)
+            .toLowerCase();
           const matchedCommands = commands
-            .filter((command) =>
-              command.label.toLowerCase().includes(commandText)
+            .filter(
+              (command) =>
+                command.label.toLowerCase().includes(searchText) ||
+                command.groupLabel?.toLowerCase().includes(searchText)
             )
-            .slice(0, 10);
+            .slice(0, MAX_SHOWN_COMMANDS);
           if (matchedCommands.length > 0) {
-            const position = getCaretPositionInTextarea(
+            const popover = getCommandPopover(
+              matchedCommands,
               e.currentTarget,
               selectionStart
             );
-            const textareaRect = e.currentTarget.getBoundingClientRect();
-            setCommandPopover({
-              style: {
-                left: position.left + 10 + textareaRect.left,
-                top: position.top + 22 + textareaRect.top,
-                position: "absolute",
-                zIndex: 1,
-              },
-              range: { start: 0, end: selectionStart },
-              actions: matchedCommands.map((command) => ({
-                key: command.value,
-                text: command.label,
-                data: command,
-                ancestors: [],
-                items: getCommandSubMenu(command, []),
-                payload: command.payload,
-              })),
-            });
-            setActiveActionIndexes([0]);
+            setCommandPopover(popover);
+            setActiveActionIndex(0);
             return;
           }
         }
       }
       setCommandPopover(null);
     },
-    [aiEmployees, commands]
+    [aiEmployees, commands, commandPrefix]
   );
 
   useEffect(() => {
-    if (mentionedText && !value.includes(mentionedText)) {
+    if (mentionedText && !value.startsWith(mentionedText)) {
       setMentionedText("");
       setMentioned(null);
     }
   }, [mentionedText, value]);
 
   useEffect(() => {
-    if (commandText && !value.includes(commandText)) {
+    if (
+      !value.startsWith(commandPrefix) ||
+      (commandText && !value.startsWith(commandText))
+    ) {
       setCommandText("");
       setCommand(null);
       onCommandSelect(null);
+      setCommands(propCommands);
+      setCommandPrefix("/");
+      setCommandPopover(null);
     }
-  }, [commandText, onCommandSelect, value]);
+  }, [commandPrefix, commandText, onCommandSelect, value, propCommands]);
 
   const handleSubmitClick = useCallback(() => {
     doSubmit(valueRef.current);
@@ -528,20 +530,42 @@ function LegacyChatBoxComponent(
   );
 
   const handleSelectCommand = useCallback(
-    (action: ActionWithAncestors) => {
-      const command = `/${[...action.ancestors!.map((an) => an.label), action.text].join(": ")} `;
+    (action: ActionWithSubCommands) => {
+      const hasSubCommands =
+        action.subCommands && action.subCommands.length > 0;
+      const command = `${commandPrefix.replace(/ $/, ": ")}${action.text} `;
       const prefix = `${valueRef.current.slice(0, commandPopover!.range.start)}${command}`;
       const newValue = `${prefix}${valueRef.current.slice(commandPopover!.range.end)}`;
       valueRef.current = newValue;
       selectionRef.current = { start: prefix.length, end: prefix.length };
       setValue(newValue);
-      setCommandText(command);
-      setCommandPopover(null);
-      setCommand(action.payload!);
-      onCommandSelect(action.payload!);
+      if (hasSubCommands) {
+        if (action.payload) {
+          setCommandText(command);
+          setCommand(action.payload);
+        }
+        setCommands(action.subCommands);
+        setCommandPrefix(command);
+        // Wait for the textarea to update
+        setTimeout(() => {
+          const popover = getCommandPopover(
+            action.subCommands!.slice(0, MAX_SHOWN_COMMANDS),
+            textareaRef.current!.element!,
+            prefix.length
+          );
+          setCommandPopover(popover);
+          setActiveActionIndex(0);
+        }, 100);
+      } else {
+        setCommandText(command);
+        setCommand(action.payload!);
+        setCommandPopover(null);
+        setCommandPrefix("/");
+        onCommandSelect(action.payload!);
+      }
       textareaRef.current?.focus();
     },
-    [commandPopover, onCommandSelect]
+    [commandPopover, commandPrefix, onCommandSelect]
   );
 
   const handleKeyDown = useCallback(
@@ -565,82 +589,30 @@ function LegacyChatBoxComponent(
           e.preventDefault();
           e.stopPropagation();
           e.nativeEvent.stopImmediatePropagation();
-          if (mentionPopover) {
-            setActiveActionIndex((prev) => {
-              const nextIndex = prev + (e.key === "ArrowUp" ? -1 : 1);
-              const total = mentionPopover.actions.length;
-              const next = (total + nextIndex) % total;
-              return next;
-            });
-          } else {
-            setActiveActionIndexes((prev) => {
-              let cursor = 0;
-              let { actions } = commandPopover!;
-              const list: number[] = [];
-              while (cursor < prev.length - 1) {
-                const action = actions[prev[cursor]];
-                if (isSubMenuAction(action)) {
-                  actions = action.items;
-                } else {
-                  break;
-                }
-                list.push(prev[cursor]);
-                cursor += 1;
-              }
-              const nextIndex = prev[cursor] + (e.key === "ArrowUp" ? -1 : 1);
-              const total = actions.length;
-              const next = (total + nextIndex) % total;
-              list.push(next);
-              return list;
-            });
-          }
+          setActiveActionIndex((prev) => {
+            const nextIndex = prev + (e.key === "ArrowUp" ? -1 : 1);
+            const meaningfulActions = getMeaningfulActions(
+              (mentionPopover || commandPopover)!.actions
+            );
+            const total = meaningfulActions.length;
+            const next = (total + nextIndex) % total;
+            return next;
+          });
           return false;
         }
         case "Enter":
-        case "ArrowLeft":
-        case "ArrowRight":
-          if (mentionPopover) {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              e.stopPropagation();
-              e.nativeEvent.stopImmediatePropagation();
-              handleMention(mentionPopover.actions[activeActionIndex]);
-              return false;
-            }
-          } else if (commandPopover) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.nativeEvent.stopImmediatePropagation();
-
-            if (e.key === "ArrowLeft") {
-              if (activeActionIndexes.length > 1) {
-                setActiveActionIndexes((prev) => prev.slice(0, -1));
-              }
-              return false;
-            }
-
-            let cursor = 0;
-            let { actions } = commandPopover!;
-            let action: ActionWithAncestors | undefined;
-            while (cursor < activeActionIndexes.length) {
-              action = actions[activeActionIndexes[cursor]];
-              if (isSubMenuAction(action)) {
-                actions = action.items;
-              } else {
-                break;
-              }
-              cursor += 1;
-            }
-            if (action) {
-              if (isSubMenuAction(action)) {
-                setActiveActionIndexes((prev) => [...prev, 0]);
-              } else if (e.key === "Enter") {
-                handleSelectCommand(action);
-              }
-            }
-            return false;
+          if (!mentionPopover && !commandPopover) {
+            return;
           }
-          break;
+          e.preventDefault();
+          e.stopPropagation();
+          e.nativeEvent.stopImmediatePropagation();
+          if (mentionPopover) {
+            handleMention(mentionPopover.actions[activeActionIndex]);
+          } else {
+            handleSelectCommand(commandPopover!.actions[activeActionIndex]);
+          }
+          return false;
         case "Delete":
         case "Backspace": {
           const popovers = [
@@ -685,7 +657,6 @@ function LegacyChatBoxComponent(
     },
     [
       activeActionIndex,
-      activeActionIndexes,
       commandPopover,
       commandText.length,
       handleMention,
@@ -694,30 +665,6 @@ function LegacyChatBoxComponent(
       mentionedText.length,
     ]
   );
-
-  const commandCheckedKeys = useMemo(() => {
-    if (!commandPopover) {
-      return [];
-    }
-    let actions = commandPopover.actions;
-    const checkedKeys: (string | number)[] = [];
-    for (let i = 0; i < activeActionIndexes.length; i += 1) {
-      const index = activeActionIndexes[i];
-      const action = actions[index];
-      if (action) {
-        if (isSubMenuAction(action)) {
-          checkedKeys.push(action.key!);
-          actions = action.items;
-        } else {
-          checkedKeys.push(action.key!);
-          break;
-        }
-      } else {
-        break;
-      }
-    }
-    return checkedKeys;
-  }, [activeActionIndexes, commandPopover]);
 
   const uploadButtonRef = useRef<UploadButtonRef>(null);
 
@@ -809,7 +756,11 @@ function LegacyChatBoxComponent(
               <WrappedActions
                 actions={mentionPopover.actions}
                 style={mentionPopover.style}
-                activeKeys={[mentionPopover.actions[activeActionIndex].key!]}
+                activeKeys={getActiveActionKeys(
+                  mentionPopover.actions,
+                  activeActionIndex
+                )}
+                footerTips={t(K.COMMAND_TIPS)}
                 onActionClick={(e) => handleMention(e.detail)}
               />,
               document.body
@@ -819,9 +770,17 @@ function LegacyChatBoxComponent(
               <WrappedActions
                 actions={commandPopover.actions}
                 style={commandPopover.style}
-                activeKeys={commandCheckedKeys}
+                activeKeys={getActiveActionKeys(
+                  commandPopover.actions,
+                  activeActionIndex
+                )}
+                footerTips={
+                  commandPrefix === "/"
+                    ? t(K.COMMAND_TIPS)
+                    : t(K.SEARCH_COMMANDS_TIPS, { count: MAX_SHOWN_COMMANDS })
+                }
                 onActionClick={(e) =>
-                  handleSelectCommand(e.detail as ActionWithAncestors)
+                  handleSelectCommand(e.detail as ActionWithSubCommands)
                 }
               />,
               document.body
@@ -837,25 +796,79 @@ function LegacyChatBoxComponent(
   );
 }
 
-function getCommandSubMenu(
-  command: Command,
-  ancestors: Command[]
-): ActionWithAncestors[] | undefined {
-  return command.options?.map((subCommand) => {
-    const nextAncestors = [...ancestors, command];
-    return {
-      key: subCommand.value,
-      text: subCommand.label,
-      data: subCommand,
-      ancestors: nextAncestors,
-      items: getCommandSubMenu(subCommand, nextAncestors),
-      payload: subCommand.payload,
-    };
-  });
+function getMeaningfulActions(
+  actions: ActionWithSubCommands[]
+): ActionWithSubCommands[] {
+  return actions.filter(
+    (action) =>
+      (action as any).type !== "group" && (action as any).type !== "divider"
+  );
 }
 
-function isSubMenuAction(
-  action: SimpleAction | SubMenuAction
-): action is SubMenuAction {
-  return !!(action as SubMenuAction).items?.length;
+function getActiveActionKeys(
+  actions: ActionWithSubCommands[],
+  index: number
+): (string | number)[] {
+  const meaningfulActions = getMeaningfulActions(actions);
+  return [meaningfulActions[index].key!];
+}
+
+function getCommandPopover(
+  commands: Command[],
+  textarea: HTMLTextAreaElement,
+  selectionStart: number
+): MentionPopover {
+  const position = getCaretPositionInTextarea(textarea, selectionStart);
+  const textareaRect = textarea.getBoundingClientRect();
+  return {
+    style: {
+      left: position.left + 10 + textareaRect.left,
+      top: position.top + 22 + textareaRect.top,
+      position: "absolute",
+      zIndex: 1,
+    },
+    range: { start: 0, end: selectionStart },
+    actions: getGroupedCommandActions(commands),
+  };
+}
+
+function getGroupedCommandActions(
+  commands: Command[]
+): ActionWithSubCommands[] {
+  const grouped = commands.every((cmd) => cmd.groupKey && cmd.groupLabel);
+  if (grouped) {
+    const groups = new Map<string, { label: string; commands: Command[] }>();
+    for (const command of commands) {
+      const groupKey = command.groupKey!;
+      let group = groups.get(groupKey);
+      if (!group) {
+        groups.set(
+          groupKey,
+          (group = {
+            label: command.groupLabel!,
+            commands: [],
+          })
+        );
+      }
+      group.commands.push(command);
+    }
+    return [...groups.values()].flatMap((group) => [
+      {
+        type: "group",
+        text: group.label,
+      },
+      ...getCommandActions(group.commands),
+    ]) as ActionWithSubCommands[];
+  }
+
+  return getCommandActions(commands);
+}
+
+function getCommandActions(commands: Command[]): ActionWithSubCommands[] {
+  return commands.map((command) => ({
+    key: command.value,
+    text: command.label,
+    subCommands: command.subCommands,
+    payload: command.payload,
+  }));
 }
