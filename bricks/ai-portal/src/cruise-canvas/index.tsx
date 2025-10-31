@@ -2,7 +2,6 @@
 import React, { createRef, forwardRef } from "react";
 import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
-import type { UseSingleBrickConf } from "@next-core/types";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import { NS, locales } from "./i18n.js";
@@ -38,9 +37,6 @@ export interface CruiseCanvasProps {
   tryItOutUrl?: string;
   separateInstructions?: boolean;
   uploadOptions?: UploadOptions;
-  toolbarBrick?: {
-    useBrick: UseSingleBrickConf;
-  };
 }
 
 export interface ConversationDetail {
@@ -122,9 +118,6 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
   @property({ attribute: false })
   accessor uploadOptions: UploadOptions | undefined;
 
-  @property({ attribute: false })
-  accessor toolbarBrick: { useBrick: UseSingleBrickConf } | undefined;
-
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
 
@@ -203,7 +196,6 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         showFeedbackAfterFailed={this.showFeedbackAfterFailed}
         showUiSwitch={this.showUiSwitch}
         showFeedbackOnView={this.showFeedbackOnView}
-        toolbarBrick={this.toolbarBrick}
         showJsxEditor={this.showJsxEditor}
         previewUrlTemplate={this.previewUrlTemplate}
         showCases={this.showCases}

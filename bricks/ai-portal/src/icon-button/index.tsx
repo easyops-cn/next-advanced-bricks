@@ -53,6 +53,10 @@ class IconButton extends ReactNextElement implements IconButtonProps {
   @property({ render: false })
   accessor variant: IconButtonVariant | undefined;
 
+  /** 是否缩小图标尺寸（部分 easyops 图标过大） */
+  @property({ render: false, type: Boolean })
+  accessor reduceIconSize: boolean | undefined;
+
   render() {
     return (
       <IconButtonComponent

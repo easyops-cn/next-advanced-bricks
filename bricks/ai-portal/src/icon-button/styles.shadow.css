@@ -54,6 +54,11 @@ button:not(:disabled):active {
   margin-right: 8px;
 }
 
+:host([reduce-icon-size]) button {
+  --elevo-icon-button-icon-size: 16px;
+  padding: 0 6px;
+}
+
 :host([variant="light"]) button {
   color: #595959;
 }

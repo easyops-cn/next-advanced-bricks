@@ -12,7 +12,6 @@ import type {
   RequestStore,
   ShowCaseType,
   UploadOptions,
-  NoticeItem,
 } from "../shared/interfaces.js";
 
 initializeI18n(NS, locales);
@@ -30,14 +29,11 @@ export interface ChatStreamProps {
   showFeedbackAfterFailed?: boolean;
   showFeedbackOnView?: boolean;
   showUiSwitch?: boolean;
-  showNoticeIcon?: boolean;
   previewUrlTemplate?: string;
-  noticeUrlTemplate?: string;
   showCases?: ShowCaseType[];
   exampleProjects?: ExampleProject[];
   tryItOutUrl?: string;
   uploadOptions?: UploadOptions;
-  notices?: NoticeItem[];
 }
 
 export interface ConversationDetail {
@@ -110,15 +106,6 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
   @property({ attribute: false })
   accessor uploadOptions: UploadOptions | undefined;
 
-  @property({ attribute: false })
-  accessor notices: NoticeItem[] | undefined;
-
-  @property({ type: Boolean })
-  accessor showNoticeIcon: boolean | undefined;
-
-  @property()
-  accessor noticeUrlTemplate: string | undefined;
-
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
 
@@ -161,20 +148,6 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
     this.#detailChange.emit(detail);
   };
 
-  @event({ type: "mark.notices.read" })
-  accessor #markNoticesReadEvent!: EventEmitter<void>;
-
-  #onMarkNoticesRead = () => {
-    this.#markNoticesReadEvent.emit();
-  };
-
-  @event({ type: "notice.click" })
-  accessor #noticeClickEvent!: EventEmitter<NoticeItem>;
-
-  #onNoticeClick = (item: NoticeItem) => {
-    this.#noticeClickEvent.emit(item);
-  };
-
   #ref = createRef<ChatStreamRef>();
 
   @method()
@@ -210,22 +183,17 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
         showFeedbackAfterFailed={this.showFeedbackAfterFailed}
         showFeedbackOnView={this.showFeedbackOnView}
         showUiSwitch={this.showUiSwitch}
-        showNoticeIcon={this.showNoticeIcon}
         previewUrlTemplate={this.previewUrlTemplate}
-        noticeUrlTemplate={this.noticeUrlTemplate}
         showCases={this.showCases}
         exampleProjects={this.exampleProjects}
         tryItOutUrl={this.tryItOutUrl}
         uploadOptions={this.uploadOptions}
-        notices={this.notices}
         onShare={this.#onShare}
         onTerminate={this.#onTerminate}
         onSubmitFeedback={this.#onSubmitFeedback}
         onSwitchToCanvas={this.#onSwitchToCanvas}
         onFeedbackOnView={this.#onFeedbackOnView}
         onDetailChange={this.#onDetailChange}
-        onMarkNoticesRead={this.#onMarkNoticesRead}
-        onNoticeClick={this.#onNoticeClick}
         ref={this.#ref}
       />
     );

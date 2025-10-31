@@ -1,6 +1,6 @@
 :host {
   display: block;
-  padding: 24px 54px 72px;
+  padding: 72px 54px 72px;
 }
 
 :host([sticky]) {
