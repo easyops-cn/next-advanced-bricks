@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.59.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.59.1...@next-bricks/ai-portal@0.59.2) (2025-10-31)
+
+
+### Bug Fixes
+
+* auto focus on scroll container ([1e6bcd8](https://github.com/easyops-cn/next-advanced-bricks/commit/1e6bcd8fff203c754dc32f06d0081d3f0421913a))
+* **box-box:** prevent submit if no content ([569ac22](https://github.com/easyops-cn/next-advanced-bricks/commit/569ac22449447ad89fa82eeb6c2a1821f9684947))
+
+
+
+
+
 ## [0.59.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.59.0...@next-bricks/ai-portal@0.59.1) (2025-10-31)
 
 
