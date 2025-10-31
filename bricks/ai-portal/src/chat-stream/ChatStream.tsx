@@ -49,6 +49,7 @@ import { PlanProgress } from "../shared/PlanProgress/PlanProgress.js";
 import { useServiceFlowPlan } from "../shared/useServiceFlowPlan.js";
 import { FilePreview } from "../shared/FilePreview/FilePreview.js";
 import { ImagesPreview } from "../shared/FilePreview/ImagesPreview.js";
+import { useHandleEscape } from "../shared/useHandleEscape.js";
 
 const ICON_SHARE: GeneralIconProps = {
   lib: "easyops",
@@ -200,7 +201,7 @@ export function ChatStreamComponent(
   const [userClosedAside, setUserClosedAside] = useState(false);
   const conversationAvailable = !!conversation;
 
-  // Delay flag to prevent aside from auto opened for a completed task
+  // Delay flag to prevent the aside from being auto-opened for a completed task
   const delayRef = useRef(false);
   useEffect(() => {
     if (conversationAvailable) {
@@ -292,6 +293,7 @@ export function ChatStreamComponent(
           };
         }
       },
+      activeFile,
       setActiveFile,
       activeImages,
       setActiveImages,
@@ -328,6 +330,7 @@ export function ChatStreamComponent(
       watchAgain,
       userInput,
       tryItOutUrl,
+      activeFile,
       activeImages,
     ]
   );
@@ -379,6 +382,8 @@ export function ChatStreamComponent(
       ignore = true;
     };
   }, []);
+
+  useHandleEscape(taskContextValue);
 
   return (
     <TaskContext.Provider value={taskContextValue}>

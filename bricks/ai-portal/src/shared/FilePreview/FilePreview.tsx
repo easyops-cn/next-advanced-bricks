@@ -106,21 +106,6 @@ export function FilePreview({ file }: FilePreviewProps) {
     downloadFile(file);
   }, [file]);
 
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setActiveFile(null);
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    };
-
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [setActiveFile]);
-
   return (
     <div className={styles.preview}>
       <div className={styles.header}>
