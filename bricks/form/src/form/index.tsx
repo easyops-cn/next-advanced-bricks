@@ -15,6 +15,7 @@ interface FormProps {
   values?: Record<string, any>;
   layout?: Layout;
   size?: ComponentSize;
+  autoScrollToInvalidFields?: boolean;
 }
 
 export interface FormEvents {
@@ -131,6 +132,9 @@ class Form extends ReactNextElement implements FormProps, AbstractForm {
     },
   };
 
+  @property({ render: false, type: Boolean })
+  accessor autoScrollToInvalidFields: boolean | undefined;
+
   /**
    * 表单值变更事件
    * @detail
@@ -163,6 +167,9 @@ class Form extends ReactNextElement implements FormProps, AbstractForm {
     return this.formStore.validateFields((err, values) => {
       if (err) {
         this.#errorEvent.emit(values);
+        if (this.autoScrollToInvalidFields && values.length > 0) {
+          this.formStore.scrollToField(values[0].name);
+        }
       } else {
         this.#successEvent.emit({
           ...(this.staticValues ?? {}),
