@@ -116,6 +116,9 @@ export interface Job {
 
   // @ 的数字人 ID
   mentionedAiEmployeeId?: string;
+
+  // 忽略该容器在 chat 模式下的自动详情展示，但仍可主动点击查看详情
+  ignoreDetails?: boolean;
 }
 
 export type HumanAction = HumanActionConfirm | HumanActionSelect;

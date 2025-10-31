@@ -52,7 +52,7 @@ export function useConversationStream(
     for (const chunk of chunks) {
       if (chunk.type === "job") {
         const job = chunk.job;
-        if (job.toolCall) {
+        if (job.toolCall && !job.ignoreDetails) {
           lastDetail = {
             type: "job",
             id: job.id,
