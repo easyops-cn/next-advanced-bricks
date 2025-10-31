@@ -148,6 +148,13 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
     this.#detailChange.emit(detail);
   };
 
+  @event({ type: "split.change" })
+  accessor #splitChange!: EventEmitter<boolean>;
+
+  #onSplitChange = (splitted: boolean) => {
+    this.#splitChange.emit(splitted);
+  };
+
   #ref = createRef<ChatStreamRef>();
 
   @method()
@@ -194,6 +201,7 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
         onSwitchToCanvas={this.#onSwitchToCanvas}
         onFeedbackOnView={this.#onFeedbackOnView}
         onDetailChange={this.#onDetailChange}
+        onSplitChange={this.#onSplitChange}
         ref={this.#ref}
       />
     );
