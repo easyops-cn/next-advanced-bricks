@@ -1,7 +1,5 @@
-import React from "react";
 import { wrapBrick } from "@next-core/react-element";
 import { unwrapProvider } from "@next-core/utils/general";
-import { asyncWrapBrick } from "@next-core/react-runtime";
 import type {
   GeneralIcon,
   GeneralIconProps,
@@ -17,7 +15,6 @@ import type {
 } from "@next-bricks/containers/drawer";
 import type { showDialog as _showDialog } from "@next-bricks/basic/data-providers/show-dialog/show-dialog";
 import type { copyToClipboard as _copyToClipboard } from "@next-bricks/basic/data-providers/copy-to-clipboard";
-import { EoNextTable, NextTableProps } from "@next-bricks/advanced/next-table";
 import {
   CodeBlock,
   CodeBlockProps,
@@ -100,7 +97,3 @@ export const showDialog =
 export const copyToClipboard = unwrapProvider<typeof _copyToClipboard>(
   "basic.copy-to-clipboard"
 );
-
-export const AsyncWrappedTable = React.lazy(async () => ({
-  default: await asyncWrapBrick<EoNextTable, NextTableProps>("eo-next-table"),
-}));
