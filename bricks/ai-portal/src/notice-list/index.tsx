@@ -172,7 +172,7 @@ function NoticeListComponent({
   const currentAllIds = useMemo(() => {
     //  过滤当前已读的项目，只有未读的项目可以选中
     return (
-      dataSource?.filter((item) => item.isUnread).map((item) => item.id) || []
+      dataSource?.filter((item) => !item.isRead).map((item) => item.id) || []
     );
   }, [dataSource]);
 
@@ -300,7 +300,7 @@ function NoticeListItem({
   return (
     <WrappedLink
       className={classNames("message-item-link", {
-        "has-read": !item.isUnread,
+        "has-read": item.isRead,
       })}
       url={parseTemplate(urlTemplate, item)}
       target={urlTarget}
@@ -309,7 +309,7 @@ function NoticeListItem({
       <div className="left">
         <WrappedCheckbox
           ref={checkboxRef}
-          disabled={!item.isUnread}
+          disabled={item.isRead}
           themeVariant="elevo"
           className="item-checkbox"
           options={[{ label: "", value: item.id }]}
