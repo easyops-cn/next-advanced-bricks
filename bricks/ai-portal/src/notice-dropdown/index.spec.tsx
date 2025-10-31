@@ -16,7 +16,7 @@ describe("ai-portal.notice-dropdown", () => {
       {
         id: "1",
         type: "project",
-        isUnread: true,
+        isRead: false,
         title: "项目通知",
         description: "项目描述",
         time: 1761820851887,
@@ -24,7 +24,7 @@ describe("ai-portal.notice-dropdown", () => {
       {
         id: "2",
         type: "account",
-        isUnread: false,
+        isRead: true,
         title: "账号通知",
         description: "账号描述",
         time: 1761820851887,
@@ -32,7 +32,7 @@ describe("ai-portal.notice-dropdown", () => {
       {
         id: "3",
         type: "system",
-        isUnread: true,
+        isRead: false,
         title: "系统通知",
         description: "系统描述",
         time: 1761820851887,
@@ -40,7 +40,7 @@ describe("ai-portal.notice-dropdown", () => {
       {
         id: "4",
         type: "space",
-        isUnread: false,
+        isRead: true,
         title: "空间通知",
         description: "空间描述",
         time: 1761820851887,
@@ -48,7 +48,7 @@ describe("ai-portal.notice-dropdown", () => {
       {
         id: "5",
         type: "unknown",
-        isUnread: true,
+        isRead: false,
         title: "未知类型",
         description: "",
         time: 1761820851887,
@@ -140,7 +140,7 @@ describe("ai-portal.notice-dropdown", () => {
       {
         id: "notice-1",
         type: "project",
-        isUnread: true,
+        isRead: false,
         title: "测试通知",
         description: "测试描述",
         time: 1761820851887,
@@ -196,7 +196,7 @@ describe("ai-portal.notice-dropdown", () => {
       {
         id: "1",
         type: "system",
-        isUnread: true,
+        isRead: false,
         title: "通知",
         description: "描述",
         time: 1761820851887,
@@ -249,7 +249,7 @@ describe("ai-portal.notice-dropdown", () => {
       {
         id: "1",
         type: "space",
-        isUnread: true,
+        isRead: false,
         title: "通知",
         description: "描述",
         time: 1761820851887,

@@ -53,14 +53,14 @@ describe("ai-portal.notice-list", () => {
         title: "Test Notice 1",
         time: 1704067200000,
         type: "info",
-        isUnread: true,
+        isRead: false,
       },
       {
         id: "2",
         title: "Test Notice 2",
         time: 1703980800000,
         type: "warning",
-        isUnread: true,
+        isRead: false,
       },
     ];
 
@@ -98,7 +98,7 @@ describe("ai-portal.notice-list", () => {
         title: "Test Notice 1",
         time: 1704067200000,
         type: "info",
-        isUnread: true,
+        isRead: false,
       },
     ];
 
@@ -169,21 +169,21 @@ describe("ai-portal.notice-list", () => {
         title: "Test Notice 1",
         time: 1704067200000,
         type: "info",
-        isUnread: true,
+        isRead: false,
       },
       {
         id: "2",
         title: "Test Notice 2",
         time: 1703980800000,
         type: "warning",
-        isUnread: true,
+        isRead: false,
       },
       {
         id: "3",
         title: "Test Notice 3",
         time: 1703894400000,
         type: "error",
-        isUnread: false,
+        isRead: true,
       },
     ];
 
@@ -225,7 +225,8 @@ describe("ai-portal.notice-list", () => {
       .detail;
     expect(markedItems).toHaveLength(2);
     expect(markedItems.map((item: NoticeItem) => item.id)).toEqual(["1", "2"]);
-    expect(markedItems.every((item: NoticeItem) => item.isUnread)).toBe(true);
+    // All marked items should be unread (isRead: false)
+    expect(markedItems.some((item: NoticeItem) => item.isRead)).toBe(false);
 
     // Deselect all
     act(() => {

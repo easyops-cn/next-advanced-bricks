@@ -11,44 +11,44 @@ brick: ai-portal.notice-dropdown
 properties:
   dataSource:
     - id: "msg-1"
-      isUnread: true
+      isRead: false
       type: "project"
       title: "协作流【研发设计】已完成【项目协作功能】已发布【项目协作功能】已发布【项目协作功能】已发布【项目协作功能】已发布"
     - id: "msg-2"
-      isUnread: true
+      isRead: false
       title: "协作流【协作流名称】 - 【活动名称】需要人工确认"
       type: "space"
     - id: "msg-3"
       type: "account"
-      isUnread: false
+      isRead: true
       title: "【项目协作功能】已发布"
     - id: "msg-4"
       type: "system"
-      isUnread: false
+      isRead: true
       title: "Samuel在项目【项目A】@了你"
     - id: "msg-2"
       type: "account"
-      isUnread: true
+      isRead: false
       title: "协作流【协作流名称】 - 【活动名称】需要人工确认"
     - id: "msg-3"
       type: "system"
-      isUnread: false
+      isRead: true
       title: "【项目协作功能】已发布"
     - id: "msg-4"
       type: "project"
-      isUnread: false
+      isRead: true
       title: "Samuel在项目【项目A】@了你"
     - id: "msg-2"
       type: "space"
-      isUnread: true
+      isRead: false
       title: "协作流【协作流名称】 - 【活动名称】需要人工确认"
     - id: "msg-3"
       type: "space"
-      isUnread: false
+      isRead: true
       title: "【项目协作功能】已发布"
     - id: "msg-4"
       type: "system"
-      isUnread: false
+      isRead: true
       title: "Samuel在项目【项目A】@了你"
 
 events:
@@ -78,16 +78,16 @@ brick: ai-portal.notice-dropdown
 properties:
   dataSource:
     - id: "msg-1"
-      isUnread: true
+      isRead: false
       type: "project"
       title: "协作流【研发设计】已完成"
     - id: "msg-2"
-      isUnread: true
+      isRead: false
       type: "space"
       title: "协作流【协作流名称】需要人工确认"
     - id: "msg-3"
       type: "account"
-      isUnread: false
+      isRead: true
       title: "【项目协作功能】已发布"
 children:
   - brick: eo-button

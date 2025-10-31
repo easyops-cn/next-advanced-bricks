@@ -370,7 +370,7 @@ export interface PlanStep {
 export interface NoticeItem {
   id: string;
   type: string;
-  isUnread: boolean;
+  isRead: boolean;
   title: string;
   description?: string;
   time: number;
