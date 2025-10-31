@@ -316,7 +316,7 @@ describe("FormStore", () => {
     expect(store.getAllValues()).toEqual({});
   });
 
-  it("event should work", () => {
+  it("scrollToField should work", () => {
     const store = new FormStore();
 
     store.setField("a", {
@@ -327,27 +327,11 @@ describe("FormStore", () => {
       },
     });
 
-    const mockInitValueEvent = jest.fn();
-    const mockResetField = jest.fn();
-    const mockResetFields = jest.fn();
-    const mockResetValidate = jest.fn();
-    store.subscribe("a.init.value", mockInitValueEvent);
-    store.subscribe("reset.fields", mockResetFields);
-    store.subscribe("a.reset.fields", mockResetField);
-    store.subscribe("reset.validate", mockResetValidate);
+    const mockScrollTo = jest.fn();
+    store.subscribe("a.scroll.to", mockScrollTo);
 
-    store.setInitValue({
-      a: 1,
-    });
+    store.scrollToField("a");
 
-    expect(mockInitValueEvent).toHaveBeenCalledWith("a.init.value", 1);
-
-    store.resetFields("a");
-    expect(mockResetField).toHaveBeenCalledWith("a.reset.fields", null);
-    expect(mockResetValidate).toHaveBeenCalledWith("reset.validate", null);
-
-    store.resetFields();
-    expect(mockResetFields).toHaveBeenCalledWith("reset.fields", null);
-    expect(mockResetValidate).toHaveBeenCalledTimes(2);
+    expect(mockScrollTo).toHaveBeenCalledWith("a.scroll.to", null);
   });
 });

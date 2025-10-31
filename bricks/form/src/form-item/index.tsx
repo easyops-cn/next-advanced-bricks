@@ -128,6 +128,7 @@ class FormItem extends FormItemElementBase implements FormItemProps {
       formInstance.unsubscribe(`${name}.validate`);
       formInstance.unsubscribe(`${name}.init.value`);
       formInstance.unsubscribe(`${name}.reset.fields`);
+      formInstance.unsubscribe(`${name}.scroll.to`);
       formInstance.unsubscribe(`reset.fields`);
       formInstance.unsubscribe("reset.validate");
     }
@@ -233,6 +234,9 @@ export function FormItemComponent(props: FormItemProps) {
     });
     formInstance.subscribe(`${name}.reset.fields`, () => {
       curElement[valuePropsName] = undefined;
+    });
+    formInstance.subscribe(`${name}.scroll.to`, () => {
+      curElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
     });
     formInstance.subscribe("reset.fields", () => {
       curElement[valuePropsName] = undefined;

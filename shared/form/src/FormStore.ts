@@ -288,6 +288,10 @@ export class FormStore extends PubSub {
     this.publish(`reset.validate`, null);
   }
 
+  scrollToField(name: string) {
+    this.publish(`${name}.scroll.to`, null);
+  }
+
   onWatch(
     name: string,
     event: any,
