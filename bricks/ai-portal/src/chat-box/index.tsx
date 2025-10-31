@@ -278,8 +278,17 @@ function LegacyChatBoxComponent(
     },
   }));
 
+  const sendDisabled =
+    !value ||
+    !allFilesDone ||
+    (!!mentionedText && value.length <= mentionedText.length) ||
+    (!!commandText && value.length <= commandText.length);
+
   const doSubmit = useCallback(
     (value: string) => {
+      if (sendDisabled) {
+        return;
+      }
       const content = value.slice(commandText.length || mentionedText.length);
       onMessageSubmit(content);
       onChatSubmit({
@@ -290,6 +299,7 @@ function LegacyChatBoxComponent(
       });
     },
     [
+      sendDisabled,
       commandText.length,
       mentionedText.length,
       command,
@@ -302,11 +312,11 @@ function LegacyChatBoxComponent(
 
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLTextAreaElement>) => {
-      if (e.currentTarget.value && allFilesDone) {
+      if (e.currentTarget.value) {
         doSubmit(e.currentTarget.value);
       }
     },
-    [doSubmit, allFilesDone]
+    [doSubmit]
   );
 
   const showMentionSuggestions = useCallback(
@@ -740,12 +750,6 @@ function LegacyChatBoxComponent(
     },
     [appendFiles]
   );
-
-  const sendDisabled =
-    !value ||
-    !allFilesDone ||
-    (!!mentionedText && value.length <= mentionedText.length) ||
-    (!!commandText && value.length <= commandText.length);
 
   return (
     <>

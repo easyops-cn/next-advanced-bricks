@@ -374,6 +374,10 @@ export function ChatStreamComponent(
     onSplitChange(split);
   }, [onSplitChange, split]);
 
+  useEffect(() => {
+    scrollContainerRef.current?.focus();
+  }, [conversationAvailable, depsReady]);
+
   return (
     <TaskContext.Provider value={taskContextValue}>
       <StreamContext.Provider value={streamContextValue}>
@@ -383,7 +387,11 @@ export function ChatStreamComponent(
           </div>
           {conversationAvailable && depsReady ? (
             <>
-              <div className={styles.main} ref={scrollContainerRef}>
+              <div
+                className={styles.main}
+                tabIndex={-1}
+                ref={scrollContainerRef}
+              >
                 <div className={styles.narrow} ref={scrollContentRef}>
                   {messages.map((msg, index, list) => (
                     <div className={styles.message} key={index}>
