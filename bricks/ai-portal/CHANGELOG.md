@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.59.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.58.15...@next-bricks/ai-portal@0.59.0) (2025-10-31)
+
+
+### Bug Fixes
+
+* reserve space for top navbar ([31e3203](https://github.com/easyops-cn/next-advanced-bricks/commit/31e3203e4722e6f06a36d30bdc7f5706baa584d1))
+
+
+### Features
+
+* add notice-list brick ([b7bd9d1](https://github.com/easyops-cn/next-advanced-bricks/commit/b7bd9d1345d9056eb30141b8a828ce8bc2fd715b))
+
+
+
+
+
 ## [0.58.15](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.58.14...@next-bricks/ai-portal@0.58.15) (2025-10-31)
 
 
