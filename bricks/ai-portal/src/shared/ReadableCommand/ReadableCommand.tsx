@@ -46,7 +46,7 @@ export function ReadableCommand({
   );
 }
 
-function getInitialContent(
+export function getInitialContent(
   cmd?: CommandPayload,
   mentionedAiEmployeeId?: string
 ): string {

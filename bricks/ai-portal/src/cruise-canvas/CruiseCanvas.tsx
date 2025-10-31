@@ -610,13 +610,8 @@ export function CruiseCanvasComponent(
     });
   }, []);
 
-  const requirementNode = rawNodes?.[0];
-
-  const userInput = useMemo(() => {
-    if (requirementNode?.type === "requirement") {
-      return requirementNode.content;
-    }
-  }, [requirementNode]);
+  const firstNode = rawNodes?.[0];
+  const requirementNode = firstNode?.type === "requirement" ? firstNode : null;
 
   const [activeImages, setActiveImages] = useState<ActiveImages | null>(null);
 
@@ -672,9 +667,13 @@ export function CruiseCanvasComponent(
           "_blank"
         );
         if (win) {
-          win.__elevo_try_it_out = {
-            content: userInput,
-          };
+          win.__elevo_try_it_out = requirementNode
+            ? {
+                content: requirementNode.content,
+                cmd: requirementNode.cmd,
+                mentionedAiEmployeeId: requirementNode.mentionedAiEmployeeId,
+              }
+            : {};
         }
       },
       separateInstructions,
@@ -719,7 +718,7 @@ export function CruiseCanvasComponent(
       skipToResults,
       watchAgain,
       setCentered,
-      userInput,
+      requirementNode,
       tryItOutUrl,
       separateInstructions,
       activeFile,

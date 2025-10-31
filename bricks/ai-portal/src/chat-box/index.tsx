@@ -6,7 +6,6 @@ import React, {
   useState,
   useImperativeHandle,
   createRef,
-  useMemo,
 } from "react";
 import { createPortal } from "react-dom";
 import { createDecorators, type EventEmitter } from "@next-core/element";
@@ -25,6 +24,7 @@ import styleText from "./styles.shadow.css";
 import {
   getChatCommand,
   setChatCommand,
+  type ChatCommand,
 } from "../data-providers/set-chat-command.js";
 import type {
   ChatPayload,
@@ -40,6 +40,7 @@ import UploadedFilesStyleText from "../shared/FileUpload/UploadedFiles.shadow.cs
 import { WrappedActions, WrappedIcon } from "./bricks.js";
 import { useFilesUploading } from "../shared/useFilesUploading.js";
 import GlobalDragOverlay from "../shared/FileUpload/GlobalDragOverlay.js";
+import { getInitialContent } from "../shared/ReadableCommand/ReadableCommand.js";
 
 initializeI18n(NS, locales);
 
@@ -132,13 +133,6 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
     this.#chatSubmit.emit(payload);
   };
 
-  @event({ type: "command.select" })
-  accessor #commandSelect!: EventEmitter<CommandPayload | null>;
-
-  #handleCommandSelect = (command: CommandPayload | null) => {
-    this.#commandSelect.emit(command);
-  };
-
   @method()
   setValue(value: string) {
     this.ref.current?.setValue(value);
@@ -165,7 +159,6 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
         uploadOptions={this.uploadOptions}
         onMessageSubmit={this.#handleMessageSubmit}
         onChatSubmit={this.#handleChatSubmit}
-        onCommandSelect={this.#handleCommandSelect}
         root={this}
         ref={this.ref}
       />
@@ -177,7 +170,6 @@ interface ChatBoxComponentProps extends ChatBoxProps {
   root: HTMLElement;
   onMessageSubmit: (value: string) => void;
   onChatSubmit: (payload: ChatPayload) => void;
-  onCommandSelect: (command: CommandPayload | null) => void;
   ref?: React.Ref<ChatBoxRef>;
 }
 
@@ -201,7 +193,6 @@ function LegacyChatBoxComponent(
     uploadOptions,
     onMessageSubmit,
     onChatSubmit,
-    onCommandSelect,
   }: ChatBoxComponentProps,
   ref: React.Ref<ChatBoxRef>
 ) {
@@ -254,6 +245,18 @@ function LegacyChatBoxComponent(
     }
   }, [uploadEnabled, resetFiles]);
 
+  const [initialMention, setInitialMention] = useState<string | null>(null);
+  const [initialCommand, setInitialCommand] = useState<ChatCommand | null>(
+    null
+  );
+  useEffect(() => {
+    const command = getChatCommand();
+    if (command) {
+      setChatCommand(null);
+    }
+    setInitialCommand(command);
+  }, []);
+
   useEffect(() => {
     const store = window.__elevo_try_it_out;
     if (store) {
@@ -262,6 +265,14 @@ function LegacyChatBoxComponent(
     if (typeof store?.content === "string") {
       valueRef.current = store.content;
       setValue(store.content);
+      if (store?.cmd) {
+        setInitialCommand({
+          command: getInitialContent(store.cmd).slice(1),
+          payload: store.cmd,
+        });
+      } else if (store?.mentionedAiEmployeeId) {
+        setInitialMention(store.mentionedAiEmployeeId);
+      }
     }
   }, []);
 
@@ -473,12 +484,11 @@ function LegacyChatBoxComponent(
     ) {
       setCommandText("");
       setCommand(null);
-      onCommandSelect(null);
       setCommands(propCommands);
       setCommandPrefix("/");
       setCommandPopover(null);
     }
-  }, [commandPrefix, commandText, onCommandSelect, value, propCommands]);
+  }, [commandPrefix, commandText, value, propCommands]);
 
   const handleSubmitClick = useCallback(() => {
     doSubmit(valueRef.current);
@@ -503,20 +513,7 @@ function LegacyChatBoxComponent(
       setMentionOverlay(null);
       return;
     }
-    const rects = getContentRectsInTextarea(
-      element,
-      "",
-      // Ignore the last space
-      mentionedText.slice(0, -1)
-    );
-    setMentionOverlay(
-      rects.map((rect) => ({
-        left: rect.left - 1,
-        top: rect.top - 1,
-        width: rect.width + 4,
-        height: rect.height + 4,
-      }))
-    );
+    setMentionOverlay(getOverlayRects(element, mentionedText));
   }, [mentionedText, hasFiles]);
 
   useEffect(() => {
@@ -525,55 +522,15 @@ function LegacyChatBoxComponent(
       setCommandOverlay(null);
       return;
     }
-    const rects = getContentRectsInTextarea(
-      element,
-      "",
-      // Ignore the last space
-      commandText.slice(0, -1)
-    );
-    setCommandOverlay(
-      rects.map((rect) => ({
-        left: rect.left - 1,
-        top: rect.top - 1,
-        width: rect.width + 4,
-        height: rect.height + 4,
-      }))
-    );
+    setCommandOverlay(getOverlayRects(element, commandText));
   }, [commandText, hasFiles]);
-
-  const chatCommand = useMemo(() => {
-    const command = getChatCommand();
-    if (command) {
-      setChatCommand(null);
-    }
-    return command;
-  }, []);
-
-  useEffect(() => {
-    if (chatCommand) {
-      setCommand(chatCommand.payload);
-      onCommandSelect(chatCommand.payload);
-    }
-  }, [chatCommand, onCommandSelect]);
 
   useEffect(() => {
     const element = textareaRef.current?.element;
-    if (chatCommand && element) {
-      const commandStr = `/${chatCommand.command} `;
-      const rects = getContentRectsInTextarea(
-        element,
-        "",
-        // Ignore the last space
-        commandStr.slice(0, -1)
-      );
-      setCommandOverlay(
-        rects.map((rect) => ({
-          left: rect.left - 1,
-          top: rect.top - 1,
-          width: rect.width + 4,
-          height: rect.height + 4,
-        }))
-      );
+    if (initialCommand && element) {
+      setCommand(initialCommand.payload);
+      const commandStr = `/${initialCommand.command} `;
+      setCommandOverlay(getOverlayRects(element, commandStr));
       valueRef.current = commandStr;
       selectionRef.current = {
         start: commandStr.length,
@@ -582,7 +539,23 @@ function LegacyChatBoxComponent(
       setValue(commandStr);
       setCommandText(commandStr);
     }
-  }, [chatCommand]);
+  }, [initialCommand]);
+
+  useEffect(() => {
+    const element = textareaRef.current?.element;
+    if (initialMention && element) {
+      setMentioned(initialMention);
+      const mentionStr = `${getInitialContent(undefined, initialMention)} `;
+      setMentionOverlay(getOverlayRects(element, mentionStr));
+      valueRef.current = mentionStr;
+      selectionRef.current = {
+        start: mentionStr.length,
+        end: mentionStr.length,
+      };
+      setValue(mentionStr);
+      setMentionedText(mentionStr);
+    }
+  }, [initialMention]);
 
   const handleMention = useCallback(
     (action: SimpleAction) => {
@@ -632,11 +605,10 @@ function LegacyChatBoxComponent(
         setCommand(action.payload!);
         setCommandPopover(null);
         setCommandPrefix("/");
-        onCommandSelect(action.payload!);
       }
       textareaRef.current?.focus();
     },
-    [commandPopover, commandPrefix, onCommandSelect]
+    [commandPopover, commandPrefix]
   );
 
   const handleKeyDown = useCallback(
@@ -880,6 +852,21 @@ function getActiveActionKeys(
 ): (string | number)[] {
   const meaningfulActions = getMeaningfulActions(actions);
   return [meaningfulActions[index].key!];
+}
+
+function getOverlayRects(element: HTMLTextAreaElement, content: string) {
+  const rects = getContentRectsInTextarea(
+    element,
+    "",
+    // Ignore the last space
+    content.slice(0, -1)
+  );
+  return rects.map((rect) => ({
+    left: rect.left - 1,
+    top: rect.top - 1,
+    width: rect.width + 4,
+    height: rect.height + 4,
+  }));
 }
 
 function getCommandPopover(

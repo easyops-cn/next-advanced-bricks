@@ -192,6 +192,8 @@ interface Window {
 
   __elevo_try_it_out?: {
     content?: string;
+    cmd?: any;
+    mentionedAiEmployeeId?: string;
   };
 
   // for File System Access Api

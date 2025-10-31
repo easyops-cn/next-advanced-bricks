@@ -220,12 +220,8 @@ export function ChatStreamComponent(
     [humanInputRef]
   );
 
-  const requirementMessage = messages[0];
-  const userInput = useMemo(() => {
-    if (requirementMessage?.role === "user") {
-      return requirementMessage.content;
-    }
-  }, [requirementMessage]);
+  const firstMessage = messages[0];
+  const userMessage = firstMessage?.role === "user" ? firstMessage : null;
 
   const [activeImages, setActiveImages] = useState<ActiveImages | null>(null);
 
@@ -272,9 +268,13 @@ export function ChatStreamComponent(
           "_blank"
         );
         if (win) {
-          win.__elevo_try_it_out = {
-            content: userInput,
-          };
+          win.__elevo_try_it_out = userMessage
+            ? {
+                content: userMessage.content,
+                cmd: userMessage.cmd,
+                mentionedAiEmployeeId: userMessage.mentionedAiEmployeeId,
+              }
+            : {};
         }
       },
       activeFile,
@@ -312,7 +312,7 @@ export function ChatStreamComponent(
 
       skipToResults,
       watchAgain,
-      userInput,
+      userMessage,
       tryItOutUrl,
       activeFile,
       activeImages,
