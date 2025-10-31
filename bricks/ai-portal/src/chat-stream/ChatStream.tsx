@@ -53,6 +53,7 @@ interface ChatStreamComponentProps extends ChatStreamProps {
   onSwitchToCanvas: () => void;
   onFeedbackOnView: (viewId: string) => void;
   onDetailChange: (detail: ConversationDetail) => void;
+  onSplitChange: (split: boolean) => void;
 }
 
 export function ChatStreamComponent(
@@ -78,6 +79,7 @@ export function ChatStreamComponent(
     onSwitchToCanvas,
     onFeedbackOnView,
     onDetailChange,
+    onSplitChange,
   }: ChatStreamComponentProps,
   ref: React.Ref<ChatStreamRef>
 ) {
@@ -366,6 +368,11 @@ export function ChatStreamComponent(
   }, []);
 
   useHandleEscape(taskContextValue);
+
+  const split = !!(activeDetail || subActiveDetail);
+  useEffect(() => {
+    onSplitChange(split);
+  }, [onSplitChange, split]);
 
   return (
     <TaskContext.Provider value={taskContextValue}>
