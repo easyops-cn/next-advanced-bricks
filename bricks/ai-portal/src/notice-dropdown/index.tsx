@@ -316,7 +316,7 @@ function NoticeDropdownComponent({
   );
 }
 
-function getNotifyIcon(type: string): string {
+export function getNotifyIcon(type: string): string {
   switch (type) {
     case "project":
       return projectNotifySvg;

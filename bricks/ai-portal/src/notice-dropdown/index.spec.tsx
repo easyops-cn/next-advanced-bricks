@@ -19,6 +19,7 @@ describe("ai-portal.notice-dropdown", () => {
         isUnread: true,
         title: "项目通知",
         description: "项目描述",
+        time: 1761820851887,
       },
       {
         id: "2",
@@ -26,6 +27,7 @@ describe("ai-portal.notice-dropdown", () => {
         isUnread: false,
         title: "账号通知",
         description: "账号描述",
+        time: 1761820851887,
       },
       {
         id: "3",
@@ -33,6 +35,7 @@ describe("ai-portal.notice-dropdown", () => {
         isUnread: true,
         title: "系统通知",
         description: "系统描述",
+        time: 1761820851887,
       },
       {
         id: "4",
@@ -40,6 +43,7 @@ describe("ai-portal.notice-dropdown", () => {
         isUnread: false,
         title: "空间通知",
         description: "空间描述",
+        time: 1761820851887,
       },
       {
         id: "5",
@@ -47,6 +51,7 @@ describe("ai-portal.notice-dropdown", () => {
         isUnread: true,
         title: "未知类型",
         description: "",
+        time: 1761820851887,
       },
     ];
 
@@ -138,6 +143,7 @@ describe("ai-portal.notice-dropdown", () => {
         isUnread: true,
         title: "测试通知",
         description: "测试描述",
+        time: 1761820851887,
       },
     ];
 
@@ -193,6 +199,7 @@ describe("ai-portal.notice-dropdown", () => {
         isUnread: true,
         title: "通知",
         description: "描述",
+        time: 1761820851887,
       },
     ];
 
@@ -245,6 +252,7 @@ describe("ai-portal.notice-dropdown", () => {
         isUnread: true,
         title: "通知",
         description: "描述",
+        time: 1761820851887,
       },
     ];
 
