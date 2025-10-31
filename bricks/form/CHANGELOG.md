@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.21.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.20.8...@next-bricks/form@1.21.0) (2025-10-31)
+
+
+### Features
+
+* support auto scroll to invalid fields ([e70a9bd](https://github.com/easyops-cn/next-advanced-bricks/commit/e70a9bdcc09c010ce66d235a53b11a7da89f15a2))
+
+
+
+
+
 ## [1.20.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.20.7...@next-bricks/form@1.20.8) (2025-10-30)
 
 
