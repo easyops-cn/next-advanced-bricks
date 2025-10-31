@@ -278,8 +278,8 @@ function LegacyElevoSidebarComponent(
       {
         key: "switch-language",
         icon: {
-          lib: "easyops",
-          icon: "language",
+          lib: "lucide",
+          icon: "languages",
         },
         text: t(K.SWITCH_LANGUAGE),
       },
@@ -392,6 +392,7 @@ function LegacyElevoSidebarComponent(
         <div className="footer">
           <WrappedDropdownActions
             className="dropdown"
+            themeVariant="elevo"
             actions={dropdownActions}
             onActionClick={async (e) => {
               if (e.detail.key === "logout") {

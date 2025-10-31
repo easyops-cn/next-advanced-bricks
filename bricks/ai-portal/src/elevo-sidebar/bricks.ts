@@ -26,7 +26,7 @@ export const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 export const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
 export const WrappedDropdownActions = wrapBrick<
   EoDropdownActions,
-  DropdownActionsProps,
+  DropdownActionsProps & { themeVariant?: "default" | "elevo" },
   DropdownActionsEvents,
   DropdownActionsEventsMapping
 >("eo-dropdown-actions", {

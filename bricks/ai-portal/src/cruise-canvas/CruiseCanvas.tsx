@@ -80,6 +80,7 @@ import { NodeChunk } from "./NodeChunk/NodeChunk";
 import { FilePreview } from "../shared/FilePreview/FilePreview";
 import { ReactUseMultipleBricks } from "@next-core/react-runtime";
 import { ImagesPreview } from "../shared/FilePreview/ImagesPreview";
+import { useHandleEscape } from "../shared/useHandleEscape";
 
 const MemoizedNodeComponent = memo(NodeComponent);
 
@@ -679,6 +680,7 @@ export function CruiseCanvasComponent(
         }
       },
       separateInstructions,
+      activeFile,
       setActiveFile,
       activeImages,
       setActiveImages,
@@ -722,6 +724,7 @@ export function CruiseCanvasComponent(
       userInput,
       tryItOutUrl,
       separateInstructions,
+      activeFile,
       activeImages,
     ]
   );
@@ -844,6 +847,8 @@ export function CruiseCanvasComponent(
     scrollTo,
     scrollBy,
   ]);
+
+  useHandleEscape(taskContextValue);
 
   return (
     <TaskContext.Provider value={taskContextValue}>

@@ -166,6 +166,7 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
         onMessageSubmit={this.#handleMessageSubmit}
         onChatSubmit={this.#handleChatSubmit}
         onCommandSelect={this.#handleCommandSelect}
+        root={this}
         ref={this.ref}
       />
     );
@@ -173,6 +174,7 @@ class ChatBox extends ReactNextElement implements ChatBoxProps {
 }
 
 interface ChatBoxComponentProps extends ChatBoxProps {
+  root: HTMLElement;
   onMessageSubmit: (value: string) => void;
   onChatSubmit: (payload: ChatPayload) => void;
   onCommandSelect: (command: CommandPayload | null) => void;
@@ -190,6 +192,7 @@ interface MentionPopover {
 
 function LegacyChatBoxComponent(
   {
+    root,
     disabled,
     placeholder,
     autoFocus,
@@ -306,21 +309,18 @@ function LegacyChatBoxComponent(
     [doSubmit, allFilesDone]
   );
 
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const { value, selectionStart, selectionEnd } = e.target;
-      valueRef.current = value;
-      setValue(value);
-
+  const showMentionSuggestions = useCallback(
+    (textarea: HTMLTextAreaElement, employees: AIEmployee[] | undefined) => {
+      const { value, selectionStart, selectionEnd } = textarea;
       if (
         selectionStart !== null &&
         selectionStart === selectionEnd &&
-        aiEmployees?.length
+        employees?.length
       ) {
         const previousContent = value.slice(0, selectionStart);
         if (previousContent.startsWith("@")) {
           const mentionText = previousContent.slice(1).toLowerCase();
-          const matchedEmployees = aiEmployees
+          const matchedEmployees = employees
             .filter(
               (employee) =>
                 employee.employeeId.toLowerCase().includes(mentionText) ||
@@ -329,10 +329,10 @@ function LegacyChatBoxComponent(
             .slice(0, MAX_SHOWN_COMMANDS);
           if (matchedEmployees.length > 0) {
             const position = getCaretPositionInTextarea(
-              e.currentTarget,
+              textarea,
               selectionStart
             );
-            const textareaRect = e.currentTarget.getBoundingClientRect();
+            const textareaRect = textarea.getBoundingClientRect();
             setMentionPopover({
               style: {
                 left: position.left + 10 + textareaRect.left,
@@ -348,23 +348,31 @@ function LegacyChatBoxComponent(
               })),
             });
             setActiveActionIndex(0);
-            return;
+            return true;
           }
         }
       }
       setMentionPopover(null);
+    },
+    []
+  );
 
+  const showCommandSuggestions = useCallback(
+    (
+      textarea: HTMLTextAreaElement,
+      commandList: Command[] | undefined,
+      prefix: string
+    ) => {
+      const { value, selectionStart, selectionEnd } = textarea;
       if (
         selectionStart !== null &&
         selectionStart === selectionEnd &&
-        commands?.length
+        commandList?.length
       ) {
         const previousContent = value.slice(0, selectionStart);
-        if (previousContent.startsWith(commandPrefix)) {
-          const searchText = previousContent
-            .slice(commandPrefix.length)
-            .toLowerCase();
-          const matchedCommands = commands
+        if (previousContent.startsWith(prefix)) {
+          const searchText = previousContent.slice(prefix.length).toLowerCase();
+          const matchedCommands = commandList
             .filter(
               (command) =>
                 command.label.toLowerCase().includes(searchText) ||
@@ -374,18 +382,71 @@ function LegacyChatBoxComponent(
           if (matchedCommands.length > 0) {
             const popover = getCommandPopover(
               matchedCommands,
-              e.currentTarget,
+              textarea,
               selectionStart
             );
             setCommandPopover(popover);
             setActiveActionIndex(0);
-            return;
+            return true;
           }
         }
       }
       setCommandPopover(null);
     },
-    [aiEmployees, commands, commandPrefix]
+    []
+  );
+
+  // Show mention/commands suggestions once candidates are loaded
+  const mentionInitializedRef = useRef(false);
+  useEffect(() => {
+    const textarea = textareaRef.current?.element;
+    if (
+      mentionInitializedRef.current ||
+      !aiEmployees ||
+      !textarea ||
+      document.activeElement !== root ||
+      root.shadowRoot?.activeElement !== textarea
+    ) {
+      return;
+    }
+    mentionInitializedRef.current = true;
+    showMentionSuggestions(textarea, aiEmployees);
+  }, [aiEmployees, root, showMentionSuggestions]);
+
+  const commandsInitializedRef = useRef(false);
+  useEffect(() => {
+    const textarea = textareaRef.current?.element;
+    if (
+      commandsInitializedRef.current ||
+      !propCommands ||
+      !textarea ||
+      document.activeElement !== root ||
+      root.shadowRoot?.activeElement !== textarea
+    ) {
+      return;
+    }
+    commandsInitializedRef.current = true;
+    showCommandSuggestions(textarea, propCommands, "/");
+  }, [propCommands, root, showCommandSuggestions]);
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const { value } = e.target;
+      valueRef.current = value;
+      setValue(value);
+
+      if (showMentionSuggestions(e.target, aiEmployees)) {
+        return;
+      }
+      showCommandSuggestions(e.target, commands, commandPrefix);
+    },
+    [
+      aiEmployees,
+      commandPrefix,
+      commands,
+      showCommandSuggestions,
+      showMentionSuggestions,
+    ]
   );
 
   useEffect(() => {

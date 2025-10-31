@@ -37,7 +37,6 @@ export function ExpandedView({ views }: ExpandedViewProps) {
     onFeedbackOnView,
     feedbackDoneViews,
   } = useContext(TaskContext);
-  const viewportRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const rootRef = useRef<Awaited<
     ReturnType<typeof unstable_createRoot>
@@ -145,29 +144,8 @@ export function ExpandedView({ views }: ExpandedViewProps) {
     setActiveExpandedViewJobId(null);
   }, [setActiveExpandedViewJobId]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      viewportRef.current?.focus();
-    }, 0);
-  }, []);
-
-  const handleKeydown = useCallback(
-    (event: React.KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.stopPropagation();
-        handleClose();
-      }
-    },
-    [handleClose]
-  );
-
   return (
-    <div
-      className={styles["expanded-view"]}
-      tabIndex={-1}
-      ref={viewportRef}
-      onKeyDown={handleKeydown}
-    >
+    <div className={styles["expanded-view"]}>
       {loading && (
         <div className={styles.loading}>
           <WrappedIcon lib="antd" icon="loading-3-quarters" spinning />

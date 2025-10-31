@@ -49,6 +49,7 @@ import { PlanProgress } from "../shared/PlanProgress/PlanProgress.js";
 import { useServiceFlowPlan } from "../shared/useServiceFlowPlan.js";
 import { FilePreview } from "../shared/FilePreview/FilePreview.js";
 import { ImagesPreview } from "../shared/FilePreview/ImagesPreview.js";
+import { useHandleEscape } from "../shared/useHandleEscape.js";
 
 const ICON_SHARE: GeneralIconProps = {
   lib: "easyops",
@@ -198,10 +199,10 @@ export function ChatStreamComponent(
     null
   );
   const [userClosedAside, setUserClosedAside] = useState(false);
-  // Delay flag to prevent aside from auto opened for a completed task
-  const delayRef = useRef(false);
-
   const conversationAvailable = !!conversation;
+
+  // Delay flag to prevent the aside from being auto-opened for a completed task
+  const delayRef = useRef(false);
   useEffect(() => {
     if (conversationAvailable) {
       const timer = setTimeout(() => {
@@ -213,11 +214,16 @@ export function ChatStreamComponent(
     }
   }, [conversationAvailable]);
 
+  const hasInitialRequest = !!initialRequest;
   useEffect(() => {
-    if (delayRef.current && lastDetail && !userClosedAside) {
+    if (
+      (delayRef.current || hasInitialRequest) &&
+      lastDetail &&
+      !userClosedAside
+    ) {
       setActiveDetail(lastDetail);
     }
-  }, [lastDetail, userClosedAside]);
+  }, [lastDetail, userClosedAside, hasInitialRequest]);
 
   useEffect(() => {
     getRuntime().applyPageTitle(pageTitle);
@@ -287,6 +293,7 @@ export function ChatStreamComponent(
           };
         }
       },
+      activeFile,
       setActiveFile,
       activeImages,
       setActiveImages,
@@ -323,6 +330,7 @@ export function ChatStreamComponent(
       watchAgain,
       userInput,
       tryItOutUrl,
+      activeFile,
       activeImages,
     ]
   );
@@ -374,6 +382,8 @@ export function ChatStreamComponent(
       ignore = true;
     };
   }, []);
+
+  useHandleEscape(taskContextValue);
 
   return (
     <TaskContext.Provider value={taskContextValue}>

@@ -61,6 +61,7 @@ export interface TaskContextValue {
   watchAgain?: () => void;
   tryItOut?: () => void;
   separateInstructions?: boolean;
+  activeFile: FileInfo | null;
   setActiveFile: Dispatch<React.SetStateAction<FileInfo | null>>;
   activeImages: ActiveImages | null;
   setActiveImages: Dispatch<React.SetStateAction<ActiveImages | null>>;
@@ -82,6 +83,7 @@ export const TaskContext = createContext<TaskContextValue>({
   submittedFeedback: false,
   onSubmitFeedback: () => {},
   setShowFeedback: () => {},
+  activeFile: null,
   setActiveFile: () => {},
   activeImages: null,
   setActiveImages: () => {},

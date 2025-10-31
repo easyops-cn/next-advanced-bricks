@@ -37,9 +37,7 @@ export function ImagesPreview({ images: { files, file } }: ImagesPreviewProps) {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setActiveImages(null);
-      } else if (e.key === "ArrowLeft") {
+      if (e.key === "ArrowLeft") {
         go(-1);
       } else if (e.key === "ArrowRight") {
         go(1);
