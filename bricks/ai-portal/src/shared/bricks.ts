@@ -17,7 +17,6 @@ import type {
 } from "@next-bricks/containers/drawer";
 import type { showDialog as _showDialog } from "@next-bricks/basic/data-providers/show-dialog/show-dialog";
 import type { copyToClipboard as _copyToClipboard } from "@next-bricks/basic/data-providers/copy-to-clipboard";
-import { PopoverProps, Popover } from "@next-bricks/basic/popover";
 import { EoNextTable, NextTableProps } from "@next-bricks/advanced/next-table";
 import {
   CodeBlock,
@@ -38,8 +37,6 @@ import type {
   RunningFlowProps,
 } from "../running-flow";
 import type { BlankState, BlankStateProps } from "../blank-state";
-import { NoticeDropdown, NoticeDropdownProps } from "../notice-dropdown";
-import { NoticeItem } from "./interfaces.js";
 
 export const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
@@ -48,8 +45,6 @@ export const WrappedButton = wrapBrick<Button, ButtonProps>("eo-button");
 export const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
 
 export const WrappedTooltip = wrapBrick<EoTooltip, ToolTipProps>("eo-tooltip");
-
-export const WrappedPopover = wrapBrick<Popover, PopoverProps>("eo-popover");
 
 export const WrappedDrawer = wrapBrick<
   Drawer,
@@ -105,25 +100,6 @@ export const showDialog =
 export const copyToClipboard = unwrapProvider<typeof _copyToClipboard>(
   "basic.copy-to-clipboard"
 );
-export interface NoticeDropdownEvents {
-  "notice.click": CustomEvent<NoticeItem>;
-  "mark.all.read": CustomEvent<void>;
-}
-
-export interface NoticeDropdownMapEvents {
-  onNoticeClick: "notice.click";
-  onMarkAllRead: "mark.all.read";
-}
-
-export const WrappedNoticeDropdown = wrapBrick<
-  NoticeDropdown,
-  NoticeDropdownProps,
-  NoticeDropdownEvents,
-  NoticeDropdownMapEvents
->("ai-portal.notice-dropdown", {
-  onNoticeClick: "notice.click",
-  onMarkAllRead: "mark.all.read",
-});
 
 export const AsyncWrappedTable = React.lazy(async () => ({
   default: await asyncWrapBrick<EoNextTable, NextTableProps>("eo-next-table"),

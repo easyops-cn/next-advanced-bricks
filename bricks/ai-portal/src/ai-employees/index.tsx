@@ -19,6 +19,10 @@ import type {
   TabListMapping,
   TabListProps,
 } from "../tab-list/index.js";
+import type {
+  StickyContainer,
+  StickyContainerProps,
+} from "../sticky-container/index.js";
 
 initializeI18n(NS, locales);
 
@@ -32,6 +36,9 @@ const WrappedTabList = wrapBrick<
 >("ai-portal.tab-list", {
   onTabClick: "tab.click",
 });
+const WrappedStickyContainer = wrapBrick<StickyContainer, StickyContainerProps>(
+  "ai-portal.sticky-container"
+);
 
 const { defineElement, property } = createDecorators();
 
@@ -40,8 +47,7 @@ export interface AIEmployeesProps {
   industries?: string[];
   // roles?: string[];
   urlTemplate?: string;
-  /** @deprecated */
-  withContainer?: boolean;
+  stickyTop?: number;
 }
 
 export interface Employee {
@@ -72,9 +78,8 @@ class AIEmployees extends ReactNextElement implements AIEmployeesProps {
   @property()
   accessor urlTemplate: string | undefined;
 
-  /** @deprecated */
-  @property({ type: Boolean })
-  accessor withContainer = true;
+  @property({ type: Number })
+  accessor stickyTop: number | undefined;
 
   render() {
     return (
@@ -82,7 +87,7 @@ class AIEmployees extends ReactNextElement implements AIEmployeesProps {
         list={this.list}
         industries={this.industries}
         urlTemplate={this.urlTemplate}
-        withContainer={this.withContainer}
+        stickyTop={this.stickyTop}
       />
     );
   }
@@ -92,7 +97,7 @@ function AIEmployeesComponent({
   list,
   industries: _industries,
   urlTemplate,
-  withContainer,
+  stickyTop,
 }: AIEmployeesProps) {
   const industries = useMemo(() => {
     return [
@@ -128,13 +133,26 @@ function AIEmployeesComponent({
     }));
   }, [industries]);
 
-  const node = (
+  const tabsNode = (
+    <WrappedTabList
+      tabs={tabs}
+      activeTab={activeIndustry}
+      onTabClick={(event) => setActiveIndustry(event.detail.id)}
+    />
+  );
+
+  return (
     <>
-      <WrappedTabList
-        tabs={tabs}
-        activeTab={activeIndustry}
-        onTabClick={(event) => setActiveIndustry(event.detail.id)}
-      />
+      {stickyTop == null ? (
+        <div className="non-sticky-tabs">{tabsNode}</div>
+      ) : (
+        <WrappedStickyContainer
+          className="sticky-tabs"
+          style={{ top: stickyTop }}
+        >
+          {tabsNode}
+        </WrappedStickyContainer>
+      )}
       <ul className="groups">
         {groups.map(([groupName, items]) => (
           <li key={groupName} className="group">
@@ -167,16 +185,5 @@ function AIEmployeesComponent({
         ))}
       </ul>
     </>
-  );
-
-  if (!withContainer) {
-    return node;
-  }
-
-  return (
-    <div className="container">
-      <h1>{t(K.AI_EMPLOYEES)}</h1>
-      {node}
-    </div>
   );
 }

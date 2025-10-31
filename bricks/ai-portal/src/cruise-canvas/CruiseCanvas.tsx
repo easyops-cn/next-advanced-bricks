@@ -78,7 +78,6 @@ import { useFlowAndActivityMap } from "../shared/useFlowAndActivityMap";
 import { useFulfilledActiveDetail } from "../shared/useFulfilledActiveDetail";
 import { NodeChunk } from "./NodeChunk/NodeChunk";
 import { FilePreview } from "../shared/FilePreview/FilePreview";
-import { ReactUseMultipleBricks } from "@next-core/react-runtime";
 import { ImagesPreview } from "../shared/FilePreview/ImagesPreview";
 import { useHandleEscape } from "../shared/useHandleEscape";
 
@@ -138,7 +137,6 @@ export function CruiseCanvasComponent(
     tryItOutUrl,
     separateInstructions,
     uploadOptions,
-    toolbarBrick,
     onShare,
     onTerminate,
     onSubmitFeedback,
@@ -929,11 +927,6 @@ export function CruiseCanvasComponent(
             ))}
           </div>
         </div>
-        {toolbarBrick && (
-          <div className={styles.toolbar}>
-            <ReactUseMultipleBricks useBrick={toolbarBrick.useBrick} />
-          </div>
-        )}
         <div className={styles.widgets}>
           <Nav
             nav={nav}

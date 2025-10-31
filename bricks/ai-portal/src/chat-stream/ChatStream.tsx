@@ -9,15 +9,10 @@ import React, {
 } from "react";
 import { getBasePath, getRuntime } from "@next-core/runtime";
 import classNames from "classnames";
-import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import { preloadHighlighter } from "@next-shared/markdown";
 import { useConversationDetail } from "../cruise-canvas/useConversationDetail.js";
 import { useConversationStream } from "./useConversationStream.js";
-import {
-  WrappedIcon,
-  WrappedIconButton,
-  WrappedNoticeDropdown,
-} from "../shared/bricks.js";
+import { WrappedIcon, WrappedIconButton } from "../shared/bricks.js";
 import { UserMessage } from "./UserMessage/UserMessage.js";
 import { AssistantMessage } from "./AssistantMessage/AssistantMessage.js";
 import { TaskContext } from "../shared/TaskContext.js";
@@ -38,7 +33,6 @@ import type {
   ActiveImages,
   ExtraChatPayload,
   FileInfo,
-  NoticeItem,
 } from "../shared/interfaces.js";
 import { useFlowAndActivityMap } from "../shared/useFlowAndActivityMap.js";
 import { useFulfilledActiveDetail } from "../shared/useFulfilledActiveDetail.js";
@@ -51,11 +45,6 @@ import { FilePreview } from "../shared/FilePreview/FilePreview.js";
 import { ImagesPreview } from "../shared/FilePreview/ImagesPreview.js";
 import { useHandleEscape } from "../shared/useHandleEscape.js";
 
-const ICON_SHARE: GeneralIconProps = {
-  lib: "easyops",
-  icon: "share",
-};
-
 interface ChatStreamComponentProps extends ChatStreamProps {
   conversationId: string;
   onShare: () => void;
@@ -64,8 +53,6 @@ interface ChatStreamComponentProps extends ChatStreamProps {
   onSwitchToCanvas: () => void;
   onFeedbackOnView: (viewId: string) => void;
   onDetailChange: (detail: ConversationDetail) => void;
-  onMarkNoticesRead: () => void;
-  onNoticeClick: (item: NoticeItem) => void;
 }
 
 export function ChatStreamComponent(
@@ -81,11 +68,8 @@ export function ChatStreamComponent(
     showFeedbackOnView,
     showUiSwitch,
     previewUrlTemplate,
-    noticeUrlTemplate,
     showCases,
-    showNoticeIcon,
     exampleProjects,
-    notices,
     tryItOutUrl,
     uploadOptions,
     onShare,
@@ -94,8 +78,6 @@ export function ChatStreamComponent(
     onSwitchToCanvas,
     onFeedbackOnView,
     onDetailChange,
-    onMarkNoticesRead,
-    onNoticeClick,
   }: ChatStreamComponentProps,
   ref: React.Ref<ChatStreamRef>
 ) {
@@ -390,36 +372,7 @@ export function ChatStreamComponent(
       <StreamContext.Provider value={streamContextValue}>
         <div className={styles.container}>
           <div className={styles.header}>
-            <div className={styles.left} />
             <h1>{pageTitle}</h1>
-            <div className={styles.right}>
-              {showUiSwitch && (
-                <WrappedIconButton
-                  className={styles["navbar-switch-ui"]}
-                  icon={ICON_CANVAS}
-                  variant="mini"
-                  title={t(K.SWITCH_TO_CANVAS)}
-                  onClick={onSwitchToCanvas}
-                />
-              )}
-              {showNoticeIcon && (
-                <WrappedNoticeDropdown
-                  dataSource={notices}
-                  dropdownContentStyle={{ minWidth: 300 }}
-                  hideNotifyCenterButton={true}
-                  urlTarget="_blank"
-                  urlTemplate={noticeUrlTemplate}
-                  onNoticeClick={(e) => onNoticeClick(e.detail)}
-                  onMarkAllRead={onMarkNoticesRead}
-                />
-              )}
-
-              <WrappedIconButton
-                icon={ICON_SHARE}
-                variant="mini"
-                onClick={onShare}
-              />
-            </div>
           </div>
           {conversationAvailable && depsReady ? (
             <>
