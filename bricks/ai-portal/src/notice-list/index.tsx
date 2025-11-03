@@ -12,7 +12,7 @@ import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
-import { NoticeItem } from "../shared/interfaces.js";
+
 import { GeneralIcon, GeneralIconProps } from "@next-bricks/icons/general-icon";
 import { Link, LinkProps, Target } from "@next-bricks/basic/link";
 import type {
@@ -22,7 +22,7 @@ import type {
 } from "@next-bricks/form/checkbox";
 import { parseTemplate } from "../shared/parseTemplate.js";
 import { humanizeTime, HumanizeTimeFormat } from "@next-shared/datetime";
-import { getNotifyIcon } from "../notice-dropdown/index.js";
+import { getNotifyIcon, NoticeItem } from "../notice-dropdown/index.js";
 import { Button, ButtonProps } from "@next-bricks/basic/button";
 
 initializeI18n(NS, locales);
@@ -219,6 +219,7 @@ function NoticeListComponent({
     <div>
       <div className="toolbar">
         <WrappedCheckbox
+          disabled={currentAllIds?.length === 0}
           themeVariant="elevo"
           className="all-checkbox"
           options={[{ label: "", value: "selectAll" }]}
@@ -302,7 +303,7 @@ function NoticeListItem({
       className={classNames("message-item-link", {
         "has-read": item.isRead,
       })}
-      url={parseTemplate(urlTemplate, item)}
+      url={item.url ?? parseTemplate(urlTemplate, item)}
       target={urlTarget}
       onClick={() => onNoticeClick(item)}
     >

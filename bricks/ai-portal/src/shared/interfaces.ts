@@ -367,15 +367,6 @@ export interface PlanStep {
   state?: TaskState;
 }
 
-export interface NoticeItem {
-  id: string;
-  type: string;
-  isRead: boolean;
-  title: string;
-  description?: string;
-  time: number;
-}
-
 export interface ActiveImages {
   files: FileInfo[];
   file: FileInfo;
