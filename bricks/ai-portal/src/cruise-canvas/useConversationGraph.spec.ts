@@ -394,4 +394,87 @@ describe("useConversationGraph", () => {
     rerender({ conv: newConversation, taskList: tasks });
     expect(result.current).not.toBe(firstResult);
   });
+
+  it("should handle showHumanActions with humanAction", () => {
+    const conversation = { id: "conv-1" } as ConversationBaseDetail;
+    const tasks: Task[] = [
+      {
+        id: "task-1",
+        jobs: [
+          {
+            id: "job-1",
+            state: "completed",
+            messages: [
+              {
+                role: "user",
+                parts: [{ type: "text", text: "User action" }],
+              },
+            ],
+          } as Partial<Job>,
+          {
+            id: "job-2",
+            state: "completed",
+            messages: [
+              {
+                role: "assistant",
+                parts: [{ type: "text", text: "Processing..." }],
+              },
+            ],
+            humanAction: "Yes",
+          },
+        ],
+      },
+    ] as Task[];
+
+    const { result } = renderHook(() =>
+      useConversationGraph(conversation, tasks, [], undefined, undefined, {
+        showHumanActions: true,
+      })
+    );
+
+    expect(result.current?.nodes).toEqual([
+      {
+        type: "requirement",
+        id: "requirement:job-1",
+        content: "User action",
+        cmd: undefined,
+        files: [],
+        mentionedAiEmployeeId: undefined,
+        username: undefined,
+      },
+      {
+        type: "job",
+        id: "job:job-2",
+        job: expect.objectContaining({ id: "job-2", humanAction: "Yes" }),
+        state: "completed",
+      },
+      {
+        type: "requirement",
+        id: "human-action:job-2",
+        content: "Yes",
+        username: undefined,
+      },
+    ]);
+  });
+
+  it("should handle error message", () => {
+    const conversation = { id: "conv-1" } as ConversationBaseDetail;
+    const tasks: Task[] = [];
+    const errors: ConversationError[] = [
+      {
+        error: "An error occurred",
+      },
+    ];
+
+    const { result } = renderHook(() =>
+      useConversationGraph(conversation, tasks, errors)
+    );
+
+    expect(result.current?.nodes).toContainEqual(
+      expect.objectContaining({
+        type: "error",
+        content: "An error occurred",
+      })
+    );
+  });
 });
