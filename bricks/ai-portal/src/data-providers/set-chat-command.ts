@@ -2,7 +2,7 @@ import { createProviderClass } from "@next-core/utils/general";
 import type { CommandPayload } from "../shared/interfaces.js";
 
 export interface ChatCommand {
-  command?: string;
+  command: string;
   payload: CommandPayload;
 }
 

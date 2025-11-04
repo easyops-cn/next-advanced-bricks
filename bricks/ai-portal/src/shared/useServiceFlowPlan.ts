@@ -1,12 +1,12 @@
 import { useMemo } from "react";
-import type { PlanStep, ServiceFlowRun, Task } from "./interfaces";
+import type { PlanProgressStep, ServiceFlowRun, Task } from "./interfaces";
 
 export function useServiceFlowPlan(
   serviceFlows: ServiceFlowRun[],
   tasks: Task[]
-): PlanStep[] {
+): PlanProgressStep[] {
   return useMemo(() => {
-    const steps: PlanStep[] = [];
+    const steps: PlanProgressStep[] = [];
 
     for (const flow of serviceFlows) {
       for (const stage of flow.spec) {
