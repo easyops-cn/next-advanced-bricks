@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.25](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.1.24...@next-bricks/ui-test@1.1.25) (2025-11-04)
+
+
+### Bug Fixes
+
+* 修复 cmdb-instance-select 不同场景下没有录制问题 ([db348b9](https://github.com/easyops-cn/next-advanced-bricks/commit/db348b96e1ceb9d4faa520c29d616531eb5f8f85))
+
+
+
+
+
 ## [1.1.24](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.1.23...@next-bricks/ui-test@1.1.24) (2025-10-17)
 
 **Note:** Version bump only for package @next-bricks/ui-test
