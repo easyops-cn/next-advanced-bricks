@@ -3,11 +3,16 @@ import * as t from "@babel/types";
 import { generateCodeText } from "../utils";
 import { BrickEvtMapField } from "../interfaces";
 import type { MenuIcon } from "@next-shared/general/types";
-import { compact, castArray } from "lodash";
+import { compact, castArray, get } from "lodash";
 import { generateBaseStep, generateBrickInputStep } from "../utils";
 
 interface OptionItem {
   label: string;
+  value: unknown;
+}
+
+interface CmdbInstanceSelectOption {
+  label: string | string[];
   value: unknown;
 }
 
@@ -395,12 +400,27 @@ export const formBricksMap: BrickEvtMapField = {
   },
   "forms.cmdb-instance-select": {
     "forms.cmdb-instance-select.change.v2": (
-      event: CustomEvent<{ label: string[]; value: string }>
+      event: CustomEvent<CmdbInstanceSelectOption | CmdbInstanceSelectOption[]>
     ) => {
       let expr: t.Expression;
       if (event.detail) {
+        const {
+          labelTemplate,
+          showKeyField,
+          isMultiLabel = true,
+        } = event.target as any;
+
+        const labels = castArray(event.detail).map((item) =>
+          getLabelValue({
+            option: item,
+            labelTemplate,
+            showKeyField,
+            isMultiLabel,
+          })
+        );
+
         expr = t.callExpression(t.identifier("brick_fill"), [
-          t.arrayExpression(event.detail.label.map((l) => t.stringLiteral(l))),
+          t.arrayExpression(labels.map((label) => t.stringLiteral(label))),
         ]);
       } else {
         expr = t.callExpression(t.identifier("brick_clear"), []);
@@ -428,3 +448,44 @@ export const formBricksMap: BrickEvtMapField = {
 export const formsBricks = Object.keys(formBricksMap);
 
 export const extraFormsRecorderSelectors: string[] = [".ant-select-dropdown"];
+
+/**
+ * 获取 label 的显示值
+ * 参照 CmdbInstanceSelect.tsx 中的 getLabelOptions 函数
+ */
+function getLabelValue(params: {
+  option: any;
+  labelTemplate?: string;
+  showKeyField?: boolean;
+  isMultiLabel?: boolean;
+}): string {
+  const { option, labelTemplate, showKeyField, isMultiLabel } = params;
+
+  if (labelTemplate) {
+    return labelTemplate?.replace(
+      /#{(.*?)}/g,
+      (_match: string, key: string) => {
+        const value = get(option, key.trim());
+        return value;
+      }
+    );
+  } else {
+    const label = option.label;
+    if (Array.isArray(label)) {
+      const firstKey = label[0];
+      const resKey = label.slice(1, label.length).join(",");
+      if (Array.isArray(firstKey) && showKeyField) {
+        const subFirstKey = firstKey[0];
+        const subResKey = firstKey.slice(1, firstKey.length).join(",");
+        return subResKey && isMultiLabel
+          ? `${subFirstKey}(${subResKey})`
+          : (subFirstKey ?? "");
+      }
+      return resKey && isMultiLabel
+        ? `${firstKey ?? " - "}(${resKey})`
+        : (firstKey ?? "");
+    } else {
+      return label;
+    }
+  }
+}
