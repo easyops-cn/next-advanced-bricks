@@ -6,7 +6,7 @@ import styles from "./PlanProgress.module.css";
 import type {
   ConversationState,
   JobState,
-  PlanStep,
+  PlanProgressStep,
   TaskState,
 } from "../interfaces";
 import { WrappedIcon } from "../../shared/bricks";
@@ -15,7 +15,7 @@ import { K, locales, NS, t } from "./i18n";
 initializeI18n(NS, locales);
 
 export interface PlanProgressProps {
-  plan: PlanStep[];
+  plan: PlanProgressStep[];
   conversationState?: ConversationState;
   style?: React.CSSProperties;
 }
@@ -100,7 +100,7 @@ export function PlanProgress({
         {expanded && (
           <ul className={styles.details}>
             {plan.map((step, index) => (
-              <PlanStep
+              <PlanProgressStep
                 key={index}
                 state={step.state}
                 conversationState={conversationState}
@@ -120,7 +120,7 @@ interface PlanStepProps {
   name: string;
 }
 
-function PlanStep({ state, conversationState, name }: PlanStepProps) {
+function PlanProgressStep({ state, conversationState, name }: PlanStepProps) {
   const { className, icon } = useMemo(() => {
     return getClassNameAndIconProps(state, conversationState);
   }, [state, conversationState]);

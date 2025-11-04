@@ -1,0 +1,210 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tree > li {
+  position: relative;
+}
+
+.collapse,
+.icon {
+  font-size: 16px;
+  padding: 2px;
+  color: #8c8c8c;
+
+  &.large {
+    font-size: 20px;
+    padding: 0;
+  }
+}
+
+.icon {
+  &.completed {
+    color: #08bf33;
+  }
+
+  &.working {
+    color: var(--elevo-color-brand);
+  }
+
+  &.paused {
+    color: #faad14;
+  }
+
+  &.failed {
+    color: #f24c25;
+  }
+}
+
+.collapse[lib="lucide"] {
+  transform: scale(1.1);
+}
+
+.collapse:not(:hover) {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+.button eo-icon,
+.collapse {
+  transition: transform 0.2s;
+}
+
+.collapse.collapsed {
+  transform: rotate(-90deg);
+}
+
+.collapse.collapsed[lib="lucide"] {
+  transform: scale(1.1) rotate(-90deg);
+}
+
+.node:not(:hover) .collapse,
+.node.collapsible:hover .icon {
+  display: none;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.88);
+  min-width: 0;
+}
+
+.node:not(:last-child),
+.tree > li:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+.tree .root:not(:last-child) {
+  margin-bottom: 18px;
+}
+
+.node {
+  display: flex;
+  align-items: center;
+  padding: 0 2px;
+  height: 24px;
+  gap: 20px;
+  cursor: pointer;
+}
+
+.node:hover {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 6px;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.root > .node > .label {
+  color: #000;
+  font-weight: 500;
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chart {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  height: 100%;
+}
+
+.bar {
+  position: absolute;
+  --gantt-chart-bar-bg: rgba(140, 140, 140, 0.36);
+
+  &.completed {
+    --gantt-chart-bar-bg: #4ed965;
+  }
+
+  &.working {
+    --gantt-chart-bar-bg: #a1b5ff;
+  }
+
+  &.paused {
+    /* --gantt-chart-bar-bg: #E6960C; */
+    --gantt-chart-bar-bg: rgba(230, 150, 12, 0.6);
+  }
+
+  &.failed {
+    --gantt-chart-bar-bg: rgba(240, 76, 37, 0.5);
+  }
+}
+
+.bar:not(.container-bar) {
+  background: var(--gantt-chart-bar-bg);
+  border-radius: 10px;
+}
+
+.bar path {
+  fill: var(--gantt-chart-bar-bg);
+}
+
+.line {
+  position: absolute;
+  top: 24px;
+  border: 1px dashed rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.button {
+  background: none;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.button:hover {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.button:focus {
+  outline: none;
+}
+
+.button eo-icon[lib="easyops"] {
+  font-size: 10px;
+}
+
+.button.collapsed eo-icon {
+  transform: rotate(-180deg);
+}

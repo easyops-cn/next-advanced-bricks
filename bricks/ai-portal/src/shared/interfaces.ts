@@ -44,6 +44,17 @@ export interface Task {
   endTime?: number;
 
   aiEmployeeId?: string;
+
+  // 复杂任务的计划。由于计划可调整，因此 SSE 接口每次更新时需返回全量的数据，不更新则不返回。
+  plan?: PlanStep[];
+}
+
+export interface PlanStep {
+  // 步骤名称
+  name: string;
+
+  // 开始执行时对应的 job ID，可以是原子 job，也可以是容器 job（包含子任务）
+  jobId?: string;
 }
 
 export type ConversationState =
@@ -131,14 +142,6 @@ export interface HumanActionConfirm {
 export interface HumanActionSelect {
   type: "select";
   options: string[];
-}
-
-export interface Step {
-  // Pre-generated Job ID for this step
-  id: string;
-
-  // The instruction for this step
-  instruction: string;
 }
 
 export interface Message {
@@ -361,7 +364,7 @@ export interface ActiveDetailOfActivity {
   flow: ServiceFlowRun;
 }
 
-export interface PlanStep {
+export interface PlanProgressStep {
   name: string;
   taskId?: string;
   state?: TaskState;
