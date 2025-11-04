@@ -1,7 +1,7 @@
 import { describe, test, expect, jest } from "@jest/globals";
 import { act } from "react-dom/test-utils";
 import "./";
-import { NoticeItem } from "../shared/interfaces.js";
+import { NoticeItem } from "./index.js";
 import type { NoticeDropdown } from "./index.js";
 
 jest.mock("@next-core/theme", () => ({}));

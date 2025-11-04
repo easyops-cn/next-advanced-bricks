@@ -17,7 +17,6 @@ import { Link, LinkProps, Target } from "@next-bricks/basic/link";
 import { Button, ButtonProps } from "@next-bricks/basic/button";
 import { EoCounterBadge, BadgeProps } from "@next-bricks/basic/counter-badge";
 import { IconButton, IconButtonProps } from "../icon-button/index.js";
-import { NoticeItem } from "../shared/interfaces.js";
 
 import { parseTemplate } from "../shared/parseTemplate.js";
 import projectNotifySvg from "./images/project-notify.svg?url";
@@ -48,6 +47,17 @@ const WrapperCounterBadge = wrapBrick<EoCounterBadge, BadgeProps>(
 const WrapperIconButton = wrapBrick<IconButton, IconButtonProps>(
   "ai-portal.icon-button"
 );
+
+export interface NoticeItem {
+  id: string;
+  type: string;
+  isRead: boolean;
+  title: string;
+  description?: string;
+  time: number;
+  /** 单个消息详情链接，优先级高于 urlTemplate */
+  url?: string;
+}
 
 export interface NoticeDropdownProps {
   /** 消息数据列表 */
@@ -265,7 +275,7 @@ function NoticeDropdownComponent({
                 <li key={item.id}>
                   <WrappedLink
                     className="link"
-                    url={parseTemplate(urlTemplate, item)}
+                    url={item.url ?? parseTemplate(urlTemplate, item)}
                     target={urlTarget}
                     onClick={() => handleNoticeItemClick(item)}
                   >
@@ -303,6 +313,7 @@ function NoticeDropdownComponent({
           </WrappedButton>
           {!hideNotifyCenterButton && (
             <WrappedButton
+              target="_blank"
               href={notifyCenterUrl}
               type="text"
               className="footer-button"
