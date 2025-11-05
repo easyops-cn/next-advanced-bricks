@@ -156,7 +156,7 @@ ul {
   }
 
   &.failed {
-    --gantt-chart-bar-bg: rgba(240, 76, 37, 0.5);
+    --gantt-chart-bar-bg: #ff754f;
   }
 }
 
