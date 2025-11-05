@@ -1,7 +1,11 @@
 /** 返回一个有状态的值和一个更新它的函数。 */
 export const useState: <T>(
   initialValue?: T
-) => [value: T, setter: (value: T) => void];
+) => [value: T, setter: Dispatch<SetStateAction<T>>];
+
+export type Dispatch<A> = (value: A) => void;
+
+export type SetStateAction<S> = S | ((prevState: S) => S);
 
 /** 异步获取资源，返回获取到的数据、以及一个重新拉取数据的函数 */
 export const useResource: <T = any>(
@@ -22,6 +26,22 @@ export const useRef: <T>(initialValue: T) => {
 export const useQuery: () => {
   readonly [key: string]: string | undefined;
 };
+
+/** 获取当前的 URL path 参数 */
+export const usePathParams: () => {
+  readonly [key: string]: string | undefined;
+};
+
+/** 接收一个 Context 对象，返回其当前的值 */
+export const useContext: <T>(context: Context<T>) => T;
+
+/** 创建一个 Context 来跨组件传递数据 */
+export const createContext: <T>(defaultValue?: T) => Context<T>;
+
+export interface Context<T> {
+  /** 提供 Context 数据的组件 */
+  Provider: (props: { value: T; children: React.ReactNode }) => any;
+}
 
 /** 更新当前的 URL search 参数 */
 export const pushQuery: (

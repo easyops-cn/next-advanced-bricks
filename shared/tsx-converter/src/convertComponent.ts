@@ -1,4 +1,4 @@
-import type { BrickConf } from "@next-core/types";
+import type { BrickConf, ContextConf, RouteConf } from "@next-core/types";
 import {
   isAnyOfficialComponent,
   type ComponentChild,
@@ -27,6 +27,8 @@ import convertAvatar from "./convertAvatar.js";
 import convertAvatarGroup from "./convertAvatarGroup.js";
 import convertCodeBlock from "./convertCodeBlock.js";
 import { getAppTplName, getViewTplName } from "./modules/getTplName.js";
+import { convertRoutes } from "./modules/convertRoutes.js";
+import { convertLifeCycle } from "./convertLifeCycle.js";
 
 export async function convertComponent(
   component: ComponentChild,
@@ -34,8 +36,8 @@ export async function convertComponent(
   state: ConvertState,
   options: ConvertOptions,
   scope: "page" | "view" | "template"
-): Promise<BrickConf | BrickConf[]> {
-  let brick: BrickConf | null = null;
+): Promise<BrickConf | BrickConf[] | RouteConf | RouteConf[]> {
+  let brick: BrickConf | RouteConf | null = null;
 
   if (isAnyOfficialComponent(component)) {
     const componentName = component.reference
@@ -117,12 +119,19 @@ export async function convertComponent(
       case "If":
         brick = await convertIf(component);
         break;
+      case "Routes":
+        return convertRoutes(component.children, state, mod, options);
+      case "Route":
+        // Route is handled in convertRoutes
+        // eslint-disable-next-line no-console
+        console.error("<Route> should be a child of <Routes>.");
+        break;
       default:
+        // Allow any bricks in app mode or when allowAnyBricks is true
         if (
           (state.app.appType === "app" || options.allowAnyBricks) &&
           component.name.toLowerCase() === component.name
         ) {
-          // Allow any bricks in app mode or when allowAnyBricks is true
           brick = {
             brick: component.name.replaceAll("_", ".").replaceAll("--", "."),
             properties: component.properties,
@@ -183,11 +192,16 @@ export async function convertComponent(
 
   brick.events = convertEvents(component, options);
 
+  brick.lifeCycle = convertLifeCycle(component, options);
+
   if (component.children?.length) {
     brick.children = (
       await Promise.all(
-        component.children.map((child) =>
-          convertComponent(child, mod, state, options, scope)
+        component.children.map(
+          (child) =>
+            convertComponent(child, mod, state, options, scope) as Promise<
+              BrickConf | BrickConf[]
+            >
         )
       )
     ).flat();
@@ -203,6 +217,14 @@ export async function convertComponent(
         },
       ];
     }
+  }
+
+  if (component.portal) {
+    brick.portal = true;
+  }
+
+  if (component.context) {
+    (brick as { context?: ContextConf[] }).context = component.context;
   }
 
   return brick;

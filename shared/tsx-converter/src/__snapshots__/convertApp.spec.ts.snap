@@ -1,0 +1,259 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`convertApp should work 1`] = `
+{
+  "meta": {
+    "customTemplates": [
+      {
+        "bricks": [
+          {
+            "brick": "nav",
+            "children": [
+              {
+                "brick": "slot",
+                "events": undefined,
+                "lifeCycle": undefined,
+                "properties": {},
+              },
+            ],
+            "events": undefined,
+            "lifeCycle": undefined,
+            "properties": {},
+          },
+        ],
+        "name": "tpl-nav",
+        "state": [],
+      },
+    ],
+    "functions": [
+      {
+        "name": "sayHello",
+        "source": "function sayHello(name: string) {
+  return \`Hello, \${name}!\`;
+}",
+        "typescript": true,
+      },
+      {
+        "name": "_helper_mergeTexts",
+        "source": "function mock() {}",
+        "typescript": true,
+      },
+    ],
+  },
+  "routes": [
+    {
+      "bricks": [
+        {
+          "brick": "h1",
+          "events": undefined,
+          "lifeCycle": undefined,
+          "properties": {
+            "textContent": "404 Not Found",
+          },
+        },
+      ],
+      "context": [],
+      "incrementalSubRoutes": true,
+      "path": "\${APP.homepage}/404",
+    },
+    {
+      "bricks": [
+        {
+          "brick": "eo-event-agent",
+          "context": [
+            {
+              "name": "CONTEXT_PROVIDER__LayoutContext__x",
+              "track": true,
+              "value": "<% CTX.x %>",
+            },
+          ],
+          "events": {
+            "trigger": [
+              {
+                "else": undefined,
+                "if": "<% EVENT.detail.name === "setX" %>",
+                "then": [
+                  {
+                    "action": "context.set",
+                    "args": [
+                      "x",
+                      "<% EVENT.detail.value %>",
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          "lifeCycle": undefined,
+          "portal": true,
+          "properties": {
+            "id": "context-agent-LayoutContext",
+          },
+        },
+        {
+          "brick": "h1",
+          "events": undefined,
+          "lifeCycle": undefined,
+          "properties": {
+            "textContent": "<%= FN._helper_mergeTexts({"type":"text","text":"Home "}, {type:"expression",value:(CTX.x)}) %>",
+          },
+        },
+        {
+          "brick": "tpl-nav",
+          "children": [
+            {
+              "brick": "ul",
+              "children": [
+                {
+                  "brick": "li",
+                  "children": [
+                    {
+                      "brick": "eo-link",
+                      "events": undefined,
+                      "lifeCycle": undefined,
+                      "properties": {
+                        "inApp": true,
+                        "textContent": "Home",
+                        "themeVariant": "elevo",
+                        "url": "/",
+                      },
+                    },
+                  ],
+                  "events": undefined,
+                  "lifeCycle": undefined,
+                  "properties": {},
+                },
+                {
+                  "brick": "li",
+                  "children": [
+                    {
+                      "brick": "eo-link",
+                      "events": undefined,
+                      "lifeCycle": undefined,
+                      "properties": {
+                        "inApp": true,
+                        "textContent": "About",
+                        "themeVariant": "elevo",
+                        "url": "/about",
+                      },
+                    },
+                  ],
+                  "events": undefined,
+                  "lifeCycle": undefined,
+                  "properties": {},
+                },
+              ],
+              "events": undefined,
+              "lifeCycle": undefined,
+              "properties": {},
+            },
+          ],
+          "events": undefined,
+          "lifeCycle": undefined,
+          "properties": {},
+        },
+        {
+          "brick": "eo-card",
+          "children": [
+            {
+              "brick": "eo-content-layout",
+              "children": [
+                {
+                  "brick": "h2",
+                  "events": undefined,
+                  "lifeCycle": undefined,
+                  "properties": {
+                    "textContent": "Welcome",
+                  },
+                  "slot": "header",
+                },
+                {
+                  "bricks": [
+                    {
+                      "brick": "h1",
+                      "events": undefined,
+                      "lifeCycle": undefined,
+                      "properties": {
+                        "textContent": "This is about",
+                      },
+                    },
+                  ],
+                  "context": [],
+                  "incrementalSubRoutes": true,
+                  "path": "\${APP.homepage}/about",
+                },
+                {
+                  "bricks": [
+                    {
+                      "brick": "h1",
+                      "children": [
+                        {
+                          "brick": "span",
+                          "events": undefined,
+                          "lifeCycle": undefined,
+                          "properties": {
+                            "textContent": "<%= FN._helper_mergeTexts({"type":"text","text":"\\n      This is home-"}, {type:"expression",value:(CTX.CONTEXT_PROVIDER__LayoutContext__x)}) %>",
+                          },
+                        },
+                      ],
+                      "events": undefined,
+                      "lifeCycle": {
+                        "onMount": [
+                          {
+                            "args": [
+                              {
+                                "name": "setX",
+                                "value": 42,
+                              },
+                            ],
+                            "method": "trigger",
+                            "target": "#context-agent-LayoutContext",
+                          },
+                        ],
+                        "onUnmount": [
+                          {
+                            "args": [
+                              {
+                                "name": "setX",
+                                "value": 0,
+                              },
+                            ],
+                            "method": "trigger",
+                            "target": "#context-agent-LayoutContext",
+                          },
+                        ],
+                      },
+                      "properties": {},
+                    },
+                  ],
+                  "context": [],
+                  "incrementalSubRoutes": true,
+                  "path": "\${APP.homepage}",
+                },
+              ],
+            },
+          ],
+          "events": undefined,
+          "lifeCycle": undefined,
+          "properties": {
+            "background": "#fff",
+            "cardTitle": undefined,
+            "outline": "background",
+            "themeVariant": "elevo",
+          },
+        },
+      ],
+      "context": [
+        {
+          "expose": false,
+          "name": "x",
+          "track": true,
+          "value": 0,
+        },
+      ],
+      "incrementalSubRoutes": true,
+      "path": "\${APP.homepage}",
+    },
+  ],
+}
+`;

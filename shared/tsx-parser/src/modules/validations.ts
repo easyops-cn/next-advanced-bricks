@@ -116,3 +116,9 @@ export function isGeneralMemberExpression(
 ): path is NodePath<t.MemberExpression | t.OptionalMemberExpression> {
   return path.isMemberExpression() || path.isOptionalMemberExpression();
 }
+
+export function isGeneralFunctionExpression(
+  path: NodePath<t.Node | null | undefined>
+): path is NodePath<t.FunctionExpression | t.ArrowFunctionExpression> {
+  return path.isFunctionExpression() || path.isArrowFunctionExpression();
+}

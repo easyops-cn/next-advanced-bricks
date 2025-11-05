@@ -6,6 +6,7 @@ import type {
   StoryboardFunction,
 } from "@next-core/types";
 import type { ParsedApp } from "@next-shared/tsx-parser";
+import type { ConvertedModule } from "./modules/convertModule";
 
 export interface ConvertOptions {
   rootId: string;
@@ -27,12 +28,14 @@ export interface ConvertResult {
 export interface ConvertState {
   readonly usedHelpers: Set<string>;
   readonly app: ParsedApp;
+  readonly convertedModules: Map<string, ConvertedModule | null>;
+  convertedEntry?: ConvertedModule;
 }
 
 export interface ConvertedApp {
   routes: RouteConf[];
   meta: {
     functions: StoryboardFunction[];
-    templates: CustomTemplate[];
+    customTemplates: CustomTemplate[];
   };
 }

@@ -66,11 +66,13 @@ function AppPreviewComponent({ storyboard }: AppPreviewProps) {
       return;
     }
 
-    const app: MicroApp = {
+    const app = {
       id: "lab-app-preview",
       name: "Lab: App Preview",
       homepage: "/lab-app-preview",
-    };
+      standaloneMode: true,
+      noPlaceholders: true,
+    } as MicroApp;
 
     if (setupRef.current) {
       let ignore = false;

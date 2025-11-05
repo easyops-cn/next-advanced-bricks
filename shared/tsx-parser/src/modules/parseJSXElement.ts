@@ -16,6 +16,8 @@ import { parseElement } from "./parseElement.js";
 import { parseEvent } from "./parseEvent.js";
 import { validateGlobalApi } from "./validations.js";
 import { getComponentReference } from "./getComponentReference.js";
+import type { LifeCycle } from "../interfaces.js";
+import { parseContextProvider } from "./parseContextProvider.js";
 
 export function parseJSXElement(
   path: NodePath<t.JSXElement>,
@@ -25,6 +27,33 @@ export function parseJSXElement(
 ): ChildElement | null | (ChildElement | null)[] {
   const openingElement = path.get("openingElement");
   const tagName = openingElement.get("name");
+
+  if (
+    app.appType === "app" &&
+    (state.moduleType === "page" || state.moduleType === "entry") &&
+    tagName.isJSXMemberExpression()
+  ) {
+    const object = tagName.get("object");
+    const property = tagName.get("property");
+    if (!object.isJSXIdentifier()) {
+      state.errors.push({
+        message: `When using JSX Member Expression, only JSX Identifier is allowed as object, but got: ${object.type}`,
+        node: object.node,
+        severity: "error",
+      });
+      return null;
+    }
+    if (property.node.name !== "Provider") {
+      state.errors.push({
+        message: `Unsupported JSX Member Expression property: ${property.node.name}. Only "Provider" is supported.`,
+        node: property.node,
+        severity: "error",
+      });
+      return null;
+    }
+    return parseContextProvider(path, object, state, app, options);
+  }
+
   if (!tagName.isJSXIdentifier()) {
     state.errors.push({
       message: `Unsupported JSX element name type: ${tagName.type}`,
@@ -59,7 +88,9 @@ export function parseJSXElement(
   const properties: Record<string, unknown> = {};
   // const ambiguousProps: Record<string, unknown> = {};
   let events: Events | undefined;
+  let lifeCycle: LifeCycle | undefined;
   let ref: string | undefined;
+  let slot: string | undefined;
 
   const isRoute = validateGlobalApi(tagName, "Route");
 
@@ -145,6 +176,19 @@ export function parseJSXElement(
       continue;
     }
 
+    if (attrName === "slot") {
+      if (!attrValuePath.isStringLiteral()) {
+        state.errors.push({
+          message: `The "slot" attribute in component expects a string literal, but got ${attrValuePath.node?.type}`,
+          node: attrValuePath.node ?? attrValuePath.parent,
+          severity: "error",
+        });
+        continue;
+      }
+      slot = attrValuePath.node.value;
+      continue;
+    }
+
     const isEventHandler = /^on[A-Z]/.test(attrName);
     if (isEventHandler) {
       if (!attrValuePath.isJSXExpressionContainer()) {
@@ -189,8 +233,13 @@ export function parseJSXElement(
         handler = parseEvent(exprPath, state, app, options);
       }
       if (handler) {
-        events ??= {};
-        events[convertJsxEventAttr(attrName)] = handler;
+        if (attrName === "onMount" || attrName === "onUnmount") {
+          lifeCycle ??= {};
+          lifeCycle[attrName] = handler;
+        } else {
+          events ??= {};
+          events[convertJsxEventAttr(attrName)] = handler;
+        }
       }
     } else {
       if (attrValuePath.node == null) {
@@ -245,7 +294,9 @@ export function parseJSXElement(
     reference,
     properties,
     ref,
+    slot,
     events,
+    lifeCycle,
     children,
   };
 

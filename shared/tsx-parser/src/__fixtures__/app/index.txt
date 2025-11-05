@@ -2,12 +2,13 @@
 // @ts-nocheck
 
 import { render, Routes, Route } from "next-tsx";
-import Layout1, { Page503 as Page403 } from "./Pages/Test";
+import BaseLayout from "./Pages/Layout";
+import Page404 from "./Pages/Page404";
 
 render(
   <Routes>
-    <Route path="/" component={Layout1} />
-    <Route path="/404" component={Page403} />
+    <Route path="/" component={BaseLayout} />
+    <Route path="/404" component={Page404} />
   </Routes>
 );
 

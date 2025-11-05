@@ -1,19 +1,15 @@
 import type {
   BrickConfInTemplate,
   CustomTemplate,
-  RouteConf,
   StoryboardFunction,
 } from "@next-core/types";
 import {
   MODULE_SOURCE,
   type ParsedApp,
-  type ComponentChild,
-  type ComponentReference,
   isOfficialComponent,
 } from "@next-shared/tsx-parser";
 import convertModule, {
-  type ConvertedModule,
-  type ConvertedPart,
+  type ConvertedPartOfComponent,
 } from "./convertModule.js";
 import type {
   ConvertState,
@@ -21,6 +17,8 @@ import type {
   ConvertedApp,
 } from "../interfaces.js";
 import { getAppTplName } from "./getTplName.js";
+import { convertRoutes } from "./convertRoutes.js";
+import { getHelperFunctions } from "../helpers/index.js";
 
 export async function convertApp(
   app: ParsedApp,
@@ -51,113 +49,73 @@ export async function convertApp(
     );
   }
 
-  let convertedEntry: ConvertedModule;
-  const convertedModules = new Map<string, ConvertedModule>();
-
   const state: ConvertState = {
     usedHelpers: new Set(),
     app,
+    convertedModules: new Map(),
   };
+
+  const convertingEntry = convertModule(entry, state, options);
+  state.convertedModules.set(entry.filePath, convertingEntry);
+
+  const routes = await convertRoutes(
+    routesComponent.children,
+    state,
+    entry,
+    options
+  );
 
   const functions: StoryboardFunction[] = [];
   const templates: CustomTemplate[] = [];
 
-  await Promise.all(
-    Array.from(app.modules).map(async ([filePath, mod]) => {
-      if (mod) {
-        const converted = await convertModule(mod, state, options);
-        convertedModules.set(filePath, converted);
-        if (mod === entry) {
-          convertedEntry = converted;
+  for (const mod of state.convertedModules.values()) {
+    if (mod) {
+      for (const part of [
+        ...mod.internals,
+        ...mod.namedExports.values(),
+        mod.defaultExport,
+      ]) {
+        if (!part) {
+          continue;
         }
-        for (const part of [
-          ...converted.internals,
-          ...converted.namedExports.values(),
-          converted.defaultExport,
-        ]) {
-          switch (part?.type) {
-            case "function":
-              functions.push(part.function);
-              break;
-            case "template":
-              templates.push({
-                name: getAppTplName(part.name!),
-                bricks: part.bricks as BrickConfInTemplate[],
-                state: part.context,
-              });
-              break;
+        const { raw, promise } = part;
+        switch (raw?.type) {
+          case "function":
+            functions.push(raw.function);
+            break;
+          case "template": {
+            const part = (await promise) as ConvertedPartOfComponent;
+            templates.push({
+              name: getAppTplName(part.name!),
+              bricks: part.bricks as BrickConfInTemplate[],
+              state: part.context,
+            });
+            break;
           }
         }
       }
-    })
-  );
+    }
+  }
 
-  const routes: RouteConf[] =
-    routesComponent.children?.map((child) => {
-      if (!isOfficialComponent(child, "Route")) {
-        throw new Error(
-          `All children of <Routes> must be <Route> from "${MODULE_SOURCE}".`
-        );
+  const helpers = Array.from(state.usedHelpers).map<StoryboardFunction>(
+    (name) => {
+      const source = getHelperFunctions().get(name);
+      if (!source) {
+        throw new Error(`Helper function ${name} not found`);
       }
-      const { path, component } = child.properties;
-
-      if (typeof path !== "string" || !path.startsWith("/")) {
-        throw new Error(
-          `The "path" property of <Route> must be a string starting with "/".`
-        );
-      }
-
-      if (!component) {
-        throw new Error(`The "component" property of <Route> is required.`);
-      }
-
-      const { reference } = component as ComponentChild & {
-        reference: ComponentReference;
-      };
-      let page: ConvertedPart | null | undefined;
-      if (reference.type === "local") {
-        const parts = [
-          ...convertedEntry.internals,
-          ...convertedEntry.namedExports.values(),
-        ];
-        page = parts.find(
-          (p) => p.type !== "function" && p.name && p.name === reference.name
-        );
-      } else {
-        const mod = convertedModules.get(reference.importSource!);
-        if (!mod) {
-          throw new Error(
-            `Cannot find the module "${reference.importSource}" imported by the route "${path}".`
-          );
-        }
-        page = reference.name
-          ? mod.namedExports.get(reference.name)
-          : mod.defaultExport;
-      }
-
-      if (!page) {
-        throw new Error(
-          `Cannot find the component "${reference.name}" used in the route "${path}".`
-        );
-      }
-      if (page.type !== "page") {
-        throw new Error(
-          `The component "${reference.name}" used in the route "${path}" must be a page component.`
-        );
-      }
-
       return {
-        path: `\${APP.homepage}${path === "/" ? "" : path}`,
-        bricks: page.bricks,
-        context: page.context,
+        name,
+        source,
+        typescript: true,
       };
-    }) ?? [];
+    }
+  );
 
   return {
     routes,
     meta: {
-      functions,
-      templates,
+      functions: [...functions, ...helpers],
+      customTemplates: templates,
     },
   };
 }

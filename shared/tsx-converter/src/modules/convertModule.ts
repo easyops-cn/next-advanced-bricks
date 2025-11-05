@@ -3,6 +3,7 @@ import {
   isOfficialComponent,
   type ComponentChild,
   type ModulePart,
+  type ModulePartOfContext,
   type ModulePartOfFunction,
   type ParsedModule,
 } from "@next-shared/tsx-parser";
@@ -12,12 +13,20 @@ import type { ConvertState, ConvertOptions } from "../interfaces.js";
 
 export interface ConvertedModule {
   sourceModule: ParsedModule;
-  defaultExport: ConvertedPart | null;
-  namedExports: Map<string, ConvertedPart>;
-  internals: ConvertedPart[];
+  defaultExport: ConvertingPart | null;
+  namedExports: Map<string, ConvertingPart>;
+  internals: ConvertingPart[];
 }
 
-export type ConvertedPart = ConvertedPartOfComponent | ModulePartOfFunction;
+export interface ConvertingPart {
+  raw: ModulePart;
+  promise: Promise<ConvertedPart>;
+}
+
+export type ConvertedPart =
+  | ConvertedPartOfComponent
+  | ModulePartOfFunction
+  | ModulePartOfContext;
 
 export interface ConvertedPartOfComponent {
   type: "page" | "view" | "template";
@@ -27,40 +36,38 @@ export interface ConvertedPartOfComponent {
   title?: string;
 }
 
-export default async function convertModule(
+export default function convertModule(
   mod: ParsedModule,
   state: ConvertState,
   options: ConvertOptions
-): Promise<ConvertedModule> {
+): ConvertedModule {
   if (mod.usedHelpers.size > 0) {
     for (const helper of mod.usedHelpers) {
       state.usedHelpers.add(helper);
     }
   }
 
-  const [defaultExport, namedExports, internals] = await Promise.all([
-    mod.defaultExport
-      ? parseModulePart(mod.defaultExport, mod, state, options)
-      : null,
-    Promise.all(
-      Array.from(mod.namedExports.entries()).map(
-        async ([name, part]) =>
-          [name, await parseModulePart(part, mod, state, options)] as [
-            string,
-            ConvertedPart,
-          ]
-      )
-    ).then((entries) => new Map(entries)),
-    Promise.all(
-      mod.internals.map((part) => parseModulePart(part, mod, state, options))
-    ),
-  ]);
-
   return {
     sourceModule: mod,
-    defaultExport,
-    namedExports,
-    internals,
+    defaultExport: mod.defaultExport
+      ? {
+          raw: mod.defaultExport,
+          promise: parseModulePart(mod.defaultExport, mod, state, options),
+        }
+      : null,
+    namedExports: new Map(
+      [...mod.namedExports].map(([name, part]) => [
+        name,
+        {
+          raw: part,
+          promise: parseModulePart(part, mod, state, options),
+        },
+      ])
+    ),
+    internals: mod.internals.map((part) => ({
+      raw: part,
+      promise: parseModulePart(part, mod, state, options),
+    })),
   };
 }
 
@@ -70,7 +77,7 @@ async function parseModulePart(
   state: ConvertState,
   options: ConvertOptions
 ): Promise<ConvertedPart> {
-  if (part.type === "function") {
+  if (part.type === "function" || part.type === "context") {
     return part;
   }
 
@@ -110,8 +117,15 @@ async function parseModulePart(
   const bricks = children?.length
     ? (
         await Promise.all(
-          children.map((child) =>
-            convertComponent(child, mod, state, options, part.type)
+          children.map(
+            (child) =>
+              convertComponent(
+                child,
+                mod,
+                state,
+                options,
+                part.type
+              ) as Promise<BrickConf | BrickConf[]>
           )
         )
       ).flat()

@@ -1,0 +1,57 @@
+/* eslint-disable */
+// @ts-nocheck
+import { useState } from "next-tsx";
+import Home from "./Home";
+import About from "./About";
+import { LayoutContext } from "../Contexts/LayoutContext";
+
+export default function Layout() {
+  const [x, setX] = useState(0);
+
+  // context:
+  //   name: SCOPE__LayoutContext__x
+  //   value: <% CTX.x %>
+  //   track: true
+  // ---
+  // brick: event-agent
+  // properties:
+  //   id: context-agent-LayoutContext
+  // events:
+  //   trigger:
+  //     - if: <% EVENT.detail.name === "setX" %>
+  //       action: context.set
+  //       args:
+  //         - name: x
+  //         - value: <% EVENT.detail.payload[0] %>
+
+  return (
+    <LayoutContext.Provider value={{
+      x,
+      setX,
+    }}>
+      <h1>Home {x}</h1>
+      <Nav>
+        <ul>
+          <li>
+            <Link url="/">Home</Link>
+          </li>
+          <li>
+            <Link url="/about">About</Link>
+          </li>
+        </ul>
+      </Nav>
+      <Card>
+        <h2 slot="header">Welcome</h2>
+        <Routes slot="body">
+          <Route path="/" component={Home} />
+          <Route path="/about" component={About} />
+        </Routes>
+      </Card>
+    </LayoutContext.Provider>
+  );
+}
+
+// components/Nav.tsx
+function Nav() {
+  return <nav><slot /></nav>;
+}

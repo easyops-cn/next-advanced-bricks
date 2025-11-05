@@ -4,25 +4,27 @@ import { parseApp } from "./parseApp.js";
 
 describe("parseApp", () => {
   test("should work", async () => {
-    const indexContent = await readFile(
-      path.join(__dirname, "./__fixtures__/app/index.txt"),
-      "utf-8"
-    );
-    const testContent = await readFile(
-      path.join(__dirname, "./__fixtures__/app/Pages/Test.txt"),
-      "utf-8"
-    );
+    const fileMap = new Map([
+      ["/index.tsx", "app/index.txt"],
+      ["/Pages/Layout.tsx", "app/Pages/Layout.txt"],
+      ["/Pages/Home.tsx", "app/Pages/Home.txt"],
+      ["/Pages/About.tsx", "app/Pages/About.txt"],
+      ["/Pages/Page404.tsx", "app/Pages/Page404.txt"],
+      ["/Contexts/LayoutContext.ts", "app/Contexts/LayoutContext.txt"],
+    ]);
 
-    const files = [
-      {
-        filePath: "/index.tsx",
-        content: indexContent,
-      },
-      {
-        filePath: "/Pages/Test.tsx",
-        content: testContent,
-      },
-    ];
+    const files = await Promise.all(
+      [...fileMap].map(async ([filePath, fixturePath]) => {
+        const content = await readFile(
+          path.join(__dirname, "./__fixtures__/", fixturePath),
+          "utf-8"
+        );
+        return {
+          filePath,
+          content,
+        };
+      })
+    );
 
     const app = parseApp(files);
     const simplifiedApp = {

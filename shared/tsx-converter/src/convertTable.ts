@@ -82,8 +82,15 @@ export default async function convertTable(
 
             const useBrick = (
               await Promise.all(
-                render.children.map((child) =>
-                  convertComponent(child, mod, state, options, scope)
+                render.children.map(
+                  (child) =>
+                    convertComponent(
+                      child,
+                      mod,
+                      state,
+                      options,
+                      scope
+                    ) as Promise<BrickConf | BrickConf[]>
                 )
               )
             ).flatMap((child) => deepReplaceVariables(child, patterns));

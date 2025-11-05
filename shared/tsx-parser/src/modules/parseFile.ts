@@ -31,11 +31,20 @@ export function parseFile(
   app.modules.set(filePath, null);
 
   if (!ast) {
-    ast = parse(file.content, {
-      plugins: ["jsx", "typescript"],
-      sourceType: "module",
-      errorRecovery: true,
-    });
+    try {
+      ast = parse(file.content, {
+        plugins: ["jsx", "typescript"],
+        sourceType: "module",
+        errorRecovery: true,
+      });
+    } catch (error) {
+      app.errors.push({
+        message: `Failed to parse file (${filePath}): ${error}`,
+        node: null,
+        severity: "fatal",
+      });
+      return;
+    }
   }
 
   const isEntry = !app.entry;
@@ -46,7 +55,9 @@ export function parseFile(
       ? "page"
       : file.filePath.startsWith("/Components/")
         ? "template"
-        : "unknown";
+        : file.filePath.startsWith("/Contexts/")
+          ? "context"
+          : "unknown";
 
   const mod: ParsedModule = {
     source: file.content,

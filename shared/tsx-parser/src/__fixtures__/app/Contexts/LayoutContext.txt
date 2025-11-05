@@ -1,0 +1,10 @@
+/* eslint-disable */
+// @ts-nocheck
+import { createContext } from "next-tsx";
+
+export interface LayoutContextType {
+  x: number;
+  setX: (x: number) => void;
+}
+
+export const LayoutContext = createContext({});

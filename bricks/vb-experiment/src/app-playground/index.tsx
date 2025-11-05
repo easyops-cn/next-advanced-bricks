@@ -136,7 +136,7 @@ function AppPlaygroundComponent({
   const [code, setCode] = useState(source ?? "");
   const deferredCode = useDeferredValue(code);
   const [markers, setMarkers] = useState<ExtraMarker[] | undefined>();
-  const [view, setView] = useState<ParsedApp | undefined>();
+  const [app, setApp] = useState<ParsedApp | undefined>();
 
   const allLibs = useMemo(
     () => [...BUILTIN_LIBS, ...(extraLibs ?? [])],
@@ -166,7 +166,7 @@ function AppPlaygroundComponent({
       if (ignore) {
         return;
       }
-      setView(result);
+      setApp(result);
       const withNodeErrors = result.errors.filter((err) => !!err.node);
       if (withNodeErrors.length > 0) {
         setMarkers(
@@ -200,13 +200,13 @@ function AppPlaygroundComponent({
   useEffect(() => {
     let ignore = false;
     (async () => {
-      if (!view) {
+      if (!app) {
         return;
       }
       // setLoading(true);
       let convertedApp: ConvertedApp | undefined;
       try {
-        convertedApp = await convertApp(view, { rootId, expanded: true });
+        convertedApp = await convertApp(app, { rootId, expanded: true });
         if (ignore) {
           return;
         }
@@ -223,7 +223,7 @@ function AppPlaygroundComponent({
     return () => {
       ignore = true;
     };
-  }, [rootId, view]);
+  }, [rootId, app]);
 
   return (
     <div className={styles.container}>

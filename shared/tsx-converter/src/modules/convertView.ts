@@ -27,20 +27,19 @@ export async function convertView(
   }
 
   let convertedEntry: ConvertedModule | undefined;
-  const convertedModules = new Map<string, ConvertedModule>();
   const state: ConvertState = {
     usedHelpers: new Set(),
     app: view,
+    convertedModules: new Map(),
   };
 
   const functions: StoryboardFunction[] = [];
   const templates: CustomTemplate[] = [];
 
   await Promise.all(
-    Array.from(view.modules).map(async ([filePath, mod]) => {
+    Array.from(view.modules.values()).map(async (mod) => {
       if (mod) {
         const converted = await convertModule(mod, state, options);
-        convertedModules.set(filePath, converted);
         if (mod === entry) {
           convertedEntry = converted;
         }
@@ -49,17 +48,23 @@ export async function convertView(
           ...converted.namedExports.values(),
           converted.defaultExport,
         ]) {
-          switch (part?.type) {
+          if (!part) {
+            continue;
+          }
+          const { raw, promise } = part;
+          switch (raw?.type) {
             case "function":
-              functions.push(part.function);
+              functions.push(raw.function);
               break;
-            case "template":
+            case "template": {
+              const part = (await promise) as ConvertedPartOfComponent;
               templates.push({
                 name: getViewTplName(part.name!, options.rootId),
                 bricks: part.bricks as BrickConfInTemplate[],
                 state: part.context,
               });
               break;
+            }
           }
         }
       }
@@ -84,8 +89,8 @@ export async function convertView(
     }
   );
 
-  const { title, bricks, context } =
-    convertedEntry.defaultExport as ConvertedPartOfComponent;
+  const { title, bricks, context } = (await convertedEntry.defaultExport
+    .promise) as ConvertedPartOfComponent;
 
   const needBox = () =>
     bricks.every((brick) =>

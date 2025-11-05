@@ -1,6 +1,11 @@
 import * as t from "@babel/types";
-import type { StoryboardFunction } from "@next-core/types";
-import type { DataSource, Events, ParseError } from "../interfaces.js";
+import type { ContextConf, StoryboardFunction } from "@next-core/types";
+import type {
+  DataSource,
+  Events,
+  LifeCycle,
+  ParseError,
+} from "../interfaces.js";
 
 export interface ParsedApp {
   appType: "app" | "view" | "template";
@@ -33,9 +38,12 @@ export interface ParsedModule {
   usedHelpers: Set<string>;
 }
 
-export type ModuleType = "entry" | "page" | "template" | "unknown";
+export type ModuleType = "entry" | "page" | "template" | "context" | "unknown";
 
-export type ModulePart = ModulePartOfComponent | ModulePartOfFunction;
+export type ModulePart =
+  | ModulePartOfComponent
+  | ModulePartOfFunction
+  | ModulePartOfContext;
 
 export interface ModulePartOfComponent {
   type: "page" | "view" | "template";
@@ -47,6 +55,11 @@ export interface ModulePartOfComponent {
 export interface ModulePartOfFunction {
   type: "function";
   function: StoryboardFunction;
+}
+
+export interface ModulePartOfContext {
+  type: "context";
+  context: string;
 }
 
 export interface ParsedRender {
@@ -62,17 +75,29 @@ export interface BindingInfo {
     | "state"
     | "setState"
     | "resource"
+    | "refetch"
     | "ref"
     | "query"
+    | "pathParams"
     | "constant"
     | "param"
     | "eventHandler"
     | "component"
+    | "context"
     | "function";
+
   /** For kind "state" | "constant" | "param" */
   initialValue?: unknown;
+
   /** For kind "resource" */
   resource?: DataSource;
+
+  /** For kind "refetch" */
+  resourceId?: t.Identifier;
+
+  /** For kind "context" */
+  contextProvider?: ContextReference;
+  contextKey?: string;
 }
 
 export interface EventBindingInfo {
@@ -108,7 +133,8 @@ export interface ParseJsValueOptions {
   dataBinding?: DataBindingInfo;
   functionBindings?: Set<t.Identifier>;
   componentBindings?: Set<t.Identifier>;
-  contextBindings?: string[];
+  contextBindings?: Set<t.Identifier>;
+  stateBindings?: string[];
   allowUseBrick?: boolean;
   ambiguous?: boolean;
   modifier?: string;
@@ -120,8 +146,11 @@ export interface ComponentChild {
   properties: Record<string, unknown>;
   ambiguousProps?: Record<string, unknown>;
   events?: Events;
+  lifeCycle?: LifeCycle;
   slot?: string;
   ref?: string;
+  portal?: boolean;
+  context?: ContextConf[];
   children?: ComponentChild[];
 }
 
@@ -132,6 +161,19 @@ export interface ComponentReference {
    * For type "imported", it's the imported name (can be undefined for default import).
    */
   name?: string;
+  /**
+   * Only for type "imported", the source module path.
+   */
+  importSource?: string;
+}
+
+export interface ContextReference {
+  type: "imported" | "local";
+  /**
+   * For type "local", it's the local component name;
+   * For type "imported", it's the imported name.
+   */
+  name: string;
   /**
    * Only for type "imported", the source module path.
    */

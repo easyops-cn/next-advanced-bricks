@@ -10,6 +10,7 @@ import type {
   ComponentChild,
 } from "./interfaces.js";
 import {
+  isGeneralFunctionExpression,
   validateEmbeddedExpression,
   validateFunction,
   validateGlobalApi,
@@ -17,6 +18,7 @@ import {
 import { parseJsValue, parsePropValue } from "./parseJsValue.js";
 import { parseChildren } from "./parseChildren.js";
 import { parseUseResource } from "./parseUseResource.js";
+import { parseUseContext } from "./parseUseContext.js";
 
 export function parseComponent(
   fn: NodePath<t.FunctionDeclaration>,
@@ -211,15 +213,17 @@ export function parseComponent(
               }
               continue;
             } else if (validateGlobalApi(callee, "useResource")) {
-              const bindingInfo = parseUseResource(
+              const bindings = parseUseResource(
                 decl,
                 args,
                 state,
                 app,
                 options
               );
-              if (bindingInfo) {
-                bindingMap.set(bindingInfo.id, bindingInfo);
+              if (bindings) {
+                for (const binding of bindings) {
+                  bindingMap.set(binding.id, binding);
+                }
               }
               continue;
             } else if (validateGlobalApi(callee, "useRef")) {
@@ -268,6 +272,35 @@ export function parseComponent(
               }
               bindingMap.set(declId.node, { id: declId.node, kind: "query" });
               continue;
+            } else if (validateGlobalApi(callee, "usePathParams")) {
+              const declId = decl.get("id");
+              if (!declId.isIdentifier()) {
+                state.errors.push({
+                  message: `usePathParams() must be assigned to an identifier, received ${declId.type}`,
+                  node: declId.node,
+                  severity: "error",
+                });
+                continue;
+              }
+              if (args.length > 0) {
+                state.errors.push({
+                  message: `usePathParams() does not accept any arguments, received ${args.length}`,
+                  node: args[0].node,
+                  severity: "warning",
+                });
+              }
+              bindingMap.set(declId.node, {
+                id: declId.node,
+                kind: "pathParams",
+              });
+              continue;
+            } else if (validateGlobalApi(callee, "useContext")) {
+              const bindings = parseUseContext(decl, args, state, app, options);
+              if (bindings) {
+                for (const binding of bindings) {
+                  bindingMap.set(binding.id, binding);
+                }
+              }
             }
           }
         }
@@ -294,7 +327,10 @@ export function parseComponent(
           );
         }
       }
-    } else if (stmt.isReturnStatement()) {
+      continue;
+    }
+
+    if (stmt.isReturnStatement()) {
       const children = parseReturnStatement(stmt, state, app, options);
       if (children) {
         prevParent.children ??= [];
@@ -305,7 +341,9 @@ export function parseComponent(
         );
       }
       break;
-    } else if (stmt.isIfStatement()) {
+    }
+
+    if (stmt.isIfStatement()) {
       const test = stmt.get("test");
       if (!validateEmbeddedExpression(test.node, state)) {
         return null;
@@ -355,10 +393,89 @@ export function parseComponent(
           break;
         }
       }
-    } else if (
-      !stmt.isTSInterfaceDeclaration() &&
-      !stmt.isTSTypeAliasDeclaration()
-    ) {
+      continue;
+    }
+
+    if (stmt.isExpressionStatement()) {
+      const expr = stmt.get("expression");
+      if (expr.isCallExpression()) {
+        const callee = expr.get("callee");
+        if (!callee.isIdentifier()) {
+          state.errors.push({
+            message: `Unsupported call expression callee type: ${callee.type}`,
+            node: callee.node,
+            severity: "error",
+          });
+          continue;
+        }
+        if (validateGlobalApi(callee, "useEffect")) {
+          const args = expr.get("arguments");
+          if (args.length !== 2) {
+            state.errors.push({
+              message: `useEffect() requires exactly 2 arguments, received ${args.length}`,
+              node: expr.node,
+              severity: "error",
+            });
+          }
+          const callback = args[0];
+          const depArray = args[1];
+          if (!isGeneralFunctionExpression(callback)) {
+            state.errors.push({
+              message: `useEffect() first argument must be a function, received ${callback.type}`,
+              node: callback.node,
+              severity: "error",
+            });
+            continue;
+          }
+          if (!validateFunction(callback.node, state)) {
+            continue;
+          }
+          const callbackParams = callback.get("params");
+          if (callbackParams.length > 0) {
+            state.errors.push({
+              message: `useEffect() function must not have parameters, received ${callbackParams.length}`,
+              node: callback.node,
+              severity: "error",
+            });
+            continue;
+          }
+
+          const callbackBody = callback.get("body");
+          if (!callbackBody.isBlockStatement()) {
+            state.errors.push({
+              message: `useEffect() function body must be a block statement, received ${callbackBody.type}`,
+              node: callbackBody.node,
+              severity: "error",
+            });
+            continue;
+          }
+          if (!depArray.isArrayExpression()) {
+            state.errors.push({
+              message: `useEffect() second argument must be an array, received ${depArray.type}`,
+              node: depArray.node,
+              severity: "error",
+            });
+            continue;
+          }
+          const depElements = depArray.get("elements");
+          if (depElements.length > 0) {
+            state.errors.push({
+              message: `useEffect() dependency array must be empty, received ${depElements.length} elements`,
+              node: depArray.node,
+              severity: "warning",
+            });
+          }
+
+          // let onUnmountHandlers: EventHandler | EventHandler[] | null = null;
+          // const onMountHandlers = parseEventHandler(callbackBody, state, app, options, (returnPath) => {
+          //   onUnmountHandlers = parseEventHandler(returnPath.get("argument") as NodePath<t.Expression>, state, app, options);
+          // });
+        }
+        continue;
+      }
+    }
+
+    if (!stmt.isTSInterfaceDeclaration() && !stmt.isTSTypeAliasDeclaration()) {
       state.errors.push({
         message: `Unsupported top level statement type: ${stmt.type}`,
         node: stmt.node,

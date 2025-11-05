@@ -1,6 +1,7 @@
 import type { NodePath, Visitor } from "@babel/traverse";
 import type * as t from "@babel/types";
 import type { ParseJsValueOptions, ParsedModule } from "./interfaces.js";
+import { getContextReferenceVariableName } from "./getContextReference.js";
 
 type Replacement = IdReplacement | Annotation;
 
@@ -96,7 +97,8 @@ export function parseEmbedded(
             binding.kind === "resource" ||
             binding.kind === "constant" ||
             binding.kind === "param" ||
-            binding.kind === "query"
+            binding.kind === "query" ||
+            binding.kind === "pathParams"
           ) {
             replacements.push({
               type: "id",
@@ -105,7 +107,17 @@ export function parseEmbedded(
               replacement:
                 binding.kind === "query"
                   ? "QUERY"
-                  : `${options.component!.type === "template" ? "STATE" : "CTX"}.${bindingId.name}`,
+                  : binding.kind === "pathParams"
+                    ? "PATH"
+                    : `${options.component!.type === "template" ? "STATE" : "CTX"}.${bindingId.name}`,
+              shorthand: shorthand ? varName : undefined,
+            });
+          } else if (binding.kind === "context") {
+            replacements.push({
+              type: "id",
+              start: idPath.node.start!,
+              end: idPath.node.end!,
+              replacement: `CTX.${getContextReferenceVariableName(binding.contextProvider!.name, binding.contextKey!)}`,
               shorthand: shorthand ? varName : undefined,
             });
           } else {
@@ -124,7 +136,7 @@ export function parseEmbedded(
             shorthand: shorthand ? varName : undefined,
           });
         }
-      } else if (options.contextBindings?.includes(varName)) {
+      } else if (options.stateBindings?.includes(varName)) {
         replacements.push({
           type: "id",
           start: idPath.node.start!,

@@ -36,10 +36,12 @@ export function parseModule(
 ): void {
   const functionBindings = new Set<t.Identifier>();
   const componentBindings = new Set<t.Identifier>();
+  const contextBindings = new Set<t.Identifier>();
   const globalOptions: ParseJsValueOptions = {
     functionBindings,
     componentBindings,
-    contextBindings: options?.withContexts,
+    contextBindings,
+    stateBindings: options?.withContexts,
   };
 
   traverse(ast, {
@@ -47,6 +49,10 @@ export function parseModule(
       const body = path.get("body");
       const functionNodes: Array<{
         func: NodePath<t.FunctionDeclaration>;
+        exported?: boolean;
+      }> = [];
+      const variableDeclarations: Array<{
+        decl: NodePath<t.VariableDeclaration>;
         exported?: boolean;
       }> = [];
       let defaultExportNode: NodePath<t.FunctionDeclaration> | null = null;
@@ -86,11 +92,23 @@ export function parseModule(
             });
             return;
           }
-          if (scope === FunctionScope.NamedExportDeclaration) {
-            functionNodes.push({ func: stmt, exported: true });
-          } else {
-            functionNodes.push({ func: stmt });
+          functionNodes.push({
+            func: stmt,
+            exported: scope === FunctionScope.NamedExportDeclaration,
+          });
+        } else if (stmt.isVariableDeclaration()) {
+          if (scope === FunctionScope.DefaultExportDeclaration) {
+            mod.errors.push({
+              message: `Default export declaration must be a function declaration.`,
+              node: stmt.node,
+              severity: "error",
+            });
+            return;
           }
+          variableDeclarations.push({
+            decl: stmt,
+            exported: scope === FunctionScope.NamedExportDeclaration,
+          });
         } else if (stmt.isExportDefaultDeclaration()) {
           const decl = stmt.get("declaration");
           collectFunctions(decl, FunctionScope.DefaultExportDeclaration);
@@ -140,6 +158,65 @@ export function parseModule(
         }
 
         collectFunctions(stmt, FunctionScope.TopLevelStatement);
+      }
+
+      for (const { decl, exported } of variableDeclarations) {
+        if (decl.node.kind !== "const") {
+          mod.errors.push({
+            message: `Global variables must be declared with const.`,
+            node: decl.node,
+            severity: "error",
+          });
+          continue;
+        }
+        for (const declarator of decl.get("declarations")) {
+          const init = declarator.get("init");
+          if (!init.isCallExpression()) {
+            mod.errors.push({
+              message: `Global variables must be initialized with a call expression, but got: ${init.type}`,
+              node: init.node,
+              severity: "error",
+            });
+            continue;
+          }
+          const callee = init.get("callee");
+          if (!callee.isIdentifier()) {
+            mod.errors.push({
+              message: `Unsupported variable initializer type: ${callee.type}`,
+              node: callee.node,
+              severity: "error",
+            });
+            continue;
+          }
+          if (!validateGlobalApi(callee, "createContext")) {
+            mod.errors.push({
+              message: `Global variables must be initialized with createContext, but got: ${callee.node.name}`,
+              node: callee.node,
+              severity: "error",
+            });
+            continue;
+          }
+
+          const id = declarator.get("id");
+          if (!id.isIdentifier()) {
+            mod.errors.push({
+              message: `Unsupported context identifier type: ${id.type}`,
+              node: id.node,
+              severity: "error",
+            });
+            continue;
+          }
+          const part: ModulePart = {
+            type: "context",
+            context: id.node.name,
+          };
+          contextBindings.add(id.node);
+          if (exported) {
+            mod.namedExports.set(id.node.name, part);
+          } else {
+            mod.internals.push(part);
+          }
+        }
       }
 
       for (const importSource of imports) {

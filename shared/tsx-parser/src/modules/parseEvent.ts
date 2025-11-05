@@ -16,6 +16,7 @@ import {
   isGeneralMemberExpression,
   validateGlobalApi,
 } from "./validations.js";
+import { getContextReferenceEventAgentId } from "./getContextReference.js";
 
 export function parseEvent(
   path: NodePath<t.Node>,
@@ -70,11 +71,12 @@ export function parseEvent(
   return ([] as EventHandler[]).concat(handler);
 }
 
-function parseEventHandler(
+export function parseEventHandler(
   path: NodePath<t.Statement | t.Expression | null | undefined>,
   state: ParsedModule,
   app: ParsedApp,
-  options: ParseJsValueOptions
+  options: ParseJsValueOptions,
+  handleReturn?: (returnPath: NodePath<t.ReturnStatement>) => void
 ): EventHandler | EventHandler[] | null {
   if (path.isBlockStatement()) {
     return path
@@ -107,6 +109,10 @@ function parseEventHandler(
 
   if (path.isExpressionStatement()) {
     return parseEventHandler(path.get("expression"), state, app, options);
+  }
+
+  if (path.isReturnStatement() && handleReturn) {
+    handleReturn(path);
   }
 
   if (isGeneralCallExpression(path)) {
@@ -191,6 +197,37 @@ function parseEventHandler(
                       ...options,
                       modifier: undefined,
                     }),
+              scope:
+                options.component!.type === "template" ? "template" : "global",
+            },
+          };
+        case "refetch":
+          return {
+            action: "refresh_data_source",
+            payload: {
+              name: binding.resourceId!.name,
+              scope:
+                options.component!.type === "template" ? "template" : "global",
+            },
+          };
+        case "context":
+          return {
+            action: "call_selector",
+            payload: {
+              selector: `#${getContextReferenceEventAgentId(binding.contextProvider!.name)}`,
+              method: "trigger",
+              args: [
+                {
+                  name: binding.contextKey!,
+                  value:
+                    args[0] === undefined
+                      ? undefined
+                      : parseJsValue(args[0], state, app, {
+                          ...options,
+                          modifier: undefined,
+                        }),
+                },
+              ],
             },
           };
         default:
@@ -259,7 +296,7 @@ function parseEventHandler(
                 method: property.node.name,
                 args: args.map((arg) => parseJsValue(arg, state, app, options)),
                 scope:
-                  options.component?.type === "template"
+                  options.component!.type === "template"
                     ? "template"
                     : "global",
               },

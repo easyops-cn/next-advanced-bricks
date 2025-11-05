@@ -1,0 +1,26 @@
+/* eslint-disable */
+// @ts-nocheck
+import { LayoutContext } from "../Contexts/LayoutContext";
+
+export default function Home() {
+  const { x, setX } = useContext(LayoutContext);
+
+  return (
+    <h1
+      onMount={() => {
+        setX(42);
+        // target: #context-agent-LayoutContext
+        // method: trigger
+        // args:
+        //   - name: setX
+        //     payload:
+        //       - 42
+      }}
+      onUnmount={() => {
+        setX(0);
+      }}
+    >
+      This is home-{x}
+    </h1>
+  );
+}

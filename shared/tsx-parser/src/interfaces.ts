@@ -48,6 +48,7 @@ export type EventHandler =
   | TypeEventHandlerOfUpdateVariable
   | TypeEventHandlerOfRefreshDataSource
   | TypeEventHandlerOfCallRef
+  | TypeEventHandlerOfCallSelector
   | TypeEventHandlerOfShowMessage
   | TypeEventHandlerOfCallAPI
   | TypeEventHandlerOfDispatchEvent
@@ -78,6 +79,15 @@ export interface TypeEventHandlerOfCallRef {
     method: string;
     args?: any[];
     scope?: "global" | "template";
+  };
+}
+
+export interface TypeEventHandlerOfCallSelector {
+  action: "call_selector";
+  payload: {
+    selector: string;
+    method: string;
+    args?: any[];
   };
 }
 
@@ -132,6 +142,11 @@ export interface TypeEventHandlerCallback {
   finally?: EventHandler | EventHandler[];
 }
 
+export interface LifeCycle {
+  onMount?: EventHandler | EventHandler[];
+  onUnmount?: EventHandler | EventHandler[];
+}
+
 export interface RenderUseBrick {
   params: string[];
   children: ComponentChild[];
@@ -146,4 +161,5 @@ export type {
   ModulePart,
   ModulePartOfComponent,
   ModulePartOfFunction,
+  ModulePartOfContext,
 } from "./modules/interfaces.js";

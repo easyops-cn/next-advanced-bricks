@@ -18,7 +18,7 @@ export function parseUseResource(
   state: ParsedModule,
   app: ParsedApp,
   options: ParseJsValueOptions
-): BindingInfo | null {
+): BindingInfo[] | null {
   const declId = decl.get("id");
   if (!declId.isArrayPattern()) {
     return null;
@@ -144,7 +144,28 @@ export function parseUseResource(
   }
 
   if (resource) {
-    return { id: resourceVar.node, kind: "resource", resource };
+    const bindings: BindingInfo[] = [
+      { id: resourceVar.node, kind: "resource", resource },
+    ];
+
+    const refetchVar = elements[1];
+    if (refetchVar) {
+      if (!refetchVar.isIdentifier()) {
+        state.errors.push({
+          message: `Refetch variable in "useResource()" must be an identifier`,
+          node: refetchVar.node,
+          severity: "error",
+        });
+        return null;
+      }
+      bindings.push({
+        id: refetchVar.node,
+        kind: "refetch",
+        resourceId: resourceVar.node,
+      });
+    }
+
+    return bindings;
   }
 
   return null;

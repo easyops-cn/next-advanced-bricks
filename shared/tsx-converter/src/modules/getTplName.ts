@@ -6,7 +6,7 @@ export function getViewTplName(name: string, rootId: string) {
 }
 
 export function getAppTplName(name: string) {
-  return `tpl-${getViewTplNameSuffix(name)}`;
+  return `tpl${getViewTplNameSuffix(name)}`;
 }
 
 function getViewTplNamePrefixByRootId(rootId: string) {

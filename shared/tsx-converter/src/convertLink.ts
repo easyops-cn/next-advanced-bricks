@@ -11,6 +11,7 @@ export default function convertLink(
   const { properties } = component;
   const props = properties as LinkProps & {
     textContent?: string;
+    to?: string;
   };
   return {
     brick: "eo-link",

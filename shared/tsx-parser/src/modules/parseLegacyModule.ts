@@ -46,7 +46,7 @@ export function parseLegacyModule(
   };
   const globalOptions: ParseJsValueOptions = {
     component,
-    contextBindings: options?.withContexts,
+    stateBindings: options?.withContexts,
   };
   const file = app.files.find((f) => f.filePath === filePath)!;
   const mod: ParsedModule = {

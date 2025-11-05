@@ -66,7 +66,7 @@ export function convertEvents(component: Component, options: ConvertOptions) {
   return Object.keys(events).length > 0 ? events : undefined;
 }
 
-function convertEventHandlers(
+export function convertEventHandlers(
   handler: EventHandler | EventHandler[] | null,
   options: ConvertOptions
 ): BrickEventHandler[] | undefined {
@@ -87,9 +87,7 @@ function convertEventHandler(
     case "update_variable":
       return {
         action:
-          handler.payload.scope === "template"
-            ? "state.update"
-            : "context.replace",
+          handler.payload.scope === "template" ? "state.set" : "context.set",
         args: [handler.payload.name, handler.payload.value],
       };
     case "refresh_data_source":
@@ -142,6 +140,12 @@ function convertEventHandler(
           : {
               target: `[data-root-id="${options.rootId}"] [data-ref="${handler.payload.ref}"]`,
             }),
+        method: handler.payload.method,
+        args: handler.payload.args,
+      };
+    case "call_selector":
+      return {
+        target: handler.payload.selector,
         method: handler.payload.method,
         args: handler.payload.args,
       };
