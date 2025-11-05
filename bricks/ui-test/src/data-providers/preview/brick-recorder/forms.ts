@@ -21,6 +21,10 @@ export const formBricksMap: BrickEvtMapField = {
     "general.select.change.v2": (
       event: CustomEvent<OptionItem | OptionItem[]>
     ) => {
+      const { mode } = event.target as any;
+      // tags 的场景需要单独处理，在 tags 模式下 general.select.change.v2 事件传出的 options 为空
+      if (mode === "tags") return;
+
       let expr: t.Expression;
       const options = compact(castArray(event.detail));
 
@@ -36,6 +40,25 @@ export const formBricksMap: BrickEvtMapField = {
 
       generateBrickInputStep(event, text, {
         brickEvtName: "general.select.change.v2",
+      });
+    },
+    "general.select.change": (event: CustomEvent<string[]>) => {
+      const { mode } = event.target as any;
+      // 在 general.select.change 事件单独处理 tags 的场景，可以获取选择的值
+      if (mode !== "tags") return;
+
+      let expr: t.Expression;
+      if (!event.detail?.length) {
+        expr = t.callExpression(t.identifier("brick_clear"), []);
+      } else {
+        expr = t.callExpression(t.identifier("brick_fill"), [
+          t.arrayExpression(event.detail.map((v) => t.stringLiteral(v))),
+        ]);
+      }
+
+      const text = generateCodeText(expr);
+      generateBrickInputStep(event, text, {
+        brickEvtName: "general.select.change",
       });
     },
   },
