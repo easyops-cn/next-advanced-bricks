@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.26](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.1.25...@next-bricks/ui-test@1.1.26) (2025-11-05)
+
+
+### Bug Fixes
+
+* **ui-test:** 支持 general-select 的 tags 模式录制 ([709e3a4](https://github.com/easyops-cn/next-advanced-bricks/commit/709e3a40ca84320851e2e3aa3cd580f590e3e7ac))
+
+
+
+
+
 ## [1.1.25](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ui-test@1.1.24...@next-bricks/ui-test@1.1.25) (2025-11-04)
 
 
