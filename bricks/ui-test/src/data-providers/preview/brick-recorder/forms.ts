@@ -86,6 +86,18 @@ export const formBricksMap: BrickEvtMapField = {
       });
     },
   },
+  "forms.general-text-area": {
+    "general.textarea.change": (event: CustomEvent<string>) => {
+      const expr = t.callExpression(t.identifier("brick_type"), [
+        t.stringLiteral(event.detail),
+      ]);
+      const text = generateCodeText(expr);
+
+      generateBrickInputStep(event, text, {
+        brickEvtName: "general.textarea.change",
+      });
+    },
+  },
   "forms.general-switch": {
     "general.switch.change": (event: CustomEvent<boolean>) => {
       const expr = t.callExpression(t.identifier("brick_click"), []);
