@@ -354,7 +354,7 @@ function parseRefAttribute(
   return binding.id.name;
 }
 
-function convertJsxEventAttr(attr: string): string {
+export function convertJsxEventAttr(attr: string): string {
   return attr
     .slice(2)
     .replace(/([a-z])([A-Z])/g, "$1.$2")

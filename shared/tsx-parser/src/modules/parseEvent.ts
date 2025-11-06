@@ -25,6 +25,7 @@ import {
   validateGlobalApi,
 } from "./validations.js";
 import { getContextReferenceEventAgentId } from "./getContextReference.js";
+import { convertJsxEventAttr } from "./parseJSXElement.js";
 
 export function parseEvent(
   path: NodePath<t.Node>,
@@ -231,6 +232,19 @@ export function parseEventHandler(
                         }),
                 },
               ],
+            },
+          };
+        case "eventHandler":
+          return {
+            action: "dispatch_event",
+            payload: {
+              type: convertJsxEventAttr(binding.id.name),
+              detail: args[0]
+                ? parseJsValue(args[0], state, app, {
+                    ...options,
+                    modifier: undefined,
+                  })
+                : undefined,
             },
           };
         default:
