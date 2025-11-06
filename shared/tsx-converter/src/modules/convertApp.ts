@@ -98,6 +98,7 @@ export async function convertApp(
               name: getAppTplName(part.name!),
               bricks: part.bricks as BrickConfInTemplate[],
               state: part.context,
+              proxy: part.proxy,
             });
             break;
           }

@@ -10,7 +10,7 @@ import type {
   ComponentChild,
 } from "./interfaces.js";
 import {
-  isGeneralFunctionExpression,
+  // isGeneralFunctionExpression,
   validateEmbeddedExpression,
   validateFunction,
   validateGlobalApi,
@@ -20,6 +20,7 @@ import { parseChildren } from "./parseChildren.js";
 import { parseUseResource } from "./parseUseResource.js";
 import { parseUseContext } from "./parseUseContext.js";
 import { parseIdentifierUse } from "./parseIdentifierUse.js";
+import { parseUseImperativeHandle } from "./parseUseImperativeHandle.js";
 
 export function parseComponent(
   fn: NodePath<t.FunctionDeclaration>,
@@ -41,26 +42,27 @@ export function parseComponent(
   const options: ParseJsValueOptions = { ...globalOptions, component };
 
   const params = fn.get("params");
+  let templateRef: NodePath<t.Identifier> | undefined;
   if (type === "template") {
-    if (params.length > 1) {
+    if (params.length > 2) {
       state.errors.push({
-        message: `Component function can only have zero or one parameter, received ${params.length}`,
+        message: `Component function can only have no more than 2 parameters, received ${params.length}`,
         node: fn.node,
         severity: "error",
       });
       return null;
     }
     if (params.length > 0) {
-      const param = params[0];
-      if (!param.isObjectPattern()) {
+      const propParam = params[0];
+      if (!propParam.isObjectPattern()) {
         state.errors.push({
-          message: `Component function parameter must be an object pattern, received ${param.type}`,
-          node: param.node,
+          message: `Component function first parameter must be an object pattern, received ${propParam.type}`,
+          node: propParam.node,
           severity: "error",
         });
         return null;
       }
-      for (const prop of param.get("properties")) {
+      for (const prop of propParam.get("properties")) {
         if (prop.isRestElement()) {
           state.errors.push({
             message: `Component function parameter rest element is not allowed`,
@@ -133,6 +135,18 @@ export function parseComponent(
           bindingMap.set(bindingId, paramBinding);
         }
       }
+    }
+    if (params.length > 1) {
+      const refParam = params[1];
+      if (!refParam.isIdentifier()) {
+        state.errors.push({
+          message: `Component function second parameter must be an identifier for ref, received ${refParam.type}`,
+          node: refParam.node,
+          severity: "error",
+        });
+        return null;
+      }
+      templateRef = refParam;
     }
   } else if (params.length > 0) {
     state.errors.push({
@@ -384,69 +398,87 @@ export function parseComponent(
           });
           continue;
         }
-        if (validateGlobalApi(callee, "useEffect")) {
-          const args = expr.get("arguments");
-          if (args.length !== 2) {
-            state.errors.push({
-              message: `useEffect() requires exactly 2 arguments, received ${args.length}`,
-              node: expr.node,
-              severity: "error",
-            });
-          }
-          const callback = args[0];
-          const depArray = args[1];
-          if (!isGeneralFunctionExpression(callback)) {
-            state.errors.push({
-              message: `useEffect() first argument must be a function, received ${callback.type}`,
-              node: callback.node,
-              severity: "error",
-            });
-            continue;
-          }
-          if (!validateFunction(callback.node, state)) {
-            continue;
-          }
-          const callbackParams = callback.get("params");
-          if (callbackParams.length > 0) {
-            state.errors.push({
-              message: `useEffect() function must not have parameters, received ${callbackParams.length}`,
-              node: callback.node,
-              severity: "error",
-            });
-            continue;
-          }
+        // if (validateGlobalApi(callee, "useEffect")) {
+        //   const args = expr.get("arguments");
+        //   if (args.length !== 2) {
+        //     state.errors.push({
+        //       message: `useEffect() requires exactly 2 arguments, received ${args.length}`,
+        //       node: expr.node,
+        //       severity: "error",
+        //     });
+        //   }
+        //   const callback = args[0];
+        //   const depArray = args[1];
+        //   if (!isGeneralFunctionExpression(callback)) {
+        //     state.errors.push({
+        //       message: `useEffect() first argument must be a function, received ${callback.type}`,
+        //       node: callback.node,
+        //       severity: "error",
+        //     });
+        //     continue;
+        //   }
+        //   if (!validateFunction(callback.node, state)) {
+        //     continue;
+        //   }
+        //   const callbackParams = callback.get("params");
+        //   if (callbackParams.length > 0) {
+        //     state.errors.push({
+        //       message: `useEffect() function must not have parameters, received ${callbackParams.length}`,
+        //       node: callback.node,
+        //       severity: "error",
+        //     });
+        //     continue;
+        //   }
 
-          const callbackBody = callback.get("body");
-          if (!callbackBody.isBlockStatement()) {
-            state.errors.push({
-              message: `useEffect() function body must be a block statement, received ${callbackBody.type}`,
-              node: callbackBody.node,
-              severity: "error",
-            });
-            continue;
-          }
-          if (!depArray.isArrayExpression()) {
-            state.errors.push({
-              message: `useEffect() second argument must be an array, received ${depArray.type}`,
-              node: depArray.node,
-              severity: "error",
-            });
-            continue;
-          }
-          const depElements = depArray.get("elements");
-          if (depElements.length > 0) {
-            state.errors.push({
-              message: `useEffect() dependency array must be empty, received ${depElements.length} elements`,
-              node: depArray.node,
-              severity: "warning",
-            });
-          }
+        //   const callbackBody = callback.get("body");
+        //   if (!callbackBody.isBlockStatement()) {
+        //     state.errors.push({
+        //       message: `useEffect() function body must be a block statement, received ${callbackBody.type}`,
+        //       node: callbackBody.node,
+        //       severity: "error",
+        //     });
+        //     continue;
+        //   }
+        //   if (!depArray.isArrayExpression()) {
+        //     state.errors.push({
+        //       message: `useEffect() second argument must be an array, received ${depArray.type}`,
+        //       node: depArray.node,
+        //       severity: "error",
+        //     });
+        //     continue;
+        //   }
+        //   const depElements = depArray.get("elements");
+        //   if (depElements.length > 0) {
+        //     state.errors.push({
+        //       message: `useEffect() dependency array must be empty, received ${depElements.length} elements`,
+        //       node: depArray.node,
+        //       severity: "warning",
+        //     });
+        //   }
 
-          // let onUnmountHandlers: EventHandler | EventHandler[] | null = null;
-          // const onMountHandlers = parseEventHandler(callbackBody, state, app, options, (returnPath) => {
-          //   onUnmountHandlers = parseEventHandler(returnPath.get("argument") as NodePath<t.Expression>, state, app, options);
-          // });
+        //   // let onUnmountHandlers: EventHandler | EventHandler[] | null = null;
+        //   // const onMountHandlers = parseEventHandler(callbackBody, state, app, options, (returnPath) => {
+        //   //   onUnmountHandlers = parseEventHandler(returnPath.get("argument") as NodePath<t.Expression>, state, app, options);
+        //   // });
+        //   continue;
+        // }
+
+        if (validateGlobalApi(callee, "useImperativeHandle")) {
+          const result = parseUseImperativeHandle(
+            expr,
+            templateRef,
+            state,
+            app,
+            options
+          );
+          if (result) {
+            component.children ??= [];
+            component.children.push(...result.components);
+            component.proxy ??= {};
+            component.proxy.methods = result.methods;
+          }
         }
+
         continue;
       }
     }

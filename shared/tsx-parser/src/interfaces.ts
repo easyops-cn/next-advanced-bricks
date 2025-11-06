@@ -51,6 +51,7 @@ export type EventHandler =
   | TypeEventHandlerOfCallRef
   | TypeEventHandlerOfCallSelector
   | TypeEventHandlerOfShowMessage
+  | TypeEventHandlerOfHandleHttpError
   | TypeEventHandlerOfCallAPI
   | TypeEventHandlerOfDispatchEvent
   | TypeEventHandlerOfNavigate
@@ -98,6 +99,11 @@ export interface TypeEventHandlerOfShowMessage {
     type: "info" | "success" | "warn" | "error";
     content: string;
   };
+}
+
+export interface TypeEventHandlerOfHandleHttpError {
+  action: "handle_http_error";
+  payload: unknown;
 }
 
 export interface TypeEventHandlerOfCallAPI {

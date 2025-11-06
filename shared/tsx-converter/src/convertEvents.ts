@@ -142,7 +142,7 @@ function convertEventHandler(
               targetRef: handler.payload.ref,
             }
           : {
-              target: `[data-root-id="${options.rootId}"] [data-ref="${handler.payload.ref}"]`,
+              target: `${options.rootId ? `[data-root-id="${options.rootId}"] ` : ""}[data-ref="${handler.payload.ref}"]`,
             }),
         method: handler.payload.method,
         args: handler.payload.args,
@@ -162,6 +162,11 @@ function convertEventHandler(
       return {
         action: `message.${handler.payload.type}` as "message.info",
         args: [handler.payload.content],
+      };
+    case "handle_http_error":
+      return {
+        action: "handleHttpError",
+        args: [handler.payload],
       };
     case "dispatch_event":
       return {

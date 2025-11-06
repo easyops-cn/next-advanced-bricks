@@ -166,7 +166,7 @@ export function parseContextProvider(
           trigger: [...stateSetters].map(([setterName, stateName]) => ({
             action: "conditional",
             payload: {
-              test: `<% EVENT.detail.name === "${setterName}" %>`,
+              test: `<% EVENT.detail.name === ${JSON.stringify(setterName)} %>`,
               consequent: {
                 action: "update_variable",
                 payload: {

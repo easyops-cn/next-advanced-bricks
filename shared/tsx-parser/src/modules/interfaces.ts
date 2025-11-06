@@ -1,5 +1,9 @@
 import * as t from "@babel/types";
-import type { ContextConf, StoryboardFunction } from "@next-core/types";
+import type {
+  ContextConf,
+  CustomTemplateProxy,
+  StoryboardFunction,
+} from "@next-core/types";
 import type {
   DataSource,
   Events,
@@ -130,6 +134,7 @@ export interface ParsedComponent {
   type: "template" | "view" | "page";
   children?: ComponentChild[];
   id?: t.Identifier | null;
+  proxy?: CustomTemplateProxy;
 }
 
 export interface ParsedFunction {
@@ -198,6 +203,5 @@ export type {
   DataSource,
   DataSourceConfig,
   ToolInfo,
-  TypeEventHandlerOfShowMessage,
   RenderUseBrick,
 } from "../interfaces.js";

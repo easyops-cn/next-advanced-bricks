@@ -6,8 +6,11 @@ import type {
   ParseJsValueOptions,
   ParsedApp,
   ParsedModule,
-  TypeEventHandlerOfShowMessage,
 } from "./interfaces.js";
+import type {
+  TypeEventHandlerOfShowMessage,
+  TypeEventHandlerOfHandleHttpError,
+} from "../interfaces.js";
 import { parseJsValue } from "./parseJsValue.js";
 import {
   CALL_API_LIST,
@@ -138,6 +141,22 @@ export function parseEventHandler(
           action: "show_message",
           payload,
         } as TypeEventHandlerOfShowMessage;
+      }
+
+      if (validateGlobalApi(callee, "handleHttpError")) {
+        if (args.length !== 1) {
+          state.errors.push({
+            message: `"handleHttpError()" expects exactly 1 argument, but got ${args.length}`,
+            node: path.node,
+            severity: "error",
+          });
+          return null;
+        }
+        const payload = parseJsValue(args[0], state, app, options);
+        return {
+          action: "handle_http_error",
+          payload,
+        } as TypeEventHandlerOfHandleHttpError;
       }
 
       for (const name of CALL_API_LIST) {

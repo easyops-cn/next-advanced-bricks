@@ -1,4 +1,8 @@
-import type { BrickConf, ContextConf } from "@next-core/types";
+import type {
+  BrickConf,
+  ContextConf,
+  CustomTemplateProxy,
+} from "@next-core/types";
 import {
   isOfficialComponent,
   type ComponentChild,
@@ -32,6 +36,7 @@ export interface ConvertedPartOfComponent {
   type: "page" | "view" | "template";
   bricks: BrickConf[];
   context: ContextConf[];
+  proxy?: CustomTemplateProxy;
   name?: string;
   title?: string;
 }
@@ -136,6 +141,7 @@ async function parseModulePart(
     bricks,
     context,
     name: component.id?.name,
+    proxy: component.proxy,
     title: part.title,
   };
 }
