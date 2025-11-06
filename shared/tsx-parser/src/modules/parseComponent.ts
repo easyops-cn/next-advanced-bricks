@@ -19,6 +19,7 @@ import { parseJsValue, parsePropValue } from "./parseJsValue.js";
 import { parseChildren } from "./parseChildren.js";
 import { parseUseResource } from "./parseUseResource.js";
 import { parseUseContext } from "./parseUseContext.js";
+import { parseIdentifierUse } from "./parseIdentifierUse.js";
 
 export function parseComponent(
   fn: NodePath<t.FunctionDeclaration>,
@@ -253,48 +254,23 @@ export function parseComponent(
               }
               bindingMap.set(declId.node, { id: declId.node, kind: "ref" });
               continue;
-            } else if (validateGlobalApi(callee, "useQuery")) {
-              const declId = decl.get("id");
-              if (!declId.isIdentifier()) {
-                state.errors.push({
-                  message: `useQuery() must be assigned to an identifier, received ${declId.type}`,
-                  node: declId.node,
-                  severity: "error",
-                });
+            } else {
+              const identifierUse = parseIdentifierUse(
+                decl,
+                callee,
+                args,
+                state
+              );
+              if (identifierUse === false) {
                 continue;
               }
-              if (args.length > 0) {
-                state.errors.push({
-                  message: `useQuery() does not accept any arguments, received ${args.length}`,
-                  node: args[0].node,
-                  severity: "warning",
-                });
-              }
-              bindingMap.set(declId.node, { id: declId.node, kind: "query" });
-              continue;
-            } else if (validateGlobalApi(callee, "usePathParams")) {
-              const declId = decl.get("id");
-              if (!declId.isIdentifier()) {
-                state.errors.push({
-                  message: `usePathParams() must be assigned to an identifier, received ${declId.type}`,
-                  node: declId.node,
-                  severity: "error",
-                });
+              if (identifierUse) {
+                bindingMap.set(identifierUse[0], identifierUse[1]);
                 continue;
               }
-              if (args.length > 0) {
-                state.errors.push({
-                  message: `usePathParams() does not accept any arguments, received ${args.length}`,
-                  node: args[0].node,
-                  severity: "warning",
-                });
-              }
-              bindingMap.set(declId.node, {
-                id: declId.node,
-                kind: "pathParams",
-              });
-              continue;
-            } else if (validateGlobalApi(callee, "useContext")) {
+            }
+
+            if (validateGlobalApi(callee, "useContext")) {
               const bindings = parseUseContext(decl, args, state, app, options);
               if (bindings) {
                 for (const binding of bindings) {

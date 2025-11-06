@@ -99,35 +99,39 @@ function convertEventHandler(
         args: [handler.payload.name],
       };
     case "call_api": {
-      const { api, http, tool, params } = handler.payload;
+      const { api, http, tool, params, isRawProvider } = handler.payload;
 
       const success = handler.callback?.success
-        ? convertEventHandlers(
-            handler.callback.success as EventHandler | EventHandler[],
-            options
-          )
+        ? convertEventHandlers(handler.callback.success, options)
+        : undefined;
+
+      const error = handler.callback?.error
+        ? convertEventHandlers(handler.callback.error, options)
         : undefined;
 
       return {
-        ...(http
+        ...(isRawProvider
           ? {
-              useProvider: "basic.http-request",
-              args: [api, params],
+              useProvider: api,
+              args: params,
             }
-          : tool
+          : http
             ? {
-                useProvider: "ai-portal.call-tool",
-                args: [tool, params],
+                useProvider: "basic.http-request",
+                args: [api, params],
               }
-            : {
-                useProvider: `${api}:*`,
-                params,
-              }),
+            : tool
+              ? {
+                  useProvider: "ai-portal.call-tool",
+                  args: [tool, params],
+                }
+              : {
+                  useProvider: `${api}${api.includes(":") ? "" : ":*"}`,
+                  params,
+                }),
         callback: {
           ...(success && { success }),
-          error: {
-            action: "handleHttpError",
-          },
+          ...(error && { error }),
         },
       };
     }
@@ -149,12 +153,9 @@ function convertEventHandler(
         method: handler.payload.method,
         args: handler.payload.args,
       };
-    case "update_query":
+    case "navigate":
       return {
-        action:
-          handler.payload.method === "replace"
-            ? "history.replaceQuery"
-            : "history.pushQuery",
+        action: `history.${handler.payload.method}`,
         args: handler.payload.args,
       };
     case "show_message":

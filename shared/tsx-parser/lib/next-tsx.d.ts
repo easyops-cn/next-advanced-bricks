@@ -32,6 +32,24 @@ export const usePathParams: () => {
   readonly [key: string]: string | undefined;
 };
 
+export const useHistory: () => History;
+
+export interface History {
+  push: (url: string) => void;
+  replace: (url: string) => void;
+  reload: () => void;
+  pushQuery: UpdateQuery;
+  replaceQuery: UpdateQuery;
+}
+
+export type UpdateQuery = (
+  newQuery: Record<string, string | null>,
+  options?: {
+    clear?: boolean; // 是否清除已有参数，默认 false
+    notify?: boolean; // 是否通知路由变化，默认 true
+  }
+) => void;
+
 /** 接收一个 Context 对象，返回其当前的值 */
 export const useContext: <T>(context: Context<T>) => T;
 
@@ -53,15 +71,6 @@ export const translate: (
 ) => string;
 
 export const translateByRecord: (record: Record<string, string>) => string;
-
-/** 更新当前的 URL search 参数 */
-export const pushQuery: (
-  newQuery: Record<string, string | null>,
-  options?: {
-    clear?: boolean; // 是否清除已有参数，默认 false
-    notify?: boolean; // 是否通知路由变化，默认 true
-  }
-) => void;
 
 /** 调用指定的 Provider 接口 */
 export const callApi: <T extends keyof ContractMap>(

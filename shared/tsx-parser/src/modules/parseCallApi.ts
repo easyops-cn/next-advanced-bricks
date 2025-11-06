@@ -13,22 +13,23 @@ import {
   isNilPath,
   validateGlobalApi,
 } from "./validations.js";
-import { CALL_API_LIST } from "./constants.js";
+import { CALL_API_LIST, type CallApiType } from "./constants.js";
 
 export interface CallApiPayload {
   api: string;
   http?: boolean;
   tool?: ToolInfo;
-  params?: string | Record<string, unknown>;
+  params?: string | Record<string, unknown> | unknown[];
   ambiguousParams?: unknown;
   objectId?: string;
+  isRawProvider?: boolean;
 }
 
-const EXPECTED_ARGS = {
-  callApi: [2, 3],
-  callHttp: [1, 2],
-  callTool: [2, 3],
-};
+const EXPECTED_ARGS = new Map<string, [min: number, max: number]>([
+  ["callApi", [2, 3]],
+  ["callHttp", [1, 2]],
+  ["callTool", [2, 3]],
+]);
 
 export function parseCallApi(
   path: NodePath<t.Expression>,
@@ -45,7 +46,7 @@ export function parseCallApi(
     return null;
   }
   const callee = path.get("callee");
-  let calleeName: "callApi" | "callHttp" | "callTool" | undefined;
+  let calleeName: CallApiType | undefined;
   if (callee.isIdentifier()) {
     for (const name of CALL_API_LIST) {
       if (validateGlobalApi(callee, name)) {
@@ -70,9 +71,18 @@ export function parseCallApi(
     return null;
   }
 
-  const expectedArgs = EXPECTED_ARGS[calleeName];
-
+  const expectedArgs = EXPECTED_ARGS.get(calleeName);
   const args = path.get("arguments");
+
+  if (!expectedArgs) {
+    // copyText
+    return {
+      api: "basic.copy-to-clipboard",
+      isRawProvider: true,
+      params: args.map((arg) => parseJsValue(arg, state, app, options)),
+    };
+  }
+
   const missingArgs = args.length < expectedArgs[0];
   if (missingArgs || !expectedArgs.includes(args.length)) {
     state.errors.push({

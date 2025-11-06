@@ -116,7 +116,7 @@ export function parseUseResource(
       (property.node.name !== "then" && property.node.name !== "catch")
     ) {
       state.errors.push({
-        message: `Unexpected awaited expression`,
+        message: `Invalid useResource call`,
         node: property.node,
         severity: "error",
       });

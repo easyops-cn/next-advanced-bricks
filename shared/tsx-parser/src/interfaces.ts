@@ -23,7 +23,7 @@ export interface DataSource {
   http?: boolean;
   tool?: ToolInfo;
   objectId?: string;
-  params?: string | Record<string, unknown>;
+  params?: string | Record<string, unknown> | unknown[];
   ambiguousParams?: unknown;
   transform?: string;
   rejectTransform?: string;
@@ -53,7 +53,7 @@ export type EventHandler =
   | TypeEventHandlerOfShowMessage
   | TypeEventHandlerOfCallAPI
   | TypeEventHandlerOfDispatchEvent
-  | TypeEventHandlerOfUpdateQuery
+  | TypeEventHandlerOfNavigate
   | TypeEventHandlerOfConditional;
 
 export interface TypeEventHandlerOfUpdateVariable {
@@ -108,6 +108,7 @@ export interface TypeEventHandlerOfCallAPI {
     tool?: ToolInfo;
     params?: any;
     objectId?: string;
+    isRawProvider?: boolean;
   };
   callback?: TypeEventHandlerCallback;
 }
@@ -120,10 +121,10 @@ export interface TypeEventHandlerOfDispatchEvent {
   };
 }
 
-export interface TypeEventHandlerOfUpdateQuery {
-  action: "update_query";
+export interface TypeEventHandlerOfNavigate {
+  action: "navigate";
   payload: {
-    method: "push" | "replace";
+    method: "push" | "replace" | "reload" | "pushQuery" | "replaceQuery";
     args: unknown[];
   };
 }
@@ -138,9 +139,9 @@ export interface TypeEventHandlerOfConditional {
 }
 
 export interface TypeEventHandlerCallback {
-  success?: EventHandler | EventHandler[];
-  error?: EventHandler | EventHandler[];
-  finally?: EventHandler | EventHandler[];
+  success?: EventHandler | EventHandler[] | null;
+  error?: EventHandler | EventHandler[] | null;
+  finally?: EventHandler | EventHandler[] | null;
 }
 
 export interface LifeCycle {

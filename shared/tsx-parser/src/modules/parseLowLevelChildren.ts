@@ -13,7 +13,7 @@ import type {
   ParsedModule,
 } from "./interfaces.js";
 import { parseElement } from "./parseElement.js";
-import { parseEmbedded } from "./parseEmbedded.js";
+import { replaceBindings } from "./replaceBindings.js";
 
 export function parseLowLevelChildren(
   paths: NodePath<t.Node>[],
@@ -113,7 +113,7 @@ export function parseLowLevelChildren(
                 child.type === "text"
                   ? child.text
                   : child.type === "expression"
-                    ? parseEmbedded(child.expression, state, app, {
+                    ? replaceBindings(child.expression, state, app, {
                         ...options,
                         modifier: "=",
                       })
@@ -136,7 +136,7 @@ function constructMergeTexts(
     .map((elem) =>
       elem.type === "text"
         ? JSON.stringify(elem)
-        : `{type:"expression",value:(${parseEmbedded(elem.expression, state, app, options, true)})}`
+        : `{type:"expression",value:(${replaceBindings(elem.expression, state, app, options, true)})}`
     )
     .join(", ")}) %>`;
 }

@@ -30,6 +30,8 @@ import { getAppTplName, getViewTplName } from "./modules/getTplName.js";
 import { convertRoutes } from "./modules/convertRoutes.js";
 import { convertLifeCycle } from "./convertLifeCycle.js";
 
+const PORTAL_COMPONENTS = ["eo-modal", "eo-drawer"];
+
 export async function convertComponent(
   component: ComponentChild,
   mod: ParsedModule,
@@ -219,7 +221,7 @@ export async function convertComponent(
     }
   }
 
-  if (component.portal) {
+  if (component.portal || PORTAL_COMPONENTS.includes(brick.brick)) {
     brick.portal = true;
   }
 
