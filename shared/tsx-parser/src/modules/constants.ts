@@ -5,6 +5,7 @@ export const CALL_API_LIST = [
   "callHttp",
   "callTool",
   "copyText",
+  "showDialog",
 ] as const;
 
 export type CallApiType = (typeof CALL_API_LIST)[number];

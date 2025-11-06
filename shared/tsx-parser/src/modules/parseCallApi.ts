@@ -75,9 +75,12 @@ export function parseCallApi(
   const args = path.get("arguments");
 
   if (!expectedArgs) {
-    // copyText
+    // copyText / showDialog
     return {
-      api: "basic.copy-to-clipboard",
+      api:
+        calleeName === "copyText"
+          ? "basic.copy-to-clipboard"
+          : "basic.show-dialog",
       isRawProvider: true,
       params: args.map((arg) => parseJsValue(arg, state, app, options)),
     };

@@ -22,6 +22,16 @@ export const useRef: <T>(initialValue: T) => {
   current: T;
 };
 
+/** 获取当前应用的信息 */
+export const useApp: () => App;
+
+export interface App {
+  id: string;
+  name: string;
+  homepage: string;
+  config: Record<string, any>;
+}
+
 /** 获取当前的 URL search 参数 */
 export const useQuery: () => {
   readonly [key: string]: string | undefined;
@@ -32,6 +42,7 @@ export const usePathParams: () => {
   readonly [key: string]: string | undefined;
 };
 
+/** 获取用于进行导航跳转的对象 */
 export const useHistory: () => History;
 
 export interface History {
@@ -50,6 +61,20 @@ export type UpdateQuery = (
   }
 ) => void;
 
+export const useLocation: () => {
+  href: string;
+  origin: string;
+  host: string;
+  hostname: string;
+};
+
+/** 获取当前用户的信息 */
+export const useAuth: () => {
+  username: string;
+  userInstanceId: string;
+  isAdmin: boolean;
+};
+
 /** 接收一个 Context 对象，返回其当前的值 */
 export const useContext: <T>(context: Context<T>) => T;
 
@@ -62,7 +87,7 @@ export interface Context<T> {
 }
 
 /**
- * 翻译指定的文本。
+ * 按 key 获取翻译后的文本。
  * 可传递变量用于替换文本中的占位符（形如 `{{ propName }}`）。
  */
 export const translate: (
@@ -90,6 +115,29 @@ export const callTool: <T = any, P = any>(
 
 /** 提示用户操作结果 */
 export const showMessage: (options: {
-  type: "success" | "error";
+  type: "success" | "error" | "warn" | "info";
   content: string;
 }) => void;
+
+/** 弹出对话框 */
+export const showDialog: (options: {
+  type?: "success" | "error" | "warn" | "info" | "confirm" | "delete";
+  title?: string;
+  content: string;
+  danger?: boolean;
+  /**
+   * 配合 type: delete 使用，用户需要输入期望值才能进行操作。
+   * 在 content 中可以使用 `{{ expect }}` 占位符来显示期望值。
+   */
+  expect?: string;
+}) => Promise<void>;
+
+/** 拷贝一段文本 */
+export const copyText: (text: string) => Promise<void>;
+
+/**
+ * 平台部署的基础路径，通常为 `/next/`。
+ *
+ * 对于大部分组件，设置 url 时不需要带上该前缀，但在某些需要使用完整 URL 的场景下需要使用该常量进行拼接。
+ */
+export const BASE_URL: string;

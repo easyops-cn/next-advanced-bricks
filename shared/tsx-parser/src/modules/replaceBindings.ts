@@ -26,6 +26,12 @@ interface Annotation {
   end: number;
 }
 
+const GlobalConstants = new Map([
+  ["BASE_URL", "BASE_URL"],
+  ["translate", "I18N"],
+  ["translateByRecord", "I18N_TEXT"],
+]);
+
 export function replaceBindings(
   path: NodePath<t.Expression | t.FunctionDeclaration>,
   state: ParsedModule,
@@ -51,19 +57,17 @@ export function replaceBindings(
         idPath.parentPath.node.shorthand;
       const varName = idPath.node.name;
 
-      const isTranslate = validateGlobalApi(idPath, "translate");
-      const isTranslateByRecord =
-        !isTranslate && validateGlobalApi(idPath, "translateByRecord");
-
-      if (isTranslate || isTranslateByRecord) {
-        replacements.push({
-          type: "id",
-          start: idPath.node.start!,
-          end: idPath.node.end!,
-          replacement: isTranslate ? "I18N" : "I18N_TEXT",
-          shorthand: shorthand ? varName : undefined,
-        });
-        return;
+      for (const [globalName, replacement] of GlobalConstants) {
+        if (validateGlobalApi(idPath, globalName)) {
+          replacements.push({
+            type: "id",
+            start: idPath.node.start!,
+            end: idPath.node.end!,
+            replacement,
+            shorthand: shorthand ? varName : undefined,
+          });
+          return;
+        }
       }
 
       const binding = idPath.scope.getBinding(varName);
