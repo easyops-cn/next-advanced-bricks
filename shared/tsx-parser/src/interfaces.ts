@@ -12,6 +12,7 @@ export interface ParseError {
   message: string;
   node: t.Node | null | undefined;
   severity: "notice" | "warning" | "error" | "fatal";
+  filePath?: string;
 }
 
 export type { ComponentChild as Component };

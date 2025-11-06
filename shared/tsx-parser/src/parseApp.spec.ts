@@ -7,6 +7,7 @@ describe("parseApp", () => {
     const fileMap = new Map([
       ["/index.tsx", "app/index.txt"],
       ["/Pages/Layout.tsx", "app/Pages/Layout.txt"],
+      ["/Pages/Layout.css", "app/Pages/Layout.css"],
       ["/Pages/Home.tsx", "app/Pages/Home.txt"],
       ["/Pages/About.tsx", "app/Pages/About.txt"],
       ["/Pages/Page404.tsx", "app/Pages/Page404.txt"],

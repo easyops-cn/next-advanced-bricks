@@ -43,14 +43,24 @@ export function parseResourceCall(
       return null;
     }
     if (transformArgs.length > 0) {
-      const transform = parsePromiseCallback(transformArgs[0], state, options);
+      const transform = parsePromiseCallback(
+        transformArgs[0],
+        state,
+        app,
+        options
+      );
       if (transform) {
         dataSource[method === "catch" ? "rejectTransform" : "transform"] =
           transform;
       }
     }
     if (method !== "catch" && transformArgs.length > 1) {
-      const transform = parsePromiseCallback(transformArgs[1], state, options);
+      const transform = parsePromiseCallback(
+        transformArgs[1],
+        state,
+        app,
+        options
+      );
       if (transform) {
         dataSource.rejectTransform = transform;
       }
@@ -63,6 +73,7 @@ export function parseResourceCall(
 function parsePromiseCallback(
   callback: NodePath<t.ArgumentPlaceholder | t.SpreadElement | t.Expression>,
   state: ParsedModule,
+  app: ParsedApp,
   options: ParseJsValueOptions
 ): string | null {
   if (!callback.isArrowFunctionExpression()) {
@@ -107,5 +118,5 @@ function parsePromiseCallback(
     }
     optionsWithData.dataBinding = { id: arg.node };
   }
-  return parseEmbedded(body, state, optionsWithData);
+  return parseEmbedded(body, state, app, optionsWithData);
 }

@@ -59,7 +59,7 @@ export function parseLegacyModule(
     },
     internals: [],
     namedExports: new Map(),
-    errors: errors,
+    errors,
     contracts: new Set(),
     usedHelpers: new Set(),
   };

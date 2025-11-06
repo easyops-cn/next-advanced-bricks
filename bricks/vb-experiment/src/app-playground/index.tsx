@@ -210,7 +210,14 @@ function AppPlaygroundComponent({
         if (ignore) {
           return;
         }
-        setStoryboard(convertedApp as Partial<Storyboard> as Storyboard);
+        const storyboard = {
+          routes: convertedApp.routes,
+          meta: {
+            functions: convertedApp.functions,
+            customTemplates: convertedApp.templates,
+          },
+        } as Partial<Storyboard> as Storyboard;
+        setStoryboard(storyboard);
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to render app:", error);

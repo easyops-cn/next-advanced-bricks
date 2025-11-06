@@ -2,44 +2,26 @@
 
 exports[`convertApp should work 1`] = `
 {
-  "meta": {
-    "customTemplates": [
-      {
-        "bricks": [
-          {
-            "brick": "nav",
-            "children": [
-              {
-                "brick": "slot",
-                "events": undefined,
-                "lifeCycle": undefined,
-                "properties": {},
-              },
-            ],
-            "events": undefined,
-            "lifeCycle": undefined,
-            "properties": {},
-          },
-        ],
-        "name": "tpl-nav",
-        "state": [],
-      },
-    ],
-    "functions": [
-      {
-        "name": "sayHello",
-        "source": "function sayHello(name: string) {
+  "constants": {
+    "/Pages/Layout.css": "* {
+  box-sizing: border-box;
+}
+",
+  },
+  "functions": [
+    {
+      "name": "sayHello",
+      "source": "function sayHello(name: string) {
   return \`Hello, \${name}!\`;
 }",
-        "typescript": true,
-      },
-      {
-        "name": "_helper_mergeTexts",
-        "source": "function mock() {}",
-        "typescript": true,
-      },
-    ],
-  },
+      "typescript": true,
+    },
+    {
+      "name": "_helper_mergeTexts",
+      "source": "function mock() {}",
+      "typescript": true,
+    },
+  ],
   "routes": [
     {
       "bricks": [
@@ -88,6 +70,14 @@ exports[`convertApp should work 1`] = `
           "portal": true,
           "properties": {
             "id": "context-agent-LayoutContext",
+          },
+        },
+        {
+          "brick": "style",
+          "events": undefined,
+          "lifeCycle": undefined,
+          "properties": {
+            "textContent": "<%= FN._helper_mergeTexts({type:"expression",value:(CONSTANTS["/Pages/Layout.css"])}) %>",
           },
         },
         {
@@ -186,16 +176,6 @@ exports[`convertApp should work 1`] = `
                   "bricks": [
                     {
                       "brick": "h1",
-                      "children": [
-                        {
-                          "brick": "span",
-                          "events": undefined,
-                          "lifeCycle": undefined,
-                          "properties": {
-                            "textContent": "<%= FN._helper_mergeTexts({"type":"text","text":"\\n      This is home-"}, {type:"expression",value:(CTX.CONTEXT_PROVIDER__LayoutContext__x)}) %>",
-                          },
-                        },
-                      ],
                       "events": undefined,
                       "lifeCycle": {
                         "onMount": [
@@ -223,7 +203,9 @@ exports[`convertApp should work 1`] = `
                           },
                         ],
                       },
-                      "properties": {},
+                      "properties": {
+                        "textContent": "<%= FN._helper_mergeTexts({"type":"text","text":"\\n      This is home-"}, {type:"expression",value:(CTX.CONTEXT_PROVIDER__LayoutContext__x)}) %>",
+                      },
                     },
                   ],
                   "context": [],
@@ -253,6 +235,28 @@ exports[`convertApp should work 1`] = `
       ],
       "incrementalSubRoutes": true,
       "path": "\${APP.homepage}",
+    },
+  ],
+  "templates": [
+    {
+      "bricks": [
+        {
+          "brick": "nav",
+          "children": [
+            {
+              "brick": "slot",
+              "events": undefined,
+              "lifeCycle": undefined,
+              "properties": {},
+            },
+          ],
+          "events": undefined,
+          "lifeCycle": undefined,
+          "properties": {},
+        },
+      ],
+      "name": "tpl-nav",
+      "state": [],
     },
   ],
 }

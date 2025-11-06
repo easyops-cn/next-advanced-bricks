@@ -88,7 +88,7 @@ export function parseJsValue(
       return ambiguousSymbol;
     }
 
-    return parseEmbedded(path, state, options);
+    return parseEmbedded(path, state, app, options);
   }
 
   state.errors.push({
@@ -132,7 +132,7 @@ export function parsePropValue(
   });
 
   if (shouldCompute && validateEmbeddedExpression(path.node, null)) {
-    return parseEmbedded(path, state, options);
+    return parseEmbedded(path, state, app, options);
   }
 
   return parseJsValue(path, state, app, options);
@@ -156,7 +156,7 @@ function parseJsObject(
     if (options.ambiguous) {
       return ambiguousSymbol;
     }
-    return parseEmbedded(path, state, options);
+    return parseEmbedded(path, state, app, options);
   }
 
   const result: Record<string, unknown> = {};
@@ -215,7 +215,7 @@ function parseJsArray(
     if (options.ambiguous) {
       return ambiguousSymbol;
     }
-    return parseEmbedded(path, state, options);
+    return parseEmbedded(path, state, app, options);
   }
 
   const result: unknown[] = [];

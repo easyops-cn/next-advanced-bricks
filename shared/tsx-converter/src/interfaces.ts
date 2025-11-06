@@ -34,8 +34,7 @@ export interface ConvertState {
 
 export interface ConvertedApp {
   routes: RouteConf[];
-  meta: {
-    functions: StoryboardFunction[];
-    customTemplates: CustomTemplate[];
-  };
+  functions: StoryboardFunction[];
+  templates: CustomTemplate[];
+  constants?: Record<string, unknown>;
 }

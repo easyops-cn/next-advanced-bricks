@@ -12,6 +12,7 @@ export interface ParsedApp {
   entry?: ParsedModule;
   modules: Map<string, ParsedModule | null>;
   files: SourceFile[];
+  constants: Map<string, unknown>;
   errors: ParseError[];
 }
 
@@ -38,7 +39,13 @@ export interface ParsedModule {
   usedHelpers: Set<string>;
 }
 
-export type ModuleType = "entry" | "page" | "template" | "context" | "unknown";
+export type ModuleType =
+  | "entry"
+  | "page"
+  | "template"
+  | "css"
+  | "function"
+  | "unknown";
 
 export type ModulePart =
   | ModulePartOfComponent

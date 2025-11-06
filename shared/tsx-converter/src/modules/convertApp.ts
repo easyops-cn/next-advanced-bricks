@@ -24,7 +24,7 @@ export async function convertApp(
   app: ParsedApp,
   options: ConvertOptions
 ): Promise<ConvertedApp> {
-  const { entry } = app;
+  const { entry, modules } = app;
   if (!entry) {
     throw new Error("No entry module found in the app.");
   }
@@ -67,6 +67,15 @@ export async function convertApp(
 
   const functions: StoryboardFunction[] = [];
   const templates: CustomTemplate[] = [];
+
+  // Some modules are not converted after routes being converted,
+  // such as functions.
+  for (const [filePath, mod] of modules) {
+    if (!state.convertedModules.has(filePath)) {
+      const convertedMod = convertModule(mod!, state, options);
+      state.convertedModules.set(filePath, convertedMod);
+    }
+  }
 
   for (const mod of state.convertedModules.values()) {
     if (mod) {
@@ -113,9 +122,8 @@ export async function convertApp(
 
   return {
     routes,
-    meta: {
-      functions: [...functions, ...helpers],
-      customTemplates: templates,
-    },
+    functions: [...functions, ...helpers],
+    templates,
+    constants: Object.fromEntries(app.constants),
   };
 }

@@ -66,7 +66,7 @@ export function parseModule(
         if (stmt.isFunctionDeclaration()) {
           const id = stmt.node.id;
           if (id) {
-            if (isComponent(id)) {
+            if (isComponent(id, mod)) {
               componentBindings.add(id);
             } else {
               functionBindings.add(id);
@@ -230,7 +230,7 @@ export function parseModule(
 
       for (const { func: item, exported } of functionNodes) {
         const id = item.node.id!;
-        if (isComponent(id)) {
+        if (isComponent(id, mod)) {
           const type =
             app.appType === "app" && mod.moduleType === "entry"
               ? "page"
@@ -248,7 +248,7 @@ export function parseModule(
             }
           }
         } else {
-          const func = parseFunction(item, mod, globalOptions);
+          const func = parseFunction(item, mod, app, globalOptions);
           if (func) {
             const part: ModulePart = {
               type: "function",
@@ -264,27 +264,44 @@ export function parseModule(
       }
 
       if (defaultExportNode) {
-        const type =
-          mod.moduleType === "entry"
-            ? app.appType === "template"
-              ? "template"
-              : "view"
-            : mod.moduleType === "page"
-              ? "page"
-              : "template";
-        const component = parseComponent(
-          defaultExportNode,
-          mod,
-          app,
-          type,
-          globalOptions
-        );
-        if (component) {
-          mod.defaultExport = {
+        const funcId = (defaultExportNode as NodePath<t.FunctionDeclaration>)
+          .node.id;
+        if (funcId ? isComponent(funcId, mod) : mod.moduleType !== "function") {
+          const type =
+            mod.moduleType === "entry"
+              ? app.appType === "template"
+                ? "template"
+                : "view"
+              : mod.moduleType === "page"
+                ? "page"
+                : "template";
+          const component = parseComponent(
+            defaultExportNode,
+            mod,
+            app,
             type,
-            component,
-            ...(type === "view" ? { title: getViewTitle(component) } : {}),
-          };
+            globalOptions
+          );
+          if (component) {
+            mod.defaultExport = {
+              type,
+              component,
+              ...(type === "view" ? { title: getViewTitle(component) } : {}),
+            };
+          }
+        } else {
+          const func = parseFunction(
+            defaultExportNode,
+            mod,
+            app,
+            globalOptions
+          );
+          if (func) {
+            mod.defaultExport = {
+              type: "function",
+              function: func,
+            };
+          }
         }
       }
 
@@ -301,11 +318,15 @@ export function parseModule(
 /**
  * Checks if a given identifier is a component.
  *
+ * For a module of type "function", no components are allowed.
+ *
  * Convention: components have names starting with uppercase letter
  * e.g. MyComponent, HelloWorld
  * functions have names starting with lowercase letter
  * e.g. myFunction, helloWorld
  */
-function isComponent(id: t.Identifier) {
-  return id.name[0] >= "A" && id.name[0] <= "Z";
+function isComponent(id: t.Identifier, mod: ParsedModule): boolean {
+  return (
+    mod.moduleType !== "function" && id.name[0] >= "A" && id.name[0] <= "Z"
+  );
 }

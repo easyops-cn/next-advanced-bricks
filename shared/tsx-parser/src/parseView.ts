@@ -4,6 +4,7 @@ import type { ParseOptions } from "./interfaces.js";
 import { parseLegacyModule } from "./modules/parseLegacyModule.js";
 import type { ParsedApp } from "./modules/interfaces.js";
 import { parseFile } from "./modules/parseFile.js";
+import { collectModuleErrors } from "./modules/collectModuleErrors.js";
 
 export function parseView(source: string, options?: ParseOptions): ParsedApp {
   const app: ParsedApp = {
@@ -16,6 +17,7 @@ export function parseView(source: string, options?: ParseOptions): ParsedApp {
       },
       ...(options?.libs ?? []),
     ],
+    constants: new Map(),
     errors: [],
   };
 
@@ -31,6 +33,7 @@ export function parseView(source: string, options?: ParseOptions): ParsedApp {
       message: `Failed to parse TSX: ${error}`,
       node: null,
       severity: "fatal",
+      filePath: "/View.tsx",
     });
     return app;
   }
@@ -39,6 +42,7 @@ export function parseView(source: string, options?: ParseOptions): ParsedApp {
     if (t.isExportDefaultDeclaration(stmt)) {
       if (t.isFunctionDeclaration(stmt.declaration)) {
         parseFile("/View.tsx", app, ast, options);
+        collectModuleErrors(app);
         return app;
       }
       break;
@@ -46,5 +50,6 @@ export function parseView(source: string, options?: ParseOptions): ParsedApp {
   }
 
   parseLegacyModule("/View.tsx", app, ast, options);
+  collectModuleErrors(app);
   return app;
 }

@@ -28,6 +28,14 @@ export function parseLowLevelChildren(
     parseElement(p, state, app, options)
   );
 
+  // Remove leading and trailing nulls
+  if (rawChildren.length > 0 && rawChildren[0] === null) {
+    rawChildren = rawChildren.slice(1);
+  }
+  if (rawChildren.length > 0 && rawChildren[rawChildren.length - 1] === null) {
+    rawChildren = rawChildren.slice(0, rawChildren.length - 1);
+  }
+
   let onlyTextChildren = rawChildren.every((child) => child?.type === "text");
   if (!onlyTextChildren) {
     let previousChild: ChildElement | ChildMerged = null;
@@ -87,6 +95,7 @@ export function parseLowLevelChildren(
           : (child as ChildText)
       ),
       state,
+      app,
       options
     );
     return { textContent };
@@ -104,11 +113,11 @@ export function parseLowLevelChildren(
                 child.type === "text"
                   ? child.text
                   : child.type === "expression"
-                    ? parseEmbedded(child.expression, state, {
+                    ? parseEmbedded(child.expression, state, app, {
                         ...options,
                         modifier: "=",
                       })
-                    : constructMergeTexts(child.children, state, options),
+                    : constructMergeTexts(child.children, state, app, options),
             },
           }
     );
@@ -119,6 +128,7 @@ export function parseLowLevelChildren(
 function constructMergeTexts(
   elements: (ChildText | ChildExpression)[],
   state: ParsedModule,
+  app: ParsedApp,
   options: ParseJsValueOptions
 ) {
   state.usedHelpers.add("_helper_mergeTexts");
@@ -126,7 +136,7 @@ function constructMergeTexts(
     .map((elem) =>
       elem.type === "text"
         ? JSON.stringify(elem)
-        : `{type:"expression",value:(${parseEmbedded(elem.expression, state, options, true)})}`
+        : `{type:"expression",value:(${parseEmbedded(elem.expression, state, app, options, true)})}`
     )
     .join(", ")}) %>`;
 }

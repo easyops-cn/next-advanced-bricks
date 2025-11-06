@@ -30,7 +30,10 @@ export function parseFile(
 
   app.modules.set(filePath, null);
 
-  if (!ast) {
+  const isScript = filePath.endsWith(".ts") || filePath.endsWith(".tsx");
+  const isCss = !isScript && file.filePath.endsWith(".css");
+
+  if (!ast && isScript) {
     try {
       ast = parse(file.content, {
         plugins: ["jsx", "typescript"],
@@ -42,6 +45,7 @@ export function parseFile(
         message: `Failed to parse file (${filePath}): ${error}`,
         node: null,
         severity: "fatal",
+        filePath,
       });
       return;
     }
@@ -51,13 +55,17 @@ export function parseFile(
 
   const moduleType: ModuleType = isEntry
     ? "entry"
-    : file.filePath.startsWith("/Pages/")
-      ? "page"
-      : file.filePath.startsWith("/Components/")
-        ? "template"
-        : file.filePath.startsWith("/Contexts/")
-          ? "context"
-          : "unknown";
+    : isCss
+      ? "css"
+      : !isScript
+        ? "unknown"
+        : file.filePath.startsWith("/Pages/")
+          ? "page"
+          : file.filePath.startsWith("/Components/")
+            ? "template"
+            : file.filePath.startsWith("/Utils/")
+              ? "function"
+              : "unknown";
 
   const mod: ParsedModule = {
     source: file.content,
@@ -71,7 +79,7 @@ export function parseFile(
     usedHelpers: new Set(),
   };
 
-  if (ast.errors?.length) {
+  if (ast?.errors?.length) {
     for (const error of ast.errors) {
       mod.errors.push({
         message: `${error.code}: ${error.reasonCode}`,
@@ -87,5 +95,9 @@ export function parseFile(
 
   app.modules.set(filePath, mod);
 
-  parseModule(mod, app, ast, options);
+  if (ast) {
+    parseModule(mod, app, ast, options);
+  } else if (isCss) {
+    app.constants.set(filePath, file.content);
+  }
 }

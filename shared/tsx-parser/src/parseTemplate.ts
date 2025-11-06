@@ -1,3 +1,4 @@
+import { collectModuleErrors } from "./modules/collectModuleErrors.js";
 import type { ParsedApp } from "./modules/interfaces.js";
 import { parseFile } from "./modules/parseFile.js";
 
@@ -11,10 +12,13 @@ export function parseTemplate(source: string): ParsedApp {
         content: source,
       },
     ],
+    constants: new Map(),
     errors: [],
   };
 
   parseFile("/Template.tsx", app);
+
+  collectModuleErrors(app);
 
   return app;
 }

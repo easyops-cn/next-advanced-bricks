@@ -4,6 +4,7 @@ import { useState } from "next-tsx";
 import Home from "./Home";
 import About from "./About";
 import { LayoutContext } from "../Contexts/LayoutContext";
+import LayoutCss from "./Layout.css";
 
 export default function Layout() {
   const [x, setX] = useState(0);
@@ -29,6 +30,7 @@ export default function Layout() {
       x,
       setX,
     }}>
+      <style>{LayoutCss}</style>
       <h1>Home {x}</h1>
       <Nav>
         <ul>

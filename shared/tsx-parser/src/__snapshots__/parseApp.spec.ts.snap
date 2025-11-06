@@ -3,6 +3,12 @@
 exports[`parseApp should work 1`] = `
 {
   "appType": "app",
+  "constants": Map {
+    "/Pages/Layout.css" => "* {
+  box-sizing: border-box;
+}
+",
+  },
   "entry": {
     "contracts": Set {},
     "defaultExport": null,
@@ -188,86 +194,86 @@ exports[`parseApp should work 1`] = `
         "component": {
           "bindingMap": Map {
             Node {
-              "end": 234,
+              "end": 272,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 10,
-                  "index": 234,
-                  "line": 9,
+                  "index": 272,
+                  "line": 10,
                 },
                 "filename": undefined,
                 "identifierName": "x",
                 "start": Position {
                   "column": 9,
-                  "index": 233,
-                  "line": 9,
+                  "index": 271,
+                  "line": 10,
                 },
               },
               "name": "x",
-              "start": 233,
+              "start": 271,
               "type": "Identifier",
             } => {
               "id": Node {
-                "end": 234,
+                "end": 272,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 10,
-                    "index": 234,
-                    "line": 9,
+                    "index": 272,
+                    "line": 10,
                   },
                   "filename": undefined,
                   "identifierName": "x",
                   "start": Position {
                     "column": 9,
-                    "index": 233,
-                    "line": 9,
+                    "index": 271,
+                    "line": 10,
                   },
                 },
                 "name": "x",
-                "start": 233,
+                "start": 271,
                 "type": "Identifier",
               },
               "initialValue": 0,
               "kind": "state",
             },
             Node {
-              "end": 240,
+              "end": 278,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 16,
-                  "index": 240,
-                  "line": 9,
+                  "index": 278,
+                  "line": 10,
                 },
                 "filename": undefined,
                 "identifierName": "setX",
                 "start": Position {
                   "column": 12,
-                  "index": 236,
-                  "line": 9,
+                  "index": 274,
+                  "line": 10,
                 },
               },
               "name": "setX",
-              "start": 236,
+              "start": 274,
               "type": "Identifier",
             } => {
               "id": Node {
-                "end": 234,
+                "end": 272,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 10,
-                    "index": 234,
-                    "line": 9,
+                    "index": 272,
+                    "line": 10,
                   },
                   "filename": undefined,
                   "identifierName": "x",
                   "start": Position {
                     "column": 9,
-                    "index": 233,
-                    "line": 9,
+                    "index": 271,
+                    "line": 10,
                   },
                 },
                 "name": "x",
-                "start": 233,
+                "start": 271,
                 "type": "Identifier",
               },
               "kind": "setState",
@@ -305,6 +311,18 @@ exports[`parseApp should work 1`] = `
               "properties": {
                 "id": "context-agent-LayoutContext",
               },
+            },
+            {
+              "children": undefined,
+              "events": undefined,
+              "lifeCycle": undefined,
+              "name": "style",
+              "properties": {
+                "textContent": "<%= FN._helper_mergeTexts({type:"expression",value:(CONSTANTS["/Pages/Layout.css"])}) %>",
+              },
+              "ref": undefined,
+              "reference": null,
+              "slot": undefined,
             },
             {
               "children": undefined,
@@ -465,23 +483,23 @@ exports[`parseApp should work 1`] = `
             },
           ],
           "id": Node {
-            "end": 219,
+            "end": 257,
             "loc": SourceLocation {
               "end": Position {
                 "column": 30,
-                "index": 219,
-                "line": 8,
+                "index": 257,
+                "line": 9,
               },
               "filename": undefined,
               "identifierName": "Layout",
               "start": Position {
                 "column": 24,
-                "index": 213,
-                "line": 8,
+                "index": 251,
+                "line": 9,
               },
             },
             "name": "Layout",
-            "start": 213,
+            "start": 251,
             "type": "Identifier",
           },
           "type": "page",
@@ -518,23 +536,23 @@ exports[`parseApp should work 1`] = `
               },
             ],
             "id": Node {
-              "end": 1226,
+              "end": 1297,
               "loc": SourceLocation {
                 "end": Position {
                   "column": 12,
-                  "index": 1226,
-                  "line": 55,
+                  "index": 1297,
+                  "line": 57,
                 },
                 "filename": undefined,
                 "identifierName": "Nav",
                 "start": Position {
                   "column": 9,
-                  "index": 1223,
-                  "line": 55,
+                  "index": 1294,
+                  "line": 57,
                 },
               },
               "name": "Nav",
-              "start": 1223,
+              "start": 1294,
               "type": "Identifier",
             },
             "type": "template",
@@ -657,14 +675,7 @@ exports[`parseApp should work 1`] = `
           },
           "children": [
             {
-              "children": [
-                {
-                  "name": "Plaintext",
-                  "properties": {
-                    "textContent": "<%= FN._helper_mergeTexts({"type":"text","text":"\\n      This is home-"}, {type:"expression",value:(CTX.CONTEXT_PROVIDER__LayoutContext__x)}) %>",
-                  },
-                },
-              ],
+              "children": undefined,
               "events": undefined,
               "lifeCycle": {
                 "onMount": [
@@ -699,7 +710,9 @@ exports[`parseApp should work 1`] = `
                 ],
               },
               "name": "h1",
-              "properties": {},
+              "properties": {
+                "textContent": "<%= FN._helper_mergeTexts({"type":"text","text":"\\n      This is home-"}, {type:"expression",value:(CTX.CONTEXT_PROVIDER__LayoutContext__x)}) %>",
+              },
               "ref": undefined,
               "reference": null,
               "slot": undefined,
@@ -903,7 +916,7 @@ exports[`parseApp should work 1`] = `
       "errors": [],
       "filePath": "/Contexts/LayoutContext.ts",
       "internals": [],
-      "moduleType": "context",
+      "moduleType": "unknown",
       "namedExports": Map {
         "LayoutContext" => {
           "context": "LayoutContext",
@@ -960,6 +973,17 @@ exports[`parseApp should work 1`] = `
       "filePath": "/Pages/About.tsx",
       "internals": [],
       "moduleType": "page",
+      "namedExports": Map {},
+      "source": undefined,
+      "usedHelpers": Set {},
+    },
+    "/Pages/Layout.css" => {
+      "contracts": Set {},
+      "defaultExport": null,
+      "errors": [],
+      "filePath": "/Pages/Layout.css",
+      "internals": [],
+      "moduleType": "css",
       "namedExports": Map {},
       "source": undefined,
       "usedHelpers": Set {},

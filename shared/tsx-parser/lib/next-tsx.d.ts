@@ -43,6 +43,17 @@ export interface Context<T> {
   Provider: (props: { value: T; children: React.ReactNode }) => any;
 }
 
+/**
+ * 翻译指定的文本。
+ * 可传递变量用于替换文本中的占位符（形如 `{{ propName }}`）。
+ */
+export const translate: (
+  key: string,
+  variables?: Record<string, unknown>
+) => string;
+
+export const translateByRecord: (record: Record<string, string>) => string;
+
 /** 更新当前的 URL search 参数 */
 export const pushQuery: (
   newQuery: Record<string, string | null>,
