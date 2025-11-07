@@ -29,6 +29,7 @@ export interface DataSource {
   rejectTransform?: string;
   scope?: "global" | "template";
   config?: DataSourceConfig;
+  isRawProvider?: boolean;
 }
 
 export interface ToolInfo {

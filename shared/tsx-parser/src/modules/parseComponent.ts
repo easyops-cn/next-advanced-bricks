@@ -291,6 +291,7 @@ export function parseComponent(
                   bindingMap.set(binding.id, binding);
                 }
               }
+              continue;
             }
           }
         }

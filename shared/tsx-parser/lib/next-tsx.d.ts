@@ -86,6 +86,9 @@ export interface Context<T> {
   Provider: (props: { value: T; children: React.ReactNode }) => any;
 }
 
+/** 将 children 放置在统一提供的 portal 容器中渲染 */
+export const createPortal: (children: any) => any;
+
 /**
  * 按 key 获取翻译后的文本。
  * 可传递变量用于替换文本中的占位符（形如 `{{ propName }}`）。

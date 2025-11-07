@@ -9,6 +9,7 @@ import {
   isGeneralCallExpression,
   isGeneralMemberExpression,
   validateEmbeddedExpression,
+  validateGlobalApi,
 } from "./validations.js";
 import type { ChildElement } from "./internal-interfaces.js";
 import { parseJSXElement } from "./parseJSXElement.js";
@@ -52,6 +53,43 @@ export function parseElement(
 
   if (isGeneralCallExpression(path)) {
     const callee = path.get("callee");
+    if (callee.isIdentifier() && validateGlobalApi(callee, "createPortal")) {
+      const args = path.get("arguments");
+      if (args.length !== 1) {
+        const missingArgs = args.length === 0;
+        state.errors.push({
+          message: `createPortal() requires exactly 1 argument, received ${args.length}`,
+          node: path.node,
+          severity: missingArgs ? "error" : "warning",
+        });
+        if (missingArgs) {
+          return null;
+        }
+      }
+      const children = ([] as (ChildElement | null)[]).concat(
+        parseElement(args[0], state, app, options)
+      );
+      return children.map((child) => {
+        if (child === null) {
+          return child;
+        }
+        if (child.type !== "component") {
+          state.errors.push({
+            message: `Invalid argument type for createPortal(), expected a component but got ${child.type}`,
+            node: args[0].node,
+            severity: "error",
+          });
+          return child;
+        }
+        return {
+          ...child,
+          component: {
+            ...child.component,
+            portal: true,
+          },
+        };
+      });
+    }
     if (isGeneralMemberExpression(callee)) {
       const property = callee.get("property");
       if (property.isIdentifier() && property.node.name === "map") {

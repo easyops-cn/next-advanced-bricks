@@ -4,6 +4,7 @@ export const CALL_API_LIST = [
   "callApi",
   "callHttp",
   "callTool",
+  "callProvider",
   "copyText",
   "showDialog",
 ] as const;

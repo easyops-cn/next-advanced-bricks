@@ -32,7 +32,7 @@ export async function convertRoutes(
         throw new Error(`The "component" property of <Route> is required.`);
       }
 
-      const { reference } = component as ComponentChild & {
+      const { reference, name: componentName } = component as ComponentChild & {
         reference: ComponentReference;
       };
       // let page: ConvertedPart | null | undefined;
@@ -89,6 +89,7 @@ export async function convertRoutes(
 
       return {
         path: `\${APP.homepage}${path === "/" ? "" : path}`,
+        alias: componentName,
         incrementalSubRoutes: true,
         bricks: page.bricks,
         context: page.context,

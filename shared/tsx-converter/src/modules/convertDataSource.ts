@@ -13,6 +13,7 @@ export function convertDataSource(resource: DataSource): ContextConf {
     rejectTransform,
     config,
     scope,
+    isRawProvider,
   } = resource;
   const hasEnabled =
     config && Object.prototype.hasOwnProperty.call(config, "enabled");
@@ -20,34 +21,39 @@ export function convertDataSource(resource: DataSource): ContextConf {
   return {
     name: name,
     resolve: {
-      ...(http
+      ...(isRawProvider
         ? {
-            useProvider: "basic.http-request",
-            args: [api, params],
+            useProvider: api,
+            args: params as unknown[],
           }
-        : tool
+        : http
           ? {
-              useProvider: "ai-portal.call-tool",
-              args: [tool, params],
+              useProvider: "basic.http-request",
+              args: [api, params],
             }
-          : {
-              useProvider: `${api}:*`,
-              params: params as Record<string, unknown> | undefined,
-              // TODO: remove the temporary workaround below
-              ...(api === "easyops.api.data_exchange.olap@Query" &&
-              isObject(params)
-                ? {
-                    params: {
-                      ...params,
-                      translate: ["#showKey"],
-                      limit: undefined,
-                      limitBy: undefined,
-                      order: undefined,
-                      displayName: true,
-                    },
-                  }
-                : null),
-            }),
+          : tool
+            ? {
+                useProvider: "ai-portal.call-tool",
+                args: [tool, params],
+              }
+            : {
+                useProvider: `${api}:*`,
+                params: params as Record<string, unknown> | undefined,
+                // TODO: remove the temporary workaround below
+                ...(api === "easyops.api.data_exchange.olap@Query" &&
+                isObject(params)
+                  ? {
+                      params: {
+                        ...params,
+                        translate: ["#showKey"],
+                        limit: undefined,
+                        limitBy: undefined,
+                        order: undefined,
+                        displayName: true,
+                      },
+                    }
+                  : null),
+              }),
       ...(transform ? { transform: { value: transform } } : null),
       ...(rejectTransform
         ? { onReject: { transform: { value: rejectTransform } } }

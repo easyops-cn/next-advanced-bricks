@@ -25,7 +25,7 @@ export interface CallApiPayload {
   isRawProvider?: boolean;
 }
 
-const EXPECTED_ARGS = new Map<string, [min: number, max: number]>([
+const EXPECTED_ARGS = new Map<string, number[]>([
   ["callApi", [2, 3]],
   ["callHttp", [1, 2]],
   ["callTool", [2, 3]],
@@ -39,7 +39,7 @@ export function parseCallApi(
 ): CallApiPayload | null {
   if (!isGeneralCallExpression(path)) {
     state.errors.push({
-      message: `Await expression must be a call expression, received ${path.node.type}`,
+      message: `Expect a call expression here, received ${path.node.type}`,
       node: path.node,
       severity: "error",
     });
@@ -56,7 +56,7 @@ export function parseCallApi(
     }
     if (!calleeName) {
       state.errors.push({
-        message: `Await expression must call "callApi", "callHttp" or "callTool", received "${callee.node.name}"`,
+        message: `Unknown API: "${callee.node.name}"`,
         node: callee.node,
         severity: "error",
       });
@@ -64,7 +64,7 @@ export function parseCallApi(
     }
   } else {
     state.errors.push({
-      message: `Await expression must call an identifier, received ${callee.type}`,
+      message: `Expect an identifier here, received ${callee.type}`,
       node: callee.node,
       severity: "error",
     });
@@ -75,6 +75,35 @@ export function parseCallApi(
   const args = path.get("arguments");
 
   if (!expectedArgs) {
+    if (calleeName === "callProvider") {
+      if (args.length < 1) {
+        state.errors.push({
+          message: `"${calleeName}()" expects at least 1 argument, but got ${args.length}`,
+          node: path.node,
+          severity: "error",
+        });
+        return null;
+      }
+
+      const firstArg = args[0];
+      if (!firstArg.isStringLiteral()) {
+        state.errors.push({
+          message: `"${calleeName}()" expects a string literal as the first argument, but got ${firstArg.type}`,
+          node: firstArg.node,
+          severity: "error",
+        });
+        return null;
+      }
+
+      return {
+        api: firstArg.node.value,
+        isRawProvider: true,
+        params: args
+          .slice(1)
+          .map((arg) => parseJsValue(arg, state, app, options)),
+      };
+    }
+
     // copyText / showDialog
     return {
       api:

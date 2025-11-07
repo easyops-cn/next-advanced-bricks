@@ -234,19 +234,66 @@ export function parseEventHandler(
               ],
             },
           };
-        case "eventHandler":
+        case "eventHandler": {
+          if (args.length > 1) {
+            state.errors.push({
+              message: `Event dispatcher "${callee.node.name}" expects at most 1 argument, but got ${args.length}`,
+              node: path.node,
+              severity: "error",
+            });
+            return null;
+          }
+          let detail: unknown;
+          if (args.length > 0) {
+            const event = args[0];
+            if (!event.isObjectExpression()) {
+              state.errors.push({
+                message: `Event dispatcher "${callee.node.name}" argument must be an object expression, but got ${event.type}`,
+                node: event.node,
+                severity: "error",
+              });
+              return null;
+            }
+            for (const prop of event.get("properties")) {
+              if (!prop.isObjectProperty()) {
+                state.errors.push({
+                  message: `Event dispatcher "${callee.node.name}" argument object expression must have only object properties, but got ${prop.type}`,
+                  node: prop.node,
+                  severity: "error",
+                });
+                return null;
+              }
+              if (prop.node.computed) {
+                state.errors.push({
+                  message: `Event dispatcher "${callee.node.name}" argument object expression must not have computed properties`,
+                  node: prop.node,
+                  severity: "error",
+                });
+                return null;
+              }
+              const key = prop.get("key");
+              if (!key.isIdentifier() || key.node.name !== "detail") {
+                state.errors.push({
+                  message: `Event dispatcher "${callee.node.name}" argument object expression property key must be an identifier with name "detail", but got ${key.type}${key.isIdentifier() ? ` (name: ${key.node.name})` : ""}`,
+                  node: key.node,
+                  severity: "error",
+                });
+                return null;
+              }
+              detail = parseJsValue(prop.get("value"), state, app, {
+                ...options,
+                modifier: undefined,
+              });
+            }
+          }
           return {
             action: "dispatch_event",
             payload: {
               type: convertJsxEventAttr(binding.id.name),
-              detail: args[0]
-                ? parseJsValue(args[0], state, app, {
-                    ...options,
-                    modifier: undefined,
-                  })
-                : undefined,
+              detail,
             },
           };
+        }
         default:
           state.errors.push({
             message: `"${callee.node.name}" is not callable`,
