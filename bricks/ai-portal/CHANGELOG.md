@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.60.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.60.0...@next-bricks/ai-portal@0.60.1) (2025-11-07)
+
+
+### Bug Fixes
+
+* fix gantt failed color ([992d044](https://github.com/easyops-cn/next-advanced-bricks/commit/992d0440687228ae7507c23431a32078d63dc0f4))
+* fix preview z-index ([ad4aa54](https://github.com/easyops-cn/next-advanced-bricks/commit/ad4aa543829f6631f89eb83431f750476ba68e3e))
+* move tsx libs to a individual repo ([c8b03e5](https://github.com/easyops-cn/next-advanced-bricks/commit/c8b03e5e11042126d8ded205f294a74419200194))
+
+
+
+
+
 # [0.60.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.59.5...@next-bricks/ai-portal@0.60.0) (2025-11-04)
 
 

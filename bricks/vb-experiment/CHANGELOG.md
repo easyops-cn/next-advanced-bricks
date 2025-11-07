@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.18](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.3.17...@next-bricks/vb-experiment@1.3.18) (2025-11-07)
+
+
+### Bug Fixes
+
+* move tsx libs to a individual repo ([c8b03e5](https://github.com/easyops-cn/next-advanced-bricks/commit/c8b03e5e11042126d8ded205f294a74419200194))
+
+
+
+
+
 ## [1.3.17](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/vb-experiment@1.3.16...@next-bricks/vb-experiment@1.3.17) (2025-10-22)
 
 
