@@ -3584,6 +3584,34 @@
   dependencies:
     "@next-core/types" "^1.17.0"
 
+"@next-tsx/converter@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@next-tsx/converter/-/converter-0.0.4.tgz#d1be7096d46858272dafdae8e36666ce307d97b3"
+  integrity sha512-npHSs0X2RHLO62dkLU1uoCYk4+2y11Qj3UfzT8jGVK/h3DW3GQIlsbyBG4ekxftkVcoXnPJ0spWG/FGvtBEb+A==
+  dependencies:
+    "@babel/types" "^7.27.7"
+    "@easyops-cn/brick-next-pipes" "^0.7.3"
+    "@next-api-sdk/cmdb-sdk" "^1.1.1"
+    "@next-core/cook" "^2.5.12"
+    "@next-core/types" "^1.18.0"
+    "@next-core/utils" "^1.8.7"
+    "@next-tsx/parser" "^0.0.4"
+
+"@next-tsx/core@^0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@next-tsx/core/-/core-0.0.5.tgz#2bbc8342feec066fe8f686d6e4f962eee699ce0e"
+  integrity sha512-pxXR/3rxd4jIjNJr8tNaCSQ9NUs1L/8aTdwFSAuAtUPEGzzAPFSdF2iLDu/TQ/xtmm35jjNgBraUT1sWs6ln5Q==
+
+"@next-tsx/parser@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@next-tsx/parser/-/parser-0.0.4.tgz#ed5669f9a913bc9f5d9846e6f746b62fbb7062f7"
+  integrity sha512-9DvjT1fvVE2NomQV3m3VsLBCKG0kQlqaOYK+99jZotH2IJY7eQVLWN7hYcMrkt89/K6UM3WQECDLNHev8vfBbA==
+  dependencies:
+    "@babel/parser" "^7.27.2"
+    "@babel/traverse" "^7.27.4"
+    "@babel/types" "^7.27.7"
+    "@next-core/types" "^1.18.0"
+
 "@nicolo-ribaudo/chokidar-2@2.1.8-no-fsevents.3":
   version "2.1.8-no-fsevents.3"
   resolved "https://registry.yarnpkg.com/@nicolo-ribaudo/chokidar-2/-/chokidar-2-2.1.8-no-fsevents.3.tgz#323d72dd25103d0c4fbdce89dadf574a787b1f9b"

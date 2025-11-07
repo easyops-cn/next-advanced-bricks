@@ -1,8 +1,8 @@
 import React, { Suspense, useContext, useMemo, useState } from "react";
 import { asyncWrapBrick } from "@next-core/react-runtime";
 import type { CodeEditor, CodeEditorProps } from "@next-bricks/vs/code-editor";
-import nextTsxDefinition from "@next-shared/tsx-parser/lib/next-tsx.d.ts?raw";
-import componentsDefinition from "@next-shared/tsx-converter/lib/components.d.ts?raw";
+import nextTsxDefinition from "@next-tsx/core/index.d.ts?raw";
+import componentsDefinition from "@next-tsx/converter/lib/components.d.ts?raw";
 import styles from "./JsxEditor.module.css";
 import { WrappedButton, WrappedIconButton } from "../bricks";
 import { ICON_CLOSE } from "../constants";

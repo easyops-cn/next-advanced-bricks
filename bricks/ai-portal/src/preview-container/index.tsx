@@ -4,8 +4,8 @@ import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import { unstable_createRoot } from "@next-core/runtime";
-import type { ModulePartOfComponent, ParsedApp } from "@next-shared/tsx-parser";
-import { convertView, type ConvertResult } from "@next-shared/tsx-converter";
+import type { ModulePartOfComponent, ParsedApp } from "@next-tsx/parser";
+import { convertView, type ConvertResult } from "@next-tsx/converter";
 import type {
   GeneralIcon,
   GeneralIconProps,

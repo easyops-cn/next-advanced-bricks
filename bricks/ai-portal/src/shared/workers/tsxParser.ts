@@ -1,5 +1,5 @@
 // istanbul ignore file
-import type { ParsedApp, ParseOptions } from "@next-shared/tsx-parser";
+import type { ParsedApp, ParseOptions } from "@next-tsx/parser";
 import { wrap } from "comlink";
 
 export interface RemoteTsxParserWorker {
