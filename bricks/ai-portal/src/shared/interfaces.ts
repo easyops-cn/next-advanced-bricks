@@ -1,4 +1,4 @@
-import type { ParsedApp } from "@next-shared/tsx-parser";
+import type { ParsedApp } from "@next-tsx/parser";
 
 export interface Conversation {
   // Conversation ID

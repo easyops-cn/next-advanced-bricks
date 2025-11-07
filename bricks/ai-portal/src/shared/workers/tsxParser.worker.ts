@@ -1,5 +1,5 @@
 // istanbul ignore file
-import { parseView, type ParseOptions } from "@next-shared/tsx-parser";
+import { parseView, type ParseOptions } from "@next-tsx/parser";
 import { expose } from "comlink";
 
 class TsxParserWorker {

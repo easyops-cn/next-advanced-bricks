@@ -1,6 +1,6 @@
 import { http } from "@next-core/http";
 import { createProviderClass } from "@next-core/utils/general";
-import type { ToolInfo } from "@next-shared/tsx-parser";
+import type { ToolInfo } from "@next-tsx/parser";
 
 export async function callTool(
   tool: ToolInfo,

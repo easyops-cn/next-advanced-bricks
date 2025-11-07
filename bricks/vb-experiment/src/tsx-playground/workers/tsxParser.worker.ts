@@ -4,7 +4,7 @@ import {
   parseView,
   type ParseOptions,
   type SourceFile,
-} from "@next-shared/tsx-parser";
+} from "@next-tsx/parser";
 import { expose } from "comlink";
 
 class TsxParserWorker {

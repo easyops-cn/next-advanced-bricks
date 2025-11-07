@@ -1,7 +1,7 @@
 import { describe, test, expect, jest } from "@jest/globals";
 import { act } from "react-dom/test-utils";
 import type { EoPageTitle } from "@next-bricks/basic/page-title";
-import type { ModulePartOfComponent, ParsedApp } from "@next-shared/tsx-parser";
+import type { ModulePartOfComponent, ParsedApp } from "@next-tsx/parser";
 import "./";
 import type { PreviewContainer } from "./index.js";
 
@@ -24,7 +24,7 @@ jest.mock("../shared/workers/tsxParser.js", () => ({
     })
   ),
 }));
-jest.mock("@next-shared/tsx-converter", () => ({
+jest.mock("@next-tsx/converter", () => ({
   convertView: jest.fn((parsedResult: ParsedApp) =>
     (
       (parsedResult.entry?.defaultExport as ModulePartOfComponent)

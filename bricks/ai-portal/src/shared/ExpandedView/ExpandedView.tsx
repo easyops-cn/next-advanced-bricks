@@ -9,7 +9,7 @@ import React, {
 import classNames from "classnames";
 import { getBasePath, unstable_createRoot } from "@next-core/runtime";
 import { uniqueId } from "lodash";
-import { convertView } from "@next-shared/tsx-converter";
+import { convertView } from "@next-tsx/converter";
 import type { GraphGeneratedView } from "../../cruise-canvas/interfaces";
 import styles from "./ExpandedView.module.css";
 import { WrappedIcon, WrappedIconButton } from "../../shared/bricks";
@@ -19,7 +19,7 @@ import { TaskContext } from "../TaskContext";
 import { useViewFeedbackDone } from "../useViewFeedbackDone";
 import { parseTemplate } from "../parseTemplate";
 import type { ParsedView } from "../interfaces";
-import type { ModulePartOfComponent } from "@next-shared/tsx-parser";
+import type { ModulePartOfComponent } from "@next-tsx/parser";
 
 export interface ExpandedViewProps {
   views: GraphGeneratedView[];

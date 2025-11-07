@@ -18,10 +18,10 @@ import type {
   ExtraLib,
   ExtraMarker,
 } from "@next-bricks/vs/code-editor";
-import nextTsxDefinition from "@next-shared/tsx-parser/lib/next-tsx.d.ts?raw";
-import componentsDefinition from "@next-shared/tsx-converter/lib/components.d.ts?raw";
-import { convertView, type ConvertResult } from "@next-shared/tsx-converter";
-import type { ParsedApp, SourceFile } from "@next-shared/tsx-parser";
+import nextTsxDefinition from "@next-tsx/core/index.d.ts?raw";
+import componentsDefinition from "@next-tsx/converter/lib/components.d.ts?raw";
+import { convertView, type ConvertResult } from "@next-tsx/converter";
+import type { ParsedApp, SourceFile } from "@next-tsx/parser";
 import "@next-core/theme";
 import styles from "./styles.module.css";
 import { getRemoteTsxParserWorker } from "./workers/tsxParser.js";

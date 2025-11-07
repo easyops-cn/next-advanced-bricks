@@ -17,10 +17,10 @@ import type {
   ExtraLib,
   ExtraMarker,
 } from "@next-bricks/vs/code-editor";
-import nextTsxDefinition from "@next-shared/tsx-parser/lib/next-tsx.d.ts?raw";
-import componentsDefinition from "@next-shared/tsx-converter/lib/components.d.ts?raw";
-import { convertApp, type ConvertedApp } from "@next-shared/tsx-converter";
-import type { ParsedApp } from "@next-shared/tsx-parser";
+import nextTsxDefinition from "@next-tsx/core/index.d.ts?raw";
+import componentsDefinition from "@next-tsx/converter/lib/components.d.ts?raw";
+import { convertApp, type ConvertedApp } from "@next-tsx/converter";
+import type { ParsedApp } from "@next-tsx/parser";
 import "@next-core/theme";
 import styles from "./styles.module.css";
 import { getRemoteTsxParserWorker } from "../tsx-playground/workers/tsxParser.js";
@@ -136,7 +136,7 @@ function AppPlaygroundComponent({
   const [code, setCode] = useState(source ?? "");
   const deferredCode = useDeferredValue(code);
   const [markers, setMarkers] = useState<ExtraMarker[] | undefined>();
-  const [view, setView] = useState<ParsedApp | undefined>();
+  const [app, setApp] = useState<ParsedApp | undefined>();
 
   const allLibs = useMemo(
     () => [...BUILTIN_LIBS, ...(extraLibs ?? [])],
@@ -166,7 +166,7 @@ function AppPlaygroundComponent({
       if (ignore) {
         return;
       }
-      setView(result);
+      setApp(result);
       const withNodeErrors = result.errors.filter((err) => !!err.node);
       if (withNodeErrors.length > 0) {
         setMarkers(
@@ -200,17 +200,24 @@ function AppPlaygroundComponent({
   useEffect(() => {
     let ignore = false;
     (async () => {
-      if (!view) {
+      if (!app) {
         return;
       }
       // setLoading(true);
       let convertedApp: ConvertedApp | undefined;
       try {
-        convertedApp = await convertApp(view, { rootId, expanded: true });
+        convertedApp = await convertApp(app, { rootId, expanded: true });
         if (ignore) {
           return;
         }
-        setStoryboard(convertedApp as Partial<Storyboard> as Storyboard);
+        const storyboard = {
+          routes: convertedApp.routes,
+          meta: {
+            functions: convertedApp.functions,
+            customTemplates: convertedApp.templates,
+          },
+        } as Partial<Storyboard> as Storyboard;
+        setStoryboard(storyboard);
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to render app:", error);
@@ -223,7 +230,7 @@ function AppPlaygroundComponent({
     return () => {
       ignore = true;
     };
-  }, [rootId, view]);
+  }, [rootId, app]);
 
   return (
     <div className={styles.container}>
