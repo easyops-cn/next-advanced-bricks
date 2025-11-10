@@ -200,7 +200,7 @@ function getCompatibleBrickConf(brick: BrickConf) {
   const { children, slots, ...rest } = brick;
   return {
     ...rest,
-    slots: childrenToSlots(children, slots),
+    slots: childrenToSlots(children as BrickConf[], slots),
   };
 }
 

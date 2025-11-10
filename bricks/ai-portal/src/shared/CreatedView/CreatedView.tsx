@@ -144,7 +144,7 @@ function traverseBricks(
       break;
     }
     if (Array.isArray(brick.children)) {
-      traverseBricks(brick.children, callback);
+      traverseBricks(brick.children as BrickConf[], callback);
     }
   }
 }

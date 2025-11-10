@@ -58,7 +58,7 @@
     "@next-core/eslint-config-next": "^3.0.1",
     "@next-core/preview": "^0.8.26",
     "@next-core/test-next": "^2.0.1",
-    "@next-core/yo": "^1.6.3",
+    "@next-core/yo": "^1.6.5",
     "@next-shared/common-bricks": "^0.57.1",
     "@next-shared/general": "^0.10.10",
     "@next-shared/property-editor": "^0.1.3",

@@ -52,7 +52,9 @@ export interface GroupedHistory {
 }
 
 export interface ActionClickDetail {
-  action: SimpleActionType;
+  action: SimpleActionType & {
+    project?: Project;
+  };
   item: HistoryItem;
   project?: Project;
 }
@@ -467,7 +469,12 @@ export function LowLevelChatHistory(
                           className="actions"
                           actions={mergedHistoryActions}
                           onActionClick={(e) => {
-                            onActionClick({ action: e.detail, item });
+                            onActionClick({
+                              action: e.detail,
+                              item,
+                              project: (e.detail as { project?: Project })
+                                .project,
+                            });
                           }}
                           onVisibleChange={(e) => {
                             setActionsVisible(
