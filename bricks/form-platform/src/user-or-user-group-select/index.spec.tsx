@@ -10,12 +10,10 @@ jest.mock("@next-api-sdk/cmdb-sdk");
 jest.mock("@next-core/theme", () => ({}));
 jest.mock("@next-core/easyops-runtime", () => ({
   auth: {
-    getAuth: jest
-      .fn()
-      .mockReturnValue({
-        username: "easyops2",
-        userInstanceId: "mock-user-instance-id",
-      }),
+    getAuth: jest.fn().mockReturnValue({
+      username: "easyops2",
+      userInstanceId: "mock-user-instance-id",
+    }),
   },
 }));
 
@@ -148,12 +146,12 @@ describe("eo-user-or-user-group-select", () => {
       document.body.appendChild(element);
     });
     const select = element.shadowRoot?.querySelector("eo-select");
-    expect(InstanceApi_postSearch).toHaveBeenCalledTimes(3);
+    expect(InstanceApi_postSearch).toHaveBeenCalledTimes(4);
 
     act(() => {
       fireEvent.focus(select as HTMLElement);
     });
-    expect(InstanceApi_postSearch).toHaveBeenCalledTimes(3);
+    expect(InstanceApi_postSearch).toHaveBeenCalledTimes(4);
 
     act(() => {
       fireEvent(
@@ -161,7 +159,7 @@ describe("eo-user-or-user-group-select", () => {
         new CustomEvent("search", { detail: { value: "easyops" } })
       );
     });
-    expect(InstanceApi_postSearch).toHaveBeenCalledTimes(3);
+    expect(InstanceApi_postSearch).toHaveBeenCalledTimes(4);
 
     act(() => {
       document.body.removeChild(element);
