@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.41](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form-platform@0.4.40...@next-bricks/form-platform@0.4.41) (2025-11-10)
+
+
+### Bug Fixes
+
+* **user-select:** re-fetch when value changes ([1e80e44](https://github.com/easyops-cn/next-advanced-bricks/commit/1e80e445baf465fb5d1616c6941c7fb9497350fb))
+
+
+
+
+
 ## [0.4.40](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form-platform@0.4.39...@next-bricks/form-platform@0.4.40) (2025-10-17)
 
 **Note:** Version bump only for package @next-bricks/form-platform
