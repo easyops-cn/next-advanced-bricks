@@ -320,24 +320,47 @@ export function EoUserOrUserGroupSelectComponent(
           }
         : {}),
     };
-    const staticQuery =
-      objectId === "USER"
-        ? {
-            [userKey]: {
-              $in: props.value?.filter((v) => !v.startsWith(":")),
-            },
-          }
-        : {
-            instanceId: {
-              // 默认带为":"+instanceId，这里查询的时候去掉前面的冒号
-              $in: props.value
-                ?.filter((v) => v.startsWith(":"))
-                .map((v) => v.slice(1)),
-            },
-          };
 
-    return (
-      await InstanceApi_postSearch(objectId, {
+    const fetchByCurrentValue = () => {
+      // 对于分组是以 ":instanceId" 的格式存储在 value 中
+      const staticIn =
+        objectId === "USER"
+          ? props.value?.filter((v) => !v.startsWith(":"))
+          : props.value
+              ?.filter((v) => v.startsWith(":"))
+              .map((v) => v.slice(1));
+
+      if (staticIn?.length) {
+        return InstanceApi_postSearch(objectId, {
+          page: 1,
+          page_size: staticIn.length,
+          fields: {
+            ...zipObject(
+              showKey,
+              map(showKey, () => true)
+            ),
+
+            name: true,
+          },
+          query:
+            objectId === "USER"
+              ? {
+                  [userKey]: {
+                    $in: staticIn,
+                  },
+                }
+              : {
+                  instanceId: {
+                    $in: staticIn,
+                  },
+                },
+        });
+      }
+      return Promise.resolve({ list: [] });
+    };
+
+    const [{ list: searchList }, { list: valueList }] = await Promise.all([
+      InstanceApi_postSearch(objectId, {
         page: 1,
         page_size: 20,
         fields: {
@@ -352,35 +375,42 @@ export function EoUserOrUserGroupSelectComponent(
           props.userQuery && objectId === "USER"
             ? {
                 $and: [props.userQuery, showKeyQuery],
-                $or: staticQuery,
               }
             : props.userGroupQuery && objectId === "USER_GROUP"
               ? {
                   $and: [props.userGroupQuery, showKeyQuery],
-                  $or: staticQuery,
                 }
               : props.query
                 ? {
                     $and: [props.query, showKeyQuery],
-                    $or: staticQuery,
                   }
-                : { $or: [showKeyQuery, staticQuery] },
-      })
-    ).list;
+                : showKeyQuery,
+      }),
+      fetchByCurrentValue(),
+    ]);
+
+    for (const item of valueList!) {
+      const exists = searchList!.find((v) => v.instanceId === item.instanceId);
+      if (!exists) {
+        searchList!.push(item);
+      }
+    }
+
+    return searchList!;
   };
 
   const searchUser = async (value: string) => {
-    setUserList((await fetchInstanceList("USER", value)) || []);
+    setUserList(await fetchInstanceList("USER", value));
   };
 
   // 用户组在instanceId前面加上:
   const searchUserGroup = async (value: string) => {
     const result = await fetchInstanceList("USER_GROUP", value);
     setUserGroupList(
-      result?.map((v) => {
+      result.map((v) => {
         v.instanceId = ":" + v.instanceId;
         return v;
-      }) || []
+      })
     );
   };
 
@@ -392,17 +422,20 @@ export function EoUserOrUserGroupSelectComponent(
     ]);
   };
 
-  const focusedRef = useRef(false);
   const handleFocus = () => {
-    focusedRef.current = true;
     if (isNil(searchValue) || searchValue !== "") {
       searchUserOrUserGroupInstances("");
     }
   };
 
+  const prevValueRef = useRef<string[] | undefined>();
+
   useEffect(() => {
-    if (!focusedRef.current && props.value?.length) {
-      handleFocus();
+    // Re-fetch when value changes (such as updating the value programmatically)
+    // TODO: avoid unnecessary requests
+    if (props.value?.length && !isEqual(props.value, prevValueRef.current)) {
+      prevValueRef.current = props.value;
+      searchUserOrUserGroupInstances("");
     }
   }, [props.value]);
 
