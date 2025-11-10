@@ -36,11 +36,11 @@
   },
   "dependencies": {
     "@next-core/element": "^1.2.19",
-    "@next-core/i18n": "^1.0.86",
+    "@next-core/i18n": "^1.0.87",
     "@next-core/react-element": "^1.0.38",
-    "@next-core/react-runtime": "^1.7.39",
-    "@next-core/types": "^1.18.0",
-    "@next-core/utils": "^1.8.7",
+    "@next-core/react-runtime": "^1.7.43",
+    "@next-core/types": "^1.18.1",
+    "@next-core/utils": "^1.8.8",
     "@next-shared/datetime": "^0.4.3",
     "@next-shared/general": "^0.10.5",
     "@next-shared/shiki": "^0.1.0",
@@ -53,7 +53,7 @@
     "resize-observer-polyfill": "^1.5.1"
   },
   "devDependencies": {
-    "@next-core/build-next-bricks": "^1.24.0",
+    "@next-core/build-next-bricks": "^1.25.0",
     "@next-core/test-next": "^2.0.1",
     "babel-plugin-prismjs": "^2.1.0"
   },
