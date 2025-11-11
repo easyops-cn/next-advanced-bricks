@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.14](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/inject@0.2.13...@next-bricks/inject@0.2.14) (2025-11-11)
+
+**Note:** Version bump only for package @next-bricks/inject
+
+
+
+
+
 ## [0.2.13](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/inject@0.2.12...@next-bricks/inject@0.2.13) (2025-10-17)
 
 **Note:** Version bump only for package @next-bricks/inject
