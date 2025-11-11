@@ -70,6 +70,8 @@ export interface SidebarLink {
   activeIncludes?: string[];
 }
 
+export type { ActionClickDetail, Project, ProjectActionClickDetail };
+
 const ElevoSidebarComponent = forwardRef(LegacyElevoSidebarComponent);
 
 interface ElevoSidebarRef extends ChatHistoryRef {

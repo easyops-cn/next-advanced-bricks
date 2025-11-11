@@ -15,10 +15,12 @@
     "dist-types",
     "docs"
   ],
+  "types": "dist-types/jsx.d.ts",
   "exports": {
     "./package.json": "./package.json",
     "./dist/bricks.json": "./dist/bricks.json",
     "./dist/manifest.json": "./dist/manifest.json",
+    ".": "./dist-types/jsx.d.ts",
     "./*": {
       "types": "./dist-types/*/index.d.ts"
     }
@@ -63,10 +65,10 @@
     "@next-core/element": "^1.2.19",
     "@next-core/monaco-contributions": "^0.3.14",
     "@next-core/react-element": "^1.0.38",
-    "@next-core/react-runtime": "^1.7.39",
-    "@next-core/runtime": "^1.71.0",
+    "@next-core/react-runtime": "^1.7.43",
+    "@next-core/runtime": "^1.71.4",
     "@next-core/theme": "^1.6.1",
-    "@next-core/utils": "^1.8.7",
+    "@next-core/utils": "^1.8.8",
     "@next-shared/form": "^0.10.0",
     "@next-shared/monaco-copilot": "^0.2.1",
     "@next-shared/monaco-textmate": "^0.1.2",
@@ -78,7 +80,7 @@
     "yaml": "^2.5.1"
   },
   "devDependencies": {
-    "@next-core/build-next-bricks": "^1.24.0",
+    "@next-core/build-next-bricks": "^1.25.1",
     "@next-core/test-next": "^2.0.1",
     "resize-observer-polyfill": "^1.5.1"
   },

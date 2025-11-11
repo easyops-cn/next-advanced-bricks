@@ -15,10 +15,12 @@
     "dist-types",
     "docs"
   ],
+  "types": "dist-types/jsx.d.ts",
   "exports": {
     "./package.json": "./package.json",
     "./dist/bricks.json": "./dist/bricks.json",
     "./dist/manifest.json": "./dist/manifest.json",
+    ".": "./dist-types/jsx.d.ts",
     "./*": {
       "types": "./dist-types/*/index.d.ts"
     }
@@ -36,7 +38,7 @@
   },
   "dependencies": {
     "@next-core/element": "^1.2.19",
-    "@next-core/i18n": "^1.0.86",
+    "@next-core/i18n": "^1.0.87",
     "@next-core/react-element": "^1.0.38",
     "@next-core/theme": "^1.6.1",
     "@next-shared/story": "^0.0.4",
@@ -45,7 +47,7 @@
   },
   "devDependencies": {
     "@next-api-sdk/cmdb-sdk": "^1.1.1",
-    "@next-core/build-next-bricks": "^1.24.0",
+    "@next-core/build-next-bricks": "^1.25.1",
     "@next-core/test-next": "^2.0.1"
   },
   "peerDependencies": {

@@ -15,10 +15,12 @@
     "dist-types",
     "docs"
   ],
+  "types": "dist-types/jsx.d.ts",
   "exports": {
     "./package.json": "./package.json",
     "./dist/bricks.json": "./dist/bricks.json",
     "./dist/manifest.json": "./dist/manifest.json",
+    ".": "./dist-types/jsx.d.ts",
     "./*": {
       "types": "./dist-types/*/index.d.ts"
     }
@@ -62,7 +64,7 @@
     "refractor": "^4.8.1"
   },
   "devDependencies": {
-    "@next-core/build-next-bricks": "^1.24.0",
+    "@next-core/build-next-bricks": "^1.25.1",
     "@next-core/test-next": "^2.0.1"
   },
   "peerDependencies": {
