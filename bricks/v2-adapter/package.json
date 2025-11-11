@@ -14,9 +14,11 @@
     "dist",
     "dist-types"
   ],
+  "types": "dist-types/jsx.d.ts",
   "exports": {
     "./package.json": "./package.json",
     "./dist/bricks.json": "./dist/bricks.json",
+    ".": "./dist-types/jsx.d.ts",
     "./*": {
       "types": "./dist-types/*/index.d.ts"
     }
