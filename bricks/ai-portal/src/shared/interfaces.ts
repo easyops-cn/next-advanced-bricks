@@ -331,7 +331,7 @@ export interface CommandPayloadGoalPlan extends BaseCommandPayload {
 export interface LegacyCommandPayloadServiceFlowStarting {
   type: "serviceFlowStarting";
   serviceFlowStarting: {
-    spaceInstanceId: string;
+    spaceInstanceId?: string;
     spaceName?: string;
     flowInstanceId?: string;
     flowName?: string;
