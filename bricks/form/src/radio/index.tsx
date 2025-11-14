@@ -61,6 +61,8 @@ export interface RadioEventsMapping {
   onOptionsChange: "optionsChange";
 }
 
+export type { GeneralComplexOption };
+
 const { defineElement, property, event } = createDecorators();
 
 /**

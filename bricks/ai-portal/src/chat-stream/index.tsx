@@ -34,6 +34,7 @@ export interface ChatStreamProps {
   exampleProjects?: ExampleProject[];
   tryItOutUrl?: string;
   uploadOptions?: UploadOptions;
+  hideMermaid?: boolean;
 }
 
 export interface ConversationDetail {

@@ -37,6 +37,7 @@ export interface CruiseCanvasProps {
   tryItOutUrl?: string;
   separateInstructions?: boolean;
   uploadOptions?: UploadOptions;
+  hideMermaid?: boolean;
 }
 
 export interface ConversationDetail {

@@ -283,7 +283,7 @@ export type CommandPayload = CommandPayloadServiceFlowStarting;
 export interface CommandPayloadServiceFlowStarting {
   type: "serviceFlowStarting";
   serviceFlowStarting: {
-    spaceInstanceId: string;
+    spaceInstanceId?: string;
     spaceName?: string;
     flowInstanceId?: string;
     flowName?: string;

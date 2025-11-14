@@ -21,6 +21,7 @@ export interface IconButtonProps {
   tooltipHoist?: boolean;
   disabled?: boolean;
   variant?: IconButtonVariant;
+  reduceIconSize?: boolean;
 }
 
 export type IconButtonVariant =
