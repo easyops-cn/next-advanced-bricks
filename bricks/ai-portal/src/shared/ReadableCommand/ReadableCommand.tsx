@@ -53,7 +53,7 @@ export function getInitialContent(
   if (cmd) {
     switch (cmd.type) {
       case "serviceFlowStarting":
-        return `/start service flow${[
+        return `/start serviceflow${[
           cmd.serviceFlowStarting.flowName,
           cmd.serviceFlowStarting.spaceName,
         ]
@@ -61,8 +61,30 @@ export function getInitialContent(
           .slice(0, 1)
           .map((name) => `: ${name}`)
           .join("")}`;
+      case "serviceflow-start":
+        return `/start serviceflow${[
+          cmd.payload.flowName,
+          cmd.payload.spaceName,
+        ]
+          .filter(Boolean)
+          .slice(0, 1)
+          .map((name) => `: ${name}`)
+          .join("")}`;
+      case "serviceflow-edit":
+        return `/edit serviceflow${[cmd.payload.flowName, cmd.payload.spaceName]
+          .filter(Boolean)
+          .slice(0, 1)
+          .map((name) => `: ${name}`)
+          .join("")}`;
+      case "serviceflow-create":
+        return `/create serviceflow${[cmd.payload.spaceName]
+          .filter(Boolean)
+          .slice(0, 1)
+          .map((name) => `: ${name}`)
+          .join("")}`;
       default:
-        return `/${cmd.type}`;
+        // unknown command type
+        return `/${(cmd as CommandPayload).type}`;
     }
   }
   return `@${mentionedAiEmployeeId!}`;

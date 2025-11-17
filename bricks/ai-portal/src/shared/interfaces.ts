@@ -278,9 +278,57 @@ export interface ConversationError {
   error?: string;
 }
 
-export type CommandPayload = CommandPayloadServiceFlowStarting;
+export type CommandPayload =
+  | CommandPayloadServiceFlowStart
+  | CommandPayloadServiceFlowCreate
+  | CommandPayloadServiceFlowEdit
+  | CommandPayloadGoalPlan
+  | LegacyCommandPayloadServiceFlowStarting;
 
-export interface CommandPayloadServiceFlowStarting {
+export interface BaseCommandPayload {
+  type: string;
+  payload?: unknown;
+}
+
+export interface CommandPayloadServiceFlowStart extends BaseCommandPayload {
+  type: "serviceflow-start";
+  payload: {
+    spaceInstanceId: string;
+    spaceName?: string;
+    flowInstanceId?: string;
+    flowName?: string;
+  };
+}
+
+export interface CommandPayloadServiceFlowCreate extends BaseCommandPayload {
+  type: "serviceflow-create";
+  payload: {
+    spaceInstanceId: string;
+    spaceName?: string;
+  };
+}
+
+export interface CommandPayloadServiceFlowEdit extends BaseCommandPayload {
+  type: "serviceflow-edit";
+  payload: {
+    spaceInstanceId: string;
+    spaceName?: string;
+    flowInstanceId: string;
+    flowName?: string;
+  };
+}
+
+export interface CommandPayloadGoalPlan extends BaseCommandPayload {
+  type: "goal-plan";
+  payload: {
+    goalId: string;
+    goalName?: string;
+    description?: string;
+  };
+}
+
+/** @deprecated Use `payload` instead */
+export interface LegacyCommandPayloadServiceFlowStarting {
   type: "serviceFlowStarting";
   serviceFlowStarting: {
     spaceInstanceId: string;
