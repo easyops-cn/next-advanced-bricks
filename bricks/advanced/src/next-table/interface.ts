@@ -40,18 +40,21 @@ export type RecordType = Record<string, any>;
 
 export interface Column
   extends Pick<
-    ColumnType<RecordType>,
-    | "align"
-    | "colSpan"
-    | "dataIndex"
-    | "ellipsis"
-    | "fixed"
-    | "rowScope"
-    | "showSorterTooltip"
-    | "sortDirections"
-    | "title"
-    | "width"
-  > {
+      ColumnType<RecordType>,
+      | "align"
+      | "colSpan"
+      | "dataIndex"
+      | "ellipsis"
+      | "fixed"
+      | "rowScope"
+      | "showSorterTooltip"
+      | "sortDirections"
+      | "title"
+      | "width"
+    >,
+    ColumnProp {}
+
+export interface ColumnProp {
   key?: string | number;
   /** 表头自定义展示构件 */
   headerBrick?: WithUseBrick;

@@ -10,14 +10,14 @@ import type {
   InputEvents,
   InputEventsMap,
   InputProps,
-} from "../input/index.jsx";
+} from "../input/index.js";
 import classNames from "classnames";
 import {
   FormItemElementBase,
   MessageBody,
   pickFormItemProps,
 } from "@next-shared/form";
-import type { FormItem, FormItemProps } from "../form-item/index.jsx";
+import type { FormItem, FormItemProps } from "../form-item/index.js";
 
 const { defineElement, property, event } = createDecorators();
 const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");

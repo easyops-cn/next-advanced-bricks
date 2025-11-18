@@ -14,7 +14,7 @@ import type {
 import styleText from "./index.shadow.css";
 import classNames from "classnames";
 import "@next-core/theme";
-import type { FormItem, FormItemProps } from "../form-item/index.jsx";
+import type { FormItem, FormItemProps } from "../form-item/index.js";
 import { UseSingleBrickConf } from "@next-core/types";
 import type {
   GeneralIcon,
@@ -37,7 +37,7 @@ interface CustomOptions {
   [propName: string]: any;
 }
 
-export interface RadioProps {
+export interface RadioProps extends FormItemProps {
   type?: RadioType;
   options: GeneralOption[] | CustomOptions[] | undefined;
   value?: any;

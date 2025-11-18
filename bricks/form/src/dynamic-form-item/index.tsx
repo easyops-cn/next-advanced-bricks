@@ -18,7 +18,7 @@ import type {
   FormMapEvents,
   FormProps,
 } from "../form/index.js";
-import type { FormItem, FormItemProps } from "../form-item/index.jsx";
+import type { FormItem, FormItemProps } from "../form-item/index.js";
 import { ReactUseMultipleBricks } from "@next-core/react-runtime";
 import { UseBrickConf, UseSingleBrickConf } from "@next-core/types";
 import styleText from "./dynamic-form-item.shadow.css";

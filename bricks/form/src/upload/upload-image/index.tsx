@@ -27,7 +27,7 @@ const WrappedImage = wrapBrick<Image, ImageProps>("eo-image");
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
 
-export interface UploadImageProps {
+export interface UploadImageProps extends FormItemProps {
   label?: string;
   name?: string;
   required?: boolean;

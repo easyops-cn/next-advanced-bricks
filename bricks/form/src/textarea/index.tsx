@@ -8,7 +8,7 @@ import {
 import { wrapBrick } from "@next-core/react-element";
 import classNames from "classnames";
 import "@next-core/theme";
-import type { FormItem, FormItemProps } from "../form-item/index.jsx";
+import type { FormItem, FormItemProps } from "../form-item/index.js";
 import styleText from "./textarea.shadow.css";
 
 const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
@@ -34,6 +34,7 @@ export interface TextareaProps extends FormItemProps {
   maxLength?: number;
   autoSize?: AutoSize;
   validateState?: string;
+  variant?: "default" | "muted";
   themeVariant?: "default" | "elevo";
 }
 

@@ -13,7 +13,7 @@ import {
   MessageBody,
   pickFormItemProps,
 } from "@next-shared/form";
-import type { FormItem, FormItemProps } from "../form-item/index.jsx";
+import type { FormItem, FormItemProps } from "../form-item/index.js";
 import { TimePicker, DatePicker, ConfigProvider, theme } from "antd";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
 import "@next-core/theme";
@@ -35,6 +35,7 @@ import quarterOfYear from "dayjs/plugin/quarterOfYear.js";
 import enUS from "antd/locale/en_US.js";
 import zhCN from "antd/locale/zh_CN.js";
 import "dayjs/locale/zh-cn.js";
+import type { PickerMode } from "../interface.js";
 
 initializeI18n(NS, locales);
 dayjs.extend(customParseFormat);
@@ -59,13 +60,13 @@ export enum presetRangeType {
   ThisYear = "今年",
 }
 export interface TimeRange {
-  startTime: string;
-  endTime: string;
+  startTime?: string;
+  endTime?: string;
 }
 
-type PickerType = "date" | "week" | "month" | "quarter" | "year";
-type OtherPickerType = "dateTime" | "hmTime" | "time";
-export type RangeType = PickerType & OtherPickerType;
+export type PickerType = "date" | "week" | "month" | "quarter" | "year";
+export type OtherPickerType = "dateTime" | "hmTime" | "time";
+export type RangeType = PickerType | OtherPickerType;
 
 export interface EoTimeRangePickerProps extends FormItemProps {
   shadowRoot?: ShadowRoot | null;
@@ -74,13 +75,12 @@ export interface EoTimeRangePickerProps extends FormItemProps {
   rangeType?: RangeType;
   placeholder?: string | [string, string];
   inputStyle?: CSSProperties;
-  onChange?: (range: TimeRange) => void;
   emitChangeOnInit?: boolean;
   selectNearDays?: number;
   presetRanges?: presetRangeType[];
 }
 type RealTimeRangePickerProps = Omit<
-  EoTimeRangePickerProps,
+  EoTimeRangePickerComponentProps,
   keyof Omit<FormItemProps, "formElement">
 >;
 /**
@@ -457,7 +457,11 @@ export function RealTimeRangePicker(
     <DatePicker.RangePicker
       style={inputStyle}
       showTime={(rangeType as RangeType) === "dateTime"}
-      picker={(rangeType as RangeType) === "dateTime" ? "date" : rangeType}
+      picker={
+        (rangeType as RangeType) === "dateTime"
+          ? "date"
+          : (rangeType as PickerMode)
+      }
       value={pickerValue}
       presets={presetRange as any}
       format={format}
@@ -476,7 +480,13 @@ export function RealTimeRangePicker(
   return <div>{range}</div>;
 }
 
-export function EoTimeRangePickerComponent(props: EoTimeRangePickerProps) {
+interface EoTimeRangePickerComponentProps extends EoTimeRangePickerProps {
+  onChange?: (range: TimeRange) => void;
+}
+
+export function EoTimeRangePickerComponent(
+  props: EoTimeRangePickerComponentProps
+) {
   const currentTheme = useCurrentTheme();
   const locale =
     i18n.language && i18n.language.split("-")[0] === "en" ? enUS : zhCN;

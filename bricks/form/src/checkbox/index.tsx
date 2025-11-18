@@ -52,8 +52,6 @@ export interface CheckboxProps extends FormItemProps {
   isGroup?: boolean;
   optionGroups?: OptionGroup[];
   themeVariant?: "default" | "elevo";
-  onChange?: (value: CheckboxValueType[]) => void;
-  optionsChange?: (options: CheckboxOptionType[], name: string) => void;
 }
 
 /**
@@ -208,7 +206,12 @@ class Checkbox extends FormItemElementBase {
   }
 }
 
-function CheckboxComponent(props: CheckboxProps) {
+interface CheckboxComponentProps extends CheckboxProps {
+  onChange?: (value: CheckboxValueType[]) => void;
+  optionsChange?: (options: CheckboxOptionType[], name: string) => void;
+}
+
+function CheckboxComponent(props: CheckboxComponentProps) {
   const { isGroup } = props;
   const [values, setValues] = useState<CheckboxValueType[]>(props?.value ?? []);
   const [options, setOptions] = useState<CheckboxOptionType[]>(
@@ -401,7 +404,7 @@ function CheckboxComponent(props: CheckboxProps) {
       </div>
     );
   };
-  const CheckGroupItem = (props: CheckboxProps) => {
+  const CheckGroupItem = (props: CheckboxComponentProps) => {
     const _optionGroups = useMemo(() => {
       return optionGroups?.map((option) => {
         const newOptions = formatOptions(option.options);

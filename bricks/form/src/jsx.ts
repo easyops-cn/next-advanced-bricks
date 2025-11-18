@@ -4,7 +4,7 @@ import type { Checkbox, CheckboxProps, CheckboxOptionType } from "./checkbox";
 import type { EoColorPicker, EoColorPickerProps } from "./color-picker";
 import type { Form, FormProps } from "./form";
 import type { IconSelect, IconSelectProps } from "./icon-select";
-import type { Input, InputProps } from "./input/index.jsx";
+import type { Input, InputProps } from "./input/index.js";
 import type { GeneralComplexOption, Radio, RadioProps } from "./radio";
 import type { GeneralSearch, SearchProps } from "./search";
 import type { Select, SelectProps } from "./select";
@@ -20,7 +20,7 @@ import type { EoUploadFile, UploadFileProps } from "./upload/upload-file";
 import type { FileData } from "./upload/utils.js";
 import type { EoDatePicker } from "./date-picker";
 import type { DynamicFormItem } from "./dynamic-form-item";
-import type { SubmitButtons } from "./submit-buttons";
+import type { SubmitButtons, SubmitButtonsProps } from "./submit-buttons";
 import type { GeneralSwitch } from "./general-switch";
 import type { EoTimePicker } from "./time-picker";
 import type { MessageBody } from "@next-shared/form";
@@ -160,10 +160,11 @@ declare global {
       "eo-submit-buttons": DetailedHTMLProps<
         HTMLAttributes<SubmitButtons>,
         SubmitButtons
-      > & {
-        onSubmit?: (event: CustomEvent<void>) => void;
-        onCancel?: (event: CustomEvent<void>) => void;
-      };
+      > &
+        SubmitButtonsProps & {
+          onSubmit?: (event: CustomEvent<void>) => void;
+          onCancel?: (event: CustomEvent<void>) => void;
+        };
 
       "eo-switch": DetailedHTMLProps<
         HTMLAttributes<GeneralSwitch>,

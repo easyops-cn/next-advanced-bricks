@@ -7,7 +7,7 @@ import fixStyleText from "./fix-style.shadow.css";
 import { TimePicker, ConfigProvider, theme } from "antd";
 import { useCurrentTheme } from "@next-core/react-runtime";
 import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
-import type { FormItem, FormItemProps } from "../form-item/index.jsx";
+import type { FormItem, FormItemProps } from "../form-item/index.js";
 import { TimePickerProps } from "antd/lib/time-picker";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
 import { i18n } from "@next-core/i18n";
