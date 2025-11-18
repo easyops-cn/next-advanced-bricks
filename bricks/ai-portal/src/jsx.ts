@@ -36,7 +36,7 @@ import type { FlowTabs, FlowTabsProps } from "./flow-tabs";
 import type { GanttChart, GanttChartProps } from "./gantt-chart";
 import type { GanttNode } from "./gantt-chart/interfaces";
 import type { GoalCardList, GoalCardListProps } from "./goal-card-list";
-import type { HomeContainer } from "./home-container";
+import type { HomeContainer, HomeContainerProps } from "./home-container";
 import type { IconButton, IconButtonProps } from "./icon-button";
 import type { McpTools, McpToolsProps } from "./mcp-tools";
 import type {
@@ -222,7 +222,8 @@ declare global {
       "ai-portal--home-container": DetailedHTMLProps<
         HTMLAttributes<HomeContainer>,
         HomeContainer
-      >;
+      > &
+        HomeContainerProps;
 
       "ai-portal--icon-button": DetailedHTMLProps<
         HTMLAttributes<IconButton>,

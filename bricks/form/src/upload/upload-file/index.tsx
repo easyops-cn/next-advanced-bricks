@@ -35,7 +35,7 @@ const WrappedEasyopsIcon = wrapBrick<EasyOpsIcon, EasyOpsIconProps>(
 const WrappedTooltip = wrapBrick<EoTooltip, ToolTipProps>("eo-tooltip");
 const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
 
-export interface UploadFileProps {
+export interface UploadFileProps extends FormItemProps {
   label?: string;
   name?: string;
   required?: boolean;

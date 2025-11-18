@@ -1,13 +1,11 @@
 import type { DetailedHTMLProps, HTMLAttributes } from "react";
-import type { DefaultOptionType } from "antd/es/cascader";
-import type { RowSelectMethod } from "antd/es/table/interface";
 import type { EoTree, EoTreeProps } from "./tree";
 import type { TreeSelectBrick, TreeSelectProps } from "./tree-select";
 import type { CascaderBrick, CascaderProps } from "./cascader";
 import type { PdfViewer, PdfViewerProps } from "./pdf-viewer";
 import type { EoTextTooltip, EoTextTooltipProps } from "./text-tooltip";
 import type { EoNextTable, NextTableProps } from "./next-table";
-import type { RecordType, Sort } from "./next-table/interface";
+import type { ColumnProp, Sort } from "./next-table/interface";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -53,7 +51,7 @@ declare global {
           onCascaderChange?: (
             event: CustomEvent<{
               value: (string | number | null)[] | undefined;
-              selectedOptions: DefaultOptionType[] | DefaultOptionType[][];
+              selectedOptions: Record<string, any>[] | Record<string, any>[][];
             }>
           ) => void;
         };
@@ -62,7 +60,28 @@ declare global {
         HTMLAttributes<EoNextTable>,
         EoNextTable
       > &
-        NextTableProps & {
+        Omit<NextTableProps, "columns"> & {
+          columns?: Array<
+            Omit<ColumnProp, "useBrick" | "headerBrick"> & {
+              align?: string;
+              dataIndex?: number | string;
+              title?: string;
+              width?: number | string;
+              colSpan?: number;
+              ellipsis?: { showTitle?: boolean } | boolean;
+              fixed?: "left" | "right" | boolean;
+              rowScope?: "row" | "rowgroup";
+              showSorterTooltip?: boolean | object;
+              sortDirections?: ("descend" | "ascend" | null)[];
+              render?: (data: {
+                rowData: object;
+                cellData: any;
+              }) => React.ReactNode;
+              headerBrick?: {
+                render?: (data: any) => React.ReactNode;
+              };
+            }
+          >;
           onPageChange?: (
             event: CustomEvent<{ page: number; pageSize: number }>
           ) => void;
@@ -72,15 +91,15 @@ declare global {
           onRowSelect?: (
             event: CustomEvent<{
               keys: (string | number)[];
-              rows: RecordType[];
-              info: { type: RowSelectMethod };
+              rows: Record<string, any>[];
+              info: { type: string };
             }>
           ) => void;
-          onRowSelectV2?: (event: CustomEvent<RecordType[]>) => void;
+          onRowSelectV2?: (event: CustomEvent<Record<string, any>[]>) => void;
           onRowExpand?: (
             event: CustomEvent<{
               expanded: boolean;
-              record: RecordType;
+              record: Record<string, any>;
             }>
           ) => void;
           onExpandedRowsChange?: (
@@ -88,9 +107,9 @@ declare global {
           ) => void;
           onRowDrag?: (
             event: CustomEvent<{
-              list: RecordType[];
-              active: RecordType;
-              over: RecordType;
+              list: Record<string, any>[];
+              active: Record<string, any>;
+              over: Record<string, any>;
             }>
           ) => void;
         };

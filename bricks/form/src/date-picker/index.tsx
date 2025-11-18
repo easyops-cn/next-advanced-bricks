@@ -17,7 +17,7 @@ import type {
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
 import { useCurrentTheme } from "@next-core/react-runtime";
 import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
-import type { FormItem, FormItemProps } from "../form-item/index.jsx";
+import type { FormItem, FormItemProps } from "../form-item/index.js";
 import { i18n, initializeI18n } from "@next-core/i18n";
 import { K, NS, locales } from "./i18n.js";
 import dayjs from "dayjs";

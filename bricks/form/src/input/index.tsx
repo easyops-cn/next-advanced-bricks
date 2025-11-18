@@ -24,7 +24,7 @@ import {
   MessageBody,
   pickFormItemProps,
 } from "@next-shared/form";
-import type { FormItem, FormItemProps } from "../form-item/index.jsx";
+import type { FormItem, FormItemProps } from "../form-item/index.js";
 import { ComponentSize, InputType } from "../interface.js";
 import { useMergeRefs } from "@next-shared/hooks";
 

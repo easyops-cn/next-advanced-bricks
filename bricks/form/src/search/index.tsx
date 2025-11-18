@@ -13,7 +13,7 @@ import type {
   InputEvents,
   InputEventsMap,
   InputProps,
-} from "../input/index.jsx";
+} from "../input/index.js";
 
 const { defineElement, property, event } = createDecorators();
 

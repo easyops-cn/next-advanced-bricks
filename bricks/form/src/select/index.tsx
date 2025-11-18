@@ -13,7 +13,7 @@ import type { GeneralComplexOption, GeneralOption } from "../interface.js";
 import styleText from "./index.shadow.css";
 import classNames from "classnames";
 import "@next-core/theme";
-import type { FormItem, FormItemProps } from "../form-item/index.jsx";
+import type { FormItem, FormItemProps } from "../form-item/index.js";
 import { formatOptions } from "../utils/formatOptions.js";
 import type {
   Tag,

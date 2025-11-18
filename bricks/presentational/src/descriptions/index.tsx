@@ -38,7 +38,7 @@ export interface DescriptionsProps {
   layout?: Layout;
   bordered?: boolean;
   hideGroups?: string[] | string;
-  dataSource?: Record<string, unknown>;
+  dataSource?: object;
   themeVariant?: "default" | "elevo";
 }
 
@@ -121,7 +121,7 @@ class Descriptions extends ReactNextElement {
   @property({
     attribute: false,
   })
-  accessor dataSource: Record<string, unknown> | undefined;
+  accessor dataSource: object | undefined;
 
   /** 主题变体 */
   @property()

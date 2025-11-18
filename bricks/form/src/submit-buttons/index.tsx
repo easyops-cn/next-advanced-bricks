@@ -10,7 +10,7 @@ import type { ButtonType } from "../interface.js";
 const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
 const WrappedButton = wrapBrick<Button, ButtonProps>("eo-button");
 
-interface SubmitButtonsProps extends FormItemProps {
+export interface SubmitButtonsProps extends FormItemProps {
   curElement: HTMLElement;
   submitText?: string;
   submitType?: ButtonType;
@@ -18,8 +18,6 @@ interface SubmitButtonsProps extends FormItemProps {
   cancelText?: string;
   cancelType?: ButtonType;
   themeVariant?: "default" | "elevo";
-  onSubmitClick?: (event: React.MouseEvent) => void;
-  onCancelClick?: (event: React.MouseEvent) => void;
 }
 
 const { defineElement, property, event } = createDecorators();
@@ -117,7 +115,12 @@ class SubmitButtons extends FormItemElementBase {
   }
 }
 
-export function ButtonsComponent(props: SubmitButtonsProps) {
+interface SubmitButtonComponentProps extends SubmitButtonsProps {
+  onSubmitClick?: (event: React.MouseEvent) => void;
+  onCancelClick?: (event: React.MouseEvent) => void;
+}
+
+export function ButtonsComponent(props: SubmitButtonComponentProps) {
   return (
     <WrappedFormItem exportparts="message" {...pickFormItemProps(props)}>
       {props.submitText && (
