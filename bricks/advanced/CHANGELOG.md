@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.50.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.50.4...@next-bricks/advanced@0.50.5) (2025-11-18)
+
+
+### Bug Fixes
+
+* refine jsx types ([5b7d139](https://github.com/easyops-cn/next-advanced-bricks/commit/5b7d13975b47651dc202ad6b91178d1011e3bfde))
+
+
+
+
+
 ## [0.50.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.50.3...@next-bricks/advanced@0.50.4) (2025-11-18)
 
 
