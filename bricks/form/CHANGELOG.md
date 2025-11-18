@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.21.1...@next-bricks/form@1.21.2) (2025-11-18)
+
+
+### Bug Fixes
+
+* refine jsx types ([d2f6dc6](https://github.com/easyops-cn/next-advanced-bricks/commit/d2f6dc625b0e03d07322a2f23ac08acb3cadb2bb))
+* refine jsx types ([8bf258e](https://github.com/easyops-cn/next-advanced-bricks/commit/8bf258ee200991777a96bd1b0c36d0bd1022bc83))
+
+
+
+
+
 ## [1.21.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.21.0...@next-bricks/form@1.21.1) (2025-11-11)
 
 **Note:** Version bump only for package @next-bricks/form
