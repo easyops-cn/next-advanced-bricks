@@ -26,7 +26,7 @@ export
 @defineElement("eo-text-tooltip", {
   styleTexts: [styleText],
 })
-class EoTextTooltip extends ReactNextElement {
+class EoTextTooltip extends ReactNextElement implements EoTextTooltipProps {
   /**
    * 文案
    * @default
@@ -48,12 +48,12 @@ class EoTextTooltip extends ReactNextElement {
   }
 }
 
-interface TooltipPropsEoTextTooltipProps {
+export interface EoTextTooltipProps {
   label?: string;
   lineClamp?: number;
 }
 
-export function EoTextTooltipComponent(props: TooltipPropsEoTextTooltipProps) {
+export function EoTextTooltipComponent(props: EoTextTooltipProps) {
   const { lineClamp, label } = props;
   const ref = useRef<HTMLDivElement>(null);
   // 是否显示tooltip

@@ -65,7 +65,7 @@ export interface DropdownSelectProps {
   loading?: boolean;
 }
 
-interface DropdownOptions {
+export interface DropdownOptions {
   label: string;
   value: string;
   disabled?: boolean;

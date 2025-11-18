@@ -33,7 +33,7 @@ export
 @defineElement("eo-info-card-item", {
   styleTexts: [styleText],
 })
-class EoInfoCardItem extends ReactNextElement {
+class EoInfoCardItem extends ReactNextElement implements EoInfoCardItemProps {
   /**
    * title
    */
@@ -125,7 +125,7 @@ class EoInfoCardItem extends ReactNextElement {
   }
 }
 
-interface IconAvatar {
+export interface IconAvatar {
   icon: GeneralIconProps;
   color?: string;
   size?: number;
@@ -133,13 +133,13 @@ interface IconAvatar {
   bgColor?: string;
 }
 
-interface InfoCardDetail {
+export interface InfoCardDetail {
   title?: string;
   desc?: string;
   useBrick?: UseSingleBrickConf;
 }
 
-interface EoInfoCardItemComponentProps {
+export interface EoInfoCardItemProps {
   url?: string;
   target?: LinkProps["target"];
   cardTitle: string;
@@ -159,7 +159,7 @@ export function EoInfoCardItemComponent({
   detailList,
   callback,
   hoverable = true,
-}: EoInfoCardItemComponentProps) {
+}: EoInfoCardItemProps) {
   // const { t } = useTranslation(NS);
   // const hello = t(K.HELLO);
 

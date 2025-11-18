@@ -18,7 +18,7 @@ const WrapperButton = wrapBrick<Button, ButtonProps>("eo-button");
 
 const { defineElement, property, event } = createDecorators();
 
-interface ActionItem {
+export interface ActionItem {
   text: string;
   key: string;
   icon?: GeneralIconProps;

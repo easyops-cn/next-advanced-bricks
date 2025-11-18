@@ -1,5 +1,9 @@
 import type { DetailedHTMLProps, HTMLAttributes } from "react";
-import type { ActionButtons, ActionButtonsProps } from "./action-buttons";
+import type {
+  ActionButtons,
+  ActionButtonsProps,
+  ActionItem,
+} from "./action-buttons";
 import type {
   ActivityTimeline,
   ActivityTimelineProps,
@@ -9,9 +13,17 @@ import type { AIEmployees, AIEmployeesProps } from "./ai-employees";
 import type { BlankState, BlankStateProps } from "./blank-state";
 import type { ChatBox, ChatBoxProps } from "./chat-box";
 import type { ChatInput, ChatInputProps } from "./chat-input";
-import type { ChatStream, ChatStreamProps } from "./chat-stream";
+import type {
+  ChatStream,
+  ChatStreamProps,
+  ConversationDetail,
+} from "./chat-stream";
 import type { CruiseCanvas, CruiseCanvasProps } from "./cruise-canvas";
-import type { DropdownSelect, DropdownSelectProps } from "./dropdown-select";
+import type {
+  DropdownSelect,
+  DropdownSelectProps,
+  DropdownOptions,
+} from "./dropdown-select";
 import type { ElevoCard, ElevoCardProps } from "./elevo-card";
 import type { ElevoLogo } from "./elevo-logo";
 import type {
@@ -22,6 +34,7 @@ import type {
 } from "./elevo-sidebar";
 import type { FlowTabs, FlowTabsProps } from "./flow-tabs";
 import type { GanttChart, GanttChartProps } from "./gantt-chart";
+import type { GanttNode } from "./gantt-chart/interfaces";
 import type { GoalCardList, GoalCardListProps } from "./goal-card-list";
 import type { HomeContainer } from "./home-container";
 import type { IconButton, IconButtonProps } from "./icon-button";
@@ -40,21 +53,32 @@ import type {
 import type {
   ProjectConversations,
   ProjectConversationsProps,
+  ActionClickDetail as PCActionClickDetail,
+  Conversation,
 } from "./project-conversations";
 import type {
+  Knowledge,
   ProjectKnowledges,
   ProjectKnowledgesProps,
 } from "./project-knowledges";
 import type { RunningFlow, RunningFlowProps } from "./running-flow";
 import type { ShowCase, ShowCaseProps } from "./show-case";
 import type { ShowCases, ShowCasesProps } from "./show-cases";
-import type { StageFlow, StageFlowProps } from "./stage-flow";
+import type {
+  EditActivityDetail,
+  Stage,
+  StageFlow,
+  StageFlowProps,
+} from "./stage-flow";
 import type {
   StatWithMiniChart,
   StatWithMiniChartProps,
 } from "./stat-with-mini-chart";
 import type { StickyContainer, StickyContainerProps } from "./sticky-container";
-import type { TabList, TabListProps } from "./tab-list";
+import type { Tab, TabList, TabListProps } from "./tab-list";
+import type { ChatPayload } from "./shared/interfaces";
+import type { FeedbackDetail } from "./cruise-canvas/interfaces";
+import type { GoalItem } from "./goal-card-list/CardItem/CardItem";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -64,7 +88,9 @@ declare global {
         HTMLAttributes<ActionButtons>,
         ActionButtons
       > &
-        ActionButtonsProps;
+        ActionButtonsProps & {
+          onChange?: (event: CustomEvent<ActionItem | null>) => void;
+        };
 
       "ai-portal--activity-timeline": DetailedHTMLProps<
         HTMLAttributes<ActivityTimeline>,
@@ -94,31 +120,52 @@ declare global {
         HTMLAttributes<ChatBox>,
         ChatBox
       > &
-        ChatBoxProps;
+        ChatBoxProps & {
+          onChatSubmit?: (event: CustomEvent<ChatPayload>) => void;
+        };
 
       "ai-portal--chat-input": DetailedHTMLProps<
         HTMLAttributes<ChatInput>,
         ChatInput
       > &
-        ChatInputProps;
+        ChatInputProps & {
+          onChatSubmit?: (event: CustomEvent<ChatPayload>) => void;
+        };
 
       "ai-portal--chat-stream": DetailedHTMLProps<
         HTMLAttributes<ChatStream>,
         ChatStream
       > &
-        ChatStreamProps;
+        ChatStreamProps & {
+          onSplitChange?: (event: CustomEvent<boolean>) => void;
+          onShare?: (event: CustomEvent<void>) => void;
+          onTerminate?: (event: CustomEvent<void>) => void;
+          onFeedbackSubmit?: (event: CustomEvent<FeedbackDetail>) => void;
+          onFeedbackOnView?: (event: CustomEvent<string>) => void;
+          onUiSwitch?: (event: CustomEvent<"canvas" | "chat">) => void;
+          onDetailChange?: (event: CustomEvent<ConversationDetail>) => void;
+        };
 
       "ai-portal--cruise-canvas": DetailedHTMLProps<
         HTMLAttributes<CruiseCanvas>,
         CruiseCanvas
       > &
-        CruiseCanvasProps;
+        CruiseCanvasProps & {
+          onShare?: (event: CustomEvent<void>) => void;
+          onTerminate?: (event: CustomEvent<void>) => void;
+          onFeedbackSubmit?: (event: CustomEvent<FeedbackDetail>) => void;
+          onFeedbackOnView?: (event: CustomEvent<string>) => void;
+          onUiSwitch?: (event: CustomEvent<"canvas" | "chat">) => void;
+          onDetailChange?: (event: CustomEvent<ConversationDetail>) => void;
+        };
 
       "ai-portal--dropdown-select": DetailedHTMLProps<
         HTMLAttributes<DropdownSelect>,
         DropdownSelect
       > &
-        DropdownSelectProps;
+        DropdownSelectProps & {
+          onChange?: (event: CustomEvent<DropdownOptions>) => void;
+        };
 
       "ai-portal--elevo-card": DetailedHTMLProps<
         HTMLAttributes<ElevoCard>,
@@ -136,6 +183,8 @@ declare global {
         ElevoSidebar
       > &
         ElevoSidebarProps & {
+          onLogout?: () => void;
+          onAddProject?: () => void;
           onActionClick?: (event: CustomEvent<ActionClickDetail>) => void;
           onProjectActionClick?: (
             event: CustomEvent<ProjectActionClickDetail>
@@ -146,19 +195,29 @@ declare global {
         HTMLAttributes<FlowTabs>,
         FlowTabs
       > &
-        FlowTabsProps;
+        FlowTabsProps & {
+          onTabClick?: (event: CustomEvent<Tab>) => void;
+        };
 
       "ai-portal--gantt-chart": DetailedHTMLProps<
         HTMLAttributes<GanttChart>,
         GanttChart
       > &
-        GanttChartProps;
+        GanttChartProps & {
+          onNodeClick?: (event: CustomEvent<GanttNode>) => void;
+          onFullscreenClick?: (event: CustomEvent<void>) => void;
+        };
 
       "ai-portal--goal-card-list": DetailedHTMLProps<
         HTMLAttributes<GoalCardList>,
         GoalCardList
       > &
-        GoalCardListProps;
+        GoalCardListProps & {
+          onItemClick?: (event: CustomEvent<GoalItem>) => void;
+          onItemStatusChange?: (event: CustomEvent<GoalItem>) => void;
+          onItemTitleChange?: (event: CustomEvent<GoalItem>) => void;
+          onItemNewChat?: (event: CustomEvent<GoalItem>) => void;
+        };
 
       "ai-portal--home-container": DetailedHTMLProps<
         HTMLAttributes<HomeContainer>,
@@ -190,7 +249,11 @@ declare global {
         HTMLAttributes<NoticeList>,
         NoticeList
       > &
-        NoticeListProps;
+        NoticeListProps & {
+          onNoticeClick?: (event: CustomEvent<NoticeItem>) => void;
+          onMarkItemsRead?: (event: CustomEvent<NoticeItem[]>) => void;
+          onMarkAllRead?: (event: CustomEvent<void>) => void;
+        };
 
       "ai-portal--page-container": DetailedHTMLProps<
         HTMLAttributes<PageContainer>,
@@ -208,19 +271,27 @@ declare global {
         HTMLAttributes<ProjectConversations>,
         ProjectConversations
       > &
-        ProjectConversationsProps;
+        ProjectConversationsProps & {
+          onActionClick?: (event: CustomEvent<PCActionClickDetail>) => void;
+          onGoalClick?: (event: CustomEvent<Conversation>) => void;
+        };
 
       "ai-portal--project-knowledges": DetailedHTMLProps<
         HTMLAttributes<ProjectKnowledges>,
         ProjectKnowledges
       > &
-        ProjectKnowledgesProps;
+        ProjectKnowledgesProps & {
+          onActionClick?: (event: CustomEvent<ActionClickDetail>) => void;
+          onItemClick?: (event: CustomEvent<Knowledge>) => void;
+        };
 
       "ai-portal--running-flow": DetailedHTMLProps<
         HTMLAttributes<RunningFlow>,
         RunningFlow
       > &
-        RunningFlowProps;
+        RunningFlowProps & {
+          onActiveChange?: (event: CustomEvent<string | null>) => void;
+        };
 
       "ai-portal--show-case": DetailedHTMLProps<
         HTMLAttributes<ShowCase>,
@@ -238,7 +309,11 @@ declare global {
         HTMLAttributes<StageFlow>,
         StageFlow
       > &
-        StageFlowProps;
+        StageFlowProps & {
+          onChange?: (event: CustomEvent<Stage[]>) => void;
+          onAddActivity?: (event: CustomEvent<{ stage: Stage }>) => void;
+          onEditActivity?: (event: CustomEvent<EditActivityDetail>) => void;
+        };
 
       "ai-portal--stat-with-mini-chart": DetailedHTMLProps<
         HTMLAttributes<StatWithMiniChart>,
@@ -256,7 +331,9 @@ declare global {
         HTMLAttributes<TabList>,
         TabList
       > &
-        TabListProps;
+        TabListProps & {
+          onTabClick?: (event: CustomEvent<Tab>) => void;
+        };
     }
   }
 }

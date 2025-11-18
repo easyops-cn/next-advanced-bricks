@@ -40,6 +40,7 @@ export interface ChatStreamProps {
   aiEmployees?: AIEmployee[];
   commands?: Command[];
   uploadOptions?: UploadOptions;
+  hideMermaid?: boolean;
 }
 
 export interface ConversationDetail {

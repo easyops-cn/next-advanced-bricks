@@ -21,7 +21,7 @@ const lockBodyScroll = unwrapProvider<typeof _lockBodyScroll>(
 );
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
-interface StepItem {
+export interface StepItem {
   title: string;
   key: string;
 }
@@ -33,7 +33,7 @@ export
 @defineElement("eo-loading-step", {
   styleTexts: [styleText],
 })
-class EoLoadingStep extends ReactNextElement {
+class EoLoadingStep extends ReactNextElement implements EoLoadingStepProps {
   /**
    * 是否可见
    */
