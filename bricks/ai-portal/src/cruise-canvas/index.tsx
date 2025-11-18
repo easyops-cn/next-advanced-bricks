@@ -13,6 +13,10 @@ import type {
   ShowCaseType,
   UploadOptions,
 } from "../shared/interfaces.js";
+import type {
+  AIEmployee,
+  Command,
+} from "../shared/ChatCompletions/useChatCompletions.js";
 
 initializeI18n(NS, locales);
 
@@ -36,6 +40,8 @@ export interface CruiseCanvasProps {
   exampleProjects?: ExampleProject[];
   tryItOutUrl?: string;
   separateInstructions?: boolean;
+  aiEmployees?: AIEmployee[];
+  commands?: Command[];
   uploadOptions?: UploadOptions;
 }
 
@@ -114,6 +120,12 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
 
   @property({ type: Boolean })
   accessor separateInstructions: boolean | undefined;
+
+  @property({ attribute: false })
+  accessor aiEmployees: AIEmployee[] | undefined;
+
+  @property({ attribute: false })
+  accessor commands: Command[] | undefined;
 
   @property({ attribute: false })
   accessor uploadOptions: UploadOptions | undefined;
@@ -202,6 +214,8 @@ class CruiseCanvas extends ReactNextElement implements CruiseCanvasProps {
         exampleProjects={this.exampleProjects}
         tryItOutUrl={this.tryItOutUrl}
         separateInstructions={this.separateInstructions}
+        aiEmployees={this.aiEmployees}
+        commands={this.commands}
         uploadOptions={this.uploadOptions}
         onShare={this.#onShare}
         onTerminate={this.#onTerminate}

@@ -3,34 +3,22 @@ import React, {
   useCallback,
   useEffect,
   useRef,
-  useState,
   useImperativeHandle,
   createRef,
 } from "react";
 import { createPortal } from "react-dom";
 import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
-import {
-  getCaretPositionInTextarea,
-  getContentRectsInTextarea,
-  TextareaAutoResize,
-  type TextareaAutoResizeRef,
-} from "@next-shared/form";
+import { TextareaAutoResize } from "@next-shared/form";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
-import type { SimpleAction } from "@next-bricks/basic/actions";
 import { K, NS, locales, t } from "./i18n.js";
 import styleText from "./styles.shadow.css";
 import {
   getChatCommand,
   setChatCommand,
-  type ChatCommand,
 } from "../data-providers/set-chat-command.js";
-import type {
-  ChatPayload,
-  CommandPayload,
-  UploadOptions,
-} from "../shared/interfaces.js";
+import type { ChatPayload, UploadOptions } from "../shared/interfaces.js";
 import {
   UploadButton,
   type UploadButtonRef,
@@ -41,6 +29,11 @@ import { WrappedActions, WrappedIcon } from "./bricks.js";
 import { useFilesUploading } from "../shared/useFilesUploading.js";
 import GlobalDragOverlay from "../shared/FileUpload/GlobalDragOverlay.js";
 import { getInitialContent } from "../shared/ReadableCommand/ReadableCommand.js";
+import {
+  useChatCompletions,
+  type ActionWithSubCommands,
+  type Command,
+} from "../shared/ChatCompletions/useChatCompletions.js";
 
 initializeI18n(NS, locales);
 
@@ -70,23 +63,8 @@ export interface ChatBoxRef {
   focusOnInput: () => void;
 }
 
-export interface Command {
-  label: string;
-  value: string;
-  groupKey?: string;
-  groupLabel?: string;
-  subCommands?: Command[];
-  payload?: CommandPayload;
-}
-
-type ActionWithSubCommands = SimpleAction & {
-  key: string | number;
-  subCommands?: Command[];
-  payload?: CommandPayload;
-};
-
 /**
- * 构件 `ai-portal.chat-box`
+ * 大型聊天输入框，用于首页
  */
 export
 @defineElement("ai-portal.chat-box", {
@@ -173,15 +151,6 @@ interface ChatBoxComponentProps extends ChatBoxProps {
   ref?: React.Ref<ChatBoxRef>;
 }
 
-interface MentionPopover {
-  style: React.CSSProperties;
-  range: {
-    start: number;
-    end: number;
-  };
-  actions: ActionWithSubCommands[];
-}
-
 function LegacyChatBoxComponent(
   {
     root,
@@ -189,7 +158,7 @@ function LegacyChatBoxComponent(
     placeholder,
     autoFocus,
     aiEmployees,
-    commands: propCommands,
+    commands,
     uploadOptions,
     onMessageSubmit,
     onChatSubmit,
@@ -197,33 +166,6 @@ function LegacyChatBoxComponent(
   ref: React.Ref<ChatBoxRef>
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<TextareaAutoResizeRef>(null);
-  const [value, setValue] = useState("");
-  const valueRef = useRef("");
-  const [mentionPopover, setMentionPopover] = useState<MentionPopover | null>(
-    null
-  );
-  const [mentionOverlay, setMentionOverlay] = useState<
-    React.CSSProperties[] | null
-  >(null);
-  const [mentionedText, setMentionedText] = useState("");
-  const [activeActionIndex, setActiveActionIndex] = useState(0);
-  const [commandPrefix, setCommandPrefix] = useState("/");
-  const [commands, setCommands] = useState<Command[] | undefined>(propCommands);
-  const [command, setCommand] = useState<CommandPayload | null>(null);
-  const [mentioned, setMentioned] = useState<string | null>(null);
-  const [commandPopover, setCommandPopover] = useState<MentionPopover | null>(
-    null
-  );
-  const [commandOverlay, setCommandOverlay] = useState<
-    React.CSSProperties[] | null
-  >(null);
-  const [commandText, setCommandText] = useState("");
-  const selectionRef = useRef<{ start: number; end: number } | null>(null);
-
-  useEffect(() => {
-    setCommands(propCommands);
-  }, [propCommands]);
 
   const uploadEnabled = uploadOptions?.enabled;
   const uploadAccept = uploadOptions?.accept;
@@ -245,17 +187,46 @@ function LegacyChatBoxComponent(
     }
   }, [uploadEnabled, resetFiles]);
 
-  const [initialMention, setInitialMention] = useState<string | null>(null);
-  const [initialCommand, setInitialCommand] = useState<ChatCommand | null>(
-    null
-  );
+  const {
+    textareaRef,
+    valueRef,
+    value,
+    setValue,
+    selectionRef,
+
+    mentioned,
+    mentionedText,
+    mentionPopover,
+    mentionOverlay,
+    mentionActiveKeys,
+    setInitialMention,
+    handleMention,
+
+    command,
+    commandText,
+    commandPrefix,
+    commandPopover,
+    commandOverlay,
+    commandActiveKeys,
+    setInitialCommand,
+    handleSelectCommand,
+
+    handleChange,
+    handleKeyDown,
+  } = useChatCompletions({
+    aiEmployees,
+    commands,
+    root,
+    hasFiles,
+  });
+
   useEffect(() => {
     const command = getChatCommand();
     if (command) {
       setChatCommand(null);
     }
     setInitialCommand(command);
-  }, []);
+  }, [setInitialCommand]);
 
   useEffect(() => {
     const store = window.__elevo_try_it_out;
@@ -274,7 +245,7 @@ function LegacyChatBoxComponent(
         setInitialMention(store.mentionedAiEmployeeId);
       }
     }
-  }, []);
+  }, [setInitialCommand, setInitialMention, setValue, valueRef]);
 
   useImperativeHandle(ref, () => ({
     setValue: (value: string) => {
@@ -330,169 +301,9 @@ function LegacyChatBoxComponent(
     [doSubmit]
   );
 
-  const showMentionSuggestions = useCallback(
-    (textarea: HTMLTextAreaElement, employees: AIEmployee[] | undefined) => {
-      const { value, selectionStart, selectionEnd } = textarea;
-      if (
-        selectionStart !== null &&
-        selectionStart === selectionEnd &&
-        employees?.length
-      ) {
-        const previousContent = value.slice(0, selectionStart);
-        if (previousContent.startsWith("@")) {
-          const mentionText = previousContent.slice(1).toLowerCase();
-          const matchedEmployees = employees
-            .filter(
-              (employee) =>
-                employee.employeeId.toLowerCase().includes(mentionText) ||
-                employee.name.toLowerCase().includes(mentionText)
-            )
-            .slice(0, MAX_SHOWN_COMMANDS);
-          if (matchedEmployees.length > 0) {
-            const position = getCaretPositionInTextarea(
-              textarea,
-              selectionStart
-            );
-            const textareaRect = textarea.getBoundingClientRect();
-            setMentionPopover({
-              style: {
-                left: position.left + 10 + textareaRect.left,
-                top: position.top + 22 + textareaRect.top,
-                position: "absolute",
-                zIndex: 1,
-              },
-              range: { start: 0, end: selectionStart },
-              actions: matchedEmployees.map((employee) => ({
-                key: employee.employeeId,
-                text: employee.name,
-                data: employee,
-              })),
-            });
-            setActiveActionIndex(0);
-            return true;
-          }
-        }
-      }
-      setMentionPopover(null);
-    },
-    []
-  );
-
-  const showCommandSuggestions = useCallback(
-    (
-      textarea: HTMLTextAreaElement,
-      commandList: Command[] | undefined,
-      prefix: string
-    ) => {
-      const { value, selectionStart, selectionEnd } = textarea;
-      if (
-        selectionStart !== null &&
-        selectionStart === selectionEnd &&
-        commandList?.length
-      ) {
-        const previousContent = value.slice(0, selectionStart);
-        if (previousContent.startsWith(prefix)) {
-          const searchText = previousContent.slice(prefix.length).toLowerCase();
-          const matchedCommands = commandList
-            .filter(
-              (command) =>
-                command.label.toLowerCase().includes(searchText) ||
-                command.groupLabel?.toLowerCase().includes(searchText)
-            )
-            .slice(0, MAX_SHOWN_COMMANDS);
-          if (matchedCommands.length > 0) {
-            const popover = getCommandPopover(
-              matchedCommands,
-              textarea,
-              selectionStart
-            );
-            setCommandPopover(popover);
-            setActiveActionIndex(0);
-            return true;
-          }
-        }
-      }
-      setCommandPopover(null);
-    },
-    []
-  );
-
-  // Show mention/commands suggestions once candidates are loaded
-  const mentionInitializedRef = useRef(false);
-  useEffect(() => {
-    const textarea = textareaRef.current?.element;
-    if (
-      mentionInitializedRef.current ||
-      !aiEmployees ||
-      !textarea ||
-      document.activeElement !== root ||
-      root.shadowRoot?.activeElement !== textarea
-    ) {
-      return;
-    }
-    mentionInitializedRef.current = true;
-    showMentionSuggestions(textarea, aiEmployees);
-  }, [aiEmployees, root, showMentionSuggestions]);
-
-  const commandsInitializedRef = useRef(false);
-  useEffect(() => {
-    const textarea = textareaRef.current?.element;
-    if (
-      commandsInitializedRef.current ||
-      !propCommands ||
-      !textarea ||
-      document.activeElement !== root ||
-      root.shadowRoot?.activeElement !== textarea
-    ) {
-      return;
-    }
-    commandsInitializedRef.current = true;
-    showCommandSuggestions(textarea, propCommands, "/");
-  }, [propCommands, root, showCommandSuggestions]);
-
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const { value } = e.target;
-      valueRef.current = value;
-      setValue(value);
-
-      if (showMentionSuggestions(e.target, aiEmployees)) {
-        return;
-      }
-      showCommandSuggestions(e.target, commands, commandPrefix);
-    },
-    [
-      aiEmployees,
-      commandPrefix,
-      commands,
-      showCommandSuggestions,
-      showMentionSuggestions,
-    ]
-  );
-
-  useEffect(() => {
-    if (mentionedText && !value.startsWith(mentionedText)) {
-      setMentionedText("");
-      setMentioned(null);
-    }
-  }, [mentionedText, value]);
-
-  useEffect(() => {
-    if (
-      !value.startsWith(commandPrefix) ||
-      (commandText && !value.startsWith(commandText))
-    ) {
-      setCommandText("");
-      setCommand(null);
-      setCommands(propCommands);
-      setCommandPrefix("/");
-      setCommandPopover(null);
-    }
-  }, [commandPrefix, commandText, value, propCommands]);
-
   const handleSubmitClick = useCallback(() => {
     doSubmit(valueRef.current);
-  }, [doSubmit]);
+  }, [doSubmit, valueRef]);
 
   useEffect(
     () => {
@@ -507,212 +318,6 @@ function LegacyChatBoxComponent(
     []
   );
 
-  useEffect(() => {
-    const element = textareaRef.current?.element;
-    if (!mentionedText || !element) {
-      setMentionOverlay(null);
-      return;
-    }
-    setMentionOverlay(getOverlayRects(element, mentionedText));
-  }, [mentionedText, hasFiles]);
-
-  useEffect(() => {
-    const element = textareaRef.current?.element;
-    if (!commandText || !element) {
-      setCommandOverlay(null);
-      return;
-    }
-    setCommandOverlay(getOverlayRects(element, commandText));
-  }, [commandText, hasFiles]);
-
-  useEffect(() => {
-    const element = textareaRef.current?.element;
-    if (initialCommand && element) {
-      setCommand(initialCommand.payload);
-      const commandStr = `/${initialCommand.command} `;
-      setCommandOverlay(getOverlayRects(element, commandStr));
-      valueRef.current = commandStr;
-      selectionRef.current = {
-        start: commandStr.length,
-        end: commandStr.length,
-      };
-      setValue(commandStr);
-      setCommandText(commandStr);
-    }
-  }, [initialCommand]);
-
-  useEffect(() => {
-    const element = textareaRef.current?.element;
-    if (initialMention && element) {
-      setMentioned(initialMention);
-      const mentionStr = `${getInitialContent(undefined, initialMention)} `;
-      setMentionOverlay(getOverlayRects(element, mentionStr));
-      valueRef.current = mentionStr;
-      selectionRef.current = {
-        start: mentionStr.length,
-        end: mentionStr.length,
-      };
-      setValue(mentionStr);
-      setMentionedText(mentionStr);
-    }
-  }, [initialMention]);
-
-  const handleMention = useCallback(
-    (action: SimpleAction) => {
-      const mention = `@${action.text} `;
-      const prefix = `${valueRef.current.slice(0, mentionPopover!.range.start)}${mention}`;
-      const newValue = `${prefix}${valueRef.current.slice(mentionPopover!.range.end)}`;
-      valueRef.current = newValue;
-      selectionRef.current = { start: prefix.length, end: prefix.length };
-      setValue(newValue);
-      setMentionedText(mention);
-      setMentionPopover(null);
-      setMentioned((action as { data?: AIEmployee }).data!.employeeId);
-      textareaRef.current?.focus();
-    },
-    [mentionPopover]
-  );
-
-  const handleSelectCommand = useCallback(
-    (action: ActionWithSubCommands) => {
-      const hasSubCommands =
-        action.subCommands && action.subCommands.length > 0;
-      const command = `${commandPrefix.replace(/ $/, ": ")}${action.text} `;
-      const prefix = `${valueRef.current.slice(0, commandPopover!.range.start)}${command}`;
-      const newValue = `${prefix}${valueRef.current.slice(commandPopover!.range.end)}`;
-      valueRef.current = newValue;
-      selectionRef.current = { start: prefix.length, end: prefix.length };
-      setValue(newValue);
-      if (hasSubCommands) {
-        if (action.payload) {
-          setCommandText(command);
-          setCommand(action.payload);
-        }
-        setCommands(action.subCommands);
-        setCommandPrefix(command);
-        // Wait for the textarea to update
-        setTimeout(() => {
-          const popover = getCommandPopover(
-            action.subCommands!.slice(0, MAX_SHOWN_COMMANDS),
-            textareaRef.current!.element!,
-            prefix.length
-          );
-          setCommandPopover(popover);
-          setActiveActionIndex(0);
-        }, 100);
-      } else {
-        setCommandText(command);
-        setCommand(action.payload!);
-        setCommandPopover(null);
-        setCommandPrefix("/");
-      }
-      textareaRef.current?.focus();
-    },
-    [commandPopover, commandPrefix]
-  );
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      switch (e.key) {
-        case "Escape":
-          if (!mentionPopover && !commandPopover) {
-            return;
-          }
-          e.preventDefault();
-          e.stopPropagation();
-          e.nativeEvent.stopImmediatePropagation();
-          setMentionPopover(null);
-          setCommandPopover(null);
-          return false;
-        case "ArrowUp":
-        case "ArrowDown": {
-          if (!mentionPopover && !commandPopover) {
-            return;
-          }
-          e.preventDefault();
-          e.stopPropagation();
-          e.nativeEvent.stopImmediatePropagation();
-          setActiveActionIndex((prev) => {
-            const nextIndex = prev + (e.key === "ArrowUp" ? -1 : 1);
-            const meaningfulActions = getMeaningfulActions(
-              (mentionPopover || commandPopover)!.actions
-            );
-            const total = meaningfulActions.length;
-            const next = (total + nextIndex) % total;
-            return next;
-          });
-          return false;
-        }
-        case "Enter": {
-          if (!mentionPopover && !commandPopover) {
-            return;
-          }
-          e.preventDefault();
-          e.stopPropagation();
-          e.nativeEvent.stopImmediatePropagation();
-          const activeAction = getMeaningfulActions(
-            (mentionPopover || commandPopover)!.actions
-          )[activeActionIndex];
-          if (mentionPopover) {
-            handleMention(activeAction);
-          } else {
-            handleSelectCommand(activeAction);
-          }
-          return false;
-        }
-        case "Delete":
-        case "Backspace": {
-          const popovers = [
-            {
-              textLength: mentionedText.length,
-              prefixLength: 0,
-            },
-            {
-              textLength: commandText.length,
-              prefixLength: 0,
-            },
-          ];
-
-          for (const { textLength, prefixLength } of popovers) {
-            if (textLength) {
-              let { selectionStart, selectionEnd } = e.currentTarget;
-              if (selectionStart === selectionEnd) {
-                if (e.key === "Backspace") {
-                  selectionStart -= 1;
-                } else {
-                  selectionEnd += 1;
-                }
-              }
-              const currentStart = prefixLength;
-              const currentEnd = currentStart + textLength;
-              if (selectionStart < currentEnd && selectionEnd > currentStart) {
-                const start = Math.min(selectionStart, currentStart);
-                const end = Math.max(selectionEnd, currentEnd);
-                const newValue = `${valueRef.current.slice(0, start)}${valueRef.current.slice(end)}`;
-                valueRef.current = newValue;
-                selectionRef.current = { start, end: start };
-                setValue(newValue);
-                e.preventDefault();
-                e.stopPropagation();
-                return false;
-              }
-            }
-          }
-          break;
-        }
-      }
-    },
-    [
-      activeActionIndex,
-      commandPopover,
-      commandText.length,
-      handleMention,
-      handleSelectCommand,
-      mentionPopover,
-      mentionedText.length,
-    ]
-  );
-
   const uploadButtonRef = useRef<UploadButtonRef>(null);
 
   const onFilesDropped = useCallback(
@@ -720,7 +325,7 @@ function LegacyChatBoxComponent(
       appendFiles(files);
       textareaRef.current?.focus();
     },
-    [appendFiles]
+    [appendFiles, textareaRef]
   );
 
   return (
@@ -760,7 +365,7 @@ function LegacyChatBoxComponent(
           )}
           <div className="actions-bar">
             <div>
-              <slot name="actions"></slot>
+              <slot name="actions" />
             </div>
             <div className="buttons">
               {uploadEnabled ? (
@@ -797,10 +402,7 @@ function LegacyChatBoxComponent(
               <WrappedActions
                 actions={mentionPopover.actions}
                 style={mentionPopover.style}
-                activeKeys={getActiveActionKeys(
-                  mentionPopover.actions,
-                  activeActionIndex
-                )}
+                activeKeys={mentionActiveKeys!}
                 footerTips={t(K.COMMAND_TIPS)}
                 onActionClick={(e) => handleMention(e.detail)}
               />,
@@ -811,10 +413,7 @@ function LegacyChatBoxComponent(
               <WrappedActions
                 actions={commandPopover.actions}
                 style={commandPopover.style}
-                activeKeys={getActiveActionKeys(
-                  commandPopover.actions,
-                  activeActionIndex
-                )}
+                activeKeys={commandActiveKeys!}
                 footerTips={
                   commandPrefix === "/"
                     ? t(K.COMMAND_TIPS)
@@ -835,96 +434,4 @@ function LegacyChatBoxComponent(
       />
     </>
   );
-}
-
-function getMeaningfulActions(
-  actions: ActionWithSubCommands[]
-): ActionWithSubCommands[] {
-  return actions.filter(
-    (action) =>
-      (action as any).type !== "group" && (action as any).type !== "divider"
-  );
-}
-
-function getActiveActionKeys(
-  actions: ActionWithSubCommands[],
-  index: number
-): (string | number)[] {
-  const meaningfulActions = getMeaningfulActions(actions);
-  return [meaningfulActions[index].key!];
-}
-
-function getOverlayRects(element: HTMLTextAreaElement, content: string) {
-  const rects = getContentRectsInTextarea(
-    element,
-    "",
-    // Ignore the last space
-    content.slice(0, -1)
-  );
-  return rects.map((rect) => ({
-    left: rect.left - 1,
-    top: rect.top - 1,
-    width: rect.width + 4,
-    height: rect.height + 4,
-  }));
-}
-
-function getCommandPopover(
-  commands: Command[],
-  textarea: HTMLTextAreaElement,
-  selectionStart: number
-): MentionPopover {
-  const position = getCaretPositionInTextarea(textarea, selectionStart);
-  const textareaRect = textarea.getBoundingClientRect();
-  return {
-    style: {
-      left: position.left + 10 + textareaRect.left,
-      top: position.top + 22 + textareaRect.top,
-      position: "absolute",
-      zIndex: 1,
-    },
-    range: { start: 0, end: selectionStart },
-    actions: getGroupedCommandActions(commands),
-  };
-}
-
-function getGroupedCommandActions(
-  commands: Command[]
-): ActionWithSubCommands[] {
-  const grouped = commands.every((cmd) => cmd.groupKey && cmd.groupLabel);
-  if (grouped) {
-    const groups = new Map<string, { label: string; commands: Command[] }>();
-    for (const command of commands) {
-      const groupKey = command.groupKey!;
-      let group = groups.get(groupKey);
-      if (!group) {
-        groups.set(
-          groupKey,
-          (group = {
-            label: command.groupLabel!,
-            commands: [],
-          })
-        );
-      }
-      group.commands.push(command);
-    }
-    return [...groups.values()].flatMap((group) => [
-      {
-        type: "group",
-        text: group.label,
-      },
-      ...getCommandActions(group.commands),
-    ]) as ActionWithSubCommands[];
-  }
-
-  return getCommandActions(commands);
-}
-
-function getCommandActions(commands: Command[]): ActionWithSubCommands[] {
-  return commands.map((command) => ({
-    key: command.value,
-    text: command.label,
-    subCommands: command.subCommands,
-    payload: command.payload,
-  }));
 }

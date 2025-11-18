@@ -1,10 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
-import {
-  TextareaAutoResize,
-  type TextareaAutoResizeRef,
-} from "@next-shared/form";
+import { TextareaAutoResize } from "@next-shared/form";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import ResizeObserver from "resize-observer-polyfill";
@@ -12,6 +9,12 @@ import type {
   GeneralIcon,
   GeneralIconProps,
 } from "@next-bricks/icons/general-icon";
+import type {
+  ActionsEvents,
+  ActionsEventsMapping,
+  ActionsProps,
+  EoActions,
+} from "@next-bricks/basic/actions";
 import classNames from "classnames";
 import { K, NS, locales, t } from "./i18n.js";
 import type { IconButton, IconButtonProps } from "../icon-button";
@@ -25,6 +28,14 @@ import {
 } from "../shared/FileUpload/UploadButton.js";
 import type { ChatPayload, UploadOptions } from "../shared/interfaces.js";
 import GlobalDragOverlay from "../shared/FileUpload/GlobalDragOverlay.js";
+import {
+  MAX_SHOWN_COMMANDS,
+  useChatCompletions,
+  type ActionWithSubCommands,
+  type AIEmployee,
+  type Command,
+} from "../shared/ChatCompletions/useChatCompletions.js";
+import { createPortal } from "react-dom";
 
 initializeI18n(NS, locales);
 
@@ -45,6 +56,17 @@ const WrappedIconButton = wrapBrick<IconButton, IconButtonProps>(
   "ai-portal.icon-button"
 );
 
+export const WrappedActions = wrapBrick<
+  EoActions,
+  ActionsProps & { activeKeys?: (string | number)[]; footerTips?: string },
+  ActionsEvents,
+  ActionsEventsMapping
+>("eo-actions", {
+  onActionClick: "action.click",
+  onItemDragEnd: "item.drag.end",
+  onItemDragStart: "item.drag.start",
+});
+
 const { defineElement, property, event } = createDecorators();
 
 export interface ChatInputProps {
@@ -54,6 +76,9 @@ export interface ChatInputProps {
   supportsTerminate?: boolean;
   terminating?: boolean;
   uploadOptions?: UploadOptions;
+  aiEmployees?: AIEmployee[];
+  commands?: Command[];
+  suggestionsPlacement?: "top" | "bottom";
 }
 
 export interface ChatInputEvents {
@@ -67,7 +92,7 @@ export interface ChatInputMapEvents {
 }
 
 /**
- * 构件 `ai-portal.chat-input`
+ * 小型聊天输入框，用于对话等页面
  */
 export
 @defineElement("ai-portal.chat-input", {
@@ -94,6 +119,18 @@ class ChatInput extends ReactNextElement implements ChatInputProps {
 
   @property({ attribute: false })
   accessor uploadOptions: UploadOptions | undefined;
+
+  @property({ attribute: false })
+  accessor aiEmployees: AIEmployee[] | undefined;
+
+  @property({ attribute: false })
+  accessor commands: Command[] | undefined;
+
+  /**
+   * @default "bottom"
+   */
+  @property()
+  accessor suggestionsPlacement: "top" | "bottom" | undefined;
 
   /**
    * @deprecated Use `chat.submit` event instead
@@ -128,35 +165,42 @@ class ChatInput extends ReactNextElement implements ChatInputProps {
         supportsTerminate={this.supportsTerminate}
         terminating={this.terminating}
         uploadOptions={this.uploadOptions}
+        aiEmployees={this.aiEmployees}
+        commands={this.commands}
+        suggestionsPlacement={this.suggestionsPlacement}
         onMessageSubmit={this.#handleMessageSubmit}
         onChatSubmit={this.#handleChatSubmit}
         onTerminate={this.#handleTerminate}
+        root={this}
       />
     );
   }
 }
 
 interface ChatInputComponentProps extends ChatInputProps {
+  root: HTMLElement;
   onMessageSubmit: (value: string) => void;
   onChatSubmit: (payload: ChatPayload) => void;
   onTerminate: () => void;
 }
 
 function ChatInputComponent({
+  root,
   placeholder,
   autoFocus,
   submitDisabled,
   supportsTerminate,
   terminating,
   uploadOptions,
+  aiEmployees,
+  commands,
+  suggestionsPlacement,
   onMessageSubmit,
   onChatSubmit,
   onTerminate,
 }: ChatInputComponentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<TextareaAutoResizeRef>(null);
-  const [value, setValue] = useState("");
-  const valueRef = useRef("");
+
   const [wrap, setWrap] = useState(false);
   const uploadEnabled = uploadOptions?.enabled;
   const uploadAccept = uploadOptions?.accept;
@@ -173,6 +217,38 @@ function ChatInputComponent({
   } = useFilesUploading(uploadOptions);
   const uploadButtonRef = useRef<UploadButtonRef>(null);
 
+  const {
+    textareaRef,
+    valueRef,
+    value,
+    setValue,
+    selectionRef,
+
+    mentioned,
+    mentionedText,
+    mentionPopover,
+    mentionOverlay,
+    mentionActiveKeys,
+    handleMention,
+
+    command,
+    commandText,
+    commandPrefix,
+    commandPopover,
+    commandOverlay,
+    commandActiveKeys,
+    handleSelectCommand,
+
+    handleChange,
+    handleKeyDown,
+  } = useChatCompletions({
+    aiEmployees,
+    commands,
+    root,
+    hasFiles,
+    placement: suggestionsPlacement,
+  });
+
   useEffect(() => {
     if (!uploadEnabled) {
       resetFiles();
@@ -183,48 +259,58 @@ function ChatInputComponent({
     if (autoFocus && !submitDisabled) {
       textareaRef.current?.focus();
     }
-  }, [autoFocus, submitDisabled]);
+  }, [autoFocus, submitDisabled, textareaRef]);
 
-  const onBeforeSubmit = useCallback(
+  const sendDisabled =
+    !value ||
+    !allFilesDone ||
+    (!!mentionedText && value.length <= mentionedText.length) ||
+    (!!commandText && value.length <= commandText.length);
+
+  const doSubmit = useCallback(
     (value: string) => {
-      if (submitDisabled || !value || !allFilesDone) {
+      if (sendDisabled) {
         return;
       }
-
-      onMessageSubmit(value);
-      onChatSubmit({ content: value, files: fileInfos });
+      const content = value.slice(commandText.length || mentionedText.length);
+      onMessageSubmit(content);
+      onChatSubmit({
+        content,
+        files: fileInfos,
+        cmd: command,
+        aiEmployeeId: mentioned,
+      });
       valueRef.current = "";
       setValue("");
       resetFiles();
     },
     [
-      allFilesDone,
-      submitDisabled,
+      sendDisabled,
       onMessageSubmit,
       onChatSubmit,
       fileInfos,
       resetFiles,
+      valueRef,
+      setValue,
+      mentioned,
+      mentionedText,
+      command,
+      commandText,
     ]
   );
 
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLTextAreaElement>) => {
-      onBeforeSubmit(e.currentTarget.value);
+      if (e.currentTarget.value) {
+        doSubmit(e.currentTarget.value);
+      }
     },
-    [onBeforeSubmit]
-  );
-
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      valueRef.current = e.target.value;
-      setValue(e.target.value);
-    },
-    []
+    [doSubmit]
   );
 
   const handleSubmitClick = useCallback(() => {
-    onBeforeSubmit(valueRef.current);
-  }, [onBeforeSubmit]);
+    doSubmit(valueRef.current);
+  }, [doSubmit, valueRef]);
 
   // istanbul ignore next
   useEffect(() => {
@@ -263,24 +349,27 @@ function ChatInputComponent({
     }
   }, [value, hasFiles]);
 
-  const handleContainerClick = useCallback((e: React.MouseEvent) => {
-    for (const item of e.nativeEvent.composedPath()) {
-      if (
-        item instanceof HTMLTextAreaElement ||
-        item instanceof HTMLButtonElement
-      ) {
-        return;
+  const handleContainerClick = useCallback(
+    (e: React.MouseEvent) => {
+      for (const item of e.nativeEvent.composedPath()) {
+        if (
+          item instanceof HTMLTextAreaElement ||
+          item instanceof HTMLButtonElement
+        ) {
+          return;
+        }
       }
-    }
-    textareaRef.current?.focus();
-  }, []);
+      textareaRef.current?.focus();
+    },
+    [textareaRef]
+  );
 
   const onFilesDropped = useCallback(
     (files: File[]) => {
       appendFiles(files);
       textareaRef.current?.focus();
     },
-    [appendFiles]
+    [appendFiles, textareaRef]
   );
 
   return (
@@ -299,8 +388,10 @@ function ChatInputComponent({
               autoResize
               placeholder={placeholder}
               submitWhen="enter-without-shift"
+              desiredSelectionRef={selectionRef}
               onSubmit={handleSubmit}
               onChange={handleChange}
+              onKeyDown={handleKeyDown}
               onPaste={paste}
               style={{
                 paddingTop: hasFiles ? 78 : 8,
@@ -319,6 +410,40 @@ function ChatInputComponent({
                 }}
               />
             )}
+            {mentionOverlay?.map((overlay, index) => (
+              <div key={index} className="mention-overlay" style={overlay} />
+            ))}
+            {commandOverlay?.map((overlay, index) => (
+              <div key={index} className="mention-overlay" style={overlay} />
+            ))}
+            {mentionPopover &&
+              createPortal(
+                <WrappedActions
+                  actions={mentionPopover.actions}
+                  style={mentionPopover.style}
+                  activeKeys={mentionActiveKeys!}
+                  footerTips={t(K.COMMAND_TIPS)}
+                  onActionClick={(e) => handleMention(e.detail)}
+                />,
+                document.body
+              )}
+            {commandPopover &&
+              createPortal(
+                <WrappedActions
+                  actions={commandPopover.actions}
+                  style={commandPopover.style}
+                  activeKeys={commandActiveKeys!}
+                  footerTips={
+                    commandPrefix === "/"
+                      ? t(K.COMMAND_TIPS)
+                      : t(K.SEARCH_COMMANDS_TIPS, { count: MAX_SHOWN_COMMANDS })
+                  }
+                  onActionClick={(e) =>
+                    handleSelectCommand(e.detail as ActionWithSubCommands)
+                  }
+                />,
+                document.body
+              )}
           </div>
           <div className="toolbar">
             {uploadEnabled ? (
