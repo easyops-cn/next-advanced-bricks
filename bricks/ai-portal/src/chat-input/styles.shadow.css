@@ -121,3 +121,11 @@ button {
   left: 8px;
   right: 8px;
 }
+
+.mention-overlay {
+  position: absolute;
+  border-radius: 4px;
+  pointer-events: none;
+  background: rgba(38, 45, 65, 0.1);
+  /* background: rgba(37, 64, 255, 0.1); */
+}

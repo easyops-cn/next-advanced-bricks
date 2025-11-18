@@ -72,6 +72,8 @@ export function ChatStreamComponent(
     showCases,
     exampleProjects,
     tryItOutUrl,
+    aiEmployees,
+    commands,
     uploadOptions,
     onShare,
     onTerminate,
@@ -238,6 +240,8 @@ export function ChatStreamComponent(
       replay,
       showCases,
       exampleProjects,
+      aiEmployees,
+      commands,
       uploadOptions,
 
       humanInput,
@@ -292,6 +296,8 @@ export function ChatStreamComponent(
       replay,
       showCases,
       exampleProjects,
+      aiEmployees,
+      commands,
       uploadOptions,
 
       humanInput,

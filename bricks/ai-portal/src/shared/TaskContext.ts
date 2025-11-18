@@ -14,6 +14,7 @@ import type {
   Task,
   UploadOptions,
 } from "./interfaces";
+import type { AIEmployee, Command } from "./ChatCompletions/useChatCompletions";
 
 export interface TaskContextValue {
   conversationId?: string;
@@ -25,6 +26,8 @@ export interface TaskContextValue {
   replay?: boolean;
   showCases?: ShowCaseType[];
   exampleProjects?: ExampleProject[];
+  aiEmployees?: AIEmployee[];
+  commands?: Command[];
   uploadOptions?: UploadOptions;
 
   humanInput: (

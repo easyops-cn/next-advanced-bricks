@@ -136,6 +136,8 @@ export function CruiseCanvasComponent(
     exampleProjects,
     tryItOutUrl,
     separateInstructions,
+    aiEmployees,
+    commands,
     uploadOptions,
     onShare,
     onTerminate,
@@ -628,6 +630,8 @@ export function CruiseCanvasComponent(
       replay,
       showCases,
       exampleProjects,
+      aiEmployees,
+      commands,
       uploadOptions,
 
       humanInput,
@@ -692,6 +696,8 @@ export function CruiseCanvasComponent(
       replay,
       showCases,
       exampleProjects,
+      aiEmployees,
+      commands,
       uploadOptions,
 
       humanInput,

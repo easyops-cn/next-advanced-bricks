@@ -13,6 +13,10 @@ import type {
   ShowCaseType,
   UploadOptions,
 } from "../shared/interfaces.js";
+import type {
+  AIEmployee,
+  Command,
+} from "../shared/ChatCompletions/useChatCompletions.js";
 
 initializeI18n(NS, locales);
 
@@ -33,6 +37,8 @@ export interface ChatStreamProps {
   showCases?: ShowCaseType[];
   exampleProjects?: ExampleProject[];
   tryItOutUrl?: string;
+  aiEmployees?: AIEmployee[];
+  commands?: Command[];
   uploadOptions?: UploadOptions;
 }
 
@@ -102,6 +108,12 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
 
   @property()
   accessor tryItOutUrl: string | undefined;
+
+  @property({ attribute: false })
+  accessor aiEmployees: AIEmployee[] | undefined;
+
+  @property({ attribute: false })
+  accessor commands: Command[] | undefined;
 
   @property({ attribute: false })
   accessor uploadOptions: UploadOptions | undefined;
@@ -194,6 +206,8 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
         showCases={this.showCases}
         exampleProjects={this.exampleProjects}
         tryItOutUrl={this.tryItOutUrl}
+        aiEmployees={this.aiEmployees}
+        commands={this.commands}
         uploadOptions={this.uploadOptions}
         onShare={this.#onShare}
         onTerminate={this.#onTerminate}
