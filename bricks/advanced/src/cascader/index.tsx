@@ -49,6 +49,7 @@ export interface CascaderProps
  * @author nlicroshan
  * @category form-input-basic
  */
+export
 @defineElement("eo-cascader", {
   alias: ["advanced.general-cascader"],
   styleTexts: [styleText],
@@ -280,5 +281,3 @@ function CascaderElement(props: CascaderProps): React.ReactElement {
     </ConfigProvider>
   );
 }
-
-export { CascaderBrick };

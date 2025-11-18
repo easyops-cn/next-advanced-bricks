@@ -6,6 +6,10 @@ import styleText from "./styles.shadow.css";
 
 const { defineElement, property } = createDecorators();
 
+export interface HomeContainerProps {
+  sticky?: boolean;
+}
+
 /**
  * 构件 `ai-portal.home-container`
  */
@@ -13,7 +17,7 @@ export
 @defineElement("ai-portal.home-container", {
   styleTexts: [styleText],
 })
-class HomeContainer extends ReactNextElement {
+class HomeContainer extends ReactNextElement implements HomeContainerProps {
   @property({ type: Boolean, render: false })
   accessor sticky: boolean | undefined;
 

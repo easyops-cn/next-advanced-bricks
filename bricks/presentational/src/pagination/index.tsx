@@ -35,25 +35,25 @@ const WrappedDropdownActions = wrapBrick<
   onVisibleChange: "visible.change",
 });
 
-interface EoPaginationProps {
+export interface EoPaginationProps {
   type?: "page" | "token";
-  total: number;
-  page: number;
-  pageSize: number;
+  total?: number;
+  page?: number;
+  pageSize?: number;
   pageSizeOptions?: number[];
   showSizeChanger?: boolean;
   nextToken?: string;
   previousToken?: string;
 }
 
-type ChangeDetail = ChangeDetailOfPage | ChangeDetailOfToken;
+export type ChangeDetail = ChangeDetailOfPage | ChangeDetailOfToken;
 
-interface ChangeDetailOfPage {
+export interface ChangeDetailOfPage {
   page: number;
   pageSize: number;
 }
 
-interface ChangeDetailOfToken {
+export interface ChangeDetailOfToken {
   type: "token";
   nextToken: string | undefined;
   pageSize: number;
@@ -68,7 +68,7 @@ export
 @defineElement("eo-pagination", {
   styleTexts: [styleText],
 })
-class EoPagination extends ReactNextElement {
+class EoPagination extends ReactNextElement implements EoPaginationProps {
   /**
    * @default "page"
    */

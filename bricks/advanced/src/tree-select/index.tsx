@@ -50,7 +50,6 @@ export interface TreeSelectProps
   dropdownStyle?: CSSProperties;
   maxTagCount?: number | "responsive";
   popupMatchSelectWidth?: boolean;
-  onChange?: (value: AntdTreeSelectProps["value"]) => void;
 }
 
 /**
@@ -236,7 +235,13 @@ class TreeSelectBrick extends FormItemElementBase implements TreeSelectProps {
   }
 }
 
-function TreeSelectElement(props: TreeSelectProps): React.ReactElement {
+interface TreeSelectComponentProps extends TreeSelectProps {
+  onChange?: (value: AntdTreeSelectProps["value"]) => void;
+}
+
+function TreeSelectElement(
+  props: TreeSelectComponentProps
+): React.ReactElement {
   const {
     shadowRoot,
     checkable,

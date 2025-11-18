@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, type HTMLAttributes } from "react";
 import { createDecorators } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import "@next-core/theme";
@@ -16,7 +16,7 @@ const WrappedTooltip = wrapBrick<EoTooltip, ToolTipProps>("eo-tooltip");
 const { defineElement, property } = createDecorators();
 
 export interface IconButtonProps {
-  icon?: GeneralIconProps;
+  icon?: GeneralIconProps & HTMLAttributes<GeneralIcon>;
   tooltip?: string;
   tooltipHoist?: boolean;
   disabled?: boolean;
@@ -40,7 +40,7 @@ export
 })
 class IconButton extends ReactNextElement implements IconButtonProps {
   @property({ attribute: false })
-  accessor icon: GeneralIconProps | undefined;
+  accessor icon: (GeneralIconProps & HTMLAttributes<GeneralIcon>) | undefined;
 
   @property()
   accessor tooltip: string | undefined;
