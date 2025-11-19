@@ -163,6 +163,13 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
     this.#addProject.emit();
   };
 
+  @event({ type: "add.serviceflow" })
+  accessor #addServiceflow!: EventEmitter<void>;
+
+  #handleAddServiceflow = () => {
+    this.#addServiceflow.emit();
+  };
+
   #ref = createRef<ElevoSidebarRef>();
 
   /**
@@ -223,6 +230,7 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
         onActionClick={this.#handleActionClick}
         onProjectActionClick={this.#handleProjectActionClick}
         onAddProject={this.#handleAddProject}
+        onAddServiceflow={this.#handleAddServiceflow}
       />
     );
   }
@@ -233,6 +241,7 @@ interface ElevoSidebarComponentProps extends ElevoSidebarProps {
   onActionClick: (detail: ActionClickDetail) => void;
   onProjectActionClick: (detail: ProjectActionClickDetail) => void;
   onAddProject: () => void;
+  onAddServiceflow: () => void;
 }
 
 function LegacyElevoSidebarComponent(
@@ -255,6 +264,7 @@ function LegacyElevoSidebarComponent(
     onActionClick,
     onProjectActionClick,
     onAddProject,
+    onAddServiceflow,
   }: ElevoSidebarComponentProps,
   ref: React.Ref<ElevoSidebarRef>
 ) {
@@ -367,7 +377,7 @@ function LegacyElevoSidebarComponent(
         </div>
         <div className="main">
           {scope === "space" ? (
-            <SpaceNav {...spaceNav!} />
+            <SpaceNav onAddServiceflow={onAddServiceflow} {...spaceNav!} />
           ) : (
             <>
               <WrappedLink className="new-chat" url={newChatUrl}>
