@@ -15,6 +15,9 @@ export enum K {
   MOVE_TO_PROJECT = "MOVE_TO_PROJECT",
   UNTITLED = "UNTITLED",
   UNNAMED = "UNNAMED",
+  BUSINESS_OBJECTS = "BUSINESS_OBJECTS",
+  SERVICEFLOWS = "SERVICEFLOWS",
+  COLLABORATION_SPACES = "COLLABORATION_SPACES",
 }
 
 const en: Locale = {
@@ -32,6 +35,9 @@ const en: Locale = {
   [K.MOVE_TO_PROJECT]: "Move to project",
   [K.UNTITLED]: "Untitled",
   [K.UNNAMED]: "Unnamed",
+  [K.BUSINESS_OBJECTS]: "Business objects",
+  [K.SERVICEFLOWS]: "Serviceflows",
+  [K.COLLABORATION_SPACES]: "Collaboration spaces",
 };
 
 const zh: Locale = {
@@ -49,6 +55,9 @@ const zh: Locale = {
   [K.MOVE_TO_PROJECT]: "移动到项目",
   [K.UNTITLED]: "无标题",
   [K.UNNAMED]: "未命名",
+  [K.BUSINESS_OBJECTS]: "业务对象",
+  [K.SERVICEFLOWS]: "业务流",
+  [K.COLLABORATION_SPACES]: "协作空间",
 };
 
 export const NS = "bricks/ai-portal/elevo-sidebar";

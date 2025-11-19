@@ -34,6 +34,8 @@ import {
   type ProjectActionClickDetail,
 } from "./ChatHistory.js";
 import { NavLink } from "./NavLink.js";
+import type { SidebarLink } from "./interfaces.js";
+import { SpaceNav, type SpaceNavProps } from "./SpaceNav.js";
 
 initializeI18n(NS, locales);
 
@@ -61,13 +63,8 @@ export interface ElevoSidebarProps {
   links?: SidebarLink[];
   canAddProject?: boolean;
   myLinks?: SidebarLink[];
-}
-
-export interface SidebarLink {
-  title: string;
-  url: string;
-  icon?: GeneralIconProps;
-  activeIncludes?: string[];
+  scope?: "default" | "space";
+  spaceNav?: SpaceNavProps;
 }
 
 export type { ActionClickDetail, Project, ProjectActionClickDetail };
@@ -123,6 +120,15 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
   @property({ attribute: false })
   accessor myLinks: SidebarLink[] | undefined;
 
+  /**
+   * @default "default"
+   */
+  @property()
+  accessor scope: "default" | "space" | undefined;
+
+  @property({ attribute: false })
+  accessor spaceNav: SpaceNavProps | undefined;
+
   @event({ type: "logout" })
   accessor #logout!: EventEmitter<void>;
 
@@ -130,6 +136,9 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
     this.#logout.emit();
   };
 
+  /**
+   * 点击对话历史操作按钮时触发
+   */
   @event({ type: "action.click" })
   accessor #actionClick!: EventEmitter<ActionClickDetail>;
 
@@ -137,6 +146,9 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
     this.#actionClick.emit(detail);
   };
 
+  /**
+   * 点击项目操作按钮时触发
+   */
   @event({ type: "project.action.click" })
   accessor #projectActionClick!: EventEmitter<ProjectActionClickDetail>;
 
@@ -205,6 +217,8 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
         links={this.links}
         canAddProject={this.canAddProject}
         myLinks={this.myLinks}
+        scope={this.scope}
+        spaceNav={this.spaceNav}
         onLogout={this.#handleLogout}
         onActionClick={this.#handleActionClick}
         onProjectActionClick={this.#handleProjectActionClick}
@@ -235,6 +249,8 @@ function LegacyElevoSidebarComponent(
     links,
     canAddProject,
     myLinks,
+    scope,
+    spaceNav,
     onLogout,
     onActionClick,
     onProjectActionClick,
@@ -349,48 +365,57 @@ function LegacyElevoSidebarComponent(
             onClick={handleCollapse}
           />
         </div>
-        <WrappedLink className="new-chat" url={newChatUrl}>
-          <WrappedIcon
-            className="new-chat-icon"
-            lib="easyops"
-            icon="new-chat"
-          />
-          {t(K.NEW_CHAT)}
-        </WrappedLink>
-        {links?.length ? (
-          <div className="links">
-            {links.map((link, index) => (
-              <NavLink
-                key={index}
-                url={link.url}
-                activeIncludes={link.activeIncludes}
-                render={({ active }) => (
-                  <WrappedLink
-                    key={index}
-                    className={classNames("link", { active })}
-                    url={link.url}
-                  >
-                    <WrappedIcon className="icon" {...link.icon} />
-                    <span className="title">{link.title}</span>
-                  </WrappedLink>
-                )}
+        <div className="main">
+          {scope === "space" ? (
+            <SpaceNav {...spaceNav!} />
+          ) : (
+            <>
+              <WrappedLink className="new-chat" url={newChatUrl}>
+                <WrappedIcon
+                  className="new-chat-icon"
+                  lib="easyops"
+                  icon="new-chat"
+                />
+                {t(K.NEW_CHAT)}
+              </WrappedLink>
+              {links?.length ? (
+                <>
+                  {links.map((link, index) => (
+                    <NavLink
+                      key={index}
+                      url={link.url}
+                      activeIncludes={link.activeIncludes}
+                      render={({ active }) => (
+                        <WrappedLink
+                          key={index}
+                          className={classNames("link", { active })}
+                          url={link.url}
+                        >
+                          <WrappedIcon className="icon" {...link.icon} />
+                          <span className="title">{link.title}</span>
+                        </WrappedLink>
+                      )}
+                    />
+                  ))}
+                  <div className="divider" />
+                </>
+              ) : null}
+              <ChatHistory
+                ref={historyRef}
+                canAddProject={canAddProject}
+                historyUrlTemplate={historyUrlTemplate}
+                historyActions={historyActions}
+                projectUrlTemplate={projectUrlTemplate}
+                projectActions={projectActions}
+                myLinks={myLinks}
+                onActionClick={onActionClick}
+                onHistoryClick={handleHistoryClick}
+                onProjectActionClick={onProjectActionClick}
+                onAddProject={onAddProject}
               />
-            ))}
-          </div>
-        ) : null}
-        <ChatHistory
-          ref={historyRef}
-          canAddProject={canAddProject}
-          historyUrlTemplate={historyUrlTemplate}
-          historyActions={historyActions}
-          projectUrlTemplate={projectUrlTemplate}
-          projectActions={projectActions}
-          myLinks={myLinks}
-          onActionClick={onActionClick}
-          onHistoryClick={handleHistoryClick}
-          onProjectActionClick={onProjectActionClick}
-          onAddProject={onAddProject}
-        />
+            </>
+          )}
+        </div>
         <div className="footer">
           <WrappedDropdownActions
             className="dropdown"

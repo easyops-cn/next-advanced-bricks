@@ -93,7 +93,9 @@ function PageContainerComponent({
           ) : null}
           {pageTitle ? <h1>{pageTitle}</h1> : null}
         </nav>
-        <slot name="toolbar" />
+        <div className="toolbar">
+          <slot name="toolbar" />
+        </div>
       </div>
     ) : null;
 
