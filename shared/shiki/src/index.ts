@@ -47,7 +47,8 @@ type BundledLanguage =
   | "python"
   | "py"
   | "go"
-  | "sql";
+  | "sql"
+  | "yaml";
 type BundledTheme = "light-plus" | "dark-plus";
 type Highlighter = HighlighterGeneric<BundledLanguage, BundledTheme>;
 
