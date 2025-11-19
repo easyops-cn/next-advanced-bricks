@@ -2,9 +2,10 @@ import React, { useRef, useState } from "react";
 import classNames from "classnames";
 import { SectionTitle } from "./SectionTitle.js";
 import { K, t } from "./i18n.js";
-import { WrappedIcon, WrappedLink } from "./bricks.js";
+import { WrappedIcon, WrappedIconButton, WrappedLink } from "./bricks.js";
 import { NavLink } from "./NavLink.js";
 import type { SidebarLink } from "./interfaces.js";
+import { ADD_ICON } from "./constants.js";
 
 export interface SpaceNavProps {
   returnUrl: string;
@@ -17,13 +18,18 @@ export interface SpaceNavProps {
   spaceLinks?: SidebarLink[];
 }
 
+export interface SpaceNavComponentProps extends SpaceNavProps {
+  onAddServiceflow?: () => void;
+}
+
 export function SpaceNav({
   returnUrl,
   spaceDetail,
   spaceObjects,
   spaceServiceflows,
   spaceLinks,
-}: SpaceNavProps) {
+  onAddServiceflow,
+}: SpaceNavComponentProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [objectsCollapsed, setObjectsCollapsed] = useState(false);
   const [serviceflowsCollapsed, setServiceflowsCollapsed] = useState(false);
@@ -80,7 +86,16 @@ export function SpaceNav({
               title={t(K.SERVICEFLOWS)}
               collapsed={serviceflowsCollapsed}
               onToggle={() => setServiceflowsCollapsed((prev) => !prev)}
-            />
+            >
+              <WrappedIconButton
+                icon={ADD_ICON}
+                variant="mini-light"
+                tooltip={t(K.CREATE_SERVICEFLOW)}
+                tooltipHoist={true}
+                className="button"
+                onClick={onAddServiceflow}
+              />
+            </SectionTitle>
             <ul className="items">
               {spaceServiceflows.map((obj, index) => (
                 <li key={index}>

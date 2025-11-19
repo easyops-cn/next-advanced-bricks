@@ -17,7 +17,6 @@ import type {
   ActionType,
   SimpleActionType,
 } from "@next-bricks/basic/mini-actions";
-import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import { isEqual } from "lodash";
 import { K, t } from "./i18n.js";
 import {
@@ -32,11 +31,7 @@ import type { ConversationState } from "../shared/interfaces.js";
 import type { SidebarLink } from "./interfaces.js";
 import { NavLink } from "./NavLink.js";
 import { SectionTitle } from "./SectionTitle.js";
-
-const ADD_ICON: GeneralIconProps = {
-  lib: "fa",
-  icon: "plus",
-};
+import { ADD_ICON } from "./constants.js";
 
 export interface HistoryItem {
   conversationId: string;
