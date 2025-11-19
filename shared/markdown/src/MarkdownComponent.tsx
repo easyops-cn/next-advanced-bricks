@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Fragment, jsx, jsxs } from "react/jsx-runtime";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
@@ -7,8 +7,11 @@ import remarkToRehype from "remark-rehype";
 import rehypeReact, { Options as RehypeReactOptions } from "rehype-react";
 import type { Components } from "hast-util-to-jsx-runtime";
 import rehypeShikiFromHighlighter from "@shikijs/rehype/core";
-import { getSingletonHighlighter } from "@next-shared/shiki";
+import type { Element } from "hast";
+import { visit } from "unist-util-visit";
+import { getSingletonHighlighter, bundledLanguages } from "@next-shared/shiki";
 import { rehypeMermaid } from "./rehypeMermaid.js";
+import { getCodeLanguage } from "./utils.js";
 
 const production = { Fragment, jsx, jsxs };
 
@@ -27,6 +30,31 @@ export async function preloadHighlighter(
   await getSingletonHighlighter({
     themes: [theme],
   });
+}
+
+function rehypeFallbackLanguage() {
+  return (tree: Element) => {
+    visit(tree, "element", (node, index, parent) => {
+      if (
+        !parent ||
+        parent.type !== "element" ||
+        parent.tagName !== "pre" ||
+        node.tagName !== "code"
+      ) {
+        return;
+      }
+
+      const lang = getCodeLanguage(node);
+      if (
+        lang &&
+        !Object.prototype.hasOwnProperty.call(bundledLanguages, lang)
+      ) {
+        node.properties.className = (node.properties.className as string[]).map(
+          (c) => (c.startsWith("language-") ? "language-text" : c)
+        );
+      }
+    });
+  };
 }
 
 // Reference https://github.com/remarkjs/react-remark/blob/39553e5f5c9e9b903bebf261788ff45130668de0/src/index.ts
@@ -53,6 +81,7 @@ export function MarkdownComponent({
           .use(remarkGfm)
           .use(remarkToRehype)
           .use(rehypeMermaid)
+          .use(rehypeFallbackLanguage)
           .use(rehypeShikiFromHighlighter, highlighter as any, {
             theme,
             lazy: true,
@@ -71,7 +100,11 @@ export function MarkdownComponent({
         if (!ignore) {
           // eslint-disable-next-line no-console
           console.error("Convert markdown failed:", error);
-          setReactContent(null);
+          setReactContent(
+            <div style={{ color: "var(--color-error)" }}>
+              Convert markdown failed: {String(error)}
+            </div>
+          );
         }
       }
     })();
