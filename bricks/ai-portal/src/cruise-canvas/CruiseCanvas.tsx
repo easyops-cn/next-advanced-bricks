@@ -50,7 +50,7 @@ import {
 import { DONE_STATES, GENERAL_DONE_STATES } from "../shared/constants.js";
 import { WrappedIcon } from "../shared/bricks";
 import { CanvasContext } from "./CanvasContext.js";
-import { ToolCallDetail } from "./ToolCallDetail/ToolCallDetail.js";
+import { ToolCallDetailDrawer } from "./ToolCallDetail/ToolCallDetailDrawer";
 import { getScrollTo } from "./utils/getScrollTo.js";
 import { handleKeyboardNav } from "./utils/handleKeyboardNav.js";
 import { ExpandedView } from "../shared/ExpandedView/ExpandedView.js";
@@ -962,7 +962,7 @@ export function CruiseCanvasComponent(
           ) : null}
         </div>
         {fulfilledActiveDetail?.type === "job" && (
-          <ToolCallDetail job={fulfilledActiveDetail.job} />
+          <ToolCallDetailDrawer job={fulfilledActiveDetail.job} />
         )}
         {activeExpandedViewJobId && <ExpandedView views={views!} />}
         {activeFile && <FilePreview file={activeFile} />}

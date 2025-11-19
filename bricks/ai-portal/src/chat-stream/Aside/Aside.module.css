@@ -47,6 +47,10 @@
   flex-direction: column;
 }
 
+.body.scrollable {
+  overflow-y: auto;
+}
+
 .app {
   flex: 1;
   min-height: 0;

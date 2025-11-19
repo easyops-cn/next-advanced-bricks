@@ -1,41 +1,23 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import type { Drawer } from "@next-bricks/containers/drawer";
+import React, { useMemo } from "react";
 import classNames from "classnames";
+import { initializeI18n } from "@next-core/i18n";
 import type { DataPart, Job, Part } from "../../shared/interfaces";
-import { WrappedCodeBlock, WrappedDrawer } from "../../shared/bricks";
+import { WrappedCodeBlock } from "../../shared/bricks";
 import styles from "./ToolCallDetail.module.css";
 import sharedStyles from "../shared.module.css";
-import { K, t } from "../i18n";
-import { TaskContext } from "../../shared/TaskContext";
-import { ToolCallStatus } from "../ToolCallStatus/ToolCallStatus";
+import { K, t, locales, NS } from "./i18n";
 import { ToolProgressLine } from "../ToolProgressLine/ToolProgressLine";
 import { EnhancedMarkdown } from "../EnhancedMarkdown/EnhancedMarkdown";
 import { MarkdownPre } from "../../shared/MarkdownPre";
+
+initializeI18n(NS, locales);
 
 export interface ToolCallDetailProps {
   job: Job;
 }
 
-function getDrawerWidth() {
-  const { innerWidth } = window;
-  return innerWidth < 800
-    ? Math.min(500, innerWidth)
-    : innerWidth < 1000
-      ? innerWidth * 0.8
-      : 800;
-}
-
 export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
-  const { setActiveDetail } = useContext(TaskContext);
   const toolCall = job.toolCall!;
-  const toolTitle = toolCall.annotations?.title;
 
   const [progress, intermediateParts, responseParts] = useMemo(() => {
     const toolCallMessages = job.messages?.filter((msg) => msg.role === "tool");
@@ -67,32 +49,6 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
     return [progress, intermediateParts, responseParts];
   }, [job.messages]);
 
-  const handleClose = useCallback(() => {
-    setTimeout(() => {
-      setActiveDetail(null);
-    }, 300);
-  }, [setActiveDetail]);
-
-  const ref = useRef<Drawer>(null);
-
-  useEffect(() => {
-    setTimeout(() => {
-      ref.current?.open();
-    });
-  }, []);
-
-  const [width, setWidth] = useState(getDrawerWidth);
-
-  useEffect(() => {
-    const onResize = () => {
-      setWidth(getDrawerWidth);
-    };
-    window.addEventListener("resize", onResize);
-    return () => {
-      window.removeEventListener("resize", onResize);
-    };
-  }, []);
-
   const hasProcessParts = intermediateParts.length > 0 || !!progress;
   const hasResponseParts = responseParts.length > 0;
   const toolState =
@@ -104,18 +60,7 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
   const failed = job.isError || toolState === "failed";
 
   return (
-    <WrappedDrawer
-      ref={ref}
-      customTitle={toolTitle || toolCall.name}
-      width={width}
-      closable
-      mask
-      maskClosable
-      keyboard
-      themeVariant="elevo"
-      onClose={handleClose}
-    >
-      <ToolCallStatus job={job} variant="read-only" />
+    <>
       <div className={styles.detail}>
         <div className={styles.heading}>{t(K.ARGUMENTS)}:</div>
         <div className={`${styles.body} ${sharedStyles.markdown}`}>
@@ -180,7 +125,7 @@ export function ToolCallDetail({ job }: ToolCallDetailProps): JSX.Element {
           </div>
         </div>
       )}
-    </WrappedDrawer>
+    </>
   );
 }
 
