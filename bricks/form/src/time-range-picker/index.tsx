@@ -71,7 +71,6 @@ export type RangeType = PickerType | OtherPickerType;
 export interface EoTimeRangePickerProps extends FormItemProps {
   shadowRoot?: ShadowRoot | null;
   value?: TimeRange;
-  format: string;
   rangeType?: RangeType;
   placeholder?: string | [string, string];
   inputStyle?: CSSProperties;
@@ -481,6 +480,7 @@ export function RealTimeRangePicker(
 }
 
 interface EoTimeRangePickerComponentProps extends EoTimeRangePickerProps {
+  format: string;
   onChange?: (range: TimeRange) => void;
 }
 

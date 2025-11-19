@@ -47,7 +47,8 @@ type BundledLanguage =
   | "python"
   | "py"
   | "go"
-  | "sql";
+  | "sql"
+  | "yaml";
 type BundledTheme = "light-plus" | "dark-plus";
 type Highlighter = HighlighterGeneric<BundledLanguage, BundledTheme>;
 
@@ -76,6 +77,7 @@ const bundledLanguages = {
   py: () => import("@shikijs/langs/python"),
   go: () => import("@shikijs/langs/go"),
   sql: () => import("@shikijs/langs/sql"),
+  yaml: () => import("@shikijs/langs/yaml"),
 } as Record<BundledLanguage, DynamicImportLanguageRegistration>;
 
 const bundledThemes = {
