@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/markdown@0.7.3...@next-shared/markdown@0.7.4) (2025-11-19)
+
+
+### Bug Fixes
+
+* handle code language fallback ([ea7fe14](https://github.com/easyops-cn/next-advanced-bricks/commit/ea7fe14bd0896185193ac0d8ee7b7631b6253395))
+
+
+
+
+
 ## [0.7.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/markdown@0.7.2...@next-shared/markdown@0.7.3) (2025-10-29)
 
 

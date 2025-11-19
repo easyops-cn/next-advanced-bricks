@@ -1,6 +1,6 @@
 {
   "name": "@next-shared/markdown",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "homepage": "https://github.com/easyops-cn/next-advanced-bricks/tree/master/shared/markdown",
   "repository": {
     "type": "git",
@@ -34,7 +34,7 @@
     "build:types": "tsc --emitDeclarationOnly --declaration --declarationDir dist/types --project tsconfig.build.json"
   },
   "dependencies": {
-    "@next-shared/shiki": "^0.1.0",
+    "@next-shared/shiki": "^0.1.1",
     "@shikijs/rehype": "3.12.2",
     "hast-util-from-html-isomorphic": "^2.0.0",
     "hast-util-to-string": "^3.0.0",

@@ -1,6 +1,6 @@
 {
   "name": "@next-bricks/presentational",
-  "version": "1.21.7",
+  "version": "1.21.8",
   "homepage": "https://github.com/easyops-cn/next-advanced-bricks/tree/master/bricks/presentational",
   "repository": {
     "type": "git",
@@ -45,7 +45,7 @@
     "@next-core/utils": "^1.8.8",
     "@next-shared/datetime": "^0.4.4",
     "@next-shared/general": "^0.10.5",
-    "@next-shared/shiki": "^0.1.0",
+    "@next-shared/shiki": "^0.1.1",
     "classnames": "^2.3.2",
     "file-saver": "^2.0.5",
     "prism-react-renderer": "^2.0.6",
