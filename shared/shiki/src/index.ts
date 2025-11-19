@@ -76,6 +76,7 @@ const bundledLanguages = {
   py: () => import("@shikijs/langs/python"),
   go: () => import("@shikijs/langs/go"),
   sql: () => import("@shikijs/langs/sql"),
+  yaml: () => import("@shikijs/langs/yaml"),
 } as Record<BundledLanguage, DynamicImportLanguageRegistration>;
 
 const bundledThemes = {
