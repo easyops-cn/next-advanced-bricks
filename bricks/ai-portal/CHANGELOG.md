@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.61.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.61.4...@next-bricks/ai-portal@0.61.5) (2025-11-19)
+
+
+### Bug Fixes
+
+* support space nav in sidebar ([d0afa42](https://github.com/easyops-cn/next-advanced-bricks/commit/d0afa4250b3a5cb008bee31f016fb1558d3c893a))
+
+
+
+
+
 ## [0.61.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.61.3...@next-bricks/ai-portal@0.61.4) (2025-11-19)
 
 

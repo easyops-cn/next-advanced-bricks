@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.50.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.50.5...@next-bricks/advanced@0.50.6) (2025-11-19)
+
+
+### Bug Fixes
+
+* support space nav in sidebar ([d0afa42](https://github.com/easyops-cn/next-advanced-bricks/commit/d0afa4250b3a5cb008bee31f016fb1558d3c893a))
+
+
+
+
+
 ## [0.50.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.50.4...@next-bricks/advanced@0.50.5) (2025-11-18)
 
 
