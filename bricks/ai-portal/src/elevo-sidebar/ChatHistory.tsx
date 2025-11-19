@@ -6,8 +6,6 @@ import React, {
   useMemo,
   useRef,
   useState,
-  type MutableRefObject,
-  type PropsWithChildren,
 } from "react";
 import classNames from "classnames";
 import {
@@ -20,7 +18,7 @@ import type {
   SimpleActionType,
 } from "@next-bricks/basic/mini-actions";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
-import { isEqual, throttle } from "lodash";
+import { isEqual } from "lodash";
 import { K, t } from "./i18n.js";
 import {
   WrappedIcon,
@@ -31,8 +29,9 @@ import {
 import { DONE_STATES } from "../shared/constants.js";
 import { parseTemplate } from "../shared/parseTemplate.js";
 import type { ConversationState } from "../shared/interfaces.js";
-import type { SidebarLink } from "./index.js";
+import type { SidebarLink } from "./interfaces.js";
 import { NavLink } from "./NavLink.js";
+import { SectionTitle } from "./SectionTitle.js";
 
 const ADD_ICON: GeneralIconProps = {
   lib: "fa",
@@ -511,60 +510,6 @@ export function LowLevelChatHistory(
           </div>
         )}
       </div>
-    </div>
-  );
-}
-
-interface SectionTitleProps {
-  rootRef: MutableRefObject<HTMLDivElement | null>;
-  title: string;
-  collapsed: boolean;
-  onToggle: () => void;
-}
-
-function SectionTitle({
-  rootRef,
-  title,
-  collapsed,
-  children,
-  onToggle,
-}: PropsWithChildren<SectionTitleProps>) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [stickyActive, setStickyActive] = useState(false);
-
-  useEffect(() => {
-    if (collapsed) {
-      setStickyActive(false);
-      return;
-    }
-    const parent = rootRef.current;
-    const element = ref.current;
-    const sibling = element?.nextElementSibling as HTMLElement | null;
-    if (!parent || !element || !sibling) {
-      return;
-    }
-    const onScroll = throttle(() => {
-      const rect = element.getBoundingClientRect();
-      const siblingRect = sibling.getBoundingClientRect();
-      const diff = siblingRect.top - rect.top - rect.height;
-      setStickyActive(diff < 1);
-    }, 100);
-    parent.addEventListener("scroll", onScroll);
-    return () => {
-      parent.removeEventListener("scroll", onScroll);
-    };
-  }, [collapsed, rootRef]);
-
-  return (
-    <div
-      className={classNames("section-title", { sticky: stickyActive })}
-      ref={ref}
-    >
-      <div className="section-label" onClick={onToggle}>
-        {title}
-        <WrappedIcon lib="fa" icon="angle-down" />
-      </div>
-      {children}
     </div>
   );
 }

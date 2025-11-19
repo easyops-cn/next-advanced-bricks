@@ -74,7 +74,7 @@ declare global {
               showSorterTooltip?: boolean | object;
               sortDirections?: ("descend" | "ascend" | null)[];
               render?: (data: {
-                rowData: object;
+                rowData: Record<string, any>;
                 cellData: any;
               }) => React.ReactNode;
               headerBrick?: {
