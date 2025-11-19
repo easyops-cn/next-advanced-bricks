@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.61.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.61.3...@next-bricks/ai-portal@0.61.4) (2025-11-19)
+
+
+### Bug Fixes
+
+* show tool call detail in aside ([e9efa9b](https://github.com/easyops-cn/next-advanced-bricks/commit/e9efa9b7815c4bb86a0fb7a34876a0f9ab34cbbf))
+
+
+
+
+
 ## [0.61.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.61.2...@next-bricks/ai-portal@0.61.3) (2025-11-19)
 
 **Note:** Version bump only for package @next-bricks/ai-portal
