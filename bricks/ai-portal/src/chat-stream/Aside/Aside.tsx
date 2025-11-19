@@ -1,19 +1,18 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext } from "react";
 import classNames from "classnames";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 import styles from "./Aside.module.css";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
 import { WrappedCodeBlock, WrappedIconButton } from "../../shared/bricks";
-import type { CmdbInstanceDetailData } from "../../cruise-canvas/interfaces";
 import { ToolCallStatus } from "../../cruise-canvas/ToolCallStatus/ToolCallStatus";
 import { TaskContext } from "../../shared/TaskContext";
 import { StreamContext } from "../StreamContext";
 import type {
   ActiveDetailOfActivity,
-  FileInfo,
   FulfilledActiveDetail,
 } from "../../shared/interfaces";
 import { FlowApp } from "./FlowApp/FlowApp";
+import { ToolCallDetail } from "../../cruise-canvas/ToolCallDetail/ToolCallDetail";
 
 const ICON_SHRINK: GeneralIconProps = {
   lib: "easyops",
@@ -29,38 +28,6 @@ export interface AsideProps {
 export function Aside({ detail, isSubTask, faded }: AsideProps) {
   const { setActiveDetail, setSubActiveDetail } = useContext(TaskContext);
   const { setUserClosedAside } = useContext(StreamContext);
-
-  const [toolMarkdownContent, cmdbInstanceDetails /* , files */] =
-    useMemo(() => {
-      const contents: string[] = [];
-      const instanceDetails: CmdbInstanceDetailData[] = [];
-      const files: FileInfo[] = [];
-
-      if (detail.type === "job") {
-        detail.job.messages?.forEach((message) => {
-          if (message.role === "tool") {
-            for (const part of message.parts) {
-              if (part.type === "data") {
-                switch (part.data?.type) {
-                  case "markdown":
-                    contents.push(part.data.content);
-                    break;
-                  case "cmdb_instance_detail":
-                    instanceDetails.push(part.data as CmdbInstanceDetailData);
-                    break;
-                }
-              } else if (part.type === "file") {
-                files.push(part.file);
-              }
-            }
-          }
-        });
-      }
-
-      const markdownContent = contents.join("");
-
-      return [markdownContent, instanceDetails, files] as const;
-    }, [detail]);
 
   return (
     <div
@@ -85,7 +52,12 @@ export function Aside({ detail, isSubTask, faded }: AsideProps) {
             }}
           />
         </div>
-        <div className={styles.body}>
+        <div
+          className={classNames(styles.body, {
+            [styles.scrollable]:
+              detail.type === "job" && !detail.job.generatedView,
+          })}
+        >
           {detail.type === "job" ? (
             <>
               <ToolCallStatus job={detail.job} variant="read-only" />
@@ -95,19 +67,9 @@ export function Aside({ detail, isSubTask, faded }: AsideProps) {
                   source={detail.job.generatedView.code}
                   language="jsx"
                 />
-              ) : toolMarkdownContent ? (
-                <EditorApp
-                  name="Content"
-                  source={toolMarkdownContent}
-                  language="md"
-                />
-              ) : cmdbInstanceDetails.length > 0 ? (
-                <EditorApp
-                  name="CMDB"
-                  source={JSON.stringify(cmdbInstanceDetails, null, 2)}
-                  language="json"
-                />
-              ) : null}
+              ) : (
+                <ToolCallDetail job={detail.job} />
+              )}
             </>
           ) : (
             <FlowApp
