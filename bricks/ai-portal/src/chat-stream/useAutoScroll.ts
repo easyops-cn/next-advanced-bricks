@@ -8,7 +8,7 @@ import {
 import ResizeObserver from "resize-observer-polyfill";
 
 export function useAutoScroll(
-  conversationAvailable: boolean,
+  contentAvailable: boolean,
   scrollContainerRef: RefObject<HTMLDivElement>,
   scrollContentRef: RefObject<HTMLDivElement>
 ) {
@@ -61,7 +61,7 @@ export function useAutoScroll(
     };
     // Auto scroll after the conversation becomes available
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [conversationAvailable]);
+  }, [contentAvailable]);
 
   const scrollToBottom = useCallback(() => {
     const scrollContainer = scrollContainerRef.current;

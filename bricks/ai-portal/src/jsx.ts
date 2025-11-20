@@ -80,6 +80,7 @@ import type { ChatPayload } from "./shared/interfaces";
 import type { FeedbackDetail } from "./cruise-canvas/interfaces";
 import type { GoalItem } from "./goal-card-list/CardItem/CardItem";
 import type { PersonalActionClickDetail } from "./elevo-sidebar/ChatHistory";
+import type { ChatPanel, ChatPanelProps } from "./chat-panel";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -339,6 +340,11 @@ declare global {
         TabListProps & {
           onTabClick?: (event: CustomEvent<Tab>) => void;
         };
+      "ai-portal--chat-panel": DetailedHTMLProps<
+        HTMLAttributes<ChatPanel>,
+        ChatPanel
+      > &
+        ChatPanelProps;
     }
   }
 }

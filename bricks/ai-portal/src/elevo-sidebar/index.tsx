@@ -58,6 +58,7 @@ export interface ElevoSidebarProps {
   historyActiveId?: string;
   historyUrlTemplate?: string;
   historyActions?: ActionType[];
+  showProjects?: boolean;
   projectActiveId?: string;
   projectUrlTemplate?: string;
   projectActions?: ActionType[];
@@ -106,6 +107,9 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
 
   @property({ attribute: false })
   accessor historyActions: ActionType[] | undefined;
+
+  @property({ type: Boolean })
+  accessor showProjects: boolean | undefined;
 
   @property()
   accessor projectUrlTemplate: string | undefined;
@@ -176,7 +180,7 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
   };
 
   /**
-   * 点击项目操作按钮时触发
+   * 点击个人操作按钮时触发
    */
   @event({ type: "personal.action.click" })
   accessor #personalActionClick!: EventEmitter<PersonalActionClickDetail>;
@@ -234,6 +238,7 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
         newChatLinkWhenCollapsed={this.newChatLinkWhenCollapsed}
         historyUrlTemplate={this.historyUrlTemplate}
         historyActions={this.historyActions}
+        showProjects={this.showProjects}
         projectUrlTemplate={this.projectUrlTemplate}
         projectActions={this.projectActions}
         personalActions={this.personalActions}
@@ -271,6 +276,7 @@ function LegacyElevoSidebarComponent(
     newChatLinkWhenCollapsed,
     historyUrlTemplate,
     historyActions,
+    showProjects,
     projectUrlTemplate,
     projectActions,
     links,
@@ -432,6 +438,7 @@ function LegacyElevoSidebarComponent(
               ) : null}
               <ChatHistory
                 ref={historyRef}
+                showProjects={showProjects}
                 canAddProject={canAddProject}
                 historyUrlTemplate={historyUrlTemplate}
                 historyActions={historyActions}

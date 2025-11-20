@@ -84,6 +84,7 @@ export interface Project {
 }
 
 export interface ChatHistoryProps {
+  showProjects?: boolean;
   historyUrlTemplate?: string;
   historyActions?: ActionType[];
   projectUrlTemplate?: string;
@@ -107,6 +108,7 @@ export const ChatHistory = forwardRef(LowLevelChatHistory);
 
 export function LowLevelChatHistory(
   {
+    showProjects,
     historyActions,
     historyUrlTemplate,
     projectUrlTemplate,
@@ -357,80 +359,87 @@ export function LowLevelChatHistory(
           </ul>
         </div>
       ) : null}
-      <div className={classNames("section", { collapsed: projectsCollapsed })}>
-        <SectionTitle
-          rootRef={rootRef}
-          title={t(K.PROJECTS)}
-          collapsed={projectsCollapsed}
-          onToggle={() => setProjectsCollapsed((prev) => !prev)}
+      {showProjects && (
+        <div
+          className={classNames("section", { collapsed: projectsCollapsed })}
         >
-          {canAddProject && (
-            <WrappedIconButton
-              icon={ADD_ICON}
-              variant="mini-light"
-              tooltip={t(K.CREATE_PROJECT)}
-              tooltipHoist={true}
-              className="button"
-              onClick={onAddProject}
-            />
-          )}
-        </SectionTitle>
-        <ul className="items">
-          {projectsError ? (
-            <li className="error">Failed to load project</li>
-          ) : projects ? (
-            projects.map((project) => {
-              const url = projectUrlTemplate
-                ? parseTemplate(projectUrlTemplate, project)
-                : undefined;
-              return (
-                <li key={project.instanceId}>
-                  <NavLink
-                    url={url}
-                    render={({ active }) => (
-                      <WrappedLink
-                        className={classNames("item", {
-                          "actions-active":
-                            project.instanceId === actionsVisible,
-                          active,
-                        })}
-                        onClick={onHistoryClick}
-                        {...(url ? { url } : null)}
-                      >
-                        <div className="item-title" title={project.name}>
-                          {project.name || t(K.UNNAMED)}
-                        </div>
-                        <WrappedMiniActions
-                          className="actions"
-                          actions={projectActions}
-                          themeVariant="elevo"
-                          onActionClick={(e) => {
-                            onProjectActionClick({ action: e.detail, project });
-                          }}
-                          onVisibleChange={(e) => {
-                            setActionsVisible(
-                              e.detail ? project.instanceId : null
-                            );
-                          }}
-                        />
-                      </WrappedLink>
-                    )}
-                  />
-                </li>
-              );
-            })
-          ) : (
-            <li className="loading">
-              <WrappedIcon
-                lib="antd"
-                theme="outlined"
-                icon="loading-3-quarters"
-                spinning
+          <SectionTitle
+            rootRef={rootRef}
+            title={t(K.PROJECTS)}
+            collapsed={projectsCollapsed}
+            onToggle={() => setProjectsCollapsed((prev) => !prev)}
+          >
+            {canAddProject && (
+              <WrappedIconButton
+                icon={ADD_ICON}
+                variant="mini-light"
+                tooltip={t(K.CREATE_PROJECT)}
+                tooltipHoist={true}
+                className="button"
+                onClick={onAddProject}
               />
-            </li>
-          )}
-        </ul>
-      </div>
+            )}
+          </SectionTitle>
+          <ul className="items">
+            {projectsError ? (
+              <li className="error">Failed to load project</li>
+            ) : projects ? (
+              projects.map((project) => {
+                const url = projectUrlTemplate
+                  ? parseTemplate(projectUrlTemplate, project)
+                  : undefined;
+                return (
+                  <li key={project.instanceId}>
+                    <NavLink
+                      url={url}
+                      render={({ active }) => (
+                        <WrappedLink
+                          className={classNames("item", {
+                            "actions-active":
+                              project.instanceId === actionsVisible,
+                            active,
+                          })}
+                          onClick={onHistoryClick}
+                          {...(url ? { url } : null)}
+                        >
+                          <div className="item-title" title={project.name}>
+                            {project.name || t(K.UNNAMED)}
+                          </div>
+                          <WrappedMiniActions
+                            className="actions"
+                            actions={projectActions}
+                            themeVariant="elevo"
+                            onActionClick={(e) => {
+                              onProjectActionClick({
+                                action: e.detail,
+                                project,
+                              });
+                            }}
+                            onVisibleChange={(e) => {
+                              setActionsVisible(
+                                e.detail ? project.instanceId : null
+                              );
+                            }}
+                          />
+                        </WrappedLink>
+                      )}
+                    />
+                  </li>
+                );
+              })
+            ) : (
+              <li className="loading">
+                <WrappedIcon
+                  lib="antd"
+                  theme="outlined"
+                  icon="loading-3-quarters"
+                  spinning
+                />
+              </li>
+            )}
+          </ul>
+        </div>
+      )}
       <div className={classNames("section", { collapsed: historyCollapsed })}>
         <SectionTitle
           rootRef={rootRef}

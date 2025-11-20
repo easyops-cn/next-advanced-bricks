@@ -12,7 +12,7 @@ import type {
 const MINIMAL_DELAY = 500;
 
 export function useConversationDetail(
-  conversationId: string,
+  conversationId: string | null,
   initialRequest?: RequestStore | null,
   replay?: boolean,
   replayDelay?: number
@@ -47,6 +47,10 @@ export function useConversationDetail(
   }, []);
 
   const watchAgain = useCallback(async () => {
+    if (!conversationId) {
+      return;
+    }
+
     replayRef.current = true;
     dispatch({ type: "reset" });
 
@@ -78,6 +82,9 @@ export function useConversationDetail(
   }, [conversationId]);
 
   useEffect(() => {
+    if (!conversationId) {
+      return;
+    }
     dispatch({ type: "reset" });
     replayListRef.current = [];
     humanInputRef.current = undefined;

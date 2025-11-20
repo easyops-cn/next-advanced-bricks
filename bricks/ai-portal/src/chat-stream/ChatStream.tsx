@@ -99,6 +99,7 @@ export function ChatStreamComponent(
     replay,
     replayDelay
   );
+  const conversationAvailable = !!conversation;
   const pageTitle = conversation?.title ?? "";
   const conversationState = conversation?.state;
   const conversationDone = DONE_STATES.includes(conversationState!);
@@ -106,7 +107,7 @@ export function ChatStreamComponent(
   const plan = useServiceFlowPlan(serviceFlows, tasks);
   const { flowMap, activityMap } = useFlowAndActivityMap(serviceFlows);
   const { messages, jobMap, lastDetail } = useConversationStream(
-    !!conversation,
+    conversationAvailable,
     conversation?.state,
     tasks,
     errors,
@@ -185,7 +186,6 @@ export function ChatStreamComponent(
     null
   );
   const [userClosedAside, setUserClosedAside] = useState(false);
-  const conversationAvailable = !!conversation;
 
   // Delay flag to prevent the aside from being auto-opened for a completed task
   const delayRef = useRef(false);
@@ -333,11 +333,28 @@ export function ChatStreamComponent(
     [lastDetail]
   );
 
+  const [depsReady, setDepsReady] = useState(false);
+  useEffect(() => {
+    let ignore = false;
+    Promise.race([
+      preloadHighlighter("light-plus"),
+      // Wait at most 5s
+      new Promise((resolve) => setTimeout(resolve, 5000)),
+    ]).finally(() => {
+      if (!ignore) {
+        setDepsReady(true);
+      }
+    });
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const scrollContentRef = useRef<HTMLDivElement>(null);
 
   const { scrollable, scrollToBottom } = useAutoScroll(
-    conversationAvailable,
+    conversationAvailable && depsReady,
     scrollContainerRef,
     scrollContentRef
   );
@@ -355,23 +372,6 @@ export function ChatStreamComponent(
     flowMap,
     activityMap
   );
-
-  const [depsReady, setDepsReady] = useState(false);
-  useEffect(() => {
-    let ignore = false;
-    Promise.race([
-      preloadHighlighter("light-plus"),
-      // Wait at most 5s
-      new Promise((resolve) => setTimeout(resolve, 5000)),
-    ]).finally(() => {
-      if (!ignore) {
-        setDepsReady(true);
-      }
-    });
-    return () => {
-      ignore = true;
-    };
-  }, []);
 
   useHandleEscape(taskContextValue);
 

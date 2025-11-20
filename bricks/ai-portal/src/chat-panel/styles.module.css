@@ -1,0 +1,36 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+  height: 100%;
+}
+
+.main {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.chat {
+  padding: 0 0 20px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.messages {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.message + .message {
+  margin-top: 40px;
+}
+
+.loading-icon {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: #fff;
+}
