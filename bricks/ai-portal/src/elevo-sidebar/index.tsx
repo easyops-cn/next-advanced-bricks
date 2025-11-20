@@ -38,6 +38,8 @@ import { NavLink } from "./NavLink.js";
 import type { SidebarLink } from "./interfaces.js";
 import { SpaceNav, type SpaceNavProps } from "./SpaceNav.js";
 
+export type { SidebarLink, SpaceNavProps };
+
 initializeI18n(NS, locales);
 
 const SIDEBAR_ICON: GeneralIconProps = {

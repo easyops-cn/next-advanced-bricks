@@ -19,6 +19,7 @@ export enum K {
   SERVICEFLOWS = "SERVICEFLOWS",
   COLLABORATION_SPACES = "COLLABORATION_SPACES",
   CREATE_SERVICEFLOW = "CREATE_SERVICEFLOW",
+  BUSINESS_OBJECTS_SETTINGS = "BUSINESS_OBJECTS_SETTINGS",
 }
 
 const en: Locale = {
@@ -40,6 +41,7 @@ const en: Locale = {
   [K.SERVICEFLOWS]: "Serviceflows",
   [K.COLLABORATION_SPACES]: "Collaboration spaces",
   [K.CREATE_SERVICEFLOW]: "Create serviceflow",
+  [K.BUSINESS_OBJECTS_SETTINGS]: "Business objects settings",
 };
 
 const zh: Locale = {
@@ -61,6 +63,7 @@ const zh: Locale = {
   [K.SERVICEFLOWS]: "业务流",
   [K.COLLABORATION_SPACES]: "协作空间",
   [K.CREATE_SERVICEFLOW]: "创建业务流",
+  [K.BUSINESS_OBJECTS_SETTINGS]: "业务对象设置",
 };
 
 export const NS = "bricks/ai-portal/elevo-sidebar";

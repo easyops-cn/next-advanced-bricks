@@ -5,10 +5,12 @@ import { K, t } from "./i18n.js";
 import { WrappedIcon, WrappedIconButton, WrappedLink } from "./bricks.js";
 import { NavLink } from "./NavLink.js";
 import type { SidebarLink } from "./interfaces.js";
-import { ADD_ICON } from "./constants.js";
+import { ADD_ICON, SETTINGS_ICON } from "./constants.js";
+import { getHistory } from "@next-core/runtime";
 
 export interface SpaceNavProps {
   returnUrl: string;
+  introUrl: string;
   spaceDetail: {
     instanceId: string;
     name: string;
@@ -24,6 +26,7 @@ export interface SpaceNavComponentProps extends SpaceNavProps {
 
 export function SpaceNav({
   returnUrl,
+  introUrl,
   spaceDetail,
   spaceObjects,
   spaceServiceflows,
@@ -45,7 +48,7 @@ export function SpaceNav({
       </WrappedLink>
       <div className="divider" />
       <div className="history" ref={rootRef}>
-        {spaceObjects?.length ? (
+        {spaceObjects ? (
           <div
             className={classNames("section", { collapsed: objectsCollapsed })}
           >
@@ -54,7 +57,16 @@ export function SpaceNav({
               title={t(K.BUSINESS_OBJECTS)}
               collapsed={objectsCollapsed}
               onToggle={() => setObjectsCollapsed((prev) => !prev)}
-            />
+            >
+              <WrappedIconButton
+                icon={SETTINGS_ICON}
+                variant="mini-light"
+                tooltip={t(K.BUSINESS_OBJECTS_SETTINGS)}
+                tooltipHoist={true}
+                className="button"
+                onClick={() => getHistory().push(introUrl)}
+              />
+            </SectionTitle>
             <ul className="items">
               {spaceObjects.map((obj, index) => (
                 <li key={index}>
@@ -75,7 +87,7 @@ export function SpaceNav({
             </ul>
           </div>
         ) : null}
-        {spaceServiceflows?.length ? (
+        {spaceServiceflows ? (
           <div
             className={classNames("section", {
               collapsed: serviceflowsCollapsed,
