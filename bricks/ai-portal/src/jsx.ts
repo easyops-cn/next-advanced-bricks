@@ -79,6 +79,7 @@ import type { Tab, TabList, TabListProps } from "./tab-list";
 import type { ChatPayload } from "./shared/interfaces";
 import type { FeedbackDetail } from "./cruise-canvas/interfaces";
 import type { GoalItem } from "./goal-card-list/CardItem/CardItem";
+import type { PersonalActionClickDetail } from "./elevo-sidebar/ChatHistory";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -188,6 +189,9 @@ declare global {
           onActionClick?: (event: CustomEvent<ActionClickDetail>) => void;
           onProjectActionClick?: (
             event: CustomEvent<ProjectActionClickDetail>
+          ) => void;
+          onPersonalActionClick?: (
+            event: CustomEvent<PersonalActionClickDetail>
           ) => void;
         };
 
