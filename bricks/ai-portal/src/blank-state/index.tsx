@@ -50,6 +50,7 @@ function BlankStateComponent({ illustration, description }: BlankStateProps) {
     <>
       <img src={getIllustrationSrc(illustration)} width={184} height={138} />
       <p>{description}</p>
+      <slot />
     </>
   );
 }

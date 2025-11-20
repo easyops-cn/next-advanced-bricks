@@ -17,20 +17,21 @@ describe("ai-portal.blank-state", () => {
       document.body.appendChild(element);
     });
     expect(element.shadowRoot?.childNodes).toMatchInlineSnapshot(`
-      NodeList [
-        <style>
-          styles.shadow.css
-        </style>,
-        <img
-          height="138"
-          src="goals@2x.png"
-          width="184"
-        />,
-        <p>
-          No goals
-        </p>,
-      ]
-    `);
+NodeList [
+  <style>
+    styles.shadow.css
+  </style>,
+  <img
+    height="138"
+    src="goals@2x.png"
+    width="184"
+  />,
+  <p>
+    No goals
+  </p>,
+  <slot />,
+]
+`);
 
     act(() => {
       document.body.removeChild(element);
@@ -46,18 +47,19 @@ describe("ai-portal.blank-state", () => {
       document.body.appendChild(element);
     });
     expect(element.shadowRoot?.childNodes).toMatchInlineSnapshot(`
-      NodeList [
-        <style>
-          styles.shadow.css
-        </style>,
-        <img
-          height="138"
-          src="activities@2x.png"
-          width="184"
-        />,
-        <p />,
-      ]
-    `);
+NodeList [
+  <style>
+    styles.shadow.css
+  </style>,
+  <img
+    height="138"
+    src="activities@2x.png"
+    width="184"
+  />,
+  <p />,
+  <slot />,
+]
+`);
 
     act(() => {
       document.body.removeChild(element);

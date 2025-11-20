@@ -214,9 +214,8 @@ export interface JobPatch extends Partial<Job> {
   id: string;
 }
 
-export interface RequestStore extends ExtraChatPayload {
+export interface RequestStore extends ChatPayload {
   conversationId: string;
-  content: string;
 }
 
 export interface UploadFileInfo {
