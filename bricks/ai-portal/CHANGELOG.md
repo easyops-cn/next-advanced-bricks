@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.63.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.63.0...@next-bricks/ai-portal@0.63.1) (2025-11-20)
+
+
+### Bug Fixes
+
+* space objects settings ([636e3ab](https://github.com/easyops-cn/next-advanced-bricks/commit/636e3ab300e6f7b9c9a75014617587fc63d92496))
+
+
+
+
+
 # [0.63.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.62.0...@next-bricks/ai-portal@0.63.0) (2025-11-20)
 
 
