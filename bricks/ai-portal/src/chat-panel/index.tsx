@@ -59,7 +59,6 @@ const { defineElement, property, method } = createDecorators();
 
 export interface ChatPanelProps {
   panelTitle?: string;
-  mode?: "drawer" | "modal" | "fullscreen";
   width?: string | number;
   height?: string | number;
   placeholder?: string;
@@ -69,7 +68,7 @@ export interface ChatPanelProps {
 const ChatPanelComponent = forwardRef(LegacyChatPanelComponent);
 
 /**
- * 弹出式对话面板，支持三种显示模式：抽屉、弹窗、全屏。
+ * 弹出式对话面板。
  */
 export
 @defineElement("ai-portal.chat-panel", {

@@ -191,6 +191,7 @@ declare global {
           onProjectActionClick?: (
             event: CustomEvent<ProjectActionClickDetail>
           ) => void;
+          onAddServiceflow?: (event: CustomEvent<void>) => void;
           onPersonalActionClick?: (
             event: CustomEvent<PersonalActionClickDetail>
           ) => void;
