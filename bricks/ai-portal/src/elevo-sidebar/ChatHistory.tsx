@@ -58,6 +58,10 @@ export interface ProjectActionClickDetail {
   project: Project;
 }
 
+export interface PersonalActionClickDetail {
+  action: SimpleActionType;
+}
+
 export interface Project {
   /** 实例ID */
   instanceId: string;

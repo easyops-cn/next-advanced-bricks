@@ -30,6 +30,7 @@ import {
   ChatHistory,
   type ActionClickDetail,
   type ChatHistoryRef,
+  type PersonalActionClickDetail,
   type Project,
   type ProjectActionClickDetail,
 } from "./ChatHistory.js";
@@ -60,6 +61,7 @@ export interface ElevoSidebarProps {
   projectActiveId?: string;
   projectUrlTemplate?: string;
   projectActions?: ActionType[];
+  personalActions?: ActionType[];
   links?: SidebarLink[];
   canAddProject?: boolean;
   myLinks?: SidebarLink[];
@@ -110,6 +112,9 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
 
   @property({ attribute: false })
   accessor projectActions: ActionType[] | undefined;
+
+  @property({ attribute: false })
+  accessor personalActions: ActionType[] | undefined;
 
   @property({ attribute: false })
   accessor links: SidebarLink[] | undefined;
@@ -170,6 +175,16 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
     this.#addServiceflow.emit();
   };
 
+  /**
+   * 点击项目操作按钮时触发
+   */
+  @event({ type: "personal.action.click" })
+  accessor #personalActionClick!: EventEmitter<PersonalActionClickDetail>;
+
+  #handlePersonalActionClick = (detail: PersonalActionClickDetail) => {
+    this.#personalActionClick.emit(detail);
+  };
+
   #ref = createRef<ElevoSidebarRef>();
 
   /**
@@ -221,6 +236,7 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
         historyActions={this.historyActions}
         projectUrlTemplate={this.projectUrlTemplate}
         projectActions={this.projectActions}
+        personalActions={this.personalActions}
         links={this.links}
         canAddProject={this.canAddProject}
         myLinks={this.myLinks}
@@ -231,6 +247,7 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
         onProjectActionClick={this.#handleProjectActionClick}
         onAddProject={this.#handleAddProject}
         onAddServiceflow={this.#handleAddServiceflow}
+        onPersonalActionClick={this.#handlePersonalActionClick}
       />
     );
   }
@@ -242,6 +259,7 @@ interface ElevoSidebarComponentProps extends ElevoSidebarProps {
   onProjectActionClick: (detail: ProjectActionClickDetail) => void;
   onAddProject: () => void;
   onAddServiceflow: () => void;
+  onPersonalActionClick: (detail: PersonalActionClickDetail) => void;
 }
 
 function LegacyElevoSidebarComponent(
@@ -260,11 +278,13 @@ function LegacyElevoSidebarComponent(
     myLinks,
     scope,
     spaceNav,
+    personalActions,
     onLogout,
     onActionClick,
     onProjectActionClick,
     onAddProject,
     onAddServiceflow,
+    onPersonalActionClick,
   }: ElevoSidebarComponentProps,
   ref: React.Ref<ElevoSidebarRef>
 ) {
@@ -430,9 +450,11 @@ function LegacyElevoSidebarComponent(
           <WrappedDropdownActions
             className="dropdown"
             themeVariant="elevo"
-            actions={dropdownActions}
+            actions={personalActions || dropdownActions}
             onActionClick={async (e) => {
-              if (e.detail.key === "logout") {
+              if (personalActions) {
+                onPersonalActionClick({ action: e.detail });
+              } else if (e.detail.key === "logout") {
                 onLogout();
               } else {
                 await i18n.changeLanguage(
