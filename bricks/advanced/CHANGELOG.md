@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.51.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.50.7...@next-bricks/advanced@0.51.0) (2025-11-21)
+
+
+### Features
+
+* **next-table:** support row click ([a7c253b](https://github.com/easyops-cn/next-advanced-bricks/commit/a7c253b11f8b2d6439e9dc2089f67ec2bf4da934))
+
+
+
+
+
 ## [0.50.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.50.6...@next-bricks/advanced@0.50.7) (2025-11-21)
 
 
