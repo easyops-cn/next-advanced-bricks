@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.50.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.50.6...@next-bricks/advanced@0.50.7) (2025-11-21)
+
+
+### Bug Fixes
+
+* refine jsx types, add cell prop for eo-next-table ([11526fe](https://github.com/easyops-cn/next-advanced-bricks/commit/11526febcca5cbbe6af2cefa98cc92267a5fec8f))
+
+
+
+
+
 ## [0.50.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.50.5...@next-bricks/advanced@0.50.6) (2025-11-19)
 
 
