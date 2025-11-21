@@ -151,6 +151,7 @@ function ActivityDetail({ activity }: ActivityDetailProps) {
               {msg.role === "user" ? (
                 <UserMessage
                   content={msg.content}
+                  mentionedAiEmployeeId={msg.mentionedAiEmployeeId}
                   cmd={msg.cmd}
                   files={msg.files}
                 />

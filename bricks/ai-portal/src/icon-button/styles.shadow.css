@@ -42,6 +42,7 @@ button:focus {
   outline: none;
 }
 
+:host([active]) button:not(:disabled),
 button:not(:disabled):hover {
   background: rgba(0, 0, 0, 0.04);
 }

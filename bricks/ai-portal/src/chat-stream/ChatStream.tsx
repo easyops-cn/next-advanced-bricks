@@ -225,10 +225,10 @@ export function ChatStreamComponent(
   const firstMessage = messages[0];
   const userMessage = firstMessage?.role === "user" ? firstMessage : null;
 
+  const [activeFile, setActiveFile] = useState<FileInfo | null>(null);
   const [activeImages, setActiveImages] = useState<ActiveImages | null>(null);
 
   const workspace = conversationId;
-  const [activeFile, setActiveFile] = useState<FileInfo | null>(null);
   const taskContextValue = useMemo(
     () => ({
       conversationId,
