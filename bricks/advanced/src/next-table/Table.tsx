@@ -69,6 +69,7 @@ export interface NextTableComponentProps extends NextTableProps {
   onPageChange?: (detail: { page: number; pageSize: number }) => void;
   onPageSizeChange?: (detail: { page: number; pageSize: number }) => void;
   onSort?: (detail?: Sort | Sort[]) => void;
+  onRowClick?: (detail: RecordType) => void;
   onRowSelect?: (detail: {
     keys: (string | number)[];
     rows: RecordType[];
@@ -106,6 +107,7 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
     expandable,
     childrenColumnName,
     rowDraggable,
+    rowClickable,
     searchFields,
     size,
     showHeader,
@@ -116,6 +118,7 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
     onPageChange,
     onPageSizeChange,
     onSort,
+    onRowClick,
     onRowSelect,
     onRowExpand,
     onExpandedRowsChange,
@@ -618,6 +621,15 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
                       },
                     }
               }
+              onRow={
+                rowClickable
+                  ? (record) => ({
+                      onClick: () => {
+                        onRowClick?.(record);
+                      },
+                    })
+                  : undefined
+              }
               onChange={(pagination, _filters, sorter, extra) => {
                 switch (extra.action) {
                   case "paginate": {
@@ -661,7 +673,9 @@ export const NextTableComponent = forwardRef(function LegacyNextTableComponent(
                   }
                 }
               }}
-              className="next-table"
+              className={classNames("next-table", {
+                "row-clickable": rowClickable,
+              })}
             />
           </SortableContext>
         </DndContext>

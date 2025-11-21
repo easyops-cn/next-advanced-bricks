@@ -25,6 +25,7 @@ export interface NextTableProps {
   expandedRowKeys?: (string | number)[];
   childrenColumnName?: string;
   rowDraggable?: boolean;
+  rowClickable?: boolean;
   searchFields?: (string | string[])[];
   size?: TableProps<RecordType>["size"];
   showHeader?: boolean;
