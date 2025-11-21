@@ -27,9 +27,10 @@ initializeI18n(NS, locales);
 
 export interface FilePreviewProps {
   file: FileInfo;
+  fromModal?: boolean;
 }
 
-export function FilePreview({ file }: FilePreviewProps) {
+export function FilePreview({ file, fromModal }: FilePreviewProps) {
   const { setActiveFile } = useContext(TaskContext);
   const { bytes, uri, mimeType, name } = file;
   const type = mimeType || getMimeTypeByFilename(name);
@@ -107,7 +108,7 @@ export function FilePreview({ file }: FilePreviewProps) {
   }, [file]);
 
   return (
-    <div className={styles.preview}>
+    <div className={styles.preview} style={fromModal ? { zIndex: 1000 } : {}}>
       <div className={styles.header}>
         <div className={styles.title}>{file.name || t(K.UNTITLED)}</div>
         <div className={styles.toolbar}>

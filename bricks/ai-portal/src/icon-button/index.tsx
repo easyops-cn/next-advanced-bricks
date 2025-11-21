@@ -19,6 +19,7 @@ export interface IconButtonProps {
   icon?: GeneralIconProps & HTMLAttributes<GeneralIcon>;
   tooltip?: string;
   tooltipHoist?: boolean;
+  active?: boolean;
   disabled?: boolean;
   variant?: IconButtonVariant;
   reduceIconSize?: boolean;
@@ -47,6 +48,9 @@ class IconButton extends ReactNextElement implements IconButtonProps {
 
   @property({ type: Boolean })
   accessor tooltipHoist: boolean | undefined;
+
+  @property({ type: Boolean, render: false })
+  accessor active: boolean | undefined;
 
   @property({ type: Boolean })
   accessor disabled: boolean | undefined;

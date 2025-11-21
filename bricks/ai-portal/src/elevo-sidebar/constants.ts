@@ -5,7 +5,7 @@ export const ADD_ICON: GeneralIconProps = {
   icon: "plus",
 };
 
-export const SETTINGS_ICON: GeneralIconProps = {
+export const MODEL_ICON: GeneralIconProps = {
   lib: "lucide",
-  icon: "settings",
+  icon: "box",
 };

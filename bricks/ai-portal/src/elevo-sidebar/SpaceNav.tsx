@@ -1,12 +1,13 @@
 import React, { useRef, useState } from "react";
 import classNames from "classnames";
+import { getHistory } from "@next-core/runtime";
 import { SectionTitle } from "./SectionTitle.js";
 import { K, t } from "./i18n.js";
 import { WrappedIcon, WrappedIconButton, WrappedLink } from "./bricks.js";
 import { NavLink } from "./NavLink.js";
 import type { SidebarLink } from "./interfaces.js";
-import { ADD_ICON, SETTINGS_ICON } from "./constants.js";
-import { getHistory } from "@next-core/runtime";
+import { ADD_ICON, MODEL_ICON } from "./constants.js";
+import { useNavLinkActive } from "./useNavLinkActive.js";
 
 export interface SpaceNavProps {
   returnUrl: string;
@@ -36,6 +37,7 @@ export function SpaceNav({
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [objectsCollapsed, setObjectsCollapsed] = useState(false);
   const [serviceflowsCollapsed, setServiceflowsCollapsed] = useState(false);
+  const introActive = useNavLinkActive(introUrl);
 
   return (
     <>
@@ -59,11 +61,12 @@ export function SpaceNav({
               onToggle={() => setObjectsCollapsed((prev) => !prev)}
             >
               <WrappedIconButton
-                icon={SETTINGS_ICON}
+                icon={MODEL_ICON}
                 variant="mini-light"
                 tooltip={t(K.BUSINESS_OBJECTS_SETTINGS)}
                 tooltipHoist={true}
                 className="button"
+                active={introActive}
                 onClick={() => getHistory().push(introUrl)}
               />
             </SectionTitle>

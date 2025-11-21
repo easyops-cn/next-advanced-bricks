@@ -11,9 +11,13 @@ import floatingStyles from "../FloatingButton.module.css";
 
 export interface ImagesPreviewProps {
   images: ActiveImages;
+  fromModal?: boolean;
 }
 
-export function ImagesPreview({ images: { files, file } }: ImagesPreviewProps) {
+export function ImagesPreview({
+  images: { files, file },
+  fromModal,
+}: ImagesPreviewProps) {
   const [currentFile, setCurrentFile] = useState<FileInfo>(file);
   const { setActiveImages } = useContext(TaskContext);
 
@@ -55,7 +59,7 @@ export function ImagesPreview({ images: { files, file } }: ImagesPreviewProps) {
   }, [go, setActiveImages]);
 
   return (
-    <div className={styles.preview}>
+    <div className={styles.preview} style={fromModal ? { zIndex: 1000 } : {}}>
       <div className={styles.header}>
         <WrappedIconButton
           icon={ICON_DOWNLOAD}

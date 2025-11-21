@@ -60,7 +60,7 @@ declare global {
         HTMLAttributes<EoNextTable>,
         EoNextTable
       > &
-        Omit<NextTableProps, "columns"> & {
+        Omit<NextTableProps, "columns" | "cell"> & {
           columns?: Array<
             Omit<ColumnProp, "useBrick" | "headerBrick"> & {
               align?: string;
@@ -82,6 +82,19 @@ declare global {
               };
             }
           >;
+          cell?: {
+            render?: (data: {
+              rowData: Record<string, any>;
+              cellData: any;
+              columnKey: string | number;
+            }) => React.ReactNode;
+            header?: {
+              render?: (data: {
+                title: string;
+                columnKey: string | number;
+              }) => React.ReactNode;
+            };
+          };
           onPageChange?: (
             event: CustomEvent<{ page: number; pageSize: number }>
           ) => void;
