@@ -121,6 +121,11 @@ class ChatPanel extends ReactNextElement implements ChatPanelProps {
     this.#ref.current?.send(payload);
   }
 
+  @method()
+  showFile(file: FileInfo) {
+    this.#ref.current?.showFile(file);
+  }
+
   render() {
     return (
       <ChatPanelComponent
@@ -146,6 +151,7 @@ interface ChatPanelRef {
   open: () => void;
   close: () => void;
   send: (payload: ChatPayload) => void;
+  showFile: (file: FileInfo) => void;
 }
 
 function LegacyChatPanelComponent(
@@ -274,6 +280,9 @@ function LegacyChatPanelComponent(
       },
       send: (payload: ChatPayload) => {
         handleChatSubmit(payload);
+      },
+      showFile: (file: FileInfo) => {
+        setActiveFile(file);
       },
     }),
     [handleChatSubmit]
