@@ -63,7 +63,7 @@ export function SpaceNav({
               <WrappedIconButton
                 icon={MODEL_ICON}
                 variant="mini-light"
-                tooltip={t(K.BUSINESS_OBJECTS_SETTINGS)}
+                tooltip={t(K.BUSINESS_OBJECT_MODELS)}
                 tooltipHoist={true}
                 className="button"
                 active={introActive}
