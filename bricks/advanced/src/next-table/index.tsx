@@ -160,6 +160,14 @@ class EoNextTable extends ReactNextElement implements NextTableProps {
   accessor rowDraggable: boolean | undefined;
 
   /**
+   * 表格行可点击（激活鼠标手势）
+   */
+  @property({
+    type: Boolean,
+  })
+  accessor rowClickable: boolean | undefined;
+
+  /**
    * 进行前端搜索的字段，支持嵌套的写法。不配置的时候默认为对所有 column.dataIndex 进行前端搜索
    */
   @property({
@@ -261,6 +269,17 @@ class EoNextTable extends ReactNextElement implements NextTableProps {
   };
 
   /**
+   * 行点击时的回调
+   * @detail 被点击的行数据
+   */
+  @event({ type: "row.click" })
+  accessor #rowClickEvent!: EventEmitter<RecordType>;
+
+  #handleRowClick = (detail: RecordType): void => {
+    this.#rowClickEvent.emit(detail);
+  };
+
+  /**
    * 行选中项发生变化时的回调
    * @detail 改变后的 rowKey 及行数据
    */
@@ -356,6 +375,7 @@ class EoNextTable extends ReactNextElement implements NextTableProps {
           expandedRowKeys={this.expandedRowKeys}
           childrenColumnName={this.childrenColumnName}
           rowDraggable={this.rowDraggable}
+          rowClickable={this.rowClickable}
           searchFields={this.searchFields}
           size={this.size}
           showHeader={this.showHeader}
@@ -366,6 +386,7 @@ class EoNextTable extends ReactNextElement implements NextTableProps {
           onPageChange={this.#handlePageChange}
           onPageSizeChange={this.#handlePageSizeChange}
           onSort={this.#handleSort}
+          onRowClick={this.#handleRowClick}
           onRowSelect={this.#handleRowSelect}
           onRowExpand={this.#handleRowExpand}
           onExpandedRowsChange={this.#handleExpandedRowsChange}

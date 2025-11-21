@@ -207,6 +207,10 @@
   border-inline-end: none;
 }
 
+.next-table.row-clickable .ant-table-tbody > tr {
+  cursor: pointer;
+}
+
 :host([theme-variant="elevo"]) {
   --eo-next-table-header-border-radius: var(--elevo-border-radius);
   --eo-table-head-cell-height: 41px;
