@@ -24,6 +24,7 @@ import type {
   ActiveImages,
   ChatPayload,
   CommandPayload,
+  ExtraChatPayload,
   FileInfo,
   RequestStore,
   UploadOptions,
@@ -195,6 +196,13 @@ function LegacyChatPanelComponent(
     errors
   );
 
+  const humanInput = useCallback(
+    (input: string | null, action?: string, extra?: ExtraChatPayload) => {
+      humanInputRef.current?.(input, action, extra);
+    },
+    [humanInputRef]
+  );
+
   const [depsReady, setDepsReady] = useState(false);
   useEffect(() => {
     let ignore = false;
@@ -225,11 +233,9 @@ function LegacyChatPanelComponent(
     async (payload: ChatPayload) => {
       if (conversationId) {
         const { content, ...extra } = payload;
-        humanInputRef.current?.(content, undefined, {
-          ...extra,
-          ...(aiEmployeeId ? { aiEmployeeId } : null),
-          ...(cmd ? { cmd } : null),
-        });
+        // For follow-up messages, do not pass aiEmployeeId and cmd again,
+        // unless passed explicitly.
+        humanInput(content, undefined, extra);
         return;
       }
       setSubmitDisabled(true);
@@ -254,7 +260,7 @@ function LegacyChatPanelComponent(
         setSubmitDisabled(false);
       }
     },
-    [aiEmployeeId, cmd, conversationId, humanInputRef]
+    [aiEmployeeId, cmd, conversationId, humanInput]
   );
 
   const [activeFile, setActiveFile] = useState<FileInfo | null>(null);
@@ -265,8 +271,9 @@ function LegacyChatPanelComponent(
       ({
         setActiveFile,
         setActiveImages,
+        humanInput,
       }) as TaskContextValue,
-    []
+    [humanInput]
   );
 
   useImperativeHandle(
