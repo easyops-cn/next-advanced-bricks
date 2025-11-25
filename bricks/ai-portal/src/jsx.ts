@@ -345,7 +345,11 @@ declare global {
         HTMLAttributes<ChatPanel>,
         ChatPanel
       > &
-        ChatPanelProps;
+        Omit<ChatPanelProps, "help"> & {
+          help?: {
+            render: () => React.ReactNode;
+          };
+        };
     }
   }
 }

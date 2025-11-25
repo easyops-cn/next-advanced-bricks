@@ -82,6 +82,10 @@ export function getInitialContent(
           .slice(0, 1)
           .map((name) => `: ${name}`)
           .join("")}`;
+      case "serviceObject-createOrEdit":
+        return `/manage business object`;
+      case "serviceObjectInstance-createOrEdit":
+        return `/manage business object instance`;
       default:
         // unknown command type
         return `/${(cmd as CommandPayload).type}`;

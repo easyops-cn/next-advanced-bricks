@@ -115,6 +115,7 @@ declare global {
               record: Record<string, any>;
             }>
           ) => void;
+          onRowClick?: (event: CustomEvent<Record<string, any>>) => void;
           onExpandedRowsChange?: (
             event: CustomEvent<(string | number)[]>
           ) => void;

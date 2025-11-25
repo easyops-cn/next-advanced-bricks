@@ -282,6 +282,8 @@ export type CommandPayload =
   | CommandPayloadServiceFlowCreate
   | CommandPayloadServiceFlowEdit
   | CommandPayloadGoalPlan
+  | CommandPayloadBusinessObjectManagement
+  | CommandPayloadBusinessInstanceManagement
   | LegacyCommandPayloadServiceFlowStarting;
 
 export interface BaseCommandPayload {
@@ -323,6 +325,25 @@ export interface CommandPayloadGoalPlan extends BaseCommandPayload {
     goalId: string;
     goalName?: string;
     description?: string;
+  };
+}
+
+export interface CommandPayloadBusinessObjectManagement
+  extends BaseCommandPayload {
+  type: "serviceObject-createOrEdit";
+  payload: {
+    spaceInstanceId: string;
+    serviceObjectId?: string;
+  };
+}
+
+export interface CommandPayloadBusinessInstanceManagement
+  extends BaseCommandPayload {
+  type: "serviceObjectInstance-createOrEdit";
+  payload: {
+    spaceInstanceId: string;
+    serviceObjectId: string;
+    instanceId?: string;
   };
 }
 
