@@ -395,21 +395,29 @@
 
   .title {
     font-weight: 500;
-    font-size: 18px;
+    font-size: 14px;
   }
 
   .sub-title {
     font-size: 12px;
-    color: #8c8c8c;
+    color: rgba(0, 0, 0, 0.45);
   }
 
   .icon {
     font-size: 16px;
-    color: #8c8c8c;
+    color: #646a73;
   }
 
-  &:not(:hover) .icon {
-    display: none;
+  .avatar {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
   }
 }
 
@@ -417,9 +425,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
   padding: 6px 8px;
   border-radius: 8px;
-  color: #000;
+  color: #262626;
 }
 
 .return-link::part(link):hover {

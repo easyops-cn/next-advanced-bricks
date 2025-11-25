@@ -8,6 +8,7 @@ import { NavLink } from "./NavLink.js";
 import type { SidebarLink } from "./interfaces.js";
 import { ADD_ICON, MODEL_ICON } from "./constants.js";
 import { useNavLinkActive } from "./useNavLinkActive.js";
+import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 
 export interface SpaceNavProps {
   returnUrl: string;
@@ -15,6 +16,9 @@ export interface SpaceNavProps {
   spaceDetail: {
     instanceId: string;
     name: string;
+    icon?: GeneralIconProps & {
+      color?: string;
+    };
   };
   spaceObjects?: SidebarLink[];
   spaceServiceflows?: SidebarLink[];
@@ -39,14 +43,26 @@ export function SpaceNav({
   const [serviceflowsCollapsed, setServiceflowsCollapsed] = useState(false);
   const introActive = useNavLinkActive(introUrl);
 
+  const avatarIcon = spaceDetail?.icon;
+  const avatarColor = avatarIcon?.color || "gray";
+  const { color, ...iconProps } = avatarIcon || {};
+
   return (
     <>
       <WrappedLink url={returnUrl} className="return-link">
+        <WrappedIcon className="icon" lib="lucide" icon="chevron-left" />
+        <div
+          className="avatar"
+          style={{
+            color: `var(--theme-${avatarColor}-color)`,
+          }}
+        >
+          <WrappedIcon {...iconProps} />
+        </div>
         <div className="heading">
           <div className="title">{spaceDetail?.name}</div>
           <div className="sub-title">{t(K.COLLABORATION_SPACES)}</div>
         </div>
-        <WrappedIcon className="icon" lib="lucide" icon="arrow-left" />
       </WrappedLink>
       <div className="divider" />
       <div className="history" ref={rootRef}>
