@@ -81,7 +81,7 @@ function PageContainerComponent({
   const header =
     pageTitle || breadcrumbs?.length ? (
       <div className="header">
-        <nav>
+        <nav className={breadcrumbs?.length ? "with-breadcrumbs" : ""}>
           {breadcrumbs?.length ? (
             <ul className="breadcrumbs">
               {breadcrumbs.map((item, index) => (
