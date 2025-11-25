@@ -44,6 +44,8 @@ import { WrappedChatInput, WrappedIcon } from "../shared/bricks";
 import { FilePreview } from "../shared/FilePreview/FilePreview.js";
 import { ImagesPreview } from "../shared/FilePreview/ImagesPreview.js";
 import { TaskContext, type TaskContextValue } from "../shared/TaskContext";
+import type { UseBrickConf } from "@next-core/types";
+import { ReactUseMultipleBricks } from "@next-core/react-runtime";
 
 const WrappedModal = wrapBrick<
   Modal,
@@ -74,6 +76,7 @@ export interface ChatPanelProps {
   height?: string | number;
   placeholder?: string;
   uploadOptions?: UploadOptions;
+  help?: { useBrick: UseBrickConf };
 }
 
 const ChatPanelComponent = forwardRef(LegacyChatPanelComponent);
@@ -105,6 +108,12 @@ class ChatPanel extends ReactNextElement implements ChatPanelProps {
   @property({ attribute: false })
   accessor uploadOptions: UploadOptions | undefined;
 
+  /**
+   * Show help messages when no conversation exists.
+   */
+  @property({ attribute: false })
+  accessor help: { useBrick: UseBrickConf } | undefined;
+
   #ref = createRef<ChatPanelRef>();
 
   @method()
@@ -115,6 +124,11 @@ class ChatPanel extends ReactNextElement implements ChatPanelProps {
   @method()
   close() {
     this.#ref.current?.close();
+  }
+
+  @method()
+  setInputValue(content: string) {
+    this.#ref.current?.setInputValue(content);
   }
 
   @method()
@@ -138,6 +152,7 @@ class ChatPanel extends ReactNextElement implements ChatPanelProps {
         height={this.height}
         placeholder={this.placeholder}
         uploadOptions={this.uploadOptions}
+        help={this.help}
       />
     );
   }
@@ -151,6 +166,7 @@ interface ChatPanelComponentProps extends ChatPanelProps {
 interface ChatPanelRef {
   open: () => void;
   close: () => void;
+  setInputValue: (content: string) => void;
   send: (payload: ChatPayload) => void;
   showFile: (file: FileInfo) => void;
 }
@@ -164,6 +180,7 @@ function LegacyChatPanelComponent(
     height,
     placeholder,
     uploadOptions,
+    help,
   }: ChatPanelComponentProps,
   ref: React.Ref<ChatPanelRef>
 ) {
@@ -286,6 +303,9 @@ function LegacyChatPanelComponent(
       close: () => {
         modalRef.current?.close();
       },
+      setInputValue: (content: string) => {
+        inputRef.current?.setValue(content);
+      },
       send: (payload: ChatPayload) => {
         handleChatSubmit(payload);
       },
@@ -317,7 +337,11 @@ function LegacyChatPanelComponent(
       >
         <div className={styles.panel}>
           {!conversationId ? (
-            <div className={styles.main} />
+            <div className={styles.main}>
+              {help ? (
+                <ReactUseMultipleBricks useBrick={help.useBrick} />
+              ) : null}
+            </div>
           ) : conversationAvailable && depsReady ? (
             <div className={styles.main}>
               <div className={styles.chat} ref={scrollContainerRef}>

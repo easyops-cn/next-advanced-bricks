@@ -1,4 +1,12 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  createRef,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import { TextareaAutoResize } from "@next-shared/form";
@@ -67,7 +75,7 @@ export const WrappedActions = wrapBrick<
   onItemDragStart: "item.drag.start",
 });
 
-const { defineElement, property, event } = createDecorators();
+const { defineElement, property, event, method } = createDecorators();
 
 export interface ChatInputProps {
   placeholder?: string;
@@ -91,6 +99,8 @@ export interface ChatInputMapEvents {
   onChatSubmit: "chat.submit";
   onTerminate: "terminate";
 }
+
+const ChatInputComponent = forwardRef(LegacyChatInputComponent);
 
 /**
  * 小型聊天输入框，用于对话等页面
@@ -160,9 +170,17 @@ class ChatInput extends ReactNextElement implements ChatInputProps {
     this.#terminate.emit();
   };
 
+  #ref = createRef<ChatInputRef>();
+
+  @method()
+  setValue(value: string) {
+    this.#ref.current?.setValue(value);
+  }
+
   render() {
     return (
       <ChatInputComponent
+        ref={this.#ref}
         placeholder={this.placeholder}
         autoFocus={this.autoFocus}
         submitDisabled={this.submitDisabled}
@@ -181,6 +199,10 @@ class ChatInput extends ReactNextElement implements ChatInputProps {
   }
 }
 
+interface ChatInputRef {
+  setValue: (value: string) => void;
+}
+
 interface ChatInputComponentProps extends ChatInputProps {
   root: HTMLElement;
   onMessageSubmit: (value: string) => void;
@@ -188,21 +210,24 @@ interface ChatInputComponentProps extends ChatInputProps {
   onTerminate: () => void;
 }
 
-function ChatInputComponent({
-  root,
-  placeholder,
-  autoFocus,
-  submitDisabled,
-  supportsTerminate,
-  terminating,
-  uploadOptions,
-  aiEmployees,
-  commands,
-  suggestionsPlacement,
-  onMessageSubmit,
-  onChatSubmit,
-  onTerminate,
-}: ChatInputComponentProps) {
+function LegacyChatInputComponent(
+  {
+    root,
+    placeholder,
+    autoFocus,
+    submitDisabled,
+    supportsTerminate,
+    terminating,
+    uploadOptions,
+    aiEmployees,
+    commands,
+    suggestionsPlacement,
+    onMessageSubmit,
+    onChatSubmit,
+    onTerminate,
+  }: ChatInputComponentProps,
+  ref: React.Ref<ChatInputRef>
+) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [wrap, setWrap] = useState(false);
@@ -252,6 +277,20 @@ function ChatInputComponent({
     hasFiles,
     placement: suggestionsPlacement,
   });
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      setValue: (value: string) => {
+        valueRef.current = value;
+        setValue(value);
+        setTimeout(() => {
+          textareaRef.current?.focus();
+        }, 100);
+      },
+    }),
+    [setValue, textareaRef, valueRef]
+  );
 
   useEffect(() => {
     if (!uploadEnabled) {
