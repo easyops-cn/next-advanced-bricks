@@ -269,11 +269,12 @@ function LegacyChatPanelComponent(
   const taskContextValue = useMemo(
     () =>
       ({
+        conversationState,
         setActiveFile,
         setActiveImages,
         humanInput,
       }) as TaskContextValue,
-    [humanInput]
+    [conversationState, humanInput]
   );
 
   useImperativeHandle(

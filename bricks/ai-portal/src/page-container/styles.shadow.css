@@ -67,19 +67,26 @@
 }
 
 nav {
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 28px;
+  font-size: 28px;
+  line-height: 40px;
+  font-weight: 600;
   display: flex;
   min-width: 0;
   white-space: nowrap;
   flex-wrap: wrap;
 }
 
+nav.with-breadcrumbs {
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 28px;
+}
+
 h1 {
   margin: 0;
   font-size: inherit;
   line-height: inherit;
+  font-weight: inherit;
 }
 
 .breadcrumbs {
