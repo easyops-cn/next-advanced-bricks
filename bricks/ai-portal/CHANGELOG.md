@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.64.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.63.6...@next-bricks/ai-portal@0.64.0) (2025-11-25)
+
+
+### Features
+
+* **chat-panel:** help block and setInputValue ([c978291](https://github.com/easyops-cn/next-advanced-bricks/commit/c9782919a4e55c37635306c9d4a63452bd846f84))
+
+
+
+
+
 ## [0.63.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.63.5...@next-bricks/ai-portal@0.63.6) (2025-11-25)
 
 
