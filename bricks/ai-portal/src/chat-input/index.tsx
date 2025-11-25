@@ -75,6 +75,7 @@ export interface ChatInputProps {
   submitDisabled?: boolean;
   supportsTerminate?: boolean;
   terminating?: boolean;
+  autoFade?: boolean;
   uploadOptions?: UploadOptions;
   aiEmployees?: AIEmployee[];
   commands?: Command[];
@@ -116,6 +117,9 @@ class ChatInput extends ReactNextElement implements ChatInputProps {
 
   @property({ type: Boolean })
   accessor terminating: boolean | undefined;
+
+  @property({ type: Boolean, render: false })
+  accessor autoFade: boolean | undefined;
 
   @property({ attribute: false })
   accessor uploadOptions: UploadOptions | undefined;

@@ -49,6 +49,7 @@ export function ChatBox({ state, canChat }: ChatBoxProps): JSX.Element {
       submitDisabled={!canChat}
       supportsTerminate={supports?.intercept}
       terminating={terminating}
+      autoFade
       aiEmployees={aiEmployees}
       commands={commands}
       suggestionsPlacement="top"
