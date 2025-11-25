@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.63.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.63.5...@next-bricks/ai-portal@0.63.6) (2025-11-25)
+
+
+### Bug Fixes
+
+* **chat-input:** use linear gradient border ([89cf0f0](https://github.com/easyops-cn/next-advanced-bricks/commit/89cf0f063b3c4dbc9d8717deca90ff3652ac127b))
+* **sidebar:** refine return link style ([ba89adf](https://github.com/easyops-cn/next-advanced-bricks/commit/ba89adfcc37c951c78a06271f3068e2957ea2602))
+
+
+
+
+
 ## [0.63.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.63.4...@next-bricks/ai-portal@0.63.5) (2025-11-25)
 
 
