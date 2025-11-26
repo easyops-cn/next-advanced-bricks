@@ -17,7 +17,11 @@ import { UserMessage } from "./UserMessage/UserMessage.js";
 import { AssistantMessage } from "./AssistantMessage/AssistantMessage.js";
 import { TaskContext } from "../shared/TaskContext.js";
 import { ChatBox } from "../shared/ChatBox/ChatBox.js";
-import { DONE_STATES, ICON_CANVAS } from "../shared/constants.js";
+import {
+  DONE_STATES,
+  ICON_CANVAS,
+  NON_WORKING_STATES,
+} from "../shared/constants.js";
 import { ExpandedView } from "../shared/ExpandedView/ExpandedView.js";
 import { Aside } from "./Aside/Aside.js";
 import { StreamContext } from "./StreamContext.js";
@@ -384,6 +388,11 @@ export function ChatStreamComponent(
     scrollContainerRef.current?.focus();
   }, [conversationAvailable, depsReady]);
 
+  const earlyFinished =
+    !replay &&
+    conversation?.finished &&
+    !NON_WORKING_STATES.includes(conversationState!);
+
   return (
     <TaskContext.Provider value={taskContextValue}>
       <StreamContext.Provider value={streamContextValue}>
@@ -412,11 +421,17 @@ export function ChatStreamComponent(
                         <AssistantMessage
                           chunks={msg.chunks}
                           scopeState={conversationState}
-                          isLatest={index === list.length - 1}
+                          isLatest={index === list.length - 1 && !earlyFinished}
+                          finished={conversation.finished}
                         />
                       )}
                     </div>
                   ))}
+                  {earlyFinished && (
+                    <div className={styles.message}>
+                      <AssistantMessage earlyFinished />
+                    </div>
+                  )}
                   {replay
                     ? conversation?.finished && (
                         <>
