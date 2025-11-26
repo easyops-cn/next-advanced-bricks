@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.64.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.64.0...@next-bricks/ai-portal@0.64.1) (2025-11-26)
+
+
+### Bug Fixes
+
+* **chat-panel:** support setting maskClosable ([d9ad356](https://github.com/easyops-cn/next-advanced-bricks/commit/d9ad3564daa4800d71dbb0c8ade8099e491f3394))
+
+
+
+
+
 # [0.64.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.63.6...@next-bricks/ai-portal@0.64.0) (2025-11-25)
 
 
