@@ -77,6 +77,7 @@ export interface ChatPanelProps {
   placeholder?: string;
   uploadOptions?: UploadOptions;
   help?: { useBrick: UseBrickConf };
+  maskClosable?: boolean;
 }
 
 const ChatPanelComponent = forwardRef(LegacyChatPanelComponent);
@@ -113,6 +114,14 @@ class ChatPanel extends ReactNextElement implements ChatPanelProps {
    */
   @property({ attribute: false })
   accessor help: { useBrick: UseBrickConf } | undefined;
+
+  /**
+   * Whether to close the panel when clicking the mask.
+   *
+   * @default false
+   */
+  @property({ type: Boolean })
+  accessor maskClosable: boolean | undefined;
 
   #ref = createRef<ChatPanelRef>();
 
@@ -153,6 +162,7 @@ class ChatPanel extends ReactNextElement implements ChatPanelProps {
         placeholder={this.placeholder}
         uploadOptions={this.uploadOptions}
         help={this.help}
+        maskClosable={this.maskClosable}
       />
     );
   }
@@ -181,6 +191,7 @@ function LegacyChatPanelComponent(
     placeholder,
     uploadOptions,
     help,
+    maskClosable,
   }: ChatPanelComponentProps,
   ref: React.Ref<ChatPanelRef>
 ) {
@@ -323,7 +334,7 @@ function LegacyChatPanelComponent(
         width={width}
         height={height}
         themeVariant="elevo"
-        maskClosable
+        maskClosable={maskClosable}
         noFooter
         headerBordered
         fullscreenButton
