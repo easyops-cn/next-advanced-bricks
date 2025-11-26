@@ -16,6 +16,7 @@ export interface CruiseCanvasState {
 export type CruiseCanvasAction =
   | ConversationSSEAction
   | ConversationResetAction
+  | ConversationStartedAction
   | ConversationFinishedAction;
 
 export interface ConversationSSEAction {
@@ -26,6 +27,10 @@ export interface ConversationSSEAction {
 
 export interface ConversationResetAction {
   type: "reset";
+}
+
+export interface ConversationStartedAction {
+  type: "started";
 }
 
 export interface ConversationFinishedAction {
