@@ -26,6 +26,12 @@ export const conversation: Reducer<
     case "reset":
       return null;
 
+    case "started":
+      if (state) {
+        return { ...state, finished: false };
+      }
+      return state;
+
     case "finished":
       if (state) {
         return { ...state, finished: true };

@@ -104,6 +104,7 @@ export function useConversationDetail(
 
       requesting = true;
       ctrl = new AbortController();
+      dispatch({ type: "started" });
       try {
         const sseRequest = await (content === null && !action
           ? createSSEStream<ConversationPatch>(
@@ -157,13 +158,13 @@ export function useConversationDetail(
           dispatch({ type: "sse", payload: value, workspace: conversationId });
           isInitial = false;
         }
-        dispatch({ type: "finished" });
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error("sse failed", e);
         handleHttpError(e);
       } finally {
         requesting = false;
+        dispatch({ type: "finished" });
       }
     };
 
