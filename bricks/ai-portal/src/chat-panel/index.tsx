@@ -18,6 +18,8 @@ import type {
   ModalMapEvents,
 } from "@next-bricks/containers/modal";
 import { http } from "@next-core/http";
+import type { UseBrickConf } from "@next-core/types";
+import { ReactUseMultipleBricks } from "@next-core/react-runtime";
 import styles from "./styles.module.css";
 import type { ChatInput } from "../chat-input";
 import type {
@@ -39,13 +41,11 @@ import { AssistantMessage } from "../chat-stream/AssistantMessage/AssistantMessa
 import scrollStyles from "../chat-stream/ScrollDownButton.module.css";
 import floatingStyles from "../shared/FloatingButton.module.css";
 import backgroundImage from "../home-container/images/background.png";
-import { DONE_STATES } from "../shared/constants";
+import { DONE_STATES, NON_WORKING_STATES } from "../shared/constants";
 import { WrappedChatInput, WrappedIcon } from "../shared/bricks";
 import { FilePreview } from "../shared/FilePreview/FilePreview.js";
 import { ImagesPreview } from "../shared/FilePreview/ImagesPreview.js";
 import { TaskContext, type TaskContextValue } from "../shared/TaskContext";
-import type { UseBrickConf } from "@next-core/types";
-import { ReactUseMultipleBricks } from "@next-core/react-runtime";
 
 const WrappedModal = wrapBrick<
   Modal,
@@ -327,6 +327,9 @@ function LegacyChatPanelComponent(
     [handleChatSubmit]
   );
 
+  const earlyFinished =
+    conversation?.finished && !NON_WORKING_STATES.includes(conversationState!);
+
   return (
     <TaskContext.Provider value={taskContextValue}>
       <WrappedModal
@@ -365,11 +368,17 @@ function LegacyChatPanelComponent(
                         <AssistantMessage
                           chunks={msg.chunks}
                           scopeState={conversation.state}
-                          isLatest={index === list.length - 1}
+                          isLatest={index === list.length - 1 && !earlyFinished}
+                          finished={conversation.finished}
                         />
                       )}
                     </div>
                   ))}
+                  {earlyFinished && (
+                    <div className={styles.message}>
+                      <AssistantMessage earlyFinished />
+                    </div>
+                  )}
                 </div>
               </div>
               <button

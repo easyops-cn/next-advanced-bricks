@@ -17,19 +17,33 @@ import { NodeChunk } from "../NodeChunk/NodeChunk";
 import { HumanInTheLoop } from "../HumanInTheLoop/HumanInTheLoop";
 
 export interface AssistantMessageProps {
-  chunks: MessageChunk[];
-  scopeState: ConversationState | TaskState | JobState | undefined;
+  chunks?: MessageChunk[];
+  scopeState?: ConversationState | TaskState | JobState | undefined;
   isLatest?: boolean;
   isSubTask?: boolean;
+  finished?: boolean;
+  earlyFinished?: boolean;
 }
+
+const EARLY_FINISHED_ERROR_CHUNK: MessageChunk = {
+  type: "error",
+  error:
+    "The conversation was marked as finished early due to an unexpected issue.\nPlease refresh the page or try again later.",
+};
 
 export function AssistantMessage({
   chunks,
   scopeState,
   isLatest,
   isSubTask,
+  finished,
+  earlyFinished,
 }: AssistantMessageProps) {
   const [working, lastJob] = useMemo(() => {
+    if (!chunks || chunks.length === 0) {
+      return [false, undefined];
+    }
+
     const lastChunk = chunks[chunks.length - 1];
     let lastJob: Job | undefined;
     if (lastChunk) {
@@ -79,10 +93,10 @@ export function AssistantMessage({
         className={styles.avatar}
       />
       <div className={styles.body}>
-        {chunks.map((chunk, index) => (
+        {chunks?.map((chunk, index) => (
           <NodeChunk key={index} chunk={chunk} isSubTask={isSubTask} />
         ))}
-        {working && <div className={styles.texting}></div>}
+        {working && !finished && <div className={styles.texting}></div>}
         {isLatest &&
           lastJob &&
           !GENERAL_DONE_STATES.includes(scopeState) &&
@@ -98,6 +112,7 @@ export function AssistantMessage({
               />
             )
           ))}
+        {earlyFinished && <NodeChunk chunk={EARLY_FINISHED_ERROR_CHUNK} />}
       </div>
     </div>
   );
