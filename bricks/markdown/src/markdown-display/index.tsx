@@ -1,11 +1,14 @@
 import React, { useMemo } from "react";
 import { createDecorators } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
+import { getBasePath } from "@next-core/runtime";
 import { useCurrentTheme } from "@next-core/react-runtime";
 import "@next-core/theme";
 import {
   MarkdownComponent,
+  type Element,
   type MarkdownComponentProps,
+  type RehypeExternalLinksOptions,
 } from "@next-shared/markdown";
 import {
   CodeWrapper,
@@ -24,6 +27,31 @@ export interface MarkdownDisplayProps {
   content?: string;
   themeVariant?: "default" | "elevo";
 }
+
+const externalLinks: RehypeExternalLinksOptions = {
+  target: "_blank",
+  rel: ["nofollow", "noopener", "noreferrer"],
+  test: (element: Element) => {
+    return isExternalLink(element.properties.href);
+  },
+  content(element) {
+    if (containsImg(element)) {
+      return;
+    }
+    return {
+      type: "element",
+      tagName: "eo-icon",
+      properties: {
+        lib: "lucide",
+        icon: "external-link",
+      },
+      children: [],
+    };
+  },
+  contentProperties: {
+    className: "external-link-icon",
+  },
+};
 
 /**
  * 用于展示 markdown 内容的构件。
@@ -85,6 +113,28 @@ function MarkdownDisplayComponent({
       content={content}
       components={components}
       shiki={shikiOptions}
+      externalLinks={externalLinks}
     />
   );
+}
+
+function containsImg(element: Element): boolean {
+  return element.children.some((child) => {
+    if (child.type === "element") {
+      return child.tagName === "img" || containsImg(child);
+    }
+    return false;
+  });
+}
+
+function isExternalLink(href: unknown): boolean {
+  if (typeof href !== "string") {
+    return false;
+  }
+  try {
+    const url = new URL(href, `${location.origin}${getBasePath()}`);
+    return url.origin !== location.origin;
+  } catch {
+    return true;
+  }
 }
