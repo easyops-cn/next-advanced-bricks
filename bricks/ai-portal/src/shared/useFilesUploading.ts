@@ -141,7 +141,7 @@ export function useFilesUploading(options?: UploadOptions) {
         const files = [...fileList];
         const allFilesAccepted = validateFiles(files, options!);
         if (allFilesAccepted) {
-          appendFiles(files);
+          appendFiles(files.map(renamePastedImage));
         }
       }
     },
@@ -159,4 +159,18 @@ export function useFilesUploading(options?: UploadOptions) {
     exceeded,
     paste,
   };
+}
+
+function renamePastedImage(originalFile: File): File {
+  if (originalFile.name === "image.png") {
+    return new File(
+      [originalFile],
+      `pasted-image-${Date.now()}-${getNextUid()}.png`,
+      {
+        type: originalFile.type,
+        lastModified: originalFile.lastModified,
+      }
+    );
+  }
+  return originalFile;
 }
