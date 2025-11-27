@@ -77,12 +77,15 @@ export function AssistantMessage({
           }
       }
     }
+
     if (lastJob && lastJob.state === "working" && lastJob.toolCall) {
       return [false, lastJob];
     }
 
     return [true, lastJob];
   }, [isLatest, chunks, scopeState]);
+
+  const lastJobIsReasoning = lastJob?.type === "reasoning";
 
   return (
     <div className={styles.assistant}>
@@ -93,12 +96,34 @@ export function AssistantMessage({
         className={styles.avatar}
       />
       <div className={styles.body}>
+        {/* <NodeChunk
+          chunk={{
+            type: "job",
+            job: {
+              type: "reasoning",
+              messages: [
+                {
+                  role: "assistant",
+                  parts: [{
+                    type: "text",
+                    text: `用户需要查询广州的天气，并根据天气帮他提请假流程。我需要：
+1. 调用天气工具查询广州天气
+2. 判断天气是下雨后，提起请假流程`
+                  }]
+                }
+              ],
+            },
+          }}
+        /> */}
         {chunks?.map((chunk, index) => (
           <NodeChunk key={index} chunk={chunk} isSubTask={isSubTask} />
         ))}
-        {working && !finished && <div className={styles.texting}></div>}
+        {working && !finished && !lastJobIsReasoning && (
+          <div className={styles.texting}></div>
+        )}
         {isLatest &&
           lastJob &&
+          !lastJobIsReasoning &&
           !GENERAL_DONE_STATES.includes(scopeState) &&
           (lastJob.state === "working" || lastJob.state === "input-required") &&
           !lastJob.humanAction &&

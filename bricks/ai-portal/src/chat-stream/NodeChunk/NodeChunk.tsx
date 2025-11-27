@@ -14,6 +14,7 @@ import { TaskContext } from "../../shared/TaskContext";
 import { ICON_UP } from "../../shared/constants";
 import { StreamContext } from "../StreamContext";
 import { K, t } from "../i18n";
+import { NodeReasoning } from "./NodeReasoning";
 
 export interface NodeChunkProps {
   chunk: MessageChunk;
@@ -22,6 +23,9 @@ export interface NodeChunkProps {
 
 export function NodeChunk({ chunk, isSubTask }: NodeChunkProps) {
   if (chunk.type === "job") {
+    if (chunk.job.type === "reasoning") {
+      return <NodeReasoning job={chunk.job} />;
+    }
     return <NodeJob job={chunk.job} isSubTask={isSubTask} />;
   }
 
