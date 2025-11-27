@@ -352,33 +352,44 @@ function LegacyChatPanelComponent(
         <div className={styles.panel}>
           {!conversationId ? (
             <div className={styles.main}>
-              {help ? (
-                <ReactUseMultipleBricks useBrick={help.useBrick} />
-              ) : null}
+              <div className={styles.chat}>
+                <div className={styles.narrow}>
+                  {help ? (
+                    <ReactUseMultipleBricks useBrick={help.useBrick} />
+                  ) : null}
+                </div>
+              </div>
             </div>
           ) : conversationAvailable && depsReady ? (
             <div className={styles.main}>
               <div className={styles.chat} ref={scrollContainerRef}>
-                <div className={styles.messages} ref={scrollContentRef}>
-                  {messages.map((msg, index, list) => (
-                    <div className={styles.message} key={index}>
-                      {msg.role === "user" ? (
-                        <UserMessage content={msg.content} files={msg.files} />
-                      ) : (
-                        <AssistantMessage
-                          chunks={msg.chunks}
-                          scopeState={conversation.state}
-                          isLatest={index === list.length - 1 && !earlyFinished}
-                          finished={conversation.finished}
-                        />
-                      )}
-                    </div>
-                  ))}
-                  {earlyFinished && (
-                    <div className={styles.message}>
-                      <AssistantMessage earlyFinished />
-                    </div>
-                  )}
+                <div className={styles.narrow}>
+                  <div className={styles.messages} ref={scrollContentRef}>
+                    {messages.map((msg, index, list) => (
+                      <div className={styles.message} key={index}>
+                        {msg.role === "user" ? (
+                          <UserMessage
+                            content={msg.content}
+                            files={msg.files}
+                          />
+                        ) : (
+                          <AssistantMessage
+                            chunks={msg.chunks}
+                            scopeState={conversation.state}
+                            isLatest={
+                              index === list.length - 1 && !earlyFinished
+                            }
+                            finished={conversation.finished}
+                          />
+                        )}
+                      </div>
+                    ))}
+                    {earlyFinished && (
+                      <div className={styles.message}>
+                        <AssistantMessage earlyFinished />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
               <button
@@ -400,7 +411,7 @@ function LegacyChatPanelComponent(
               />
             </div>
           )}
-          <div className={styles.input}>
+          <div className={styles.narrow}>
             <WrappedChatInput
               ref={inputRef}
               placeholder={placeholder}
