@@ -40,7 +40,9 @@ export function useConversationGraph(
       tasks,
       errors,
       flowMap,
-      activityMap
+      activityMap,
+      false,
+      true
     );
 
     const nodes: GraphNode[] = [];
@@ -169,7 +171,7 @@ export function useConversationGraph(
           content: chunk.error,
         });
         nodeIds.push(errorNodeId);
-      } else {
+      } else if (chunk.type === "flow" || chunk.type === "activity") {
         const nodeId = `${chunk.type}:${chunk.task.id}`;
         nodes.push({
           type: chunk.type,
@@ -179,6 +181,9 @@ export function useConversationGraph(
           ...(chunk.type === "activity" ? { activity: chunk.activity } : null),
         } as GraphNode);
         nodeIds.push(nodeId);
+      } else {
+        // eslint-disable-next-line no-console
+        console.error("Unexpected chunk type:", chunk);
       }
 
       for (let i = 1; i < nodeIds.length; i++) {

@@ -108,7 +108,7 @@ export function useConversationStream(
         }
       } else {
         prevAssistantMessage.chunks.push(chunk);
-        if (chunk.type !== "error") {
+        if (chunk.type !== "error" && chunk.type !== "plan") {
           lastDetail = {
             type: chunk.type,
             id: chunk.task.id,

@@ -1,18 +1,21 @@
 import { i18n } from "@next-core/i18n";
 
 export enum K {
-  PLAN_COMPLETED = "PLAN_COMPLETED",
+  ACTIVITY_PLAN = "ACTIVITY_PLAN",
+  SHOW_PROCESS = "SHOW_PROCESS",
 }
 
 const en: Locale = {
-  PLAN_COMPLETED: "All tasks are completed",
+  [K.ACTIVITY_PLAN]: "Activity plan",
+  [K.SHOW_PROCESS]: "Show process",
 };
 
 const zh: Locale = {
-  PLAN_COMPLETED: "所有任务已全部完成",
+  [K.ACTIVITY_PLAN]: "活动计划",
+  [K.SHOW_PROCESS]: "显示过程",
 };
 
-export const NS = "bricks/ai-portal/PlanProgress";
+export const NS = "bricks/ai-portal/ActivityPlan";
 
 export const locales = { en, zh };
 
