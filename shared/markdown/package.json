@@ -40,6 +40,7 @@
     "hast-util-to-string": "^3.0.0",
     "mermaid": "^11.9.0",
     "react": "0.0.0-experimental-ee8509801-20230117",
+    "rehype-external-links": "^3.0.0",
     "rehype-react": "^8.0.0",
     "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",

@@ -24,3 +24,17 @@ blockquote {
   margin-left: 0;
   margin-right: 0;
 }
+
+a {
+  color: var(--antd-btn-link-color);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--antd-btn-link-hover-color);
+  }
+}
+
+.external-link-icon {
+  margin-left: 3px;
+  color: var(--text-color-disabled);
+}

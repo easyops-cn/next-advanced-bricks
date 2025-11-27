@@ -4,6 +4,9 @@ import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
 import remarkToRehype from "remark-rehype";
+import rehypeExternalLinks, {
+  type Options as RehypeExternalLinksOptions,
+} from "rehype-external-links";
 import rehypeReact, { Options as RehypeReactOptions } from "rehype-react";
 import type { Components } from "hast-util-to-jsx-runtime";
 import rehypeShikiFromHighlighter from "@shikijs/rehype/core";
@@ -15,6 +18,8 @@ import { getCodeLanguage } from "./utils.js";
 
 const production = { Fragment, jsx, jsxs };
 
+export type { RehypeExternalLinksOptions, Element };
+
 export interface MarkdownComponentProps {
   content?: string;
   components?: Partial<Components>;
@@ -22,6 +27,7 @@ export interface MarkdownComponentProps {
     /** @default "dark-plus" */
     theme?: "light-plus" | "dark-plus";
   };
+  externalLinks?: RehypeExternalLinksOptions;
 }
 
 export async function preloadHighlighter(
@@ -62,6 +68,7 @@ export function MarkdownComponent({
   content,
   components,
   shiki,
+  externalLinks,
 }: MarkdownComponentProps): JSX.Element | null {
   const [reactContent, setReactContent] = useState<JSX.Element | null>(null);
   const theme = shiki?.theme ?? "dark-plus";
@@ -80,6 +87,7 @@ export function MarkdownComponent({
           .use(remarkParse)
           .use(remarkGfm)
           .use(remarkToRehype)
+          .use(rehypeExternalLinks, externalLinks)
           .use(rehypeMermaid)
           .use(rehypeFallbackLanguage)
           .use(rehypeShikiFromHighlighter, highlighter as any, {
@@ -111,7 +119,7 @@ export function MarkdownComponent({
     return () => {
       ignore = true;
     };
-  }, [components, content, theme]);
+  }, [components, content, externalLinks, theme]);
 
   return reactContent;
 }
