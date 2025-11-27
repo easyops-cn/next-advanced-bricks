@@ -178,4 +178,128 @@ describe("useFilesUploading", () => {
 
     expect(result.current.allFilesDone).toBe(false);
   });
+
+  describe("paste", () => {
+    const createPasteEvent = (files: File[]) => {
+      const dataTransfer = {
+        files: files as unknown as FileList,
+      };
+      return {
+        clipboardData: dataTransfer,
+        preventDefault: jest.fn(),
+        stopPropagation: jest.fn(),
+      } as unknown as React.ClipboardEvent<HTMLTextAreaElement>;
+    };
+
+    it("should do nothing when not enabled", async () => {
+      const { result } = renderHook(() =>
+        useFilesUploading({ enabled: false })
+      );
+
+      const pasteEvent = createPasteEvent([new File(["test"], "test.txt")]);
+
+      act(() => {
+        result.current.paste(pasteEvent);
+      });
+
+      expect(pasteEvent.preventDefault).not.toHaveBeenCalled();
+      expect(result.current.files).toBeUndefined();
+    });
+
+    it("should do nothing when no files in clipboard", async () => {
+      const { result } = renderHook(() => useFilesUploading({ enabled: true }));
+
+      const pasteEvent = createPasteEvent([]);
+
+      act(() => {
+        result.current.paste(pasteEvent);
+      });
+
+      expect(pasteEvent.preventDefault).not.toHaveBeenCalled();
+      expect(result.current.files).toBeUndefined();
+    });
+
+    it("should handle pasted files", async () => {
+      const { result } = renderHook(() => useFilesUploading({ enabled: true }));
+
+      const pasteEvent = createPasteEvent([new File(["test"], "test.txt")]);
+
+      act(() => {
+        result.current.paste(pasteEvent);
+      });
+
+      expect(pasteEvent.preventDefault).toHaveBeenCalled();
+      expect(pasteEvent.stopPropagation).toHaveBeenCalled();
+      expect(result.current.files?.length).toBe(1);
+      expect(result.current.files?.[0].file.name).toBe("test.txt");
+
+      await act(async () => {
+        await (global as any).flushPromises();
+      });
+    });
+
+    it("should rename pasted image.png to unique name", async () => {
+      const { result } = renderHook(() => useFilesUploading({ enabled: true }));
+
+      const pasteEvent = createPasteEvent([
+        new File(["image data"], "image.png", { type: "image/png" }),
+      ]);
+
+      act(() => {
+        result.current.paste(pasteEvent);
+      });
+
+      expect(result.current.files?.length).toBe(1);
+      expect(result.current.files?.[0].file.name).toMatch(
+        /^pasted-image-\d+-\d+\.png$/
+      );
+      expect(result.current.files?.[0].file.type).toBe("image/png");
+
+      await act(async () => {
+        await (global as any).flushPromises();
+      });
+    });
+
+    it("should not rename non-image.png files", async () => {
+      const { result } = renderHook(() => useFilesUploading({ enabled: true }));
+
+      const pasteEvent = createPasteEvent([
+        new File(["image data"], "screenshot.png", { type: "image/png" }),
+      ]);
+
+      act(() => {
+        result.current.paste(pasteEvent);
+      });
+
+      expect(result.current.files?.length).toBe(1);
+      expect(result.current.files?.[0].file.name).toBe("screenshot.png");
+
+      await act(async () => {
+        await (global as any).flushPromises();
+      });
+    });
+
+    it("should handle multiple pasted files", async () => {
+      const { result } = renderHook(() => useFilesUploading({ enabled: true }));
+
+      const pasteEvent = createPasteEvent([
+        new File(["test1"], "file1.txt"),
+        new File(["image data"], "image.png", { type: "image/png" }),
+      ]);
+
+      act(() => {
+        result.current.paste(pasteEvent);
+      });
+
+      expect(result.current.files?.length).toBe(2);
+      expect(result.current.files?.[0].file.name).toBe("file1.txt");
+      expect(result.current.files?.[1].file.name).toMatch(
+        /^pasted-image-\d+-\d+\.png$/
+      );
+
+      await act(async () => {
+        await (global as any).flushPromises();
+      });
+    });
+  });
 });
