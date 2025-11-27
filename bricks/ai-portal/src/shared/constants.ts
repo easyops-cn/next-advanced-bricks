@@ -49,8 +49,8 @@ export const ICON_EXTERNAL_LINK: GeneralIconProps = {
 };
 
 export const ICON_UP: GeneralIconProps = {
-  lib: "fa",
-  icon: "angle-up",
+  lib: "lucide",
+  icon: "chevron-up",
 };
 
 export const ICON_DOWNLOAD: GeneralIconProps = {

@@ -5,6 +5,8 @@ export enum K {
   INITIATING_SERVICE_FLOW = "INITIATING_SERVICE_FLOW",
   STARTING_SERVICE_FLOW_ACTIVITY = "STARTING_SERVICE_FLOW_ACTIVITY",
   HIL_TIPS = "HIL_TIPS",
+  THINKING = "THINKING",
+  SHOW_THINKING = "SHOW_THINKING",
 }
 
 const en: Locale = {
@@ -12,6 +14,8 @@ const en: Locale = {
   INITIATING_SERVICE_FLOW: "Initiating service flow: {{ name }}",
   STARTING_SERVICE_FLOW_ACTIVITY: "Starting service flow activity: {{ name }}",
   HIL_TIPS: "Triggered HIL rule, waiting for {{ name }} to process.",
+  THINKING: "Thinking...",
+  SHOW_THINKING: "Show thinking",
 };
 
 const zh: Locale = {
@@ -19,6 +23,8 @@ const zh: Locale = {
   INITIATING_SERVICE_FLOW: "发起业务流：{{ name }}",
   STARTING_SERVICE_FLOW_ACTIVITY: "开始业务流活动：{{ name }}",
   HIL_TIPS: "触发 HIL 规则，等待 {{ name }} 处理。",
+  THINKING: "思考中...",
+  SHOW_THINKING: "显示思路",
 };
 
 export const NS = "bricks/ai-portal/chat-stream";
