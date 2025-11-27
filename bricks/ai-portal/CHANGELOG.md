@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.64.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.64.4...@next-bricks/ai-portal@0.64.5) (2025-11-27)
+
+
+### Bug Fixes
+
+* rename pasted images ([8fe4cd9](https://github.com/easyops-cn/next-advanced-bricks/commit/8fe4cd9e2c280f0ace6a9a3774754b1d65eed54b))
+
+
+
+
+
 ## [0.64.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.64.3...@next-bricks/ai-portal@0.64.4) (2025-11-27)
 
 **Note:** Version bump only for package @next-bricks/ai-portal
