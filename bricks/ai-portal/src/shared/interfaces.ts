@@ -15,6 +15,7 @@ export interface Conversation {
 
   serviceFlows: ServiceFlowRun[];
 
+  mode: "new" | "resume";
   startTime: number;
   endTime?: number;
   finished?: boolean;

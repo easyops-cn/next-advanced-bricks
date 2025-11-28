@@ -19,12 +19,7 @@ import type {
 } from "@next-bricks/basic/mini-actions";
 import { isEqual } from "lodash";
 import { K, t } from "./i18n.js";
-import {
-  WrappedIcon,
-  WrappedLink,
-  WrappedMiniActions,
-  WrappedIconButton,
-} from "./bricks.js";
+import { WrappedIcon, WrappedLink, WrappedIconButton } from "./bricks.js";
 import { DONE_STATES } from "../shared/constants.js";
 import { parseTemplate } from "../shared/parseTemplate.js";
 import type { ConversationState } from "../shared/interfaces.js";
@@ -32,6 +27,7 @@ import type { SidebarLink } from "./interfaces.js";
 import { NavLink } from "./NavLink.js";
 import { SectionTitle } from "./SectionTitle.js";
 import { ADD_ICON } from "./constants.js";
+import { NavLinkWithActions } from "./NavLinkWithActions.js";
 
 export interface HistoryItem {
   conversationId: string;
@@ -207,8 +203,6 @@ export function LowLevelChatHistory(
         setHistoryError(true);
       });
   }, [loadNextToken]);
-
-  const [actionsVisible, setActionsVisible] = useState<string | null>(null);
 
   const nextRef = useRef<HTMLDivElement | null>(null);
 
@@ -390,39 +384,17 @@ export function LowLevelChatHistory(
                   : undefined;
                 return (
                   <li key={project.instanceId}>
-                    <NavLink
+                    <NavLinkWithActions
+                      title={project.name}
                       url={url}
-                      render={({ active }) => (
-                        <WrappedLink
-                          className={classNames("item", {
-                            "actions-active":
-                              project.instanceId === actionsVisible,
-                            active,
-                          })}
-                          onClick={onHistoryClick}
-                          {...(url ? { url } : null)}
-                        >
-                          <div className="item-title" title={project.name}>
-                            {project.name || t(K.UNNAMED)}
-                          </div>
-                          <WrappedMiniActions
-                            className="actions"
-                            actions={projectActions}
-                            themeVariant="elevo"
-                            onActionClick={(e) => {
-                              onProjectActionClick({
-                                action: e.detail,
-                                project,
-                              });
-                            }}
-                            onVisibleChange={(e) => {
-                              setActionsVisible(
-                                e.detail ? project.instanceId : null
-                              );
-                            }}
-                          />
-                        </WrappedLink>
-                      )}
+                      actions={projectActions}
+                      onClick={onHistoryClick}
+                      onActionClick={(e) => {
+                        onProjectActionClick({
+                          action: e.detail,
+                          project,
+                        });
+                      }}
                     />
                   </li>
                 );
@@ -455,46 +427,23 @@ export function LowLevelChatHistory(
                 : undefined;
               return (
                 <li key={item.conversationId}>
-                  <NavLink
+                  <NavLinkWithActions
+                    title={item.title}
                     url={url}
-                    render={({ active }) => (
-                      <WrappedLink
-                        className={classNames("item", {
-                          "actions-active":
-                            item.conversationId === actionsVisible,
-                          active,
-                        })}
-                        onClick={onHistoryClick}
-                        {...(historyUrlTemplate
-                          ? { url: parseTemplate(historyUrlTemplate, item) }
-                          : null)}
-                      >
-                        <div className="item-title" title={item.title}>
-                          {item.title || t(K.UNTITLED)}
-                        </div>
-                        <WrappedMiniActions
-                          className="actions"
-                          actions={mergedHistoryActions}
-                          onActionClick={(e) => {
-                            onActionClick({
-                              action: e.detail,
-                              item,
-                              project: (e.detail as { project?: Project })
-                                .project,
-                            });
-                          }}
-                          onVisibleChange={(e) => {
-                            setActionsVisible(
-                              e.detail ? item.conversationId : null
-                            );
-                          }}
-                        />
-                        {!DONE_STATES.includes(item.state!) && (
-                          <div className="working"></div>
-                        )}
-                      </WrappedLink>
+                    actions={mergedHistoryActions}
+                    onClick={onHistoryClick}
+                    onActionClick={(e) => {
+                      onActionClick({
+                        action: e.detail,
+                        item,
+                        project: (e.detail as { project?: Project }).project,
+                      });
+                    }}
+                  >
+                    {!DONE_STATES.includes(item.state!) && (
+                      <div className="working"></div>
                     )}
-                  />
+                  </NavLinkWithActions>
                 </li>
               );
             })

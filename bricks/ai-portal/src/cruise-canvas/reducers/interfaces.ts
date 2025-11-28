@@ -23,6 +23,7 @@ export interface ConversationSSEAction {
   type: "sse";
   payload: ConversationPatch;
   workspace: string;
+  mode: "new" | "resume";
 }
 
 export interface ConversationResetAction {

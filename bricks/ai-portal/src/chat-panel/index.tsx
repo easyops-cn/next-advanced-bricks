@@ -221,7 +221,10 @@ function LegacyChatPanelComponent(
     conversationAvailable,
     conversationState,
     tasks,
-    errors
+    errors,
+    undefined,
+    undefined,
+    { showHumanActions: true, skipActivitySubTasks: true }
   );
 
   const humanInput = useCallback(
@@ -328,7 +331,9 @@ function LegacyChatPanelComponent(
   );
 
   const earlyFinished =
-    conversation?.finished && !NON_WORKING_STATES.includes(conversationState!);
+    conversation?.finished &&
+    conversation.mode !== "resume" &&
+    !NON_WORKING_STATES.includes(conversationState!);
 
   return (
     <TaskContext.Provider value={taskContextValue}>

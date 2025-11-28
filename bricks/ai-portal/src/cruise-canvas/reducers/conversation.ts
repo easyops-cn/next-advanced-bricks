@@ -16,7 +16,8 @@ export const conversation: Reducer<
         "startTime",
         "endTime",
         "projectId",
-      ]);
+      ]) as Partial<ConversationBaseDetail>;
+      patch.mode = action.mode;
 
       return (
         state && isMatch(state, patch) ? state : { ...state, ...patch }

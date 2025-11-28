@@ -75,7 +75,12 @@ export function useConversationDetail(
         }
       }
 
-      dispatch({ type: "sse", payload: value, workspace: conversationId });
+      dispatch({
+        type: "sse",
+        mode: "resume",
+        payload: value,
+        workspace: conversationId,
+      });
       isInitial = false;
     }
     dispatch({ type: "finished" });
@@ -104,9 +109,10 @@ export function useConversationDetail(
 
       requesting = true;
       ctrl = new AbortController();
+      const mode = content === null && !action ? "resume" : "new";
       dispatch({ type: "started" });
       try {
-        const sseRequest = await (content === null && !action
+        const sseRequest = await (mode === "resume"
           ? createSSEStream<ConversationPatch>(
               `${getBasePath()}api/gateway/logic.llm.aiops_service/api/v1/elevo/conversations/${conversationId}/stream`,
               {
@@ -155,7 +161,12 @@ export function useConversationDetail(
           }
 
           replayListRef.current.push(value);
-          dispatch({ type: "sse", payload: value, workspace: conversationId });
+          dispatch({
+            type: "sse",
+            mode,
+            payload: value,
+            workspace: conversationId,
+          });
           isInitial = false;
         }
       } catch (e) {
