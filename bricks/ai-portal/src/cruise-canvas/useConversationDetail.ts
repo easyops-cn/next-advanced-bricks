@@ -75,7 +75,12 @@ export function useConversationDetail(
         }
       }
 
-      dispatch({ type: "sse", payload: value, workspace: conversationId });
+      dispatch({
+        type: "sse",
+        mode: "resume",
+        payload: value,
+        workspace: conversationId,
+      });
       isInitial = false;
     }
     dispatch({ type: "finished" });

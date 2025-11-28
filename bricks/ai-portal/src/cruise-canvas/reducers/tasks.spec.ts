@@ -42,6 +42,7 @@ describe("tasks reducer", () => {
     const initialState: Task[] = [];
     const action: CruiseCanvasAction = {
       type: "sse",
+      mode: "new",
       payload: { tasks: [] },
       workspace: "",
     };
@@ -55,6 +56,7 @@ describe("tasks reducer", () => {
     const initialState: Task[] = [];
     const action: CruiseCanvasAction = {
       type: "sse",
+      mode: "new",
       payload: {},
       workspace: "",
     };
@@ -73,6 +75,7 @@ describe("tasks reducer", () => {
     } as Partial<Task> as Task;
     const action: CruiseCanvasAction = {
       type: "sse",
+      mode: "new",
       payload: { tasks: [newTask] },
       workspace: "",
     };
@@ -97,6 +100,7 @@ describe("tasks reducer", () => {
     } as Partial<Task> as Task;
     const action: CruiseCanvasAction = {
       type: "sse",
+      mode: "new",
       payload: { tasks: [taskUpdate] },
       workspace: "",
     };
@@ -121,6 +125,7 @@ describe("tasks reducer", () => {
     } as Partial<Task> as Task;
     const action: CruiseCanvasAction = {
       type: "sse",
+      mode: "new",
       payload: { tasks: [taskUpdate] },
       workspace: "",
     };
@@ -154,6 +159,7 @@ describe("tasks reducer", () => {
     } as Partial<Task> as Task;
     const action: CruiseCanvasAction = {
       type: "sse",
+      mode: "new",
       payload: { tasks: [taskUpdate] },
       workspace: "",
     };
@@ -182,6 +188,7 @@ describe("tasks reducer", () => {
     } as Partial<Task> as Task;
     const action: CruiseCanvasAction = {
       type: "sse",
+      mode: "new",
       payload: { tasks: [taskUpdate] },
       workspace: "",
     };
@@ -210,6 +217,7 @@ describe("tasks reducer", () => {
     } as Partial<Task> as Task;
     const action: CruiseCanvasAction = {
       type: "sse",
+      mode: "new",
       payload: { tasks: [taskUpdate] },
       workspace: "",
     };
@@ -245,6 +253,7 @@ describe("tasks reducer", () => {
     } as Partial<Task> as Task;
     const action: CruiseCanvasAction = {
       type: "sse",
+      mode: "new",
       payload: { tasks: [taskUpdate] },
       workspace: "",
     };
@@ -289,6 +298,7 @@ describe("tasks reducer", () => {
     } as Partial<Task> as Task;
     const action: CruiseCanvasAction = {
       type: "sse",
+      mode: "new",
       payload: { tasks: [taskUpdate] },
       workspace: "",
     };
@@ -325,6 +335,7 @@ describe("tasks reducer", () => {
     } as Partial<Task> as Task;
     const action: CruiseCanvasAction = {
       type: "sse",
+      mode: "new",
       payload: { tasks: [taskUpdate] },
       workspace: "",
     };
@@ -364,6 +375,7 @@ describe("tasks reducer", () => {
     } as Partial<Task> as Task;
     const action: CruiseCanvasAction = {
       type: "sse",
+      mode: "new",
       payload: { tasks: [taskUpdate] },
       workspace: "",
     };
@@ -411,6 +423,7 @@ describe("tasks reducer", () => {
     } as Partial<Task> as Task;
     const action: CruiseCanvasAction = {
       type: "sse",
+      mode: "new",
       payload: { tasks: [taskUpdate] },
       workspace: "",
     };
