@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.64.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.64.6...@next-bricks/ai-portal@0.64.7) (2025-11-28)
+
+
+### Bug Fixes
+
+* distinguish new conv with resume a conv ([887dead](https://github.com/easyops-cn/next-advanced-bricks/commit/887deadbf8081a0be72b551832a81bac2882ec2d))
+
+
+### Performance Improvements
+
+* do not render mini-actions before hovered once ([64dd728](https://github.com/easyops-cn/next-advanced-bricks/commit/64dd72883a96bf8bd91c2dd967dc5a680117b5a5))
+
+
+
+
+
 ## [0.64.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.64.5...@next-bricks/ai-portal@0.64.6) (2025-11-27)
 
 
