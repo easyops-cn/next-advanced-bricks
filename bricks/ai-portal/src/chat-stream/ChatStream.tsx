@@ -391,6 +391,7 @@ export function ChatStreamComponent(
   const earlyFinished =
     !replay &&
     conversation?.finished &&
+    conversation.mode !== "resume" &&
     !NON_WORKING_STATES.includes(conversationState!);
 
   return (
