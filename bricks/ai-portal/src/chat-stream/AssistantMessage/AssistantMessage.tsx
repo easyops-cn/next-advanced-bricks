@@ -41,7 +41,7 @@ export function AssistantMessage({
 }: AssistantMessageProps) {
   const [working, lastJob] = useMemo(() => {
     if (!chunks || chunks.length === 0) {
-      return [false, undefined];
+      return [isLatest && !NON_WORKING_STATES.includes(scopeState!), undefined];
     }
 
     const lastChunk = chunks[chunks.length - 1];
