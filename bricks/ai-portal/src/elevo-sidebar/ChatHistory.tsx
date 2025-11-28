@@ -151,6 +151,9 @@ export function LowLevelChatHistory(
   );
 
   useEffect(() => {
+    if (!showProjects) {
+      return;
+    }
     (async () => {
       try {
         const projects = await ElevoApi_getElevoProjects({
@@ -165,7 +168,7 @@ export function LowLevelChatHistory(
         setProjects([]);
       }
     })();
-  }, []);
+  }, [showProjects]);
 
   useEffect(() => {
     Promise.all([
