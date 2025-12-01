@@ -7,7 +7,7 @@ import { EnhancedMarkdown } from "../../cruise-canvas/EnhancedMarkdown/EnhancedM
 import type { Job } from "../../shared/interfaces.js";
 import { ICON_UP } from "../../shared/constants.js";
 import { K, t } from "../i18n";
-import thinkingIcon from "../images/thinkging@2x.png";
+import thinkingIcon from "../images/thinking@2x.png";
 
 export interface NodeReasoningProps {
   job: Job;

@@ -101,19 +101,36 @@ export function AssistantMessage({
             type: "job",
             job: {
               type: "reasoning",
-              messages: [
-                {
-                  role: "assistant",
-                  parts: [{
-                    type: "text",
-                    text: `用户需要查询广州的天气，并根据天气帮他提请假流程。我需要：
-1. 调用天气工具查询广州天气
-2. 判断天气是下雨后，提起请假流程`
-                  }]
-                }
-              ],
+              //               messages: [
+              //                 {
+              //                   role: "assistant",
+              //                   parts: [{
+              //                     type: "text",
+              //                     text: `用户需要查询广州的天气，并根据天气帮他提请假流程。我需要：
+              // 1. 调用天气工具查询广州天气
+              // 2. 判断天气是下雨后，提起请假流程`
+              //                   }]
+              //                 }
+              //               ],
             },
           }}
+        /> */}
+        {/* <NodeChunk
+          chunk={
+            {
+              type: "plan",
+              task: {
+                plan: [
+                  {
+                    name: "查询广州明天天气预报",
+                  },
+                  {
+                    name: "分析天气预报，判断是否下雨",
+                  },
+                ],
+              },
+            } as any
+          }
         /> */}
         {chunks?.map((chunk, index) => (
           <NodeChunk key={index} chunk={chunk} isSubTask={isSubTask} />

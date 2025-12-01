@@ -13,7 +13,8 @@ export function getFlatChunks(
   errors: ConversationError[],
   flowMap?: Map<string, ServiceFlowRun>,
   activityMap?: Map<string, ActivityWithFlow>,
-  skipActivitySubTasks?: boolean
+  skipActivitySubTasks?: boolean,
+  enablePlan?: boolean
 ) {
   const taskTree = getTaskTree(tasks);
   const chunks: MessageChunk[] = [];
@@ -61,7 +62,15 @@ export function getFlatChunks(
           });
         }
       } else if (subTask) {
-        collectChunks(subTask, level + 1);
+        if (enablePlan && subTask.task.plan) {
+          chunks.push({
+            type: "plan",
+            job,
+            task: subTask.task,
+          });
+        } else {
+          collectChunks(subTask, level + 1);
+        }
       } else {
         chunks.push({
           type: "job",

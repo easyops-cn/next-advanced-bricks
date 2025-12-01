@@ -57,3 +57,9 @@ export const ICON_DOWNLOAD: GeneralIconProps = {
   lib: "antd",
   icon: "download",
 };
+
+export const ICON_STOP: GeneralIconProps = {
+  lib: "fa",
+  prefix: "far",
+  icon: "circle-stop",
+};

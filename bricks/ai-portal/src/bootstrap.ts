@@ -32,5 +32,5 @@ import "./data-providers/set-chat-command.js";
 import "./running-flow/index.js";
 import "./notice-dropdown/index.js";
 import "./notice-list/index.js";
-import "./gantt-chart/index.js";
+// import "./gantt-chart/index.js";
 import "./chat-panel/index.js";

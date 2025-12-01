@@ -25,6 +25,7 @@ export interface MessageFromAssistant {
 
 export type MessageChunk =
   | MessageChunkOfJob
+  | MessageChunkOfPlan
   | MessageChunkOfFlow
   | MessageChunkOfActivity
   | MessageChunkOfError;
@@ -34,6 +35,12 @@ export interface MessageChunkOfJob {
   job: Job;
   level: number;
   fromSkippedSubTask?: boolean;
+}
+
+export interface MessageChunkOfPlan {
+  type: "plan";
+  job: Job;
+  task: Task;
 }
 
 export interface MessageChunkOfFlow {

@@ -43,8 +43,6 @@ import { useFulfilledActiveDetail } from "../shared/useFulfilledActiveDetail.js"
 import { useAutoScroll } from "./useAutoScroll.js";
 import scrollStyles from "./ScrollDownButton.module.css";
 import floatingStyles from "../shared/FloatingButton.module.css";
-import { PlanProgress } from "../shared/PlanProgress/PlanProgress.js";
-import { useServiceFlowPlan } from "../shared/useServiceFlowPlan.js";
 import { FilePreview } from "../shared/FilePreview/FilePreview.js";
 import { ImagesPreview } from "../shared/FilePreview/ImagesPreview.js";
 import { useHandleEscape } from "../shared/useHandleEscape.js";
@@ -108,7 +106,6 @@ export function ChatStreamComponent(
   const conversationState = conversation?.state;
   const conversationDone = DONE_STATES.includes(conversationState!);
   const canChat = conversationDone || conversationState === "input-required";
-  const plan = useServiceFlowPlan(serviceFlows, tasks);
   const { flowMap, activityMap } = useFlowAndActivityMap(serviceFlows);
   const { messages, jobMap, lastDetail } = useConversationStream(
     conversationAvailable,
@@ -435,14 +432,7 @@ export function ChatStreamComponent(
                   )}
                   {replay
                     ? conversation?.finished && (
-                        <>
-                          <PlanProgress
-                            plan={plan}
-                            conversationState={conversationState}
-                            style={{ marginTop: 14 }}
-                          />
-                          <NodeReplay finished ui="chat" />
-                        </>
+                        <NodeReplay finished ui="chat" />
                       )
                     : showFeedback &&
                       (conversationState === "completed" ||
@@ -463,10 +453,6 @@ export function ChatStreamComponent(
               {(replay ? !conversation?.finished : supports?.chat) ? (
                 <div className={styles.footer}>
                   <div className={styles.narrow}>
-                    <PlanProgress
-                      plan={plan}
-                      conversationState={conversationState}
-                    />
                     {replay ? (
                       <NodeReplay />
                     ) : (
