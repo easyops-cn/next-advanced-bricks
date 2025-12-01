@@ -14,6 +14,8 @@ import { TaskContext } from "../../shared/TaskContext";
 import { ICON_UP } from "../../shared/constants";
 import { StreamContext } from "../StreamContext";
 import { K, t } from "../i18n";
+import { NodeReasoning } from "./NodeReasoning";
+import { ActivityPlan } from "../../shared/ActivityPlan/ActivityPlan";
 
 export interface NodeChunkProps {
   chunk: MessageChunk;
@@ -22,22 +24,29 @@ export interface NodeChunkProps {
 
 export function NodeChunk({ chunk, isSubTask }: NodeChunkProps) {
   if (chunk.type === "job") {
+    if (chunk.job.type === "reasoning") {
+      return <NodeReasoning job={chunk.job} />;
+    }
     return <NodeJob job={chunk.job} isSubTask={isSubTask} />;
+  }
+
+  if (chunk.type === "plan") {
+    return <ActivityPlan task={chunk.task} />;
   }
 
   if (chunk.type === "error") {
     return <div className={styles.error}>{chunk.error}</div>;
   }
 
-  return <NodeTask chunk={chunk} isSubTask={isSubTask} />;
+  return <NodeFlow chunk={chunk} isSubTask={isSubTask} />;
 }
 
-interface NodeTaskProps {
+interface NodeFlowProps {
   chunk: MessageChunkOfFlow | MessageChunkOfActivity;
   isSubTask?: boolean;
 }
 
-function NodeTask({ chunk, isSubTask }: NodeTaskProps) {
+function NodeFlow({ chunk, isSubTask }: NodeFlowProps) {
   const { conversationState, setActiveDetail, setSubActiveDetail } =
     useContext(TaskContext);
   const { setUserClosedAside, lastDetail } = useContext(StreamContext);

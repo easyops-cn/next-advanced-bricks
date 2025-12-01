@@ -49,11 +49,17 @@ export const ICON_EXTERNAL_LINK: GeneralIconProps = {
 };
 
 export const ICON_UP: GeneralIconProps = {
-  lib: "fa",
-  icon: "angle-up",
+  lib: "lucide",
+  icon: "chevron-up",
 };
 
 export const ICON_DOWNLOAD: GeneralIconProps = {
   lib: "antd",
   icon: "download",
+};
+
+export const ICON_STOP: GeneralIconProps = {
+  lib: "fa",
+  prefix: "far",
+  icon: "circle-stop",
 };

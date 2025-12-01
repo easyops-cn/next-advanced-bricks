@@ -1,9 +1,11 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { initializeI18n } from "@next-core/i18n";
-import { showDialog, WrappedChatInput } from "../bricks";
+import { showDialog, WrappedChatInput, WrappedIcon } from "../bricks";
 import { K, locales, NS, t } from "./i18n";
 import { TaskContext } from "../TaskContext";
 import type { ConversationState } from "../interfaces";
+import styles from "./ChatBox.module.css";
+import { ICON_STOP } from "../constants";
 
 initializeI18n(NS, locales);
 
@@ -33,7 +35,7 @@ export function ChatBox({ state, canChat }: ChatBoxProps): JSX.Element {
       await showDialog({
         type: "confirm",
         title: t(K.CONFIRM_TO_TERMINATE_THE_TASK_TITLE),
-        content: "",
+        content: t(K.CONFIRM_TO_TERMINATE_THE_TASK_DESCRIPTION),
       });
     } catch {
       return;
@@ -42,13 +44,23 @@ export function ChatBox({ state, canChat }: ChatBoxProps): JSX.Element {
     setTerminating(true);
   }, [onTerminate]);
 
+  if (!canChat && supports?.intercept) {
+    return (
+      <button
+        className={styles.button}
+        onClick={handleTerminate}
+        disabled={terminating}
+      >
+        <WrappedIcon {...ICON_STOP} />
+        {t(K.TERMINATE_THE_TASK)}
+      </button>
+    );
+  }
+
   return (
     <WrappedChatInput
       placeholder={t(K.SEND_MESSAGE)}
       autoFocus
-      submitDisabled={!canChat}
-      supportsTerminate={supports?.intercept}
-      terminating={terminating}
       autoFade
       aiEmployees={aiEmployees}
       commands={commands}
