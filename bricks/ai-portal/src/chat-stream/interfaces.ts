@@ -39,7 +39,6 @@ export interface MessageChunkOfJob {
 
 export interface MessageChunkOfPlan {
   type: "plan";
-  job: Job;
   task: Task;
 }
 

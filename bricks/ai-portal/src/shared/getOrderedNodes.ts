@@ -17,7 +17,7 @@ export function getOrderedNodes<T extends GeneralNode>(
   // Ignore sub nodes
   for (const node of nodes) {
     map.set(node.id, node);
-    if (node.parent /*  && node.id !== rootId */) {
+    if (node.parent && node.id !== rootId) {
       childMap.set(node.parent, node.id);
     }
   }
@@ -32,7 +32,7 @@ export function getOrderedNodes<T extends GeneralNode>(
       downstream.push(node.id);
     }
 
-    if (node.id === rootId || (!node.parent && !node.upstream?.length)) {
+    if (rootId ? node.id === rootId : !node.parent && !node.upstream?.length) {
       roots.push(node.id);
     }
   }
