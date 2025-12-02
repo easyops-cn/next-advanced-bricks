@@ -22,10 +22,12 @@ export function useConversationStream(
   options?: {
     showHumanActions?: boolean;
     skipActivitySubTasks?: boolean;
+    rootTaskId?: string;
   }
 ) {
   const showHumanActions = options?.showHumanActions;
   const skipActivitySubTasks = options?.skipActivitySubTasks;
+  const rootTaskId = options?.rootTaskId;
 
   return useMemo(() => {
     if (!conversationAvailable) {
@@ -40,7 +42,9 @@ export function useConversationStream(
       errors,
       flowMap,
       activityMap,
-      skipActivitySubTasks
+      skipActivitySubTasks,
+      true,
+      rootTaskId
     );
     const messages: ChatMessage[] = [];
 
@@ -144,5 +148,6 @@ export function useConversationStream(
     errors,
     showHumanActions,
     skipActivitySubTasks,
+    rootTaskId,
   ]);
 }

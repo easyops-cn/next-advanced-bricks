@@ -3,6 +3,7 @@ import type { FeedbackDetail } from "../cruise-canvas/interfaces";
 import type {
   ActiveDetail,
   ActiveImages,
+  ActivityWithFlow,
   ConversationError,
   ConversationState,
   ExampleProject,
@@ -10,6 +11,7 @@ import type {
   FileInfo,
   GeneratedView,
   Job,
+  ServiceFlowRun,
   ShowCaseType,
   Task,
   UploadOptions,
@@ -21,6 +23,9 @@ export interface TaskContextValue {
   conversationState?: ConversationState;
   tasks: Task[];
   errors: ConversationError[];
+  jobMap?: Map<string, Job>;
+  flowMap?: Map<string, ServiceFlowRun>;
+  activityMap?: Map<string, ActivityWithFlow>;
   workspace?: string;
   previewUrlTemplate?: string;
   replay?: boolean;

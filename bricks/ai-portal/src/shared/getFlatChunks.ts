@@ -14,9 +14,15 @@ export function getFlatChunks(
   flowMap?: Map<string, ServiceFlowRun>,
   activityMap?: Map<string, ActivityWithFlow>,
   skipActivitySubTasks?: boolean,
-  enablePlan?: boolean
-) {
-  const taskTree = getTaskTree(tasks);
+  enablePlan?: boolean,
+  rootTaskId?: string
+): {
+  /** Message chunks, excluding those from skipped subtasks */
+  chunks: MessageChunk[];
+  /** All jobs including those nested within subtasks */
+  jobMap: Map<string, Job>;
+} {
+  const taskTree = getTaskTree(tasks, rootTaskId);
   const chunks: MessageChunk[] = [];
   const jobMap = new Map<string, Job>();
 
