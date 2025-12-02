@@ -55,7 +55,7 @@ export function Aside({ detail, isSubTask, faded }: AsideProps) {
         <div
           className={classNames(styles.body, {
             [styles.scrollable]:
-              detail.type === "job" && !detail.job.generatedView,
+              detail.type !== "job" || !detail.job.generatedView,
           })}
         >
           {detail.type === "job" ? (
