@@ -5,20 +5,20 @@ export interface GeneralNode {
   hidden?: boolean;
 }
 
-export function getOrderedNodes<T extends GeneralNode>(nodes: T[]) {
+export function getOrderedNodes<T extends GeneralNode>(
+  nodes: T[],
+  rootId?: string
+) {
   const map = new Map<string, T>();
   const downstreamMap = new Map<string, string[]>();
   const roots: string[] = [];
-  const rootChildren: string[] = [];
   const childMap: Map<string, string> = new Map();
 
   // Ignore sub nodes
   for (const node of nodes) {
     map.set(node.id, node);
-    if (node.parent) {
+    if (node.parent /*  && node.id !== rootId */) {
       childMap.set(node.parent, node.id);
-    } else {
-      rootChildren.push(node.id);
     }
   }
 
@@ -32,11 +32,7 @@ export function getOrderedNodes<T extends GeneralNode>(nodes: T[]) {
       downstream.push(node.id);
     }
 
-    if (
-      !node.parent &&
-      !node.upstream?.length /* &&
-      (showHiddenNodes || !node.hidden) */
-    ) {
+    if (node.id === rootId || (!node.parent && !node.upstream?.length)) {
       roots.push(node.id);
     }
   }
@@ -45,7 +41,6 @@ export function getOrderedNodes<T extends GeneralNode>(nodes: T[]) {
   const list: string[] = [];
   const visitedNodes = new Set<string>();
   const queue: string[] = [...roots];
-  const leaves: string[] = [];
   while (queue.length > 0) {
     const id = queue.shift()!;
     if (visitedNodes.has(id)) {
@@ -56,10 +51,8 @@ export function getOrderedNodes<T extends GeneralNode>(nodes: T[]) {
     const downstream = downstreamMap.get(id);
     if (downstream?.length) {
       queue.push(...downstream);
-    } else {
-      leaves.push(id);
     }
   }
 
-  return { list, map, roots, leaves, childMap, downstreamMap };
+  return { list, map, childMap };
 }

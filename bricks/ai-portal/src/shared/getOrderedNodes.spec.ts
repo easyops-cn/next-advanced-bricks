@@ -16,14 +16,6 @@ describe("getOrderedNodes", () => {
     "b" => "c",
     "f" => "e",
   },
-  "downstreamMap": Map {
-    "a" => [
-      "d",
-    ],
-  },
-  "leaves": [
-    "d",
-  ],
   "list": [
     "a",
     "d",
@@ -47,9 +39,6 @@ describe("getOrderedNodes", () => {
       "parent": "f",
     },
   },
-  "roots": [
-    "a",
-  ],
 }
 `);
   });

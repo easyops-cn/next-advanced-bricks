@@ -217,7 +217,7 @@ function LegacyChatPanelComponent(
     conversationDone ||
     conversationState === "input-required";
 
-  const { messages } = useConversationStream(
+  const { messages, jobMap } = useConversationStream(
     conversationAvailable,
     conversationState,
     tasks,
@@ -301,11 +301,14 @@ function LegacyChatPanelComponent(
     () =>
       ({
         conversationState,
+        tasks,
+        jobMap,
+        errors,
         setActiveFile,
         setActiveImages,
         humanInput,
       }) as TaskContextValue,
-    [conversationState, humanInput]
+    [conversationState, humanInput, jobMap, tasks, errors]
   );
 
   useImperativeHandle(

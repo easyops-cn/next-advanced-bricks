@@ -11,8 +11,15 @@ export interface JobTreeNode {
   subTask?: TaskTreeNode;
 }
 
-export function getTaskTree(tasks: Task[]): TaskTreeNode[] {
-  const { list: taskIds, map: taskMap, childMap } = getOrderedNodes(tasks);
+export function getTaskTree(
+  tasks: Task[],
+  rootTaskId?: string
+): TaskTreeNode[] {
+  const {
+    list: taskIds,
+    map: taskMap,
+    childMap,
+  } = getOrderedNodes(tasks, rootTaskId);
 
   const processedTaskMap = new Map(
     [...taskMap.entries()].map(([taskId, task]) => {
@@ -22,8 +29,7 @@ export function getTaskTree(tasks: Task[]): TaskTreeNode[] {
 
   const buildTaskTreeNode = (taskId: string): TaskTreeNode => {
     const task = taskMap.get(taskId)!;
-    const processedTask = processedTaskMap.get(taskId)!;
-    const { list: jobIds, map: jobMap } = processedTask;
+    const { list: jobIds, map: jobMap } = processedTaskMap.get(taskId)!;
 
     const children: JobTreeNode[] = jobIds.map((jobId) => {
       const job = jobMap.get(jobId)!;

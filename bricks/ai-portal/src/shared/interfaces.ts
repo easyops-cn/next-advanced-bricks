@@ -82,7 +82,7 @@ export interface Job {
   id: string;
 
   // When setting `type: subTask` or `type: serviceFlow`, the job is a container job.
-  type?: "default" | "subTask" | "serviceFlow" | "reasoning";
+  type?: "default" | "subTask" | "serviceFlow" | "reasoning" | "askUser";
 
   // Upstream job IDs
   upstream?: string[];
