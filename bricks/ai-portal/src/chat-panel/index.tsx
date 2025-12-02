@@ -46,6 +46,7 @@ import { WrappedChatInput, WrappedIcon } from "../shared/bricks";
 import { FilePreview } from "../shared/FilePreview/FilePreview.js";
 import { ImagesPreview } from "../shared/FilePreview/ImagesPreview.js";
 import { TaskContext, type TaskContextValue } from "../shared/TaskContext";
+import { StreamContext } from "../chat-stream/StreamContext";
 
 const WrappedModal = wrapBrick<
   Modal,
@@ -254,7 +255,7 @@ function LegacyChatPanelComponent(
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const scrollContentRef = useRef<HTMLDivElement>(null);
 
-  const { scrollable, scrollToBottom } = useAutoScroll(
+  const { scrollable, scrollToBottom, toggleAutoScroll } = useAutoScroll(
     conversationAvailable && depsReady,
     scrollContainerRef,
     scrollContentRef
@@ -338,102 +339,113 @@ function LegacyChatPanelComponent(
     conversation.mode !== "resume" &&
     !NON_WORKING_STATES.includes(conversationState!);
 
+  const streamContextValue = useMemo(
+    () => ({
+      lastDetail: null,
+      toggleAutoScroll,
+      setUserClosedAside: () => {},
+    }),
+    [toggleAutoScroll]
+  );
+
   return (
     <TaskContext.Provider value={taskContextValue}>
-      <WrappedModal
-        modalTitle={panelTitle}
-        width={width}
-        height={height}
-        themeVariant="elevo"
-        maskClosable={maskClosable}
-        noFooter
-        headerBordered
-        fullscreenButton
-        background={`fixed url(${backgroundImage}) center center / cover no-repeat`}
-        onOpen={() => {
-          setTimeout(() => {
-            inputRef.current?.focus();
-          }, 100);
-        }}
-        ref={modalRef}
-      >
-        <div className={styles.panel}>
-          {!conversationId ? (
-            <div className={styles.main}>
-              <div className={styles.chat}>
-                <div className={styles.narrow}>
-                  {help ? (
-                    <ReactUseMultipleBricks useBrick={help.useBrick} />
-                  ) : null}
-                </div>
-              </div>
-            </div>
-          ) : conversationAvailable && depsReady ? (
-            <div className={styles.main}>
-              <div className={styles.chat} ref={scrollContainerRef}>
-                <div className={styles.narrow}>
-                  <div className={styles.messages} ref={scrollContentRef}>
-                    {messages.map((msg, index, list) => (
-                      <div className={styles.message} key={index}>
-                        {msg.role === "user" ? (
-                          <UserMessage
-                            content={msg.content}
-                            files={msg.files}
-                          />
-                        ) : (
-                          <AssistantMessage
-                            chunks={msg.chunks}
-                            scopeState={conversation.state}
-                            isLatest={
-                              index === list.length - 1 && !earlyFinished
-                            }
-                            finished={conversation.finished}
-                          />
-                        )}
-                      </div>
-                    ))}
-                    {earlyFinished && (
-                      <div className={styles.message}>
-                        <AssistantMessage earlyFinished />
-                      </div>
-                    )}
+      <StreamContext.Provider value={streamContextValue}>
+        <WrappedModal
+          modalTitle={panelTitle}
+          width={width}
+          height={height}
+          themeVariant="elevo"
+          maskClosable={maskClosable}
+          noFooter
+          headerBordered
+          fullscreenButton
+          background={`fixed url(${backgroundImage}) center center / cover no-repeat`}
+          onOpen={() => {
+            setTimeout(() => {
+              inputRef.current?.focus();
+            }, 100);
+          }}
+          ref={modalRef}
+        >
+          <div className={styles.panel}>
+            {!conversationId ? (
+              <div className={styles.main}>
+                <div className={styles.chat}>
+                  <div className={styles.narrow}>
+                    {help ? (
+                      <ReactUseMultipleBricks useBrick={help.useBrick} />
+                    ) : null}
                   </div>
                 </div>
               </div>
-              <button
-                className={`${scrollStyles["scroll-down"]} ${floatingStyles["floating-button"]}`}
-                style={{ bottom: "30px" }}
-                hidden={!scrollable}
-                onClick={scrollToBottom}
-              >
-                <WrappedIcon lib="antd" icon="down" />
-              </button>
-            </div>
-          ) : (
-            <div className={styles["loading-icon"]}>
-              <WrappedIcon
-                lib="antd"
-                theme="outlined"
-                icon="loading-3-quarters"
-                spinning
+            ) : conversationAvailable && depsReady ? (
+              <div className={styles.main}>
+                <div className={styles.chat} ref={scrollContainerRef}>
+                  <div className={styles.narrow}>
+                    <div className={styles.messages} ref={scrollContentRef}>
+                      {messages.map((msg, index, list) => (
+                        <div className={styles.message} key={index}>
+                          {msg.role === "user" ? (
+                            <UserMessage
+                              content={msg.content}
+                              files={msg.files}
+                            />
+                          ) : (
+                            <AssistantMessage
+                              chunks={msg.chunks}
+                              scopeState={conversation.state}
+                              isLatest={
+                                index === list.length - 1 && !earlyFinished
+                              }
+                              finished={conversation.finished}
+                            />
+                          )}
+                        </div>
+                      ))}
+                      {earlyFinished && (
+                        <div className={styles.message}>
+                          <AssistantMessage earlyFinished />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  className={`${scrollStyles["scroll-down"]} ${floatingStyles["floating-button"]}`}
+                  style={{ bottom: "30px" }}
+                  hidden={!scrollable}
+                  onClick={scrollToBottom}
+                >
+                  <WrappedIcon lib="antd" icon="down" />
+                </button>
+              </div>
+            ) : (
+              <div className={styles["loading-icon"]}>
+                <WrappedIcon
+                  lib="antd"
+                  theme="outlined"
+                  icon="loading-3-quarters"
+                  spinning
+                />
+              </div>
+            )}
+            <div className={styles.narrow}>
+              <WrappedChatInput
+                ref={inputRef}
+                placeholder={placeholder}
+                suggestionsPlacement="top"
+                submitDisabled={submitDisabled || !canChat}
+                supportsTerminate
+                uploadOptions={uploadOptions}
+                onChatSubmit={(e) => handleChatSubmit(e.detail)}
               />
             </div>
-          )}
-          <div className={styles.narrow}>
-            <WrappedChatInput
-              ref={inputRef}
-              placeholder={placeholder}
-              suggestionsPlacement="top"
-              submitDisabled={submitDisabled || !canChat}
-              supportsTerminate
-              uploadOptions={uploadOptions}
-              onChatSubmit={(e) => handleChatSubmit(e.detail)}
-            />
           </div>
-        </div>
-      </WrappedModal>
-      {activeFile && <FilePreview file={activeFile} fromModal />}
-      {activeImages && <ImagesPreview images={activeImages} fromModal />}
+        </WrappedModal>
+        {activeFile && <FilePreview file={activeFile} fromModal />}
+        {activeImages && <ImagesPreview images={activeImages} fromModal />}
+      </StreamContext.Provider>
     </TaskContext.Provider>
   );
 }

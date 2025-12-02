@@ -27,6 +27,14 @@ export function getFlatChunks(
   const jobMap = new Map<string, Job>();
 
   const collectChunks = (taskNode: TaskTreeNode, level: number) => {
+    if (enablePlan && taskNode.task.plan) {
+      chunks.push({
+        type: "plan",
+        task: taskNode.task,
+      });
+      return;
+    }
+
     const flow = flowMap?.get(taskNode.task.id);
 
     const activityWithFlow = activityMap?.get(taskNode.task.id);
@@ -68,15 +76,7 @@ export function getFlatChunks(
           });
         }
       } else if (subTask) {
-        if (enablePlan && subTask.task.plan) {
-          chunks.push({
-            type: "plan",
-            job,
-            task: subTask.task,
-          });
-        } else {
-          collectChunks(subTask, level + 1);
-        }
+        collectChunks(subTask, level + 1);
       } else {
         chunks.push({
           type: "job",

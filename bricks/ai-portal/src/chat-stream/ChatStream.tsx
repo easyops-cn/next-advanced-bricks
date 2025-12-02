@@ -332,14 +332,6 @@ export function ChatStreamComponent(
     ]
   );
 
-  const streamContextValue = useMemo(
-    () => ({
-      lastDetail,
-      setUserClosedAside,
-    }),
-    [lastDetail]
-  );
-
   const [depsReady, setDepsReady] = useState(false);
   useEffect(() => {
     let ignore = false;
@@ -360,7 +352,7 @@ export function ChatStreamComponent(
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const scrollContentRef = useRef<HTMLDivElement>(null);
 
-  const { scrollable, scrollToBottom } = useAutoScroll(
+  const { scrollable, scrollToBottom, toggleAutoScroll } = useAutoScroll(
     conversationAvailable && depsReady,
     scrollContainerRef,
     scrollContentRef
@@ -396,6 +388,15 @@ export function ChatStreamComponent(
     conversation?.finished &&
     conversation.mode !== "resume" &&
     !NON_WORKING_STATES.includes(conversationState!);
+
+  const streamContextValue = useMemo(
+    () => ({
+      lastDetail,
+      setUserClosedAside,
+      toggleAutoScroll,
+    }),
+    [lastDetail, toggleAutoScroll]
+  );
 
   return (
     <TaskContext.Provider value={taskContextValue}>

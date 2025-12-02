@@ -71,5 +71,9 @@ export function useAutoScroll(
     });
   }, [scrollContainerRef]);
 
-  return { scrollable, scrollToBottom };
+  const toggleAutoScroll = useCallback((enabled: boolean) => {
+    manualScrolledRef.current = !enabled;
+  }, []);
+
+  return { scrollable, scrollToBottom, toggleAutoScroll };
 }
