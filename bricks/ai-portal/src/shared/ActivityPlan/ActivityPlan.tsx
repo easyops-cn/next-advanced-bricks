@@ -15,7 +15,6 @@ import { WrappedIcon } from "../bricks";
 import { ICON_UP } from "../constants";
 import { TaskContext } from "../TaskContext";
 import { useConversationStream } from "../../chat-stream/useConversationStream";
-import { getStateIcon } from "./getStateIcon";
 import type {
   MessageChunk,
   MessageFromAssistant,
@@ -23,6 +22,8 @@ import type {
 import { EnhancedMarkdown } from "../../cruise-canvas/EnhancedMarkdown/EnhancedMarkdown";
 import sharedStyles from "../../cruise-canvas/shared.module.css";
 import { StreamContext } from "../../chat-stream/StreamContext";
+import { AskUserTag } from "../AskUserTag/AskUserTag";
+import { PlanStateIcon } from "./PlanStateIcon";
 
 initializeI18n(NS, locales);
 
@@ -36,7 +37,9 @@ const ActivityPlanContext = createContext<{
 
 export function ActivityPlan({ task }: ActivityPlanProps) {
   const [collapsed, setCollapsed] = useState(true);
+  const { flowMap, setActiveDetail } = useContext(TaskContext);
   const { toggleAutoScroll } = useContext(StreamContext);
+  const flow = flowMap?.get(task.id);
 
   return (
     <ActivityPlanContext.Provider value={{ collapsed }}>
@@ -44,7 +47,25 @@ export function ActivityPlan({ task }: ActivityPlanProps) {
         className={classNames(styles.plan, { [styles.collapsed]: collapsed })}
       >
         <div className={styles.heading}>
-          <span className={styles.title}>{t(K.ACTIVITY_PLAN)}</span>
+          {flow ? (
+            <span
+              className={styles["flow-title"]}
+              onClick={() => {
+                const detail = {
+                  type: "flow" as const,
+                  id: task.id,
+                };
+                setActiveDetail((prev) =>
+                  isEqual(prev, detail) ? prev : detail
+                );
+              }}
+            >
+              <WrappedIcon lib="lucide" icon="route" />
+              {t(K.STARTING_SERVICE_FLOW, { name: flow.name })}
+            </span>
+          ) : (
+            <span>{t(K.ACTIVITY_PLAN)}</span>
+          )}
           <div
             className={styles.toggle}
             onClick={() => {
@@ -93,7 +114,6 @@ function PlanStepNode({ step, level, isLast }: PlanStepNodeProps) {
   const { jobMap } = useContext(TaskContext);
   const { collapsed } = useContext(ActivityPlanContext);
   const job = step.jobId ? jobMap?.get(step.jobId) : undefined;
-  const { icon, className } = getStateIcon(job?.state, isFirstLevel);
   const hasChildren = false;
 
   return (
@@ -108,23 +128,23 @@ function PlanStepNode({ step, level, isLast }: PlanStepNodeProps) {
       )}
       <div className={styles.node}>
         <div className={styles.label}>
-          <WrappedIcon
-            className={classNames(styles.icon, className)}
-            {...icon}
-          />
+          <PlanStateIcon state={job?.state} filled={isFirstLevel} />
           <span className={styles.name}>{step.name}</span>
         </div>
       </div>
-      {!collapsed && job ? <PlanStepDetails stepJob={job} /> : null}
+      {!collapsed && job ? (
+        <PlanStepDetails stepJob={job} level={level} />
+      ) : null}
     </li>
   );
 }
 
 interface PlanStepDetailsProps {
   stepJob: Job;
+  level: number;
 }
 
-function PlanStepDetails({ stepJob }: PlanStepDetailsProps) {
+function PlanStepDetails({ stepJob, level }: PlanStepDetailsProps) {
   const { tasks, errors, flowMap, activityMap } = useContext(TaskContext);
   const subTask =
     stepJob.type === "subTask"
@@ -135,10 +155,9 @@ function PlanStepDetails({ stepJob }: PlanStepDetailsProps) {
     subTask?.state,
     tasks,
     errors,
-    flowMap,
-    activityMap,
     {
-      skipActivitySubTasks: true,
+      flowMap,
+      activityMap,
       rootTaskId: subTask?.id,
     }
   );
@@ -168,7 +187,7 @@ function PlanStepDetails({ stepJob }: PlanStepDetailsProps) {
           ) : (
             <div className={styles.assistant}>
               {msg.chunks.map((chunk, idx) => (
-                <PlanStepMessageChunk key={idx} chunk={chunk} />
+                <PlanStepMessageChunk key={idx} chunk={chunk} level={level} />
               ))}
             </div>
           )}
@@ -180,13 +199,11 @@ function PlanStepDetails({ stepJob }: PlanStepDetailsProps) {
 
 interface PlanStepMessageChunkProps {
   chunk: MessageChunk;
+  level: number;
 }
 
-function PlanStepMessageChunk({ chunk }: PlanStepMessageChunkProps) {
+function PlanStepMessageChunk({ chunk, level }: PlanStepMessageChunkProps) {
   const { setActiveDetail } = useContext(TaskContext);
-  const { icon, className } = getStateIcon(
-    chunk.type === "job" ? chunk.job.state : undefined
-  );
 
   return (
     <div className={styles.chunk}>
@@ -204,10 +221,7 @@ function PlanStepMessageChunk({ chunk }: PlanStepMessageChunkProps) {
               );
             }}
           >
-            <WrappedIcon
-              className={classNames(styles.icon, className)}
-              {...icon}
-            />
+            <PlanStateIcon state={chunk.job.state} />
             {chunk.job.toolCall.annotations?.title || chunk.job.toolCall.name}
           </div>
         ) : (
@@ -225,6 +239,10 @@ function PlanStepMessageChunk({ chunk }: PlanStepMessageChunkProps) {
             </Fragment>
           ))
         )
+      ) : chunk.type === "plan" ? (
+        <PlanTree plan={chunk.task.plan!} level={level + 1} />
+      ) : chunk.type === "askUser" ? (
+        <AskUserTag job={chunk.job} task={chunk.task} />
       ) : null}
     </div>
   );

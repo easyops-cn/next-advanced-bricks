@@ -12,40 +12,45 @@ import type {
 import { getFlatChunks } from "../shared/getFlatChunks.js";
 import { DONE_STATES } from "../shared/constants.js";
 
+export interface UseConversationStreamOptions {
+  flowMap?: Map<string, ServiceFlowRun>;
+  activityMap?: Map<string, ActivityWithFlow>;
+  showHumanActions?: boolean;
+  skipActivitySubTasks?: boolean;
+  rootTaskId?: string;
+}
+
 export function useConversationStream(
   conversationAvailable: boolean,
   state: ConversationState | TaskState | undefined,
   tasks: Task[],
   errors: ConversationError[],
-  flowMap?: Map<string, ServiceFlowRun>,
-  activityMap?: Map<string, ActivityWithFlow>,
-  options?: {
-    showHumanActions?: boolean;
-    skipActivitySubTasks?: boolean;
-    rootTaskId?: string;
-  }
+  options?: UseConversationStreamOptions
 ) {
-  const showHumanActions = options?.showHumanActions;
-  const skipActivitySubTasks = options?.skipActivitySubTasks;
-  const rootTaskId = options?.rootTaskId;
+  const {
+    showHumanActions,
+    skipActivitySubTasks,
+    rootTaskId,
+    flowMap,
+    activityMap,
+  } = options || {};
 
   return useMemo(() => {
     if (!conversationAvailable) {
       return {
         messages: [],
         lastDetail: null,
+        activeAskUser: null,
       };
     }
 
-    const { chunks, jobMap } = getFlatChunks(
-      tasks,
-      errors,
+    const { chunks, jobMap, activeAskUser } = getFlatChunks(tasks, errors, {
       flowMap,
       activityMap,
       skipActivitySubTasks,
-      true,
-      rootTaskId
-    );
+      enablePlan: true,
+      rootTaskId,
+    });
     const messages: ChatMessage[] = [];
 
     let prevAssistantMessage: MessageFromAssistant = {
@@ -112,7 +117,11 @@ export function useConversationStream(
         }
       } else {
         prevAssistantMessage.chunks.push(chunk);
-        if (chunk.type !== "error" && chunk.type !== "plan") {
+        if (
+          chunk.type !== "error" &&
+          chunk.type !== "plan" &&
+          chunk.type !== "askUser"
+        ) {
           lastDetail = {
             type: chunk.type,
             id: chunk.task.id,
@@ -138,7 +147,7 @@ export function useConversationStream(
       messages.push(prevAssistantMessage);
     }
 
-    return { messages, jobMap, lastDetail };
+    return { messages, jobMap, lastDetail, activeAskUser };
   }, [
     conversationAvailable,
     state,

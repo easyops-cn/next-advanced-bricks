@@ -12,9 +12,16 @@ initializeI18n(NS, locales);
 export interface ChatBoxProps {
   state: ConversationState | undefined;
   canChat: boolean;
+  showInput?: "auto" | "always" | "never";
+  className?: string;
 }
 
-export function ChatBox({ state, canChat }: ChatBoxProps): JSX.Element {
+export function ChatBox({
+  state,
+  canChat,
+  showInput,
+  className,
+}: ChatBoxProps): JSX.Element {
   const {
     humanInput,
     onTerminate,
@@ -44,12 +51,15 @@ export function ChatBox({ state, canChat }: ChatBoxProps): JSX.Element {
     setTerminating(true);
   }, [onTerminate]);
 
-  if (!canChat && supports?.intercept) {
+  if (
+    showInput === "never" ||
+    (!canChat && supports?.intercept && showInput !== "always")
+  ) {
     return (
       <button
         className={styles.button}
         onClick={handleTerminate}
-        disabled={terminating}
+        disabled={terminating || canChat}
       >
         <WrappedIcon {...ICON_STOP} />
         {t(K.TERMINATE_THE_TASK)}
@@ -66,6 +76,7 @@ export function ChatBox({ state, canChat }: ChatBoxProps): JSX.Element {
       commands={commands}
       suggestionsPlacement="top"
       uploadOptions={uploadOptions}
+      className={className}
       onChatSubmit={(e) => {
         const { content, ...extra } = e.detail;
         humanInput(content, undefined, extra);

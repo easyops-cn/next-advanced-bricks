@@ -38,6 +38,7 @@ describe("getFlatChunks", () => {
     expect(result).toEqual({
       chunks: [],
       jobMap: new Map(),
+      activeAskUser: null,
     });
   });
 
@@ -55,7 +56,7 @@ describe("getFlatChunks", () => {
 
     const activityMap = new Map([["task1", activityWithFlow]]);
 
-    const result = getFlatChunks([task], [], undefined, activityMap);
+    const result = getFlatChunks([task], [], { activityMap });
 
     expect(result.chunks).toEqual([
       {
@@ -86,7 +87,7 @@ describe("getFlatChunks", () => {
 
     const flowMap = new Map([["task1", flow]]);
 
-    const result = getFlatChunks([task], [], flowMap);
+    const result = getFlatChunks([task], [], { flowMap });
 
     expect(result.chunks).toContainEqual({
       type: "flow",
@@ -185,7 +186,10 @@ describe("getFlatChunks", () => {
 
     const activityMap = new Map([["task1", activityWithFlow]]);
 
-    const result = getFlatChunks([task], [], undefined, activityMap, true);
+    const result = getFlatChunks([task], [], {
+      activityMap,
+      skipActivitySubTasks: true,
+    });
 
     expect(result.chunks).toContainEqual({
       type: "activity",
@@ -227,7 +231,10 @@ describe("getFlatChunks", () => {
 
     const activityMap = new Map([["task1", activityWithFlow]]);
 
-    const result = getFlatChunks([task], [], undefined, activityMap, true);
+    const result = getFlatChunks([task], [], {
+      activityMap,
+      skipActivitySubTasks: true,
+    });
 
     expect(result.chunks).toContainEqual({
       type: "job",
@@ -341,12 +348,10 @@ describe("getFlatChunks", () => {
     const flowMap = new Map([["task1", flow]]);
     const activityMap = new Map([["task1", activityWithFlow]]);
 
-    const result = getFlatChunks(
-      [task],
-      [error, globalError],
+    const result = getFlatChunks([task], [error, globalError], {
       flowMap,
-      activityMap
-    );
+      activityMap,
+    });
 
     expect(result.chunks).toContainEqual({
       type: "activity",

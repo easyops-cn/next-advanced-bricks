@@ -1,4 +1,7 @@
-import type { MessageChunk } from "../chat-stream/interfaces";
+import type {
+  MessageChunk,
+  MessageChunkOfAskUser,
+} from "../chat-stream/interfaces";
 import type {
   Task,
   ServiceFlowRun,
@@ -8,23 +11,33 @@ import type {
 } from "../shared/interfaces";
 import { getTaskTree, type TaskTreeNode } from "./getTaskTree";
 
+export interface FlatChunkOptions {
+  flowMap?: Map<string, ServiceFlowRun>;
+  activityMap?: Map<string, ActivityWithFlow>;
+  skipActivitySubTasks?: boolean;
+  enablePlan?: boolean;
+  rootTaskId?: string;
+}
+
 export function getFlatChunks(
   tasks: Task[],
   errors: ConversationError[],
-  flowMap?: Map<string, ServiceFlowRun>,
-  activityMap?: Map<string, ActivityWithFlow>,
-  skipActivitySubTasks?: boolean,
-  enablePlan?: boolean,
-  rootTaskId?: string
+  options?: FlatChunkOptions
 ): {
   /** Message chunks, excluding those from skipped subtasks */
   chunks: MessageChunk[];
   /** All jobs including those nested within subtasks */
   jobMap: Map<string, Job>;
+  /** The active askUser chunk, if any */
+  activeAskUser: MessageChunkOfAskUser | null;
 } {
+  const { flowMap, activityMap, skipActivitySubTasks, enablePlan, rootTaskId } =
+    options || {};
+
   const taskTree = getTaskTree(tasks, rootTaskId);
   const chunks: MessageChunk[] = [];
   const jobMap = new Map<string, Job>();
+  let activeAskUser: MessageChunkOfAskUser | null = null;
 
   const collectChunks = (taskNode: TaskTreeNode, level: number) => {
     if (enablePlan && taskNode.task.plan) {
@@ -67,7 +80,13 @@ export function getFlatChunks(
         continue;
       }
 
-      if (job.type === "serviceFlow") {
+      if (job.type === "askUser") {
+        chunks.push({
+          type: "askUser",
+          job,
+          task: subTask?.task,
+        });
+      } else if (job.type === "serviceFlow") {
         if (flow) {
           chunks.push({
             type: "flow",
@@ -102,6 +121,14 @@ export function getFlatChunks(
       jobMap.set(job.id, job);
       if (subTask) {
         collectJobs(subTask);
+
+        if (job.type === "askUser") {
+          activeAskUser = {
+            type: "askUser",
+            job,
+            task: subTask.task,
+          };
+        }
       }
     }
   };
@@ -121,5 +148,5 @@ export function getFlatChunks(
     }
   }
 
-  return { chunks, jobMap };
+  return { chunks, jobMap, activeAskUser };
 }

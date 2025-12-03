@@ -122,17 +122,9 @@ describe("useConversationStream", () => {
     ];
 
     const { result } = renderHook(() =>
-      useConversationStream(
-        true,
-        "working",
-        mockTasks,
-        [],
-        undefined,
-        undefined,
-        {
-          showHumanActions: true,
-        }
-      )
+      useConversationStream(true, "working", mockTasks, [], {
+        showHumanActions: true,
+      })
     );
 
     expect(result.current.messages).toHaveLength(3);
@@ -160,17 +152,9 @@ describe("useConversationStream", () => {
     ];
 
     const { result } = renderHook(() =>
-      useConversationStream(
-        true,
-        "working",
-        mockTasks,
-        [],
-        undefined,
-        undefined,
-        {
-          showHumanActions: false,
-        }
-      )
+      useConversationStream(true, "working", mockTasks, [], {
+        showHumanActions: false,
+      })
     );
 
     expect(result.current.messages).toHaveLength(2);

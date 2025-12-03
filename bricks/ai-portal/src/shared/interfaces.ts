@@ -131,6 +131,9 @@ export interface Job {
 
   // 忽略该容器在 chat 模式下的自动详情展示，但仍可主动点击查看详情
   ignoreDetails?: boolean;
+
+  // For type: "askUser"
+  summary?: string;
 }
 
 export type HumanAction = HumanActionConfirm | HumanActionSelect;
@@ -408,18 +411,24 @@ export interface ActivityWithFlow {
 }
 
 export interface ActiveDetail {
-  type: "job" | "flow" | "activity";
+  type: "job" | "flow" | "activity" | "task";
   id: string;
 }
 
 export type FulfilledActiveDetail =
   | ActiveDetailOfJob
+  | ActiveDetailOfTask
   | ActiveDetailOfFlow
   | ActiveDetailOfActivity;
 
 export interface ActiveDetailOfJob {
   type: "job";
   job: Job;
+}
+
+export interface ActiveDetailOfTask {
+  type: "task";
+  task: Task;
 }
 
 export interface ActiveDetailOfFlow {

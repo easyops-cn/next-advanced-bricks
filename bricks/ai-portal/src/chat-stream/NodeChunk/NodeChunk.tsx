@@ -16,6 +16,7 @@ import { StreamContext } from "../StreamContext";
 import { K, t } from "../i18n";
 import { NodeReasoning } from "./NodeReasoning";
 import { ActivityPlan } from "../../shared/ActivityPlan/ActivityPlan";
+import { AskUserTag } from "../../shared/AskUserTag/AskUserTag";
 
 export interface NodeChunkProps {
   chunk: MessageChunk;
@@ -32,6 +33,10 @@ export function NodeChunk({ chunk, isSubTask }: NodeChunkProps) {
 
   if (chunk.type === "plan") {
     return <ActivityPlan task={chunk.task} />;
+  }
+
+  if (chunk.type === "askUser") {
+    return <AskUserTag job={chunk.job} task={chunk.task} />;
   }
 
   if (chunk.type === "error") {

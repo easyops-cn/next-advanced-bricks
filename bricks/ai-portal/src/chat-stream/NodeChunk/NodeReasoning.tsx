@@ -5,7 +5,7 @@ import sharedStyles from "../../cruise-canvas/shared.module.css";
 import { WrappedIcon } from "../../shared/bricks.js";
 import { EnhancedMarkdown } from "../../cruise-canvas/EnhancedMarkdown/EnhancedMarkdown.js";
 import type { Job } from "../../shared/interfaces.js";
-import { ICON_UP } from "../../shared/constants.js";
+import { ICON_UP, NON_WORKING_STATES } from "../../shared/constants.js";
 import { K, t } from "../i18n";
 import thinkingIcon from "../images/thinking@2x.png";
 
@@ -41,7 +41,15 @@ export function NodeReasoning({ job }: NodeReasoningProps) {
         className={styles["reasoning-label"]}
         onClick={() => setCollapsed((prev) => !prev)}
       >
-        <span>{t(K.SHOW_THINKING)}</span>
+        <span
+          className={classNames({
+            [sharedStyles["shine-text"]]: !NON_WORKING_STATES.includes(
+              job.state
+            ),
+          })}
+        >
+          {t(K.SHOW_THINKING)}
+        </span>
         <WrappedIcon className={styles.chevron} {...ICON_UP} />
       </div>
       <div className={styles["reasoning-content"]}>

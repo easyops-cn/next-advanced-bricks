@@ -744,6 +744,7 @@ export function CruiseCanvasComponent(
 
   const fulfilledActiveDetail = useFulfilledActiveDetail(
     activeDetail,
+    tasks,
     jobMap,
     flowMap,
     activityMap
@@ -955,11 +956,11 @@ export function CruiseCanvasComponent(
                 <NodeReplay />
               </div>
             )
-          ) : supports?.chat ? (
+          ) : (
             <div className={styles["footer-container"]}>
               <ChatBox state={conversationState} canChat={canChat} />
             </div>
-          ) : null}
+          )}
         </div>
         {fulfilledActiveDetail?.type === "job" && (
           <ToolCallDetailDrawer job={fulfilledActiveDetail.job} />

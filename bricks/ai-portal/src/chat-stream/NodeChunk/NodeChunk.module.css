@@ -156,11 +156,9 @@ ai-portal\.chat-stream[hide-mermaid] .content .markdown :global(.mermaid) {
   align-items: center;
   gap: 6px;
   margin-bottom: 16px;
-
-  span {
-    --shine-text-color: rgba(0, 0, 0, 0.88);
-    --shine-text-highlight-color: #dcdcdc;
-  }
+  color: rgba(0, 0, 0, 0.88);
+  --shine-text-color: rgba(0, 0, 0, 0.88);
+  --shine-text-highlight-color: #dcdcdc;
 }
 
 .reasoning {
@@ -173,6 +171,8 @@ ai-portal\.chat-stream[hide-mermaid] .content .markdown :global(.mermaid) {
   align-items: center;
   gap: 4px;
   cursor: pointer;
+  --shine-text-color: rgba(0, 0, 0, 0.45);
+  --shine-text-highlight-color: #dcdcdc;
 
   &:hover {
     color: rgba(0, 0, 0, 0.65);
