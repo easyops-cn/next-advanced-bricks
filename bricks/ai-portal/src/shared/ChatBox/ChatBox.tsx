@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { initializeI18n } from "@next-core/i18n";
 import { showDialog, WrappedChatInput, WrappedIcon } from "../bricks";
 import { K, locales, NS, t } from "./i18n";
@@ -6,6 +12,7 @@ import { TaskContext } from "../TaskContext";
 import type { ConversationState } from "../interfaces";
 import styles from "./ChatBox.module.css";
 import { ICON_STOP } from "../constants";
+import { ChatInput } from "../../chat-input";
 
 initializeI18n(NS, locales);
 
@@ -51,6 +58,16 @@ export function ChatBox({
     setTerminating(true);
   }, [onTerminate]);
 
+  const inputRef = useRef<ChatInput>(null);
+
+  useEffect(() => {
+    if (canChat) {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    }
+  }, [canChat]);
+
   if (
     showInput === "never" ||
     (!canChat && supports?.intercept && showInput !== "always")
@@ -69,6 +86,7 @@ export function ChatBox({
 
   return (
     <WrappedChatInput
+      ref={inputRef}
       placeholder={t(K.SEND_MESSAGE)}
       autoFocus
       autoFade

@@ -18,6 +18,7 @@ export interface UseConversationStreamOptions {
   showHumanActions?: boolean;
   skipActivitySubTasks?: boolean;
   rootTaskId?: string;
+  expandAskUser?: boolean;
 }
 
 export function useConversationStream(
@@ -33,6 +34,7 @@ export function useConversationStream(
     rootTaskId,
     flowMap,
     activityMap,
+    expandAskUser,
   } = options || {};
 
   return useMemo(() => {
@@ -40,17 +42,23 @@ export function useConversationStream(
       return {
         messages: [],
         lastDetail: null,
+        planMap: null,
         activeAskUser: null,
       };
     }
 
-    const { chunks, jobMap, activeAskUser } = getFlatChunks(tasks, errors, {
-      flowMap,
-      activityMap,
-      skipActivitySubTasks,
-      enablePlan: true,
-      rootTaskId,
-    });
+    const { chunks, jobMap, planMap, activeAskUser } = getFlatChunks(
+      tasks,
+      errors,
+      {
+        flowMap,
+        activityMap,
+        skipActivitySubTasks,
+        enablePlan: true,
+        rootTaskId,
+        expandAskUser,
+      }
+    );
     const messages: ChatMessage[] = [];
 
     let prevAssistantMessage: MessageFromAssistant = {
@@ -147,7 +155,7 @@ export function useConversationStream(
       messages.push(prevAssistantMessage);
     }
 
-    return { messages, jobMap, lastDetail, activeAskUser };
+    return { messages, jobMap, planMap, lastDetail, activeAskUser };
   }, [
     conversationAvailable,
     state,
@@ -158,5 +166,6 @@ export function useConversationStream(
     showHumanActions,
     skipActivitySubTasks,
     rootTaskId,
+    expandAskUser,
   ]);
 }

@@ -3,12 +3,14 @@ import type { ActiveDetail } from "../shared/interfaces";
 
 export interface StreamContextValue {
   lastDetail: ActiveDetail | null;
+  planMap: Map<string, any> | null;
   setUserClosedAside: Dispatch<React.SetStateAction<boolean>>;
   toggleAutoScroll: (enabled: boolean) => void;
 }
 
 export const StreamContext = createContext<StreamContextValue>({
   lastDetail: null,
+  planMap: null,
   setUserClosedAside: () => {},
   toggleAutoScroll: () => {},
 });

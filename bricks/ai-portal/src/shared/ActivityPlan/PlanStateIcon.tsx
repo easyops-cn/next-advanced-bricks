@@ -33,11 +33,7 @@ export function PlanStateIcon({ state, filled }: PlanStateIconProps) {
               }
             )}
           >
-            <WrappedIcon
-              lib="lucide"
-              icon="check"
-              strokeWidth={filled ? 5 : 3}
-            />
+            <WrappedIcon lib="lucide" icon="check" strokeWidth={5} />
           </span>
         );
       }

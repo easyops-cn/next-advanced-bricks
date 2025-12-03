@@ -141,6 +141,7 @@ function mergeJobs(
         "cmd",
         "mentionedAiEmployeeId",
         "hil",
+        "summary",
       ]);
       if (aiEmployeeId !== undefined) {
         restMessagesPatch.aiEmployeeId = aiEmployeeId;

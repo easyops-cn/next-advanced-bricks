@@ -13,3 +13,12 @@
 .input {
   margin-top: 20px;
 }
+
+.tips {
+  font-weight: 500;
+  color: #d48806;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
