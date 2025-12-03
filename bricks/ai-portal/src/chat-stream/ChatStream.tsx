@@ -46,6 +46,7 @@ import floatingStyles from "../shared/FloatingButton.module.css";
 import { FilePreview } from "../shared/FilePreview/FilePreview.js";
 import { ImagesPreview } from "../shared/FilePreview/ImagesPreview.js";
 import { useHandleEscape } from "../shared/useHandleEscape.js";
+import { AskUser } from "../shared/AskUser/AskUser.js";
 
 interface ChatStreamComponentProps extends ChatStreamProps {
   conversationId: string;
@@ -105,16 +106,25 @@ export function ChatStreamComponent(
   const pageTitle = conversation?.title ?? "";
   const conversationState = conversation?.state;
   const conversationDone = DONE_STATES.includes(conversationState!);
+  const conversationFinished = conversation?.finished;
+  const earlyFinished =
+    !replay &&
+    conversation?.finished &&
+    conversation.mode !== "resume" &&
+    !NON_WORKING_STATES.includes(conversationState!);
   const canChat = conversationDone || conversationState === "input-required";
   const { flowMap, activityMap } = useFlowAndActivityMap(serviceFlows);
-  const { messages, jobMap, lastDetail } = useConversationStream(
+  const { messages, jobMap, lastDetail, activeAskUser } = useConversationStream(
     conversationAvailable,
     conversation?.state,
     tasks,
     errors,
-    flowMap,
-    activityMap,
-    { showHumanActions, skipActivitySubTasks: true }
+    {
+      flowMap,
+      activityMap,
+      showHumanActions,
+      skipActivitySubTasks: true,
+    }
   );
 
   useEffect(() => {
@@ -234,6 +244,8 @@ export function ChatStreamComponent(
     () => ({
       conversationId,
       conversationState,
+      finished: conversationFinished,
+      earlyFinished,
       tasks,
       errors,
       jobMap,
@@ -293,6 +305,8 @@ export function ChatStreamComponent(
     [
       conversationId,
       conversationState,
+      conversationFinished,
+      earlyFinished,
       tasks,
       errors,
       jobMap,
@@ -360,6 +374,7 @@ export function ChatStreamComponent(
 
   const fulfilledActiveDetail = useFulfilledActiveDetail(
     activeDetail,
+    tasks,
     jobMap,
     flowMap,
     activityMap
@@ -367,6 +382,7 @@ export function ChatStreamComponent(
 
   const fulfilledSubActiveDetail = useFulfilledActiveDetail(
     subActiveDetail,
+    tasks,
     jobMap,
     flowMap,
     activityMap
@@ -382,12 +398,6 @@ export function ChatStreamComponent(
   useEffect(() => {
     scrollContainerRef.current?.focus();
   }, [conversationAvailable, depsReady]);
-
-  const earlyFinished =
-    !replay &&
-    conversation?.finished &&
-    conversation.mode !== "resume" &&
-    !NON_WORKING_STATES.includes(conversationState!);
 
   const streamContextValue = useMemo(
     () => ({
@@ -432,6 +442,7 @@ export function ChatStreamComponent(
                       )}
                     </div>
                   ))}
+                  {activeAskUser && <AskUser task={activeAskUser.task} />}
                   {earlyFinished && (
                     <div className={styles.message}>
                       <AssistantMessage earlyFinished />
@@ -457,13 +468,17 @@ export function ChatStreamComponent(
               >
                 <WrappedIcon lib="antd" icon="down" />
               </button>
-              {(replay ? !conversation?.finished : supports?.chat) ? (
+              {!replay || !conversation?.finished ? (
                 <div className={styles.footer}>
                   <div className={styles.narrow}>
                     {replay ? (
                       <NodeReplay />
                     ) : (
-                      <ChatBox state={conversationState} canChat={canChat} />
+                      <ChatBox
+                        state={conversationState}
+                        canChat={canChat}
+                        showInput={activeAskUser ? "never" : "auto"}
+                      />
                     )}
                   </div>
                 </div>

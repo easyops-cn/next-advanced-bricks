@@ -19,7 +19,6 @@ const { defineElement, property, event } = createDecorators();
 
 export interface RunningFlowProps {
   spec?: FlowStage[];
-  activeActivityId?: string | null;
 }
 
 export interface FlowStage {
@@ -36,11 +35,11 @@ export interface FlowActivity {
 }
 
 export interface RunningFlowEvents {
-  "active.change": CustomEvent<string | null>;
+  "activity.click": CustomEvent<string>;
 }
 
 export interface RunningFlowMapEvents {
-  onActiveChange: "active.change";
+  onActivityClick: "activity.click";
 }
 
 /**
@@ -54,42 +53,31 @@ class RunningFlow extends ReactNextElement implements RunningFlowProps {
   @property({ attribute: false })
   accessor spec: FlowStage[] | undefined;
 
-  @property()
-  accessor activeActivityId: string | null | undefined;
+  @event({ type: "activity.click" })
+  accessor #activityClick!: EventEmitter<string>;
 
-  @event({ type: "active.change" })
-  accessor #activeChange!: EventEmitter<string | null>;
-
-  #handleActiveChange = (activityId: string | null) => {
-    this.#activeChange?.emit(activityId);
+  #handleActivityClick = (activityId: string) => {
+    this.#activityClick?.emit(activityId);
   };
 
   render() {
     return (
       <RunningFlowComponent
         spec={this.spec}
-        activeActivityId={this.activeActivityId}
-        onActiveChange={this.#handleActiveChange}
+        onActivityClick={this.#handleActivityClick}
       />
     );
   }
 }
 
 interface RunningFlowComponentProps extends RunningFlowProps {
-  onActiveChange: (activityId: string | null) => void;
+  onActivityClick: (activityId: string) => void;
 }
 
 function RunningFlowComponent({
   spec: stages,
-  activeActivityId,
-  onActiveChange,
+  onActivityClick,
 }: RunningFlowComponentProps) {
-  const [activeId, setActiveId] = useState(activeActivityId || null);
-
-  useEffect(() => {
-    setActiveId(activeActivityId || null);
-  }, [activeActivityId]);
-
   return (
     <div className="container">
       <ul className="nav">
@@ -112,15 +100,11 @@ function RunningFlowComponent({
                 <div
                   className={classNames(
                     "activity",
-                    getActivityStateClassName(activity.state),
-                    {
-                      active: activeId && activity.taskId === activeId,
-                    }
+                    getActivityStateClassName(activity.state)
                   )}
                   onClick={() => {
-                    if (activity.taskId && activeId !== activity.taskId) {
-                      setActiveId(activity.taskId);
-                      onActiveChange(activity.taskId);
+                    if (activity.taskId) {
+                      onActivityClick(activity.taskId);
                     }
                   }}
                 >

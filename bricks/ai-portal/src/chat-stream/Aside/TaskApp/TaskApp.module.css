@@ -1,0 +1,23 @@
+.body {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.chat {
+  background: rgba(227, 228, 229, 0.4);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 16px 20px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.messages {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.message + .message {
+  margin-top: 40px;
+}

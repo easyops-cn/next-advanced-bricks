@@ -1,15 +1,6 @@
-.app {
+.heading {
   border-radius: 9px;
   border: 1px solid #ccd1de;
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.heading {
-  border-bottom: 1px solid #ccd1de;
-  border-radius: 9px 9px 0 0;
   background-image: radial-gradient(
     circle at 1px 1px,
     #ddd 1px,
@@ -17,9 +8,6 @@
   );
   background-size: 25px 25px;
   background-position: 12px;
-  max-height: 30%;
-  display: flex;
-  flex-direction: column;
 }
 
 .header {
@@ -73,47 +61,12 @@
 
 .chart {
   padding: 8px 22px 18px;
-  overflow: auto;
-  min-height: 0;
+  overflow-x: auto;
 }
 
 .body {
-  padding: 16px 12px 12px;
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  flex-direction: column;
+  margin-top: 16px;
   position: relative;
-}
-
-.activity-title {
-  font-weight: 500;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 16px;
-
-  eo-icon {
-    font-size: 20px;
-    color: #8c8c8c;
-  }
-
-  .paused {
-    color: #f0a22e;
-  }
-
-  .working {
-    color: #4f69ff;
-  }
-
-  .completed {
-    color: #08bf33;
-  }
-
-  .failed {
-    color: var(--color-error);
-  }
 }
 
 .chat {
@@ -131,6 +84,7 @@
   margin: 0 auto;
 }
 
-.message + .message {
+.message + .message,
+.activity + .activity {
   margin-top: 40px;
 }

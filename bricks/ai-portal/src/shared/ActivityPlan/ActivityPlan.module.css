@@ -10,6 +10,19 @@
   font-size: 16px;
   line-height: 22px;
   color: rgba(0, 0, 0, 0.88);
+
+  .flow-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 30px;
+    padding: 0 14px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+  }
 }
 
 .toggle {
@@ -55,33 +68,50 @@
 
 .icon {
   font-size: 16px;
-  color: #8c8c8c;
+  color: var(--plan-state-icon-color);
+
+  --plan-state-icon-color: #8c8c8c;
 }
 
 .icon {
   &.completed {
-    color: #08bf33;
+    --plan-state-icon-color: #08bf33;
   }
 
   &.working {
-    color: var(--elevo-color-brand);
+    --plan-state-icon-color: var(--elevo-color-brand);
   }
 
   &.paused {
-    color: #faad14;
+    --plan-state-icon-color: #faad14;
   }
 
   &.failed {
-    color: #f24c25;
+    --plan-state-icon-color: #f24c25;
   }
 }
 
-.node:not(:last-child),
-.tree > li:not(:last-child) {
+.icon.stacked {
+  font-size: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  border: 1.5px solid var(--plan-state-icon-color);
+}
+
+.icon.filled {
+  color: #fff;
+  background: var(--plan-state-icon-color);
+}
+
+.node:not(:last-child) {
   margin-bottom: 8px;
 }
 
-.tree .root:not(:last-child) {
+.tree > li:not(:last-child) {
   margin-bottom: 12px;
 }
 

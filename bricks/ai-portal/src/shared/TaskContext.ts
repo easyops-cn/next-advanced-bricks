@@ -23,6 +23,8 @@ export interface TaskContextValue {
   conversationState?: ConversationState;
   tasks: Task[];
   errors: ConversationError[];
+  finished?: boolean;
+  earlyFinished?: boolean;
   jobMap?: Map<string, Job>;
   flowMap?: Map<string, ServiceFlowRun>;
   activityMap?: Map<string, ActivityWithFlow>;

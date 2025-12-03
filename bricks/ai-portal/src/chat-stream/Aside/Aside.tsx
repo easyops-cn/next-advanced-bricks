@@ -13,6 +13,7 @@ import type {
 } from "../../shared/interfaces";
 import { FlowApp } from "./FlowApp/FlowApp";
 import { ToolCallDetail } from "../../cruise-canvas/ToolCallDetail/ToolCallDetail";
+import { TaskApp } from "./TaskApp/TaskApp";
 
 const ICON_SHRINK: GeneralIconProps = {
   lib: "easyops",
@@ -55,7 +56,8 @@ export function Aside({ detail, isSubTask, faded }: AsideProps) {
         <div
           className={classNames(styles.body, {
             [styles.scrollable]:
-              detail.type === "job" && !detail.job.generatedView,
+              detail.type !== "task" &&
+              (detail.type !== "job" || !detail.job.generatedView),
           })}
         >
           {detail.type === "job" ? (
@@ -71,6 +73,8 @@ export function Aside({ detail, isSubTask, faded }: AsideProps) {
                 <ToolCallDetail job={detail.job} />
               )}
             </>
+          ) : detail.type === "task" ? (
+            <TaskApp task={detail.task} />
           ) : (
             <FlowApp
               flow={detail.flow}

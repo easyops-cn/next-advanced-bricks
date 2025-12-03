@@ -1,12 +1,15 @@
-import React, { useContext, useMemo, useRef } from "react";
+import React, {
+  forwardRef,
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+} from "react";
 import { initializeI18n } from "@next-core/i18n";
 import classNames from "classnames";
 import styles from "./FlowApp.module.css";
-import {
-  WrappedBlankState,
-  WrappedIcon,
-  WrappedRunningFlow,
-} from "../../../shared/bricks";
+import { WrappedIcon, WrappedRunningFlow } from "../../../shared/bricks";
 import { getFlowOrActivityIcon } from "../../../shared/getFlowOrActivityIcon";
 import type {
   ActivityRun,
@@ -26,13 +29,15 @@ import floatingStyles from "../../../shared/FloatingButton.module.css";
 
 initializeI18n(NS, locales);
 
+const ActivityDetail = forwardRef(LegacyActivityDetail);
+
 export interface FlowAppProps {
   flow: ServiceFlowRun;
   activity?: ActivityRun;
 }
 
 export function FlowApp({ flow, activity }: FlowAppProps) {
-  const { tasks, setActiveDetail } = useContext(TaskContext);
+  const { tasks } = useContext(TaskContext);
   const flowTask = useMemo(() => {
     return tasks.find((t) => t.id === flow.taskId)!;
   }, [tasks, flow.taskId]);
@@ -53,13 +58,44 @@ export function FlowApp({ flow, activity }: FlowAppProps) {
     }));
   }, [flow.spec, tasks]);
 
+  const activities = useMemo(
+    () =>
+      runningSpec.flatMap(
+        (s) => s.serviceFlowActivities?.filter((act) => act.taskId) || []
+      ),
+    [runningSpec]
+  );
+
   const flowStatus = useMemo(
     () => getFlowStatusDisplay(flowTask.state),
     [flowTask.state]
   );
 
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const scrollContentRef = useRef<HTMLDivElement>(null);
+
+  const { scrollable, scrollToBottom, toggleAutoScroll } = useAutoScroll(
+    true,
+    scrollContainerRef,
+    scrollContentRef
+  );
+
+  const activitiesRef = useRef<Map<string, ActivityDetailRef | null>>(
+    new Map()
+  );
+
+  useEffect(() => {
+    if (activity?.taskId) {
+      const activityDetail = activitiesRef.current.get(activity.taskId);
+      if (activityDetail) {
+        activityDetail.scrollIntoView();
+        toggleAutoScroll(false);
+      }
+    }
+  }, [activity, toggleAutoScroll]);
+
   return (
-    <div className={styles.app}>
+    <>
       <div className={styles.heading}>
         <div className={styles.header}>
           <div className={classNames(styles.status, flowStatus.className)}>
@@ -73,45 +109,60 @@ export function FlowApp({ flow, activity }: FlowAppProps) {
         <div className={styles.chart}>
           <WrappedRunningFlow
             spec={runningSpec}
-            activeActivityId={activity?.taskId}
-            onActiveChange={(e) => {
-              if (e.detail) {
-                setActiveDetail({ type: "activity", id: e.detail });
+            onActivityClick={(e) => {
+              const activityDetail = activitiesRef.current.get(e.detail);
+              if (activityDetail) {
+                activityDetail.scrollIntoView();
+                toggleAutoScroll(false);
               }
             }}
           />
         </div>
       </div>
       <div className={styles.body}>
-        {activity ? (
-          <ActivityDetail activity={activity} />
-        ) : (
-          <WrappedBlankState
-            className={styles.blank}
-            description="您还未选择活动"
-            illustration="serviceflows"
-          />
-        )}
+        <div className={styles.chat} ref={scrollContainerRef}>
+          <div className={styles.messages} ref={scrollContentRef}>
+            {activities.map((act) => (
+              <ActivityDetail
+                key={act.taskId}
+                activity={act}
+                ref={(r) => {
+                  activitiesRef.current.set(act.taskId!, r);
+                }}
+              />
+            ))}
+          </div>
+        </div>
+        <button
+          className={`${scrollStyles["scroll-down"]} ${floatingStyles["floating-button"]}`}
+          style={{ bottom: "30px" }}
+          hidden={!scrollable}
+          onClick={scrollToBottom}
+        >
+          <WrappedIcon lib="antd" icon="down" />
+        </button>
       </div>
-    </div>
+    </>
   );
+}
+
+interface ActivityDetailRef {
+  scrollIntoView: () => void;
 }
 
 interface ActivityDetailProps {
   activity: ActivityRun;
 }
 
-function ActivityDetail({ activity }: ActivityDetailProps) {
+function LegacyActivityDetail(
+  { activity }: ActivityDetailProps,
+  ref: React.Ref<ActivityDetailRef>
+) {
+  const activityRef = useRef<HTMLDivElement>(null);
   const { tasks, errors } = useContext(TaskContext);
   const activityTask = useMemo(() => {
     return tasks.find((t) => t.id === activity.taskId)!;
   }, [tasks, activity.taskId]);
-  const activityState = activityTask.state;
-
-  const { icon, className } = useMemo(
-    () => getFlowStatusDisplay(activityState),
-    [activityState]
-  );
 
   const fixedTasks = useMemo(() => {
     return [
@@ -129,53 +180,37 @@ function ActivityDetail({ activity }: ActivityDetailProps) {
     errors
   );
 
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const scrollContentRef = useRef<HTMLDivElement>(null);
-
-  const { scrollable, scrollToBottom } = useAutoScroll(
-    true,
-    scrollContainerRef,
-    scrollContentRef
-  );
+  useImperativeHandle(ref, () => ({
+    scrollIntoView: () => {
+      activityRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    },
+  }));
 
   return (
-    <>
-      <div className={styles["activity-title"]}>
-        <WrappedIcon {...icon} className={className} />
-        {activity.name}
-      </div>
-      <div className={styles.chat} ref={scrollContainerRef}>
-        <div className={styles.messages} ref={scrollContentRef}>
-          {messages.map((msg, index, list) => (
-            <div className={styles.message} key={index}>
-              {msg.role === "user" ? (
-                <UserMessage
-                  content={msg.content}
-                  mentionedAiEmployeeId={msg.mentionedAiEmployeeId}
-                  cmd={msg.cmd}
-                  files={msg.files}
-                />
-              ) : (
-                <AssistantMessage
-                  chunks={msg.chunks}
-                  scopeState={activityTask.state}
-                  isLatest={index === list.length - 1}
-                  isSubTask
-                />
-              )}
-            </div>
-          ))}
+    <div className={styles.activity} ref={activityRef}>
+      {messages.map((msg, index, list) => (
+        <div className={styles.message} key={index}>
+          {msg.role === "user" ? (
+            <UserMessage
+              content={msg.content}
+              mentionedAiEmployeeId={msg.mentionedAiEmployeeId}
+              cmd={msg.cmd}
+              files={msg.files}
+            />
+          ) : (
+            <AssistantMessage
+              chunks={msg.chunks}
+              scopeState={activityTask.state}
+              isLatest={index === list.length - 1}
+              isSubTask
+            />
+          )}
         </div>
-      </div>
-      <button
-        className={`${scrollStyles["scroll-down"]} ${floatingStyles["floating-button"]}`}
-        style={{ bottom: "30px" }}
-        hidden={!scrollable}
-        onClick={scrollToBottom}
-      >
-        <WrappedIcon lib="antd" icon="down" />
-      </button>
-    </>
+      ))}
+    </div>
   );
 }
 

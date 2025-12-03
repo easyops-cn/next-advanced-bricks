@@ -56,7 +56,7 @@ export function NodeReplay({ finished, ui }: NodeReplayProps) {
           </WrappedButton>
         </div>
       </div>
-      {finished && (
+      {finished && !!(showCases?.length || exampleProjects?.length) && (
         <div className={styles.content}>
           {!showCases ||
             (showCases.length > 0 && (

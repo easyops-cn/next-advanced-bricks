@@ -1,0 +1,15 @@
+.container {
+  background: rgba(184, 187, 205, 0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  padding: 16px 26px;
+}
+
+.container:not(:first-child) {
+  margin-top: 40px;
+}
+
+.input {
+  margin-top: 20px;
+}

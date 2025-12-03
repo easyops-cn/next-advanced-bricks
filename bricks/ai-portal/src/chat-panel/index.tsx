@@ -213,6 +213,12 @@ function LegacyChatPanelComponent(
   const conversationAvailable = !!conversation;
   const conversationState = conversation?.state;
   const conversationDone = DONE_STATES.includes(conversationState!);
+  const conversationFinished = conversation?.finished;
+  const earlyFinished =
+    conversation?.finished &&
+    conversation.mode !== "resume" &&
+    !NON_WORKING_STATES.includes(conversationState!);
+
   const canChat =
     !conversationId ||
     conversationDone ||
@@ -223,8 +229,6 @@ function LegacyChatPanelComponent(
     conversationState,
     tasks,
     errors,
-    undefined,
-    undefined,
     { showHumanActions: true, skipActivitySubTasks: true }
   );
 
@@ -302,6 +306,8 @@ function LegacyChatPanelComponent(
     () =>
       ({
         conversationState,
+        finished: conversationFinished,
+        earlyFinished,
         tasks,
         jobMap,
         errors,
@@ -309,7 +315,15 @@ function LegacyChatPanelComponent(
         setActiveImages,
         humanInput,
       }) as TaskContextValue,
-    [conversationState, humanInput, jobMap, tasks, errors]
+    [
+      conversationState,
+      humanInput,
+      jobMap,
+      tasks,
+      errors,
+      conversationFinished,
+      earlyFinished,
+    ]
   );
 
   useImperativeHandle(
@@ -333,11 +347,6 @@ function LegacyChatPanelComponent(
     }),
     [handleChatSubmit]
   );
-
-  const earlyFinished =
-    conversation?.finished &&
-    conversation.mode !== "resume" &&
-    !NON_WORKING_STATES.includes(conversationState!);
 
   const streamContextValue = useMemo(
     () => ({

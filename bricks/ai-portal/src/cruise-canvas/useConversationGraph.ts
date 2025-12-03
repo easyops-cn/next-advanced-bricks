@@ -36,14 +36,12 @@ export function useConversationGraph(
       return null;
     }
 
-    const { chunks, jobMap } = getFlatChunks(
-      tasks,
-      errors,
+    const { chunks, jobMap } = getFlatChunks(tasks, errors, {
       flowMap,
       activityMap,
-      false,
-      true
-    );
+      skipActivitySubTasks: false,
+      enablePlan: true,
+    });
 
     const nodes: GraphNode[] = [];
     const edges: GraphEdge[] = [];

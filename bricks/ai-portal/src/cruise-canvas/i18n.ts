@@ -32,8 +32,8 @@ const en: Locale = {
   SEND_MESSAGE: "Send message",
   UNTITLED: "Untitled",
   DOWNLOAD: "Download",
-  INITIATING_SERVICE_FLOW: "Initiating service flow: {{ name }}",
-  STARTING_SERVICE_FLOW_ACTIVITY: "Starting service flow activity: {{ name }}",
+  INITIATING_SERVICE_FLOW: "Starting serviceflow: {{ name }}",
+  STARTING_SERVICE_FLOW_ACTIVITY: "Starting serviceflow activity: {{ name }}",
 };
 
 const zh: Locale = {

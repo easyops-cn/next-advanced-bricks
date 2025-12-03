@@ -5,10 +5,12 @@ import type {
   FulfilledActiveDetail,
   Job,
   ServiceFlowRun,
+  Task,
 } from "./interfaces";
 
 export function useFulfilledActiveDetail(
   activeDetail: ActiveDetail | null,
+  tasks: Task[],
   jobMap: Map<string, Job> | undefined,
   flowMap: Map<string, ServiceFlowRun>,
   activityMap: Map<string, ActivityWithFlow>
@@ -24,6 +26,16 @@ export function useFulfilledActiveDetail(
           return {
             type: "job",
             job,
+          };
+        }
+        break;
+      }
+      case "task": {
+        const task = tasks.find((t) => t.id === activeDetail.id);
+        if (task) {
+          return {
+            type: "task",
+            task,
           };
         }
         break;
@@ -51,5 +63,5 @@ export function useFulfilledActiveDetail(
       }
     }
     return null;
-  }, [activeDetail, activityMap, flowMap, jobMap]);
+  }, [activeDetail, activityMap, flowMap, jobMap, tasks]);
 }
