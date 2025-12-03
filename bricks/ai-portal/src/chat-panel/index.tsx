@@ -351,6 +351,7 @@ function LegacyChatPanelComponent(
   const streamContextValue = useMemo(
     () => ({
       lastDetail: null,
+      planMap: null,
       toggleAutoScroll,
       setUserClosedAside: () => {},
     }),

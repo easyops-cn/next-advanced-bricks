@@ -39,8 +39,6 @@ export function useConversationGraph(
     const { chunks, jobMap } = getFlatChunks(tasks, errors, {
       flowMap,
       activityMap,
-      skipActivitySubTasks: false,
-      enablePlan: true,
     });
 
     const nodes: GraphNode[] = [];

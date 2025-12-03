@@ -164,20 +164,15 @@ function LegacyActivityDetail(
     return tasks.find((t) => t.id === activity.taskId)!;
   }, [tasks, activity.taskId]);
 
-  const fixedTasks = useMemo(() => {
-    return [
-      {
-        ...activityTask,
-        parent: undefined,
-      },
-    ];
-  }, [activityTask]);
-
   const { messages } = useConversationStream(
     true,
     activityTask.state,
-    fixedTasks,
-    errors
+    tasks,
+    errors,
+    {
+      rootTaskId: activity.taskId,
+      expandAskUser: true,
+    }
   );
 
   useImperativeHandle(ref, () => ({

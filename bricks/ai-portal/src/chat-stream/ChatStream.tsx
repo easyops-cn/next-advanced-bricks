@@ -114,18 +114,19 @@ export function ChatStreamComponent(
     !NON_WORKING_STATES.includes(conversationState!);
   const canChat = conversationDone || conversationState === "input-required";
   const { flowMap, activityMap } = useFlowAndActivityMap(serviceFlows);
-  const { messages, jobMap, lastDetail, activeAskUser } = useConversationStream(
-    conversationAvailable,
-    conversation?.state,
-    tasks,
-    errors,
-    {
-      flowMap,
-      activityMap,
-      showHumanActions,
-      skipActivitySubTasks: true,
-    }
-  );
+  const { messages, jobMap, planMap, lastDetail, activeAskUser } =
+    useConversationStream(
+      conversationAvailable,
+      conversation?.state,
+      tasks,
+      errors,
+      {
+        flowMap,
+        activityMap,
+        showHumanActions,
+        skipActivitySubTasks: true,
+      }
+    );
 
   useEffect(() => {
     onDetailChange({
@@ -402,10 +403,11 @@ export function ChatStreamComponent(
   const streamContextValue = useMemo(
     () => ({
       lastDetail,
+      planMap,
       setUserClosedAside,
       toggleAutoScroll,
     }),
-    [lastDetail, toggleAutoScroll]
+    [lastDetail, planMap, toggleAutoScroll]
   );
 
   return (
@@ -442,7 +444,13 @@ export function ChatStreamComponent(
                       )}
                     </div>
                   ))}
-                  {activeAskUser && <AskUser task={activeAskUser.task} />}
+                  {activeAskUser && (
+                    <AskUser
+                      task={activeAskUser.task}
+                      parentJob={activeAskUser.parentJob}
+                      parentTask={activeAskUser.parentTask}
+                    />
+                  )}
                   {earlyFinished && (
                     <div className={styles.message}>
                       <AssistantMessage earlyFinished />

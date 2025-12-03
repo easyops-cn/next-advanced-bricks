@@ -3,6 +3,7 @@ import React, {
   Fragment,
   useContext,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { initializeI18n } from "@next-core/i18n";
@@ -40,6 +41,7 @@ export function ActivityPlan({ task }: ActivityPlanProps) {
   const { flowMap, setActiveDetail } = useContext(TaskContext);
   const { toggleAutoScroll } = useContext(StreamContext);
   const flow = flowMap?.get(task.id);
+  const toggleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   return (
     <ActivityPlanContext.Provider value={{ collapsed }}>
@@ -71,6 +73,12 @@ export function ActivityPlan({ task }: ActivityPlanProps) {
             onClick={() => {
               setCollapsed((prev) => !prev);
               toggleAutoScroll(false);
+              if (toggleRef.current) {
+                clearTimeout(toggleRef.current);
+              }
+              toggleRef.current = setTimeout(() => {
+                toggleAutoScroll(true);
+              }, 100);
             }}
           >
             {t(K.SHOW_PROCESS)}

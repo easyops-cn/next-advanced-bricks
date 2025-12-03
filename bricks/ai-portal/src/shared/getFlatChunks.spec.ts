@@ -38,6 +38,7 @@ describe("getFlatChunks", () => {
     expect(result).toEqual({
       chunks: [],
       jobMap: new Map(),
+      planMap: new Map(),
       activeAskUser: null,
     });
   });

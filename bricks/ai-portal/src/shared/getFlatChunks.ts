@@ -1,13 +1,11 @@
-import type {
-  MessageChunk,
-  MessageChunkOfAskUser,
-} from "../chat-stream/interfaces";
+import type { MessageChunk } from "../chat-stream/interfaces";
 import type {
   Task,
   ServiceFlowRun,
   ActivityWithFlow,
   ConversationError,
   Job,
+  PlanStep,
 } from "../shared/interfaces";
 import { getTaskTree, type TaskTreeNode } from "./getTaskTree";
 
@@ -17,6 +15,13 @@ export interface FlatChunkOptions {
   skipActivitySubTasks?: boolean;
   enablePlan?: boolean;
   rootTaskId?: string;
+  expandAskUser?: boolean;
+}
+
+export interface ActiveAskUser {
+  task?: Task;
+  parentJob?: Job;
+  parentTask: Task;
 }
 
 export function getFlatChunks(
@@ -28,16 +33,25 @@ export function getFlatChunks(
   chunks: MessageChunk[];
   /** All jobs including those nested within subtasks */
   jobMap: Map<string, Job>;
+  /** Map of jobId to plan step, if plan is available */
+  planMap: Map<string, PlanStep>;
   /** The active askUser chunk, if any */
-  activeAskUser: MessageChunkOfAskUser | null;
+  activeAskUser: ActiveAskUser | null;
 } {
-  const { flowMap, activityMap, skipActivitySubTasks, enablePlan, rootTaskId } =
-    options || {};
+  const {
+    flowMap,
+    activityMap,
+    skipActivitySubTasks,
+    enablePlan,
+    rootTaskId,
+    expandAskUser,
+  } = options || {};
 
   const taskTree = getTaskTree(tasks, rootTaskId);
   const chunks: MessageChunk[] = [];
   const jobMap = new Map<string, Job>();
-  let activeAskUser: MessageChunkOfAskUser | null = null;
+  const planMap = new Map<string, PlanStep>();
+  let activeAskUser: ActiveAskUser | null = null;
 
   const collectChunks = (taskNode: TaskTreeNode, level: number) => {
     if (enablePlan && taskNode.task.plan) {
@@ -45,6 +59,11 @@ export function getFlatChunks(
         type: "plan",
         task: taskNode.task,
       });
+      for (const step of taskNode.task.plan) {
+        if (step.jobId) {
+          planMap.set(step.jobId, step);
+        }
+      }
       return;
     }
 
@@ -81,11 +100,17 @@ export function getFlatChunks(
       }
 
       if (job.type === "askUser") {
-        chunks.push({
-          type: "askUser",
-          job,
-          task: subTask?.task,
-        });
+        if (subTask) {
+          if (expandAskUser) {
+            collectChunks(subTask, level + 1);
+          } else {
+            chunks.push({
+              type: "askUser",
+              job,
+              task: subTask?.task,
+            });
+          }
+        }
       } else if (job.type === "serviceFlow") {
         if (flow) {
           chunks.push({
@@ -116,17 +141,17 @@ export function getFlatChunks(
     }
   };
 
-  const collectJobs = (taskNode: TaskTreeNode) => {
+  const collectJobs = (taskNode: TaskTreeNode, parentJob?: Job) => {
     for (const { job, subTask } of taskNode.children) {
       jobMap.set(job.id, job);
       if (subTask) {
-        collectJobs(subTask);
+        collectJobs(subTask, job);
 
         if (job.type === "askUser") {
           activeAskUser = {
-            type: "askUser",
-            job,
             task: subTask.task,
+            parentJob,
+            parentTask: taskNode.task,
           };
         }
       }
@@ -148,5 +173,5 @@ export function getFlatChunks(
     }
   }
 
-  return { chunks, jobMap, activeAskUser };
+  return { chunks, jobMap, planMap, activeAskUser };
 }
