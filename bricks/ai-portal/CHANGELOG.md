@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.65.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.65.5...@next-bricks/ai-portal@0.65.6) (2025-12-04)
+
+
+### Bug Fixes
+
+* refine serviceflow in activity plan ([c385ffa](https://github.com/easyops-cn/next-advanced-bricks/commit/c385ffa1f1628e693304c1e2c5ad640d2cc3c362))
+
+
+
+
+
 ## [0.65.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.65.4...@next-bricks/ai-portal@0.65.5) (2025-12-04)
 
 
