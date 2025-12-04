@@ -122,11 +122,10 @@ function PlanStepNode({ step, level, isLast }: PlanStepNodeProps) {
   const { jobMap } = useContext(TaskContext);
   const { collapsed } = useContext(ActivityPlanContext);
   const job = step.jobId ? jobMap?.get(step.jobId) : undefined;
-  const hasChildren = false;
 
   return (
     <li className={isFirstLevel ? styles.root : undefined}>
-      {!(isLast && (collapsed || !hasChildren)) && (
+      {!(isLast && (collapsed || !job)) && (
         <div
           className={styles.line}
           style={{
@@ -292,10 +291,60 @@ function PlanStepMessageChunk({ chunk, level }: PlanStepMessageChunkProps) {
           </Fragment>
         ))
       ) : chunk.type === "plan" ? (
-        <PlanTree plan={chunk.task.plan!} level={level + 1} />
+        <SubPlanTree task={chunk.task} level={level + 1} />
       ) : chunk.type === "askUser" ? (
         <AskUserTag job={chunk.job} task={chunk.task} />
       ) : null}
     </div>
   );
+}
+
+interface SubPlanTreeProps {
+  task: Task;
+  level: number;
+}
+
+function SubPlanTree({ task, level }: SubPlanTreeProps) {
+  const { flowMap, setActiveDetail } = useContext(TaskContext);
+  const flow = flowMap?.get(task.id);
+
+  if (flow) {
+    return (
+      <ul className={styles.tree}>
+        <li>
+          <div
+            className={styles.line}
+            style={{
+              top: 34,
+              bottom: 0,
+              left: 20,
+            }}
+          />
+          <div className={styles.node}>
+            <span
+              className={styles["flow-title"]}
+              onClick={() => {
+                const detail = {
+                  type: "flow" as const,
+                  id: task.id,
+                };
+                setActiveDetail((prev) =>
+                  isEqual(prev, detail) ? prev : detail
+                );
+              }}
+            >
+              <PlanStateIcon state={task.state} />
+              <WrappedIcon lib="lucide" icon="route" />
+              {t(K.STARTING_SERVICE_FLOW, { name: flow.name })}
+            </span>
+          </div>
+          <div style={{ paddingLeft: 34 }}>
+            <PlanTree plan={task.plan!} level={level} />
+          </div>
+        </li>
+      </ul>
+    );
+  }
+
+  return <PlanTree plan={task.plan!} level={level} />;
 }
