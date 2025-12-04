@@ -193,11 +193,7 @@ function PlanStepDetails({ stepJob, level }: PlanStepDetailsProps) {
           {msg.role === "user" ? (
             <div className={styles.user}>{msg.content}</div>
           ) : (
-            <div className={styles.assistant}>
-              {msg.chunks.map((chunk, idx) => (
-                <PlanStepMessageChunk key={idx} chunk={chunk} level={level} />
-              ))}
-            </div>
+            <MergedPlanStepMessageChunks chunks={msg.chunks} level={level} />
           )}
         </div>
       ))}
@@ -205,8 +201,53 @@ function PlanStepDetails({ stepJob, level }: PlanStepDetailsProps) {
   );
 }
 
+interface MergedPlanStepMessageChunksProps {
+  chunks: MessageChunk[];
+  level: number;
+}
+
+type StepMessageChunk =
+  | MessageChunk
+  | {
+      type: "tools";
+      jobs: Job[];
+    };
+
+function MergedPlanStepMessageChunks({
+  chunks,
+  level,
+}: MergedPlanStepMessageChunksProps) {
+  const stepChunks = useMemo(() => {
+    const mergedChunks: StepMessageChunk[] = [];
+    for (const chunk of chunks) {
+      if (chunk.type === "job" && chunk.job.toolCall) {
+        const lastChunk = mergedChunks[mergedChunks.length - 1];
+        if (lastChunk && lastChunk.type === "tools") {
+          lastChunk.jobs.push(chunk.job);
+        } else {
+          mergedChunks.push({
+            type: "tools",
+            jobs: [chunk.job],
+          });
+        }
+      } else {
+        mergedChunks.push(chunk);
+      }
+    }
+    return mergedChunks;
+  }, [chunks]);
+
+  return (
+    <div className={styles.assistant}>
+      {stepChunks.map((chunk, idx) => (
+        <PlanStepMessageChunk key={idx} chunk={chunk} level={level} />
+      ))}
+    </div>
+  );
+}
+
 interface PlanStepMessageChunkProps {
-  chunk: MessageChunk;
+  chunk: StepMessageChunk;
   level: number;
 }
 
@@ -215,38 +256,41 @@ function PlanStepMessageChunk({ chunk, level }: PlanStepMessageChunkProps) {
 
   return (
     <div className={styles.chunk}>
-      {chunk.type === "job" ? (
-        chunk.job.toolCall ? (
-          <div
-            className={styles.tool}
-            onClick={() => {
-              const detail: ActiveDetail = {
-                type: "job",
-                id: chunk.job.id,
-              };
-              setActiveDetail((prev) =>
-                isEqual(prev, detail) ? prev : detail
-              );
-            }}
-          >
-            <PlanStateIcon state={chunk.job.state} />
-            {chunk.job.toolCall.annotations?.title || chunk.job.toolCall.name}
-          </div>
-        ) : (
-          chunk.job.messages?.map((m, mIdx) => (
-            <Fragment key={mIdx}>
-              {m.parts.map((part, pIdx) =>
-                part.type === "text" ? (
-                  <EnhancedMarkdown
-                    key={pIdx}
-                    className={sharedStyles["markdown-wrapper"]}
-                    content={part.text}
-                  />
-                ) : null
-              )}
-            </Fragment>
-          ))
-        )
+      {chunk.type === "tools" ? (
+        <div className={styles.tools}>
+          {chunk.jobs.map((job) => (
+            <div
+              key={job.id}
+              className={styles.tool}
+              onClick={() => {
+                const detail: ActiveDetail = {
+                  type: "job",
+                  id: job.id,
+                };
+                setActiveDetail((prev) =>
+                  isEqual(prev, detail) ? prev : detail
+                );
+              }}
+            >
+              <PlanStateIcon state={job.state} />
+              {job.toolCall!.annotations?.title || job.toolCall!.name}
+            </div>
+          ))}
+        </div>
+      ) : chunk.type === "job" ? (
+        chunk.job.messages?.map((m, mIdx) => (
+          <Fragment key={mIdx}>
+            {m.parts.map((part, pIdx) =>
+              part.type === "text" ? (
+                <EnhancedMarkdown
+                  key={pIdx}
+                  className={sharedStyles["markdown-wrapper"]}
+                  content={part.text}
+                />
+              ) : null
+            )}
+          </Fragment>
+        ))
       ) : chunk.type === "plan" ? (
         <PlanTree plan={chunk.task.plan!} level={level + 1} />
       ) : chunk.type === "askUser" ? (

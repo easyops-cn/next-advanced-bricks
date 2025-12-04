@@ -172,6 +172,12 @@
   margin-bottom: 8px;
 }
 
+.tools {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .tool {
   display: flex;
   gap: 10px;
