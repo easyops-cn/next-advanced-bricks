@@ -1,4 +1,4 @@
-import { isEmpty, isNil } from "lodash";
+import { isEmpty, get, has, set, unset, cloneDeep } from "lodash";
 import { PubSub } from "./PubSub.js";
 
 interface FormStoreOptions {
@@ -74,6 +74,7 @@ export class FormStore extends PubSub {
 
   setField(name: string, detail: FieldDetail) {
     this.#fields.set(name, new Field(name, detail));
+    this.setFieldsValueByInitData(name);
   }
   #getAllFields() {
     return [...this.#fields.keys()].filter((key) => {
@@ -83,16 +84,13 @@ export class FormStore extends PubSub {
 
   getAllValues() {
     const allFields = this.#getAllFields();
-    const formData = Object.fromEntries(
-      Object.entries(this.#formData)
-        .map(([k, v]) => {
-          if (allFields.includes(k)) {
-            return [k, v];
-          }
-          return [];
-        })
-        .filter((item) => item.length)
-    );
+    const formData: Record<string, unknown> = {};
+
+    allFields.forEach((fieldName) => {
+      const value = get(this.#formData, fieldName);
+      set(formData, fieldName, value);
+    });
+
     return formData;
   }
 
@@ -102,27 +100,35 @@ export class FormStore extends PubSub {
   }
 
   setFieldsValueByInitData(name: string) {
-    const value = this.#initData?.[name];
-    if (!isNil(value)) {
-      this.#formData[name] = value;
+    const field = this.#fields.get(name);
+    if (field && !field.detail?.notRender && has(this.#initData, name)) {
+      const value = get(this.#initData, name);
+      set(this.#formData, name, value);
       this.publish(`${name}.init.value`, value);
     }
   }
 
   setFieldsValue(values: Record<string, unknown>, isEmitValuseChange = true) {
-    const newFormData: Record<string, unknown> = {
-      ...this.#formData,
-    };
-    Object.entries(values).forEach(([k, v]) => {
-      newFormData[k] = v;
-      this.#initData && (this.#initData[k] = v);
-      this.publish(`${k}.init.value`, v);
+    const newFormData = cloneDeep(this.#formData);
+    const changedValues: Record<string, unknown> = {};
+
+    this.#fields.forEach((field, key) => {
+      if (!field.detail?.notRender && has(values, key)) {
+        const v = get(values, key);
+        set(newFormData, key, v);
+        if (this.#initData) {
+          set(this.#initData, key, v);
+        }
+        this.publish(`${key}.init.value`, v);
+        set(changedValues, key, v);
+      }
     });
+
     this.#formData = newFormData;
 
     if (isEmitValuseChange) {
       this.#options?.onValuesChanged?.({
-        changedValues: values,
+        changedValues,
         allValues: this.getAllValues(),
       });
     }
@@ -130,7 +136,7 @@ export class FormStore extends PubSub {
 
   resetFields(name?: string) {
     if (name) {
-      delete this.#formData[name];
+      unset(this.#formData, name);
       this.publish(`${name}.reset.fields`, null);
     } else {
       this.#formData = {};
@@ -141,12 +147,17 @@ export class FormStore extends PubSub {
 
   getFieldsValue(name?: string) {
     if (name) {
-      return this.#formData[name];
+      const field = this.#fields.get(name);
+      if (field && !field.detail?.notRender) {
+        return get(this.#formData, name);
+      }
+      return undefined;
     }
     return this.getAllValues();
   }
 
   removeField(name: string) {
+    unset(this.#formData, name);
     this.#fields.delete(name);
   }
 
@@ -176,11 +187,21 @@ export class FormStore extends PubSub {
   }
 
   validateField(field: string | FieldDetail) {
-    const fieldDetail =
-      typeof field === "string" ? this.#fields.get(field)?.detail : field;
-    if (!fieldDetail) return;
+    let fieldDetail;
+    let fieldObj;
+
+    if (typeof field === "string") {
+      fieldObj = this.#fields.get(field);
+      fieldDetail = fieldObj?.detail;
+    } else {
+      fieldDetail = field;
+      fieldObj = this.#fields.get(fieldDetail.name);
+    }
+
+    if (!fieldDetail || (fieldObj && fieldObj.detail?.notRender)) return;
+
     const { name, label, validate } = fieldDetail;
-    const validateValue = this.#formData[name];
+    const validateValue = get(this.#formData, name);
 
     const messageBody = (message: string, type = "error") => {
       return {
@@ -191,10 +212,7 @@ export class FormStore extends PubSub {
 
     const getName = () => label ?? name;
 
-    const valid = (
-      validate: Validate,
-      value: string | number | null | undefined
-    ): MessageBody => {
+    const valid = (validate: Validate, value: unknown): MessageBody => {
       const { required, pattern, message, type, min, max, validator } =
         validate;
       const label = getName();
@@ -210,11 +228,9 @@ export class FormStore extends PubSub {
         return messageBody("", "normal");
       }
 
-      const stringValue = String(value);
-
-      if (pattern) {
+      if (typeof value === "string" && pattern) {
         const reg = new RegExp(pattern);
-        if (!reg.test(stringValue)) {
+        if (!reg.test(value)) {
           return messageBody(
             message?.pattern || `${label}没有匹配正则 ${pattern}`
           );
@@ -223,27 +239,27 @@ export class FormStore extends PubSub {
 
       const checkMin = typeof min === "number";
       const checkMax = typeof max === "number";
-      if (checkMin || checkMax) {
-        if (type === "number") {
+
+      if (type === "number") {
+        if (typeof value === "number" || typeof value === "string") {
           const numberValue =
-            typeof value === "number" ? value : parseFloat(value as string);
+            typeof value === "number" ? value : parseFloat(value);
+          if (isNaN(numberValue)) {
+            return messageBody(`${label}必须是数字`);
+          }
           if (checkMin && numberValue < min) {
             return messageBody(message?.min || `${label}不能小于 ${min}`);
           }
           if (checkMax && numberValue > max) {
             return messageBody(message?.max || `${label}不能大于 ${max}`);
           }
-        } else {
-          if (checkMin && stringValue.length < min) {
-            return messageBody(
-              message?.min || `${label}至少包含 ${min} 个字符`
-            );
-          }
-          if (checkMax && stringValue.length > max) {
-            return messageBody(
-              message?.max || `${label}不能超过 ${max} 个字符`
-            );
-          }
+        }
+      } else if (typeof value === "string") {
+        if (checkMin && value.length < min) {
+          return messageBody(message?.min || `${label}至少包含 ${min} 个字符`);
+        }
+        if (checkMax && value.length > max) {
+          return messageBody(message?.max || `${label}不能超过 ${max} 个字符`);
         }
       }
 
@@ -271,7 +287,7 @@ export class FormStore extends PubSub {
       return messageBody("", "normal");
     };
 
-    const result = { name, ...valid(validate, validateValue as string) };
+    const result = { name, ...valid(validate, validateValue) };
     this.publish(`${name}.validate`, result);
     return result;
   }
