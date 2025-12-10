@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.11.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/form@0.10.1...@next-shared/form@0.11.0) (2025-12-10)
+
+
+### Features
+
+* **FormStore:** support nested structures in form data handling ([d795d51](https://github.com/easyops-cn/next-advanced-bricks/commit/d795d517974dc6b614071551cbe13ed1ad89d430))
+
+
+
+
+
 ## [0.10.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/form@0.10.0...@next-shared/form@0.10.1) (2025-11-11)
 
 **Note:** Version bump only for package @next-shared/form
