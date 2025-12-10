@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.21.5...@next-bricks/form@1.21.6) (2025-12-10)
+
+
+### Bug Fixes
+
+* eo-input hover css 变量漏覆盖一个地方 ([e3bc984](https://github.com/easyops-cn/next-advanced-bricks/commit/e3bc984fb75194b907895350a76210a0c9b30cd2))
+
+
+
+
+
 ## [1.21.5](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.21.4...@next-bricks/form@1.21.5) (2025-12-10)
 
 **Note:** Version bump only for package @next-bricks/form
