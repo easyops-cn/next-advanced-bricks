@@ -94,7 +94,7 @@
 }
 
 .input-affix-wrapper:not(.input-affix-wrapper-disabled):hover {
-  border-color: var(--antd-input-hover-border-color);
+  border-color: var(--eo-input-hover-border-color);
   z-index: 1;
 }
 
