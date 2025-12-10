@@ -313,7 +313,12 @@ describe("FormStore", () => {
 
     store.resetFields();
 
-    expect(store.getAllValues()).toEqual({});
+    expect(store.getAllValues()).toStrictEqual({
+      a: undefined,
+      b: undefined,
+      c: undefined,
+      "validator-item": undefined,
+    });
   });
 
   it("scrollToField should work", () => {
@@ -333,5 +338,246 @@ describe("FormStore", () => {
     store.scrollToField("a");
 
     expect(mockScrollTo).toHaveBeenCalledWith("a.scroll.to", null);
+  });
+
+  test("support nested object and array structures", () => {
+    const store = new FormStore();
+
+    store.setField("user.name", {
+      name: "user.name",
+      label: "用户名",
+      validate: {
+        required: true,
+      },
+    });
+    store.setField("user.age", {
+      name: "user.age",
+      label: "年龄",
+      validate: {
+        type: "number",
+      },
+    });
+    store.setField("items[0].name", {
+      name: "items[0].name",
+      label: "第一个项目名称",
+      validate: {
+        required: true,
+      },
+    });
+    store.setField("items[1].name", {
+      name: "items[1].name",
+      label: "第二个项目名称",
+      validate: {},
+    });
+
+    // setInitValue
+    store.setInitValue({
+      user: {
+        name: "test",
+        age: 18,
+      },
+      items: [{ name: "item1" }, { name: "item2" }],
+    });
+
+    // getFieldsValue
+    expect(store.getFieldsValue("user.name")).toBe("test");
+    expect(store.getFieldsValue("user.age")).toBe(18);
+    expect(store.getFieldsValue("items[0].name")).toBe("item1");
+    expect(store.getFieldsValue("items[1].name")).toBe("item2");
+
+    // getAllValues
+    const allValues = store.getAllValues();
+    expect(allValues).toEqual({
+      user: {
+        name: "test",
+        age: 18,
+      },
+      items: [{ name: "item1" }, { name: "item2" }],
+    });
+
+    // setFieldsValue
+    store.setFieldsValue({
+      user: {
+        name: "updated",
+        age: 20,
+      },
+    });
+
+    expect(store.getFieldsValue("user.name")).toBe("updated");
+    expect(store.getFieldsValue("user.age")).toBe(20);
+
+    // validateFields
+    const mockValidateFields = jest.fn();
+    store.validateFields(mockValidateFields);
+
+    expect(mockValidateFields).toHaveBeenCalledWith(false, {
+      user: {
+        name: "updated",
+        age: 20,
+      },
+      items: [{ name: "item1" }, { name: "item2" }],
+    });
+
+    // resetFields
+    store.resetFields("user.name");
+    expect(store.getFieldsValue("user.name")).toBeUndefined();
+    expect(store.getFieldsValue("user.age")).toBe(20);
+
+    store.resetFields();
+    expect(store.getAllValues()).toStrictEqual({
+      items: [
+        {
+          name: undefined,
+        },
+        {
+          name: undefined,
+        },
+      ],
+      user: {
+        age: undefined,
+        name: undefined,
+      },
+    });
+  });
+
+  test("handle notRender fields when reading and setting values", () => {
+    const store = new FormStore();
+
+    store.setField("visible-field", {
+      name: "visible-field",
+      validate: {
+        required: true,
+      },
+    });
+    store.setField("hidden-field", {
+      name: "hidden-field",
+      notRender: true,
+      validate: {
+        required: true,
+      },
+    });
+
+    store.setInitValue({
+      "visible-field": "visible",
+      "hidden-field": "hidden",
+    });
+
+    // getFieldsValue
+    expect(store.getFieldsValue("visible-field")).toBe("visible");
+    expect(store.getFieldsValue("hidden-field")).toBeUndefined();
+
+    // getAllValues
+    expect(store.getAllValues()).toEqual({ "visible-field": "visible" });
+
+    // setFieldsValueByInitData
+    store.setInitValue({
+      "visible-field": "init-visible",
+      "hidden-field": "init-hidden",
+    });
+
+    store.resetFields("visible-field");
+    expect(store.getFieldsValue("visible-field")).toBeUndefined();
+
+    store.setFieldsValueByInitData("visible-field");
+    store.setFieldsValueByInitData("hidden-field");
+
+    expect(store.getFieldsValue("visible-field")).toBe("init-visible");
+    expect(store.getFieldsValue("hidden-field")).toBeUndefined();
+
+    // validateField
+    const validateResultVisible = store.validateField("visible-field");
+    expect(validateResultVisible).toBeDefined();
+
+    const validateResultHidden = store.validateField("hidden-field");
+    expect(validateResultHidden).toBeUndefined();
+  });
+
+  test("onValuesChanged callback should receive correct changedValues", () => {
+    const mockOnValuesChanged = jest.fn();
+    const store = new FormStore({
+      onValuesChanged: mockOnValuesChanged,
+    });
+
+    store.setField("name", {
+      name: "name",
+      label: "Name",
+      validate: {},
+    });
+    store.setField("age", {
+      name: "age",
+      label: "Age",
+      validate: {},
+    });
+    store.setField("email", {
+      name: "email",
+      label: "Email",
+      validate: {},
+    });
+
+    store.setInitValue({
+      name: "John",
+      age: 30,
+      email: "john@example.com",
+    });
+
+    mockOnValuesChanged.mockClear();
+
+    store.setFieldsValue({
+      name: "Jane",
+      age: 25,
+    });
+
+    expect(mockOnValuesChanged).toHaveBeenCalledTimes(1);
+    expect(mockOnValuesChanged).toHaveBeenCalledWith({
+      changedValues: {
+        name: "Jane",
+        age: 25,
+      },
+      allValues: {
+        name: "Jane",
+        age: 25,
+        email: "john@example.com",
+      },
+    });
+
+    // test nested field update
+    mockOnValuesChanged.mockClear();
+
+    store.setField("address.city", {
+      name: "address.city",
+      label: "City",
+      validate: {},
+    });
+    store.setField("address.zip", {
+      name: "address.zip",
+      label: "Zip Code",
+      validate: {},
+    });
+
+    store.setFieldsValue({
+      address: {
+        city: "New York",
+        zip: "10001",
+      },
+    });
+
+    expect(mockOnValuesChanged).toHaveBeenCalledTimes(1);
+    expect(mockOnValuesChanged).toHaveBeenCalledWith({
+      changedValues: {
+        address: {
+          city: "New York",
+          zip: "10001",
+        },
+      },
+      allValues: {
+        name: "Jane",
+        age: 25,
+        email: "john@example.com",
+        address: {
+          city: "New York",
+          zip: "10001",
+        },
+      },
+    });
   });
 });
