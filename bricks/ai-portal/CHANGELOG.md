@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.65.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.65.7...@next-bricks/ai-portal@0.65.8) (2025-12-11)
+
+
+### Bug Fixes
+
+* handle circular plan steps ([46042fd](https://github.com/easyops-cn/next-advanced-bricks/commit/46042fdd0f03d803c1ec70ba1c176d4dc005deb6))
+
+
+
+
+
 ## [0.65.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.65.6...@next-bricks/ai-portal@0.65.7) (2025-12-10)
 
 **Note:** Version bump only for package @next-bricks/ai-portal
