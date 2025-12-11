@@ -2,6 +2,7 @@ import React, {
   createContext,
   Fragment,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -34,6 +35,7 @@ export interface ActivityPlanProps {
 
 const ActivityPlanContext = createContext<{
   collapsed?: boolean;
+  jobLevelMap?: Map<string, number>;
 }>({});
 
 export function ActivityPlan({ task }: ActivityPlanProps) {
@@ -42,9 +44,12 @@ export function ActivityPlan({ task }: ActivityPlanProps) {
   const { toggleAutoScroll } = useContext(StreamContext);
   const flow = flowMap?.get(task.id);
   const toggleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const jobLevelMap = useRef<Map<string, number>>(new Map());
 
   return (
-    <ActivityPlanContext.Provider value={{ collapsed }}>
+    <ActivityPlanContext.Provider
+      value={{ collapsed, jobLevelMap: jobLevelMap.current }}
+    >
       <div
         className={classNames(styles.plan, { [styles.collapsed]: collapsed })}
       >
@@ -120,8 +125,34 @@ export interface PlanStepNodeProps {
 function PlanStepNode({ step, level, isLast }: PlanStepNodeProps) {
   const isFirstLevel = level === 0;
   const { jobMap } = useContext(TaskContext);
-  const { collapsed } = useContext(ActivityPlanContext);
-  const job = step.jobId ? jobMap?.get(step.jobId) : undefined;
+  const { collapsed, jobLevelMap } = useContext(ActivityPlanContext);
+  const { jobId } = step;
+  const job = jobId ? jobMap?.get(jobId) : undefined;
+  const jobLevel = jobId ? jobLevelMap?.get(jobId) : undefined;
+  const isCircular = jobLevel !== undefined && jobLevel !== level;
+
+  useEffect(() => {
+    if (!isCircular && jobId) {
+      jobLevelMap?.set(jobId, level);
+    }
+  }, [isCircular, level, jobId, jobLevelMap]);
+
+  useEffect(() => {
+    if (isCircular) {
+      // eslint-disable-next-line no-console
+      console.error(`Circular plan steps detected for job ID: ${jobId}`);
+    }
+  }, [isCircular, jobId]);
+
+  if (isCircular) {
+    return (
+      <li>
+        <div style={{ color: "var(--color-error)" }}>
+          Circular plan steps detected
+        </div>
+      </li>
+    );
+  }
 
   return (
     <li className={isFirstLevel ? styles.root : undefined}>
