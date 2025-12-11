@@ -26,6 +26,10 @@ import {
   setChatCommand,
   type ChatCommand,
 } from "../data-providers/set-chat-command.js";
+import {
+  getChatMentionedEmployee,
+  setChatMentionedEmployee,
+} from "../data-providers/set-chat-mentioned-employee.js";
 import type {
   ChatPayload,
   CommandPayload,
@@ -255,6 +259,24 @@ function LegacyChatBoxComponent(
       setChatCommand(null);
     }
     setInitialCommand(command);
+  }, []);
+
+  useEffect(() => {
+    const employee = getChatMentionedEmployee();
+    const element = textareaRef.current?.element;
+    if (employee && element) {
+      setChatMentionedEmployee(null);
+      setMentioned(employee.employeeId);
+      const mentionStr = `${getInitialContent(undefined, employee.name)} `;
+      setMentionOverlay(getOverlayRects(element!, mentionStr));
+      valueRef.current = mentionStr;
+      selectionRef.current = {
+        start: mentionStr.length,
+        end: mentionStr.length,
+      };
+      setValue(mentionStr);
+      setMentionedText(mentionStr);
+    }
   }, []);
 
   useEffect(() => {
