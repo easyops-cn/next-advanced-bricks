@@ -18,6 +18,10 @@ import {
   getChatCommand,
   setChatCommand,
 } from "../data-providers/set-chat-command.js";
+import {
+  getChatMentionedEmployee,
+  setChatMentionedEmployee,
+} from "../data-providers/set-chat-mentioned-employee.js";
 import type { ChatPayload, UploadOptions } from "../shared/interfaces.js";
 import {
   UploadButton,
@@ -227,6 +231,14 @@ function LegacyChatBoxComponent(
     }
     setInitialCommand(command);
   }, [setInitialCommand]);
+
+  useEffect(() => {
+    const employee = getChatMentionedEmployee();
+    if (employee) {
+      setChatMentionedEmployee(null);
+      setInitialMention(employee.employeeId);
+    }
+  }, []);
 
   useEffect(() => {
     const store = window.__elevo_try_it_out;
