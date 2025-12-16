@@ -1,0 +1,114 @@
+// istanbul ignore file
+import React from "react";
+import { createDecorators, EventEmitter } from "@next-core/element";
+import { ReactNextElement } from "@next-core/react-element";
+import "@next-core/theme";
+import { initializeI18n } from "@next-core/i18n";
+import { NS, locales } from "./i18n.js";
+import SpaceNavStyle from "./components/SpaceNav/SpaceNav.shadow.css";
+import SpaceGuideStyle from "./components/SpaceGuide/SpaceGuide.shadow.css";
+import styleText from "./styles.shadow.css";
+import type { NoticeItem } from "../notice-dropdown/index.js";
+import { SpaceDetail } from "./interfaces.js";
+import { SpaceNav } from "./components/SpaceNav/SpaceNav";
+
+initializeI18n(NS, locales);
+
+const { defineElement, property, event } = createDecorators();
+
+export interface SpaceWorkbenchProps {
+  notifyCenterUrl: string;
+  spaceDetail: SpaceDetail;
+  notices?: NoticeItem[];
+}
+
+/**
+ * 构件 `ai-portal.space-workbench`
+ */
+export
+@defineElement("ai-portal.space-workbench", {
+  styleTexts: [SpaceNavStyle, SpaceGuideStyle, styleText],
+})
+class SpaceWorkbench extends ReactNextElement implements SpaceWorkbenchProps {
+  @property()
+  accessor iconUrl: string | undefined;
+
+  @property({ attribute: false })
+  accessor notices: NoticeItem[] | undefined;
+
+  @property({ attribute: false })
+  accessor spaceDetail!: SpaceDetail;
+
+  @property({ type: Boolean })
+  accessor showNoticeBadge: boolean | undefined;
+
+  @property()
+  accessor notifyCenterUrl!: string;
+
+  @event({ type: "go.back" })
+  accessor #_goBackEvent!: EventEmitter<void>;
+
+  @event({ type: "members.click" })
+  accessor #_membersClickEvent!: EventEmitter<void>;
+
+  @event({ type: "notice.click" })
+  accessor #_noticeClickEvent!: EventEmitter<NoticeItem>;
+
+  @event({ type: "mark.all.read" })
+  accessor #_markAllReadEvent!: EventEmitter<void>;
+
+  @event({ type: "space.edit" })
+  accessor #_spaceEditEvent!: EventEmitter<void>;
+
+  render() {
+    return (
+      <SpaceWorkbenchComponent
+        spaceDetail={this.spaceDetail}
+        notices={this.notices}
+        notifyCenterUrl={this.notifyCenterUrl}
+        onBack={() => this.#_goBackEvent.emit()}
+        onMembersClick={() => this.#_membersClickEvent.emit()}
+        onNoticeClick={(notice) => this.#_noticeClickEvent.emit(notice)}
+        onMarkAllRead={() => this.#_markAllReadEvent.emit()}
+        onSpaceEdit={() => this.#_spaceEditEvent.emit()}
+      />
+    );
+  }
+}
+
+interface SpaceWorkbenchComponentProps extends SpaceWorkbenchProps {
+  onBack: () => void;
+  onMembersClick: () => void;
+  onMarkAllRead: () => void;
+  onNoticeClick: (notice: NoticeItem) => void;
+  onSpaceEdit: () => void;
+}
+
+function SpaceWorkbenchComponent(props: SpaceWorkbenchComponentProps) {
+  const {
+    spaceDetail,
+    notices = [],
+    notifyCenterUrl,
+    onBack,
+    onMembersClick,
+    onMarkAllRead,
+    onNoticeClick,
+    onSpaceEdit,
+  } = props;
+
+  return (
+    <div className="space-workbench-container">
+      <SpaceNav
+        spaceName={spaceDetail.name}
+        description={spaceDetail.description}
+        notifyCenterUrl={notifyCenterUrl}
+        notices={notices}
+        onBack={onBack}
+        onMembersClick={onMembersClick}
+        onMarkAllRead={onMarkAllRead}
+        onNoticeClick={onNoticeClick}
+        onSpaceEdit={onSpaceEdit}
+      />
+    </div>
+  );
+}

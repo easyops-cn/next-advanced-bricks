@@ -35,3 +35,5 @@ import "./notice-dropdown/index.js";
 import "./notice-list/index.js";
 // import "./gantt-chart/index.js";
 import "./chat-panel/index.js";
+import "./space-workbench/space-logo/index.js";
+import "./space-workbench/index.js";
