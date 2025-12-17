@@ -1,0 +1,27 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+:host::before {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  background-color: #f1f1f1;
+  background-image: url("../home-container/images/background.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+.space-workbench-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
