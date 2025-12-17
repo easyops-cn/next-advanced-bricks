@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.67.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.66.0...@next-bricks/ai-portal@0.67.0) (2025-12-17)
+
+
+### Bug Fixes
+
+* Some optimizations ([bd2ee26](https://github.com/easyops-cn/next-advanced-bricks/commit/bd2ee26985916e2202c1bb41dfc112eb7586553f))
+
+
+### Features
+
+* space guide component ([6fbe848](https://github.com/easyops-cn/next-advanced-bricks/commit/6fbe8484eb12f680f8e1aa8a93001612bc2ed3c8))
+* space logo ([fd779ec](https://github.com/easyops-cn/next-advanced-bricks/commit/fd779ec498a0b5bc41c2e1c44cf4c7a7f076c16c))
+* space workbench ([a4c344d](https://github.com/easyops-cn/next-advanced-bricks/commit/a4c344d6448740ea5932e7793557eae078b2bcdd))
+* spaceNav component ([87fce17](https://github.com/easyops-cn/next-advanced-bricks/commit/87fce17d3ada92f201878fa13e94fed938a9ed8e))
+
+
+
+
+
 # [0.66.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.65.8...@next-bricks/ai-portal@0.66.0) (2025-12-11)
 
 
