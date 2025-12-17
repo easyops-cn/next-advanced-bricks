@@ -10,6 +10,7 @@ import {
   NoticeItem,
 } from "../../../notice-dropdown/index.jsx";
 import type { SpaceLogo, SpaceLogoProps } from "../../space-logo/index.jsx";
+import { K, t } from "../../i18n.js";
 
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 export interface NoticeDropdownEvents {
@@ -38,7 +39,6 @@ const WrappedSpaceLogo = wrapBrick<SpaceLogo, SpaceLogoProps>(
 export interface SpaceNavProps {
   spaceName: string;
   notices?: NoticeItem[];
-  showNoticeBadge?: boolean;
   onBack: () => void;
   onMembersClick: () => void;
   notifyCenterUrl: string;
@@ -117,7 +117,7 @@ export function SpaceNav(props: SpaceNavProps) {
       {showDescription && description && (
         <div className="space-description">
           <div className="description-header">
-            <p className="description-title">描述</p>
+            <p className="description-title">{t(K.DESCRIPTION)}</p>
             <button className="description-edit-button" onClick={onSpaceEdit}>
               <WrappedIcon lib="antd" icon="edit" theme="outlined" />
             </button>

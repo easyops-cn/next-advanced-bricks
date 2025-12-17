@@ -6,6 +6,19 @@ import "@testing-library/jest-dom";
 import { SpaceNav, type SpaceNavProps } from "./SpaceNav.js";
 import type { NoticeItem } from "../../../notice-dropdown/index.js";
 
+// Mock the i18n module
+jest.mock("../../i18n.js", () => ({
+  K: {
+    DESCRIPTION: "DESCRIPTION",
+  },
+  t: jest.fn((key: string) => {
+    const translations: Record<string, string> = {
+      DESCRIPTION: "描述",
+    };
+    return translations[key] || key;
+  }),
+}));
+
 // Mock wrapped components
 jest.mock("@next-core/react-element", () => ({
   wrapBrick: jest.fn((tagName: string) => {
@@ -114,7 +127,6 @@ describe("SpaceNav", () => {
   const defaultProps: SpaceNavProps = {
     spaceName: "测试空间",
     notices: mockNotices,
-    showNoticeBadge: false,
     onBack: jest.fn(),
     onMembersClick: jest.fn(),
     notifyCenterUrl: "/notify-center",

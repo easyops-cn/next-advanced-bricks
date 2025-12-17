@@ -1,6 +1,7 @@
 import { i18n } from "@next-core/i18n";
 
 export enum K {
+  DESCRIPTION = "DESCRIPTION",
   SPACE_GUIDE_SECTION_TITLE = "SPACE_GUIDE_SECTION_TITLE",
   SPACE_GUIDE_CARD_1_TITLE = "SPACE_GUIDE_CARD_1_TITLE",
   SPACE_GUIDE_CARD_2_TITLE = "SPACE_GUIDE_CARD_2_TITLE",
@@ -8,6 +9,7 @@ export enum K {
 }
 
 const en: Locale = {
+  DESCRIPTION: "Description",
   SPACE_GUIDE_SECTION_TITLE: "I can help you with:",
   SPACE_GUIDE_CARD_1_TITLE: "Manage Business Cases",
   SPACE_GUIDE_CARD_2_TITLE: "Initiate Business Flow",
@@ -15,6 +17,7 @@ const en: Locale = {
 };
 
 const zh: Locale = {
+  DESCRIPTION: "描述",
   SPACE_GUIDE_SECTION_TITLE: "我可以协助您完成:",
   SPACE_GUIDE_CARD_1_TITLE: "管理业务案例",
   SPACE_GUIDE_CARD_2_TITLE: "发起业务流",

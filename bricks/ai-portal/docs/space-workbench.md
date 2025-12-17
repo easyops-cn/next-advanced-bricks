@@ -27,7 +27,6 @@ properties:
       type: "account"
       isRead: true
       title: "【项目协作功能】已发布"
-  showNoticeBadge: true
 events:
   go.back:
     action: console.log

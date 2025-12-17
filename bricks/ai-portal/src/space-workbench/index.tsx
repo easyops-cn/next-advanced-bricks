@@ -30,17 +30,11 @@ export
   styleTexts: [SpaceNavStyle, SpaceGuideStyle, styleText],
 })
 class SpaceWorkbench extends ReactNextElement implements SpaceWorkbenchProps {
-  @property()
-  accessor iconUrl: string | undefined;
-
   @property({ attribute: false })
   accessor notices: NoticeItem[] | undefined;
 
   @property({ attribute: false })
   accessor spaceDetail!: SpaceDetail;
-
-  @property({ type: Boolean })
-  accessor showNoticeBadge: boolean | undefined;
 
   @property()
   accessor notifyCenterUrl!: string;
