@@ -5,8 +5,7 @@ import { ReactNextElement } from "@next-core/react-element";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import { NS, locales } from "./i18n.js";
-import SpaceNavStyle from "./components/SpaceNav/SpaceNav.shadow.css";
-import SpaceGuideStyle from "./components/SpaceGuide/SpaceGuide.shadow.css";
+import componentsStyle from "./components.shadow.css";
 import styleText from "./styles.shadow.css";
 import type { NoticeItem } from "../notice-dropdown/index.js";
 import { SpaceDetail } from "./interfaces.js";
@@ -27,7 +26,7 @@ export interface SpaceWorkbenchProps {
  */
 export
 @defineElement("ai-portal.space-workbench", {
-  styleTexts: [SpaceNavStyle, SpaceGuideStyle, styleText],
+  styleTexts: [componentsStyle, styleText],
 })
 class SpaceWorkbench extends ReactNextElement implements SpaceWorkbenchProps {
   @property({ attribute: false })
