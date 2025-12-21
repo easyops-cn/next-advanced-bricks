@@ -1,0 +1,102 @@
+/* ========== 中间: 业务对象/业务流列表区域 ========== */
+.configListArea {
+  flex: 0 0 260px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(184, 187, 205, 0.15);
+  box-shadow: 1px 0 0 0 rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.configListTabs {
+  display: flex;
+  padding: 4px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 20px;
+  margin: 12px;
+  gap: 4px;
+}
+
+.configListTab {
+  flex: 1;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.65);
+  background: transparent;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.configListTab:hover {
+  color: #1d2129;
+}
+
+.configListTab.active {
+  background: #fff;
+  color: #2540ff;
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.cardList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cardItem {
+  padding: 12px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cardItem:hover {
+  border-color: #a1b5ff;
+  box-shadow: 0 2px 6px rgba(37, 64, 255, 0.1);
+}
+
+.cardItem.active {
+  border-color: #2540ff;
+  background: rgba(37, 64, 255, 0.02);
+}
+
+.cardItemName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.85);
+  margin-bottom: 4px;
+}
+
+.cardItemDesc {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* ========== 右侧: 配置详情预览区域 ========== */
+.configPreviewArea {
+  flex: 1;
+  min-width: 0;
+  background: rgba(184, 187, 205, 0.15);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}

@@ -1,0 +1,185 @@
+/* ========== BusinessFlowPreview 样式 ========== */
+.businessFlowPreview {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.flowHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.flowTitleArea {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.flowTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.flowDescription {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.flowBadge {
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #2540ff;
+  background: rgba(37, 64, 255, 0.08);
+  border: 1px solid rgba(37, 64, 255, 0.2);
+  border-radius: 16px;
+  white-space: nowrap;
+}
+
+.flowSection {
+  margin-bottom: 24px;
+}
+
+.flowSection:last-child {
+  margin-bottom: 0;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 先决条件样式 */
+.prerequisitesIcon {
+  width: 16px;
+  height: 16px;
+  color: #2540ff;
+}
+
+.prerequisitesSubtitle {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.65);
+  margin-bottom: 8px;
+}
+
+.prerequisitesList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 4px;
+}
+
+.prerequisiteItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.65);
+  line-height: 1.5;
+}
+
+.prerequisiteItem::before {
+  content: "•";
+  color: rgba(0, 0, 0, 0.25);
+  flex-shrink: 0;
+}
+
+/* 阶段流程样式 */
+.stagesContainer {
+  display: flex;
+  gap: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 23px 26px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.stageColumn {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.stageActivities {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ========== 步骤条样式 ========== */
+/* 参考设计图: node-id=125-3037 */
+.stageIndicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* 步骤序号圆圈 */
+.stageIndicatorNumber {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e6ebef;
+  border: 2px solid #e6ebef;
+  border-radius: 50%;
+  font-family: "PingFang SC", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: #45556c;
+  flex-shrink: 0;
+}
+
+/* 步骤名称 */
+.stageIndicatorName {
+  font-family: "PingFang SC", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: #1d293d;
+  letter-spacing: 0.35px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* 连接线 */
+.stageIndicatorLine {
+  height: 0;
+  border-top: 1px dashed rgba(0, 0, 0, 0.15);
+  flex: 1;
+  min-width: 40px;
+}
+
+/* ========== JSON 视图样式 ========== */
+.jsonView {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  overflow: auto;
+  height: 100%;
+}
+
+.jsonView pre {
+  margin: 0;
+  font-family:
+    "SF Mono", "Monaco", "Inconsolata", "Fira Mono", "Droid Sans Mono",
+    monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #1d2129;
+  white-space: pre-wrap;
+  word-break: break-all;
+}

@@ -1,42 +1,60 @@
-.space-guide-container {
+.spaceGuideContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: 0 auto;
+  padding-top: 103px;
 
-  .guide-header {
+  .guideHeader {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-bottom: 60px;
-  }
-
-  .space-logo {
     margin-bottom: 24px;
   }
 
-  .guide-title {
+  .spaceLogo {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 24px;
+    background: #2540ff;
+    border-radius: 16px;
+    box-shadow:
+      0px 10px 15px -3px rgba(37, 64, 255, 0.2),
+      0px 4px 6px -4px rgba(37, 64, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .guideTitle {
     font-size: 24px;
     font-weight: 600;
     line-height: 32px;
     color: rgba(0, 0, 0, 0.88);
-    margin: 0 0 16px 0;
+    margin: 0 0 24px 0;
+    letter-spacing: 0.0703px;
   }
 
-  .guide-description {
+  .guideDescription {
     font-size: 16px;
     line-height: 26px;
     color: rgba(0, 0, 0, 0.65);
     margin: 0;
-    max-width: 600px;
+    max-width: 448px;
+    text-align: center;
+    letter-spacing: -0.3125px;
   }
 
-  .guide-content {
-    width: 100%;
+  .guideContent {
+    width: 672px;
+    background: rgba(248, 250, 252, 0.5);
+    border-radius: 16px;
+    padding: 25px;
+    margin-top: 24px;
   }
 
-  .section-title {
+  .sectionTitle {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -44,66 +62,78 @@
     font-weight: 500;
     line-height: 20px;
     color: #0f172b;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
+    letter-spacing: -0.1504px;
   }
 
-  .section-icon {
+  .sectionIcon {
     width: 16px;
     height: 16px;
   }
 
-  .cards-grid {
+  .cardsGrid {
     display: grid;
-    grid-template-columns: repeat(3, 220px);
+    grid-template-columns: repeat(3, 197px);
     gap: 16px;
   }
 
-  .guide-card {
-    height: 110px;
-    border-radius: 12px;
-    padding: 24px;
+  .guideCard {
+    height: 161px;
+    border-radius: 16px;
+    padding: 0;
     overflow: hidden;
-    cursor: pointer;
     transition:
       transform 0.2s ease,
       box-shadow 0.2s ease;
     border: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: white;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+    position: relative;
   }
 
-  .guide-card:hover {
+  .guideCard:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   }
 
-  .card-content {
+  .cardContent {
     position: relative;
     z-index: 1;
     height: 100%;
     display: flex;
     flex-direction: column;
+    padding: 16px 15px 15px 15px;
   }
 
-  .card-icon {
+  .cardIconContainer {
     width: 32px;
     height: 32px;
-    margin-bottom: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+  .cardIcon {
+    width: 16px;
+    height: 16px;
   }
 
-  .card-title {
+  .cardTitle {
     font-size: 14px;
     font-weight: 500;
     line-height: 20px;
     color: rgba(0, 0, 0, 0.88);
     margin: 0 0 8px 0;
+    letter-spacing: -0.1504px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .card-description {
+  .cardDescription {
     font-size: 12px;
     line-height: 18px;
     color: rgba(0, 0, 0, 0.45);
@@ -111,7 +141,7 @@
     flex: 1;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     overflow: hidden;
     text-overflow: ellipsis;
   }
