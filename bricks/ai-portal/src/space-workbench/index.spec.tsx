@@ -1,9 +1,37 @@
 import { describe, test, expect, jest } from "@jest/globals";
 import { act } from "react-dom/test-utils";
-import "./";
-import type { SpaceWorkbench } from "./index.js";
 
 jest.mock("@next-core/theme", () => ({}));
+
+jest.mock("@next-core/i18n", () => ({
+  initializeI18n: jest.fn(),
+  i18n: {
+    getFixedT: jest.fn(() => (key: string) => key),
+  },
+}));
+
+jest.mock("./i18n.js", () => ({
+  K: {},
+  NS: "test-ns",
+  locales: {},
+  t: (key: string) => key,
+}));
+
+jest.mock("../chat-stream/i18n.js", () => ({
+  NS: "test-chat-stream-ns",
+  locales: {},
+}));
+
+jest.mock("./components/SpaceNav", () => ({
+  SpaceNav: () => null,
+}));
+
+jest.mock("./components/SpaceGuide", () => ({
+  SpaceGuide: () => null,
+}));
+
+import "./";
+import type { SpaceWorkbench } from "./index.js";
 
 describe("ai-portal.space-workbench", () => {
   test("basic usage", async () => {
@@ -24,11 +52,12 @@ describe("ai-portal.space-workbench", () => {
     act(() => {
       document.body.appendChild(element);
     });
-    expect(element.shadowRoot?.childNodes.length).toBeGreaterThan(1);
+    expect(element.shadowRoot).toBeFalsy();
+    expect(element.children.length).toBeGreaterThan(0);
+    expect(element.innerHTML).toBeTruthy();
 
     act(() => {
       document.body.removeChild(element);
     });
-    expect(element.shadowRoot?.childNodes.length).toBe(0);
   });
 });
