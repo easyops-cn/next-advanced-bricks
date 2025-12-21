@@ -5,6 +5,7 @@ import { EmptyState } from "./EmptyState";
 import { BusinessObject, BusinessFlow, ViewType } from "../interfaces";
 import { WrappedIcon } from "../../shared/bricks";
 import styles from "./ConfigPreview.module.css";
+import { K, t } from "../i18n.js";
 
 export interface ConfigPreviewProps {
   businessObject?: BusinessObject | null;
@@ -75,8 +76,8 @@ export function ConfigPreview({
       <div className={styles.configPreviewBody}>
         {!hasData ? (
           <EmptyState
-            title="暂无配置数据"
-            description="请通过左侧对话引导 AI 生成配置"
+            title={t(K.NO_CONFIGURATION_DATA)}
+            description={t(K.GUIDE_AI_TO_GENERATE_CONFIG)}
           />
         ) : showBusinessObject ? (
           <BusinessObjectPreview data={businessObject} viewType={viewType} />

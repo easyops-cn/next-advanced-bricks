@@ -21,16 +21,22 @@ import { BusinessManage } from "../BusinessManage";
 import styles from "./SpaceConfigModal.module.css";
 import { Activity, SpaceConfigSchema, SpaceDetail } from "../../interfaces";
 import { mergeConfigSchema, handleModifyActivity } from "./utils";
+import { K, t } from "../../i18n.js";
 
-const WrappedModal = wrapBrick<Modal, ModalProps, ModalEvents, ModalMapEvents>(
-  "eo-modal",
-  {
-    onClose: "close",
-    onConfirm: "confirm",
-    onCancel: "cancel",
-    onOpen: "open",
-  }
-);
+const WrappedModal = wrapBrick<
+  Modal,
+  ModalProps & {
+    themeVariant?: "default" | "elevo";
+    headerBordered?: boolean;
+  },
+  ModalEvents,
+  ModalMapEvents
+>("eo-modal", {
+  onClose: "close",
+  onConfirm: "confirm",
+  onCancel: "cancel",
+  onOpen: "open",
+});
 
 export interface SpaceConfigModalProps {
   visible: boolean;
@@ -169,15 +175,15 @@ export function SpaceConfigModal({
       <WrappedModal
         themeVariant="elevo"
         headerBordered
-        modalTitle="协作空间配置"
+        modalTitle={t(K.SPACE_CONFIGURATION)}
         width="90%"
         visible={visible}
         onCancel={handleCancel}
         onClose={handleCancel}
         onConfirm={handleSave}
         maskClosable={false}
-        confirmText="保存配置"
-        cancelText="取消"
+        confirmText={t(K.SAVE_CONFIGURATION)}
+        cancelText={t(K.CANCEL)}
       >
         <div className={styles.modalContent}>
           {/* 左侧: AI 助手对话区域 */}
@@ -188,12 +194,12 @@ export function SpaceConfigModal({
               conversationId={conversationId}
               initialRequest={initialRequest}
               onData={handleData}
-              placeholder="请输入"
+              placeholder={t(K.PLEASE_ENTER)}
               help={{
                 useBrick: {
                   brick: "ai-portal.chat-panel-welcome",
                   properties: {
-                    text: "您好！我是协作空间配置助手。您可以告诉我描述你的业务流程，我会为你自动生成相关的业务对象和业务流，你也可以明确让我修改哪个业务对象或业务流。",
+                    text: t(K.CONFIG_ASSISTANT_WELCOME),
                   },
                 },
               }}

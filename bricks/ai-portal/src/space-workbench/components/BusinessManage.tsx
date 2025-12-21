@@ -5,6 +5,7 @@ import { ConfigPreview } from "./ConfigPreview";
 import { SpaceConfigSchema, BusinessObject, BusinessFlow } from "../interfaces";
 import styles from "./BusinessManage.module.css";
 import { EmptyState } from "./EmptyState";
+import { K, t } from "../i18n.js";
 
 interface CardItem {
   id: string;
@@ -101,7 +102,7 @@ export function BusinessManage({
             })}
             onClick={() => handleTabChange(TabType.BUSINESS_OBJECTS)}
           >
-            业务对象
+            {t(K.BUSINESS_OBJECTS)}
           </button>
           <button
             className={classNames(styles.configListTab, {
@@ -109,7 +110,7 @@ export function BusinessManage({
             })}
             onClick={() => handleTabChange(TabType.BUSINESS_FLOWS)}
           >
-            业务流
+            {t(K.BUSINESS_FLOWS)}
           </button>
         </div>
 
@@ -167,8 +168,8 @@ function BusinessCardList({
   if (!itemList?.length) {
     return (
       <EmptyState
-        title="暂无业务对象/业务流"
-        description="请通过左侧对话引导 AI 生成配置"
+        title={t(K.NO_BUSINESS_OBJECTS_FLOWS)}
+        description={t(K.GUIDE_AI_TO_GENERATE_CONFIG)}
       />
     );
   }

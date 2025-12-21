@@ -11,6 +11,7 @@ import type {
 } from "@next-bricks/markdown/markdown-display";
 import { ActivityDetailModal } from "./ActivityDetailModal";
 import { ConfigContext } from "./SpaceConfigModal/ConfigContext";
+import { K, t } from "../i18n.js";
 
 const WrappedMarkdownDisplay = wrapBrick<MarkdownDisplay, MarkdownDisplayProps>(
   "eo-markdown-display"
@@ -83,10 +84,10 @@ export function BusinessFlowPreview({
                 icon="filter"
                 className={styles.prerequisitesIcon}
               />
-              <span>先决条件</span>
+              <span>{t(K.PREREQUISITES)}</span>
             </div>
             <div className={styles.prerequisitesSubtitle}>
-              需要满足以下条件：
+              {t(K.PREREQUISITES_SUBTITLE)}
             </div>
             <div className={styles.prerequisitesList}>
               <WrappedMarkdownDisplay content={data.prerequisite} />

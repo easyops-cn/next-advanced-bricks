@@ -9,6 +9,7 @@ import type {
   MarkdownDisplayProps,
   MarkdownDisplay,
 } from "@next-bricks/markdown/markdown-display";
+import { K, t } from "../i18n.js";
 
 export interface BusinessObjectPreviewProps {
   data?: BusinessObject;
@@ -62,7 +63,7 @@ export function BusinessObjectPreview({
             icon="database"
             className={styles.sectionIcon}
           />
-          <span>字段定义</span>
+          <span>{t(K.FIELD_DEFINITIONS)}</span>
         </div>
         <div className={styles.fieldGrid}>
           {data?.attributes?.map((field) => (
@@ -83,7 +84,7 @@ export function BusinessObjectPreview({
               icon="sync"
               className={styles.sectionIcon}
             />
-            <span>生命周期状态</span>
+            <span>{t(K.LIFECYCLE_STATUS)}</span>
           </div>
           <div className={styles.lifecycleContainer}>
             <WrappedMarkdownDisplay

@@ -23,6 +23,7 @@ import {
 } from "@next-bricks/markdown/markdown-display";
 import type { Activity } from "../interfaces.js";
 import styles from "./ActivityDetailModal.module.css";
+import { K, t } from "../i18n.js";
 
 const WrappedModal = wrapBrick<
   Modal,
@@ -154,19 +155,23 @@ export function ActivityDetailModal({
       <div className={styles.content}>
         {/* 活动描述区域 */}
         <div className={styles.section}>
-          <div className={styles.sectionTitle}>活动描述</div>
+          <div className={styles.sectionTitle}>{t(K.ACTIVITY_DESCRIPTION)}</div>
           <div className={styles.descriptionContent}>
             {activity.description ? (
               <WrappedMarkdownDisplay content={activity.description} />
             ) : (
-              <div className={styles.emptyDescription}>暂无描述</div>
+              <div className={styles.emptyDescription}>
+                {t(K.NO_DESCRIPTION)}
+              </div>
             )}
           </div>
         </div>
 
         {/* 负责数字人 */}
         <div className={styles.section}>
-          <div className={styles.sectionTitle}>负责数字人</div>
+          <div className={styles.sectionTitle}>
+            {t(K.RESPONSIBLE_AI_EMPLOYEE)}
+          </div>
           <WrappedSelect
             value={activity.aiEmployeeId}
             themeVariant="elevo"
@@ -176,7 +181,7 @@ export function ActivityDetailModal({
                 value: item.employeeId as string,
               })) ?? []
             }
-            placeholder="请选择负责数字人"
+            placeholder={t(K.SELECT_AI_EMPLOYEE_PLACEHOLDER)}
             onValueChange={handleAssigneeChange}
             className={styles.select}
           />
@@ -185,17 +190,19 @@ export function ActivityDetailModal({
         {/* HITL 规则 */}
         {activity.hilRules && (
           <div className={styles.section}>
-            <div className={styles.sectionTitle}>HITL规则</div>
+            <div className={styles.sectionTitle}>{t(K.HITL_RULES)}</div>
             <div className={styles.hitlRuleItem}>{activity.hilRules}</div>
           </div>
         )}
 
         {/* HITL 介入用户 */}
         <div className={styles.section}>
-          <div className={styles.sectionTitle}>HITL介入用户</div>
+          <div className={styles.sectionTitle}>
+            {t(K.HITL_INTERVENTION_USER)}
+          </div>
           <WrappedUserOrUserGroupSelect
             value={[activity.hilUser ?? ""]}
-            placeholder="请选择HITL介入用户"
+            placeholder={t(K.SELECT_HITL_USER_PLACEHOLDER)}
             optionsMode="user"
             userKey="name"
             isMultiple={false}
