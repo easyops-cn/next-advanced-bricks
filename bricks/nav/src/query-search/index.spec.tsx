@@ -78,6 +78,15 @@ describe("nav.query-search", () => {
           showInApps: [],
           type: "link",
         },
+        {
+          config: null,
+          creator: "easyops",
+          ctime: "2025-05-14 09:11:54",
+          instanceId: "6350e3c1a4715",
+          name: "链接跳转测试1",
+          showInApps: [],
+          type: "instanceSearch",
+        },
       ],
     });
 

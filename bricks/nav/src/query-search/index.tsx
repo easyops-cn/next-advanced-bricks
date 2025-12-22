@@ -41,6 +41,7 @@ const storage = new JsonStorage(localStorage);
 const fullTextUrl = "search/result?q=%{q}%";
 const ipSearchUrl = "search/new/ipSearch?q=%{q}%";
 const itsmSearchUrl = "/itsc-ticket-center/ticket-list?q=%{q}%";
+const instanceSearchUrl = "search/instance-or-relation-path/search/";
 
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
@@ -223,6 +224,16 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
                 config.url = fullTextUrl;
               } else if (i.type === QuerierTypes.ipSearch) {
                 config.url = ipSearchUrl;
+              }
+              // istanbul ignore next
+              else if (
+                [
+                  QuerierTypes.instanceSearch,
+                  QuerierTypes.relationSearch,
+                ].includes(i.type)
+              ) {
+                // istanbul ignore next
+                config.url = instanceSearchUrl + i.name + "?q=%{q}%";
               }
               return { ...i, config };
             }) || [];
