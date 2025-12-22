@@ -52,7 +52,6 @@ export function BusinessObjectPreview({
           </div>
           <div className={styles.objectDescription}>{data.description}</div>
         </div>
-        <span className={styles.objectBadge}>Active Object</span>
       </div>
 
       {/* 字段定义区域 */}

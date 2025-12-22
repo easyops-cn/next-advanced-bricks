@@ -72,7 +72,6 @@ export function BusinessFlowPreview({
             <div className={styles.flowTitle}>{data.name}</div>
             <div className={styles.flowDescription}>{data.description}</div>
           </div>
-          <span className={styles.flowBadge}>Active Flow</span>
         </div>
 
         {/* 先决条件 */}
