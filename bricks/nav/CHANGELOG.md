@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.26.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.25.3...@next-bricks/nav@1.26.0) (2025-12-23)
+
+
+### Features
+
+* 优化nav.query-search构件 Refs MONITOR-10589 ([3940bd4](https://github.com/easyops-cn/next-advanced-bricks/commit/3940bd49ae10729659d6c11c8b8f3d7319203f76))
+
+
+
+
+
 ## [1.25.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.25.2...@next-bricks/nav@1.25.3) (2025-12-22)
 
 
