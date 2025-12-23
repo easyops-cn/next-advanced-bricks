@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.12.11](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/data-view@1.12.10...@next-bricks/data-view@1.12.11) (2025-12-23)
+
+
+### Bug Fixes
+
+* 大屏气泡动效圆圈里面的文字太小，上墙后看不清 ([0a6dbc3](https://github.com/easyops-cn/next-advanced-bricks/commit/0a6dbc302dd5494e18653485e97efc45d90bcc53))
+
+
+
+
+
 ## [1.12.10](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/data-view@1.12.9...@next-bricks/data-view@1.12.10) (2025-11-11)
 
 **Note:** Version bump only for package @next-bricks/data-view
