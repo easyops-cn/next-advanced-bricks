@@ -99,10 +99,11 @@
   border-radius: 9999px;
   background-image: url(./assets/other-bubble.png);
   background-size: 100%;
+  filter: brightness(80%);
 }
 
 .bubble-label {
-  font-size: 16px;
+  font-size: 22px;
   font-weight: 500;
   line-height: 22px;
   color: #c8e2ff;
@@ -110,13 +111,13 @@
 
 .bubble-value {
   font-family: ALiBaBaPuHuiTi;
-  font-size: 24px;
+  font-size: 28px;
   line-height: 33px;
   text-shadow: 0px 4px 7px #514af7;
 }
 
 .center-label {
-  font-size: 24px;
+  font-size: 32px;
   line-height: 33px;
   font-weight: 600;
   margin-top: 13px;
@@ -125,7 +126,7 @@
 
 .center-value {
   font-family: PangMenZhengDaoBiaoTiTi;
-  font-size: 64px;
+  font-size: 72px;
   line-height: 73px;
 }
 
