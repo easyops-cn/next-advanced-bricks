@@ -25,8 +25,9 @@ import cornerStyleText from "../shared/CornerIndicator.shadow.css";
 const BASE_WIDTH = 900;
 const BASE_HEIGHT = 700;
 const CENTER_BUBBLE_RADIUS = 196;
-const OTHER_BUBBLE_MAX_RADIUS = 81;
-const OTHER_BUBBLE_MIN_RADIUS = 40;
+// 之前最大和最小的气泡圆半径 81/40
+const OTHER_BUBBLE_MAX_RADIUS = 90;
+const OTHER_BUBBLE_MIN_RADIUS = 60;
 const BUBBLE_PADDING = 12;
 const RANDOM_BUBBLE_MIN_RADIUS = 10;
 const RANDOM_BUBBLE_MAX_RADIUS = 22;
