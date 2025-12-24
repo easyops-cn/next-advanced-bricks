@@ -2,14 +2,16 @@ import React from "react";
 import styles from "./EmptyState.module.css";
 
 import EmptyStateIcon from "../images/empty.svg";
+import classNames from "classnames";
 
 /**
  * EmptyState 组件 Props
  */
 export interface EmptyStateProps {
   icon?: React.ReactNode;
-  title?: string;
+  title: string;
   description?: string;
+  className?: string;
 }
 
 /**
@@ -20,9 +22,10 @@ export function EmptyState({
   icon,
   title,
   description,
+  className,
 }: EmptyStateProps): React.ReactElement {
   return (
-    <div className={styles.emptyState}>
+    <div className={classNames(styles.emptyState, className)}>
       {icon ? icon : <EmptyStateIcon className={styles.emptyStateIcon} />}
       <div className={styles.emptyStateTitle}>{title}</div>
       {description && (

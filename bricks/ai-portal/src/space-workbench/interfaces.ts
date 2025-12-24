@@ -15,12 +15,24 @@ export interface Knowledge {
   content?: string;
 }
 
-interface Attribute {
+export type AttributeType =
+  | "string"
+  | "text"
+  | "int"
+  | "float"
+  | "bool"
+  | "date"
+  | "datetime"
+  | "file"
+  | "enum";
+
+export interface Attribute {
   id: string;
   name: string;
   description: string;
   required: boolean;
-  type: string;
+  type: AttributeType;
+  isArray?: boolean;
 }
 
 interface ObjectRelation {
@@ -115,4 +127,19 @@ export interface KnowledgeItem {
   mtime?: string;
   /** 修改者 */
   modifier?: string;
+}
+
+export interface InstanceSchema {
+  objectId?: string; // 模型 id
+  imports?: InstanceItem[];
+  deletes?: string[]; // 删除实例的列表，为 instanceId 的数组
+}
+
+export interface InstanceItem {
+  /** 前端管理用的唯一标识 ID */
+  _id_: string;
+  /** 实例 ID(编辑时存在,新增时可能为空) */
+  instanceId?: string;
+  /** 实例属性数据 */
+  [key: string]: any;
 }

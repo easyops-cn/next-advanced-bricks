@@ -67,9 +67,24 @@ export function mergeConfigSchema(
     businessObjects: mergedBusinessObjects,
     objectRelations: mergedObjectRelations,
     businessFlows: mergedBusinessFlows,
-    deleteObjects: currentEditSchema.deleteObjects,
-    deleteRelations: currentEditSchema.deleteRelations,
-    deleteFlows: currentEditSchema.deleteFlows,
+    deleteObjects: Array.from(
+      new Set([
+        ...(prevSchema.deleteObjects || []),
+        ...(currentEditSchema.deleteObjects || []),
+      ])
+    ),
+    deleteRelations: Array.from(
+      new Set([
+        ...(prevSchema.deleteRelations || []),
+        ...(currentEditSchema.deleteRelations || []),
+      ])
+    ),
+    deleteFlows: Array.from(
+      new Set([
+        ...(prevSchema.deleteFlows || []),
+        ...(currentEditSchema.deleteFlows || []),
+      ])
+    ),
   };
 }
 
