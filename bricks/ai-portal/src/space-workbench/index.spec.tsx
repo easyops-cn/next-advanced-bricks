@@ -26,8 +26,12 @@ jest.mock("./components/SpaceNav", () => ({
   SpaceNav: () => null,
 }));
 
-jest.mock("./components/SpaceGuide", () => ({
-  SpaceGuide: () => null,
+jest.mock("./components/SpaceSidebar", () => ({
+  SpaceSidebar: () => null,
+}));
+
+jest.mock("./components/ChatArea/ChatArea", () => ({
+  ChatArea: () => null,
 }));
 
 import "./";

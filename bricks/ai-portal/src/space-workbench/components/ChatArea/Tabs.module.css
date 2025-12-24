@@ -1,0 +1,158 @@
+.tabBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0;
+  padding: 5px 16px 0;
+  border-bottom: none;
+  min-height: 44px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.tabBar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.tabList {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex: 1;
+  min-width: 0;
+  margin-right: 8px;
+}
+
+.tabList::-webkit-scrollbar {
+  height: 4px;
+}
+
+.tabList::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px 12px;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  position: relative;
+  background: transparent;
+}
+
+.tab:not(.active) {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.tab:not(.active):hover {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.tab.active {
+  color: #2540ff;
+  background: transparent;
+}
+
+.tab.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: #2540ff;
+}
+
+.tabIcon {
+  font-size: 16.517px;
+  flex-shrink: 0;
+}
+
+.tabTitle {
+  font-size: 14px;
+  font-weight: 400;
+  font-family: "PingFang SC", sans-serif;
+  line-height: 16px;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+  flex-shrink: 0;
+}
+
+.closeButton:hover {
+  opacity: 1;
+}
+
+.closeButton :global(eo-icon) {
+  font-size: 10px;
+}
+
+.tabActions {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  padding-left: 8px;
+}
+
+.divider {
+  width: 1px;
+  height: 17px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 0 5px;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.actionButton:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.actionButton :global(eo-icon) {
+  font-size: 14px;
+}

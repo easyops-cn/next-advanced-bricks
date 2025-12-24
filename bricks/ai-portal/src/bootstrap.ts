@@ -37,4 +37,5 @@ import "./notice-list/index.js";
 import "./chat-panel/index.js";
 import "./space-workbench/space-logo/index.js";
 import "./space-workbench/chat-panel-welcome/index.js";
+import "./space-workbench/space-chat-guide/index.js";
 import "./space-workbench/index.js";

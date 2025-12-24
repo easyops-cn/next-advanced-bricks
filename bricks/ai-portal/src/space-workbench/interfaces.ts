@@ -4,17 +4,6 @@ export interface SpaceDetail {
   description: string;
 }
 
-export interface Knowledge {
-  instanceId: string;
-  name: string;
-  description?: string;
-  time?: number;
-  user?: string;
-  openApiUrl?: string;
-  state?: string;
-  content?: string;
-}
-
 export type AttributeType =
   | "string"
   | "text"

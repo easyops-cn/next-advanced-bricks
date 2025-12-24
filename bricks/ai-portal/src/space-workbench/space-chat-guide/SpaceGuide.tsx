@@ -5,7 +5,6 @@ import {
   ElevoSpaceApi_generateSpaceCapabilities,
 } from "@next-api-sdk/llm-sdk";
 import type { SpaceLogo, SpaceLogoProps } from "../space-logo/index.js";
-import styles from "./SpaceGuide.module.css";
 import { SpaceDetail } from "../interfaces.js";
 import MagicSvg from "../images/magic.svg";
 import layerSvg from "../images/layer.svg?url";
@@ -15,6 +14,7 @@ import lightningBg from "../images/lightning-bg.png";
 import bookSvg from "../images/book.svg?url";
 import bookBg from "../images/book-bg.png";
 import { K, t } from "../i18n.js";
+import { handleHttpError } from "@next-core/runtime";
 
 const WrappedSpaceLogo = wrapBrick<SpaceLogo, SpaceLogoProps>(
   "ai-portal.space-logo"
@@ -32,12 +32,14 @@ export interface GuideCard {
 export interface SpaceGuideProps {
   onCardClick?: (cardIndex: number) => void;
   spaceDetail: SpaceDetail;
+  generateSpaceSummary?: boolean;
 }
 
 export function SpaceGuide(props: SpaceGuideProps) {
-  const { spaceDetail, onCardClick } = props;
+  const { spaceDetail, onCardClick, generateSpaceSummary } = props;
   const [spaceCapabilities, setSpaceCapabilities] =
     useState<ElevoSpaceApi_GenerateSpaceCapabilitiesResponseBody | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const cards: GuideCard[] = [
     {
@@ -69,59 +71,73 @@ export function SpaceGuide(props: SpaceGuideProps) {
 
   useEffect(() => {
     const fetchSpaceCapabilities = async () => {
-      const res = await ElevoSpaceApi_generateSpaceCapabilities(
-        spaceDetail.instanceId,
-        {
-          forceRefresh: true,
-        }
-      );
-      setSpaceCapabilities(res);
+      setLoading(true);
+      try {
+        const res = await ElevoSpaceApi_generateSpaceCapabilities(
+          spaceDetail.instanceId,
+          {
+            forceRefresh: !!generateSpaceSummary,
+          },
+          {
+            interceptorParams: {
+              ignoreLoadingBar: true,
+            },
+          }
+        );
+        setSpaceCapabilities(res);
+      } catch (error) {
+        handleHttpError(error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchSpaceCapabilities();
-  }, [spaceDetail.instanceId]);
+  }, [spaceDetail.instanceId, generateSpaceSummary]);
 
   return (
-    <div className={styles.spaceGuideContainer}>
-      <div className={styles.guideHeader}>
-        <div className={styles.spaceLogo}>
+    <div className="space-guide-container">
+      <div className="guide-header">
+        <div className="space-logo">
           <WrappedSpaceLogo size={48} />
         </div>
-        <h1 className={styles.guideTitle}>{spaceDetail.name}</h1>
-        <p className={styles.guideDescription}>{spaceDetail.description}</p>
+        <h1 className="guide-title">{spaceDetail.name}</h1>
+        <p className="guide-description">{spaceDetail.description}</p>
       </div>
 
-      <div className={styles.guideContent}>
-        <div className={styles.sectionTitle}>
-          <MagicSvg className={styles.sectionIcon} />
+      <div className="guide-content">
+        <div className="section-title">
+          <MagicSvg className="section-icon" />
           <span>{t(K.SPACE_GUIDE_SECTION_TITLE)}</span>
         </div>
 
-        <div className={styles.cardsGrid}>
+        <div className="cards-grid">
           {cards.map((card, index) => (
             <div
               key={index}
-              className={styles.guideCard}
+              className="guide-card"
               style={{ backgroundImage: `url(${card.background})` }}
               onClick={() => handleCardClick(index)}
             >
-              <div className={styles.cardContent}>
+              <div className="card-content">
                 <div
-                  className={`${styles.cardIconContainer} ${styles[card.iconContainerColor]}`}
+                  className={`card-icon-container ${card.iconContainerColor}`}
                 >
-                  <img
-                    src={card.icon}
-                    alt={card.title}
-                    className={styles.cardIcon}
-                  />
+                  <img src={card.icon} alt={card.title} className="card-icon" />
                 </div>
-                <h3 className={styles.cardTitle}>{card.title}</h3>
-                <p className={styles.cardDescription}>
-                  {
+                <h3 className="card-title">{card.title}</h3>
+                <p className="card-description">
+                  {loading ? (
+                    <span className="loading-dots">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </span>
+                  ) : (
                     spaceCapabilities?.[
                       card.key as keyof ElevoSpaceApi_GenerateSpaceCapabilitiesResponseBody
                     ]
-                  }
+                  )}
                 </p>
               </div>
             </div>

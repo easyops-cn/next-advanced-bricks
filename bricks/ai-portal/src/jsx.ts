@@ -81,6 +81,10 @@ import type { FeedbackDetail } from "./cruise-canvas/interfaces";
 import type { GoalItem } from "./goal-card-list/CardItem/CardItem";
 import type { PersonalActionClickDetail } from "./elevo-sidebar/ChatHistory";
 import type { ChatPanel, ChatPanelProps } from "./chat-panel";
+import type {
+  SpaceChatGuide,
+  SpaceChatGuideProps,
+} from "./space-workbench/space-chat-guide";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -350,6 +354,11 @@ declare global {
             render: () => React.ReactNode;
           };
         };
+      "ai-portal--space-chat-guide": DetailedHTMLProps<
+        HTMLAttributes<SpaceChatGuide>,
+        SpaceChatGuide
+      > &
+        SpaceChatGuideProps;
     }
   }
 }
