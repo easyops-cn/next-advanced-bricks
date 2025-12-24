@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.68.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.67.0...@next-bricks/ai-portal@0.68.0) (2025-12-24)
+
+
+### Bug Fixes
+
+* i18n ([96f58f9](https://github.com/easyops-cn/next-advanced-bricks/commit/96f58f9dc5feee370af90923f60ab02a4c2e03de))
+* knowledges list ([78117e6](https://github.com/easyops-cn/next-advanced-bricks/commit/78117e651590bbe31bdef99e711e6b444d09f417))
+* modify style ([9b55ff7](https://github.com/easyops-cn/next-advanced-bricks/commit/9b55ff7cf76d6c00a91031e1ebaaf421878f1770))
+* remove unused code ([6e4dcee](https://github.com/easyops-cn/next-advanced-bricks/commit/6e4dcee522e6ec8b23483e0e4f4ec87ccd19ac76))
+* some optimizations ([5511fed](https://github.com/easyops-cn/next-advanced-bricks/commit/5511fedc28950510b91f97ac99795cd05fe315b7))
+* test ([e725864](https://github.com/easyops-cn/next-advanced-bricks/commit/e72586429f58df3f9fb16a04b110f3a07429a77f))
+
+
+### Features
+
+* **space-workbench:** 完善协作空间工作台功能 ([8e620c2](https://github.com/easyops-cn/next-advanced-bricks/commit/8e620c29ff806c867214631ade39202fe03bb503))
+
+
+
+
+
 # [0.67.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.66.0...@next-bricks/ai-portal@0.67.0) (2025-12-17)
 
 
