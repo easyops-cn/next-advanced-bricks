@@ -117,7 +117,12 @@ export function QuerySearchComponent(props: QuerySearchComponentProps) {
   const currentTheme = useCurrentTheme();
 
   // State
-  const [showInput, setShowInput] = useState<boolean>(false);
+  /**
+   * null: 初始化（无动画）
+   * false: 收起（播放收起动画）
+   * true: 展开
+   */
+  const [showInput, setShowInput] = useState<boolean | null>(null);
   const [searchKey, setSearchKey] = useState<string>("");
   const [visits, setVisits] = useState<string[]>([]);
 
