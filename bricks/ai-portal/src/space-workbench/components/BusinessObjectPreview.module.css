@@ -1,0 +1,145 @@
+/* ========== BusinessObjectPreview 样式 ========== */
+.businessObjectPreview {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.objectHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.objectTitleArea {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.objectTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.objectName {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1d2129;
+}
+
+.objectNameEn {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.objectDescription {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.objectBadge {
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #2540ff;
+  background: rgba(37, 64, 255, 0.08);
+  border: 1px solid rgba(37, 64, 255, 0.2);
+  border-radius: 16px;
+  white-space: nowrap;
+}
+
+.objectSection {
+  margin-bottom: 24px;
+}
+
+.objectSection:last-child {
+  margin-bottom: 0;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1d2129;
+  margin-bottom: 12px;
+}
+
+.sectionIcon {
+  width: 16px;
+  height: 16px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+/* 字段列表样式 */
+.fieldGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.fieldItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #f7f8fa;
+  border-radius: 8px;
+}
+
+.fieldName {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.fieldType {
+  padding: 2px 8px;
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.45);
+  background: #fff;
+  border-radius: 4px;
+}
+
+/* 生命周期状态样式 */
+.lifecycleContainer {
+  padding: 20px;
+  background: #f7f8fa;
+  border-radius: 8px;
+}
+
+.lifecycleStates {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+}
+
+.lifecycleState {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  font-size: 13px;
+  color: #1d2129;
+  white-space: nowrap;
+}
+
+.lifecycleArrow {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  color: rgba(0, 0, 0, 0.25);
+}
+
+.lifecycleArrowIcon {
+  width: 16px;
+  height: 16px;
+}

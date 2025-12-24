@@ -1,16 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { wrapBrick } from "@next-core/react-element";
 import type {
   GeneralIcon,
   GeneralIconProps,
 } from "@next-bricks/icons/general-icon";
+import { ElevoSpaceApi_getSpaceSchema } from "@next-api-sdk/llm-sdk";
 import {
   NoticeDropdown,
   NoticeDropdownProps,
   NoticeItem,
-} from "../../../notice-dropdown/index.jsx";
-import type { SpaceLogo, SpaceLogoProps } from "../../space-logo/index.jsx";
-import { K, t } from "../../i18n.js";
+} from "../../notice-dropdown/index.jsx";
+import type { SpaceLogo, SpaceLogoProps } from "../space-logo/index.jsx";
+import { SpaceConfigModal } from "./SpaceConfigModal/SpaceConfigModal";
+import { K, t } from "../i18n.js";
+import styles from "./SpaceNav.module.css";
+import { SpaceDetail } from "../interfaces.js";
+import { handleHttpError } from "@next-core/runtime";
 
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 export interface NoticeDropdownEvents {
@@ -37,54 +42,79 @@ const WrappedSpaceLogo = wrapBrick<SpaceLogo, SpaceLogoProps>(
 );
 
 export interface SpaceNavProps {
-  spaceName: string;
+  spaceDetail: SpaceDetail;
   notices?: NoticeItem[];
   onBack: () => void;
   onMembersClick: () => void;
   notifyCenterUrl: string;
   onMarkAllRead: () => void;
   onNoticeClick: (notice: NoticeItem) => void;
-  description?: string;
   onSpaceEdit?: () => void;
+  aiEmployeeId?: string;
 }
 
 export function SpaceNav(props: SpaceNavProps) {
   const {
-    spaceName,
+    spaceDetail,
     notices = [],
     notifyCenterUrl,
     onBack,
     onMembersClick,
     onMarkAllRead,
     onNoticeClick,
-    description,
     onSpaceEdit,
+    aiEmployeeId,
   } = props;
 
   const [showDescription, setShowDescription] = React.useState(false);
+  const [configModalVisible, setConfigModalVisible] = React.useState(false);
+  const [configSchema, setConfigSchema] = React.useState<any>(null);
 
   const handleQuestionClick = () => {
     setShowDescription(!showDescription);
   };
 
+  const handleSettingClick = async () => {
+    setConfigModalVisible(true);
+  };
+
+  const handleSave = () => {
+    // TODO: Call actual save API
+    setConfigModalVisible(false);
+  };
+
+  useEffect(() => {
+    const fetchSchema = async () => {
+      try {
+        const schema = await ElevoSpaceApi_getSpaceSchema(
+          spaceDetail.instanceId
+        );
+        setConfigSchema(schema);
+      } catch (error) {
+        handleHttpError(error);
+      }
+    };
+    fetchSchema();
+  }, [spaceDetail.instanceId]);
+
   return (
     <>
-      <header className="space-workbench-header">
-        <div className="header-left">
-          <button className="icon-button" onClick={onBack}>
+      <header className={styles.spaceWorkbenchHeader}>
+        <div className={styles.headerLeft}>
+          <button className={styles.iconButton} onClick={onBack}>
             <WrappedIcon lib="antd" icon="arrow-left" theme="outlined" />
           </button>
 
           <WrappedSpaceLogo size={32} />
 
-          <h1 className="space-title">{spaceName}</h1>
+          <h1 className={styles.spaceTitle}>{spaceDetail.name}</h1>
 
-          <div className="action-icons">
-            <button className="icon-button">
+          <div className={styles.actionIcons}>
+            <button className={styles.iconButton} onClick={handleSettingClick}>
               <WrappedIcon lib="antd" icon="setting" theme="outlined" />
             </button>
             <button
-              className={`icon-button ${showDescription ? "active" : ""}`}
+              className={`${styles.iconButton} ${showDescription ? styles.active : ""}`}
               onClick={handleQuestionClick}
             >
               <WrappedIcon lib="antd" icon="question-circle" theme="outlined" />
@@ -92,15 +122,15 @@ export function SpaceNav(props: SpaceNavProps) {
           </div>
         </div>
 
-        <div className="header-right">
+        <div className={styles.headerRight}>
           <WrappedIcon
-            className="icon-button"
+            className={styles.iconButton}
             lib="antd"
             icon="usergroup-add"
             onClick={onMembersClick}
           ></WrappedIcon>
 
-          <div className="divider" />
+          <div className={styles.divider} />
 
           <WrappedNoticeDropdown
             dataSource={notices}
@@ -114,17 +144,29 @@ export function SpaceNav(props: SpaceNavProps) {
         </div>
       </header>
 
-      {showDescription && description && (
-        <div className="space-description">
-          <div className="description-header">
-            <p className="description-title">{t(K.DESCRIPTION)}</p>
-            <button className="description-edit-button" onClick={onSpaceEdit}>
+      {showDescription && spaceDetail?.description && (
+        <div className={styles.spaceDescription}>
+          <div className={styles.descriptionHeader}>
+            <p className={styles.descriptionTitle}>{t(K.DESCRIPTION)}</p>
+            <button
+              className={styles.descriptionEditButton}
+              onClick={onSpaceEdit}
+            >
               <WrappedIcon lib="antd" icon="edit" theme="outlined" />
             </button>
           </div>
-          <p className="description-content">{description}</p>
+          <p className={styles.descriptionContent}>{spaceDetail.description}</p>
         </div>
       )}
+
+      <SpaceConfigModal
+        visible={configModalVisible}
+        configSchema={configSchema}
+        spaceDetail={spaceDetail}
+        aiEmployeeId={aiEmployeeId}
+        onSave={handleSave}
+        onCancel={() => setConfigModalVisible(false)}
+      />
     </>
   );
 }

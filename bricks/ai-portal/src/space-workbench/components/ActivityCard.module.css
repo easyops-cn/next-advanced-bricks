@@ -1,0 +1,87 @@
+/* ========== ActivityCard 样式 ========== */
+/* 参考设计图: node-id=125-2527 */
+.activityCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 1;
+  transition: all 0.2s;
+  min-width: 236px;
+  width: 236px;
+  height: 120px;
+}
+
+.activityCard:hover {
+  border-color: #a1b5ff;
+  box-shadow: 0 2px 8px rgba(37, 64, 255, 0.1);
+}
+
+/* 激活状态 */
+.activityCardActive {
+  border-color: #a1b5ff;
+}
+
+/* 内容区域（标题和描述） */
+.activityContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 活动标题 */
+.activityName {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 14px;
+  color: rgba(0, 0, 0, 0.85);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 激活状态的标题 */
+.activityNameActive {
+  color: #2540ff;
+}
+
+/* 活动描述 */
+.activityDescription {
+  font-family: "PingFang SC", sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 12.5px;
+  color: rgba(0, 0, 0, 0.45);
+  letter-spacing: 0.1172px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 负责人标签（基础样式） */
+.activityAssignee {
+  align-items: center;
+  padding: 2px 8px;
+  font-family: "PingFang SC", sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 14px;
+  letter-spacing: 0.1172px;
+  border-radius: 20px;
+  border: 1px solid;
+  width: fit-content;
+  background: rgba(37, 64, 255, 0.05);
+  border-color: rgba(30, 48, 204, 0.3);
+  color: #1e30cc;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

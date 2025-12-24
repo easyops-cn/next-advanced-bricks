@@ -5,14 +5,18 @@ import { ReactNextElement } from "@next-core/react-element";
 import "@next-core/theme";
 import { initializeI18n } from "@next-core/i18n";
 import { NS, locales } from "./i18n.js";
-import SpaceNavStyle from "./components/SpaceNav/SpaceNav.shadow.css";
-import SpaceGuideStyle from "./components/SpaceGuide/SpaceGuide.shadow.css";
-import styleText from "./styles.shadow.css";
+import {
+  NS as ChatStreamNS,
+  locales as ChatStreamLocales,
+} from "../chat-stream/i18n.js";
+import styles from "./styles.module.css";
 import type { NoticeItem } from "../notice-dropdown/index.js";
 import { SpaceDetail } from "./interfaces.js";
-import { SpaceNav } from "./components/SpaceNav/SpaceNav";
+import { SpaceNav } from "./components/SpaceNav.js";
+import { SpaceGuide } from "./components/SpaceGuide.js";
 
 initializeI18n(NS, locales);
+initializeI18n(ChatStreamNS, ChatStreamLocales);
 
 const { defineElement, property, event } = createDecorators();
 
@@ -27,7 +31,7 @@ export interface SpaceWorkbenchProps {
  */
 export
 @defineElement("ai-portal.space-workbench", {
-  styleTexts: [SpaceNavStyle, SpaceGuideStyle, styleText],
+  shadowOptions: false,
 })
 class SpaceWorkbench extends ReactNextElement implements SpaceWorkbenchProps {
   @property({ attribute: false })
@@ -91,18 +95,20 @@ function SpaceWorkbenchComponent(props: SpaceWorkbenchComponentProps) {
   } = props;
 
   return (
-    <div className="space-workbench-container">
-      <SpaceNav
-        spaceName={spaceDetail.name}
-        description={spaceDetail.description}
-        notifyCenterUrl={notifyCenterUrl}
-        notices={notices}
-        onBack={onBack}
-        onMembersClick={onMembersClick}
-        onMarkAllRead={onMarkAllRead}
-        onNoticeClick={onNoticeClick}
-        onSpaceEdit={onSpaceEdit}
-      />
+    <div className={styles.container}>
+      <div className={styles.spaceWorkbenchContainer}>
+        <SpaceNav
+          spaceDetail={spaceDetail}
+          notifyCenterUrl={notifyCenterUrl}
+          notices={notices}
+          onBack={onBack}
+          onMembersClick={onMembersClick}
+          onMarkAllRead={onMarkAllRead}
+          onNoticeClick={onNoticeClick}
+          onSpaceEdit={onSpaceEdit}
+        />
+        <SpaceGuide spaceDetail={spaceDetail} />
+      </div>
     </div>
   );
 }

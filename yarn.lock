@@ -3128,6 +3128,13 @@
   dependencies:
     "@next-core/http" "^1.0.0"
 
+"@next-api-sdk/llm-sdk@^1.6.2":
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/@next-api-sdk/llm-sdk/-/llm-sdk-1.6.2.tgz#a36b4cad25282a4d0fa437c9a486bdd9b52c79a8"
+  integrity sha512-DDuTXnyqWUU1ARu1twKooS41gg831s86vhk9NbPpzOs50eD5XzVtQBEQ6Yzf76wqeLsyTfEnZfweGCbgRuAKSQ==
+  dependencies:
+    "@next-core/http" "^1.0.0"
+
 "@next-api-sdk/micro-app-sdk@^1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@next-api-sdk/micro-app-sdk/-/micro-app-sdk-1.2.1.tgz#b3879de5e3b06e698c003d7eb4919392b3d710c6"

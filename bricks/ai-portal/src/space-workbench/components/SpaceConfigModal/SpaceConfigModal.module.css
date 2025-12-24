@@ -1,0 +1,23 @@
+/* SpaceConfigModal 主容器样式 */
+/* 参考设计图: https://www.figma.com/design/JujKftAewa3TTpa2ltq6M1 */
+
+.modalContent {
+  display: flex;
+  height: calc(100vh - 200px);
+  min-height: 500px;
+  max-height: 700px;
+  margin: -16px -20px;
+  gap: 0;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.aiAssistantArea {
+  flex: 1 0 360px;
+  max-width: 550px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 0 16px;
+  padding: 24px;
+}

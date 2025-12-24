@@ -1,0 +1,116 @@
+.knowledgesList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 16px 0;
+}
+
+.knowledgeCard {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 13px 1px 13px 13px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.knowledgeCard:hover {
+  border-color: #a1b5ff;
+  box-shadow: 0px 2px 4px rgba(37, 64, 255, 0.1);
+}
+
+.iconContainer {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: rgba(37, 64, 255, 0.05);
+}
+
+.fileIcon {
+  font-size: 20px;
+  color: #2540ff;
+}
+
+.knowledgeInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.knowledgeName {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.85);
+  font-family: "PingFang SC", sans-serif;
+  line-height: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.knowledgeMeta {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.45);
+  font-family: "PingFang SC", sans-serif;
+  line-height: 16px;
+}
+
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px 20px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.loadingIcon {
+  font-size: 16px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loadingText {
+  font-size: 14px;
+  font-family: "PingFang SC", sans-serif;
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.45);
+  font-family: "PingFang SC", sans-serif;
+}
+
+.addKnowledgeButton {
+  display: block;
+  margin: 0 10px;
+}
+
+.addKnowledgeButton::part(button) {
+  width: 100%;
+  margin-bottom: 5px;
+  background-color: transparent;
+}

@@ -246,6 +246,7 @@ export interface ExtraChatPayload {
   files?: UploadFileInfo[];
   cmd?: CommandPayload | null;
   aiEmployeeId?: string | null;
+  agentId?: string;
 }
 
 export interface GeneratedView {
@@ -288,6 +289,7 @@ export type CommandPayload =
   | CommandPayloadGoalPlan
   | CommandPayloadBusinessObjectManagement
   | CommandPayloadBusinessInstanceManagement
+  | CommandPayloadSpaceConfig
   | LegacyCommandPayloadServiceFlowStarting;
 
 export interface BaseCommandPayload {
@@ -302,6 +304,15 @@ export interface CommandPayloadServiceFlowStart extends BaseCommandPayload {
     spaceName?: string;
     flowInstanceId?: string;
     flowName?: string;
+  };
+}
+
+export interface CommandPayloadSpaceConfig extends BaseCommandPayload {
+  type: "space-config";
+  payload: {
+    spaceInstanceId: string;
+    ServiceObjectId?: string;
+    InstanceId?: string;
   };
 }
 

@@ -15,7 +15,8 @@ export function useConversationDetail(
   conversationId: string | null,
   initialRequest?: RequestStore | null,
   replay?: boolean,
-  replayDelay?: number
+  replayDelay?: number,
+  onData?: (data: ConversationPatch) => void
 ) {
   const [{ conversation, tasks, serviceFlows, errors }, dispatch] = useReducer(
     rootReducer,
@@ -167,6 +168,7 @@ export function useConversationDetail(
             payload: value,
             workspace: conversationId,
           });
+          onData?.(value);
           isInitial = false;
         }
       } catch (e) {
@@ -192,6 +194,7 @@ export function useConversationDetail(
         cmd: initialRequest.cmd,
         files: initialRequest.files,
         aiEmployeeId: initialRequest.aiEmployeeId,
+        agentId: initialRequest.agentId,
       });
     } else {
       makeRequest(null);

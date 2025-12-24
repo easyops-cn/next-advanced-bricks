@@ -1,18 +1,18 @@
-.space-workbench-header {
+.spaceWorkbenchHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px 24px;
 }
 
-.header-left {
+.headerLeft {
   display: flex;
   align-items: center;
   gap: 12px;
   flex: 1;
 }
 
-.space-icon {
+.spaceIcon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,13 +25,13 @@
   flex-shrink: 0;
 }
 
-.space-icon img {
+.spaceIcon img {
   width: 28px;
   height: 28px;
   object-fit: cover;
 }
 
-.space-title {
+.spaceTitle {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
@@ -39,14 +39,14 @@
   line-height: 28px;
 }
 
-.action-icons {
+.actionIcons {
   display: flex;
   align-items: center;
   gap: 4px;
   margin-left: 16px;
 }
 
-.header-right {
+.headerRight {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -59,7 +59,7 @@
   background-color: rgba(0, 0, 0, 0.15);
 }
 
-.icon-button {
+.iconButton {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -68,7 +68,6 @@
   padding: 0;
   border: none;
   border-radius: 8px;
-
   background: none;
   cursor: pointer;
   color: inherit;
@@ -76,29 +75,29 @@
   transition: background-color 0.2s ease;
 }
 
-.icon-button eo-icon {
+.iconButton :global(eo-icon) {
   font-size: 16px;
   color: rgba(0, 0, 0, 0.65);
   transition: color 0.2s ease;
 }
 
-.icon-button:hover {
+.iconButton:hover {
   background: rgba(0, 0, 0, 0.04);
 }
 
-.icon-button:active {
+.iconButton:active {
   background: rgba(0, 0, 0, 0.08);
 }
 
-.icon-button:focus {
+.iconButton:focus {
   outline: none;
 }
 
-.icon-button.active {
+.iconButton.active {
   background: rgba(0, 0, 0, 0.06);
 }
 
-.space-description {
+.spaceDescription {
   padding: 18px 20px;
   background-color: rgba(184, 187, 205, 0.2);
   border-radius: 12px;
@@ -133,13 +132,13 @@
   }
 }
 
-.description-header {
+.descriptionHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.description-title {
+.descriptionTitle {
   font-size: 14px;
   font-weight: 500;
   line-height: 15px;
@@ -149,7 +148,7 @@
   margin: 0;
 }
 
-.description-edit-button {
+.descriptionEditButton {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -165,29 +164,29 @@
   flex-shrink: 0;
 }
 
-.description-edit-button eo-icon {
+.descriptionEditButton :global(eo-icon) {
   font-size: 14px;
   color: rgba(0, 0, 0, 0.45);
   transition: color 0.2s ease;
 }
 
-.description-edit-button:hover {
+.descriptionEditButton:hover {
   background: rgba(0, 0, 0, 0.06);
 }
 
-.description-edit-button:hover eo-icon {
+.descriptionEditButton:hover :global(eo-icon) {
   color: rgba(0, 0, 0, 0.65);
 }
 
-.description-edit-button:active {
+.descriptionEditButton:active {
   background: rgba(0, 0, 0, 0.1);
 }
 
-.description-edit-button:focus {
+.descriptionEditButton:focus {
   outline: none;
 }
 
-.description-content {
+.descriptionContent {
   font-size: 14px;
   font-weight: 400;
   line-height: 22.75px;

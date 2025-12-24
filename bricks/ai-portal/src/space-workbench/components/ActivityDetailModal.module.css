@@ -1,0 +1,55 @@
+/* 内容容器 */
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 24px;
+}
+
+/* 区块容器 */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 区块标题 */
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.85);
+  line-height: 24px;
+}
+
+/* 活动描述内容 */
+.descriptionContent {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.85);
+  line-height: 24px;
+  padding: 12px;
+  border: 1px dashed rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+}
+
+/* 下拉框样式 */
+.select {
+  width: 100%;
+}
+
+/* HITL 规则项 */
+.hitlRuleItem {
+  padding: 12px;
+  background-color: #fffbe6;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #d48806;
+  line-height: 24px;
+}
+
+.emptyDescription {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.5);
+  line-height: 24px;
+  text-align: center;
+}
