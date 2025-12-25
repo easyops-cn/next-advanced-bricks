@@ -74,7 +74,7 @@
     "@next-shared/monaco-textmate": "^0.1.2",
     "@next-shared/spell-check": "^0.1.6",
     "comlink": "^4.4.2",
-    "monaco-editor": "^0.50.0",
+    "monaco-editor": "^0.55.1",
     "react": "0.0.0-experimental-ee8509801-20230117",
     "react-i18next": "^12.3.1",
     "yaml": "^2.5.1"
