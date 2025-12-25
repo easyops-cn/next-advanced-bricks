@@ -251,7 +251,7 @@ export function AddObjectInstModal({
             conversationId={conversationId}
             initialRequest={initialRequest}
             onData={handleData}
-            placeholder={t(K.PLEASE_ENTER)}
+            placeholder={t(K.ADD_INSTANCE_ASSISTANT_PLACEHOLDER)}
             help={{
               useBrick: {
                 brick: "ai-portal.chat-panel-welcome",

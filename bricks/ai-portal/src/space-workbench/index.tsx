@@ -145,7 +145,7 @@ function SpaceWorkbenchComponent(props: SpaceWorkbenchComponentProps) {
               onKnowledgeClick={onKnowledgeClick}
               onKnowledgeAdd={onKnowledgeAdd}
             />
-            <ChatArea spaceDetail={spaceDetail} />
+            <ChatArea />
           </div>
         </div>
       </div>

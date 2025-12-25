@@ -26,6 +26,8 @@ export enum K {
   SAVE_CONFIGURATION = "SAVE_CONFIGURATION",
   CANCEL = "CANCEL",
   PLEASE_ENTER = "PLEASE_ENTER",
+  CONFIG_ASSISTANT_PLACEHOLDER = "CONFIG_ASSISTANT_PLACEHOLDER",
+  ADD_INSTANCE_ASSISTANT_PLACEHOLDER = "ADD_INSTANCE_ASSISTANT_PLACEHOLDER",
   CONFIG_ASSISTANT_WELCOME = "CONFIG_ASSISTANT_WELCOME",
   KNOWLEDGE = "KNOWLEDGE",
   NO_KNOWLEDGE = "NO_KNOWLEDGE",
@@ -85,6 +87,7 @@ const en: Locale = {
   SAVE_CONFIGURATION: "Save Configuration",
   CANCEL: "Cancel",
   PLEASE_ENTER: "Please enter",
+  CONFIG_ASSISTANT_PLACEHOLDER: "Enter command to adjust configuration...",
   CONFIG_ASSISTANT_WELCOME:
     "Hello! I am the space configuration assistant. You can describe your business process, and I will automatically generate related business objects and flows for you. You can also explicitly tell me which business object or flow to modify.",
   KNOWLEDGE: "Knowledge",
@@ -118,6 +121,7 @@ const en: Locale = {
   EDIT_INSTANCE: "Edit",
   DELETE_INSTANCE: "Delete",
   NO_DETAIL_HINT: "You can select an instance on the left to view details",
+  ADD_INSTANCE_ASSISTANT_PLACEHOLDER: "Enter information to create instance...",
 };
 
 const zh: Locale = {
@@ -146,6 +150,8 @@ const zh: Locale = {
   SAVE_CONFIGURATION: "保存配置",
   CANCEL: "取消",
   PLEASE_ENTER: "请输入",
+  CONFIG_ASSISTANT_PLACEHOLDER: "输入指令调整配置...",
+  ADD_INSTANCE_ASSISTANT_PLACEHOLDER: "输入信息创建实例...",
   CONFIG_ASSISTANT_WELCOME:
     "您好！我是协作空间配置助手。您可以告诉我描述你的业务流程，我会为你自动生成相关的业务对象和业务流，你也可以明确让我修改哪个业务对象或业务流。",
   KNOWLEDGE: "知识",

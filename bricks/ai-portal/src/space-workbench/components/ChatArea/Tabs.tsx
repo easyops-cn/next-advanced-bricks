@@ -79,17 +79,15 @@ export const Tabs = ({
   return (
     <div className={styles.tabBar}>
       <div className={styles.tabList}>
-        {tabs.map((tab, index) => (
-          <React.Fragment key={tab.id}>
-            <Tab
-              id={tab.id}
-              title={tab.title}
-              active={activeTabId === tab.id}
-              onClick={onTabClick}
-              onClose={onTabClose}
-            />
-            {index < tabs.length - 1 && <div className={styles.divider} />}
-          </React.Fragment>
+        {tabs.map((tab) => (
+          <Tab
+            key={tab.id}
+            id={tab.id}
+            title={tab.title}
+            active={activeTabId === tab.id}
+            onClick={onTabClick}
+            onClose={onTabClose}
+          />
         ))}
       </div>
       <div className={styles.tabActions}>

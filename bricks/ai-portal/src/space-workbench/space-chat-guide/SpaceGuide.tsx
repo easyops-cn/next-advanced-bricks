@@ -92,8 +92,10 @@ export function SpaceGuide(props: SpaceGuideProps) {
       }
     };
 
-    fetchSpaceCapabilities();
-  }, [spaceDetail.instanceId, generateSpaceSummary]);
+    if (spaceDetail?.instanceId) {
+      fetchSpaceCapabilities();
+    }
+  }, [spaceDetail?.instanceId, generateSpaceSummary]);
 
   return (
     <div className="space-guide-container">
@@ -101,8 +103,8 @@ export function SpaceGuide(props: SpaceGuideProps) {
         <div className="space-logo">
           <WrappedSpaceLogo size={48} />
         </div>
-        <h1 className="guide-title">{spaceDetail.name}</h1>
-        <p className="guide-description">{spaceDetail.description}</p>
+        <h1 className="guide-title">{spaceDetail?.name}</h1>
+        <p className="guide-description">{spaceDetail?.description}</p>
       </div>
 
       <div className="guide-content">

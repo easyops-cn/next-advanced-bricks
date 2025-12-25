@@ -15,7 +15,6 @@ import {
 } from "../../../chat-panel/ChatPanelContent.js";
 import styles from "./ChatArea.module.css";
 import { K, t } from "../../i18n.js";
-import { SpaceDetail } from "../../interfaces.js";
 import type {
   ChatPayload,
   ConversationPatch,
@@ -23,7 +22,8 @@ import type {
 } from "../../../shared/interfaces.js";
 import { Tabs } from "./Tabs.js";
 import { WorkbenchContext } from "../../workbenchContext.js";
-
+import { HistoryDrawer } from "../HistoryDrawer.js";
+import { ConversationItem } from "../../interfaces.js";
 export interface SessionTab {
   id: string;
   title: string;
@@ -31,21 +31,19 @@ export interface SessionTab {
 }
 
 export interface ChatAreaProps {
-  spaceDetail: SpaceDetail;
-  onHistoryClick?: () => void;
   onChatSubmit?: (payload: ChatPayload) => void;
 }
 
 const STORAGE_KEY_ACTIVE_TABS = "space_workbench_active_tabs";
 
-export function ChatArea(props: ChatAreaProps) {
-  const { spaceDetail, onHistoryClick } = props;
+export function ChatArea() {
   const [tabs, setTabs] = useState<SessionTab[]>([]);
   const [activeTabId, setActiveTabId] = useState<string | null>(null);
   const [submitDisabled, setSubmitDisabled] = useState(false);
   const chatPanelRef = useRef<ChatPanelContentRef>(null);
+  const [historyDrawerVisible, setHistoryDrawerVisible] = useState(false);
 
-  const { uploadOptions } = useContext(WorkbenchContext);
+  const { uploadOptions, spaceDetail } = useContext(WorkbenchContext);
   const storage = useMemo(() => new JsonStorage(localStorage), []);
 
   // 存储每个 tab 对应的 conversationId 和 initialRequest
@@ -160,13 +158,6 @@ export function ChatArea(props: ChatAreaProps) {
               conversationId,
               initialRequest: {
                 ...payload,
-                agentId: "elevo-space_configuration",
-                cmd: {
-                  type: "space-config",
-                  payload: {
-                    spaceInstanceId: spaceDetail.instanceId,
-                  },
-                },
                 conversationId,
               },
             });
@@ -186,14 +177,66 @@ export function ChatArea(props: ChatAreaProps) {
         }
       }
     },
-    [activeTabId, tabsData, spaceDetail.instanceId]
+    [activeTabId, tabsData]
   );
 
   const handleData = useCallback((data: ConversationPatch) => {
-    // TODO: 处理对话数据
-    // eslint-disable-next-line no-console
-    console.log("conversation data:", data);
+    // 如果收到了会话标题,更新对应的 tab 标题
+    if (data.title && data.id) {
+      setTabs((prev) =>
+        prev.map((tab) =>
+          tab.conversationId === data.id ? { ...tab, title: data.title! } : tab
+        )
+      );
+    }
   }, []);
+
+  const handleHistoryClick = () => {
+    setHistoryDrawerVisible(true);
+  };
+
+  const handleHistoryDrawerClose = () => {
+    setHistoryDrawerVisible(false);
+  };
+
+  const handleConversationClick = useCallback(
+    (conversation: ConversationItem) => {
+      // 检查是否已存在该 conversationId 的 tab
+      const existingTab = tabs.find(
+        (tab) => tab.conversationId === conversation.conversationId
+      );
+
+      if (existingTab) {
+        // 如果已存在,直接激活该 tab
+        setActiveTabId(existingTab.id);
+      } else {
+        // 如果不存在,创建新的 tab
+        const newTab: SessionTab = {
+          id: `session_${Date.now()}`,
+          title: conversation.title || t(K.NEW_SESSION),
+          conversationId: conversation.conversationId || null,
+        };
+
+        // 添加新 tab
+        setTabs((prev) => [...prev, newTab]);
+        setActiveTabId(newTab.id);
+
+        // 初始化新 tab 的数据
+        setTabsData((prev) => {
+          const newMap = new Map(prev);
+          newMap.set(newTab.id, {
+            conversationId: conversation.conversationId || null,
+            initialRequest: null,
+          });
+          return newMap;
+        });
+      }
+
+      // 关闭历史抽屉
+      setHistoryDrawerVisible(false);
+    },
+    [tabs]
+  );
 
   const activeTab = tabs.find((tab) => tab.id === activeTabId);
   const activeTabData = activeTabId ? tabsData.get(activeTabId) : undefined;
@@ -206,7 +249,7 @@ export function ChatArea(props: ChatAreaProps) {
         onTabClick={handleTabClick}
         onTabClose={handleCloseTab}
         onAddSession={handleAddSession}
-        onHistoryClick={onHistoryClick}
+        onHistoryClick={handleHistoryClick}
       />
 
       <div className={styles.chatContent}>
@@ -225,13 +268,19 @@ export function ChatArea(props: ChatAreaProps) {
               useBrick: {
                 brick: "ai-portal.space-chat-guide",
                 properties: {
-                  spaceDetail: spaceDetail,
+                  spaceDetail,
                 },
               },
             }}
           />
         )}
       </div>
+
+      <HistoryDrawer
+        visible={historyDrawerVisible}
+        onClose={handleHistoryDrawerClose}
+        onConversationClick={handleConversationClick}
+      />
     </div>
   );
 }
