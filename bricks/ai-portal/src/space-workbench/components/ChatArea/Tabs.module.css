@@ -1,0 +1,192 @@
+.tabBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0;
+  padding: 8px 16px;
+  border-bottom: none;
+  min-height: 48px;
+  flex-shrink: 0;
+  position: relative;
+  background: #f5f5f5;
+}
+
+.tabList {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex: 1;
+  min-width: 0;
+  margin-right: 8px;
+}
+
+.tabList::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox */
+.tabList {
+  scrollbar-width: none;
+}
+
+/* IE and Edge */
+.tabList {
+  -ms-overflow-style: none;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  position: relative;
+  background: transparent;
+  border: none;
+  min-height: 28px;
+}
+
+/* tab 之间的分割线 - 从第二个开始在左侧显示 */
+.tab:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 14px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* 激活状态的 tab 不显示分割线 */
+.tab.active::before {
+  display: none;
+}
+
+/* 激活 tab 后一个 tab 的分割线也隐藏 */
+.tab.active + .tab::before {
+  display: none;
+}
+
+.tab:not(.active) {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.tab:not(.active):hover {
+  background: rgba(0, 0, 0, 0.04);
+  padding: 8px 12px;
+}
+
+.tab.active {
+  color: rgba(0, 0, 0, 0.85);
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  padding: 8px 12px;
+}
+
+.tabIcon {
+  font-size: 14px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+/* 状态指示器圆点 */
+.tabIcon::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.tab.hasStatus .tabIcon::before {
+  background: #ff8c00;
+}
+
+.tabTitle {
+  font-size: 14px;
+  font-weight: 400;
+  font-family: "PingFang SC", sans-serif;
+  line-height: 16px;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.45);
+  opacity: 1;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+.closeButton:hover {
+  color: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.closeButton :global(eo-icon) {
+  font-size: 11px;
+}
+
+.tabActions {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  padding-left: 8px;
+}
+
+.divider {
+  width: 1px;
+  height: 17px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 0 5px;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.actionButton:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.actionButton :global(eo-icon) {
+  font-size: 14px;
+}

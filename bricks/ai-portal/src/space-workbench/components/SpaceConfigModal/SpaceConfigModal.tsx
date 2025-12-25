@@ -194,7 +194,7 @@ export function SpaceConfigModal({
               conversationId={conversationId}
               initialRequest={initialRequest}
               onData={handleData}
-              placeholder={t(K.PLEASE_ENTER)}
+              placeholder={t(K.CONFIG_ASSISTANT_PLACEHOLDER)}
               help={{
                 useBrick: {
                   brick: "ai-portal.chat-panel-welcome",

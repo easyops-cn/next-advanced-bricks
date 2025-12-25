@@ -58,7 +58,7 @@ describe("SpaceGuide", () => {
     const { container } = render(<SpaceGuide spaceDetail={mockSpaceDetail} />);
 
     await waitFor(() => {
-      const cards = container.querySelectorAll('[class*="guideCard"]');
+      const cards = container.querySelectorAll(".guide-card");
       expect(cards.length).toBe(3);
     });
   });
@@ -70,7 +70,7 @@ describe("SpaceGuide", () => {
     );
 
     await waitFor(() => {
-      const cards = container.querySelectorAll('[class*="guideCard"]');
+      const cards = container.querySelectorAll(".guide-card");
       if (cards.length > 0) {
         fireEvent.click(cards[0]);
         expect(onCardClick).toHaveBeenCalledWith(0);
@@ -88,7 +88,14 @@ describe("SpaceGuide", () => {
     await waitFor(() => {
       expect(ElevoSpaceApi_generateSpaceCapabilities).toHaveBeenCalledWith(
         "test-space-123",
-        { forceRefresh: true }
+        {
+          forceRefresh: false,
+        },
+        {
+          interceptorParams: {
+            ignoreLoadingBar: true,
+          },
+        }
       );
     });
   });

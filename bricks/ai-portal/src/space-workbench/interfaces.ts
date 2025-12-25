@@ -4,17 +4,6 @@ export interface SpaceDetail {
   description: string;
 }
 
-export interface Knowledge {
-  instanceId: string;
-  name: string;
-  description?: string;
-  time?: number;
-  user?: string;
-  openApiUrl?: string;
-  state?: string;
-  content?: string;
-}
-
 export type AttributeType =
   | "string"
   | "text"
@@ -142,4 +131,27 @@ export interface InstanceItem {
   instanceId?: string;
   /** 实例属性数据 */
   [key: string]: any;
+}
+
+export interface ConversationItem {
+  /** 会话ID */
+  conversationId?: string;
+  /** 项目ID */
+  projectId?: string;
+  /** 会话标题 */
+  title?: string;
+  /** 会话状态 */
+  state?: string;
+  /** 创建时间(时间戳) */
+  startTime?: number;
+  /** 会话关联的目标ID */
+  goalInstanceId?: string;
+  /** 创建者的用户名 */
+  username?: string;
+  /** 会话描述 */
+  description?: string;
+  /** 更新时间(时间戳) */
+  updatedAt?: number;
+  /** 绑定的业务流实例id列表 */
+  serviceFlowIds?: string[];
 }

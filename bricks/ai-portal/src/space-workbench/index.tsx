@@ -12,8 +12,13 @@ import {
 import styles from "./styles.module.css";
 import type { NoticeItem } from "../notice-dropdown/index.js";
 import { SpaceDetail } from "./interfaces.js";
+import type { UploadOptions } from "../shared/interfaces.js";
 import { SpaceNav } from "./components/SpaceNav.js";
-import { SpaceGuide } from "./components/SpaceGuide.js";
+import { SpaceSidebar } from "./components/SpaceSidebar.js";
+import { ChatArea } from "./components/ChatArea/ChatArea.js";
+
+import { WorkbenchContext } from "./workbenchContext.js";
+import type { KnowledgeItem } from "./interfaces.js";
 
 initializeI18n(NS, locales);
 initializeI18n(ChatStreamNS, ChatStreamLocales);
@@ -24,6 +29,8 @@ export interface SpaceWorkbenchProps {
   notifyCenterUrl: string;
   spaceDetail: SpaceDetail;
   notices?: NoticeItem[];
+  knowledges?: KnowledgeItem[];
+  uploadOptions?: UploadOptions;
 }
 
 /**
@@ -38,10 +45,16 @@ class SpaceWorkbench extends ReactNextElement implements SpaceWorkbenchProps {
   accessor notices: NoticeItem[] | undefined;
 
   @property({ attribute: false })
+  accessor knowledges: KnowledgeItem[] | undefined;
+
+  @property({ attribute: false })
   accessor spaceDetail!: SpaceDetail;
 
   @property()
   accessor notifyCenterUrl!: string;
+
+  @property({ attribute: false })
+  accessor uploadOptions: UploadOptions | undefined;
 
   @event({ type: "go.back" })
   accessor #_goBackEvent!: EventEmitter<void>;
@@ -58,17 +71,29 @@ class SpaceWorkbench extends ReactNextElement implements SpaceWorkbenchProps {
   @event({ type: "space.edit" })
   accessor #_spaceEditEvent!: EventEmitter<void>;
 
+  @event({ type: "knowledge.click" })
+  accessor #_knowledgeClickEvent!: EventEmitter<KnowledgeItem>;
+
+  @event({ type: "knowledge.add" })
+  accessor #_knowledgeAddEvent!: EventEmitter<void>;
+
   render() {
     return (
       <SpaceWorkbenchComponent
         spaceDetail={this.spaceDetail}
+        knowledges={this.knowledges}
         notices={this.notices}
+        uploadOptions={this.uploadOptions}
         notifyCenterUrl={this.notifyCenterUrl}
         onBack={() => this.#_goBackEvent.emit()}
         onMembersClick={() => this.#_membersClickEvent.emit()}
         onNoticeClick={(notice) => this.#_noticeClickEvent.emit(notice)}
         onMarkAllRead={() => this.#_markAllReadEvent.emit()}
         onSpaceEdit={() => this.#_spaceEditEvent.emit()}
+        onKnowledgeClick={(knowledge) =>
+          this.#_knowledgeClickEvent.emit(knowledge)
+        }
+        onKnowledgeAdd={() => this.#_knowledgeAddEvent.emit()}
       />
     );
   }
@@ -80,35 +105,50 @@ interface SpaceWorkbenchComponentProps extends SpaceWorkbenchProps {
   onMarkAllRead: () => void;
   onNoticeClick: (notice: NoticeItem) => void;
   onSpaceEdit: () => void;
+  onKnowledgeClick: (knowledge: KnowledgeItem) => void;
+  onKnowledgeAdd: () => void;
 }
 
 function SpaceWorkbenchComponent(props: SpaceWorkbenchComponentProps) {
   const {
     spaceDetail,
+    knowledges,
     notices = [],
     notifyCenterUrl,
+    uploadOptions,
     onBack,
     onMembersClick,
     onMarkAllRead,
     onNoticeClick,
     onSpaceEdit,
+    onKnowledgeClick,
+    onKnowledgeAdd,
   } = props;
 
   return (
-    <div className={styles.container}>
-      <div className={styles.spaceWorkbenchContainer}>
-        <SpaceNav
-          spaceDetail={spaceDetail}
-          notifyCenterUrl={notifyCenterUrl}
-          notices={notices}
-          onBack={onBack}
-          onMembersClick={onMembersClick}
-          onMarkAllRead={onMarkAllRead}
-          onNoticeClick={onNoticeClick}
-          onSpaceEdit={onSpaceEdit}
-        />
-        <SpaceGuide spaceDetail={spaceDetail} />
+    <WorkbenchContext.Provider value={{ spaceDetail, uploadOptions }}>
+      <div className={styles.container}>
+        <div className={styles.spaceWorkbenchContainer}>
+          <SpaceNav
+            spaceDetail={spaceDetail}
+            notifyCenterUrl={notifyCenterUrl}
+            notices={notices}
+            onBack={onBack}
+            onMembersClick={onMembersClick}
+            onMarkAllRead={onMarkAllRead}
+            onNoticeClick={onNoticeClick}
+            onSpaceEdit={onSpaceEdit}
+          />
+          <div className={styles.spaceWorkbenchContent}>
+            <SpaceSidebar
+              knowledgeList={knowledges}
+              onKnowledgeClick={onKnowledgeClick}
+              onKnowledgeAdd={onKnowledgeAdd}
+            />
+            <ChatArea />
+          </div>
+        </div>
       </div>
-    </div>
+    </WorkbenchContext.Provider>
   );
 }

@@ -1,0 +1,114 @@
+.instanceDetailWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px;
+  min-height: 100%;
+}
+
+.instanceDetailCard {
+  width: 100%;
+  max-width: 800px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.instanceDetailTitle {
+  margin: 0;
+  padding: 20px 24px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #0f172b;
+  border-bottom: 1px solid #e5e6eb;
+}
+
+.instanceDetailContainer {
+  padding: 24px;
+}
+
+.instanceDetailList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.instanceDetailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.instanceDetailLabel {
+  color: #1d2129;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.instanceDetailValue {
+  color: #1d2129;
+}
+
+.instanceDetailSection {
+  margin-top: 32px;
+}
+
+.instanceDetailSectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  color: #1d2129;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.instanceDetailSectionIcon {
+  font-size: 16px;
+}
+
+.instanceDetailFileList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.instanceDetailFileItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background-color: #f7f8fa;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.instanceDetailFileItem:hover {
+  background-color: #ebedf0;
+}
+
+.instanceDetailFileIcon {
+  font-size: 18px;
+  color: #f24c25;
+}
+
+.instanceDetailFileName {
+  color: #1d2129;
+  flex: 1;
+  font-size: 14px;
+}
+
+.instanceDetailTextContent {
+  padding: 16px;
+  background: #f7f8fa;
+  border-radius: 4px;
+  color: #1d2129;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 14px;
+}
+
+.emptyState {
+  margin-top: 62px;
+}

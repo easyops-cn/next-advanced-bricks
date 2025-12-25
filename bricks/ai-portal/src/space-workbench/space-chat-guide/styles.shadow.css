@@ -1,0 +1,220 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.space-guide-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  padding-top: 103px;
+}
+
+.guide-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.space-logo {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 24px;
+  background: #2540ff;
+  border-radius: 16px;
+  box-shadow:
+    0px 10px 15px -3px rgba(37, 64, 255, 0.2),
+    0px 4px 6px -4px rgba(37, 64, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.guide-title {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
+  color: rgba(0, 0, 0, 0.88);
+  margin: 0 0 24px 0;
+  letter-spacing: 0.0703px;
+}
+
+.guide-description {
+  font-size: 16px;
+  line-height: 26px;
+  color: rgba(0, 0, 0, 0.65);
+  margin: 0;
+  max-width: 448px;
+  text-align: center;
+  letter-spacing: -0.3125px;
+}
+
+.guide-content {
+  width: 100%;
+  max-width: 672px;
+  background: rgba(248, 250, 252, 0.5);
+  border-radius: 16px;
+  padding: 25px;
+  margin-top: 24px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: #0f172b;
+  margin-bottom: 16px;
+  letter-spacing: -0.1504px;
+}
+
+.section-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+/* 确保在足够宽度时最多显示3列 */
+@media (min-width: 640px) {
+  .cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.guide-card {
+  height: 161px;
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: white;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.guide-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.card-content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 15px 15px 15px;
+}
+
+.card-icon-container {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.card-icon-container.blue {
+  background: rgba(37, 64, 255, 0.1);
+}
+
+.card-icon-container.orange {
+  background: rgba(255, 152, 0, 0.1);
+}
+
+.card-icon-container.green {
+  background: rgba(52, 199, 89, 0.1);
+}
+
+.card-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: rgba(0, 0, 0, 0.88);
+  margin: 0 0 8px 0;
+  letter-spacing: -0.1504px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-description {
+  font-size: 12px;
+  line-height: 18px;
+  color: rgba(0, 0, 0, 0.45);
+  margin: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  /* 设置最大高度为3行的高度 */
+  max-height: 54px; /* 18px * 3 = 54px */
+  word-break: break-word;
+}
+
+.loading-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.loading-dots span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.45);
+  animation: loading-dot-blink 1.4s infinite;
+}
+
+.loading-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes loading-dot-blink {
+  0%,
+  60%,
+  100% {
+    opacity: 0.2;
+  }
+  30% {
+    opacity: 1;
+  }
+}

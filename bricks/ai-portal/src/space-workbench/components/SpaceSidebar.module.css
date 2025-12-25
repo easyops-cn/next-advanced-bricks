@@ -1,0 +1,276 @@
+.spaceSidebar {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  height: 100%;
+  min-height: 0;
+  background: rgba(248, 250, 252, 0.9);
+  border-right: 1px solid #fff;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.tabList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 4px;
+  margin: 12px 16px 0;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 20px;
+  gap: 0;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.tabButton {
+  height: 30px;
+  border: none;
+  background: transparent;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 5px 9px;
+  font-family: "PingFang SC", sans-serif;
+}
+
+.tabButton.active {
+  background: #fff;
+  color: #2540ff;
+  font-weight: 500;
+  box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.08);
+}
+
+.tabButton:hover:not(.active) {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.sidebarContent {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px;
+}
+
+.businessObjectList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  min-height: 0;
+}
+
+.objectGroup {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 1px;
+  flex-shrink: 0;
+}
+
+.objectGroup.expanded {
+  flex: 1;
+  min-height: 0;
+}
+
+.objectHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 28px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.objectHeader:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  .addIcon {
+    display: inline-block;
+  }
+}
+
+.objectName {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.65);
+  font-family: "PingFang SC", sans-serif;
+  line-height: 14px;
+}
+
+.objectHeaderActions {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.addIcon {
+  display: none;
+}
+.expandIcon,
+.addIcon {
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.45);
+  transition: transform 0.2s ease;
+
+  &:hover {
+    color: #2540ff;
+  }
+}
+
+.instanceList {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 8px;
+  gap: 8px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.instanceCard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  height: 70px;
+  user-select: none;
+}
+
+.instanceCard:hover {
+  border-color: #a1b5ff;
+  box-shadow: 0px 2px 4px rgba(37, 64, 255, 0.1);
+}
+
+.instanceHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 11px;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.instanceName {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.85);
+  font-family: "PingFang SC", sans-serif;
+  line-height: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.instanceTime {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.45);
+  line-height: 14.286px;
+  letter-spacing: 0.1172px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.instanceStatus {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.statusTag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 18.281px;
+  padding: 2px 8px;
+  background: rgba(37, 64, 255, 0.05);
+  border-radius: 33554400px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #1e30cc;
+  font-family: "PingFang SC", sans-serif;
+  line-height: 14px;
+  letter-spacing: 0.1172px;
+  box-shadow: inset 0px 0px 0px 1px rgba(37, 64, 255, 0.2);
+}
+
+.knowledgeList {
+  padding: 20px 0;
+}
+
+.emptyState {
+  text-align: center;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.45);
+  padding: 20px;
+}
+
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.loadingIcon {
+  font-size: 16px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loadingText {
+  font-size: 14px;
+  font-family: "PingFang SC", sans-serif;
+}
+
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 8px;
+}
+
+.errorContainer:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.errorText {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.65);
+  font-family: "PingFang SC", sans-serif;
+}
+
+.retryText {
+  font-size: 12px;
+  color: #2540ff;
+  font-family: "PingFang SC", sans-serif;
+}

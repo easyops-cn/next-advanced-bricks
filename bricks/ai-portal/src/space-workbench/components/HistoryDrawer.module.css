@@ -1,0 +1,107 @@
+.drawer :global(.ant-drawer-body) {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.historyList {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.historyItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.historyItem:hover {
+  border-color: #a1b5ff;
+  box-shadow: 0px 2px 4px rgba(37, 64, 255, 0.1);
+}
+
+.historyItemHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.historyItemTitle {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.85);
+  font-family: "PingFang SC", sans-serif;
+  line-height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.historyItemPreview {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.45);
+  font-family: "PingFang SC", sans-serif;
+  line-height: 18px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.historyItemFooter {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.timeIcon {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.historyItemTime {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.45);
+  font-family: "Inter", "Noto Sans JP", "Noto Sans SC", sans-serif;
+  line-height: 15px;
+}
+
+.loadMoreContainer {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.emptyStateIcon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.emptyStateText {
+  font-size: 14px;
+  font-family: "PingFang SC", sans-serif;
+}
