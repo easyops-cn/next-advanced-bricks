@@ -58,6 +58,20 @@ export enum K {
   EDIT_INSTANCE = "EDIT_INSTANCE",
   DELETE_INSTANCE = "DELETE_INSTANCE",
   NO_DETAIL_HINT = "NO_DETAIL_HINT",
+  ACTIVITY_RECORD = "ACTIVITY_RECORD",
+  NO_ACTIVITY_RECORD = "NO_ACTIVITY_RECORD",
+  NO_ACTIVITY_RECORD_DESCRIPTION = "NO_ACTIVITY_RECORD_DESCRIPTION",
+  INSTANCE_DETAIL_CHAT_PLACEHOLDER = "INSTANCE_DETAIL_CHAT_PLACEHOLDER",
+  NO_SERVICE_FLOWS = "NO_SERVICE_FLOWS",
+  INITIATING_SERVICE_FLOW = "INITIATING_SERVICE_FLOW",
+  ADD_COMMENT_PLACEHOLDER = "ADD_COMMENT_PLACEHOLDER",
+  CREATED_INSTANCE = "CREATED_INSTANCE",
+  EDITED_INSTANCE = "EDITED_INSTANCE",
+  COMMENTED = "COMMENTED",
+  STARTED_CONVERSATION = "STARTED_CONVERSATION",
+  CHANGED_STATUS_TO = "CHANGED_STATUS_TO",
+  CONVERSATION = "CONVERSATION",
+  STATUS_CHANGED = "STATUS_CHANGED",
 }
 
 const en: Locale = {
@@ -122,6 +136,22 @@ const en: Locale = {
   DELETE_INSTANCE: "Delete",
   NO_DETAIL_HINT: "You can select an instance on the left to view details",
   ADD_INSTANCE_ASSISTANT_PLACEHOLDER: "Enter information to create instance...",
+  ACTIVITY_RECORD: "Activity Record",
+  NO_ACTIVITY_RECORD: "No Activity Record",
+  NO_ACTIVITY_RECORD_DESCRIPTION:
+    "Activity records will appear here after interactions",
+  INSTANCE_DETAIL_CHAT_PLACEHOLDER:
+    "Chat about this instance, ask questions or make updates...",
+  NO_SERVICE_FLOWS: "No Service Flows",
+  INITIATING_SERVICE_FLOW: "Starting serviceflow: {{ name }}",
+  ADD_COMMENT_PLACEHOLDER: "Add comment...",
+  CREATED_INSTANCE: "created instance",
+  EDITED_INSTANCE: "edited instance",
+  COMMENTED: "commented",
+  STARTED_CONVERSATION: "started conversation",
+  CHANGED_STATUS_TO: "changed status to ",
+  CONVERSATION: "Conversation",
+  STATUS_CHANGED: "Status Changed",
 };
 
 const zh: Locale = {
@@ -184,6 +214,20 @@ const zh: Locale = {
   EDIT_INSTANCE: "编辑",
   DELETE_INSTANCE: "删除",
   NO_DETAIL_HINT: "你可在左侧选择实例查看详情",
+  ACTIVITY_RECORD: "活动记录",
+  NO_ACTIVITY_RECORD: "暂无活动记录",
+  NO_ACTIVITY_RECORD_DESCRIPTION: "交互后的活动记录将显示在这里",
+  INSTANCE_DETAIL_CHAT_PLACEHOLDER: "与此实例对话，提问或更新...",
+  NO_SERVICE_FLOWS: "暂无业务流",
+  INITIATING_SERVICE_FLOW: "发起业务流：{{ name }}",
+  ADD_COMMENT_PLACEHOLDER: "添加评论...",
+  CREATED_INSTANCE: "创建了实例",
+  EDITED_INSTANCE: "编辑实例",
+  COMMENTED: "评论",
+  STARTED_CONVERSATION: "发起会话",
+  CHANGED_STATUS_TO: "将状态改为",
+  CONVERSATION: "会话",
+  STATUS_CHANGED: "状态变更",
 };
 
 export const NS = "bricks/ai-portal/space-workbench";

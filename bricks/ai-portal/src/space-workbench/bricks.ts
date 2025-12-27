@@ -17,6 +17,7 @@ import type {
 import type { IconButton, IconButtonProps } from "../icon-button";
 import { TagProps, Tag } from "@next-bricks/basic/tag";
 import { Input, InputProps } from "@next-bricks/form/input";
+import { Textarea, TextareaProps } from "@next-bricks/form/textarea";
 
 export const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
@@ -56,5 +57,20 @@ export const WrappedInput = wrapBrick<
   InputEvents,
   InputEventsMap
 >("eo-input", {
+  onValueChange: "change",
+});
+
+export interface TextareaEvents {
+  change: CustomEvent<string>;
+}
+export interface TextareaEventsMap {
+  onValueChange: "change";
+}
+export const WrappedTextarea = wrapBrick<
+  Textarea,
+  TextareaProps,
+  TextareaEvents,
+  TextareaEventsMap
+>("eo-textarea", {
   onValueChange: "change",
 });
