@@ -1,7 +1,7 @@
 .spaceSidebar {
   display: flex;
   flex-direction: column;
-  width: 320px;
+  flex: 0 0 320px;
   height: 100%;
   min-height: 0;
   background: rgba(248, 250, 252, 0.9);
@@ -149,6 +149,11 @@
 .instanceCard:hover {
   border-color: #a1b5ff;
   box-shadow: 0px 2px 4px rgba(37, 64, 255, 0.1);
+}
+
+.instanceCard.active {
+  border-color: #a1b5ff;
+  box-shadow: 0px 2px 4px rgba(37, 64, 255, 0.2);
 }
 
 .instanceHeader {

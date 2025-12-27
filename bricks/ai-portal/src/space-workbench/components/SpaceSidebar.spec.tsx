@@ -385,6 +385,10 @@ describe("BusinessCategoryPanel", () => {
         expect.objectContaining({
           instanceId: "inst-1",
           name: "实例1",
+        }),
+        expect.objectContaining({
+          objectId: "obj-1",
+          objectName: "对象1",
         })
       );
     }
@@ -438,7 +442,7 @@ describe("BusinessCategoryPanel", () => {
     (ElevoObjectApi_listServiceObjects as jest.Mock).mockResolvedValueOnce({
       list: mockBusinessObjects,
     } as never);
-    // 第一次获取实例失败
+    // 第一次获取实例失败,第二次成功
     (ElevoObjectApi_listServiceObjectInstances as jest.Mock)
       .mockRejectedValueOnce(new Error("加载失败") as never)
       .mockResolvedValueOnce({ list: mockInstances } as never);
@@ -452,21 +456,12 @@ describe("BusinessCategoryPanel", () => {
       expect(screen.getByText("LOAD_FAILED")).toBeInTheDocument();
     });
 
-    // 清除 mock 调用记录
-    jest.clearAllMocks();
-
-    // 点击错误区域重试 - 由于是第一个对象,已经是展开状态,点击会先折叠然后再展开
+    // 点击错误区域重试
     const errorContainer = screen.getByText("LOAD_FAILED").parentElement;
     if (errorContainer) {
       fireEvent.click(errorContainer);
 
-      // 由于点击会折叠对象,不会立即重新加载
-      // 需要再次点击对象头部来重新展开
-      await waitFor(() => {
-        const obj1 = screen.getByText("对象1");
-        fireEvent.click(obj1);
-      });
-
+      // 等待重试成功,显示实例
       await waitFor(() => {
         expect(screen.getByText("实例1")).toBeInTheDocument();
       });
