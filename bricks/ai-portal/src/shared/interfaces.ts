@@ -240,6 +240,7 @@ export interface UploadOptions {
 
 export interface ChatPayload extends ExtraChatPayload {
   content: string;
+  spaceId?: string;
 }
 
 export interface ExtraChatPayload {

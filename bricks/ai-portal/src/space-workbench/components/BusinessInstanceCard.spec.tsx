@@ -38,10 +38,10 @@ jest.mock("./EmptyState", () => ({
   ),
 }));
 
-import { BusinessInstanceDetail } from "./BusinessInstanceDetail";
+import { BusinessInstanceCard } from "./BusinessInstanceCard";
 import type { Attribute } from "../interfaces";
 
-describe("BusinessInstanceDetail", () => {
+describe("BusinessInstanceCard", () => {
   const mockAttrs: Attribute[] = [
     {
       id: "name",
@@ -89,7 +89,7 @@ describe("BusinessInstanceDetail", () => {
 
   test("应该在没有实例时显示空状态", () => {
     render(
-      <BusinessInstanceDetail
+      <BusinessInstanceCard
         instance={null}
         attrs={mockAttrs}
         onAttrChange={mockOnAttrChange}
@@ -103,7 +103,7 @@ describe("BusinessInstanceDetail", () => {
 
   test("应该在没有属性时显示空状态", () => {
     render(
-      <BusinessInstanceDetail
+      <BusinessInstanceCard
         instance={mockInstance}
         attrs={null as any}
         onAttrChange={mockOnAttrChange}
@@ -115,9 +115,10 @@ describe("BusinessInstanceDetail", () => {
 
   test("应该渲染实例详情标题", () => {
     render(
-      <BusinessInstanceDetail
+      <BusinessInstanceCard
         instance={mockInstance}
         attrs={mockAttrs}
+        title="INSTANCE_DETAIL"
         onAttrChange={mockOnAttrChange}
       />
     );
@@ -127,7 +128,7 @@ describe("BusinessInstanceDetail", () => {
 
   test("应该为 string 类型的属性渲染可编辑的输入框", () => {
     render(
-      <BusinessInstanceDetail
+      <BusinessInstanceCard
         instance={mockInstance}
         attrs={mockAttrs}
         onAttrChange={mockOnAttrChange}
@@ -140,7 +141,7 @@ describe("BusinessInstanceDetail", () => {
 
   test("应该在输入框值变化时调用 onAttrChange", () => {
     render(
-      <BusinessInstanceDetail
+      <BusinessInstanceCard
         instance={mockInstance}
         attrs={mockAttrs}
         onAttrChange={mockOnAttrChange}
@@ -155,7 +156,7 @@ describe("BusinessInstanceDetail", () => {
 
   test("应该为 text 类型的属性渲染单独的区域", () => {
     render(
-      <BusinessInstanceDetail
+      <BusinessInstanceCard
         instance={mockInstance}
         attrs={mockAttrs}
         onAttrChange={mockOnAttrChange}
@@ -167,7 +168,7 @@ describe("BusinessInstanceDetail", () => {
 
   test("应该为 file 类型的属性渲染文件列表", () => {
     render(
-      <BusinessInstanceDetail
+      <BusinessInstanceCard
         instance={mockInstance}
         attrs={mockAttrs}
         onAttrChange={mockOnAttrChange}
@@ -199,7 +200,7 @@ describe("BusinessInstanceDetail", () => {
     ];
 
     render(
-      <BusinessInstanceDetail
+      <BusinessInstanceCard
         instance={instanceWithMultipleFiles}
         attrs={attrsWithFileArray}
         onAttrChange={mockOnAttrChange}
@@ -212,7 +213,7 @@ describe("BusinessInstanceDetail", () => {
 
   test("应该为 enum 类型渲染标签", () => {
     render(
-      <BusinessInstanceDetail
+      <BusinessInstanceCard
         instance={mockInstance}
         attrs={mockAttrs}
         onAttrChange={mockOnAttrChange}
@@ -242,7 +243,7 @@ describe("BusinessInstanceDetail", () => {
     ];
 
     render(
-      <BusinessInstanceDetail
+      <BusinessInstanceCard
         instance={instanceWithMultipleEnums}
         attrs={attrsWithEnumArray}
         onAttrChange={mockOnAttrChange}
@@ -260,7 +261,7 @@ describe("BusinessInstanceDetail", () => {
     };
 
     render(
-      <BusinessInstanceDetail
+      <BusinessInstanceCard
         instance={instanceWithoutFile}
         attrs={mockAttrs}
         onAttrChange={mockOnAttrChange}
@@ -277,7 +278,7 @@ describe("BusinessInstanceDetail", () => {
     };
 
     render(
-      <BusinessInstanceDetail
+      <BusinessInstanceCard
         instance={instanceWithoutText}
         attrs={mockAttrs}
         onAttrChange={mockOnAttrChange}
@@ -331,7 +332,7 @@ describe("BusinessInstanceDetail", () => {
     };
 
     render(
-      <BusinessInstanceDetail
+      <BusinessInstanceCard
         instance={allTypesInstance}
         attrs={allTypesAttrs}
         onAttrChange={mockOnAttrChange}
@@ -348,7 +349,7 @@ describe("BusinessInstanceDetail", () => {
 
   test("应该在没有 onAttrChange 时不抛出错误", () => {
     const { container } = render(
-      <BusinessInstanceDetail instance={mockInstance} attrs={mockAttrs} />
+      <BusinessInstanceCard instance={mockInstance} attrs={mockAttrs} />
     );
 
     const input = container.querySelector("input");

@@ -66,6 +66,7 @@
 .detailArea {
   flex: 66;
   display: flex;
+  padding: 24px 16px;
   flex-direction: column;
   background: rgba(184, 187, 205, 0.15);
   overflow-y: auto;

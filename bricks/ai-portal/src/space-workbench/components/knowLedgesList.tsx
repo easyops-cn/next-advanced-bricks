@@ -7,6 +7,7 @@ import type {
 import { K, t } from "../i18n.js";
 import styles from "./knowLedgesList.module.css";
 import type { Button, ButtonProps } from "@next-bricks/basic/button";
+import { EmptyState } from "./EmptyState.js";
 import moment from "moment";
 import type { KnowledgeItem } from "../interfaces.js";
 
@@ -88,9 +89,7 @@ export function KnowledgesList(props: KnowledgesListProps) {
         {t(K.ADD_KNOWLEDGE)}
       </WrappedButton>
       {!knowledges.length ? (
-        <div className={styles.emptyState}>
-          <span>{t(K.NO_KNOWLEDGE)}</span>
-        </div>
+        <EmptyState title={t(K.NO_KNOWLEDGE)} />
       ) : (
         <div className={styles.knowledgesList}>
           {knowledges.map((knowledge) => {

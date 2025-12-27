@@ -7,6 +7,7 @@ import {
   ElevoSpaceApi_createActivityLog,
 } from "@next-api-sdk/llm-sdk";
 import { WrappedTextarea, WrappedIcon } from "../../bricks";
+import { EmptyState } from "../EmptyState";
 import type { RequestStore } from "../../../shared/interfaces";
 import { K, t } from "../../i18n";
 import styles from "./ActivityLogs.module.css";
@@ -198,6 +199,8 @@ export function ActivityLogs({
       {/* 活动记录列表 */}
       {loading ? (
         <div className={styles.loadingState}>{t(K.LOADING)}</div>
+      ) : activities.length === 0 ? (
+        <EmptyState className={styles.empty} title={t(K.NO_ACTIVITY_RECORD)} />
       ) : (
         <div className={styles.listContainer}>
           {activities.map((activity) => {

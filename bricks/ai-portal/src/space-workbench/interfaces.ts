@@ -155,3 +155,10 @@ export interface ConversationItem {
   /** 绑定的业务流实例id列表 */
   serviceFlowIds?: string[];
 }
+
+export interface InstanceUpdateTrigger {
+  objectId: string;
+  instanceId: string;
+  updatedData: Partial<BusinessInstance>;
+  timestamp: number;
+}

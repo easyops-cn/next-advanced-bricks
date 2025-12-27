@@ -1,0 +1,192 @@
+.instanceCardWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  min-height: 100%;
+}
+
+.instanceCard {
+  width: 100%;
+  max-width: 800px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.instanceCardTitle {
+  margin: 0;
+  padding: 20px 24px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #0f172b;
+  border-bottom: 1px solid #e5e6eb;
+}
+
+/* InstFieldsView 组件样式 */
+.fieldsViewContainer {
+  padding: 24px;
+}
+
+.fieldsViewList {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 24px 32px;
+}
+
+/* 响应式多列布局 */
+@media (min-width: 768px) {
+  .fieldsViewList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .fieldsViewList {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.fieldsViewItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* 标签行 - 包含标签名称和编辑按钮 */
+.fieldsViewLabelRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fieldsViewLabel {
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.fieldsViewValue {
+  color: #1d2129;
+  font-size: 14px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+/* 编辑按钮样式 */
+.editButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  color: #86909c;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+}
+
+.editButton:hover {
+  background-color: #f2f3f5;
+  color: #165dff;
+}
+
+.editButton:active {
+  background-color: #e5e6eb;
+}
+
+/* 字段文本值 */
+.fieldTextValue {
+  flex: 1;
+  color: #1d2129;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.fieldTextValue:empty::before {
+  content: "-";
+  color: #c9cdd4;
+}
+
+/* 文件类型字段 - 占满整行 */
+.fieldsViewItem.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.fieldsViewSection {
+  margin-top: 32px;
+}
+
+.fieldsViewSectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  color: #1d2129;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.fieldsViewSectionIcon {
+  font-size: 16px;
+}
+
+.fieldsViewFileList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fieldsViewFileItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background-color: #f7f8fa;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.fieldsViewFileItem:hover {
+  background-color: #ebedf0;
+}
+
+.fieldsViewFileIcon {
+  font-size: 18px;
+  color: #f24c25;
+}
+
+.fieldsViewFileName {
+  color: #1d2129;
+  flex: 1;
+  font-size: 14px;
+}
+
+.fieldsViewTextContent {
+  padding: 16px;
+  background: #f7f8fa;
+  border-radius: 4px;
+  color: #1d2129;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 14px;
+}
+
+.emptyState {
+  margin-top: 62px;
+}
