@@ -53,3 +53,24 @@
   line-height: 24px;
   text-align: center;
 }
+
+/* 只读展示容器 */
+.readOnlyDisplay {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 4px;
+}
+
+/* 只读图标样式 */
+.readOnlyIcon {
+  font-size: 28px;
+  color: #1890ff;
+}
+
+/* 只读文本样式 */
+.readOnlyText {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.65);
+  line-height: 22px;
+}

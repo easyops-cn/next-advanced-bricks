@@ -72,6 +72,7 @@ export enum K {
   CHANGED_STATUS_TO = "CHANGED_STATUS_TO",
   CONVERSATION = "CONVERSATION",
   STATUS_CHANGED = "STATUS_CHANGED",
+  NOT_SET = "NOT_SET",
 }
 
 const en: Locale = {
@@ -152,6 +153,7 @@ const en: Locale = {
   CHANGED_STATUS_TO: "changed status to ",
   CONVERSATION: "Conversation",
   STATUS_CHANGED: "Status Changed",
+  NOT_SET: "Not Set",
 };
 
 const zh: Locale = {
@@ -228,6 +230,7 @@ const zh: Locale = {
   CHANGED_STATUS_TO: "将状态改为",
   CONVERSATION: "会话",
   STATUS_CHANGED: "状态变更",
+  NOT_SET: "未设置",
 };
 
 export const NS = "bricks/ai-portal/space-workbench";

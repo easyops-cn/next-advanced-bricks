@@ -1,15 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import { wrapBrick } from "@next-core/react-element";
 import { EmptyState } from "./EmptyState.js";
 import type {
   GeneralIcon,
   GeneralIconProps,
 } from "@next-bricks/icons/general-icon";
+import type {
+  Modal,
+  ModalProps,
+  ModalEvents,
+  ModalMapEvents,
+} from "@next-bricks/containers/modal";
+import { BusinessFlowPreview } from "./BusinessFlowPreview.js";
 import styles from "./ServiceFlows.module.css";
 import { K, t } from "../i18n.js";
 import { BusinessFlow } from "../interfaces.js";
 
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
+
+const WrappedModal = wrapBrick<
+  Modal,
+  ModalProps & { noFooter?: boolean },
+  ModalEvents,
+  ModalMapEvents
+>("eo-modal", {
+  onClose: "close",
+  onConfirm: "confirm",
+  onCancel: "cancel",
+  onOpen: "open",
+});
 
 export interface ServiceFlowsProps {
   businessFlows?: BusinessFlow[];
@@ -19,12 +38,22 @@ export interface ServiceFlowsProps {
 export function ServiceFlows(props: ServiceFlowsProps) {
   const { businessFlows = [], onFlowClick } = props;
 
+  const [selectedFlow, setSelectedFlow] = useState<BusinessFlow | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const handleFlowClick = (flow: BusinessFlow) => {
     onFlowClick?.(flow);
   };
 
   const handleDetailClick = (flow: BusinessFlow, e: React.MouseEvent) => {
     e.stopPropagation();
+    setSelectedFlow(flow);
+    setIsModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+    setSelectedFlow(null);
   };
 
   return (
@@ -75,6 +104,23 @@ export function ServiceFlows(props: ServiceFlowsProps) {
           ))}
         </div>
       )}
+
+      {/* 业务流详情模态框 */}
+      <WrappedModal
+        modalTitle={selectedFlow?.name}
+        width={700}
+        visible={isModalVisible}
+        onCancel={handleCloseModal}
+        onClose={handleCloseModal}
+        noFooter
+        maskClosable
+      >
+        <BusinessFlowPreview
+          activityOnlyRead
+          data={selectedFlow ?? undefined}
+          viewType="visual"
+        />
+      </WrappedModal>
     </div>
   );
 }
