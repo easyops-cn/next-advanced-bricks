@@ -53,6 +53,8 @@ export const ChatArea = forwardRef<ChatAreaRef, ChatAreaProps>(
     const chatPanelRef = useRef<ChatPanelContentRef>(null);
     const [historyDrawerVisible, setHistoryDrawerVisible] = useState(false);
 
+    const processedConversationIdsRef = useRef<Set<string>>(new Set());
+
     const { uploadOptions, spaceDetail } = useContext(WorkbenchContext);
     const storage = useMemo(() => new JsonStorage(localStorage), []);
     const storageActiveTabsKey = `${STORAGE_KEY_ACTIVE_TABS}_${spaceDetail.instanceId}`;
@@ -140,6 +142,7 @@ export const ChatArea = forwardRef<ChatAreaRef, ChatAreaProps>(
       e.stopPropagation();
 
       const tabIndex = tabs.findIndex((tab) => tab.id === tabId);
+      const closingTab = tabs.find((tab) => tab.id === tabId);
       const newTabs = tabs.filter((tab) => tab.id !== tabId);
 
       setTabs(newTabs);
@@ -150,6 +153,11 @@ export const ChatArea = forwardRef<ChatAreaRef, ChatAreaProps>(
         newMap.delete(tabId);
         return newMap;
       });
+
+      // 清理 processedConversationIdsRef
+      if (closingTab?.conversationId) {
+        processedConversationIdsRef.current.delete(closingTab.conversationId);
+      }
 
       // 如果关闭的是当前活跃的 tab，切换到相邻的 tab
       if (activeTabId === tabId && newTabs.length > 0) {
@@ -272,25 +280,11 @@ export const ChatArea = forwardRef<ChatAreaRef, ChatAreaProps>(
         );
       }
 
-      // 当收到第一个数据时,清空 initialRequest,避免切换 tab 时重复发送
-      // 这样后续重新挂载时会进入 resume 模式
+      // 当收到数据时,将该 conversationId 标记为已处理
+      // 使用 ref 而不是 state，这样不会触发重新渲染，也不会中断 SSE 流
+      // 当组件重新挂载时，我们会根据这个 ref 决定传 null 还是 initialRequest
       if (data.id) {
-        setTabsData((prev) => {
-          const newMap = new Map(prev);
-          // 找到对应的 tab
-          for (const [tabId, tabData] of newMap.entries()) {
-            if (
-              tabData.conversationId === data.id &&
-              tabData.initialRequest !== null
-            ) {
-              newMap.set(tabId, {
-                ...tabData,
-                initialRequest: null,
-              });
-            }
-          }
-          return newMap;
-        });
+        processedConversationIdsRef.current.add(data.id);
       }
     }, []);
 
@@ -344,6 +338,26 @@ export const ChatArea = forwardRef<ChatAreaRef, ChatAreaProps>(
     const activeTab = tabs.find((tab) => tab.id === activeTabId);
     const activeTabData = activeTabId ? tabsData.get(activeTabId) : undefined;
 
+    // 计算有效的 initialRequest
+    // 如果该 conversationId 已经被处理过（已发送过初始消息），则返回 null
+    // 这样组件重新挂载时会进入 resume 模式
+    const effectiveInitialRequest = useMemo(() => {
+      const conversationId = activeTabData?.conversationId;
+      const initialRequest = activeTabData?.initialRequest;
+
+      // 如果没有 conversationId 或 initialRequest，直接返回 null
+      if (!conversationId || !initialRequest) {
+        return null;
+      }
+
+      // 如果该 conversationId 已经被处理过，返回 null 进入 resume 模式
+      if (processedConversationIdsRef.current.has(conversationId)) {
+        return null;
+      }
+
+      return initialRequest;
+    }, [activeTabData?.conversationId, activeTabData?.initialRequest]);
+
     return (
       <div className={styles.chatArea}>
         <Tabs
@@ -361,7 +375,7 @@ export const ChatArea = forwardRef<ChatAreaRef, ChatAreaProps>(
               key={activeTab.id}
               ref={chatPanelRef}
               conversationId={activeTabData?.conversationId || null}
-              initialRequest={activeTabData?.initialRequest || null}
+              initialRequest={effectiveInitialRequest}
               uploadOptions={uploadOptions}
               submitDisabled={submitDisabled}
               onChatSubmit={handleChatSubmit}

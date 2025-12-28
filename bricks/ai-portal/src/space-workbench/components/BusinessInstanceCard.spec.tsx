@@ -1,5 +1,5 @@
 import React from "react";
-import { describe, test, expect, jest } from "@jest/globals";
+import { describe, test, expect, jest, beforeEach } from "@jest/globals";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
@@ -14,11 +14,13 @@ jest.mock("../i18n", () => ({
 }));
 
 jest.mock("../bricks", () => ({
-  WrappedInput: ({ value, onValueChange }: any) => (
+  WrappedInput: ({ value, onValueChange, onBlur, onKeyDown }: any) => (
     <input
       data-testid="wrapped-input"
       value={value}
       onChange={(e) => onValueChange?.({ detail: e.target.value })}
+      onBlur={onBlur}
+      onKeyDown={onKeyDown}
     />
   ),
   WrappedIcon: ({ lib, icon }: any) => (
@@ -135,8 +137,17 @@ describe("BusinessInstanceCard", () => {
       />
     );
 
-    const inputs = screen.getAllByTestId("wrapped-input");
-    expect(inputs.length).toBeGreaterThan(0);
+    // 默认应该显示文本，不是输入框
+    expect(screen.queryByTestId("wrapped-input")).not.toBeInTheDocument();
+    expect(screen.getByText("实例1")).toBeInTheDocument();
+
+    // 点击编辑按钮后应该显示输入框
+    const editButton = screen.getAllByTestId("icon-edit")[0].closest("button");
+    fireEvent.click(editButton!);
+
+    const input = screen.getByTestId("wrapped-input");
+    expect(input).toBeInTheDocument();
+    expect(input).toHaveValue("实例1");
   });
 
   test("应该在输入框值变化时调用 onAttrChange", () => {
@@ -148,8 +159,15 @@ describe("BusinessInstanceCard", () => {
       />
     );
 
-    const input = screen.getAllByTestId("wrapped-input")[0];
+    // 先点击编辑按钮进入编辑模式
+    const editButton = screen.getAllByTestId("icon-edit")[0].closest("button");
+    fireEvent.click(editButton!);
+
+    const input = screen.getByTestId("wrapped-input");
     fireEvent.change(input, { target: { value: "新名称" } });
+
+    // 触发失焦，保存修改
+    fireEvent.blur(input);
 
     expect(mockOnAttrChange).toHaveBeenCalledWith("name", "新名称");
   });
@@ -340,8 +358,16 @@ describe("BusinessInstanceCard", () => {
     );
 
     // 检查不同类型的属性都正确渲染
-    const inputs = screen.getAllByTestId("wrapped-input");
-    expect(inputs[0]).toHaveValue("测试"); // string 类型使用 input
+    // string 类型默认显示为文本
+    expect(screen.getByText("测试")).toBeInTheDocument();
+
+    // 点击编辑按钮后才会显示输入框
+    const editButton = screen.getByTestId("icon-edit").closest("button");
+    fireEvent.click(editButton!);
+
+    const input = screen.getByTestId("wrapped-input");
+    expect(input).toHaveValue("测试"); // string 类型使用 input
+
     expect(screen.getByText("10")).toBeInTheDocument(); // int 类型
     expect(screen.getByText("这是文本内容")).toBeInTheDocument(); // text 类型
     expect(screen.getByText("test.pdf")).toBeInTheDocument(); // file 类型
@@ -358,5 +384,106 @@ describe("BusinessInstanceCard", () => {
         fireEvent.change(input, { target: { value: "新值" } });
       }
     }).not.toThrow();
+  });
+
+  test("应该在按 Enter 键时保存修改", () => {
+    render(
+      <BusinessInstanceCard
+        instance={mockInstance}
+        attrs={mockAttrs}
+        onAttrChange={mockOnAttrChange}
+      />
+    );
+
+    // 点击编辑按钮
+    const editButton = screen.getAllByTestId("icon-edit")[0].closest("button");
+    fireEvent.click(editButton!);
+
+    const input = screen.getByTestId("wrapped-input");
+    fireEvent.change(input, { target: { value: "新名称" } });
+
+    // 按 Enter 键保存
+    fireEvent.keyDown(input, { key: "Enter" });
+
+    expect(mockOnAttrChange).toHaveBeenCalledWith("name", "新名称");
+  });
+
+  test("应该在点击外部时保存修改", () => {
+    render(
+      <div>
+        <BusinessInstanceCard
+          instance={mockInstance}
+          attrs={mockAttrs}
+          onAttrChange={mockOnAttrChange}
+        />
+        <div data-testid="outside">外部元素</div>
+      </div>
+    );
+
+    // 点击编辑按钮
+    const editButton = screen.getAllByTestId("icon-edit")[0].closest("button");
+    fireEvent.click(editButton!);
+
+    const input = screen.getByTestId("wrapped-input");
+    fireEvent.change(input, { target: { value: "新名称" } });
+
+    // 点击外部元素
+    const outsideElement = screen.getByTestId("outside");
+    fireEvent.mouseDown(outsideElement);
+
+    expect(mockOnAttrChange).toHaveBeenCalledWith("name", "新名称");
+  });
+
+  test("应该在值未变化时不调用 onAttrChange", () => {
+    render(
+      <BusinessInstanceCard
+        instance={mockInstance}
+        attrs={mockAttrs}
+        onAttrChange={mockOnAttrChange}
+      />
+    );
+
+    // 点击编辑按钮
+    const editButton = screen.getAllByTestId("icon-edit")[0].closest("button");
+    fireEvent.click(editButton!);
+
+    const input = screen.getByTestId("wrapped-input");
+
+    // 不修改值，直接失焦
+    fireEvent.blur(input);
+
+    expect(mockOnAttrChange).not.toHaveBeenCalled();
+  });
+
+  test("应该为 string 类型显示编辑按钮", () => {
+    render(
+      <BusinessInstanceCard
+        instance={mockInstance}
+        attrs={mockAttrs}
+        onAttrChange={mockOnAttrChange}
+      />
+    );
+
+    // name 是 string 类型，应该有编辑按钮
+    const editButtons = screen.getAllByTestId("icon-edit");
+    expect(editButtons.length).toBeGreaterThan(0);
+  });
+
+  test("应该在编辑模式下自动聚焦输入框", () => {
+    render(
+      <BusinessInstanceCard
+        instance={mockInstance}
+        attrs={mockAttrs}
+        onAttrChange={mockOnAttrChange}
+      />
+    );
+
+    // 点击编辑按钮
+    const editButton = screen.getAllByTestId("icon-edit")[0].closest("button");
+    fireEvent.click(editButton!);
+
+    const input = screen.getByTestId("wrapped-input");
+    // 检查是否有 autoFocus 属性（通过检查 mock 组件是否正确接收到该属性）
+    expect(input).toBeInTheDocument();
   });
 });

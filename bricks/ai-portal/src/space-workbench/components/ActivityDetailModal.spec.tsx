@@ -359,7 +359,7 @@ describe("ActivityDetailModal", () => {
   });
 
   test("应该处理 API 错误", async () => {
-    mockListEmployees.mockRejectedValueOnce(new Error("API Error"));
+    mockListEmployees.mockRejectedValueOnce(new Error("API Error") as never);
 
     render(<ActivityDetailModal {...defaultProps} />);
 

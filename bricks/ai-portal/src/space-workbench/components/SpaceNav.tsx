@@ -78,11 +78,6 @@ export function SpaceNav(props: SpaceNavProps) {
     setConfigModalVisible(true);
   };
 
-  const handleSave = () => {
-    // TODO: Call actual save API
-    setConfigModalVisible(false);
-  };
-
   useEffect(() => {
     const fetchSchema = async () => {
       try {
@@ -164,7 +159,6 @@ export function SpaceNav(props: SpaceNavProps) {
         configSchema={configSchema}
         spaceDetail={spaceDetail}
         aiEmployeeId={aiEmployeeId}
-        onSave={handleSave}
         onCancel={() => setConfigModalVisible(false)}
       />
     </>
