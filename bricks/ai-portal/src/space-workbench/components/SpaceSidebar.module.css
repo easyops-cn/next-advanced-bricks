@@ -68,6 +68,7 @@
   flex-direction: column;
   padding-bottom: 1px;
   flex-shrink: 0;
+  transition: flex 0.2s ease;
 }
 
 .objectGroup.expanded {
@@ -118,6 +119,14 @@
   &:hover {
     color: #2540ff;
   }
+}
+
+.objectGroup.expanded .expandIcon {
+  transform: rotate(0deg);
+}
+
+.objectGroup:not(.expanded) .expandIcon {
+  transform: rotate(-90deg);
 }
 
 .instanceList {

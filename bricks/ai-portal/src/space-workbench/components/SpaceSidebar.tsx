@@ -116,7 +116,8 @@ export function SpaceSidebar(props: SpaceSidebarProps) {
 interface BusinessObjectItemProps {
   businessObject: BusinessObject;
   activeInstanceId: string | null;
-  defaultExpanded?: boolean;
+  isExpanded: boolean;
+  onToggleExpand: (objectId: string) => void;
   onInstanceClick: (
     instance: BusinessInstance,
     businessObject: BusinessObject
@@ -140,14 +141,14 @@ const BusinessObjectItem = forwardRef<
   {
     businessObject,
     activeInstanceId,
-    defaultExpanded = false,
+    isExpanded,
+    onToggleExpand,
     onInstanceClick,
     onAddClick,
     getShowAttrIds,
   },
   ref
 ) {
-  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [instances, setInstances] = useState<BusinessInstance[]>([]);
@@ -209,7 +210,7 @@ const BusinessObjectItem = forwardRef<
 
   // 切换展开/折叠
   const handleHeaderClick = () => {
-    setIsExpanded(!isExpanded);
+    onToggleExpand(businessObject.objectId);
   };
 
   // 处理添加按钮点击
@@ -344,6 +345,9 @@ function BusinessCategoryPanel({
     null
   );
 
+  // 用于控制当前展开的分类
+  const [expandedObjectId, setExpandedObjectId] = useState<string | null>(null);
+
   // 用于存储子组件的 ref
   const businessObjectItemRefs = useRef<
     Record<string, BusinessObjectItemRef | null>
@@ -368,6 +372,10 @@ function BusinessCategoryPanel({
           }
         );
         setBusinessObjects(res.list as BusinessObject[]);
+        // 默认展开第一个分类
+        if (res.list && res.list.length > 0) {
+          setExpandedObjectId(res.list[0].objectId || null);
+        }
       } catch (error) {
         handleHttpError(error);
       } finally {
@@ -420,6 +428,11 @@ function BusinessCategoryPanel({
     setSelectedObject(null);
   };
 
+  // 处理分类展开/折叠切换
+  const handleToggleExpand = useCallback((objectId: string) => {
+    setExpandedObjectId((prevId) => (prevId === objectId ? null : objectId));
+  }, []);
+
   // 监听外部的 instanceUpdateTrigger,调用子组件的 updateInstance 方法
   useEffect(() => {
     if (!instanceUpdateTrigger) return;
@@ -456,13 +469,14 @@ function BusinessCategoryPanel({
   return (
     <>
       <div className={styles.businessObjectList}>
-        {businessObjects.map((obj, index) => (
+        {businessObjects.map((obj) => (
           <BusinessObjectItem
             key={obj.objectId}
             ref={(ref) => (businessObjectItemRefs.current[obj.objectId] = ref)}
             businessObject={obj}
             activeInstanceId={activeInstanceId}
-            defaultExpanded={index === 0} // 第一个对象默认展开
+            isExpanded={expandedObjectId === obj.objectId}
+            onToggleExpand={handleToggleExpand}
             onInstanceClick={handleInstanceClick}
             onAddClick={handleAddInstance}
             getShowAttrIds={getShowAttrIds}
