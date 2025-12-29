@@ -100,7 +100,7 @@ export function InstFieldsView({
 
       if (isEditing) {
         return (
-          <div ref={editingContainerRef}>
+          <div ref={editingContainerRef} className={styles.inputWrapper}>
             <WrappedInput
               value={displayValue}
               themeVariant="elevo"

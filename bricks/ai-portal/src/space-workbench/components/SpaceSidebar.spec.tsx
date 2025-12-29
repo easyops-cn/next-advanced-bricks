@@ -180,6 +180,65 @@ describe("SpaceSidebar", () => {
       expect(screen.getByText("知识2")).toBeInTheDocument();
     }
   });
+
+  test("应该在点击知识时调用 onKnowledgeClick", () => {
+    render(
+      <SpaceSidebar
+        knowledgeList={mockKnowledgeList}
+        onInstanceClick={mockOnInstanceClick}
+        onKnowledgeClick={mockOnKnowledgeClick}
+        onKnowledgeAdd={mockOnKnowledgeAdd}
+      />
+    );
+
+    // 切换到知识标签页
+    const buttons = screen.getAllByRole("button");
+    const knowledgeButton = buttons.find((btn) =>
+      btn.textContent?.includes("KNOWLEDGE")
+    );
+
+    if (knowledgeButton) {
+      fireEvent.click(knowledgeButton);
+
+      // 点击第一个知识
+      const knowledge1 = screen.getByText("知识1");
+      fireEvent.click(knowledge1);
+
+      expect(mockOnKnowledgeClick).toHaveBeenCalledWith(
+        expect.objectContaining({
+          instanceId: "k-1",
+          name: "知识1",
+        })
+      );
+    }
+  });
+
+  test("应该在点击添加知识按钮时调用 onKnowledgeAdd", () => {
+    render(
+      <SpaceSidebar
+        knowledgeList={mockKnowledgeList}
+        onInstanceClick={mockOnInstanceClick}
+        onKnowledgeClick={mockOnKnowledgeClick}
+        onKnowledgeAdd={mockOnKnowledgeAdd}
+      />
+    );
+
+    // 切换到知识标签页
+    const buttons = screen.getAllByRole("button");
+    const knowledgeButton = buttons.find((btn) =>
+      btn.textContent?.includes("KNOWLEDGE")
+    );
+
+    if (knowledgeButton) {
+      fireEvent.click(knowledgeButton);
+
+      // 点击添加知识按钮
+      const addButton = screen.getByText("添加知识");
+      fireEvent.click(addButton);
+
+      expect(mockOnKnowledgeAdd).toHaveBeenCalled();
+    }
+  });
 });
 
 describe("BusinessCategoryPanel", () => {
@@ -466,5 +525,214 @@ describe("BusinessCategoryPanel", () => {
         expect(screen.getByText("实例1")).toBeInTheDocument();
       });
     }
+  });
+
+  test("应该在展开已有缓存数据的对象时不重新加载", async () => {
+    render(
+      <SpaceSidebar knowledgeList={[]} onInstanceClick={mockOnInstanceClick} />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("对象1")).toBeInTheDocument();
+    });
+
+    // 确认第一次加载实例
+    expect(ElevoObjectApi_listServiceObjectInstances).toHaveBeenCalledTimes(1);
+
+    // 折叠第一个对象
+    const obj1 = screen.getByText("对象1");
+    fireEvent.click(obj1);
+
+    await waitFor(() => {
+      const instanceCards = document.querySelectorAll(
+        '[class*="instanceCard"]'
+      );
+      expect(instanceCards.length).toBe(0);
+    });
+
+    // 再次展开第一个对象 - 应该使用缓存,不重新加载
+    fireEvent.click(obj1);
+
+    await waitFor(() => {
+      expect(screen.getByText("实例1")).toBeInTheDocument();
+    });
+
+    // 验证没有额外的 API 调用
+    expect(ElevoObjectApi_listServiceObjectInstances).toHaveBeenCalledTimes(1);
+  });
+
+  test("应该在取消添加模态框时清理状态", async () => {
+    render(
+      <SpaceSidebar knowledgeList={[]} onInstanceClick={mockOnInstanceClick} />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("对象1")).toBeInTheDocument();
+    });
+
+    // 打开模态框
+    const plusIcons = screen.getAllByTestId("icon-plus");
+    if (plusIcons.length > 0) {
+      fireEvent.click(plusIcons[0]);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("add-modal")).toBeInTheDocument();
+      });
+
+      // 点击取消
+      const cancelButton = screen.getByText("取消");
+      fireEvent.click(cancelButton);
+
+      await waitFor(() => {
+        expect(screen.queryByTestId("add-modal")).not.toBeInTheDocument();
+      });
+    }
+  });
+
+  test("应该在点击实例时更新 activeInstanceId", async () => {
+    const { container } = render(
+      <SpaceSidebar knowledgeList={[]} onInstanceClick={mockOnInstanceClick} />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("实例1")).toBeInTheDocument();
+    });
+
+    const instanceCards = container.querySelectorAll('[class*="instanceCard"]');
+    expect(instanceCards.length).toBeGreaterThan(0);
+
+    // 点击第一个实例
+    fireEvent.click(instanceCards[0]);
+
+    await waitFor(() => {
+      expect(instanceCards[0].className).toContain("active");
+    });
+
+    // 点击第二个实例
+    if (instanceCards.length > 1) {
+      fireEvent.click(instanceCards[1]);
+
+      await waitFor(() => {
+        expect(instanceCards[1].className).toContain("active");
+        expect(instanceCards[0].className).not.toContain("active");
+      });
+    }
+  });
+
+  test("应该正确处理 instanceUpdateTrigger", async () => {
+    const { rerender } = render(
+      <SpaceSidebar knowledgeList={[]} onInstanceClick={mockOnInstanceClick} />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("实例1")).toBeInTheDocument();
+    });
+
+    // 触发实例更新
+    const updateTrigger = {
+      objectId: "obj-1",
+      instanceId: "inst-1",
+      updatedData: { name: "更新后的实例1" },
+      timestamp: 1234567890000,
+    };
+
+    rerender(
+      <SpaceSidebar
+        knowledgeList={[]}
+        onInstanceClick={mockOnInstanceClick}
+        instanceUpdateTrigger={updateTrigger}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("更新后的实例1")).toBeInTheDocument();
+    });
+  });
+
+  test("应该显示实例的状态标签", async () => {
+    const { container } = render(
+      <SpaceSidebar knowledgeList={[]} onInstanceClick={mockOnInstanceClick} />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("实例1")).toBeInTheDocument();
+    });
+
+    // 检查状态标签是否存在
+    const statusTags = container.querySelectorAll('[class*="statusTag"]');
+    expect(statusTags.length).toBeGreaterThan(0);
+    expect(statusTags[0].textContent).toBe("active");
+  });
+
+  test("应该正确显示实例的时间信息", async () => {
+    render(
+      <SpaceSidebar knowledgeList={[]} onInstanceClick={mockOnInstanceClick} />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("实例1")).toBeInTheDocument();
+    });
+
+    // 验证时间显示功能被调用
+    expect(screen.getAllByText("2小时前").length).toBeGreaterThan(0);
+  });
+
+  test("应该在没有状态属性时不显示状态标签", async () => {
+    const objectsWithoutStatus = [
+      {
+        objectId: "obj-1",
+        objectName: "对象1",
+        description: "描述1",
+        attributes: [
+          {
+            id: "name",
+            name: "名称",
+            description: "",
+            required: true,
+            type: "string" as const,
+          },
+        ],
+      },
+    ];
+
+    (ElevoObjectApi_listServiceObjects as jest.Mock).mockResolvedValue({
+      list: objectsWithoutStatus,
+    } as never);
+
+    const { container } = render(
+      <SpaceSidebar knowledgeList={[]} onInstanceClick={mockOnInstanceClick} />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("实例1")).toBeInTheDocument();
+    });
+
+    // 检查状态标签不存在
+    const statusTags = container.querySelectorAll('[class*="statusTag"]');
+    expect(statusTags.length).toBe(0);
+  });
+
+  test("应该正确处理展开图标的切换", async () => {
+    render(
+      <SpaceSidebar knowledgeList={[]} onInstanceClick={mockOnInstanceClick} />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("对象1")).toBeInTheDocument();
+    });
+
+    // 第一个对象默认展开,应该显示 chevron-down
+    const chevronDownIcons = screen.getAllByTestId("icon-chevron-down");
+    expect(chevronDownIcons.length).toBeGreaterThan(0);
+
+    // 点击折叠
+    const obj1 = screen.getByText("对象1");
+    fireEvent.click(obj1);
+
+    await waitFor(() => {
+      // 折叠后应该有 chevron-right 图标
+      const chevronRightIcons = screen.getAllByTestId("icon-chevron-right");
+      expect(chevronRightIcons.length).toBeGreaterThan(0);
+    });
   });
 });

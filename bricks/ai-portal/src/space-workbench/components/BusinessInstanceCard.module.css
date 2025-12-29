@@ -190,3 +190,11 @@
 .emptyState {
   margin-top: 62px;
 }
+
+.inputWrapper {
+  width: 100%;
+
+  eo-input {
+    width: 100%;
+  }
+}
