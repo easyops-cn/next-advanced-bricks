@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { handleHttpError } from "@next-core/runtime";
 import { auth } from "@next-core/easyops-runtime";
 import { humanizeTime, HumanizeTimeFormat } from "@next-shared/datetime";
@@ -48,6 +48,9 @@ export function ActivityLogs({
   const [submitDisabled, setSubmitDisabled] = useState(false);
   const [commentValue, setCommentValue] = useState("");
 
+  const listContainerRef = useRef<HTMLDivElement>(null);
+  const isSubmittingCommentRef = useRef(false);
+
   const fetchActivities = useCallback(async () => {
     setLoading(true);
     try {
@@ -69,12 +72,20 @@ export function ActivityLogs({
     fetchActivities();
   }, [fetchActivities]);
 
+  useEffect(() => {
+    if (isSubmittingCommentRef.current && listContainerRef.current) {
+      listContainerRef.current.scrollTop = 0;
+      isSubmittingCommentRef.current = false;
+    }
+  }, [activities]);
+
   const handleCommentSubmit = useCallback(async () => {
     if (!commentValue.trim()) {
       return;
     }
 
     setSubmitDisabled(true);
+    isSubmittingCommentRef.current = true;
     try {
       const authInfo = auth.getAuth();
       const username = authInfo.username || "Anonymous";
@@ -91,6 +102,7 @@ export function ActivityLogs({
       // 刷新列表
       await fetchActivities();
     } catch (error) {
+      isSubmittingCommentRef.current = false;
       handleHttpError(error);
     } finally {
       setSubmitDisabled(false);
@@ -202,7 +214,7 @@ export function ActivityLogs({
       ) : activities.length === 0 ? (
         <EmptyState className={styles.empty} title={t(K.NO_ACTIVITY_RECORD)} />
       ) : (
-        <div className={styles.listContainer}>
+        <div className={styles.listContainer} ref={listContainerRef}>
           {activities.map((activity) => {
             const clickable = isClickable(activity);
             const iconType = getIconType(activity);

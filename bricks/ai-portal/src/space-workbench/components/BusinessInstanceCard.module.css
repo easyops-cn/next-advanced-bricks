@@ -147,8 +147,8 @@
 
 .fieldsViewFileList {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .fieldsViewFileItem {
@@ -157,9 +157,11 @@
   gap: 12px;
   padding: 12px 16px;
   background-color: #f7f8fa;
-  border-radius: 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: background-color 0.2s;
+  width: 280px;
 }
 
 .fieldsViewFileItem:hover {
@@ -167,14 +169,31 @@
 }
 
 .fieldsViewFileIcon {
-  font-size: 18px;
-  color: #f24c25;
+  width: 26px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.fieldsViewFileContent {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
 }
 
 .fieldsViewFileName {
   color: #1d2129;
-  flex: 1;
   font-size: 14px;
+  line-height: 22px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fieldsViewFileSize {
+  color: #86909c;
+  font-size: 12px;
+  line-height: 20px;
 }
 
 .fieldsViewTextContent {

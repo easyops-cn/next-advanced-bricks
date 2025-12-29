@@ -6,12 +6,17 @@ import classNames from "classnames";
 import { WrappedInput, WrappedIcon, WrappedTag } from "../bricks";
 import { EmptyState } from "./EmptyState";
 import { K, t } from "../i18n";
+import {
+  formatFileSize,
+  getFileTypeAndIcon,
+} from "../../cruise-canvas/utils/file";
 
 interface BusinessInstanceCardProps {
   instance: any;
   attrs: Attribute[];
   title?: string;
   onAttrChange?: (attrId: string, value: any) => void;
+  onFileClick?: (file: FileInfo) => void;
 }
 
 interface InstFieldsViewProps {
@@ -19,6 +24,7 @@ interface InstFieldsViewProps {
   instance: any;
   attrs: Attribute[];
   onAttrChange?: (attrId: string, value: any) => void;
+  onFileClick?: (file: FileInfo) => void;
 }
 
 interface FileInfo {
@@ -34,6 +40,7 @@ export function InstFieldsView({
   attrs,
   className,
   onAttrChange,
+  onFileClick,
 }: InstFieldsViewProps) {
   // 管理每个字段的编辑状态
   const [editingFieldId, setEditingFieldId] = useState<string | null>(null);
@@ -221,16 +228,38 @@ export function InstFieldsView({
               {(Array.isArray(instance[attr.id])
                 ? instance[attr.id]
                 : [instance[attr.id]]
-              ).map((file: FileInfo, idx: number) => (
-                <div key={idx} className={styles.fieldsViewFileItem}>
-                  <WrappedIcon
-                    lib="lucide"
-                    icon="file-text"
-                    className={styles.fieldsViewFileIcon}
-                  />
-                  <span className={styles.fieldsViewFileName}>{file.name}</span>
-                </div>
-              ))}
+              ).map((file: FileInfo, idx: number) => {
+                const [type, icon] = getFileTypeAndIcon(
+                  file.mimeType,
+                  file.name
+                );
+                return (
+                  <div
+                    key={idx}
+                    className={styles.fieldsViewFileItem}
+                    onClick={() => onFileClick?.(file)}
+                  >
+                    <img
+                      src={icon}
+                      alt={type}
+                      className={styles.fieldsViewFileIcon}
+                    />
+                    <div className={styles.fieldsViewFileContent}>
+                      <span
+                        className={styles.fieldsViewFileName}
+                        title={file.name}
+                      >
+                        {file.name}
+                      </span>
+                      {file.size ? (
+                        <span className={styles.fieldsViewFileSize}>
+                          {formatFileSize(file.size)}
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )
@@ -255,6 +284,7 @@ export function BusinessInstanceCard({
   attrs,
   title,
   onAttrChange,
+  onFileClick,
 }: BusinessInstanceCardProps) {
   if (!instance || !attrs) {
     return (
@@ -274,6 +304,7 @@ export function BusinessInstanceCard({
           instance={instance}
           attrs={attrs}
           onAttrChange={onAttrChange}
+          onFileClick={onFileClick}
         />
       </div>
     </div>

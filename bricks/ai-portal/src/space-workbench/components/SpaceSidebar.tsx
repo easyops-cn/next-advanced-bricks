@@ -7,6 +7,7 @@ import React, {
   useRef,
   forwardRef,
 } from "react";
+import classNames from "classnames";
 import { wrapBrick } from "@next-core/react-element";
 import moment from "moment";
 import {
@@ -68,13 +69,17 @@ export function SpaceSidebar(props: SpaceSidebarProps) {
     <div className={styles.spaceSidebar}>
       <div className={styles.tabList}>
         <button
-          className={`${styles.tabButton} ${activeTab === "business" ? styles.active : ""}`}
+          className={classNames(styles.tabButton, {
+            [styles.active]: activeTab === "business",
+          })}
           onClick={() => handleTabChange("business")}
         >
           {t(K.BUSINESS_OBJECTS)}
         </button>
         <button
-          className={`${styles.tabButton} ${activeTab === "knowledge" ? styles.active : ""}`}
+          className={classNames(styles.tabButton, {
+            [styles.active]: activeTab === "knowledge",
+          })}
           onClick={() => handleTabChange("knowledge")}
         >
           {t(K.KNOWLEDGE)}
@@ -82,18 +87,27 @@ export function SpaceSidebar(props: SpaceSidebarProps) {
       </div>
 
       <div className={styles.sidebarContent}>
-        {activeTab === "business" ? (
+        <div
+          className={classNames(styles.tabContent, {
+            [styles.tabContentActive]: activeTab === "business",
+          })}
+        >
           <BusinessCategoryPanel
             onInstanceClick={onInstanceClick}
             instanceUpdateTrigger={instanceUpdateTrigger}
           />
-        ) : (
+        </div>
+        <div
+          className={classNames(styles.tabContent, {
+            [styles.tabContentActive]: activeTab === "knowledge",
+          })}
+        >
           <KnowledgesList
             knowledges={knowledgeList}
             onKnowledgeClick={onKnowledgeClick}
             onAddKnowledge={onKnowledgeAdd}
           />
-        )}
+        </div>
       </div>
     </div>
   );

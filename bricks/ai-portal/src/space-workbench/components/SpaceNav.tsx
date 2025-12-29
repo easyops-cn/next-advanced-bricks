@@ -139,8 +139,12 @@ export function SpaceNav(props: SpaceNavProps) {
         </div>
       </header>
 
-      {showDescription && spaceDetail?.description && (
-        <div className={styles.spaceDescription}>
+      {spaceDetail?.description && (
+        <div
+          className={`${styles.spaceDescription} ${
+            showDescription ? styles.spaceDescriptionVisible : ""
+          }`}
+        >
           <div className={styles.descriptionHeader}>
             <p className={styles.descriptionTitle}>{t(K.DESCRIPTION)}</p>
             <button

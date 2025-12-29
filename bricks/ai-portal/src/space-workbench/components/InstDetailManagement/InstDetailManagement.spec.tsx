@@ -94,6 +94,18 @@ jest.mock("./ActivityLogs", () => ({
   ),
 }));
 
+jest.mock("../../../shared/FilePreview/FilePreview.js", () => ({
+  FilePreview: ({ file }: any) =>
+    file ? <div data-testid="file-preview">{file.name}</div> : null,
+}));
+
+jest.mock("../../../shared/TaskContext", () => {
+  const React = require("react");
+  return {
+    TaskContext: React.createContext({}),
+  };
+});
+
 jest.mock("../../workbenchContext", () => {
   const React = require("react");
   const mockContext = React.createContext({
