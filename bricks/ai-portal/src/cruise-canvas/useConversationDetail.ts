@@ -195,6 +195,7 @@ export function useConversationDetail(
         files: initialRequest.files,
         aiEmployeeId: initialRequest.aiEmployeeId,
         agentId: initialRequest.agentId,
+        spaceId: initialRequest.spaceId,
       });
     } else {
       makeRequest(null);

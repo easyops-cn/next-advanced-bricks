@@ -240,7 +240,6 @@ export interface UploadOptions {
 
 export interface ChatPayload extends ExtraChatPayload {
   content: string;
-  spaceId?: string;
 }
 
 export interface ExtraChatPayload {
@@ -248,6 +247,7 @@ export interface ExtraChatPayload {
   cmd?: CommandPayload | null;
   aiEmployeeId?: string | null;
   agentId?: string;
+  spaceId?: string;
 }
 
 export interface GeneratedView {

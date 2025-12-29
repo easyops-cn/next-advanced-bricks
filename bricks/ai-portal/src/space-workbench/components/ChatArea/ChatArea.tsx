@@ -203,6 +203,7 @@ export const ChatArea = forwardRef<ChatAreaRef, ChatAreaProps>(
                 initialRequest: {
                   ...payload,
                   conversationId,
+                  spaceId: spaceDetail.instanceId,
                 },
               });
               return newMap;
