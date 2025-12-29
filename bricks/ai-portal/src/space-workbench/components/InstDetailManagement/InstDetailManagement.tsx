@@ -66,8 +66,17 @@ export function InstDetailManagement({
 
         const requestPayload = {
           ...e.detail,
+          agentId: "elevo-service_object_instance_manager",
+          cmd: {
+            type: "serviceObjectInstance-createOrEdit",
+            payload: {
+              spaceInstanceId: spaceDetail.instanceId,
+              serviceObjectId: businessObject.objectId,
+              instanceId: instance.instanceId,
+            },
+          },
           conversationId: newConversationId,
-        };
+        } as RequestStore;
 
         // 触发新建 tab 并跳回 ChatArea
         onNewConversation(requestPayload);
@@ -77,7 +86,12 @@ export function InstDetailManagement({
         setSubmitDisabled(false);
       }
     },
-    [onNewConversation]
+    [
+      businessObject.objectId,
+      instance.instanceId,
+      onNewConversation,
+      spaceDetail.instanceId,
+    ]
   );
 
   const handleAttrChange = useCallback(
