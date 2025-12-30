@@ -670,7 +670,10 @@ export function SelectComponent(props: SelectProps) {
     (e: KeyboardEvent): void => {
       if (isFocused) {
         if (e.code === "Enter") {
-          focusOptionItem && handleChange(focusOptionItem);
+          // 只有在下拉框展开时才允许通过 Enter 键选中
+          if (!isDropHidden && focusOptionItem) {
+            handleChange(focusOptionItem);
+          }
         }
         if (
           e.code === "Backspace" &&
