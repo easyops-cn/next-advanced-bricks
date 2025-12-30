@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.69.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.68.0...@next-bricks/ai-portal@0.69.0) (2025-12-30)
+
+
+### Bug Fixes
+
+* refine animation ([4d2c026](https://github.com/easyops-cn/next-advanced-bricks/commit/4d2c0265f1beb7c2db5aa31a19682a58346adb26))
+* refine space sidebar ([f564a7f](https://github.com/easyops-cn/next-advanced-bricks/commit/f564a7fed7e796769a198cf04e0eea9f2048885b))
+* **space-workbench:** 修复 tab 切换导致消息流中断和重复发送问题 ([d13d973](https://github.com/easyops-cn/next-advanced-bricks/commit/d13d9736a473c1c41117da1a4528788f137e004a))
+* 历史会话列表抽屉 ([82f1c72](https://github.com/easyops-cn/next-advanced-bricks/commit/82f1c727d2262d3f74a44015315dd9c8367353ce))
+
+
+### Features
+
+* object instance management ([29e1740](https://github.com/easyops-cn/next-advanced-bricks/commit/29e17401d98b98995c80ed15700e6cb284ddfbdb))
+* **space-workbench:** 业务对象预览支持关系字段展示 ([3a4b56b](https://github.com/easyops-cn/next-advanced-bricks/commit/3a4b56be8f5c5b8dff180c5310ef76d3a576c3a3))
+* **space-workbench:** 实例详情管理功能重构 ([0f3bfaa](https://github.com/easyops-cn/next-advanced-bricks/commit/0f3bfaa37715a392718b1da51086fd4ea900665d))
+* **space-workbench:** 实例详情编辑添加 agent 和 cmd 配置 ([cc47947](https://github.com/easyops-cn/next-advanced-bricks/commit/cc47947b9a6e436e3eba10dae1d2a0bdded92eff))
+* **space-workbench:** 支持在会话中传递 spaceId 参数 ([e81b92e](https://github.com/easyops-cn/next-advanced-bricks/commit/e81b92e732e29c43160efd3580850e8cf37c4043))
+* **space-workbench:** 新增活动日志组件 ActivityLogs ([a7de50e](https://github.com/easyops-cn/next-advanced-bricks/commit/a7de50ea0a717c20f5c6911c384c96134c9791b1))
+
+
+
+
+
 # [0.68.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.67.0...@next-bricks/ai-portal@0.68.0) (2025-12-24)
 
 
