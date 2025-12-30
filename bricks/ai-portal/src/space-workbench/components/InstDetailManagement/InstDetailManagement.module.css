@@ -21,7 +21,7 @@
   margin: 0;
   font-size: 16px;
   font-weight: 500;
-  color: var(--theme-text-primary-color);
+  color: rgba(0, 0, 0, 0.65);
 }
 
 .closeButton {
@@ -35,13 +35,12 @@
   background: transparent;
   cursor: pointer;
   border-radius: 4px;
-  color: var(--theme-text-secondary-color);
+  color: #595959;
   transition: all 0.2s;
 }
 
 .closeButton:hover {
-  background: var(--theme-hover-bg-color);
-  color: var(--theme-text-primary-color);
+  color: rgba(0, 0, 0, 0.85);
 }
 
 .instanceDetailBody {
@@ -90,7 +89,6 @@
   flex-shrink: 0;
   padding: 12px;
   border-top: 1px solid #dadadd;
-  overflow: hidden;
   display: flex;
   align-items: flex-end;
 }
