@@ -247,6 +247,7 @@ export interface ExtraChatPayload {
   cmd?: CommandPayload | null;
   aiEmployeeId?: string | null;
   agentId?: string;
+  spaceId?: string;
 }
 
 export interface GeneratedView {

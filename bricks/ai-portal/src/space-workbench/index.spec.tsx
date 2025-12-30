@@ -22,6 +22,10 @@ jest.mock("../chat-stream/i18n.js", () => ({
   locales: {},
 }));
 
+jest.mock("@next-api-sdk/llm-sdk", () => ({
+  ElevoSpaceApi_listServiceFlow: jest.fn(() => Promise.resolve({ list: [] })),
+}));
+
 jest.mock("./components/SpaceNav", () => ({
   SpaceNav: () => null,
 }));
@@ -32,6 +36,14 @@ jest.mock("./components/SpaceSidebar", () => ({
 
 jest.mock("./components/ChatArea/ChatArea", () => ({
   ChatArea: () => null,
+}));
+
+jest.mock("./components/InstDetailManagement/InstDetailManagement", () => ({
+  InstDetailManagement: () => null,
+}));
+
+jest.mock("./components/ServiceFlows", () => ({
+  ServiceFlows: () => null,
 }));
 
 import "./";

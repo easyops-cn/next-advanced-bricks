@@ -103,8 +103,8 @@ jest.mock("./InstanceList", () => ({
   ),
 }));
 
-jest.mock("../BusinessInstanceDetail", () => ({
-  BusinessInstanceDetail: ({ instance, onAttrChange }: any) => (
+jest.mock("../BusinessInstanceCard", () => ({
+  BusinessInstanceCard: ({ instance, onAttrChange }: any) => (
     <div data-testid="business-instance-detail">
       {instance && (
         <>

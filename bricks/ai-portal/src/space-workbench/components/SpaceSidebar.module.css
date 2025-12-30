@@ -1,7 +1,7 @@
 .spaceSidebar {
   display: flex;
   flex-direction: column;
-  width: 320px;
+  flex: 0 0 320px;
   height: 100%;
   min-height: 0;
   background: rgba(248, 250, 252, 0.9);
@@ -68,6 +68,7 @@
   flex-direction: column;
   padding-bottom: 1px;
   flex-shrink: 0;
+  transition: flex 0.2s ease;
 }
 
 .objectGroup.expanded {
@@ -120,6 +121,14 @@
   }
 }
 
+.objectGroup.expanded .expandIcon {
+  transform: rotate(0deg);
+}
+
+.objectGroup:not(.expanded) .expandIcon {
+  transform: rotate(-90deg);
+}
+
 .instanceList {
   display: flex;
   flex-direction: column;
@@ -149,6 +158,11 @@
 .instanceCard:hover {
   border-color: #a1b5ff;
   box-shadow: 0px 2px 4px rgba(37, 64, 255, 0.1);
+}
+
+.instanceCard.active {
+  border-color: #a1b5ff;
+  box-shadow: 0px 2px 4px rgba(37, 64, 255, 0.2);
 }
 
 .instanceHeader {
@@ -273,4 +287,25 @@
   font-size: 12px;
   color: #2540ff;
   font-family: "PingFang SC", sans-serif;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tabContent {
+  height: 100%;
+  display: none;
+}
+
+.tabContentActive {
+  display: block;
+  animation: fadeIn 0.3s ease-in-out;
 }

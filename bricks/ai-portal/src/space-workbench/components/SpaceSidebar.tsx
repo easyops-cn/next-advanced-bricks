@@ -1,4 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useImperativeHandle,
+  useRef,
+  forwardRef,
+} from "react";
+import classNames from "classnames";
 import { wrapBrick } from "@next-core/react-element";
 import moment from "moment";
 import {
@@ -19,8 +28,10 @@ import {
   BusinessInstance,
   BusinessObjectGroup,
   KnowledgeItem,
+  InstanceUpdateTrigger,
 } from "../interfaces";
 import { KnowledgesList } from "./knowLedgesList.js";
+import { EmptyState } from "./EmptyState.js";
 import { AddObjectInstModal } from "../components/AddObjectInstModal/AddObjectInstModal";
 import { handleHttpError } from "@next-core/runtime";
 
@@ -29,14 +40,23 @@ const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 export interface SpaceSidebarProps {
   businessObjects?: BusinessObjectGroup[];
   knowledgeList?: KnowledgeItem[];
-  onInstanceClick?: (instance: BusinessInstance) => void;
+  onInstanceClick?: (
+    instance: BusinessInstance,
+    businessObject: BusinessObject
+  ) => void;
   onKnowledgeClick?: (knowledge: KnowledgeItem) => void;
   onKnowledgeAdd?: () => void;
+  instanceUpdateTrigger?: InstanceUpdateTrigger;
 }
 
 export function SpaceSidebar(props: SpaceSidebarProps) {
-  const { knowledgeList, onInstanceClick, onKnowledgeClick, onKnowledgeAdd } =
-    props;
+  const {
+    knowledgeList,
+    onInstanceClick,
+    onKnowledgeClick,
+    onKnowledgeAdd,
+    instanceUpdateTrigger,
+  } = props;
   const [activeTab, setActiveTab] = useState<"business" | "knowledge">(
     "business"
   );
@@ -49,13 +69,17 @@ export function SpaceSidebar(props: SpaceSidebarProps) {
     <div className={styles.spaceSidebar}>
       <div className={styles.tabList}>
         <button
-          className={`${styles.tabButton} ${activeTab === "business" ? styles.active : ""}`}
+          className={classNames(styles.tabButton, {
+            [styles.active]: activeTab === "business",
+          })}
           onClick={() => handleTabChange("business")}
         >
           {t(K.BUSINESS_OBJECTS)}
         </button>
         <button
-          className={`${styles.tabButton} ${activeTab === "knowledge" ? styles.active : ""}`}
+          className={classNames(styles.tabButton, {
+            [styles.active]: activeTab === "knowledge",
+          })}
           onClick={() => handleTabChange("knowledge")}
         >
           {t(K.KNOWLEDGE)}
@@ -63,88 +87,279 @@ export function SpaceSidebar(props: SpaceSidebarProps) {
       </div>
 
       <div className={styles.sidebarContent}>
-        {activeTab === "business" ? (
-          <BusinessCategoryPanel onInstanceClick={onInstanceClick} />
-        ) : (
+        <div
+          className={classNames(styles.tabContent, {
+            [styles.tabContentActive]: activeTab === "business",
+          })}
+        >
+          <BusinessCategoryPanel
+            onInstanceClick={onInstanceClick}
+            instanceUpdateTrigger={instanceUpdateTrigger}
+          />
+        </div>
+        <div
+          className={classNames(styles.tabContent, {
+            [styles.tabContentActive]: activeTab === "knowledge",
+          })}
+        >
           <KnowledgesList
             knowledges={knowledgeList}
             onKnowledgeClick={onKnowledgeClick}
             onAddKnowledge={onKnowledgeAdd}
           />
-        )}
+        </div>
       </div>
     </div>
   );
 }
 
+interface BusinessObjectItemProps {
+  businessObject: BusinessObject;
+  activeInstanceId: string | null;
+  isExpanded: boolean;
+  onToggleExpand: (objectId: string) => void;
+  onInstanceClick: (
+    instance: BusinessInstance,
+    businessObject: BusinessObject
+  ) => void;
+  onAddClick: (e: React.MouseEvent, objectId: string) => void;
+  getShowAttrIds: (objectId: string) => string[];
+}
+
+export interface BusinessObjectItemRef {
+  refresh: () => Promise<void>;
+  updateInstance: (
+    instanceId: string,
+    updatedData: Partial<BusinessInstance>
+  ) => void;
+}
+
+const BusinessObjectItem = forwardRef<
+  BusinessObjectItemRef,
+  BusinessObjectItemProps
+>(function BusinessObjectItem(
+  {
+    businessObject,
+    activeInstanceId,
+    isExpanded,
+    onToggleExpand,
+    onInstanceClick,
+    onAddClick,
+    getShowAttrIds,
+  },
+  ref
+) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [instances, setInstances] = useState<BusinessInstance[]>([]);
+
+  // 加载实例列表的核心函数
+  const loadInstances = useCallback(async () => {
+    setIsLoading(true);
+    setHasError(false);
+
+    try {
+      const res = await ElevoObjectApi_listServiceObjectInstances(
+        businessObject.objectId,
+        { page: 1, pageSize: 3000 }
+      );
+      const data = res.list as BusinessInstance[];
+      setInstances(data);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to load instances:", error);
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [businessObject.objectId]);
+
+  // 暴露给父组件的方法
+  useImperativeHandle(
+    ref,
+    () => ({
+      refresh: loadInstances,
+      updateInstance: (
+        instanceId: string,
+        updatedData: Partial<BusinessInstance>
+      ) => {
+        setInstances((prevInstances) =>
+          prevInstances.map((instance) =>
+            instance.instanceId === instanceId
+              ? { ...instance, ...updatedData }
+              : instance
+          )
+        );
+      },
+    }),
+    [loadInstances]
+  );
+
+  // 监听展开状态变化,展开时加载数据
+  useEffect(() => {
+    if (!isExpanded) return;
+
+    // 如果已有数据(缓存),不重新加载
+    if (instances.length > 0) {
+      return;
+    }
+
+    // 首次展开,调用 API
+    loadInstances();
+  }, [isExpanded, instances.length, loadInstances]);
+
+  // 切换展开/折叠
+  const handleHeaderClick = () => {
+    onToggleExpand(businessObject.objectId);
+  };
+
+  // 处理添加按钮点击
+  const handleAddClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onAddClick(e, businessObject.objectId);
+  };
+
+  // 处理实例点击
+  const handleInstanceClick = (instance: BusinessInstance) => {
+    onInstanceClick(instance, businessObject);
+  };
+
+  // 处理重试点击
+  const handleRetryClick = () => {
+    setHasError(false);
+    loadInstances();
+  };
+
+  return (
+    <div
+      className={`${styles.objectGroup} ${isExpanded ? styles.expanded : ""}`}
+    >
+      <div className={styles.objectHeader} onClick={handleHeaderClick}>
+        <span className={styles.objectName}>{businessObject.objectName}</span>
+        <div className={styles.objectHeaderActions}>
+          <WrappedIcon
+            lib="lucide"
+            icon="plus"
+            className={styles.addIcon}
+            onClick={handleAddClick}
+          />
+          <WrappedIcon
+            lib="lucide"
+            icon={isExpanded ? "chevron-down" : "chevron-right"}
+            className={styles.expandIcon}
+          />
+        </div>
+      </div>
+      {isExpanded && (
+        <div className={styles.instanceList}>
+          {isLoading ? (
+            <div className={styles.loadingContainer}>
+              <WrappedIcon
+                lib="antd"
+                icon="loading"
+                theme="outlined"
+                className={styles.loadingIcon}
+              />
+              <span className={styles.loadingText}>{t(K.LOADING)}</span>
+            </div>
+          ) : hasError ? (
+            <div className={styles.errorContainer} onClick={handleRetryClick}>
+              <span className={styles.errorText}>{t(K.LOAD_FAILED)}</span>
+              <span className={styles.retryText}>{t(K.CLICK_TO_RETRY)}</span>
+            </div>
+          ) : instances.length === 0 ? (
+            <div className={styles.emptyState}>{t(K.NO_INSTANCES)}</div>
+          ) : (
+            instances.map((instance) => (
+              <div
+                key={instance.instanceId}
+                className={`${styles.instanceCard} ${
+                  activeInstanceId === instance.instanceId ? styles.active : ""
+                }`}
+                onClick={() => handleInstanceClick(instance)}
+              >
+                <div className={styles.instanceHeader}>
+                  <span className={styles.instanceName}>
+                    {
+                      instance?.[
+                        getShowAttrIds(
+                          businessObject.objectId
+                        )?.[0] as keyof BusinessInstance
+                      ]
+                    }
+                  </span>
+                  <span className={styles.instanceTime}>
+                    {humanizeTime(
+                      moment(
+                        instance.ctime || instance.mtime,
+                        "YYYY-MM-DD HH:mm:ss"
+                      ).valueOf(),
+                      HumanizeTimeFormat.relative
+                    )}
+                  </span>
+                </div>
+                {getShowAttrIds(businessObject.objectId)?.[1] && (
+                  <div className={styles.instanceStatus}>
+                    <span className={styles.statusTag}>
+                      {
+                        instance?.[
+                          getShowAttrIds(
+                            businessObject.objectId
+                          )[1] as keyof BusinessInstance
+                        ]
+                      }
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+});
+
 interface BusinessCategoryPanelProps {
-  onInstanceClick?: (instance: BusinessInstance) => void;
+  onInstanceClick?: (
+    instance: BusinessInstance,
+    businessObject: BusinessObject
+  ) => void;
+  instanceUpdateTrigger?: InstanceUpdateTrigger;
 }
 
 function BusinessCategoryPanel({
   onInstanceClick,
+  instanceUpdateTrigger,
 }: BusinessCategoryPanelProps) {
   const { spaceDetail } = useContext(WorkbenchContext);
 
   const [businessObjects, setBusinessObjects] = useState<BusinessObject[]>([]);
 
-  const [activeObjectId, setActiveObjectId] = useState<string | null>(null);
-
-  const [objectInstancesMap, setObjectInstancesMap] = useState<
-    Record<string, BusinessInstance[]>
-  >({});
-
-  const [loadingObjectId, setLoadingObjectId] = useState<string | null>(null);
-
-  const [errorObjectId, setErrorObjectId] = useState<string | null>(null);
-
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+
+  const [activeInstanceId, setActiveInstanceId] = useState<string | null>(null);
 
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [selectedObject, setSelectedObject] = useState<BusinessObject | null>(
     null
   );
 
-  const handleObjectToggle = async (objectId: string) => {
-    // 如果点击的是当前展开的分类,则折叠它
-    if (activeObjectId === objectId) {
-      setActiveObjectId(null);
-      return;
-    }
+  // 用于控制当前展开的分类
+  const [expandedObjectId, setExpandedObjectId] = useState<string | null>(null);
 
-    // 展开新分类
-    setActiveObjectId(objectId);
+  // 用于存储子组件的 ref
+  const businessObjectItemRefs = useRef<
+    Record<string, BusinessObjectItemRef | null>
+  >({});
 
-    // 如果已经有缓存数据,直接显示
-    if (objectInstancesMap[objectId]) {
-      return;
-    }
-
-    // 开始加载数据
-    setLoadingObjectId(objectId);
-    setErrorObjectId(null);
-
-    try {
-      const instances = await ElevoObjectApi_listServiceObjectInstances(
-        objectId,
-        { page: 1, pageSize: 3000 }
-      );
-      setObjectInstancesMap((prev) => ({
-        ...prev,
-        [objectId]: instances.list as BusinessInstance[],
-      }));
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("Failed to load instances:", error);
-      setErrorObjectId(objectId);
-    } finally {
-      setLoadingObjectId(null);
-    }
-  };
-
-  const handleInstanceClick = (instance: BusinessInstance) => {
-    onInstanceClick?.(instance);
-  };
+  const handleInstanceClick = useCallback(
+    (instance: BusinessInstance, businessObject: BusinessObject) => {
+      setActiveInstanceId(instance.instanceId);
+      onInstanceClick?.(instance, businessObject);
+    },
+    [onInstanceClick]
+  );
 
   useEffect(() => {
     const fetchBusinessFlows = async () => {
@@ -157,26 +372,9 @@ function BusinessCategoryPanel({
           }
         );
         setBusinessObjects(res.list as BusinessObject[]);
-
-        // 默认展开第一个分类并加载数据
-        const firstObjectId = res.list[0]?.objectId;
-        if (firstObjectId) {
-          setActiveObjectId(firstObjectId);
-          setLoadingObjectId(firstObjectId);
-
-          try {
-            const instances = await ElevoObjectApi_listServiceObjectInstances(
-              firstObjectId,
-              { page: 1, pageSize: 3000 }
-            );
-            setObjectInstancesMap({
-              [firstObjectId]: instances.list as BusinessInstance[],
-            });
-          } catch (_error) {
-            setErrorObjectId(firstObjectId);
-          } finally {
-            setLoadingObjectId(null);
-          }
+        // 默认展开第一个分类
+        if (res.list && res.list.length > 0) {
+          setExpandedObjectId(res.list[0].objectId || null);
         }
       } catch (error) {
         handleHttpError(error);
@@ -187,57 +385,66 @@ function BusinessCategoryPanel({
     fetchBusinessFlows();
   }, [spaceDetail.instanceId]);
 
-  const getShowAttrIds = (objectId: string): string[] => {
-    const attrs = businessObjects.find(
-      (item) => item.objectId === objectId
-    )?.attributes;
+  const getShowAttrIds = useCallback(
+    (objectId: string): string[] => {
+      const attrs = businessObjects.find(
+        (item) => item.objectId === objectId
+      )?.attributes;
 
-    if (attrs?.length) {
-      return [
-        attrs[0].id, // 拿第一个属性作为主展示名称
-        attrs.find((item) => item.id === "status")?.id, // 拿状态列作为副展示信息
-      ].filter(Boolean) as string[];
-    }
-
-    return [];
-  };
-
-  const handleAddInstance = (e: React.MouseEvent, objectId: string) => {
-    e.stopPropagation();
-    const obj = businessObjects.find((o) => o.objectId === objectId);
-    if (obj) {
-      setSelectedObject(obj);
-      setAddModalVisible(true);
-    }
-  };
-
-  const handleModalSuccess = async () => {
-    setAddModalVisible(false);
-    // 刷新当前对象的实例列表
-    if (activeObjectId) {
-      setLoadingObjectId(activeObjectId);
-      try {
-        const instances = await ElevoObjectApi_listServiceObjectInstances(
-          activeObjectId,
-          { page: 1, pageSize: 3000 }
-        );
-        setObjectInstancesMap((prev) => ({
-          ...prev,
-          [activeObjectId]: instances.list as BusinessInstance[],
-        }));
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error("Failed to refresh instances:", error);
-      } finally {
-        setLoadingObjectId(null);
+      if (attrs?.length) {
+        return [
+          attrs[0].id, // 拿第一个属性作为主展示名称
+          attrs.find((item) => item.id === "status")?.id, // 拿状态列作为副展示信息
+        ].filter(Boolean) as string[];
       }
+
+      return [];
+    },
+    [businessObjects]
+  );
+
+  const handleAddInstance = useCallback(
+    (e: React.MouseEvent, objectId: string) => {
+      e.stopPropagation();
+      const obj = businessObjects.find((o) => o.objectId === objectId);
+      if (obj) {
+        setSelectedObject(obj);
+        setAddModalVisible(true);
+      }
+    },
+    [businessObjects]
+  );
+
+  const handleModalSuccess = useCallback(() => {
+    setAddModalVisible(false);
+    if (selectedObject) {
+      // 调用子组件的 refresh 方法刷新实例列表
+      businessObjectItemRefs.current[selectedObject.objectId]?.refresh();
     }
-  };
+  }, [selectedObject]);
 
   const handleModalCancel = () => {
     setAddModalVisible(false);
     setSelectedObject(null);
   };
+
+  // 处理分类展开/折叠切换
+  const handleToggleExpand = useCallback((objectId: string) => {
+    setExpandedObjectId((prevId) => (prevId === objectId ? null : objectId));
+  }, []);
+
+  // 监听外部的 instanceUpdateTrigger,调用子组件的 updateInstance 方法
+  useEffect(() => {
+    if (!instanceUpdateTrigger) return;
+
+    const { objectId, instanceId, updatedData } = instanceUpdateTrigger;
+
+    // 调用对应子组件的 updateInstance 方法
+    businessObjectItemRefs.current[objectId]?.updateInstance(
+      instanceId,
+      updatedData
+    );
+  }, [instanceUpdateTrigger]);
 
   if (isInitialLoading) {
     return (
@@ -256,114 +463,24 @@ function BusinessCategoryPanel({
   }
 
   if (!businessObjects?.length) {
-    return (
-      <div className={styles.knowledgeList}>
-        <div className={styles.emptyState}>{t(K.NO_BUSINESS_OBJECTS)}</div>
-      </div>
-    );
+    return <EmptyState title={t(K.NO_BUSINESS_OBJECTS)} />;
   }
 
   return (
     <>
       <div className={styles.businessObjectList}>
         {businessObjects.map((obj) => (
-          <div
+          <BusinessObjectItem
             key={obj.objectId}
-            className={`${styles.objectGroup} ${activeObjectId === obj.objectId ? styles.expanded : ""}`}
-          >
-            <div
-              className={styles.objectHeader}
-              onClick={() => handleObjectToggle(obj.objectId)}
-            >
-              <span className={styles.objectName}>{obj.objectName}</span>
-              <div className={styles.objectHeaderActions}>
-                <WrappedIcon
-                  lib="lucide"
-                  icon="plus"
-                  className={styles.addIcon}
-                  onClick={(e) => handleAddInstance(e, obj.objectId)}
-                />
-                <WrappedIcon
-                  lib="lucide"
-                  icon={
-                    activeObjectId === obj.objectId
-                      ? "chevron-down"
-                      : "chevron-right"
-                  }
-                  className={styles.expandIcon}
-                />
-              </div>
-            </div>
-            {activeObjectId === obj.objectId && (
-              <div className={styles.instanceList}>
-                {loadingObjectId === obj.objectId ? (
-                  <div className={styles.loadingContainer}>
-                    <WrappedIcon
-                      lib="antd"
-                      icon="loading"
-                      theme="outlined"
-                      className={styles.loadingIcon}
-                    />
-                    <span className={styles.loadingText}>{t(K.LOADING)}</span>
-                  </div>
-                ) : errorObjectId === obj.objectId ? (
-                  <div
-                    className={styles.errorContainer}
-                    onClick={() => handleObjectToggle(obj.objectId)}
-                  >
-                    <span className={styles.errorText}>{t(K.LOAD_FAILED)}</span>
-                    <span className={styles.retryText}>
-                      {t(K.CLICK_TO_RETRY)}
-                    </span>
-                  </div>
-                ) : objectInstancesMap[obj.objectId]?.length === 0 ? (
-                  <div className={styles.emptyState}>{t(K.NO_INSTANCES)}</div>
-                ) : (
-                  objectInstancesMap[obj.objectId]?.map((instance) => (
-                    <div
-                      key={instance.instanceId}
-                      className={styles.instanceCard}
-                      onClick={() => handleInstanceClick(instance)}
-                    >
-                      <div className={styles.instanceHeader}>
-                        <span className={styles.instanceName}>
-                          {
-                            instance?.[
-                              getShowAttrIds(
-                                obj.objectId
-                              )?.[0] as keyof BusinessInstance
-                            ]
-                          }
-                        </span>
-                        <span className={styles.instanceTime}>
-                          {humanizeTime(
-                            moment(
-                              instance.ctime || instance.mtime,
-                              "YYYY-MM-DD HH:mm:ss"
-                            ).valueOf(),
-                            HumanizeTimeFormat.relative
-                          )}
-                        </span>
-                      </div>
-                      {getShowAttrIds(obj.objectId)?.[1] && (
-                        <div className={styles.instanceStatus}>
-                          <span className={styles.statusTag}>
-                            {
-                              instance?.[
-                                getShowAttrIds(
-                                  obj.objectId
-                                )[1] as keyof BusinessInstance
-                              ]
-                            }
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
+            ref={(ref) => (businessObjectItemRefs.current[obj.objectId] = ref)}
+            businessObject={obj}
+            activeInstanceId={activeInstanceId}
+            isExpanded={expandedObjectId === obj.objectId}
+            onToggleExpand={handleToggleExpand}
+            onInstanceClick={handleInstanceClick}
+            onAddClick={handleAddInstance}
+            getShowAttrIds={getShowAttrIds}
+          />
         ))}
       </div>
 

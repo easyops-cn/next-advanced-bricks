@@ -79,7 +79,7 @@
 /* 字段列表样式 */
 .fieldGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 12px;
 }
 
@@ -103,6 +103,23 @@
   font-size: 11px;
   color: rgba(0, 0, 0, 0.45);
   background: #fff;
+  border-radius: 4px;
+}
+
+.linkIcon {
+  width: 14px;
+  height: 14px;
+  margin-left: 6px;
+  color: rgba(0, 0, 0, 0.45);
+  vertical-align: middle;
+}
+
+.relationType {
+  padding: 2px 8px;
+  font-size: 11px;
+  color: #2540ff;
+  background: rgba(37, 64, 255, 0.08);
+  border: 1px solid rgba(37, 64, 255, 0.2);
   border-radius: 4px;
 }
 

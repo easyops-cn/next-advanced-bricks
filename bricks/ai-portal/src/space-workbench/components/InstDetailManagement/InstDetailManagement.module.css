@@ -1,0 +1,108 @@
+.instanceDetailContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+
+  background-color: #fff;
+  border-radius: 16px;
+}
+
+.instanceDetailHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 16px;
+  flex-shrink: 0;
+  border-bottom: 1px solid #dadadd;
+}
+
+.instanceDetailTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--theme-text-primary-color);
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  color: var(--theme-text-secondary-color);
+  transition: all 0.2s;
+}
+
+.closeButton:hover {
+  background: var(--theme-hover-bg-color);
+  color: var(--theme-text-primary-color);
+}
+
+.instanceDetailBody {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.instanceDetailLeft {
+  flex: 0 0 70%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  background: rgba(184, 187, 205, 0.15);
+  border-bottom-left-radius: 16px;
+}
+.instanceDetailLeftWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+  margin: 30px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+/* BusinessInstanceDetail 区域 - 可滚动 */
+.instanceDetailContent {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.fieldsView {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* 底部聊天区域 - 固定高度 */
+.instanceDetailFooter {
+  flex-shrink: 0;
+  padding: 12px;
+  border-top: 1px solid #dadadd;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.instanceDetailFooter > * {
+  width: 100%;
+}
+
+.instanceDetailRight {
+  flex: 0 0 30%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #dadadd;
+}

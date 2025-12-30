@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { wrapBrick } from "@next-core/react-element";
 import { handleHttpError } from "@next-core/runtime";
 import {
@@ -21,6 +21,14 @@ import {
   MarkdownDisplay,
   MarkdownDisplayProps,
 } from "@next-bricks/markdown/markdown-display";
+import type {
+  GeneralIcon,
+  GeneralIconProps,
+} from "@next-bricks/icons/general-icon";
+import type {
+  EoEasyopsAvatar,
+  EoEasyopsAvatarProps,
+} from "@next-bricks/basic/easyops-avatar";
 import type { Activity } from "../interfaces.js";
 import styles from "./ActivityDetailModal.module.css";
 import { K, t } from "../i18n.js";
@@ -76,11 +84,18 @@ const WrappedMarkdownDisplay = wrapBrick<MarkdownDisplay, MarkdownDisplayProps>(
   "eo-markdown-display"
 );
 
+const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
+
+const WrappedEasyopsAvatar = wrapBrick<EoEasyopsAvatar, EoEasyopsAvatarProps>(
+  "eo-easyops-avatar"
+);
+
 export interface ActivityDetailModalProps {
   activity: Activity | null;
   visible: boolean;
   onClose: () => void;
   onChange?: (updates: Activity) => void;
+  onlyRead?: boolean;
 }
 
 /**
@@ -92,11 +107,21 @@ export function ActivityDetailModal({
   visible,
   onClose,
   onChange,
+  onlyRead = false,
 }: ActivityDetailModalProps): React.ReactElement | null {
   const [aiEmployees, setAiEmployees] = useState<
     ElevoApi_ListElevoAiEmployeesResponseItem[]
   >([]);
   const [activity, setActivity] = useState<Activity | null>(_activity);
+
+  // 计算数字人名称
+  const aiEmployeeName = useMemo(() => {
+    if (!activity?.aiEmployeeId) return "";
+    const employee = aiEmployees.find(
+      (emp) => emp.employeeId === activity.aiEmployeeId
+    );
+    return employee?.name ?? "";
+  }, [activity?.aiEmployeeId, aiEmployees]);
 
   // 获取数字人列表
   useEffect(() => {
@@ -172,19 +197,33 @@ export function ActivityDetailModal({
           <div className={styles.sectionTitle}>
             {t(K.RESPONSIBLE_AI_EMPLOYEE)}
           </div>
-          <WrappedSelect
-            value={activity.aiEmployeeId}
-            themeVariant="elevo"
-            options={
-              aiEmployees?.map((item) => ({
-                label: item.name as string,
-                value: item.employeeId as string,
-              })) ?? []
-            }
-            placeholder={t(K.SELECT_AI_EMPLOYEE_PLACEHOLDER)}
-            onValueChange={handleAssigneeChange}
-            className={styles.select}
-          />
+          {onlyRead ? (
+            <div className={styles.readOnlyDisplay}>
+              <WrappedIcon
+                lib="easyops"
+                category="image"
+                icon="employee-avatar-3-png"
+                className={styles.readOnlyIcon}
+              />
+              <span className={styles.readOnlyText}>
+                {aiEmployeeName || t(K.NOT_SET)}
+              </span>
+            </div>
+          ) : (
+            <WrappedSelect
+              value={activity.aiEmployeeId}
+              themeVariant="elevo"
+              options={
+                aiEmployees?.map((item) => ({
+                  label: item.name as string,
+                  value: item.employeeId as string,
+                })) ?? []
+              }
+              placeholder={t(K.SELECT_AI_EMPLOYEE_PLACEHOLDER)}
+              onValueChange={handleAssigneeChange}
+              className={styles.select}
+            />
+          )}
         </div>
 
         {/* HITL 规则 */}
@@ -200,15 +239,29 @@ export function ActivityDetailModal({
           <div className={styles.sectionTitle}>
             {t(K.HITL_INTERVENTION_USER)}
           </div>
-          <WrappedUserOrUserGroupSelect
-            value={[activity.hilUser ?? ""]}
-            placeholder={t(K.SELECT_HITL_USER_PLACEHOLDER)}
-            optionsMode="user"
-            userKey="name"
-            isMultiple={false}
-            themeVariant="elevo"
-            onValueChange={handleUserChange}
-          />
+          {onlyRead ? (
+            <div className={styles.readOnlyDisplay}>
+              {activity.hilUser ? (
+                <WrappedEasyopsAvatar
+                  nameOrInstanceId={activity.hilUser}
+                  showName
+                  size="xs"
+                />
+              ) : (
+                <span className={styles.readOnlyText}>{t(K.NOT_SET)}</span>
+              )}
+            </div>
+          ) : (
+            <WrappedUserOrUserGroupSelect
+              value={[activity.hilUser ?? ""]}
+              placeholder={t(K.SELECT_HITL_USER_PLACEHOLDER)}
+              optionsMode="user"
+              userKey="name"
+              isMultiple={false}
+              themeVariant="elevo"
+              onValueChange={handleUserChange}
+            />
+          )}
         </div>
       </div>
     </WrappedModal>

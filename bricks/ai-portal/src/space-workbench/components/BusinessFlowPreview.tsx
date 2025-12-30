@@ -21,6 +21,7 @@ export interface BusinessFlowPreviewProps {
   data?: BusinessFlow;
   viewType?: ViewType;
   onActivityClick?: (activity: Activity) => void;
+  activityOnlyRead?: boolean;
 }
 
 /**
@@ -31,6 +32,7 @@ export interface BusinessFlowPreviewProps {
 export function BusinessFlowPreview({
   data,
   viewType = "visual",
+  activityOnlyRead,
 }: BusinessFlowPreviewProps): React.ReactElement | null {
   // 活动详情模态框状态
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(
@@ -136,6 +138,7 @@ export function BusinessFlowPreview({
       </div>
       {/* 活动详情模态框 */}
       <ActivityDetailModal
+        onlyRead={activityOnlyRead}
         activity={selectedActivity}
         visible={!!selectedActivity}
         onClose={handleCloseActivityDetail}

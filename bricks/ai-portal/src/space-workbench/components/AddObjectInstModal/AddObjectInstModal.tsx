@@ -26,7 +26,7 @@ import {
 } from "../../interfaces";
 import { K, t } from "../../i18n.js";
 import { WorkbenchContext } from "../../workbenchContext";
-import { BusinessInstanceDetail } from "../BusinessInstanceDetail";
+import { BusinessInstanceCard } from "../BusinessInstanceCard";
 import { mergeInstanceSchema } from "./utils";
 
 const WrappedModal = wrapBrick<
@@ -282,9 +282,10 @@ export function AddObjectInstModal({
 
         {/* 右侧: 实例详情预览 */}
         <div className={styles.detailArea}>
-          <BusinessInstanceDetail
+          <BusinessInstanceCard
             instance={selectedInstance}
             attrs={businessObject.attributes || []}
+            title={t(K.INSTANCE_DETAIL)}
             onAttrChange={handleAttrChange}
           />
         </div>

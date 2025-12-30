@@ -59,7 +59,6 @@ export function SpaceNav(props: SpaceNavProps) {
     notices = [],
     notifyCenterUrl,
     onBack,
-    onMembersClick,
     onMarkAllRead,
     onNoticeClick,
     onSpaceEdit,
@@ -76,11 +75,6 @@ export function SpaceNav(props: SpaceNavProps) {
 
   const handleSettingClick = async () => {
     setConfigModalVisible(true);
-  };
-
-  const handleSave = () => {
-    // TODO: Call actual save API
-    setConfigModalVisible(false);
   };
 
   useEffect(() => {
@@ -123,14 +117,15 @@ export function SpaceNav(props: SpaceNavProps) {
         </div>
 
         <div className={styles.headerRight}>
-          <WrappedIcon
+          {/* 暂时隐藏成员添加按钮，先不使用 */}
+          {/* <WrappedIcon
             className={styles.iconButton}
             lib="antd"
             icon="usergroup-add"
             onClick={onMembersClick}
           ></WrappedIcon>
 
-          <div className={styles.divider} />
+          <div className={styles.divider} />  */}
 
           <WrappedNoticeDropdown
             dataSource={notices}
@@ -144,8 +139,12 @@ export function SpaceNav(props: SpaceNavProps) {
         </div>
       </header>
 
-      {showDescription && spaceDetail?.description && (
-        <div className={styles.spaceDescription}>
+      {spaceDetail?.description && (
+        <div
+          className={`${styles.spaceDescription} ${
+            showDescription ? styles.spaceDescriptionVisible : ""
+          }`}
+        >
           <div className={styles.descriptionHeader}>
             <p className={styles.descriptionTitle}>{t(K.DESCRIPTION)}</p>
             <button
@@ -164,7 +163,6 @@ export function SpaceNav(props: SpaceNavProps) {
         configSchema={configSchema}
         spaceDetail={spaceDetail}
         aiEmployeeId={aiEmployeeId}
-        onSave={handleSave}
         onCancel={() => setConfigModalVisible(false)}
       />
     </>

@@ -65,10 +65,26 @@ export function BusinessObjectPreview({
           <span>{t(K.FIELD_DEFINITIONS)}</span>
         </div>
         <div className={styles.fieldGrid}>
+          {/* 展示 attributes */}
           {data?.attributes?.map((field) => (
             <div key={field.id} className={styles.fieldItem}>
               <span className={styles.fieldName}>{field.name}</span>
               <span className={styles.fieldType}>{field.type}</span>
+            </div>
+          ))}
+
+          {/* 展示 relations */}
+          {data?.relations?.map((relation) => (
+            <div key={relation.relation_id} className={styles.fieldItem}>
+              <span className={styles.fieldName}>
+                {relation.name}
+                <WrappedIcon
+                  lib="antd"
+                  icon="link"
+                  className={styles.linkIcon}
+                />
+              </span>
+              <span className={styles.relationType}>Relation</span>
             </div>
           ))}
         </div>
