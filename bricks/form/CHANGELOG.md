@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.21.6...@next-bricks/form@1.21.7) (2026-01-04)
+
+
+### Bug Fixes
+
+* **form:** 修复 select 组件未展开时按 Enter 键错误选中的问题 ([9ac4043](https://github.com/easyops-cn/next-advanced-bricks/commit/9ac4043d5772310a7e9515297c88a08fe8b16cad))
+
+
+
+
+
 ## [1.21.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.21.5...@next-bricks/form@1.21.6) (2025-12-10)
 
 
