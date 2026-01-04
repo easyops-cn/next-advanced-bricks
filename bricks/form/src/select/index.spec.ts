@@ -462,4 +462,165 @@ describe("eo-select", () => {
     });
     expect(element.shadowRoot?.childNodes.length).toBe(0);
   });
+
+  test("should not select option when pressing Enter with dropdown closed", () => {
+    const element = document.createElement("eo-select") as Select;
+    element.options = [
+      {
+        label: "a",
+        value: "a",
+      },
+      {
+        label: "b",
+        value: "b",
+      },
+      {
+        label: "c",
+        value: "c",
+      },
+    ];
+    element.value = "a"; // 预设一个值,这样可以通过点击来切换下拉框状态
+
+    const mockChangeEvent = jest.fn();
+    element.addEventListener("change", mockChangeEvent);
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    expect(element.shadowRoot).toBeTruthy();
+
+    // 确保下拉框未展开
+    expect(
+      getByTestId(
+        element.shadowRoot as unknown as HTMLElement,
+        "select-dropdown-popup"
+      ) as SlPopupElement
+    ).not.toHaveAttribute("active");
+
+    // 打开下拉框
+    act(() => {
+      (
+        element.shadowRoot?.querySelector(".select-selector") as HTMLElement
+      ).click();
+    });
+
+    // 下拉框应该已展开
+    expect(
+      getByTestId(
+        element.shadowRoot as unknown as HTMLElement,
+        "select-dropdown-popup"
+      ) as SlPopupElement
+    ).toHaveAttribute("active");
+
+    // 关闭下拉框(通过再次点击 selector)
+    act(() => {
+      (
+        element.shadowRoot?.querySelector(".select-selector") as HTMLElement
+      ).click();
+    });
+
+    // 下拉框应该已关闭
+    expect(
+      getByTestId(
+        element.shadowRoot as unknown as HTMLElement,
+        "select-dropdown-popup"
+      ) as SlPopupElement
+    ).not.toHaveAttribute("active");
+
+    // 在下拉框关闭时按 Enter 键
+    act(() => {
+      fireEvent.keyDown(
+        element.shadowRoot?.querySelector(
+          ".select-selection-search-input"
+        ) as HTMLElement,
+        { code: "Enter" }
+      );
+    });
+
+    // 不应触发 change 事件(因为下拉框是关闭的)
+    expect(mockChangeEvent).not.toHaveBeenCalled();
+    // 值应保持为 "a"
+    expect(element.value).toBe("a");
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
+
+  test("should select option when pressing Enter with dropdown open", () => {
+    const element = document.createElement("eo-select") as Select;
+    element.options = [
+      {
+        label: "a",
+        value: "a",
+      },
+      {
+        label: "b",
+        value: "b",
+      },
+      {
+        label: "c",
+        value: "c",
+      },
+    ];
+
+    const mockChangeEvent = jest.fn();
+    element.addEventListener("change", mockChangeEvent);
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    expect(element.shadowRoot).toBeTruthy();
+
+    // 打开下拉框
+    act(() => {
+      (
+        element.shadowRoot?.querySelector(".select-selector") as HTMLElement
+      ).click();
+    });
+
+    // 确保下拉框已展开
+    expect(
+      getByTestId(
+        element.shadowRoot as unknown as HTMLElement,
+        "select-dropdown-popup"
+      ) as SlPopupElement
+    ).toHaveAttribute("active");
+
+    // 聚焦输入框
+    act(() => {
+      fireEvent.click(
+        element.shadowRoot?.querySelector(
+          ".select-selection-search-input"
+        ) as HTMLElement
+      );
+    });
+
+    // 在下拉框展开时按 Enter 键
+    act(() => {
+      fireEvent.keyDown(
+        element.shadowRoot?.querySelector(
+          ".select-selection-search-input"
+        ) as HTMLElement,
+        { code: "Enter" }
+      );
+    });
+
+    // 应触发 change 事件,选中第一个选项(默认聚焦项)
+    expect(mockChangeEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        detail: {
+          options: [{ label: "a", value: "a" }],
+          value: "a",
+        },
+      })
+    );
+    expect(element.value).toBe("a");
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
 });
