@@ -8,6 +8,7 @@ import React, {
   useState,
 } from "react";
 import { initializeI18n } from "@next-core/i18n";
+import { useCurrentApp } from "@next-core/react-runtime";
 import classNames from "classnames";
 import { isEqual } from "lodash";
 import type { ActiveDetail, Job, PlanStep, Task } from "../interfaces";
@@ -39,7 +40,9 @@ const ActivityPlanContext = createContext<{
 }>({});
 
 export function ActivityPlan({ task }: ActivityPlanProps) {
-  const [collapsed, setCollapsed] = useState(true);
+  const app = useCurrentApp();
+  const defaultExpanded = app?.config?.activityPlanExpandedByDefault;
+  const [collapsed, setCollapsed] = useState(!defaultExpanded);
   const { flowMap, setActiveDetail } = useContext(TaskContext);
   const { toggleAutoScroll } = useContext(StreamContext);
   const flow = flowMap?.get(task.id);
