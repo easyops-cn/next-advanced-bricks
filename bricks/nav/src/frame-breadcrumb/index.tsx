@@ -1,5 +1,6 @@
 import React from "react";
 import { createDecorators } from "@next-core/element";
+import { getRealValue } from "@next-core/runtime";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import { useCurrentApp, useNavConfig } from "@next-core/react-runtime";
 import { BreadcrumbItemConf } from "@next-core/types";
@@ -86,10 +87,11 @@ export function EoFrameBreadcrumbComponent(props: EoFrameBreadcrumbProps) {
   const navConfig = useNavConfig();
   const currentApp = useCurrentApp();
   const curAppBreadcrumb = currentApp?.breadcrumb;
-
-  const currentAppBreadcrumbItems = curAppBreadcrumb?.items as Array<
-    BreadcrumbItemConf & { icon: GeneralIconProps }
-  >;
+  // 处理面包屑文本中的动态计算表达式
+  const currentAppBreadcrumbItems = curAppBreadcrumb?.items?.map((item) => ({
+    ...item,
+    text: getRealValue(item.text),
+  })) as Array<BreadcrumbItemConf & { icon: GeneralIconProps }>;
   const breadcrumbItems = props.breadcrumb?.length
     ? props.breadcrumb
     : navConfig?.breadcrumb;

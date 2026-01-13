@@ -1,12 +1,18 @@
 import { describe, test, expect, jest } from "@jest/globals";
 import { act } from "react-dom/test-utils";
+
+jest.mock("@next-core/theme", () => ({}));
+jest.mock("@next-core/runtime", () => ({
+  getRealValue: jest.fn((value) => value),
+}));
+jest.mock("@next-core/react-runtime", () => ({
+  useCurrentApp: jest.fn(),
+  useNavConfig: jest.fn(),
+}));
+
 import { useCurrentApp, useNavConfig } from "@next-core/react-runtime";
 import "./";
 import { EoFrameBreadcrumb } from "./index.js";
-
-jest.mock("@next-core/theme", () => ({}));
-jest.mock("@next-core/runtime");
-jest.mock("@next-core/react-runtime");
 
 const mockUseCurrentApp = useCurrentApp as jest.Mock;
 const mockUseNavConfig = useNavConfig as jest.Mock;
