@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.26.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.26.1...@next-bricks/nav@1.26.2) (2026-01-13)
+
+
+### Bug Fixes
+
+* 支持应用级面包屑配置的文案表达式计算值 Closes MONITOR-10629 ([06f5e8e](https://github.com/easyops-cn/next-advanced-bricks/commit/06f5e8e1414a7e52cf266cca51eeb6ef5a87da78))
+
+
+
+
+
 ## [1.26.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.26.0...@next-bricks/nav@1.26.1) (2025-12-24)
 
 **Note:** Version bump only for package @next-bricks/nav
