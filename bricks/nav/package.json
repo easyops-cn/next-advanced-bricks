@@ -37,7 +37,7 @@
     "postpublish": "mv package.json.bak package.json"
   },
   "dependencies": {
-    "@ant-design/cssinjs": "^1.22.1",
+    "@ant-design/cssinjs": "^1.24.0",
     "@next-api-sdk/cmdb-sdk": "^1.1.1",
     "@next-api-sdk/micro-app-standalone-sdk": "^1.1.1",
     "@next-api-sdk/sys-setting-sdk": "^1.1.1",
@@ -52,7 +52,7 @@
     "@next-core/types": "^1.18.1",
     "@next-core/utils": "^1.8.8",
     "@next-shared/general": "^0.10.5",
-    "antd": "^5.23.2",
+    "antd": "^5.29.3",
     "classnames": "^2.3.2",
     "hotkeys-js": "^3.10.1",
     "lodash": "^4.17.21",
