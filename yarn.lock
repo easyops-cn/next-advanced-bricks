@@ -3121,14 +3121,7 @@
   dependencies:
     "@next-core/http" "^1.0.6"
 
-"@next-api-sdk/llm-sdk@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@next-api-sdk/llm-sdk/-/llm-sdk-1.6.0.tgz#afb2c60e2bddcd113d2ee01ee1318253c9fcaba2"
-  integrity sha512-kRyFxNj8TnDn8dkULieB4eVuPtK6v+k25o6oizz1KsrzP1dSlzv+fmRE0JBMsz3RevCYzEpzo1X+uyP065sRZQ==
-  dependencies:
-    "@next-core/http" "^1.0.0"
-
-"@next-api-sdk/llm-sdk@^1.6.2":
+"@next-api-sdk/llm-sdk@^1.6.0", "@next-api-sdk/llm-sdk@^1.6.2":
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/@next-api-sdk/llm-sdk/-/llm-sdk-1.6.2.tgz#a36b4cad25282a4d0fa437c9a486bdd9b52c79a8"
   integrity sha512-DDuTXnyqWUU1ARu1twKooS41gg831s86vhk9NbPpzOs50eD5XzVtQBEQ6Yzf76wqeLsyTfEnZfweGCbgRuAKSQ==
@@ -3233,10 +3226,10 @@
     mockdate "^3.0.5"
     ws "^8.18.2"
 
-"@next-core/brick-dll-v3@^0.8.26":
-  version "0.8.26"
-  resolved "https://registry.yarnpkg.com/@next-core/brick-dll-v3/-/brick-dll-v3-0.8.26.tgz#83e1e0cec47925c08c7542e57da8664274ae2fcc"
-  integrity sha512-7aei7KnJAd2bzcm2S3Jx0F/D9ln5fv2wT3ut70HQASTEnPPnyIq8SUxXGgyOz6YEFJrSJh3Mb1ousU6PwfBvZQ==
+"@next-core/brick-dll-v3@^0.8.33":
+  version "0.8.33"
+  resolved "https://registry.yarnpkg.com/@next-core/brick-dll-v3/-/brick-dll-v3-0.8.33.tgz#c153d28ce32af87fad6f475a51012e9c31a082f2"
+  integrity sha512-GjNeSyPkPMzFHRirFuZrjvF1NXuivTQAa2vIfJLecczMmvCGDKzR1E0qRNPnIXwY7U+rz0sT9fTdjZqrYhsjkA==
 
 "@next-core/brick-manifest@^0.7.2":
   version "0.7.2"
@@ -3528,30 +3521,30 @@
     minimist "^1.2.8"
     plop "^4.0.1"
 
-"@next-dll/ace@^2.0.791":
-  version "2.0.791"
-  resolved "https://registry.yarnpkg.com/@next-dll/ace/-/ace-2.0.791.tgz#c0070a66041bff55bb5b3c134a0db5ac96eccf02"
-  integrity sha512-+g2ioKoL2iWBQJ12PwrH6BHybmpnD0GnGbfU4RNLhTzQ51xoibOjuVnkWRpFu5aSNLaylaEJaBALPZl0lGr27A==
+"@next-dll/ace@^2.0.817":
+  version "2.0.817"
+  resolved "https://registry.yarnpkg.com/@next-dll/ace/-/ace-2.0.817.tgz#2964102760901a86e350d25b27d7b237ac803cfa"
+  integrity sha512-oc/MmRURcm5m/aNS5VtvJwEdHbRxE7mver0u13F3U2ErxKPP4sgH6tQCOqMXHYLI9XJHOhTWrI1COezsMrvsvQ==
 
-"@next-dll/d3@^2.0.83":
-  version "2.0.83"
-  resolved "https://registry.yarnpkg.com/@next-dll/d3/-/d3-2.0.83.tgz#673a9e4f5f9d414f14fb654e7c7fb06f0d806b17"
-  integrity sha512-G3ZXRWzXFGZy4wsq1AjzMXyN/kGx9XfW2oRJaM/u+mCe4mJvz4IQvEzt9+/wPnRAUEr7p/BsbkXxCSTEockvqQ==
-
-"@next-dll/echarts@^2.0.84":
+"@next-dll/d3@^2.0.84":
   version "2.0.84"
-  resolved "https://registry.yarnpkg.com/@next-dll/echarts/-/echarts-2.0.84.tgz#fbc6ec7854be65906b6a358a780d5bd775dba09c"
-  integrity sha512-oFBQE3FCZWvw1IoY86tX8Lazqz96+0TwalF0e7TdAY+8oX/1dEHiY0IVYoQO3ONdrb+33bEBANb/b296v8WaEg==
+  resolved "https://registry.yarnpkg.com/@next-dll/d3/-/d3-2.0.84.tgz#780ca9d018685ef82000623ba5a3088716593608"
+  integrity sha512-pNxBPiVZYdDmkYPBfYBaMHov5QyeFG2Uk5SjSBSUf50L/dd0AraKj7aeRf32fWjohgy9irJx/lyzHjRP8En/Ug==
 
-"@next-dll/editor-bricks-helper@^0.40.6":
-  version "0.40.6"
-  resolved "https://registry.yarnpkg.com/@next-dll/editor-bricks-helper/-/editor-bricks-helper-0.40.6.tgz#8e8a29b4408991b11ba80c7d19201d860578a8f6"
-  integrity sha512-oCALnElEAw2UykjH5lKCDlHW5EAek7PTlDeNR3fh0GnWH/ihNebcYxY0lWekJOKrGafR3BIOvw/HxPj+7g0AXQ==
+"@next-dll/echarts@^2.0.85":
+  version "2.0.85"
+  resolved "https://registry.yarnpkg.com/@next-dll/echarts/-/echarts-2.0.85.tgz#027e588352c8e5d8ef3444a8cb58af31ce20e70f"
+  integrity sha512-sUnrOScLw3CoFwpmcMN9qtuQ44EhSgGiiyf5QlIGIuqA03hu6n1YDQNTc3DbvXRHCK6w/4+O2ELCcgg3Q9J2Kw==
 
-"@next-dll/react-dnd@^0.1.729":
-  version "0.1.729"
-  resolved "https://registry.yarnpkg.com/@next-dll/react-dnd/-/react-dnd-0.1.729.tgz#39c8e2400eb72b24109cd386c28ef3c945e88460"
-  integrity sha512-rgY9XcrK1KsBq4N1j5EMa50lUxAws2kuVUORn6t3sXLQv1dE1bbFnQXrqSIlZO5JKzBfp+pIzzdDdJiKSrFUdA==
+"@next-dll/editor-bricks-helper@^0.41.16":
+  version "0.41.16"
+  resolved "https://registry.yarnpkg.com/@next-dll/editor-bricks-helper/-/editor-bricks-helper-0.41.16.tgz#da0a5b928583feb358e1d36caeedf7163c1ea5ad"
+  integrity sha512-Z+Jh1/8oe7A1Z36YtaIeu3oDEqaVIL5iHfasaxgok2dcQfisdL1EqjELBiSX8bKzv5tuLzu84h21pear5D6Biw==
+
+"@next-dll/react-dnd@^0.1.755":
+  version "0.1.755"
+  resolved "https://registry.yarnpkg.com/@next-dll/react-dnd/-/react-dnd-0.1.755.tgz#c8647ad7c9a7fcecad663efcb16f521c3ea27941"
+  integrity sha512-L+qfiqyZ926HEXso8W589uug2HSbTzokd990AV2MGAukxuAXF7dXfQ7tF3Rck/xEKD2U484r/gKJ27cAaoukMQ==
 
 "@next-shared/common-bricks@^0.57.1":
   version "0.57.1"
@@ -18193,16 +18186,7 @@ string-length@^4.0.2:
     char-regex "^1.0.2"
     strip-ansi "^6.0.0"
 
-"string-width-cjs@npm:string-width@^4.2.0":
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
-  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
-  dependencies:
-    emoji-regex "^8.0.0"
-    is-fullwidth-code-point "^3.0.0"
-    strip-ansi "^6.0.1"
-
-"string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3, "string-width@npm:string-width@^4.2.3":
+"string-width-cjs@npm:string-width@^4.2.0", "string-width@^1.0.2 || 2 || 3 || 4", string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3, "string-width@npm:string-width@^4.2.3":
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -18310,7 +18294,7 @@ stringify-entities@^4.0.0:
     character-entities-html4 "^2.0.0"
     character-entities-legacy "^3.0.0"
 
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1, "strip-ansi@npm:strip-ansi@^6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
@@ -18323,13 +18307,6 @@ strip-ansi@^3.0.0:
   integrity sha512-VhumSSbBqDTP8p2ZLKj40UjBCV4+v8bUSEpUb4KjRgWk9pbqGF4REFj6KEagidb2f/M6AzC0EmFyDNGaw9OCzg==
   dependencies:
     ansi-regex "^2.0.0"
-
-strip-ansi@^6.0.0, strip-ansi@^6.0.1, "strip-ansi@npm:strip-ansi@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
-  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
-  dependencies:
-    ansi-regex "^5.0.1"
 
 strip-ansi@^7.0.1, strip-ansi@^7.1.0:
   version "7.1.0"
@@ -19777,7 +19754,7 @@ wordwrap@^1.0.0:
   resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-1.0.0.tgz#27584810891456a4171c8d0226441ade90cbcaeb"
   integrity sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==
 
-"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0":
+"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
@@ -19790,15 +19767,6 @@ wrap-ansi@^6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-6.2.0.tgz#e9393ba07102e6c91a3b221478f0257cd2856e53"
   integrity sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==
-  dependencies:
-    ansi-styles "^4.0.0"
-    string-width "^4.1.0"
-    strip-ansi "^6.0.0"
-
-wrap-ansi@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
-  integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
   dependencies:
     ansi-styles "^4.0.0"
     string-width "^4.1.0"
