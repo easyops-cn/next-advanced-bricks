@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.51.2](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.51.1...@next-bricks/advanced@0.51.2) (2026-01-28)
+
+
+### Bug Fixes
+
+* **form:** improvement form types Refs INFRA-5454 ([7c3e3f9](https://github.com/easyops-cn/next-advanced-bricks/commit/7c3e3f96d9bf04ab4435a5d233b70a5bebf46e31))
+
+
+
+
+
 ## [0.51.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.51.0...@next-bricks/advanced@0.51.1) (2025-11-25)
 
 **Note:** Version bump only for package @next-bricks/advanced
