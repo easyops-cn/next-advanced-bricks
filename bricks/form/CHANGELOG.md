@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.21.8...@next-bricks/form@1.21.9) (2026-01-28)
+
+
+### Bug Fixes
+
+* **form:** fix timePiker types Refs INFRA-5454 ([ba1a242](https://github.com/easyops-cn/next-advanced-bricks/commit/ba1a242c760df3abda367ab3f418ff6935d22ed9))
+
+
+
+
+
 ## [1.21.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.21.7...@next-bricks/form@1.21.8) (2026-01-28)
 
 
