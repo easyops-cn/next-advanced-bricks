@@ -26,6 +26,16 @@ export interface StepItem {
   key: string;
 }
 
+export interface EoLoadingStepEventsMap {
+  open: CustomEvent<void>;
+  close: CustomEvent<void>;
+}
+
+export interface EoLoadingStepEventsMapping {
+  onOpen: "open";
+  onClose: "close";
+}
+
 /**
  * 加载步骤框
  */

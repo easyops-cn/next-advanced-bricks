@@ -205,6 +205,54 @@ export interface CanvasContextMenuDetail {
   };
 }
 
+export interface EoDrawCanvasEventsMap {
+  "activeTarget.change": CustomEvent<ActiveTarget | null>;
+  "node.move": CustomEvent<MoveCellPayload>;
+  "cell.move": CustomEvent<MoveCellPayload>;
+  "cells.move": CustomEvent<MoveCellPayload[]>;
+  "cell.resize": CustomEvent<ResizeCellPayload>;
+  "node.delete": CustomEvent<Cell>;
+  "cell.delete": CustomEvent<Cell>;
+  "cells.delete": CustomEvent<Cell[]>;
+  "cell.contextmenu": CustomEvent<CellContextMenuDetail>;
+  "edge.add": CustomEvent<ConnectNodesDetail>;
+  "edge.view.change": CustomEvent<EdgeViewChangePayload>;
+  "decorator.view.change": CustomEvent<DecoratorViewChangePayload>;
+  "decorator.text.change": CustomEvent<DecoratorTextChangeDetail>;
+  "node.container.change": CustomEvent<MoveCellPayload[]>;
+  "decorator.group.plus.click": CustomEvent<DecoratorCell>;
+  "scale.change": CustomEvent<number>;
+  "canvas.contextmenu": CustomEvent<CanvasContextMenuDetail>;
+  "canvas.copy": CustomEvent<void>;
+  "canvas.paste": CustomEvent<void>;
+  "canvas.group": CustomEvent<void>;
+  "canvas.ungroup": CustomEvent<void>;
+}
+
+export interface EoDrawCanvasEventsMapping {
+  onActiveTargetChange: "activeTarget.change";
+  onNodeMove: "node.move";
+  onCellMove: "cell.move";
+  onCellsMove: "cells.move";
+  onCellResize: "cell.resize";
+  onNodeDelete: "node.delete";
+  onCellDelete: "cell.delete";
+  onCellsDelete: "cells.delete";
+  onCellContextmenu: "cell.contextmenu";
+  onEdgeAdd: "edge.add";
+  onEdgeViewChange: "edge.view.change";
+  onDecoratorViewChange: "decorator.view.change";
+  onDecoratorTextChange: "decorator.text.change";
+  onNodeContainerChange: "node.container.change";
+  onDecoratorGroupPlusClick: "decorator.group.plus.click";
+  onScaleChange: "scale.change";
+  onCanvasContextmenu: "canvas.contextmenu";
+  onCanvasCopy: "canvas.copy";
+  onCanvasPaste: "canvas.paste";
+  onCanvasGroup: "canvas.group";
+  onCanvasUngroup: "canvas.ungroup";
+}
+
 /**
  * 用于手工绘图的画布。
  *

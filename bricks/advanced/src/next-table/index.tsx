@@ -22,36 +22,51 @@ import "./host-context.css";
 import chartStyleText from "./chart-v2.shadow.css";
 
 const { defineElement, property, method, event } = createDecorators();
-export interface NextTableEventsMap {
-  pageChange: CustomEvent<Record<string, number>>;
-  filterUpdate: CustomEvent<Record<string, number>>;
-  selectUpdate: CustomEvent<Record<string, any>[]>;
-  selectRowKeysUpdate: CustomEvent<string[]>;
-  sortUpdate: CustomEvent<{
-    sort: string;
-    order: string | number;
-  }>;
-  rowExpand: CustomEvent<{
-    expanded: boolean;
-    record: Record<string, any>;
-  }>;
-  expandRowsChange: CustomEvent<{
-    expandedRows: React.Key[];
-  }>;
-  rowDrag: CustomEvent<{
-    data: Record<string, any>[];
-  }>;
+
+export interface PageOrPageSizeChangeEventDetail {
+  page: number;
+  pageSize: number;
 }
 
-export interface NextTableEventsMapping {
-  onPageChange: "page.update";
-  onfilterUpdate: "filter.update";
-  selectUpdate: "select.update";
-  selectRowKeysUpdate: "select.row.keys.update";
-  sortUpdate: "sort.update";
-  rowExpand: "row.expand";
-  expandRowsChange: "expand.rows.change";
-  rowDrag: "row.drag";
+export interface RowSelectEventDetail {
+  keys: (string | number)[];
+  rows: RecordType[];
+  info: { type: RowSelectMethod };
+}
+
+export interface RowExpandEventDetail {
+  expanded: boolean;
+  record: RecordType;
+}
+
+export interface RowDragEventDetail {
+  list: RecordType[];
+  active: RecordType;
+  over: RecordType;
+}
+
+export interface EoNextTableEventsMap {
+  "page.change": CustomEvent<PageOrPageSizeChangeEventDetail>;
+  "page.size.change": CustomEvent<PageOrPageSizeChangeEventDetail>;
+  "sort.change": CustomEvent<Sort | Sort[] | undefined>;
+  "row.click": CustomEvent<RecordType>;
+  "row.select": CustomEvent<RowSelectEventDetail>;
+  "row.select.v2": CustomEvent<RecordType[]>;
+  "row.expand": CustomEvent<RowExpandEventDetail>;
+  "expanded.rows.change": CustomEvent<(string | number)[]>;
+  "row.drag": CustomEvent<RowDragEventDetail>;
+}
+
+export interface EoNextTableEventsMapping {
+  onPageChange: "page.change";
+  onPageSizeChange: "page.size.change";
+  onSortChange: "sort.change";
+  onRowClick: "row.click";
+  onRowSelect: "row.select";
+  onRowSelectV2: "row.select.v2";
+  onRowExpand: "row.expand";
+  onExpandedRowsChange: "expanded.rows.change";
+  onRowDrag: "row.drag";
 }
 
 /**
@@ -267,8 +282,8 @@ class EoNextTable extends ReactNextElement implements NextTableProps {
    * @detail 改变后的页码及每页条数
    */
   @event({ type: "page.change" })
-  accessor #pageChangeEvent!: EventEmitter<{ page: number; pageSize: number }>;
-  #handlePageChange = (detail: { page: number; pageSize: number }): void => {
+  accessor #pageChangeEvent!: EventEmitter<PageOrPageSizeChangeEventDetail>;
+  #handlePageChange = (detail: PageOrPageSizeChangeEventDetail): void => {
     this.#pageChangeEvent.emit(detail);
   };
 
@@ -278,14 +293,8 @@ class EoNextTable extends ReactNextElement implements NextTableProps {
    * @deprecated 统一用 `page.change` 事件
    */
   @event({ type: "page.size.change" })
-  accessor #pageSizeChangeEvent!: EventEmitter<{
-    page: number;
-    pageSize: number;
-  }>;
-  #handlePageSizeChange = (detail: {
-    page: number;
-    pageSize: number;
-  }): void => {
+  accessor #pageSizeChangeEvent!: EventEmitter<PageOrPageSizeChangeEventDetail>;
+  #handlePageSizeChange = (detail: PageOrPageSizeChangeEventDetail): void => {
     this.#pageSizeChangeEvent.emit(detail);
   };
 
@@ -315,11 +324,7 @@ class EoNextTable extends ReactNextElement implements NextTableProps {
    * @detail 改变后的 rowKey 及行数据
    */
   @event({ type: "row.select" })
-  accessor #rowSelectEvent!: EventEmitter<{
-    keys: (string | number)[];
-    rows: RecordType[];
-    info: { type: RowSelectMethod };
-  }>;
+  accessor #rowSelectEvent!: EventEmitter<RowSelectEventDetail>;
 
   /**
    * 行选中项发生变化时的回调（v2 版本）
@@ -329,11 +334,7 @@ class EoNextTable extends ReactNextElement implements NextTableProps {
   @event({ type: "row.select.v2" })
   accessor #rowSelectV2Event!: EventEmitter<RecordType[]>;
 
-  #handleRowSelect = (detail: {
-    keys: (string | number)[];
-    rows: RecordType[];
-    info: { type: RowSelectMethod };
-  }): void => {
+  #handleRowSelect = (detail: RowSelectEventDetail): void => {
     this.#rowSelectEvent.emit(detail);
     this.#rowSelectV2Event.emit(detail.rows);
   };
@@ -343,14 +344,8 @@ class EoNextTable extends ReactNextElement implements NextTableProps {
    * @detail 当前行的展开情况及数据
    */
   @event({ type: "row.expand" })
-  accessor #rowExpandEvent!: EventEmitter<{
-    expanded: boolean;
-    record: RecordType;
-  }>;
-  #handleRowExpand = (detail: {
-    expanded: boolean;
-    record: RecordType;
-  }): void => {
+  accessor #rowExpandEvent!: EventEmitter<RowExpandEventDetail>;
+  #handleRowExpand = (detail: RowExpandEventDetail): void => {
     this.#rowExpandEvent.emit(detail);
   };
 
@@ -369,17 +364,9 @@ class EoNextTable extends ReactNextElement implements NextTableProps {
    * @detail 重新排序的行数据、拖拽的行数据、放下位置的行数据
    */
   @event({ type: "row.drag" })
-  accessor #rowDragEvent!: EventEmitter<{
-    list: RecordType[];
-    active: RecordType;
-    over: RecordType;
-  }>;
+  accessor #rowDragEvent!: EventEmitter<RowDragEventDetail>;
   // istanbul ignore next
-  #handleRowDrag = (detail: {
-    list: RecordType[];
-    active: RecordType;
-    over: RecordType;
-  }): void => {
+  #handleRowDrag = (detail: RowDragEventDetail): void => {
     this.#rowDragEvent.emit(detail);
   };
 

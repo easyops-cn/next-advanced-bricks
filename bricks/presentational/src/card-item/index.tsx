@@ -102,6 +102,16 @@ export interface EoCardItemProps {
   cardTitleStyle?: React.CSSProperties;
 }
 
+export interface EoCardItemEventsMap {
+  "action.click": CustomEvent<SimpleActionType>;
+  "tag.click": CustomEvent<void>;
+}
+
+export interface EoCardItemEventsMapping {
+  onActionClick: "action.click";
+  onTagClick: "tag.click";
+}
+
 /**
  * 信息类卡片 —— 通用卡片
  * @slot - 内容区域，通常放置卡片自定义内容

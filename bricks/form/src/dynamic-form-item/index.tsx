@@ -105,8 +105,8 @@ export const getRealValue = (
 
 export interface DynamicFormItemEventsMap {
   change: CustomEvent<DynamicFormValuesItem[]>;
-  rowAdd: CustomEvent<rowDataType>;
-  rowRemove: CustomEvent<rowDataType>;
+  "row.add": CustomEvent<rowDataType>;
+  "row.remove": CustomEvent<rowDataType>;
 }
 
 export interface DynamicFormItemEventsMapping {

@@ -59,6 +59,14 @@ export interface ChangeDetailOfToken {
   pageSize: number;
 }
 
+export interface EoPaginationEventsMap {
+  change: CustomEvent<ChangeDetail>;
+}
+
+export interface EoPaginationEventsMapping {
+  onChange: "change";
+}
+
 /**
  * 分页
  * @author nlicro
