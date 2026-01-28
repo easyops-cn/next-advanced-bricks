@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.68.8](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.68.7...@next-bricks/diagram@0.68.8) (2026-01-28)
+
+
+### Bug Fixes
+
+* Supplement the brick's EventsMap and EventsMapping interfaces ([f6b59c3](https://github.com/easyops-cn/next-advanced-bricks/commit/f6b59c3b684e555a78855186b7daeebeefb82092))
+
+
+
+
+
 ## [0.68.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.68.6...@next-bricks/diagram@0.68.7) (2025-11-11)
 
 **Note:** Version bump only for package @next-bricks/diagram

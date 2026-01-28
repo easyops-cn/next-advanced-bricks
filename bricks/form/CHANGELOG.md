@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.10](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.21.9...@next-bricks/form@1.21.10) (2026-01-28)
+
+
+### Bug Fixes
+
+* Supplement the brick's EventsMap and EventsMapping interfaces ([f6b59c3](https://github.com/easyops-cn/next-advanced-bricks/commit/f6b59c3b684e555a78855186b7daeebeefb82092))
+
+
+
+
+
 ## [1.21.9](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.21.8...@next-bricks/form@1.21.9) (2026-01-28)
 
 
