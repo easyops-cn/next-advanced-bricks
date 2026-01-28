@@ -22,6 +22,37 @@ import "./host-context.css";
 import chartStyleText from "./chart-v2.shadow.css";
 
 const { defineElement, property, method, event } = createDecorators();
+export interface NextTableEventsMap {
+  pageChange: CustomEvent<Record<string, number>>;
+  filterUpdate: CustomEvent<Record<string, number>>;
+  selectUpdate: CustomEvent<Record<string, any>[]>;
+  selectRowKeysUpdate: CustomEvent<string[]>;
+  sortUpdate: CustomEvent<{
+    sort: string;
+    order: string | number;
+  }>;
+  rowExpand: CustomEvent<{
+    expanded: boolean;
+    record: Record<string, any>;
+  }>;
+  expandRowsChange: CustomEvent<{
+    expandedRows: React.Key[];
+  }>;
+  rowDrag: CustomEvent<{
+    data: Record<string, any>[];
+  }>;
+}
+
+export interface NextTableEventsMapping {
+  onPageChange: "page.update";
+  onfilterUpdate: "filter.update";
+  selectUpdate: "select.update";
+  selectRowKeysUpdate: "select.row.keys.update";
+  sortUpdate: "sort.update";
+  rowExpand: "row.expand";
+  expandRowsChange: "expand.rows.change";
+  rowDrag: "row.drag";
+}
 
 /**
  * 大型表格

@@ -80,7 +80,7 @@ const WrappedSearch = wrapBrick<
 });
 const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
 
-type Icon = LibIconProps & { color?: string };
+export type Icon = LibIconProps & { color?: string };
 
 export interface IconSelectProps {
   name?: string;
@@ -90,6 +90,14 @@ export interface IconSelectProps {
   required?: boolean;
   message?: Record<string, string>;
   themeVariant?: "default" | "elevo";
+}
+
+export interface IconSelectEventsMap {
+  change: CustomEvent<Icon | undefined>;
+}
+
+export interface IconSelectEventsMapping {
+  onChange: "change";
 }
 
 /**

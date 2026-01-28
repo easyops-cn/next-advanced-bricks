@@ -23,6 +23,14 @@ export interface EoColorPickerProps
   value?: string;
 }
 
+export interface EoColorPickerEventsMap {
+  change: CustomEvent<string | undefined>;
+}
+
+export interface EoColorPickerEventsMapping {
+  onChange: "change";
+}
+
 /**
  * 构件 `eo-color-picker`
  * @author astrid

@@ -20,6 +20,16 @@ export interface SubmitButtonsProps extends FormItemProps {
   themeVariant?: "default" | "elevo";
 }
 
+export interface SubmitButtonsEventsMap {
+  submit: CustomEvent<void>;
+  cancel: CustomEvent<void>;
+}
+
+export interface SubmitButtonsEventsMapping {
+  onSubmit: "submit";
+  onCancel: "cancel";
+}
+
 const { defineElement, property, event } = createDecorators();
 
 /**

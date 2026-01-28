@@ -54,6 +54,19 @@ export interface CheckboxProps extends FormItemProps {
   themeVariant?: "default" | "elevo";
 }
 
+export interface CheckboxEventsMap {
+  change: CustomEvent<CheckboxOptionType[]>;
+  optionsChange: CustomEvent<{
+    options: CheckboxOptionType[];
+    name: string;
+  }>;
+}
+
+export interface CheckboxEventsMapping {
+  onChange: "change";
+  onOptionsChange: "options.change";
+}
+
 /**
  * 表单复选框构件
  * @author derrickma

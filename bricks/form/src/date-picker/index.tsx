@@ -72,6 +72,16 @@ type PickerModeMap = {
   [K in PickerMode]: string[];
 };
 
+export interface EoDatePickerEventsMap {
+  change: CustomEvent<string>;
+  ok: CustomEvent<string>;
+}
+
+export interface EoDatePickerEventsMapping {
+  onChange: "change";
+  onOk: "ok";
+}
+
 const { defineElement, property, event } = createDecorators();
 const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");

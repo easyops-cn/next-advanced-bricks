@@ -44,6 +44,17 @@ export interface CascaderProps
   ) => void;
 }
 
+export interface CascaderEventsMap {
+  pageChange: CustomEvent<{
+    value: AntdCascaderProps["value"];
+    selectedOptions: DefaultOptionType[] | DefaultOptionType[][];
+  }>;
+}
+
+export interface CascaderEventsMapping {
+  onCascaderChange: "cascader.change";
+}
+
 /**
  * 级联选择器
  * @author nlicroshan

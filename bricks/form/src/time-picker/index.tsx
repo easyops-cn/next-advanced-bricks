@@ -33,6 +33,18 @@ interface EoTimePickerProps extends FormItemProps {
   onOpenChange?: (flag: boolean, value: string) => void;
 }
 
+export interface EoTimePickeEventsMap {
+  change: CustomEvent<string>;
+  open: CustomEvent<string>;
+  close: CustomEvent<string>;
+}
+
+export interface EoTimePickeEventsMapping {
+  onChange: "change";
+  onOpen: "open";
+  onClose: "close";
+}
+
 /**
  * 时间选择器
  * @author zhendonghuang

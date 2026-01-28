@@ -15,7 +15,7 @@ import classNames from "classnames";
 const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
 const WrappedGeneralIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
-interface SwitchProps extends FormItemProps {
+export interface SwitchProps extends FormItemProps {
   curElement: HTMLElement;
   onSwitch: (value: boolean) => void;
   disabled?: boolean;
@@ -26,6 +26,14 @@ interface SwitchProps extends FormItemProps {
   checkedIcon?: GeneralIconProps;
   unCheckedIcon?: GeneralIconProps;
   themeVariant?: "default" | "elevo";
+}
+
+export interface SwitchEventsMap {
+  switch: CustomEvent<boolean>;
+}
+
+export interface SwitchEventsMapping {
+  onSwitch: "switch";
 }
 
 const { defineElement, property, event } = createDecorators();
