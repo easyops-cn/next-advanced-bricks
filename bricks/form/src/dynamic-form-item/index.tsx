@@ -67,9 +67,9 @@ export function uniqueValidatorFN(
   };
 }
 
-type DynamicFormValuesItem = Record<string, any>;
+export type DynamicFormValuesItem = Record<string, any>;
 
-interface DynamicFormItemProps extends FormItemProps {
+export interface DynamicFormItemProps extends FormItemProps {
   form?: Form;
   useBrick?: UseBrickConf;
   value?: DynamicFormValuesItem[];
@@ -102,6 +102,19 @@ export const getRealValue = (
   }
   return property;
 };
+
+export interface DynamicFormItemEventsMap {
+  change: CustomEvent<DynamicFormValuesItem[]>;
+  rowAdd: CustomEvent<rowDataType>;
+  rowRemove: CustomEvent<rowDataType>;
+}
+
+export interface DynamicFormItemEventsMapping {
+  onChange: "change";
+  onRowAdd: "row.add";
+  onRowRemove: "row.remove";
+}
+
 /**
  * 动态表单
  * @author sailor

@@ -42,6 +42,14 @@ export interface TextareaComponentProps extends TextareaProps {
   onInputChange: (value: string) => void;
 }
 
+export interface TextareaEventsMap {
+  change: CustomEvent<string>;
+}
+
+export interface TextareaEventsMapping {
+  onChange: "change";
+}
+
 const { defineElement, property, event, method } = createDecorators();
 
 /**

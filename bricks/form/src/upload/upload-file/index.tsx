@@ -58,6 +58,14 @@ export interface UploadFileProps extends FormItemProps {
   themeVariant?: "default" | "elevo";
 }
 
+export interface UploadFileEventsMap {
+  change: CustomEvent<FileData[]>;
+}
+
+export interface UploadFileEventsMapping {
+  onChange: "change";
+}
+
 /**
  * 上传文件
  * @author nlicro

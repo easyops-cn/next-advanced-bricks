@@ -82,6 +82,15 @@ type RealTimeRangePickerProps = Omit<
   EoTimeRangePickerComponentProps,
   keyof Omit<FormItemProps, "formElement">
 >;
+
+export interface EoTimeRangePickerEventsMap {
+  change: CustomEvent<TimeRange>;
+}
+
+export interface EoTimeRangePickerEventsMapping {
+  onChange: "change";
+}
+
 /**
  * 时间区间选择器
  * @author zhendonghuang

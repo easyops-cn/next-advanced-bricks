@@ -127,6 +127,38 @@ export interface CustomColumn extends ColumnProps<Record<string, any>> {
   };
 }
 
+export interface EoTableEventsMap {
+  pageChange: CustomEvent<Record<string, number>>;
+  filterUpdate: CustomEvent<Record<string, number>>;
+  selectUpdate: CustomEvent<Record<string, any>[]>;
+  selectRowKeysUpdate: CustomEvent<string[]>;
+  sortUpdate: CustomEvent<{
+    sort: string;
+    order: string | number;
+  }>;
+  rowExpand: CustomEvent<{
+    expanded: boolean;
+    record: Record<string, any>;
+  }>;
+  expandRowsChange: CustomEvent<{
+    expandedRows: React.Key[];
+  }>;
+  rowDrag: CustomEvent<{
+    data: Record<string, any>[];
+  }>;
+}
+
+export interface EoTableEventsMapping {
+  onPageChange: "page.update";
+  onfilterUpdate: "filter.update";
+  selectUpdate: "select.update";
+  selectRowKeysUpdate: "select.row.keys.update";
+  sortUpdate: "sort.update";
+  rowExpand: "row.expand";
+  expandRowsChange: "expand.rows.change";
+  rowDrag: "row.drag";
+}
+
 /**
  * 简易表格构件。
  *

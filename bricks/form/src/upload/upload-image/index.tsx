@@ -41,6 +41,14 @@ export interface UploadImageProps extends FormItemProps {
   themeVariant?: "default" | "elevo";
 }
 
+export interface UploadImageEventsMap {
+  change: CustomEvent<ImageData[]>;
+}
+
+export interface UploadImageEventsMapping {
+  onChange: "change";
+}
+
 /**
  * 上传图片构件
  * @author nlicro

@@ -130,6 +130,34 @@ export interface SelectProps extends FormItemProps {
   onSearch?: (value: string) => void;
 }
 
+export interface SelectEventsMap {
+  change: CustomEvent<{
+    value: string | string[];
+    options: GeneralComplexOption[];
+  }>;
+  changeV2: CustomEvent<string | string[]>;
+  search: CustomEvent<{
+    value: string;
+  }>;
+  selectFocus: CustomEvent<void>;
+  optionsChange: CustomEvent<{
+    options: {
+      label: string;
+      value: any;
+      [key: string]: any;
+    };
+    name: string;
+  }>;
+}
+
+export interface SelectEventsMapping {
+  onChange: "change";
+  onChangeV2: "change.v2";
+  onSearch: "search";
+  onSelectFocus: "select.focus";
+  onOptionsChange: "options.change";
+}
+
 const { defineElement, property, event } = createDecorators();
 
 /**
