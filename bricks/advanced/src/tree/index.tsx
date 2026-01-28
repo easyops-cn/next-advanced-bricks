@@ -65,6 +65,20 @@ export type RawDropInfo = Parameters<
   Exclude<TreeProps<TreeNode>["onDrop"], undefined>
 >[0];
 
+export interface EoTreeEventsMap {
+  check: CustomEvent<TreeNodeKey[]>;
+  "check.detail": CustomEvent<CheckDetail>;
+  expand: CustomEvent<TreeNodeKey[]>;
+  "node.drop": CustomEvent<DropDetail>;
+}
+
+export interface EoTreeEventsMapping {
+  onCheck: "check";
+  onCheckDetail: "check.detail";
+  onExpand: "expand";
+  onNodeDrop: "node.drop";
+}
+
 /**
  * 树形构件
  * @author steve

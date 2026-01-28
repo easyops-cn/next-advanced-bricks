@@ -44,11 +44,13 @@ export interface CascaderProps
   ) => void;
 }
 
+export interface CascaderChangeEventDetail {
+  value: AntdCascaderProps["value"];
+  selectedOptions: DefaultOptionType[] | DefaultOptionType[][];
+}
+
 export interface CascaderEventsMap {
-  pageChange: CustomEvent<{
-    value: AntdCascaderProps["value"];
-    selectedOptions: DefaultOptionType[] | DefaultOptionType[][];
-  }>;
+  "cascader.change": CustomEvent<CascaderChangeEventDetail>;
 }
 
 export interface CascaderEventsMapping {
@@ -153,10 +155,7 @@ class CascaderBrick extends FormItemElementBase implements CascaderProps {
    * @description 级联选择项输入变化时触发，value 为选择的值，selectedOptions 为选择的值所对应的 options
    */
   @event({ type: "cascader.change" })
-  accessor #changeEvent!: EventEmitter<{
-    value: AntdCascaderProps["value"];
-    selectedOptions: DefaultOptionType[] | DefaultOptionType[][];
-  }>;
+  accessor #changeEvent!: EventEmitter<CascaderChangeEventDetail>;
 
   handleOnChange = (
     value: AntdCascaderProps["value"],

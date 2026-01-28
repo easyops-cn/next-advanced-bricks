@@ -76,6 +76,18 @@ export interface EoDisplayCanvasProps {
 
 const EoDisplayCanvasComponent = forwardRef(LegacyEoDisplayCanvasComponent);
 
+export interface EoDisplayCanvasEventsMap {
+  "activeTarget.change": CustomEvent<ActiveTarget | null>;
+  "cell.contextmenu": CustomEvent<CellContextMenuDetail>;
+  "cell.click": CustomEvent<CellContextMenuDetail>;
+}
+
+export interface EoDisplayCanvasEventsMapping {
+  onActiveTargetChange: "activeTarget.change";
+  onCellContextmenu: "cell.contextmenu";
+  onCellClick: "cell.click";
+}
+
 /**
  * 用于展示查看的画布。
  */
@@ -443,7 +455,9 @@ function LegacyEoDisplayCanvasComponent(
 
   return (
     <>
-      {extraStyleTexts?.map((text, index) => <style key={index}>{text}</style>)}
+      {extraStyleTexts?.map((text, index) => (
+        <style key={index}>{text}</style>
+      ))}
       <svg
         width="100%"
         height="100%"

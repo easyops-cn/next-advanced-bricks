@@ -127,36 +127,44 @@ export interface CustomColumn extends ColumnProps<Record<string, any>> {
   };
 }
 
+export interface SortUpdateEventDetail {
+  sort: string;
+  order: string | number;
+}
+
+export interface RowExpandEventDetail {
+  expanded: boolean;
+  record: Record<string, any>;
+}
+
+export interface ExpandRowsChangeEventDetail {
+  expandedRows: React.Key[];
+}
+
+export interface RowDragEventDetail {
+  data: Record<string, any>[];
+}
+
 export interface EoTableEventsMap {
-  pageChange: CustomEvent<Record<string, number>>;
-  filterUpdate: CustomEvent<Record<string, number>>;
-  selectUpdate: CustomEvent<Record<string, any>[]>;
-  selectRowKeysUpdate: CustomEvent<string[]>;
-  sortUpdate: CustomEvent<{
-    sort: string;
-    order: string | number;
-  }>;
-  rowExpand: CustomEvent<{
-    expanded: boolean;
-    record: Record<string, any>;
-  }>;
-  expandRowsChange: CustomEvent<{
-    expandedRows: React.Key[];
-  }>;
-  rowDrag: CustomEvent<{
-    data: Record<string, any>[];
-  }>;
+  "page.update": CustomEvent<Record<string, number>>;
+  "filter.update": CustomEvent<Record<string, number>>;
+  "select.update": CustomEvent<Record<string, any>[]>;
+  "select.row.keys.update": CustomEvent<string[]>;
+  "sort.update": CustomEvent<SortUpdateEventDetail>;
+  "row.expand": CustomEvent<RowExpandEventDetail>;
+  "expand.rows.change": CustomEvent<ExpandRowsChangeEventDetail>;
+  "row.drag": CustomEvent<RowDragEventDetail>;
 }
 
 export interface EoTableEventsMapping {
   onPageChange: "page.update";
-  onfilterUpdate: "filter.update";
-  selectUpdate: "select.update";
-  selectRowKeysUpdate: "select.row.keys.update";
-  sortUpdate: "sort.update";
-  rowExpand: "row.expand";
-  expandRowsChange: "expand.rows.change";
-  rowDrag: "row.drag";
+  onFilterUpdate: "filter.update";
+  onSelectUpdate: "select.update";
+  onSelectRowKeysUpdate: "select.row.keys.update";
+  onSortUpdate: "sort.update";
+  onRowExpand: "row.expand";
+  onExpandRowsChange: "expand.rows.change";
+  onRowDrag: "row.drag";
 }
 
 /**
@@ -205,33 +213,25 @@ class TableComponent extends ReactNextElement {
    * 排序变化，detail 中的 sort 为对应排序列的 key/dataIndex，order 为升序/降序
    */
   @event({ type: "sort.update", cancelable: true })
-  accessor #sortUpdate!: EventEmitter<{
-    sort: string;
-    order: string | number;
-  }>;
+  accessor #sortUpdate!: EventEmitter<SortUpdateEventDetail>;
 
   /**
    * 点击展开图标时触发的事件，事件详情中`expanded`为是否展开，`record`被点击的行信息
    */
-  @event({ type: "row.expand" }) accessor #rowExpand!: EventEmitter<{
-    expanded: boolean;
-    record: Record<string, any>;
-  }>;
+  @event({ type: "row.expand" })
+  accessor #rowExpand!: EventEmitter<RowExpandEventDetail>;
 
   /**
    * 展开的行变化时触发的事件，事件详情为当前展开的所有行的`rowKey`集合
    */
   @event({ type: "expand.rows.change" })
-  accessor #expandRowsChange!: EventEmitter<{
-    expandedRows: React.Key[];
-  }>;
+  accessor #expandRowsChange!: EventEmitter<ExpandRowsChangeEventDetail>;
 
   /**
    * 表格行拖拽结束发生的事件，事件详情为拖拽后重新排序的所有行数据
    */
-  @event({ type: "row.drag" }) accessor #rowDrag!: EventEmitter<{
-    data: Record<string, any>[];
-  }>;
+  @event({ type: "row.drag" })
+  accessor #rowDrag!: EventEmitter<RowDragEventDetail>;
 
   /**
    * 扩展自 ant-design 的 Column 相关配置项,具体查阅：[Column](https://ant.design/components/table-cn/#Column)

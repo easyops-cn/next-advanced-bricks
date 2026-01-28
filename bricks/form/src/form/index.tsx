@@ -30,6 +30,18 @@ export interface FormMapEvents {
   onValidateError: "validate.error";
 }
 
+export interface EoFormEventsMap {
+  "values.change": CustomEvent<Record<string, unknown>>;
+  "validate.success": CustomEvent<Record<string, unknown>>;
+  "validate.error": CustomEvent<(MessageBody & { name: string })[]>;
+}
+
+export interface EoFormEventsMapping {
+  onValuesChange: "values.change";
+  onValidateSuccess: "validate.success";
+  onValidateError: "validate.error";
+}
+
 /**
  * 表单构件
  * @author sailor

@@ -54,12 +54,14 @@ export interface CheckboxProps extends FormItemProps {
   themeVariant?: "default" | "elevo";
 }
 
+export interface OptionsChangeEventDetail {
+  options: CheckboxOptionType[];
+  name: string;
+}
+
 export interface CheckboxEventsMap {
   change: CustomEvent<CheckboxOptionType[]>;
-  optionsChange: CustomEvent<{
-    options: CheckboxOptionType[];
-    name: string;
-  }>;
+  "options.change": CustomEvent<OptionsChangeEventDetail>;
 }
 
 export interface CheckboxEventsMapping {
@@ -180,10 +182,7 @@ class Checkbox extends FormItemElementBase {
    * 复选框变化事件
    */
   @event({ type: "options.change" })
-  accessor #optionsChangeEvent!: EventEmitter<{
-    options: CheckboxOptionType[];
-    name: string;
-  }>;
+  accessor #optionsChangeEvent!: EventEmitter<OptionsChangeEventDetail>;
 
   #handleOptionsChange = (options: CheckboxOptionType[], name: string) => {
     this.#optionsChangeEvent.emit({

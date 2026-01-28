@@ -85,6 +85,24 @@ export interface DiagramRef {
 
 export const EoDiagramComponent = forwardRef(LegacyEoDiagramComponent);
 
+export interface EoDiagramEventsMap {
+  "activeTarget.change": CustomEvent<ActiveTarget | null>;
+  "node.delete": CustomEvent<DiagramNode>;
+  "edge.delete": CustomEvent<DiagramEdge>;
+  "line.click": CustomEvent<LineTarget>;
+  "line.dblclick": CustomEvent<LineTarget>;
+  "nodes.connect": CustomEvent<ConnectLineDetail>;
+}
+
+export interface EoDiagramEventsMapping {
+  onActiveTargetChange: "activeTarget.change";
+  onNodeDelete: "node.delete";
+  onEdgeDelete: "edge.delete";
+  onLineClick: "line.click";
+  onLineDblclick: "line.dblclick";
+  onNodesConnect: "nodes.connect";
+}
+
 /**
  * 构件 `eo-diagram`
  */

@@ -130,24 +130,30 @@ export interface SelectProps extends FormItemProps {
   onSearch?: (value: string) => void;
 }
 
+export interface ChangeEventDetail {
+  value: string | string[];
+  options: GeneralComplexOption[];
+}
+
+export interface SearchEventDetail {
+  value: string;
+}
+
+export interface OptionsChangeEventDetail {
+  options: {
+    label: string;
+    value: any;
+    [key: string]: any;
+  };
+  name: string;
+}
+
 export interface SelectEventsMap {
-  change: CustomEvent<{
-    value: string | string[];
-    options: GeneralComplexOption[];
-  }>;
-  changeV2: CustomEvent<string | string[]>;
-  search: CustomEvent<{
-    value: string;
-  }>;
-  selectFocus: CustomEvent<void>;
-  optionsChange: CustomEvent<{
-    options: {
-      label: string;
-      value: any;
-      [key: string]: any;
-    };
-    name: string;
-  }>;
+  change: CustomEvent<ChangeEventDetail>;
+  "change.v2": CustomEvent<string | string[]>;
+  search: CustomEvent<SearchEventDetail>;
+  "select.focus": CustomEvent<void>;
+  "options.change": CustomEvent<OptionsChangeEventDetail>;
 }
 
 export interface SelectEventsMapping {
@@ -312,10 +318,8 @@ class Select extends FormItemElementBase {
   /**
    * 下拉选择事件
    */
-  @event({ type: "change" }) accessor #changeEvent!: EventEmitter<{
-    value: string | string[];
-    options: GeneralComplexOption[];
-  }>;
+  @event({ type: "change" })
+  accessor #changeEvent!: EventEmitter<ChangeEventDetail>;
 
   /**
    * 下拉选择事件 v2（仅传递选中的值）
@@ -329,9 +333,8 @@ class Select extends FormItemElementBase {
   /**
    * 下拉框search事件
    */
-  @event({ type: "search" }) accessor #searchEvent!: EventEmitter<{
-    value: string;
-  }>;
+  @event({ type: "search" })
+  accessor #searchEvent!: EventEmitter<SearchEventDetail>;
 
   /**
    * 下拉框focus事件
@@ -343,14 +346,8 @@ class Select extends FormItemElementBase {
   /**
    * 选项列表变化事件
    */
-  @event({ type: "options.change" }) accessor #optionsChange!: EventEmitter<{
-    options: {
-      label: string;
-      value: any;
-      [key: string]: any;
-    };
-    name: string;
-  }>;
+  @event({ type: "options.change" })
+  accessor #optionsChange!: EventEmitter<OptionsChangeEventDetail>;
 
   handleChange = (
     value: string | string[],

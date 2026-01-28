@@ -29,6 +29,16 @@ export interface EditableLabelRef {
 
 export const EditableLabelComponent = forwardRef(LegacyEditableLabelComponent);
 
+export interface EditableLabelEventsMap {
+  "label.editing.change": CustomEvent<boolean>;
+  "label.change": CustomEvent<string>;
+}
+
+export interface EditableLabelEventsMapping {
+  onLabelEditingChange: "label.editing.change";
+  onLabelChange: "label.change";
+}
+
 /**
  * 构件 `diagram.editable-label`
  */

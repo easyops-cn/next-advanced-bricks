@@ -17,6 +17,18 @@ export interface ExperimentalNodeProps {
   status?: NodeStatus;
 }
 
+export interface ExperimentalNodeEventsMap {
+  "drag.start": CustomEvent<PositionTuple>;
+  "drag.move": CustomEvent<PositionTuple>;
+  "drag.end": CustomEvent<PositionTuple>;
+}
+
+export interface ExperimentalNodeEventsMapping {
+  onDragStart: "drag.start";
+  onDragMove: "drag.move";
+  onDragEnd: "drag.end";
+}
+
 /**
  * 构件 `diagram.experimental-node`
  */
