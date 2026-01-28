@@ -23,7 +23,7 @@ dayjs.extend(customParseFormat);
 const { defineElement, property, event } = createDecorators();
 const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
 
-interface EoTimePickerProps extends FormItemProps {
+export interface EoTimePickerProps extends FormItemProps {
   shadowRoot: ShadowRoot | null;
   configProps?: Partial<TimePickerProps>;
   placeholder?: string;
@@ -33,13 +33,13 @@ interface EoTimePickerProps extends FormItemProps {
   onOpenChange?: (flag: boolean, value: string) => void;
 }
 
-export interface EoTimePickeEventsMap {
+export interface EoTimePickerEventsMap {
   change: CustomEvent<string>;
   open: CustomEvent<string>;
   close: CustomEvent<string>;
 }
 
-export interface EoTimePickeEventsMapping {
+export interface EoTimePickerEventsMapping {
   onChange: "change";
   onOpen: "open";
   onClose: "close";
