@@ -72,6 +72,14 @@ export interface EoUserOrUserGroupSelectProps extends FormItemProps {
   themeVariant?: "default" | "elevo";
 }
 
+export interface MarkdownDisplayEventsMap {
+  change: CustomEvent<string[]>;
+}
+
+export interface MarkdownDisplayEventsMapping {
+  onChange: "change";
+}
+
 /**
  * 用户(组)选择器
  * @author dophijing
