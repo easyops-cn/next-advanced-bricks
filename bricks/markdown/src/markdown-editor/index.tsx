@@ -93,6 +93,16 @@ export interface MarkdownEditorProps extends FormItemProps {
   onMarkdownValueChange?: (value: string) => void;
 }
 
+export interface MarkdownEditorEventsMap {
+  "image.upload": CustomEvent<ImageInfo>;
+  "markdown.value.change": CustomEvent<string>;
+}
+
+export interface MarkdownEditorEventsMapping {
+  onImageUpload: "image.upload";
+  onMarkdownValueChange: "markdown.value.change";
+}
+
 export interface ImageInfo {
   name: string;
   src: string;
