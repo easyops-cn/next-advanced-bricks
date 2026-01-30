@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/markdown@1.14.1...@next-bricks/markdown@1.15.0) (2026-01-30)
+
+
+### Features
+
+* **form-platform,markdown:** improvement types Closes INFRA-001 ([2a49c55](https://github.com/easyops-cn/next-advanced-bricks/commit/2a49c55927c9c3d9bbad3fc92e9733def4446d2a))
+
+
+
+
+
 ## [1.14.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/markdown@1.14.0...@next-bricks/markdown@1.14.1) (2025-12-10)
 
 **Note:** Version bump only for package @next-bricks/markdown

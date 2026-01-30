@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form-platform@0.4.43...@next-bricks/form-platform@0.5.0) (2026-01-30)
+
+
+### Features
+
+* **form-platform,markdown:** improvement types Closes INFRA-001 ([2a49c55](https://github.com/easyops-cn/next-advanced-bricks/commit/2a49c55927c9c3d9bbad3fc92e9733def4446d2a))
+
+
+
+
+
 ## [0.4.43](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form-platform@0.4.42...@next-bricks/form-platform@0.4.43) (2025-11-18)
 
 
