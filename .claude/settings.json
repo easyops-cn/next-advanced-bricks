@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/abert/workspace/easyops/next-libs-v3/**)"
+    ]
+  }
+}

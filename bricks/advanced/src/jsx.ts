@@ -6,6 +6,7 @@ import type { PdfViewer, PdfViewerProps } from "./pdf-viewer";
 import type { EoTextTooltip, EoTextTooltipProps } from "./text-tooltip";
 import type { EoNextTable, NextTableProps } from "./next-table";
 import type { ColumnProp, Sort } from "./next-table/interface";
+import type { FlowList, FlowListProps } from "./flow-list";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -133,6 +134,7 @@ declare global {
         PdfViewer
       > &
         PdfViewerProps;
+      "advanced--flow-list": DetailedHTMLProps<HTMLAttributes<FlowList>, FlowList> & FlowListProps;
     }
   }
 }
