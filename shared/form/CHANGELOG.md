@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.12.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/form@0.11.0...@next-shared/form@0.12.0) (2026-03-04)
+
+
+### Bug Fixes
+
+* formItemElementBase不使用#，改成用private，避免跨包使用时ts编译报错 Closes CI-1142 ([7fab5d4](https://github.com/easyops-cn/next-advanced-bricks/commit/7fab5d4459111aa7d4e4e01d3b6583cf32c02b4b))
+
+
+### Features
+
+* formItemElementBase不使用#，改成用private，避免跨包使用时ts编译报错 Closes CI-1142 ([06d1631](https://github.com/easyops-cn/next-advanced-bricks/commit/06d16317bb77b3e98185a5f1c61e1cedcdc38a6f))
+
+
+
+
+
 # [0.11.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-shared/form@0.10.1...@next-shared/form@0.11.0) (2025-12-10)
 
 
