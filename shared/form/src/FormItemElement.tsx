@@ -6,20 +6,20 @@ import { UseSingleBrickConf } from "@next-core/types";
 const { method, property } = createDecorators();
 
 export abstract class FormItemElementBase extends ReactNextElement {
-  accessor #_notRender = false;
-  accessor #validate = "normal";
-  accessor #bindFormItem = false;
+  private accessor _notRender = false;
+  private accessor validate = "normal";
+  private accessor bindFormItem = false;
 
   get isFormItemElement(): true {
     return true;
   }
 
   set validateState(value: string) {
-    this.#validate = value;
+    this.validate = value;
     this._render();
   }
   get validateState() {
-    return this.#validate;
+    return this.validate;
   }
 
   /**
@@ -29,18 +29,18 @@ export abstract class FormItemElementBase extends ReactNextElement {
    */
   set notRender(value: boolean) {
     this.hidden = value;
-    this.#_notRender = value;
+    this._notRender = value;
     this._render();
   }
   get notRender(): boolean {
-    return this.#_notRender;
+    return this._notRender;
   }
 
   get $bindFormItem() {
-    return this.#bindFormItem;
+    return this.bindFormItem;
   }
   set $bindFormItem(value: boolean) {
-    this.#bindFormItem = value;
+    this.bindFormItem = value;
     this._render();
   }
 
