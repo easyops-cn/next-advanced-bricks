@@ -32,8 +32,9 @@ export interface EoColorPickerEventsMapping {
 }
 
 /**
- * 构件 `eo-color-picker`
+ * 颜色选择器
  * @author astrid
+ * @category form-input-basic
  */
 export
 @defineElement("eo-color-picker", {
@@ -104,6 +105,7 @@ class EoColorPicker extends FormItemElementBase implements EoColorPickerProps {
 
   /**
    * 颜色变化事件, 返回值格式和`format`格式一致
+   * @detail 选中的颜色值，格式由 format 属性决定（hex/rgb/hsb），清除时为 undefined
    */
   @event({ type: "change" })
   accessor #changeEvent!: EventEmitter<string | undefined>;

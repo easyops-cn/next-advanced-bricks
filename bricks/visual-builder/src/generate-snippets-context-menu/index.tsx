@@ -53,38 +53,62 @@ export interface SnippetOption {
 }
 
 /**
- * 构件 `visual-builder.generate-snippets-context-menu`
+ * 用于 Visual Builder 的代码片段右键上下文菜单，支持拖拽片段到画布，菜单位置自动适配视口边界
  */
 export
 @defineElement("visual-builder.generate-snippets-context-menu", {
   styleTexts: [styleText],
 })
 class GenerateSnippetsContextMenu extends ReactNextElement {
+  /**
+   * 菜单选项列表，每组包含标题和子菜单项
+   */
   @property({
     attribute: false,
   })
   accessor options: SnippetOption[] | undefined;
 
+  /**
+   * 菜单是否处于激活（显示）状态，通过 open/close 方法控制
+   */
   @property({
     type: Boolean,
   })
   accessor active: boolean | undefined;
 
+  /**
+   * 菜单显示位置，格式为 `[clientX, clientY]`，超出视口时自动修正
+   */
   @property({ attribute: false })
   accessor position: Position | undefined;
 
+  /**
+   * @detail `SnippetItem` — { text: 片段文本, icon: 图标, dragConf: { format: 数据格式, data: 数据内容 } }
+   * @description 用户开始拖拽菜单项时触发
+   */
   @event({ type: "item.drag.start" })
   accessor #itemDragStartEvent!: EventEmitter<SnippetItem>;
 
+  /**
+   * @detail `SnippetItem` — { text: 片段文本, icon: 图标, dragConf: { format: 数据格式, data: 数据内容 } }
+   * @description 用户结束拖拽菜单项时触发，同时菜单自动关闭
+   */
   @event({ type: "item.drag.end" })
   accessor #itemDragEndEvent!: EventEmitter<SnippetItem>;
 
+  /**
+   * 打开上下文菜单并定位到指定位置
+   * @param openInfo 包含菜单位置的配置，position 通常设为 `[EVENT.clientX, EVENT.clientY]`
+   */
   @method()
   open({ position }: OpenInfo) {
     this.active = true;
     this.position = position;
   }
 
+  /**
+   * 关闭上下文菜单
+   */
   @method()
   close() {
     this.active = false;

@@ -15,12 +15,14 @@ interface WorkbenchSidebarChildElement extends HTMLElement {
 const { defineElement, property } = createDecorators();
 
 /**
+ * 工作台侧边栏容器，包含标题栏和面板容器，自动管理子面板（workbench-pane）的展开/折叠布局
  * @insider
  */
 @defineElement("visual-builder.workbench-sidebar", {
   styleTexts: [styleText],
 })
 class WorkbenchSidebar extends ReactNextElement {
+  /** 侧边栏标题文本 */
   @property() accessor titleLabel: string | undefined;
 
   #getPaneSlot = (): HTMLSlotElement => {

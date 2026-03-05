@@ -41,16 +41,25 @@ export interface Agent {
 }
 
 /**
- * 构件 `ai-portal.ai-agents`
+ * AI Agents 卡片列表，展示可用的 AI 智能体，支持点击跳转到对应详情页。
+ *
+ * @description AI Agents 卡片列表，展示可用的 AI 智能体，支持点击跳转到对应详情页。
+ * @category ai-portal
  */
 export
 @defineElement("ai-portal.ai-agents", {
   styleTexts: [styleText],
 })
 class AIAgents extends ReactNextElement implements AIAgentsProps {
+  /**
+   * AI Agent 列表数据
+   */
   @property({ attribute: false })
   accessor list: Agent[] | undefined;
 
+  /**
+   * 跳转到 Agent 详情页的 URL 模板，支持 {name} 等 Agent 字段插值
+   */
   @property()
   accessor urlTemplate: string | undefined;
 

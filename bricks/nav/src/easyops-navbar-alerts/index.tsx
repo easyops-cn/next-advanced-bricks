@@ -20,7 +20,7 @@ export const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
 const { defineElement } = createDecorators();
 
 /**
- * 构件 `nav.easyops-navbar-alerts`
+ * 导航栏告警提示组件，用于显示 License 到期提醒和页面性能问题警告。
  * @insider
  */
 export

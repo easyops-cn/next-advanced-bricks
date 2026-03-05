@@ -102,7 +102,7 @@ export type PreviewCategory =
   | "value";
 
 /**
- * 构件 `visual-builder.raw-data-preview`
+ * 原始数据预览，在 iframe 中渲染属性生成候选编排的对比表格，支持批注和确认操作
  *
  * @internal
  */
@@ -111,33 +111,45 @@ export
   styleTexts: [styleText],
 })
 class RawDataPreview extends ReactNextElement {
+  /** 预览 iframe 地址，默认使用内置预览地址 */
   @property()
   accessor previewUrl: string | undefined;
 
+  /** 属性生成数据列表 */
   @property({ attribute: false })
   accessor generations: AttributeGeneration[] | undefined;
 
+  /** 模拟数据列表，作为各属性的候补示例数据 */
   @property({ attribute: false })
   accessor mocks: Record<string, unknown>[] | undefined;
 
+  /** 是否处于加载中状态，为 true 时禁用批注和确认操作 */
   @property({ type: Boolean })
   accessor busy: boolean | undefined;
 
   /**
+   * 预览分类，影响数据容器的渲染方式
    * @default "value"
    */
   @property()
   accessor category: PreviewCategory | undefined;
 
+  /** 预览主题 */
   @property()
   accessor theme: string | undefined;
 
+  /** UI 版本 */
   @property()
   accessor uiVersion: string | undefined;
 
+  /** 微应用信息 */
   @property()
   accessor app: MicroApp | undefined;
 
+  /**
+   * 提交批注时触发（在批注文本框中按 ⌘/Ctrl + 回车）
+   * @detail { comment: 批注内容, propertyInstanceId: 属性实例 ID }
+   */
   @event({ type: "comment" })
   accessor #commentEvent: EventEmitter<CommentDetail>;
 
@@ -145,6 +157,10 @@ class RawDataPreview extends ReactNextElement {
     this.#commentEvent.emit(detail);
   };
 
+  /**
+   * 点击确认 checkbox 时触发
+   * @detail { approved: 是否已确认, propertyInstanceId: 属性实例 ID }
+   */
   @event({ type: "approve" })
   accessor #approveEvent: EventEmitter<ApproveDetail>;
 
@@ -152,6 +168,10 @@ class RawDataPreview extends ReactNextElement {
     this.#approveEvent.emit(detail);
   };
 
+  /**
+   * 点击属性类型链接查看提示词时触发
+   * @detail { generationId: 生成 ID, objectId: 对象 ID, objectName: 对象名称, propertyId: 属性 ID, propertyName: 属性名称, propertyType: 属性类型, candidates: 候选编排列表, mockData: 模拟数据 }
+   */
   @event({ type: "view.attr.prompt" })
   accessor #viewAttrPromptEvent: EventEmitter<AttributeGeneration>;
 

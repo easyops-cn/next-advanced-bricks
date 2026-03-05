@@ -184,6 +184,7 @@ export interface EoTableEventsMapping {
 class TableComponent extends ReactNextElement {
   /**
    * 页码变化,pagePath 可在 fields.page 中设置，默认为 page
+   * @detail { page: 当前页码, pageSize: 每页条数 }
    */
   @event({ type: "page.update" }) accessor #pageUpdate!: EventEmitter<
     Record<string, number>
@@ -191,6 +192,7 @@ class TableComponent extends ReactNextElement {
 
   /**
    * 每页条数变化 ,pagePath 可在 fields.page 中设置,pageSizePath 可在 fields.pageSize 中设置，默认为 pageSize
+   * @detail { page: 当前页码, pageSize: 每页条数 }
    */
   @event({ type: "filter.update" }) accessor #filterUpdate!: EventEmitter<
     Record<string, number>
@@ -198,6 +200,7 @@ class TableComponent extends ReactNextElement {
 
   /**
    * 勾选框变化，detail 中为所选的行数据
+   * @detail 选中的行数据数组
    */
   @event({ type: "select.update" }) accessor #selectUpdate!: EventEmitter<
     Record<string, any>[]
@@ -205,30 +208,35 @@ class TableComponent extends ReactNextElement {
 
   /**
    * 勾选框变化，detail 中为所选的行key集合
+   * @detail 选中的行 key 集合
    */
   @event({ type: "select.row.keys.update" })
   accessor #selectRowKeysUpdate!: EventEmitter<string[]>;
 
   /**
    * 排序变化，detail 中的 sort 为对应排序列的 key/dataIndex，order 为升序/降序
+   * @detail { sort: 排序列的 key/dataIndex, order: 升序/降序 }
    */
   @event({ type: "sort.update", cancelable: true })
   accessor #sortUpdate!: EventEmitter<SortUpdateEventDetail>;
 
   /**
    * 点击展开图标时触发的事件，事件详情中`expanded`为是否展开，`record`被点击的行信息
+   * @detail { expanded: 是否展开, record: 被点击的行数据 }
    */
   @event({ type: "row.expand" })
   accessor #rowExpand!: EventEmitter<RowExpandEventDetail>;
 
   /**
    * 展开的行变化时触发的事件，事件详情为当前展开的所有行的`rowKey`集合
+   * @detail { expandedRows: 当前展开的所有行的 rowKey 集合 }
    */
   @event({ type: "expand.rows.change" })
   accessor #expandRowsChange!: EventEmitter<ExpandRowsChangeEventDetail>;
 
   /**
    * 表格行拖拽结束发生的事件，事件详情为拖拽后重新排序的所有行数据
+   * @detail { data: 拖拽后重新排序的所有行数据 }
    */
   @event({ type: "row.drag" })
   accessor #rowDrag!: EventEmitter<RowDragEventDetail>;
@@ -554,13 +562,13 @@ class TableComponent extends ReactNextElement {
   accessor pageSize: number | undefined;
 
   /**
+   * 表格是否可滚动，也可以指定滚动区域的宽、高，配置项。详见 [scroll](https://ant.design/components/table-cn/#scroll)
    * @kind {
    *   x?: string | number | true;
    *   y?: number | string;
    * } & {
    *   scrollToFirstRowOnChange?: boolean;
    * }
-   * 表格是否可滚动，也可以指定滚动区域的宽、高，配置项。详见 [scroll](https://ant.design/components/table-cn/#scroll)
    * @required false
    * @default { x: true }
    * @group other
@@ -744,6 +752,7 @@ class TableComponent extends ReactNextElement {
   private _isInSelect = false;
   /**
    * 搜索过滤
+   * @param event - 搜索事件，event.detail.q 为搜索关键词
    */
   @method()
   filterSourceData(event: CustomEvent): void {

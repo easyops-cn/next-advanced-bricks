@@ -21,6 +21,8 @@ export interface ChatPanelWelcomeProps {
 
 /**
  * 构件 `ai-portal.chat-panel-welcome`
+ *
+ * 聊天面板欢迎语构件，展示带有 Elevo 头像的欢迎消息。
  */
 export
 @defineElement("ai-portal.chat-panel-welcome", {
@@ -30,6 +32,7 @@ class ChatPanelWelcome
   extends ReactNextElement
   implements ChatPanelWelcomeProps
 {
+  /** 欢迎语文本内容 */
   @property()
   accessor text: string | undefined;
 

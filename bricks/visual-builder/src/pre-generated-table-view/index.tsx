@@ -7,7 +7,7 @@ import styleText from "./styles.shadow.css";
 const { defineElement } = createDecorators();
 
 /**
- * 构件 `visual-builder.pre-generated-table-view`
+ * 预生成编排表格视图，使用 CSS Grid 布局渲染子构件
  *
  * @internal
  */

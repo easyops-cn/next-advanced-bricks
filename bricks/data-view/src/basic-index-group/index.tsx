@@ -3,7 +3,7 @@ import { createDecorators } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
 import "@next-core/theme";
 import styleText from "./styles.shadow.css";
-import { isNumber, isNil } from "lodash";
+import { isNil } from "lodash";
 
 const { defineElement, property } = createDecorators();
 
@@ -30,6 +30,7 @@ export interface ItemProps {
 /**
  * 基础指标组构件
  * @author annzhang
+ * @category big-screen-content
  */
 @defineElement("data-view.basic-index-group", {
   styleTexts: [styleText],

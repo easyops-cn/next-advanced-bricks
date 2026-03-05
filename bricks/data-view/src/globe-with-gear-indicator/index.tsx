@@ -77,6 +77,8 @@ interface DataItemWithPosition extends DataItem {
 
 /**
  * 地球加轮盘的数据展示构件。
+ * @author astrid
+ * @category big-screen-content
  */
 export
 @defineElement("data-view.globe-with-gear-indicator", {

@@ -1,8 +1,46 @@
-应用墙
+---
+tagName: data-view.app-wall
+displayName: WrappedDataViewAppWall
+description: 应用墙
+category: big-screen-layout
+source: "@next-bricks/data-view"
+---
+
+# data-view.app-wall
+
+> 应用墙
+
+## Props
+
+| 属性                      | 类型                       | 必填 | 默认值                                                                                        | 说明                                                                                    |
+| ------------------------- | -------------------------- | ---- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| dataSource                | `AppData[]`                | 是   | -                                                                                             | 数据                                                                                    |
+| relations                 | `Relation[]`               | 是   | -                                                                                             | 关系                                                                                    |
+| cardSize                  | `CardSize`                 | 否   | `{ width: 120, height: 160, outerWidth: 140, outerHeight: 180, lgWidth: 180, lgHeight: 240 }` | 卡的大小配置，注意这里卡片大小宽高将影响T台大小展示                                     |
+| cardBrickName             | `AppWallCardBrickNameType` | 否   | `"data-view.app-wall-card-item"`                                                              | 卡片支持的构件类型                                                                      |
+| useDblclick               | `boolean`                  | 否   | -                                                                                             | 是否使用双击事件，开启之后卡片不会触发内部dblclick事件展示梯台                          |
+| useDistanceConfig         | `boolean`                  | 否   | -                                                                                             | 是否使用内置的distanceConfig配置                                                        |
+| disabledDefaultClickEvent | `boolean`                  | 否   | -                                                                                             | 是否禁用触发默认单击事件，开启之后卡片不会触发内部click事件展示卡片，直接抛出了点击事件 |
+| containerId               | `string`                   | 否   | -                                                                                             | 容器id，用于监听容器大小                                                                |
+| noRotate                  | `boolean`                  | 否   | -                                                                                             | 控制是否旋转                                                                            |
+| boundMargin               | `number`                   | 否   | `100`                                                                                         | 四周的边距                                                                              |
+| useSystemPopover          | `boolean`                  | 否   | -                                                                                             | 是否使用系统卡片popover                                                                 |
+
+## Events
+
+| 事件                     | detail                                         | 说明                                                                   |
+| ------------------------ | ---------------------------------------------- | ---------------------------------------------------------------------- |
+| system.card.button.click | `AppData` — 当前点击的应用数据                 | 系统卡片详情按钮点击事件                                               |
+| left.btn.click           | `AppData` — 展示台左边按钮点击时传出的应用数据 | 展示台左边按钮点击事件                                                 |
+| right.btn.click          | `AppData` — 展示台右边按钮点击时传出的应用数据 | 展示台右边按钮点击事件                                                 |
+| on.card.dbclick          | `AppData` — 双击卡片时传出的应用数据           | 卡片双击事件，useDblclick 为 true 或当前节点 clusters 属性无数据时触发 |
+| card.click               | `AppData` — 单击卡片时传出的应用数据           | 卡片单击事件，disabledDefaultClickEvent 为 true 时点击卡片触发         |
 
 ## Examples
 
 ### Basic
+
+展示包含多个应用节点和关系连线的三维应用墙。
 
 ```yaml preview
 - brick: data-view.app-wall
@@ -31,20 +69,10 @@
           itemList:
             - key: 实例ID
               value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
             - key: 系统英文名称
               value: app-fms
             - key: 系统中文名称
               value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
           buttonName: 应用墙大屏
         trapezoidalProps:
           leftBtnName: 应用健康监控大屏
@@ -60,356 +88,36 @@
           cardTitle: 购物系统
           itemList:
             - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
+              value: 5d570a851bef7
             - key: 系统英文名称
-              value: app-fms
+              value: app-shop
             - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
+              value: 购物系统
           buttonName: 应用墙大屏
         trapezoidalProps:
           leftBtnName: 应用健康监控大屏
           rightBtnName: 应用部署架构
-      - key: 5e63e70340f35
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f36
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: thirdPay
-          description: 支付中心
-        systemCardProps:
-          status: normal
-          cardTitle: 支付中心
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f37
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: crm
-          description: 零售CRM
-        systemCardProps:
-          status: normal
-          cardTitle: 零售CRM
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f38
+      - key: 5e63e70340f73
         status: warning
         cardItemProps:
           status: warning
-          cardTitle: diss
-          description: 数字孪生门店2
+          cardTitle: crm
+          description: 零售CRM
         systemCardProps:
           status: warning
-          cardTitle: 数字孪生门店2
+          cardTitle: 零售CRM
           itemList:
             - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
+              value: 5d570a851bef8
             - key: 系统英文名称
-              value: app-fms
+              value: app-crm
             - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
+              value: 零售CRM
           buttonName: 应用墙大屏
         trapezoidalProps:
           leftBtnName: 应用健康监控大屏
           rightBtnName: 应用部署架构
-      - key: 5e63e70340f39
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: img
-          description: 购物系统2
-        systemCardProps:
-          status: normal
-          cardTitle: 购物系统2
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f40
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通2
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通2
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f41
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通21
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通21
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f42
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通22
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通22
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f43
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通23
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通23
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f44
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通24
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通24
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f45
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: pss
-          description: 店达人
-        systemCardProps:
-          status: normal
-          cardTitle: 店达人
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f46
+      - key: 5e63e70340f76
         status: normal
         cardItemProps:
           status: normal
@@ -420,1041 +128,11 @@
           cardTitle: 店铺收银系统
           itemList:
             - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
+              value: 5d570a851bef9
             - key: 系统英文名称
-              value: app-fms
+              value: app-pos
             - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f47
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: mpos
-          description: 店铺货管通
-        systemCardProps:
-          status: normal
-          cardTitle: 店铺货管通
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f48
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: mps
-          description: 营促销
-        systemCardProps:
-          status: normal
-          cardTitle: 营促销
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f49
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: lmg
-          description: 丽码购系统
-        systemCardProps:
-          status: normal
-          cardTitle: 丽码购系统
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f50
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: diss
-          description: 数字孪生门店3
-        systemCardProps:
-          status: normal
-          cardTitle: 数字孪生门店3
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70350f51
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: img
-          description: 购物系统3
-        systemCardProps:
-          status: normal
-          cardTitle: 购物系统3
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f52
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通3
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通3
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f53
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通31
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通31
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f54
-        status: warning
-        cardItemProps:
-          status: warning
-          cardTitle: nmp
-          description: 云店通32
-        systemCardProps:
-          status: warning
-          cardTitle: 云店通32
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f55
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通33
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通33
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f56
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通34
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通34
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f57
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通4
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通4
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f58
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通41
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通41
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f59
-        status: warning
-        cardItemProps:
-          status: warning
-          cardTitle: nmp
-          description: 云店通42
-        systemCardProps:
-          status: warning
-          cardTitle: 云店通42
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f60
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通43
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通43
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f61
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通44
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通44
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f62
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通45
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通45
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f63
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通46
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通46
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f64
-        status: warning
-        cardItemProps:
-          status: warning
-          cardTitle: nmp
-          description: 云店通47
-        systemCardProps:
-          status: warning
-          cardTitle: 云店通47
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f65
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通48
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通48
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f66
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通49
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通49
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f67
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: thirdPay
-          description: 支付中心5
-        systemCardProps:
-          status: normal
-          cardTitle: 支付中心5
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f68
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: crm
-          description: 零售CRM51
-        systemCardProps:
-          status: normal
-          cardTitle: 零售CRM51
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f69
-        status: warning
-        cardItemProps:
-          status: warning
-          cardTitle: diss
-          description: 数字孪生门店53
-        systemCardProps:
-          status: warning
-          cardTitle: 数字孪生门店53
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f70
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: img
-          description: 购物系统54
-        systemCardProps:
-          status: normal
-          cardTitle: 购物系统54
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f71
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通55
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通55
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f72
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: thirdPay
-          description: 支付中心56
-        systemCardProps:
-          status: normal
-          cardTitle: 支付中心56
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f73
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: crm
-          description: 零售CRM57
-        systemCardProps:
-          status: normal
-          cardTitle: 零售CRM57
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f74
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: diss
-          description: 数字孪生门店58
-        systemCardProps:
-          status: normal
-          cardTitle: 数字孪生门店58
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f75
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: img
-          description: 购物系统59
-        systemCardProps:
-          status: normal
-          cardTitle: 购物系统59
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f76
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: nmp
-          description: 云店通6
-        systemCardProps:
-          status: normal
-          cardTitle: 云店通6
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f77
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: thirdPay
-          description: 支付中心61
-        systemCardProps:
-          status: normal
-          cardTitle: 支付中心61
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f78
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: crm
-          description: 零售CRM62
-        systemCardProps:
-          status: normal
-          cardTitle: 零售CRM62
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f79
-        status: warning
-        cardItemProps:
-          status: warning
-          cardTitle: diss
-          description: 数字孪生门店63
-        systemCardProps:
-          status: warning
-          cardTitle: 数字孪生门店63
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f80
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: img
-          description: 购物系统64
-        systemCardProps:
-          status: normal
-          cardTitle: 购物系统64
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
+              value: 店铺收银系统
           buttonName: 应用墙大屏
         trapezoidalProps:
           leftBtnName: 应用健康监控大屏
@@ -1463,120 +141,91 @@
         status: normal
         cardItemProps:
           status: normal
-          cardTitle: thirdPay
-          description: 支付中心65
+          cardTitle: pay
+          description: 支付中心
         systemCardProps:
           status: normal
-          cardTitle: 支付中心65
+          cardTitle: 支付中心
           itemList:
             - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
+              value: 5d570a851befa
             - key: 系统英文名称
-              value: app-fms
+              value: app-pay
             - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
+              value: 支付中心
           buttonName: 应用墙大屏
         trapezoidalProps:
           leftBtnName: 应用健康监控大屏
           rightBtnName: 应用部署架构
-      - key: 5e63e70340f82
+    boundMargin: 80
+    noRotate: false
+    useSystemPopover: true
+  events:
+    system.card.button.click:
+      action: console.log
+    left.btn.click:
+      action: console.log
+    right.btn.click:
+      action: console.log
+    card.click:
+      action: console.log
+    on.card.dbclick:
+      action: console.log
+```
+
+### 禁用默认点击行为
+
+设置 disabledDefaultClickEvent 为 true，点击卡片时直接抛出 card.click 事件，不展示内部卡片详情。
+
+```yaml preview
+- brick: data-view.app-wall
+  properties:
+    style:
+      width: 1000px
+      height: 600px
+      background-color: "#1c1e21"
+    disabledDefaultClickEvent: true
+    useDblclick: true
+    useDistanceConfig: true
+    dataSource:
+      - key: node-1
         status: normal
         cardItemProps:
           status: normal
-          cardTitle: crm
-          description: 零售CRM66
+          cardTitle: app-a
+          description: 应用A
         systemCardProps:
           status: normal
-          cardTitle: 零售CRM66
+          cardTitle: 应用A
           itemList:
             - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
+              value: inst-001
+          buttonName: 详情
         trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f83
-        status: warning
+          leftBtnName: 健康监控
+          rightBtnName: 部署架构
+      - key: node-2
+        status: error
         cardItemProps:
-          status: warning
-          cardTitle: diss
-          description: 数字孪生门店67
+          status: error
+          cardTitle: app-b
+          description: 应用B
         systemCardProps:
-          status: warning
-          cardTitle: 数字孪生门店67
+          status: error
+          cardTitle: 应用B
           itemList:
             - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
+              value: inst-002
+          buttonName: 详情
         trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
-      - key: 5e63e70340f84
-        status: normal
-        cardItemProps:
-          status: normal
-          cardTitle: img
-          description: 购物系统68
-        systemCardProps:
-          status: normal
-          cardTitle: 购物系统68
-          itemList:
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文缩写
-              value: system-fms
-            - key: 实例ID
-              value: 5d570a851bef6
-            - key: 系统英文名称
-              value: app-fms
-            - key: 系统中文名称
-              value: A财务系统
-            - key: 归属部门
-              value: 财务系统部
-            - key: 系统类型
-              value: 应用系统
-            - key: 系统描述
-              value: 1、使用场景概述：财务应收和应付结算
-          buttonName: 应用墙大屏
-        trapezoidalProps:
-          leftBtnName: 应用健康监控大屏
-          rightBtnName: 应用部署架构
+          leftBtnName: 健康监控
+          rightBtnName: 部署架构
+    relations:
+      - source: node-1
+        target: node-2
+  events:
+    card.click:
+      action: console.log
+    on.card.dbclick:
+      action: console.log
 ```

@@ -59,25 +59,37 @@ export interface Employee {
 }
 
 /**
- * 构件 `ai-portal.ai-employees`
+ * AI 数字人卡片列表，按行业和角色分组展示，支持 Tab 切换行业和点击跳转。
+ *
+ * @description AI 数字人卡片列表，按行业和角色分组展示，支持 Tab 切换行业和点击跳转。
+ * @category ai-portal
  */
 export
 @defineElement("ai-portal.ai-employees", {
   styleTexts: [styleText],
 })
 class AIEmployees extends ReactNextElement implements AIEmployeesProps {
+  /**
+   * 数字人列表数据
+   */
   @property({ attribute: false })
   accessor list: Employee[] | undefined;
 
+  /**
+   * 行业列表，用于指定 Tab 的顺序，未在此列表中的行业将按出现顺序附加在末尾
+   */
   @property({ attribute: false })
   accessor industries: string[] | undefined;
 
-  // @property({ attribute: false })
-  // accessor roles: string[] | undefined;
-
+  /**
+   * 跳转到数字人详情页的 URL 模板，支持 {name} 等数字人字段插值
+   */
   @property()
   accessor urlTemplate: string | undefined;
 
+  /**
+   * 行业 Tab 栏吸顶时距顶部的距离（px），不设置则不吸顶
+   */
   @property({ type: Number })
   accessor stickyTop: number | undefined;
 

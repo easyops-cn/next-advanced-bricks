@@ -68,22 +68,27 @@ export
   styleTexts: [styleText],
 })
 class CascaderBrick extends FormItemElementBase implements CascaderProps {
+  /** 表单字段名 */
   @property()
   accessor name: string | undefined;
 
+  /** 表单字段标签 */
   @property()
   accessor label: string | undefined;
 
+  /** 是否为必填项 */
   @property({
     type: Boolean,
   })
   accessor required: boolean | undefined;
 
+  /** 可选项数据源 */
   @property({
     attribute: false,
   })
   accessor options: AntdCascaderProps["options"];
 
+  /** 自定义字段名，指定 label、value、children 对应的字段 */
   @property({
     attribute: false,
   })
@@ -93,66 +98,79 @@ class CascaderBrick extends FormItemElementBase implements CascaderProps {
     children: "children",
   };
 
+  /** 当前选中的值 */
   @property({
     attribute: false,
   })
   accessor value: AntdCascaderProps["value"];
 
+  /** 输入框占位文本 */
   @property()
   accessor placeholder: string | undefined;
 
+  /** 是否支持多选 */
   @property({
     type: Boolean,
   })
   accessor multiple: boolean | undefined;
 
+  /** 是否禁用 */
   @property({
     type: Boolean,
   })
   accessor disabled: boolean | undefined;
 
+  /** 是否支持清除 */
   @property({
     type: Boolean,
   })
   accessor allowClear: boolean | undefined = true;
 
+  /** 是否支持搜索，开启后可通过输入关键字过滤选项 */
   @property({
     type: Boolean,
   })
   accessor showSearch: boolean | undefined = true;
 
+  /** 自定义下拉箭头图标 */
   @property({
     attribute: false,
   })
   accessor suffixIcon: GeneralIconProps | undefined;
 
+  /** 次级菜单的展开方式，可选 click 或 hover */
   @property()
   accessor expandTrigger: AntdCascaderProps["expandTrigger"] = "click";
 
+  /** 浮层预设位置，可选 bottomLeft、bottomRight、topLeft、topRight */
   @property()
   accessor popupPlacement: AntdCascaderProps["placement"] = "bottomLeft";
 
+  /** 输入框大小，可选 large、middle、small */
   @property()
   accessor size: AntdCascaderProps["size"];
 
+  /** 搜索结果的最大条数，0 表示不限制 */
   @property({
     type: Number,
   })
   accessor limit: number | undefined = 50;
 
+  /** 多选模式下最多显示的 tag 数量，设为 responsive 时会自适应宽度 */
   @property({
     attribute: false,
   })
   accessor maxTagCount: number | "responsive" | undefined;
 
+  /** 级联选择器的内联样式 */
   @property({
     attribute: false,
   })
   accessor cascaderStyle: CSSProperties | undefined;
 
   /**
-   * @detail { value: AntdCascaderProps["value"], selectedOptions: DefaultOptionType[] | DefaultOptionType[][] }
-   * @description 级联选择项输入变化时触发，value 为选择的值，selectedOptions 为选择的值所对应的 options
+   * @detail { value: 选择的值, selectedOptions: 选择的值所对应的 options }
+   * @description 级联选择项输入变化时触发
    */
   @event({ type: "cascader.change" })
   accessor #changeEvent!: EventEmitter<CascaderChangeEventDetail>;

@@ -202,6 +202,7 @@ export const ChatViewComponent = forwardRef(LegacyChatViewComponent);
 
 /**
  * AI 对话终端
+ * @category ai
  */
 export
 @defineElement("ai.chat-view", {
@@ -210,6 +211,9 @@ export
   shadowOptions: false,
 })
 class ChatView extends ReactNextElement {
+  /**
+   * 当前会话 ID
+   */
   @property()
   accessor sessionId: string | undefined;
 
@@ -340,13 +344,17 @@ class ChatView extends ReactNextElement {
   @property({ type: Boolean })
   accessor showToolCalls: boolean | undefined;
 
-  /** 设置接口 config */
+  /** 设置接口 config
+   * @param config 传递给接口的 config 参数
+   */
   @method()
   setConfig(config: Record<string, unknown> | undefined): void {
     this.#ref.current?.setConfig(config);
   }
 
-  /** 设置接口 formData */
+  /** 设置接口 formData
+   * @param formData 传递给接口的 formData 参数
+   */
   @method()
   setFormData(formData: Record<string, unknown> | undefined): void {
     this.#ref.current?.setFormData(formData);
@@ -354,6 +362,10 @@ class ChatView extends ReactNextElement {
 
   #ref = React.createRef<ChatViewRef>();
 
+  /**
+   * 会话 ID 变化时触发
+   * @detail 当前激活的会话 ID
+   */
   @event({ type: "sessionId.change" })
   accessor #sessionIdChange!: EventEmitter<string | undefined>;
 
@@ -361,6 +373,10 @@ class ChatView extends ReactNextElement {
     this.#sessionIdChange.emit(activeSessionId);
   };
 
+  /**
+   * 机器人 ID 变化时触发（切换会话时可能切换对应机器人）
+   * @detail 当前会话对应的机器人 ID
+   */
   @event({ type: "robotId.change" })
   accessor #robotIdChange!: EventEmitter<string | undefined>;
 
@@ -368,6 +384,10 @@ class ChatView extends ReactNextElement {
     this.#robotIdChange.emit(robotId);
   };
 
+  /**
+   * 一次问答完成时触发（chatting 从 true 变为 false 时）
+   * @detail 当前激活的会话 ID
+   */
   @event({ type: "qa.finish" })
   accessor #qaFinish!: EventEmitter<string | undefined>;
 
@@ -376,8 +396,8 @@ class ChatView extends ReactNextElement {
   };
 
   /**
-   *
-   * @description 调用方法进行提问
+   * 调用方法进行提问，将内容插入输入框并发送
+   * @param args 包含问题内容的对象
    */
   @method()
   insertQuestion(args: { value: string }): void {
@@ -387,7 +407,8 @@ class ChatView extends ReactNextElement {
   }
 
   /**
-   * @description 外部提问
+   * 外部发起提问，直接发送消息不经过输入框交互
+   * @param msg 要发送的消息，可以是字符串或结构化消息体
    */
   @method()
   sendMsg(msg: string | ChatBody): void {

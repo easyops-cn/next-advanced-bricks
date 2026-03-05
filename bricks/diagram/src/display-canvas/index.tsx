@@ -89,7 +89,8 @@ export interface EoDisplayCanvasEventsMapping {
 }
 
 /**
- * 用于展示查看的画布。
+ * @description 用于展示查看的画布构件，支持 manual、force、dagre 多种布局，可展示节点、边和装饰器，支持缩放、平移、激活目标高亮、淡化无关元素等功能。
+ * @category diagram
  */
 export
 @defineElement("eo-display-canvas", {
@@ -97,23 +98,38 @@ export
 })
 class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
   /**
-   * 用于查看的画布可以更新 `cells` 属性。
+   * @description 画布中的单元格数据，包含节点（node）、边（edge）和装饰器（decorator）。
    */
   @property({ attribute: false })
   accessor cells: InitialCell[] | undefined;
 
+  /**
+   * @description 画布布局类型，支持 `manual`（手动定位）、`force`（力导向）、`dagre`（层次有向图）。
+   */
   @property({ type: String })
   accessor layout: LayoutType;
 
+  /**
+   * @description 布局算法选项，根据 layout 类型不同，支持不同参数（如 dagre 的 ranksep/nodesep，force 的碰撞参数等）。
+   */
   @property({ attribute: false })
   accessor layoutOptions: LayoutOptions | undefined;
 
+  /**
+   * @description 是否自动计算节点尺寸，启用后画布会根据节点内容自动调整节点大小。
+   */
   @property({ attribute: false })
   accessor autoSize: AutoSize | undefined;
 
+  /**
+   * @description 节点默认尺寸，格式为 `[width, height]`，在节点未指定尺寸时使用。
+   */
   @property({ attribute: false })
   accessor defaultNodeSize: SizeTuple = [DEFAULT_NODE_SIZE, DEFAULT_NODE_SIZE];
 
+  /**
+   * @description 节点默认砖块配置，指定渲染节点的自定义构件，可按节点类型匹配不同配置。
+   */
   @property({ attribute: false })
   accessor defaultNodeBricks: NodeBrickConf[] | undefined;
 
@@ -148,24 +164,39 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
   @property({ attribute: false })
   accessor defaultEdgeLines: EdgeLineConf[] | undefined;
 
+  /**
+   * @description 当前激活目标，可以是节点（`{ type: "node", id }`）或边（`{ type: "edge", id }`）等，为 null 表示无激活目标。
+   */
   @property({ attribute: false })
   accessor activeTarget: ActiveTarget | null | undefined;
 
   /**
-   * 当鼠标悬浮到某节点上时，隐藏其他跟该节点无关的元素。
+   * @description 当鼠标悬浮到某节点上时，隐藏其他跟该节点无关的元素，高亮相关节点和边。
    */
   @property({ type: Boolean })
   accessor fadeUnrelatedCells: boolean | undefined;
 
+  /**
+   * @description 是否允许通过鼠标滚轮或触控板捏合手势缩放画布，默认为 true。
+   */
   @property({ type: Boolean })
   accessor zoomable: boolean | undefined = true;
 
+  /**
+   * @description 是否允许通过滚轮平移画布（非捏合手势），默认为 true。
+   */
   @property({ type: Boolean })
   accessor scrollable: boolean | undefined = true;
 
+  /**
+   * @description 是否允许通过鼠标拖拽平移画布，默认为 true。
+   */
   @property({ type: Boolean })
   accessor pannable: boolean | undefined = true;
 
+  /**
+   * @description 缩放比例范围，格式为 `[min, max]`，默认范围由内部常量决定。
+   */
   @property({ attribute: false })
   accessor scaleRange: RangeTuple | undefined;
 
@@ -196,6 +227,10 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
   @property({ attribute: false })
   accessor extraStyleTexts: string[] | undefined;
 
+  /**
+   * @detail `ActiveTarget | null` — 当前激活目标，节点/边对象或 null
+   * @description 激活目标变化时触发，当用户点击节点或边使其激活，或点击空白处取消激活时触发。
+   */
   @event({ type: "activeTarget.change" })
   accessor #activeTargetChangeEvent!: EventEmitter<ActiveTarget | null>;
 
@@ -209,6 +244,10 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
     }
   };
 
+  /**
+   * @detail `CellContextMenuDetail` — 右键菜单详情，包含 `{ cell: 对应的单元格, clientX: 鼠标X坐标, clientY: 鼠标Y坐标 }`
+   * @description 用户右键点击节点或边时触发，常用于弹出上下文菜单。
+   */
   @event({ type: "cell.contextmenu" })
   accessor #cellContextMenu!: EventEmitter<CellContextMenuDetail>;
 
@@ -216,6 +255,10 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
     this.#cellContextMenu.emit(detail);
   };
 
+  /**
+   * @detail `CellContextMenuDetail` — 点击详情，包含 `{ cell: 对应的单元格, clientX: 鼠标X坐标, clientY: 鼠标Y坐标 }`
+   * @description 用户左键点击节点或边时触发。
+   */
   @event({ type: "cell.click" })
   accessor #cellClick!: EventEmitter<CellContextMenuDetail>;
 
@@ -225,6 +268,9 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
 
   #ref = createRef<DisplayCanvasRef>();
 
+  /**
+   * @description 将画布视图重置并居中，使所有单元格重新显示在视口中央。
+   */
   @method()
   center() {
     this.#ref.current?.center();

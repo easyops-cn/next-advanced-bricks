@@ -22,16 +22,25 @@ export type BlankStateIllustration =
   | "serviceflows";
 
 /**
- * 构件 `ai-portal.blank-state`
+ * 空状态展示组件，提供预置插画和描述文字，并支持通过默认插槽插入自定义内容。
+ *
+ * @description 空状态展示组件，提供预置插画和描述文字，并支持通过默认插槽插入自定义内容。
+ * @category ai-portal
  */
 export
 @defineElement("ai-portal.blank-state", {
   styleTexts: [styleText],
 })
 class BlankState extends ReactNextElement implements BlankStateProps {
+  /**
+   * 插画类型，可选 "goals"、"activities"、"collaboration-spaces"、"serviceflows"，默认使用 activities 插画
+   */
   @property()
   accessor illustration: BlankStateIllustration | undefined;
 
+  /**
+   * 描述文字
+   */
   @property()
   accessor description: string | undefined;
 

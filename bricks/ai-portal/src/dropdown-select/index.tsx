@@ -73,7 +73,9 @@ export interface DropdownOptions {
 }
 
 /**
- * 构件 `ai-portal.dropdown-select`
+ * 下拉选择器，提供选项列表供用户选择，支持搜索过滤功能。
+ *
+ * @category interact-basic
  */
 export
 @defineElement("ai-portal.dropdown-select", {
@@ -108,6 +110,10 @@ class DropdownSelect extends ReactNextElement implements DropdownSelectProps {
   @property({ type: Boolean })
   accessor showSearch: boolean | undefined;
 
+  /**
+   * @detail { label: 选项标签, value: 选项值 }
+   * @description 选项选中时触发
+   */
   @event({ type: "change" })
   accessor #changeEvent!: EventEmitter<DropdownOptions>;
 

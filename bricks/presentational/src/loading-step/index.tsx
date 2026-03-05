@@ -37,7 +37,7 @@ export interface EoLoadingStepEventsMapping {
 }
 
 /**
- * 加载步骤框
+ * @description 加载步骤框。以全屏遮罩的形式展示多步骤加载进度，适用于系统初始化、批量操作等需要阻塞用户交互的场景。
  */
 export
 @defineElement("eo-loading-step", {
@@ -45,7 +45,7 @@ export
 })
 class EoLoadingStep extends ReactNextElement implements EoLoadingStepProps {
   /**
-   * 是否可见
+   * @description 是否可见。为 `true` 时展示全屏遮罩并锁定页面滚动，为 `false` 时隐藏遮罩并恢复滚动。
    */
   @property({
     type: Boolean,
@@ -53,19 +53,19 @@ class EoLoadingStep extends ReactNextElement implements EoLoadingStepProps {
   accessor visible: boolean | undefined;
 
   /**
-   * 宽度
+   * @description 容器宽度，支持任意 CSS 宽度值（如 `"400px"`、`"50%"`）。不设置时使用默认宽度。
    */
   @property()
   accessor width: string | undefined;
 
   /**
-   * 步骤标题
+   * @description 步骤区域的标题文字，显示在步骤列表上方。
    */
   @property()
   accessor stepTitle: string | undefined;
 
   /**
-   * 步骤列表
+   * @description 步骤列表，每项包含 `title`（显示名称）和 `key`（唯一标识）。步骤按数组顺序渲染。
    */
   @property({
     attribute: false,
@@ -73,13 +73,13 @@ class EoLoadingStep extends ReactNextElement implements EoLoadingStepProps {
   accessor stepList: StepItem[] | undefined;
 
   /**
-   * 当前步骤
+   * @description 当前正在执行的步骤 `key`。key 对应的步骤显示为加载中（loading），之前的步骤显示为已完成（finished），之后的步骤显示为待执行（pending）。
    */
   @property()
   accessor curStep: string | undefined;
 
   /**
-   * 打开事件
+   * @description 调用 `open()` 方法后触发。
    */
   @event({ type: "open" })
   accessor #openEvent!: EventEmitter<void>;
@@ -88,7 +88,7 @@ class EoLoadingStep extends ReactNextElement implements EoLoadingStepProps {
   }
 
   /**
-   * 关闭事件
+   * @description 调用 `close()` 方法后触发。
    */
   @event({ type: "close" })
   accessor #closeEvent!: EventEmitter<void>;
@@ -97,7 +97,7 @@ class EoLoadingStep extends ReactNextElement implements EoLoadingStepProps {
   }
 
   /**
-   * 打开
+   * @description 打开加载步骤框。将 `visible` 设为 `true` 并触发 `open` 事件。
    */
   @method()
   open() {
@@ -106,7 +106,7 @@ class EoLoadingStep extends ReactNextElement implements EoLoadingStepProps {
   }
 
   /**
-   * 关闭
+   * @description 关闭加载步骤框。将 `visible` 设为 `false` 并触发 `close` 事件。
    */
   @method({ bound: true })
   close() {

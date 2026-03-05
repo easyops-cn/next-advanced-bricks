@@ -11,15 +11,16 @@ import type {
 const { defineElement, property } = createDecorators();
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
+interface BrickNotificationProps {
+  message: string;
+  icon?: GeneralIconProps | undefined;
+}
+
 /**
  * 大屏提示构件
  * @author astrid
  * @category big-screen-content
  */
-interface BrickNotificationProps {
-  message: string;
-  icon?: GeneralIconProps | undefined;
-}
 @defineElement("data-view.brick-notification", {
   styleTexts: [variablesStyleText, styleText],
 })

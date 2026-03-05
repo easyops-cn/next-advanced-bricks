@@ -36,29 +36,44 @@ const WrappedAutoComplete = wrapBrick<
 });
 
 /**
- * 契约选择构件
+ * 契约选择构件，提供契约名称和版本的联动选择，格式为 `contractName@namespace:version`，支持在表单中使用
  */
 export
 @defineElement("visual-builder.contract-select", {
   styleTexts: [styleText],
 })
 class EoContractSelect extends FormItemElementBase {
+  /**
+   * 表单字段名
+   */
   @property()
   accessor name: string | undefined;
 
+  /**
+   * 是否为必填项
+   */
   @property({
     type: Boolean,
   })
   accessor required: boolean | undefined;
 
+  /**
+   * 表单项标签
+   */
   @property()
   accessor label: string | undefined;
 
+  /**
+   * 当前选中的契约值，格式为 `contractName@namespace:version`
+   */
   @property({
     attribute: false,
   })
   accessor value: any | undefined;
 
+  /**
+   * 输入框后缀内容，使用 useBrick 自定义渲染
+   */
   @property({
     attribute: false,
   })
@@ -66,6 +81,10 @@ class EoContractSelect extends FormItemElementBase {
     | { useBrick: UseSingleBrickConf | UseSingleBrickConf[] }
     | undefined;
 
+  /**
+   * @detail 选中的契约值字符串，格式为 `contractName@namespace:version`
+   * @description 契约选择值变化时触发
+   */
   @event({ type: "change" })
   accessor #changeEvent: EventEmitter<string>;
 

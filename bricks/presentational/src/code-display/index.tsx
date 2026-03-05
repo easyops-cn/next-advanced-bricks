@@ -108,7 +108,6 @@ class CodeDisplay extends ReactNextElement implements CodeDisplayProps {
 
   /**
    * 导出的文件名
-   * @default download.txt
    */
   @property()
   accessor exportFileName: string | undefined;
@@ -174,7 +173,7 @@ export function CodeDisplayComponent(props: CodeDisplayProps) {
       <Highlight theme={theme} code={value} language={language} prism={Prism}>
         {({
           className: preClassName,
-          style,
+          style: _style,
           tokens,
           getLineProps,
           getTokenProps,

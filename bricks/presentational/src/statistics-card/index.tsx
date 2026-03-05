@@ -26,7 +26,7 @@ export interface EoStatisticsCardProps {
  * 统计卡片
  *
  * @slot titlePrefix - 标题前缀，放置辅助信息
- * @slot titleSuffix - 标题前缀，放置辅助信息
+ * @slot titleSuffix - 标题后缀，放置辅助信息
  * @slot description - 描述信息，通常是对于统计值的描述
  * @slot basicContent - 卡片右侧内容区，适合放置迷你图表，常用于小卡片
  * @slot extraContent - 卡片下方内容区，适合放置图表，用于展示更多信息的场景
@@ -57,7 +57,7 @@ class EoStatisticsCard extends ReactNextElement {
   accessor unit: string | undefined;
 
   /**
-   * 图标
+   * 图标，支持 GeneralIconProps 的所有字段，额外支持 `color`（图标颜色）和 `bgColor`（背景色）
    */
   @property({
     attribute: false,

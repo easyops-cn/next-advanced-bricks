@@ -99,19 +99,22 @@ class EoTimePicker extends FormItemElementBase {
   accessor configProps: Partial<TimePickerProps> | undefined;
 
   /**
-   *时间变化时触发
+   * @detail 格式化后的时间字符串
+   * @description 时间变化时触发
    */
   @event({ type: "change" })
   accessor #changeEvent!: EventEmitter<string>;
 
   /**
-   *面板打开时触发， 传出当前时间值
+   * @detail 面板打开时的当前时间值字符串
+   * @description 面板打开时触发， 传出当前时间值
    */
   @event({ type: "open" })
   accessor #openEvent!: EventEmitter<string>;
 
   /**
-   *面板关闭时触发，传出当前时间值
+   * @detail 面板关闭时的当前时间值字符串
+   * @description 面板关闭时触发，传出当前时间值
    */
   @event({ type: "close" })
   accessor #closeEvent!: EventEmitter<string>;

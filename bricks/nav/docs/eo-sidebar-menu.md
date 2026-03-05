@@ -1,8 +1,26 @@
-侧栏菜单
+---
+tagName: eo-sidebar-menu
+displayName: WrappedEoSidebarMenu
+description: 侧栏菜单
+category: navigation
+source: "@next-bricks/nav"
+---
+
+# eo-sidebar-menu
+
+> 侧栏菜单
+
+## Props
+
+| 属性          | 类型      | 必填 | 默认值 | 说明                 |
+| ------------- | --------- | ---- | ------ | -------------------- |
+| menuCollapsed | `boolean` | 否   | -      | 菜单整体是否收起状态 |
 
 ## Examples
 
 ### Basic
+
+展示侧栏菜单的基本用法，可包含菜单项、菜单分组和子菜单，支持整体收起/展开切换。
 
 ```yaml preview gap
 - brick: eo-button

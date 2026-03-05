@@ -179,13 +179,15 @@ class EoDatePicker extends FormItemElementBase {
   accessor inputStyle: CSSProperties | undefined;
 
   /**
-   *日期变化时触发
+   * @detail 格式化后的日期字符串
+   * @description 日期变化时触发
    */
   @event({ type: "change" })
   accessor #changeEvent!: EventEmitter<string>;
 
   /**
-   *点击确定按钮触发（showTime 为 true 使用）
+   * @detail 格式化后的日期字符串
+   * @description 点击确定按钮触发（showTime 为 true 使用）
    */
   @event({ type: "ok" })
   accessor #okEvent!: EventEmitter<string>;

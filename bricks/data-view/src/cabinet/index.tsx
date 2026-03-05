@@ -77,10 +77,7 @@ export interface CabinetGraphProps {
 })
 class CabinetGraph extends ReactNextElement implements CabinetGraphProps {
   /**
-   * @kind AppData
-   * @required true
-   * @default
-   * @description 数据源
+   * 数据源
    */
   @property({
     attribute: false,
@@ -88,33 +85,27 @@ class CabinetGraph extends ReactNextElement implements CabinetGraphProps {
   accessor dataSource: AppData;
 
   /**
-   * @kind string |string[]
-   * @required false
-   * @default
-   * @description 选中项， 支持数组
+   * 选中项，支持数组
    */
   @property({ attribute: false })
   accessor activeKey: string | string[];
 
   /**
-   * @kind boolean
-   * @required false
-   * @default true
-   * @description 取消按钮是否需要展示
+   * 取消按钮是否需要展示
    */
   @property({ type: Boolean })
   accessor hiddenCloseBtn: boolean;
 
   /**
-   * @detail
+   * @detail `void`
    * @description 关闭按钮点击事件
    */
   @event({ type: "close.button.click" })
   accessor #closeBtnClickEvent!: EventEmitter<void>;
 
   /**
-   * @detail
-   * @description 节点或者外层的点击的事件
+   * @detail `{ type: ChangeType, data: Record<string, any> }` — { type: 点击类型（node/cluster/layer），data: 对应节点或集群数据 }
+   * @description 节点或外层的点击事件
    */
   @event({ type: "cabinet.click" })
   accessor #cabinetClickEvent!: EventEmitter<{
@@ -123,8 +114,8 @@ class CabinetGraph extends ReactNextElement implements CabinetGraphProps {
   }>;
 
   /**
-   * @detail
-   * @description 节点或者外层的双击的事件，目前不支持应用层
+   * @detail `{ type: ChangeType, data: Record<string, any> }` — { type: 双击类型（node/cluster），data: 对应节点或集群数据 }
+   * @description 节点或外层的双击事件，目前不支持应用层
    */
   @event({ type: "cabinet.dbclick" })
   accessor #cabinetDbClickEvent!: EventEmitter<{
@@ -249,8 +240,8 @@ function CabinetGraphElement(props: CabinetGraphProps): React.ReactElement {
                           ? undefined
                           : "active"
                         : filterKeys.length
-                        ? "faded"
-                        : undefined,
+                          ? "faded"
+                          : undefined,
                   };
                 })}
                 handleClick={({ type, data }) => {
@@ -274,8 +265,8 @@ function CabinetGraphElement(props: CabinetGraphProps): React.ReactElement {
                       ? "active"
                       : undefined
                     : filterKeys.length
-                    ? "faded"
-                    : undefined;
+                      ? "faded"
+                      : undefined;
                 })()}
                 handleDbClick={({ type, data }) => {
                   switch (type) {

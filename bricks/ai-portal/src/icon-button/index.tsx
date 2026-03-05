@@ -33,7 +33,10 @@ export type IconButtonVariant =
   | "bordered";
 
 /**
- * 构件 `ai-portal.icon-button`
+ * 图标按钮，支持多种视觉变体、禁用状态、Tooltip 提示及文字插槽。
+ *
+ * @category interact-basic
+ * @slot default - 图标旁边的文字内容（可选）
  */
 export
 @defineElement("ai-portal.icon-button", {

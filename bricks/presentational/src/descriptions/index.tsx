@@ -79,6 +79,7 @@ class Descriptions extends ReactNextElement {
 
   /**
    * 列数
+   * @default 3
    */
   @property({
     attribute: true,
@@ -108,7 +109,7 @@ class Descriptions extends ReactNextElement {
   accessor bordered: boolean | undefined;
 
   /**
-   * 隐藏的描述列表项
+   * 需要隐藏的分组名称，匹配 list 项的 group 字段，支持字符串或字符串数组
    */
   @property({
     attribute: false,

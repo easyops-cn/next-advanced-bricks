@@ -156,7 +156,7 @@ class EoUploadFile extends FormItemElementBase implements UploadFileProps {
   accessor buttonType: ButtonProps["type"] | undefined;
 
   /**
-   * 上传按钮类型
+   * 上传按钮图标
    */
   @property({
     attribute: false,
@@ -218,7 +218,8 @@ class EoUploadFile extends FormItemElementBase implements UploadFileProps {
   accessor themeVariant: "default" | "elevo" | undefined;
 
   /**
-   * 值变化时触发
+   * @detail { uid: 文件唯一标识, name: 文件名, file: 原始 File 对象, response: 上传响应内容, status: 上传状态（uploading | done | error）, errors: 错误信息列表 }[]
+   * @description 值变化时触发
    */
   @event({ type: "change" })
   accessor #change!: EventEmitter<FileData[]>;

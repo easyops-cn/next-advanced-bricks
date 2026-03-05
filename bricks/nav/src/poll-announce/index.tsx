@@ -38,6 +38,11 @@ export interface Message {
   instanceId: string;
 }
 
+export interface PollAnnounceEventsMapping {
+  onNotificationClose: "notification.close";
+  onNotificationOpen: "notification.open";
+}
+
 /**
  * 轮询获取通知消息并展示。
  *

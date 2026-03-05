@@ -438,9 +438,25 @@ export const EoWorkbenchLayoutComponent = forwardRef<
   );
 });
 
+export interface EoWorkbenchLayoutEventsMap {
+  change: CustomEvent<Layout[]>;
+  save: CustomEvent<Layout[]>;
+  cancel: CustomEvent<void>;
+  "action.click": CustomEvent<{ action: SimpleAction; layouts: Layout[] }>;
+}
+
+export interface EoWorkbenchLayoutEventsMapping {
+  onChange: "change";
+  onSave: "save";
+  onCancel: "cancel";
+  onActionClick: "action.click";
+}
+
 /**
- * 工作台布局
+ * 工作台布局（拖拽式卡片布局，支持编辑模式）
  * @deprecated Please use eo-workbench-layout-v2 which support global styles instead
+ * @author developer
+ * @category layout
  */
 export
 @defineElement("eo-workbench-layout", {
@@ -449,24 +465,32 @@ export
 class EoWorkbenchLayout extends ReactNextElement {
   #componentRef = createRef<EoWorkbenchLayoutComponentRef>();
 
+  /** 编辑模式下左侧卡片列表面板的标题 */
   @property()
   accessor cardTitle: string | undefined;
 
+  /** 是否进入编辑模式，编辑模式下可拖拽调整布局并显示卡片选择面板 */
   @property({
     type: Boolean,
   })
   accessor isEdit: boolean | undefined;
 
+  /** 当前布局配置，每项对应一个卡片的位置与大小 */
   @property({
     attribute: false,
   })
   accessor layouts: Layout[] | undefined;
 
+  /** 组件列表，每项包含 key、title、useBrick 和 position 信息 */
   @property({
     attribute: false,
   })
   accessor componentList: Item[] | undefined;
 
+  /**
+   * @detail 当前布局配置数组
+   * @description 布局发生变化时触发
+   */
   @event({
     type: "change",
   })
@@ -476,6 +500,10 @@ class EoWorkbenchLayout extends ReactNextElement {
     this.#changeEvent.emit(layouts);
   };
 
+  /**
+   * @detail 保存时的布局配置数组
+   * @description 点击保存按钮时触发
+   */
   @event({
     type: "save",
   })
@@ -485,6 +513,10 @@ class EoWorkbenchLayout extends ReactNextElement {
     this.#saveEvent.emit(layouts);
   };
 
+  /**
+   * @detail -
+   * @description 点击取消按钮时触发
+   */
   @event({
     type: "cancel",
   })
@@ -496,10 +528,7 @@ class EoWorkbenchLayout extends ReactNextElement {
 
   /**
    * 操作点击事件
-   * @detail {
-        action: SimpleAction;
-        layouts: Layout[];
-      }
+   * @detail { action: 点击的操作项, layouts: 当前布局配置数组 }
    */
   @event({
     type: "action.click",
@@ -515,6 +544,10 @@ class EoWorkbenchLayout extends ReactNextElement {
       this.dispatchEvent(new CustomEvent(action.event, { detail: layouts }));
   };
 
+  /**
+   * 设置布局配置
+   * @param layouts - 新的布局配置数组
+   */
   @method()
   setLayouts(layouts: Layout[]) {
     this.#componentRef.current?.setLayouts(layouts);

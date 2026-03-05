@@ -82,7 +82,9 @@ interface ElevoSidebarRef extends ChatHistoryRef {
 }
 
 /**
- * 构件 `ai-portal.elevo-sidebar`
+ * Elevo AI 侧边栏，包含 Logo 导航、新建对话、历史记录、项目列表及个人账户操作，支持折叠和抽屉两种行为模式。
+ *
+ * @category layout-component
  */
 export
 @defineElement("ai-portal.elevo-sidebar", {
@@ -140,6 +142,10 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
   @property({ attribute: false })
   accessor spaceNav: SpaceNavProps | undefined;
 
+  /**
+   * @detail void
+   * @description 点击退出登录时触发
+   */
   @event({ type: "logout" })
   accessor #logout!: EventEmitter<void>;
 
@@ -149,6 +155,8 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
 
   /**
    * 点击对话历史操作按钮时触发
+   * @detail { action: 点击的操作项（含 project 等扩展字段）, item: 当前对话历史记录项, project: 关联的项目（可选） }
+   * @description 点击对话历史操作按钮时触发
    */
   @event({ type: "action.click" })
   accessor #actionClick!: EventEmitter<ActionClickDetail>;
@@ -159,6 +167,8 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
 
   /**
    * 点击项目操作按钮时触发
+   * @detail { action: 点击的操作项, project: 当前项目对象 }
+   * @description 点击项目操作按钮时触发
    */
   @event({ type: "project.action.click" })
   accessor #projectActionClick!: EventEmitter<ProjectActionClickDetail>;
@@ -167,6 +177,10 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
     this.#projectActionClick.emit(detail);
   };
 
+  /**
+   * @detail void
+   * @description 点击新建项目按钮时触发
+   */
   @event({ type: "add.project" })
   accessor #addProject!: EventEmitter<void>;
 
@@ -174,6 +188,10 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
     this.#addProject.emit();
   };
 
+  /**
+   * @detail void
+   * @description 点击新建服务流按钮时触发（scope 为 space 时有效）
+   */
   @event({ type: "add.serviceflow" })
   accessor #addServiceflow!: EventEmitter<void>;
 
@@ -183,6 +201,8 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
 
   /**
    * 点击个人操作按钮时触发
+   * @detail { action: 点击的操作项 }
+   * @description 点击个人操作按钮时触发
    */
   @event({ type: "personal.action.click" })
   accessor #personalActionClick!: EventEmitter<PersonalActionClickDetail>;
@@ -194,7 +214,8 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
   #ref = createRef<ElevoSidebarRef>();
 
   /**
-   * @param delay Delay in milliseconds before pulling the latest chat history.
+   * 延迟一段时间后拉取最新对话历史
+   * @param delay 拉取前的等待时长（毫秒），用于等待任务标题生成完成
    */
   @method()
   pullHistory(delay: number) {
@@ -204,26 +225,40 @@ class ElevoSidebar extends ReactNextElement implements ElevoSidebarProps {
     }, delay);
   }
 
+  /** 展开侧边栏（behavior 为 drawer 时有效） */
   @method()
   open() {
     this.#ref.current?.open();
   }
 
+  /** 折叠侧边栏（behavior 为 drawer 时有效） */
   @method()
   close() {
     this.#ref.current?.close();
   }
 
+  /**
+   * 从历史列表中移除指定项目及其对话
+   * @param projectId 要移除的项目 instanceId
+   */
   @method()
   removeProject(projectId: string) {
     this.#ref.current?.removeProject?.(projectId);
   }
 
+  /**
+   * 向项目列表中追加一个新项目
+   * @param project 要追加的项目对象
+   */
   @method()
   addProject(project: Project) {
     this.#ref.current?.addProject?.(project);
   }
 
+  /**
+   * 将指定对话标记为已移入项目，从历史列表中隐藏
+   * @param conversationId 要移动的对话 ID
+   */
   @method()
   moveConversation(conversationId: string) {
     this.#ref.current?.moveConversation?.(conversationId);

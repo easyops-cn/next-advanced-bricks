@@ -110,18 +110,17 @@ export interface ImageInfo {
 
 const { defineElement, property, event } = createDecorators();
 
-@defineElement("eo-markdown-editor", {
-  styleTexts: [styleText],
-  alias: ["markdown.markdown-editor"],
-})
-
 /**
- * markdown编辑器
+ * Markdown 编辑器，基于 Milkdown 实现，支持富文本编辑、表格、代码高亮及图片上传。
  * @docKind brick
  * @author kehua
  * @noInheritDoc
  * @category form-input-advanced
  */
+@defineElement("eo-markdown-editor", {
+  styleTexts: [styleText],
+  alias: ["markdown.markdown-editor"],
+})
 class MarkdownEditor extends FormItemElementBase {
   /**
    * 字段名称
@@ -169,7 +168,7 @@ class MarkdownEditor extends FormItemElementBase {
 
   /**
    * 上传图片时触发的事件
-   * @detail
+   * @detail { name: 图片文件名, src: 图片存储路径 }
    */
   @event({ type: "image.upload" })
   accessor #uploadImage!: EventEmitter<ImageInfo>;
@@ -179,8 +178,8 @@ class MarkdownEditor extends FormItemElementBase {
   };
 
   /**
-   * 编辑markdown触发的变化事件
-   * @detail
+   * 编辑 markdown 触发的变化事件
+   * @detail 当前编辑器的 markdown 文本内容
    */
   @event({ type: "markdown.value.change" })
   accessor #markdownValueChange!: EventEmitter<string>;

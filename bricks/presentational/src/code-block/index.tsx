@@ -34,7 +34,7 @@ export interface CodeBlockProps {
 }
 
 /**
- * 构件 `eo-code-block`
+ * 代码块展示构件，基于 Shiki 进行语法高亮，支持多种编程语言、亮色/暗色主题自动切换及复制功能。
  *
  * @part pre - 包裹代码内容的 `<pre>` 元素
  * @part copy - 复制按钮
@@ -47,18 +47,27 @@ export
   styleTexts: [styleText],
 })
 class CodeBlock extends ReactNextElement implements CodeBlockProps {
+  /**
+   * 代码语言，用于语法高亮，例如 `javascript`、`python`、`yaml` 等
+   */
   @property()
   accessor language: string | undefined;
 
+  /**
+   * 代码内容字符串
+   */
   @property()
   accessor source: string | undefined;
 
-  /** @default "auto" */
+  /**
+   * 代码高亮主题。`auto` 跟随系统主题自动切换亮色/暗色
+   * @default "auto"
+   */
   @property()
   accessor theme: "auto" | "light-plus" | "dark-plus" | undefined;
 
   /**
-   * 主题变体
+   * 主题变体，影响代码块的整体样式风格
    */
   @property()
   accessor themeVariant: "default" | "elevo" | undefined;

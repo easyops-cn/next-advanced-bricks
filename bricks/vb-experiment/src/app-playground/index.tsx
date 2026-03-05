@@ -75,7 +75,7 @@ export interface AppPlaygroundProps {
 }
 
 /**
- * 构件 `vb-experiment.app-playground`
+ * App 编辑器与预览的集成 Playground，支持用 TSX 语法编写 App，并实时转换为 Storyboard 进行预览
  */
 export
 @defineElement("vb-experiment.app-playground", {
@@ -83,13 +83,22 @@ export
   shadowOptions: false,
 })
 class AppPlayground extends ReactNextElement implements AppPlaygroundProps {
-  /** 仅初始有效 */
+  /**
+   * 初始代码内容，仅在首次渲染时有效，后续更改不会同步到编辑器
+   */
   @property({ attribute: false })
   accessor source: string | undefined;
 
+  /**
+   * 额外注入到编辑器的类型声明库，用于提供代码补全和类型检查
+   */
   @property({ attribute: false })
   accessor extraLibs: ExtraLib[] | undefined;
 
+  /**
+   * @detail 当前编辑器中的代码字符串
+   * @description 编辑器内容变化时触发
+   */
   @event({ type: "change" })
   accessor #change!: EventEmitter<string>;
 

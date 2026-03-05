@@ -237,6 +237,10 @@ class EoUserOrUserGroupSelect extends FormItemElementBase {
   @property()
   accessor themeVariant: "default" | "elevo" | undefined;
 
+  /**
+   * 值变化时触发
+   * @detail 当前选中的用户名或用户组实例 ID 列表
+   */
   @event({ type: "change" })
   accessor #changeEvent!: EventEmitter<string[]>;
 

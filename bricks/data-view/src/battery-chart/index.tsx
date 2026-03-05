@@ -22,52 +22,39 @@ interface BatteryChartChartProps {
  * 大屏电池
  * @author astrid
  * @category big-screen-content
+ * @slot - 电池右侧内容插槽，可放置标题和数据信息
+ * @slot left - 电池左侧阈值线附近内容插槽
  */
 @defineElement("data-view.battery-chart", {
   styleTexts: [variablesStyleText, styleText],
 })
 class BatteryChart extends ReactNextElement implements BatteryChartChartProps {
   /**
-   * @kind number
-   * @default -
-   * @required false
-   * @description 值, 默认范围在[0-100], 但是范围还可通过 thresholdColors 来改变，将取第一个和最后一个值作为范围
+   * 值，默认范围在 [0-100]，范围还可通过 thresholdColors 来改变，将取第一个和最后一个配置项的值作为区间
    */
   @property({ type: Number })
   accessor value: number;
 
   /**
-   * @kind  number
-   * @default  38
-   * @required false
-   * @description 电池的宽度
+   * 电池的宽度
    */
   @property({ type: Number })
   accessor batteryWidth: number;
 
   /**
-   * @kind  number
-   * @default  58
-   * @required false
-   * @description 电池的高度
+   * 电池的高度
    */
   @property({ type: Number })
   accessor batteryHeight: number;
 
   /**
-   * @kind  ThresholdColor[]
-   * @default  -
-   * @required false
-   * @description 阈值范围以及颜色的配置；
+   * 阈值范围以及颜色的配置
    */
   @property({ attribute: false })
   accessor thresholdColors: ThresholdColor[];
 
   /**
-   * @kind  number
-   * @default  50
-   * @required false
-   * @description 阈值刻度线
+   * 阈值刻度线
    */
   @property({ type: Number })
   accessor thresholdValue: number;

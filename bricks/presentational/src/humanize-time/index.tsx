@@ -43,7 +43,7 @@ export
 })
 class EoHumanizeTime extends ReactNextElement {
   /**
-   * 时间截，或字符串，当为字符串时，应提供时间格式 `inputFormat`
+   * 时间戳（秒或毫秒，由 `isMillisecond` 决定），或时间字符串（字符串类型时应提供 `inputFormat`）
    * @required
    */
   @property({
@@ -52,13 +52,13 @@ class EoHumanizeTime extends ReactNextElement {
   accessor value: number | string;
 
   /**
-   * 字符串的时间格式，如 "YYYY-MM-DD", [时间格式参照表](https://day.js.org/docs/en/parse/string-format)
+   * 字符串类型 `value` 的解析格式，如 "YYYY-MM-DD"，[时间格式参照表](https://momentjs.com/docs/#/parsing/string-format/)
    */
   @property()
   accessor inputFormat: string;
 
   /**
-   * 展示时间格式，如 "YYYY-MM-DD"，当设置该属性时，属性 `formatter` 无效 [时间格式参照表](https://day.js.org/docs/en/display/format)
+   * 自定义输出格式，如 "YYYY-MM-DD HH:mm:ss"，设置后 `formatter` 属性无效，[时间格式参照表](https://momentjs.com/docs/#/displaying/format/)
    */
   @property()
   accessor outputFormat: string;
@@ -79,9 +79,9 @@ class EoHumanizeTime extends ReactNextElement {
   accessor isCostTime: boolean;
 
   /**
-   * 格式类型
+   * 格式类型，可选值：`"full"`（完整时间）、`"default"`（自动相对/完整）、`"relative"`（相对时间，支持过去和未来）、`"past"`（仅过去相对时间）、`"future"`（仅未来相对时间）、`"accurate"`（精确耗时）、`"auto"`
    *
-   * @default "default"
+   * @default "auto"
    */
   @property({
     attribute: false,
@@ -89,7 +89,7 @@ class EoHumanizeTime extends ReactNextElement {
   accessor formatter: HumanizeTimeFormat;
 
   /**
-   * value 值的单位是否为毫秒（此处属性 id 写错，实际表达意义为 isMillisecond）
+   * 已废弃：`value` 值的单位是否为毫秒（属性名拼写有误，请改用 `isMillisecond`）
    *
    * @deprecated 请使用 `isMillisecond`
    */
@@ -99,7 +99,7 @@ class EoHumanizeTime extends ReactNextElement {
   accessor isMicrosecond: boolean;
 
   /**
-   * value 值的单位是否为毫秒
+   * `value` 值的单位是否为毫秒，默认将 `value` 视为秒级时间戳
    */
   @property({
     type: Boolean,
@@ -107,7 +107,7 @@ class EoHumanizeTime extends ReactNextElement {
   accessor isMillisecond: boolean;
 
   /**
-   * 跳转链接，默认为空
+   * 将时间显示为可点击链接
    */
   @property({
     attribute: false,

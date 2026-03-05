@@ -27,18 +27,23 @@ export interface ShowCaseProps {
 
 /**
  * 构件 `ai-portal.show-case`
+ *
+ * 案例展示卡片构件，以彩色背景卡片展示单个优秀案例，点击可跳转到案例详情。
  */
 export
 @defineElement("ai-portal.show-case", {
   styleTexts: [styleText],
 })
 class ShowCase extends ReactNextElement implements ShowCaseProps {
+  /** 案例标题，同时用于计算卡片背景色 */
   @property()
   accessor caseTitle: string | undefined;
 
+  /** 案例摘要描述 */
   @property()
   accessor summary: string | undefined;
 
+  /** 点击卡片跳转的目标链接 */
   @property()
   accessor url: string | undefined;
 

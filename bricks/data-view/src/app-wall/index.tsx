@@ -131,7 +131,8 @@ class AppWall extends ReactNextElement implements AppWallProps {
   accessor useSystemPopover: boolean;
 
   /**
-   *  详情卡片点击事件
+   * @detail AppData — 当前点击的应用数据
+   * @description 系统卡片详情按钮点击事件
    */
   @event({ type: "system.card.button.click" })
   accessor #systemCardButtonClickEvent!: EventEmitter<AppData>;
@@ -140,29 +141,29 @@ class AppWall extends ReactNextElement implements AppWallProps {
     this.#systemCardButtonClickEvent.emit(data);
   };
   /**
-   * @detail
-   * @description 展示台左边按钮点击
+   * @detail AppData — 展示台左边按钮点击时传出的应用数据
+   * @description 展示台左边按钮点击事件
    */
   @event({ type: "left.btn.click" })
   accessor #onLeftClickEvent!: EventEmitter<AppData>;
 
   /**
-   * @detail
-   * @description 展示台左边按钮点击
+   * @detail AppData — 展示台右边按钮点击时传出的应用数据
+   * @description 展示台右边按钮点击事件
    */
   @event({ type: "right.btn.click" })
   accessor #onRightClickEvent!: EventEmitter<AppData>;
 
   /**
-   * @detail
-   * @description 卡片双击事件,useDblclick:true 或者当前节点clusters属性无数据的时候也会触发
+   * @detail AppData — 双击卡片时传出的应用数据
+   * @description 卡片双击事件，useDblclick 为 true 或当前节点 clusters 属性无数据时触发
    */
   @event({ type: "on.card.dbclick" })
   accessor #onDbClickEvent!: EventEmitter<AppData>;
 
   /**
-   * @detail
-   * @description 卡片单击事件, disabledDefaultClickEvent:true 点击卡片触发
+   * @detail AppData — 单击卡片时传出的应用数据
+   * @description 卡片单击事件，disabledDefaultClickEvent 为 true 时点击卡片触发
    */
   @event({ type: "card.click" })
   accessor #onClickEvent!: EventEmitter<AppData>;

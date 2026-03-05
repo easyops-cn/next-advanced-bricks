@@ -1,8 +1,37 @@
-data-view.modern-style-treemap
+---
+tagName: data-view.modern-style-treemap
+displayName: WrappedDataViewModernStyleTreemap
+description: 现代风树图
+category: big-screen-content
+source: "@next-bricks/data-view"
+---
+
+# data-view.modern-style-treemap
+
+> 现代风树图
+
+## Props
+
+| 属性               | 类型                                                                                                                   | 必填 | 默认值              | 说明              |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------- | ---- | ------------------- | ----------------- |
+| data               | `TreemapData`                                                                                                          | 是   | -                   | 数据              |
+| tail               | `"treemapBinary" \| "treemapDice" \| "treemapResquarify" \| "treemapSlice" \| "treemapSliceDice" \| "treemapSquarify"` | 否   | `"treemapSquarify"` | 平铺方法          |
+| leafUseBrick       | `{ useBrick: UseBrickConf }`                                                                                           | 否   | -                   | 叶子节点 useBrick |
+| leafContainerStyle | `React.CSSProperties`                                                                                                  | 否   | -                   | 叶子节点容器样式  |
+| tooltipUseBrick    | `{ useBrick: UseBrickConf }`                                                                                           | 否   | -                   | tooltip useBrick  |
+| tooltipStyle       | `React.CSSProperties`                                                                                                  | 否   | -                   | tooltip 容器样式  |
+
+## Events
+
+| 事件          | detail                                                                    | 说明               |
+| ------------- | ------------------------------------------------------------------------- | ------------------ |
+| treemap.click | `TreemapData` — { name: 节点名称, value: 节点数值, children: 子节点列表 } | 点击叶子节点时触发 |
 
 ## Examples
 
 ### Basic
+
+展示现代风树图的基本用法，包含叶子节点自定义渲染和 tooltip 配置。
 
 ```yaml preview
 - brick: data-view.modern-style-treemap
@@ -140,378 +169,6 @@ data-view.modern-style-treemap
               value: 2213
             - name: SpringForce
               value: 1681
-        - name: query
-          children:
-            - name: AggregateExpression
-              value: 1616
-            - name: And
-              value: 1027
-            - name: Arithmetic
-              value: 3891
-            - name: Average
-              value: 891
-            - name: BinaryExpression
-              value: 2893
-            - name: Comparison
-              value: 5103
-            - name: CompositeExpression
-              value: 3677
-            - name: Count
-              value: 781
-            - name: DateUtil
-              value: 4141
-            - name: Distinct
-              value: 933
-            - name: Expression
-              value: 5130
-            - name: ExpressionIterator
-              value: 3617
-            - name: Fn
-              value: 3240
-            - name: If
-              value: 2732
-            - name: IsA
-              value: 2039
-            - name: Literal
-              value: 1214
-            - name: Match
-              value: 3748
-            - name: Maximum
-              value: 843
-            - name: methods
-              children:
-                - name: add
-                  value: 593
-                - name: and
-                  value: 330
-                - name: average
-                  value: 287
-                - name: count
-                  value: 277
-                - name: distinct
-                  value: 292
-                - name: div
-                  value: 595
-                - name: eq
-                  value: 594
-                - name: fn
-                  value: 460
-                - name: gt
-                  value: 603
-                - name: gte
-                  value: 625
-                - name: iff
-                  value: 748
-                - name: isa
-                  value: 461
-                - name: lt
-                  value: 597
-                - name: lte
-                  value: 619
-                - name: max
-                  value: 283
-                - name: min
-                  value: 283
-                - name: mod
-                  value: 591
-                - name: mul
-                  value: 603
-                - name: neq
-                  value: 599
-                - name: not
-                  value: 386
-                - name: or
-                  value: 323
-                - name: orderby
-                  value: 307
-                - name: range
-                  value: 772
-                - name: select
-                  value: 296
-                - name: stddev
-                  value: 363
-                - name: sub
-                  value: 600
-                - name: sum
-                  value: 280
-                - name: update
-                  value: 307
-                - name: variance
-                  value: 335
-                - name: where
-                  value: 299
-                - name: xor
-                  value: 354
-                - name: _
-                  value: 264
-            - name: Minimum
-              value: 843
-            - name: Not
-              value: 1554
-            - name: Or
-              value: 970
-            - name: Query
-              value: 13896
-            - name: Range
-              value: 1594
-            - name: StringUtil
-              value: 4130
-            - name: Sum
-              value: 791
-            - name: Variable
-              value: 1124
-            - name: Variance
-              value: 1876
-            - name: Xor
-              value: 1101
-        - name: scale
-          children:
-            - name: IScaleMap
-              value: 2105
-            - name: LinearScale
-              value: 1316
-            - name: LogScale
-              value: 3151
-            - name: OrdinalScale
-              value: 3770
-            - name: QuantileScale
-              value: 2435
-            - name: QuantitativeScale
-              value: 4839
-            - name: RootScale
-              value: 1756
-            - name: Scale
-              value: 4268
-            - name: ScaleType
-              value: 1821
-            - name: TimeScale
-              value: 5833
-        - name: util
-          children:
-            - name: Arrays
-              value: 8258
-            - name: Colors
-              value: 10001
-            - name: Dates
-              value: 8217
-            - name: Displays
-              value: 12555
-            - name: Filter
-              value: 2324
-            - name: Geometry
-              value: 10993
-            - name: heap
-              children:
-                - name: FibonacciHeap
-                  value: 9354
-                - name: HeapNode
-                  value: 1233
-            - name: IEvaluable
-              value: 335
-            - name: IPredicate
-              value: 383
-            - name: IValueProxy
-              value: 874
-            - name: math
-              children:
-                - name: DenseMatrix
-                  value: 3165
-                - name: IMatrix
-                  value: 2815
-                - name: SparseMatrix
-                  value: 3366
-            - name: Maths
-              value: 17705
-            - name: Orientation
-              value: 1486
-            - name: palette
-              children:
-                - name: ColorPalette
-                  value: 6367
-                - name: Palette
-                  value: 1229
-                - name: ShapePalette
-                  value: 2059
-                - name: SizePalette
-                  value: 2291
-            - name: Property
-              value: 5559
-            - name: Shapes
-              value: 19118
-            - name: Sort
-              value: 6887
-            - name: Stats
-              value: 6557
-            - name: Strings
-              value: 22026
-        - name: vis
-          children:
-            - name: axis
-              children:
-                - name: Axes
-                  value: 1302
-                - name: Axis
-                  value: 24593
-                - name: AxisGridLine
-                  value: 652
-                - name: AxisLabel
-                  value: 636
-                - name: CartesianAxes
-                  value: 6703
-            - name: controls
-              children:
-                - name: AnchorControl
-                  value: 2138
-                - name: ClickControl
-                  value: 3824
-                - name: Control
-                  value: 1353
-                - name: ControlList
-                  value: 4665
-                - name: DragControl
-                  value: 2649
-                - name: ExpandControl
-                  value: 2832
-                - name: HoverControl
-                  value: 4896
-                - name: IControl
-                  value: 763
-                - name: PanZoomControl
-                  value: 5222
-                - name: SelectionControl
-                  value: 7862
-                - name: TooltipControl
-                  value: 8435
-            - name: data
-              children:
-                - name: Data
-                  value: 20544
-                - name: DataList
-                  value: 19788
-                - name: DataSprite
-                  value: 10349
-                - name: EdgeSprite
-                  value: 3301
-                - name: NodeSprite
-                  value: 19382
-                - name: render
-                  children:
-                    - name: ArrowType
-                      value: 698
-                    - name: EdgeRenderer
-                      value: 5569
-                    - name: IRenderer
-                      value: 353
-                    - name: ShapeRenderer
-                      value: 2247
-                - name: ScaleBinding
-                  value: 11275
-                - name: Tree
-                  value: 7147
-                - name: TreeBuilder
-                  value: 9930
-            - name: events
-              children:
-                - name: DataEvent
-                  value: 2313
-                - name: SelectionEvent
-                  value: 1880
-                - name: TooltipEvent
-                  value: 1701
-                - name: VisualizationEvent
-                  value: 1117
-            - name: legend
-              children:
-                - name: Legend
-                  value: 20859
-                - name: LegendItem
-                  value: 4614
-                - name: LegendRange
-                  value: 10530
-            - name: operator
-              children:
-                - name: distortion
-                  children:
-                    - name: BifocalDistortion
-                      value: 4461
-                    - name: Distortion
-                      value: 6314
-                    - name: FisheyeDistortion
-                      value: 3444
-                - name: encoder
-                  children:
-                    - name: ColorEncoder
-                      value: 3179
-                    - name: Encoder
-                      value: 4060
-                    - name: PropertyEncoder
-                      value: 4138
-                    - name: ShapeEncoder
-                      value: 1690
-                    - name: SizeEncoder
-                      value: 1830
-                - name: filter
-                  children:
-                    - name: FisheyeTreeFilter
-                      value: 5219
-                    - name: GraphDistanceFilter
-                      value: 3165
-                    - name: VisibilityFilter
-                      value: 3509
-                - name: IOperator
-                  value: 1286
-                - name: label
-                  children:
-                    - name: Labeler
-                      value: 9956
-                    - name: RadialLabeler
-                      value: 3899
-                    - name: StackedAreaLabeler
-                      value: 3202
-                - name: layout
-                  children:
-                    - name: AxisLayout
-                      value: 6725
-                    - name: BundledEdgeRouter
-                      value: 3727
-                    - name: CircleLayout
-                      value: 9317
-                    - name: CirclePackingLayout
-                      value: 12003
-                    - name: DendrogramLayout
-                      value: 4853
-                    - name: ForceDirectedLayout
-                      value: 8411
-                    - name: IcicleTreeLayout
-                      value: 4864
-                    - name: IndentedTreeLayout
-                      value: 3174
-                    - name: Layout
-                      value: 7881
-                    - name: NodeLinkTreeLayout
-                      value: 12870
-                    - name: PieLayout
-                      value: 2728
-                    - name: RadialTreeLayout
-                      value: 12348
-                    - name: RandomLayout
-                      value: 870
-                    - name: StackedAreaLayout
-                      value: 9121
-                    - name: TreeMapLayout
-                      value: 9191
-                - name: Operator
-                  value: 2490
-                - name: OperatorList
-                  value: 5248
-                - name: OperatorSequence
-                  value: 4190
-                - name: OperatorSwitch
-                  value: 2581
-                - name: SortOperator
-                  value: 2023
-            - name: Visualization
-              value: 16540
     style:
       width: 100%
       height: 800px
@@ -545,4 +202,45 @@ data-view.modern-style-treemap
                       overflow: "hidden"
                       "white-space": "nowrap"
                       "text-overflow": "ellipsis"
+  events:
+    treemap.click:
+      - action: console.log
+```
+
+### Custom Tiling
+
+展示使用不同平铺算法的现代风树图。
+
+```yaml preview
+- brick: data-view.modern-style-treemap
+  properties:
+    tail: treemapBinary
+    leafContainerStyle:
+      border: "1px solid rgba(74, 234, 255, 0.3)"
+    data:
+      name: root
+      children:
+        - name: A
+          value: 500
+        - name: B
+          value: 300
+        - name: C
+          value: 200
+        - name: D
+          value: 150
+        - name: E
+          value: 100
+    style:
+      width: 100%
+      height: 400px
+      display: block
+      background-color: "#1c1e21"
+    leafUseBrick:
+      useBrick:
+        brick: div
+        properties:
+          textContent: <% DATA.data.name %>
+          style:
+            color: "#FFFFFF"
+            padding: "8px"
 ```

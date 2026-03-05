@@ -122,21 +122,21 @@ class TabsDrawer extends ReactNextElement implements TabsDrawerProps {
   })
   accessor visible: boolean | undefined;
   /**
-   * @detail
+   * @detail `-`
    * @description 抽屉打开事件
    */
   @event({ type: "open" })
   accessor #drawerOpenEvent!: EventEmitter<void>;
 
   /**
-   * @detail
+   * @detail `-`
    * @description 抽屉关闭事件
    */
   @event({ type: "close" })
   accessor #drawerCloseEvent!: EventEmitter<void>;
 
   /**
-   * @detail `string`
+   * @detail 切换后激活的 tab 的 key
    * @description 切换 `tab` 栏会触发的事件，`detail` 为目标 `tab` 对应的 `key`
    */
   @event({ type: "tab.change" })

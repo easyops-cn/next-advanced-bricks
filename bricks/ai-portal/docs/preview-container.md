@@ -1,8 +1,27 @@
-构件 `ai-portal.preview-container`
+---
+tagName: ai-portal.preview-container
+displayName: WrappedAiPortalPreviewContainer
+description: TSX 源码预览容器，将 TSX 源码字符串解析并渲染为完整的页面视图。
+category: ""
+source: "@next-bricks/ai-portal"
+---
+
+# ai-portal.preview-container
+
+> TSX 源码预览容器，将 TSX 源码字符串解析并渲染为完整的页面视图。
+
+## Props
+
+| 属性   | 类型     | 必填 | 默认值 | 说明                                                            |
+| ------ | -------- | ---- | ------ | --------------------------------------------------------------- |
+| source | `string` | 否   | -      | TSX 源码字符串，将被解析并渲染为页面视图                        |
+| url    | `string` | 否   | -      | 渲染上下文中可访问的 URL，传入后可在视图内通过路由相关 API 使用 |
 
 ## Examples
 
-### Basic
+### 基础使用
+
+将 TSX 源码字符串解析并渲染为磁盘使用情况报告视图。
 
 ```yaml preview minHeight="600px"
 brick: ai-portal.preview-container
@@ -76,7 +95,6 @@ properties:
       <View title="磁盘使用情况">
         {RESPONSE.list.map((item) => (
           <Card title={item.ip}>
-            {/* 磁盘空间使用情况 */}
             <Plaintext>磁盘空间使用</Plaintext>
             <Table
               dataSource={{ list: item.disk_usage }}
@@ -92,8 +110,6 @@ properties:
               rowKey="device"
               pagination={false}
             />
-
-            {/* Inode 使用情况 */}
             <Plaintext>Inode 使用情况</Plaintext>
             <Table
               dataSource={{ list: item.inode_usage }}
@@ -103,37 +119,11 @@ properties:
                 { dataIndex: "total_inodes", key: "total_inodes", title: "Inode 总数" },
                 { dataIndex: "used_inodes", key: "used_inodes", title: "已用 Inode" },
                 { dataIndex: "free_inodes", key: "free_inodes", title: "空闲 Inode" },
-                {
-                  dataIndex: "percent", key: "percent", title: "使用率",
-                  render: (cell, record) => (
-                    // <Plaintext>{record.percent}%</Plaintext>
-                    `~${record.percent}`
-                  )
-                }
+                { dataIndex: "percent", key: "percent", title: "使用率" }
               ]}
               rowKey="device"
               pagination={false}
             />
-
-            {/* 大文件列表（仅当存在 large_files 且有内容时） */}
-            {item.disk_usage
-              .filter(disk => disk.large_files && disk.large_files.length > 0)
-              .map(disk =>
-                disk.large_files ? (
-                  <Fragment key={disk.device}>
-                    <Plaintext>{`大文件列表 (${disk.mount_point})`}</Plaintext>
-                    <Table
-                      dataSource={{ list: disk.large_files }}
-                      columns={[
-                        { dataIndex: "path", key: "path", title: "路径" },
-                        { dataIndex: "size", key: "size", title: "大小" }
-                      ]}
-                      rowKey="path"
-                      pagination={false}
-                    />
-                  </Fragment>
-                ) : null
-              )}
           </Card>
         ))}
       </View>

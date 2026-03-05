@@ -30,7 +30,7 @@ const lockBodyScroll = unwrapProvider<typeof _lockBodyScroll>(
 );
 
 /**
- * 构件 `eo-launchpad-button-v2`
+ * Launchpad 启动台按钮（v2），点击后展开 Launchpad 面板，支持快捷键 Alt+L 开关、Esc 关闭。
  * @insider
  */
 export

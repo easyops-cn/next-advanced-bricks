@@ -75,7 +75,7 @@ export interface TsxPlaygroundProps {
 }
 
 /**
- * 构件 `vb-experiment.tsx-playground`
+ * TSX 视图编辑器与实时预览的集成 Playground，支持用 TSX 语法编写视图，并即时渲染到右侧预览区
  */
 export
 @defineElement("vb-experiment.tsx-playground", {
@@ -83,22 +83,40 @@ export
   shadowOptions: false,
 })
 class TsxPlayground extends ReactNextElement implements TsxPlaygroundProps {
-  /** 仅初始有效 */
+  /**
+   * 初始代码内容，仅在首次渲染时有效，后续更改不会同步到编辑器
+   */
   @property({ attribute: false })
   accessor source: string | undefined;
 
+  /**
+   * 额外注入到编辑器的类型声明库，用于提供代码补全和类型检查
+   */
   @property({ attribute: false })
   accessor extraLibs: ExtraLib[] | undefined;
 
+  /**
+   * 额外的视图库源文件，会合并到类型声明中，并在解析视图时作为依赖提供
+   */
   @property({ attribute: false })
   accessor viewLibs: SourceFile[] | undefined;
 
+  /**
+   * 是否跳过顶层 wrapper 包裹，启用后视图直接渲染为裸砖块列表
+   */
   @property({ type: Boolean })
   accessor withoutWrapper: boolean | undefined;
 
+  /**
+   * 是否允许使用任意砖块，默认仅允许 next-tsx 白名单砖块
+   */
   @property({ type: Boolean })
   accessor allowAnyBricks: boolean | undefined;
 
+  /**
+   * @detail 当前编辑器中的代码字符串
+   * @description 编辑器内容变化时触发
+   */
   @event({ type: "change" })
   accessor #change!: EventEmitter<string>;
 

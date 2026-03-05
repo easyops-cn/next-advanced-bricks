@@ -33,6 +33,8 @@ export interface Breadcrumb {
 /**
  * 构件 `ai-portal.page-container`
  *
+ * 页面容器构件，提供统一的页面布局，包含面包屑导航、页面标题和内容区域。
+ *
  * @slot - 内容
  * @slot toolbar - 工具栏
  */
@@ -41,18 +43,23 @@ export
   styleTexts: [styleText],
 })
 class PageContainer extends ReactNextElement implements PageContainerProps {
+  /** 页面标题，同时会调用 applyPageTitle 更新浏览器标签页标题 */
   @property()
   accessor pageTitle: string | undefined;
 
+  /** 面包屑导航配置，每项包含 text 和 url */
   @property({ attribute: false })
   accessor breadcrumbs: Breadcrumb[] | undefined;
 
+  /** 内容区域宽度模式，通过 CSS attribute selector 控制样式，不触发重新渲染 */
   @property({ render: false })
   accessor size: "medium" | "small" | "full" | undefined;
 
+  /** 页面变体，通过 CSS attribute selector 控制样式，不触发重新渲染 */
   @property({ render: false })
   accessor variant: "default" | "form" | undefined;
 
+  /** 是否固定头部（含面包屑和标题）到页面顶部 */
   @property({ type: Boolean })
   accessor sticky: boolean | undefined;
 

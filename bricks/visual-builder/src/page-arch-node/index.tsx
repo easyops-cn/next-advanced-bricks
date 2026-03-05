@@ -45,98 +45,155 @@ export interface ContextMenuDetail {
 export type PageArchNodeType = "page" | "board";
 
 /**
- * 构件 `visual-builder.page-arch-node`
+ * Visual Builder 页面架构图节点，支持页面（page）和看板（board）两种类型，可内联编辑标签、追加子节点、显示外链和子节点
  */
 export
 @defineElement("visual-builder.page-arch-node", {
   styleTexts: [styleText],
 })
 class PageArchNode extends ReactNextElement implements PageArchNodeProps {
+  /**
+   * 节点标签文字，支持内联双击编辑
+   */
   @property()
   accessor label: string | undefined;
 
+  /**
+   * 节点类型，"page" 渲染为页面缩略图样式（高 130px），"board" 渲染为列表图标样式（高 70px）
+   */
   @property()
   accessor type: PageArchNodeType | undefined;
 
+  /**
+   * 外部链接节点数据，仅 type="page" 时显示，点击触发 external.click 事件
+   */
   @property({ attribute: false })
   accessor external: ExtraNodeData | undefined;
 
+  /**
+   * 子节点列表，仅 type="page" 时显示，每个子节点可双击和右键操作
+   */
   @property({ attribute: false })
   accessor subNodes: ExtraNodeData[] | undefined;
 
-  // @property()
-  // accessor thumbnail: string | undefined;
-
+  /**
+   * 是否为当前激活节点，仅控制 CSS 样式（render: false），不触发重新渲染
+   */
   @property({ type: Boolean, render: false })
   accessor active: boolean | undefined;
 
+  /**
+   * 是否标记为未同步状态，仅控制 CSS 样式（render: false），不触发重新渲染
+   */
   @property({ type: Boolean, render: false })
   accessor notSynced: boolean | undefined;
 
+  /**
+   * 是否禁用追加子节点按钮，仅控制 CSS 样式（render: false），不触发重新渲染
+   */
   @property({ type: Boolean, render: false })
   accessor disableChildAppend: boolean | undefined;
 
+  /**
+   * 自动聚焦标识符，设置后节点首次挂载时会自动进入标签编辑模式，同一标识符只触发一次
+   */
   @property()
   accessor autoFocusOnce: string | undefined;
 
+  /**
+   * @detail 当前标签是否正在编辑
+   * @description 节点标签编辑状态变化时触发
+   */
   @event({ type: "label.editing.change" })
   accessor #labelEditingChange: EventEmitter<boolean>;
+
+  /**
+   * @detail 编辑完成后的新标签文字
+   * @description 节点标签编辑完成（失焦）后触发
+   */
+  @event({ type: "label.change" })
+  accessor #labelChange: EventEmitter<string>;
+
+  /**
+   * @detail `void`
+   * @description 点击节点主体区域时触发
+   */
+  @event({ type: "node.click" })
+  accessor #nodeClick: EventEmitter<void>;
+
+  /**
+   * @detail `void`
+   * @description 双击节点主体区域时触发
+   */
+  @event({ type: "node.dblclick" })
+  accessor #nodeDoubleClick: EventEmitter<void>;
+
+  /**
+   * @detail `ContextMenuDetail` — { clientX: 鼠标 X 坐标, clientY: 鼠标 Y 坐标 }
+   * @description 在节点上触发右键菜单时触发
+   */
+  @event({ type: "node.contextmenu" })
+  accessor #nodeContextMenu: EventEmitter<ContextMenuDetail>;
+
+  /**
+   * @detail `void`
+   * @description 点击节点的添加子节点按钮时触发
+   */
+  @event({ type: "child.append" })
+  accessor #childAppend: EventEmitter<void>;
+
+  /**
+   * @detail `ExtraNodeData` — { id: 外链节点 ID, label: 外链节点标签 }
+   * @description 点击节点的外链区域时触发
+   */
+  @event({ type: "external.click" })
+  accessor #externalClick: EventEmitter<ExtraNodeData>;
+
+  /**
+   * @detail `ExtraNodeData` — { id: 子节点 ID, label: 子节点标签 }
+   * @description 双击子节点时触发
+   */
+  @event({ type: "subNode.dblclick" })
+  accessor #subNodeDoubleClick: EventEmitter<ExtraNodeData>;
+
+  /**
+   * @detail `SubNodeContextMenuData` — { node: { id: 子节点 ID, label: 子节点标签 }, clientX: 鼠标 X 坐标, clientY: 鼠标 Y 坐标 }
+   * @description 在子节点上触发右键菜单时触发
+   */
+  @event({ type: "subNode.contextmenu" })
+  accessor #subNodeContextMenu: EventEmitter<SubNodeContextMenuData>;
 
   #handleLabelEditingChange = (value: boolean) => {
     this.#labelEditingChange.emit(value);
   };
 
-  @event({ type: "label.change" })
-  accessor #labelChange: EventEmitter<string>;
-
   #handleLabelChange = (value: string) => {
     this.#labelChange.emit(value);
   };
-
-  @event({ type: "node.click" })
-  accessor #nodeClick: EventEmitter<void>;
 
   #handleNodeClick = () => {
     this.#nodeClick.emit();
   };
 
-  @event({ type: "node.dblclick" })
-  accessor #nodeDoubleClick: EventEmitter<void>;
-
   #handleNodeDoubleClick = () => {
     this.#nodeDoubleClick.emit();
   };
-
-  @event({ type: "node.contextmenu" })
-  accessor #nodeContextMenu: EventEmitter<ContextMenuDetail>;
 
   #handleNodeContextMenu = (data: ContextMenuDetail) => {
     this.#nodeContextMenu.emit(data);
   };
 
-  @event({ type: "child.append" })
-  accessor #childAppend: EventEmitter<void>;
-
   #handleChildAppend = () => {
     this.#childAppend.emit();
   };
-
-  @event({ type: "external.click" })
-  accessor #externalClick: EventEmitter<ExtraNodeData>;
 
   #handleExternalClick = (data: ExtraNodeData) => {
     this.#externalClick.emit(data);
   };
 
-  @event({ type: "subNode.dblclick" })
-  accessor #subNodeDoubleClick: EventEmitter<ExtraNodeData>;
-
   #handleSubNodeDoubleClick = (data: ExtraNodeData) => {
     this.#subNodeDoubleClick.emit(data);
   };
-
-  @event({ type: "subNode.contextmenu" })
-  accessor #subNodeContextMenu: EventEmitter<SubNodeContextMenuData>;
 
   #handleSubNodeContextMenu = (data: SubNodeContextMenuData) => {
     this.#subNodeContextMenu.emit(data);

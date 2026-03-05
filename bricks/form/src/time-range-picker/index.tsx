@@ -148,26 +148,30 @@ class EoTimeRangePicker extends FormItemElementBase {
   accessor selectNearDays: number | undefined;
 
   /**
-   * @default  true
-   * 是否在初始化完成后额外触发一次`time.range.change`, 这里因为历史原因之前默认行为就是在初始化后会触发该事件，这里为了兼容之前的行为，默认值只能设置为 true。
+   * 是否在初始化完成后额外触发一次 change 事件。因历史原因，默认行为就是在初始化后触发该事件，为了兼容之前的行为，默认值只能设置为 true。
+   * @default true
    */
   @property({ type: Boolean })
   accessor emitChangeOnInit: boolean | undefined = true;
 
   /**
-   * @default  []
-   * 预设时间范围快捷选择；设置了属性selectNearDays时，属性presetRanges不生效；属性rangeType为week时，presetRanges的值只能为本周、本月、本季度、今年，属性rangeType为month、quarter、year时，以此类推
+   * 预设时间范围快捷选择。设置了 selectNearDays 时，presetRanges 不生效；rangeType 为 week 时只能选本周、本月、本季度、今年，rangeType 为 month、quarter、year 时以此类推。
+   * @default []
    */
   @property({ attribute: false })
   accessor presetRanges: presetRangeType[] | undefined;
 
+  /**
+   * 自定义校验函数，返回错误信息字符串或 MessageBody 对象，返回空字符串表示校验通过。
+   */
   @property({
     attribute: false,
   })
   accessor validator: ((value: any) => MessageBody | string) | undefined;
 
   /**
-   *时间段变化时触发
+   * @detail { startTime: 开始时间字符串, endTime: 结束时间字符串 }
+   * @description 时间段变化时触发
    */
   @event({ type: "change" })
   accessor #changeEvent!: EventEmitter<TimeRange>;

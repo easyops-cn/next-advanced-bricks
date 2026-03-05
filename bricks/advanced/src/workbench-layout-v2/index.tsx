@@ -484,49 +484,70 @@ export const EoWorkbenchLayoutComponent = forwardRef<
   );
 });
 
+export interface EoWorkbenchLayoutV2EventsMap {
+  change: CustomEvent<ExtraLayout[]>;
+  save: CustomEvent<ExtraLayout[]>;
+  cancel: CustomEvent<void>;
+  setting: CustomEvent<void>;
+  "action.click": CustomEvent<{ action: SimpleAction; layouts: ExtraLayout[] }>;
+}
+
+export interface EoWorkbenchLayoutV2EventsMapping {
+  onChange: "change";
+  onSave: "save";
+  onCancel: "cancel";
+  onSetting: "setting";
+  onActionClick: "action.click";
+}
+
 /**
- * 工作台布局V2, 未使用shadow dom
+ * 工作台布局 V2，支持拖拽式卡片布局与全局样式（不使用 shadow DOM）
+ * @author developer
+ * @category layout
  */
 export
 @defineElement("eo-workbench-layout-v2", { shadowOptions: false })
 class EoWorkbenchLayoutV2 extends ReactNextElement {
   #componentRef = createRef<EoWorkbenchLayoutV2ComponentRef>();
 
+  /** 编辑模式下左侧卡片列表面板的标题 */
   @property()
   accessor cardTitle: string | undefined;
 
+  /** 是否进入编辑模式，编辑模式下可拖拽调整布局并显示卡片选择面板 */
   @property({ type: Boolean })
   accessor isEdit: boolean | undefined;
 
+  /** 当前布局配置，每项对应一个卡片的位置与大小及样式信息 */
   @property({ attribute: false })
   accessor layouts: ExtraLayout[] | undefined;
 
+  /** 编辑模式下工具栏区域的自定义构件 */
   @property({ attribute: false })
   accessor toolbarBricks: { useBrick: UseSingleBrickConf[] } | undefined;
 
+  /** 组件列表，每项包含 key、title、useBrick 和 position 信息 */
   @property({ attribute: false })
   accessor componentList: WorkbenchComponent[] | undefined;
 
-  /**
-   * 自定义卡片默认配置, 用于覆盖默认卡片配置
-   */
+  /** 自定义卡片默认配置，用于覆盖默认卡片样式配置 */
   @property({ attribute: false })
   accessor customDefaultCardConfigMap:
     | Record<string, CardStyleConfig>
     | undefined;
 
-  /**
-   * description: 用于设置页面样式和布局的按钮
-   */
+  /** 是否显示设置按钮，用于触发页面样式和布局设置 */
   @property({ type: Boolean })
   accessor showSettingButton: boolean | undefined;
 
-  /**
-   * description: 卡片间隔
-   */
+  /** 卡片之间的间距（px） */
   @property({ type: Number })
   accessor gap: number | undefined;
 
+  /**
+   * @detail 当前布局配置数组
+   * @description 布局发生变化时触发
+   */
   @event({ type: "change" })
   accessor #changeEvent!: EventEmitter<ExtraLayout[]>;
 
@@ -534,6 +555,10 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
     this.#changeEvent.emit(layouts);
   };
 
+  /**
+   * @detail 保存时的布局配置数组
+   * @description 点击保存按钮时触发
+   */
   @event({ type: "save" })
   accessor #saveEvent!: EventEmitter<ExtraLayout[]>;
 
@@ -541,6 +566,10 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
     this.#saveEvent.emit(layouts);
   };
 
+  /**
+   * @detail -
+   * @description 点击取消按钮时触发
+   */
   @event({ type: "cancel" })
   accessor #cancelEvent!: EventEmitter<void>;
 
@@ -548,6 +577,10 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
     this.#cancelEvent.emit();
   };
 
+  /**
+   * @detail -
+   * @description 点击设置按钮时触发
+   */
   @event({ type: "setting" })
   accessor #settingEvent!: EventEmitter<void>;
   #handleSetting = () => {
@@ -555,11 +588,8 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
   };
 
   /**
-   * 操作点击事件
-   * @detail {
-        action: SimpleAction;
-        layouts: Layout[];
-      }
+   * @detail { action: 点击的操作项, layouts: 当前布局配置数组 }
+   * @description 更多操作菜单中的操作点击时触发
    */
   @event({ type: "action.click" })
   accessor #actionClickEvent!: EventEmitter<{
@@ -567,16 +597,20 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
     layouts: Layout[];
   }>;
 
+  /**
+   * 设置布局配置
+   * @param layouts - 新的布局配置数组
+   */
+  @method()
+  setLayouts(layouts: Layout[]) {
+    this.#componentRef.current?.setLayouts(layouts);
+  }
+
   #handleActionClick = (action: SimpleAction, layouts: Layout[]): void => {
     this.#actionClickEvent.emit({ action, layouts });
     action.event &&
       this.dispatchEvent(new CustomEvent(action.event, { detail: layouts }));
   };
-
-  @method()
-  setLayouts(layouts: Layout[]) {
-    this.#componentRef.current?.setLayouts(layouts);
-  }
 
   connectedCallback(): void {
     // Don't override user's style settings.

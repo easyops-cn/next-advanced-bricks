@@ -60,7 +60,7 @@ export const WrappedSearch = wrapBrick<
 const WrappedToolTip = wrapBrick<EoTooltip, ToolTipProps>("eo-tooltip");
 
 /**
- * 构件 `nav.query-search`
+ * 综合搜索入口，支持全文检索、IP 搜索、工单搜索等多种查询模式，带搜索历史记录功能
  */
 export
 @defineElement("nav.query-search", {

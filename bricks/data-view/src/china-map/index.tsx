@@ -67,7 +67,7 @@ export interface DataItem {
 }
 
 /**
- * 构件 `data-view.china-map`
+ * 中国地图展示构件，支持全国地图和省级地图，可在地图上标注文字标签
  */
 export
 @defineElement("data-view.china-map", {

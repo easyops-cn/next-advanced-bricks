@@ -207,17 +207,23 @@ class DynamicFormItem extends FormItemElementBase {
   })
   accessor useBrick: UseBrickConf | undefined;
 
+  /**
+   * 表单值改变时触发
+   * @detail 整个动态表单当前所有行的值列表
+   */
   @event({ type: "change" })
   accessor #changeEvent!: EventEmitter<DynamicFormValuesItem[]>;
 
   /**
-   * 增加一行时触发，detail为该行的默认值，index为该行的位置
+   * 增加一行时触发
+   * @detail { detail: 该行的默认值, index: 该行的位置 }
    */
   @event({ type: "row.add" })
   accessor #addEvent!: EventEmitter<rowDataType>;
 
   /**
-   * 移除一行时触发，detail为该行的值，index为该行的位置
+   * 移除一行时触发
+   * @detail { detail: 该行的值, index: 该行的位置 }
    */
   @event({ type: "row.remove" })
   accessor #removeEvent!: EventEmitter<rowDataType>;

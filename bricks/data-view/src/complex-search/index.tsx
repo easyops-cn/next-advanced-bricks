@@ -89,35 +89,35 @@ class ComplexSearch extends ReactNextElement implements ComplexSearchProps {
   accessor tooltipUseBrick: ReactUseMultipleBricksProps;
 
   /**
-   * @detail
+   * @detail 当前输入框的文本值
    * @description input值改变事件
    */
   @event({ type: "change" })
   accessor #inputChangeEvent!: EventEmitter<string>;
 
   /**
-   * @detail
+   * @detail 当前搜索的文本值
    * @description input值搜索事件
    */
   @event({ type: "search" })
   accessor #onSearchEvent!: EventEmitter<string>;
 
   /**
-   * @detail
+   * @detail { icon: 图标配置, name: 选项名称 }
    * @description 下拉选择事件
    */
   @event({ type: "select" })
   accessor #onSelectEvent!: EventEmitter<OptionItem>;
 
   /**
-   * @detail
+   * @detail -
    * @description 聚焦事件
    */
   @event({ type: "focus" })
   accessor #onFocusEvent!: EventEmitter<void>;
 
   /**
-   * @detail
+   * @detail -
    * @description 失焦事件
    */
   @event({ type: "blur" })

@@ -9,7 +9,8 @@ const { defineElement } = createDecorators();
 /**
  * 大屏框架构件-网格纹
  * @author jiezhou
- * @slot - 页面内容
+ * @slot titleBar - 标题栏插槽
+ * @slot content - 页面内容插槽
  * @category big-screen-layout
  */
 export

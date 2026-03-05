@@ -14,6 +14,7 @@ export interface AppWallRelationLineProps {
 /**
  * 应用墙子构件----关联连线
  * @author nlicroshan
+ * @category big-screen-layout
  */
 @defineElement("data-view.app-wall-relation-line", {
   styleTexts: [variablesStyleText, styleText],
@@ -23,10 +24,7 @@ class AppWallRelationLine
   implements AppWallRelationLineProps
 {
   /**
-   * @kind "blue" | "purple"
-   * @required false
-   * @default "blue"
-   * @description 光线颜色
+   * 光线颜色
    */
   @property()
   accessor lightColor: "blue" | "purple" = "blue";

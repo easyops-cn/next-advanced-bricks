@@ -1,8 +1,42 @@
-构件 tabs-page-title
+---
+tagName: data-view.tabs-page-title
+displayName: WrappedDataViewTabsPageTitle
+description: 带有tabs的标题构件
+category: big-screen-content
+source: "@next-bricks/data-view"
+---
+
+# data-view.tabs-page-title
+
+> 带有tabs的标题构件
+
+## Props
+
+| 属性      | 类型         | 必填 | 默认值 | 说明                       |
+| --------- | ------------ | ---- | ------ | -------------------------- |
+| tabList   | `TabsItem[]` | 是   | -      | 标签，如果没有就不展示标签 |
+| activeKey | `string`     | 是   | -      | 标签高亮显示，默认第一个   |
+
+## Events
+
+| 事件       | detail                             | 说明                                                          |
+| ---------- | ---------------------------------- | ------------------------------------------------------------- |
+| tab.change | `string` — 切换后激活的 tab 的 key | 切换 `tab` 栏会触发的事件，`detail` 为目标 `tab` 对应的 `key` |
+
+## Slots
+
+| 名称      | 说明                       |
+| --------- | -------------------------- |
+| (default) | 默认插槽，用于放置标题内容 |
+| start     | 顶部左边插槽               |
+| end       | 顶部右边插槽               |
+| [key]     | 标签对应的key的插槽        |
 
 ## Examples
 
 ### Basic
+
+展示带有标题和顶部工具栏的页面标题构件（无标签页）。
 
 ```yaml preview
 - brick: data-view.tabs-page-title
@@ -33,6 +67,8 @@
 ```
 
 ### TabList
+
+展示带有多个标签页的页面标题构件，支持通过 activeKey 指定初始激活标签。
 
 ```yaml preview
 - brick: data-view.tabs-page-title
@@ -95,4 +131,7 @@
         - brick: div
           properties:
             textContent: 标签六内容
+  events:
+    tab.change:
+      - action: console.log
 ```

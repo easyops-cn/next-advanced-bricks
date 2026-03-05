@@ -1,8 +1,35 @@
-构件 `ai-portal.stat-with-mini-chart`
+---
+tagName: ai-portal.stat-with-mini-chart
+displayName: WrappedAiPortalStatWithMiniChart
+description: 带迷你折线图的统计数据展示构件，在统计数值旁边渲染一个迷你折线图。
+category: ""
+source: "@next-bricks/ai-portal"
+---
+
+# ai-portal.stat-with-mini-chart
+
+> 带迷你折线图的统计数据展示构件，在统计数值旁边渲染一个迷你折线图。
+
+## Props
+
+| 属性      | 类型                       | 必填 | 默认值                 | 说明                                                |
+| --------- | -------------------------- | ---- | ---------------------- | --------------------------------------------------- |
+| label     | `string`                   | 否   | -                      | 统计指标标签名称                                    |
+| value     | `string`                   | 否   | -                      | 统计数值文本                                        |
+| size      | `"medium" \| "small"`      | 否   | `"medium"`             | 展示尺寸，medium 时图表高度为 92px，small 时为 55px |
+| lineColor | `string`                   | 否   | `"var(--color-brand)"` | 折线颜色                                            |
+| showArea  | `boolean`                  | 否   | -                      | 是否在折线下方显示渐变填充区域                      |
+| min       | `number`                   | 否   | -                      | 指定 y 轴最小值，未指定时从数据中计算               |
+| max       | `number`                   | 否   | -                      | 指定 y 轴最大值，未指定时从数据中计算               |
+| xField    | `string`                   | 否   | `"0"`                  | x 轴字段名（数据中时间字段的 key）                  |
+| yField    | `string`                   | 否   | `"1"`                  | y 轴字段名（数据中数值字段的 key）                  |
+| data      | `Record<string, number>[]` | 否   | -                      | 图表数据源，每项为包含 xField 和 yField 字段的对象  |
 
 ## Examples
 
-### Basic
+### 基础使用（medium 尺寸）
+
+展示带标签、数值和迷你折线图的统计卡片，默认 medium 尺寸。
 
 ```yaml preview
 brick: ai-portal.stat-with-mini-chart
@@ -31,89 +58,13 @@ properties:
       time: 1730610000
     - request_total: 550.2
       time: 1730611800
-    - request_total: 556.5666666666667
-      time: 1730613600
-    - request_total: 565.6333333333333
-      time: 1730615400
-    - request_total: 586.5666666666667
-      time: 1730617200
-    - request_total: 611.7
-      time: 1730619000
-    - request_total: 540.0645161290323
-      time: 1730620800
-    - request_total: 595.9333333333333
-      time: 1730622600
-    - request_total: 560.0333333333333
-      time: 1730624400
-    - request_total: 565.2333333333333
-      time: 1730626200
-    - request_total: 609.5806451612904
-      time: 1730628000
-    - request_total: 598.8
-      time: 1730629800
-    - request_total: 594.5333333333333
-      time: 1730631600
-    - request_total: 525.7
-      time: 1730633400
-    - request_total: 602.3666666666667
-      time: 1730635200
-    - request_total: 557.7333333333333
-      time: 1730637000
-    - request_total: 595.8666666666667
-      time: 1730638800
-    - request_total: 638.7
-      time: 1730640600
-    - request_total: 635.8333333333334
-      time: 1730642400
-    - request_total: 563.9
-      time: 1730644200
-    - request_total: 606.4516129032259
-      time: 1730646000
-    - request_total: 660.1
-      time: 1730647800
-    - request_total: 606.2666666666667
-      time: 1730649600
-    - request_total: 504.43333333333334
-      time: 1730651400
-    - request_total: 651.7333333333333
-      time: 1730653200
-    - request_total: 583.5
-      time: 1730655000
-    - request_total: 566.2333333333333
-      time: 1730656800
-    - request_total: 519.2333333333333
-      time: 1730658600
-    - request_total: 621.6333333333333
-      time: 1730660400
-    - request_total: 530.9333333333333
-      time: 1730662200
-    - request_total: 685.3
-      time: 1730664000
-    - request_total: 616.3333333333334
-      time: 1730665800
-    - request_total: 580.3333333333334
-      time: 1730667600
-    - request_total: 568.5666666666667
-      time: 1730669400
-    - request_total: 619.3
-      time: 1730671200
-    - request_total: 636.2333333333333
-      time: 1730673000
-    - request_total: 630.4666666666667
-      time: 1730674800
-    - request_total: 621.4666666666667
-      time: 1730676600
-    - request_total: 587.5333333333333
-      time: 1730678400
-    - request_total: 542.8666666666667
-      time: 1730680200
-    - request_total: 579
-      time: 1730682000
     - request_total: 563.5
       time: 1730683800
 ```
 
-### Size
+### Small 尺寸
+
+small 尺寸时图表高度为 55px，标签和数值紧凑排列在图表左侧。
 
 ```yaml preview
 brick: ai-portal.stat-with-mini-chart
@@ -143,84 +94,38 @@ properties:
       time: 1730610000
     - request_total: 550.2
       time: 1730611800
-    - request_total: 556.5666666666667
-      time: 1730613600
-    - request_total: 565.6333333333333
-      time: 1730615400
-    - request_total: 586.5666666666667
-      time: 1730617200
-    - request_total: 611.7
-      time: 1730619000
-    - request_total: 540.0645161290323
-      time: 1730620800
-    - request_total: 595.9333333333333
-      time: 1730622600
-    - request_total: 560.0333333333333
-      time: 1730624400
-    - request_total: 565.2333333333333
-      time: 1730626200
-    - request_total: 609.5806451612904
-      time: 1730628000
-    - request_total: 598.8
-      time: 1730629800
-    - request_total: 594.5333333333333
-      time: 1730631600
-    - request_total: 525.7
-      time: 1730633400
-    - request_total: 602.3666666666667
-      time: 1730635200
-    - request_total: 557.7333333333333
-      time: 1730637000
-    - request_total: 595.8666666666667
-      time: 1730638800
-    - request_total: 638.7
-      time: 1730640600
-    - request_total: 635.8333333333334
-      time: 1730642400
-    - request_total: 563.9
-      time: 1730644200
-    - request_total: 606.4516129032259
-      time: 1730646000
-    - request_total: 660.1
-      time: 1730647800
-    - request_total: 606.2666666666667
-      time: 1730649600
-    - request_total: 504.43333333333334
-      time: 1730651400
-    - request_total: 651.7333333333333
-      time: 1730653200
-    - request_total: 583.5
-      time: 1730655000
-    - request_total: 566.2333333333333
-      time: 1730656800
-    - request_total: 519.2333333333333
-      time: 1730658600
-    - request_total: 621.6333333333333
-      time: 1730660400
-    - request_total: 530.9333333333333
-      time: 1730662200
-    - request_total: 685.3
-      time: 1730664000
-    - request_total: 616.3333333333334
-      time: 1730665800
-    - request_total: 580.3333333333334
-      time: 1730667600
-    - request_total: 568.5666666666667
-      time: 1730669400
-    - request_total: 619.3
-      time: 1730671200
-    - request_total: 636.2333333333333
-      time: 1730673000
-    - request_total: 630.4666666666667
-      time: 1730674800
-    - request_total: 621.4666666666667
-      time: 1730676600
-    - request_total: 587.5333333333333
-      time: 1730678400
-    - request_total: 542.8666666666667
-      time: 1730680200
-    - request_total: 579
-      time: 1730682000
     - request_total: 563.5
       time: 1730683800
+```
+
+### 带填充区域和 y 轴范围
+
+开启 showArea 并指定 min/max 固定 y 轴范围。
+
+```yaml preview
+brick: ai-portal.stat-with-mini-chart
+properties:
+  label: CPU 使用率
+  value: "78.5%"
+  xField: time
+  yField: cpu
+  lineColor: "#FF6B6B"
+  showArea: true
+  min: 0
+  max: 100
+  data:
+    - cpu: 65.2
+      time: 1730597995
+    - cpu: 72.1
+      time: 1730599200
+    - cpu: 78.5
+      time: 1730601000
+    - cpu: 80.3
+      time: 1730602800
+    - cpu: 75.6
+      time: 1730604600
+    - cpu: 70.2
+      time: 1730606400
+    - cpu: 78.5
+      time: 1730608200
 ```

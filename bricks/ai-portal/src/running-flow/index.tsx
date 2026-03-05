@@ -44,15 +44,22 @@ export interface RunningFlowMapEvents {
 
 /**
  * 构件 `ai-portal.running-flow`
+ *
+ * 运行中的流程视图构件，以泳道方式展示各阶段的活动及其运行状态（completed、working、input-required 等）。
  */
 export
 @defineElement("ai-portal.running-flow", {
   styleTexts: [styleText],
 })
 class RunningFlow extends ReactNextElement implements RunningFlowProps {
+  /** 流程阶段配置数据，每个阶段包含名称和活动列表 */
   @property({ attribute: false })
   accessor spec: FlowStage[] | undefined;
 
+  /**
+   * @description 点击活动时触发，仅当活动有 taskId 时可触发
+   * @detail 活动的 taskId
+   */
   @event({ type: "activity.click" })
   accessor #activityClick!: EventEmitter<string>;
 

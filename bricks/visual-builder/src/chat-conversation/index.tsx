@@ -39,7 +39,7 @@ interface StoryboardChunkBlockItem {
 }
 
 /**
- * 用于 Visual Builder 的智能聊天对话列表
+ * 用于 Visual Builder 的智能聊天对话列表，解析 AI 回复中的 Storyboard 代码块并触发更新事件
  */
 export
 @defineElement("visual-builder.chat-conversation", {
@@ -49,12 +49,22 @@ class ChatConversation
   extends ReactNextElement
   implements ChatConversationProps
 {
+  /**
+   * 对话消息列表，包含用户和 AI 助手的消息，支持流式（partial）和失败（failed）状态
+   */
   @property({ attribute: false })
   accessor messages: Message[] | undefined;
 
+  /**
+   * 是否为解析出的砖块启用错误边界，防止单个砖块异常导致整个预览崩溃
+   */
   @property({ type: Boolean })
   accessor errorBoundary: boolean | undefined;
 
+  /**
+   * @detail `BrickConf[]` — 解析出的砖块配置列表
+   * @description 从 AI 回复中解析出新的 Storyboard 时触发
+   */
   @event({ type: "storyboard.update" })
   accessor #storyboardUpdate!: EventEmitter<BrickConf[]>;
 

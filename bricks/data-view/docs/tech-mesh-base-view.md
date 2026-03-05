@@ -1,8 +1,27 @@
-构件 `data-view.tech-mesh-base-view`
+---
+tagName: data-view.tech-mesh-base-view
+displayName: WrappedDataViewTechMeshBaseView
+description: 大屏框架构件-网格纹
+category: big-screen-layout
+source: "@next-bricks/data-view"
+---
+
+# data-view.tech-mesh-base-view
+
+> 大屏框架构件-网格纹
+
+## Slots
+
+| 名称     | 说明         |
+| -------- | ------------ |
+| titleBar | 标题栏插槽   |
+| content  | 页面内容插槽 |
 
 ## Examples
 
 ### Basic TabsTitleBar
+
+展示使用带标签页标题栏的大屏框架构件基础用法。
 
 ```yaml preview
 - brick: data-view.tech-mesh-base-view
@@ -40,6 +59,8 @@
 ```
 
 ### Sample TitleBar
+
+展示使用顶部标题栏样式为 sample 的大屏框架构件。
 
 ```yaml preview
 - brick: data-view.tech-mesh-base-view

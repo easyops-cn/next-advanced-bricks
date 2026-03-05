@@ -66,6 +66,7 @@ export type OptionType = Option | OptionGroup;
  * @author zhendonghuang
  *
  * @category form-input-basic
+ * @slot options-toolbar - 下拉列表底部工具栏
  */
 export
 @defineElement("eo-auto-complete", {
@@ -106,6 +107,9 @@ class AutoComplete extends FormItemElementBase {
    */
   @property({ type: Boolean }) accessor required: boolean | undefined;
 
+  /**
+   * 输入框当前值
+   */
   @property()
   accessor value: string | undefined;
 
@@ -142,7 +146,8 @@ class AutoComplete extends FormItemElementBase {
     | undefined;
 
   /**
-   * 值改变事件
+   * @detail 当前输入框的值
+   * @description 值改变事件
    */
   @event({ type: "change" })
   accessor #changeEvent!: EventEmitter<string>;

@@ -11,7 +11,10 @@ export interface HomeContainerProps {
 }
 
 /**
- * 构件 `ai-portal.home-container`
+ * AI Portal 首页容器，通过 sticky 属性控制顶部吸附行为，内容通过默认插槽传入。
+ *
+ * @category layout-component
+ * @slot default - 页面内容区域
  */
 export
 @defineElement("ai-portal.home-container", {

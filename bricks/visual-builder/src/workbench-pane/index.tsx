@@ -29,29 +29,41 @@ export interface WorkbenchPaneProps {
 }
 
 /**
+ * 工作台侧边栏面板，可折叠的内容面板，包含标题栏和可滚动的内容区
  * @insider
  */
 @defineElement("visual-builder.workbench-pane", {
   styleTexts: [styleText, sharedStyle],
 })
 class WorkbenchPane extends ReactNextElement {
+  /** 面板标题文本 */
   @property() accessor titleLabel: string | undefined;
 
+  /** 是否展开面板 */
   @property({ type: Boolean }) accessor active: boolean | undefined;
 
+  /** 标题栏右侧的数字徽标 */
   @property({ type: Number }) accessor badge: number | undefined;
 
+  /**
+   * 面板展开/折叠状态变化时触发
+   * @detail 当前展开状态，true 为展开，false 为折叠
+   */
   @event({ type: "active.change" })
   accessor #activeChangeEvent: EventEmitter<boolean>;
+
+  /**
+   * 面板首次被展开时触发（仅触发一次）
+   */
+  @event({ type: "active.firstActivated" })
+  accessor #activeFirstActivatedEvent: EventEmitter<void>;
+
   #handleActiveChange = (active: boolean): void => {
     if (active !== this.active) {
       this.active = active;
       this.#activeChangeEvent.emit(active);
     }
   };
-
-  @event({ type: "active.firstActivated" })
-  accessor #activeFirstActivatedEvent: EventEmitter<void>;
 
   #handleActiveFirstActivated = (): void => {
     this.#activeFirstActivatedEvent.emit();

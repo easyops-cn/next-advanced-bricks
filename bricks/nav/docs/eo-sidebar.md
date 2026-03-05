@@ -1,8 +1,36 @@
-侧边栏
+---
+tagName: eo-sidebar
+displayName: WrappedEoSidebar
+description: 侧边栏
+category: navigation
+source: "@next-bricks/nav"
+---
+
+# eo-sidebar
+
+> 侧边栏
+
+## Props
+
+| 属性            | 类型                  | 必填 | 默认值    | 说明                             |
+| --------------- | --------------------- | ---- | --------- | -------------------------------- |
+| menu            | `SidebarMenuType`     | 是   | -         | 菜单数据                         |
+| hiddenFixedIcon | `boolean`             | 否   | -         | 是否隐藏固定按钮                 |
+| expandedState   | `ExpandedState`       | 否   | -         | 侧栏状态                         |
+| position        | `"static" \| "fixed"` | 否   | `"fixed"` | 设置定位方式：静态定位或固定定位 |
+
+## Events
+
+| 事件                  | detail                     | 说明               |
+| --------------------- | -------------------------- | ------------------ |
+| actual.width.change   | `number` — 当前宽度        | 宽度变化时触发     |
+| expanded.state.change | `ExpandedState` — 侧栏状态 | 侧栏状态变化时触发 |
 
 ## Examples
 
 ### Basic
+
+展示侧边栏的基本用法，支持菜单项、子菜单和分组，用户可鼠标悬停展开或点击固定图标固定宽度。
 
 ```yaml preview
 brick: eo-sidebar
@@ -102,4 +130,41 @@ properties:
         type: default
         children: []
         key: "5"
+events:
+  actual.width.change:
+    action: console.log
+  expanded.state.change:
+    action: console.log
+```
+
+### 隐藏固定按钮
+
+隐藏侧边栏底部的固定/取消固定图标按钮。
+
+```yaml preview
+brick: eo-sidebar
+properties:
+  style:
+    height: 600px
+  position: static
+  hiddenFixedIcon: true
+  menu:
+    title: 菜单标题
+    menuItems:
+      - icon:
+          lib: easyops
+          category: second-menu
+          icon: automatic-collection-second-menu
+        text: item 1
+        to: /a
+        type: default
+        key: "0"
+      - icon:
+          lib: easyops
+          category: second-menu
+          icon: deployment-instance-second-menu
+        text: item 2
+        to: /b
+        type: default
+        key: "1"
 ```

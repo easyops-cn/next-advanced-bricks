@@ -85,7 +85,7 @@ interface ResizeMessage extends BasePreviewMessage {
 type PreviewMessage = CommentMessage | ApproveMessage | ResizeMessage;
 
 /**
- * 构件 `visual-builder.raw-metric-preview`
+ * 原始指标预览，在 iframe 中渲染指标生成候选图表的对比表格
  *
  * @internal
  */
@@ -94,27 +94,31 @@ export
   styleTexts: [styleText],
 })
 class RawMetricPreview extends ReactNextElement {
+  /** 预览 iframe 地址，默认使用内置预览地址 */
   @property()
   accessor previewUrl: string | undefined;
 
+  /** 指标生成数据列表 */
   @property({ attribute: false })
   accessor generations: MetricGeneration[] | undefined;
 
+  /** 是否按分组显示，启用后表格额外显示分组列 */
   @property({ type: Boolean })
   accessor grouped: boolean | undefined;
 
-  // @property({ attribute: false })
-  // accessor mocks: Record<string, unknown> | undefined;
-
+  /** 是否处于加载中状态 */
   @property({ type: Boolean })
   accessor busy: boolean | undefined;
 
+  /** 预览主题 */
   @property()
   accessor theme: string | undefined;
 
+  /** UI 版本 */
   @property()
   accessor uiVersion: string | undefined;
 
+  /** 微应用信息 */
   @property()
   accessor app: MicroApp | undefined;
 

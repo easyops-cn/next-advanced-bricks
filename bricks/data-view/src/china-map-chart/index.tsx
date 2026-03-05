@@ -99,7 +99,7 @@ class ChinaMapChart extends ReactNextElement {
 
   /**
    * 当提示可见性开始变化时触发
-   * @detail 当前是否可见
+   * @detail { open: 当前是否可见, data: 当前展示的数据项 }
    */
   @event({ type: "detail.open.change" })
   accessor #openChangeEvent!: EventEmitter<{

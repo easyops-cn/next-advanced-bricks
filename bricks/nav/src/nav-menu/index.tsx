@@ -355,6 +355,9 @@ class NavMenu extends ReactNextElement {
   })
   accessor menu: SidebarMenu | undefined;
 
+  /**
+   * 主菜单标题文字的自定义样式
+   */
   @property({
     attribute: false,
   })

@@ -115,6 +115,7 @@ export interface EoCardItemEventsMapping {
 /**
  * 信息类卡片 —— 通用卡片
  * @slot - 内容区域，通常放置卡片自定义内容
+ * @slot title-suffix - 标题后缀区域，通常放置状态标签等内容
  * @slot expanded-area-1 - 扩展区域 1，通常放置标签信息
  * @slot expanded-area-2 - 扩展区域 2，通常放置操作和其他属性信息（图标/头像/小字描述/统计信息）
  * @category card-info
@@ -125,7 +126,7 @@ export
 })
 class EoCardItem extends ReactNextElement implements EoCardItemProps {
   /**
-   * 是否有顶部小标题
+   * 是否有顶部小标题区域，开启后会显示 `auxiliaryText` 辅助文字
    */
   @property({
     type: Boolean,
@@ -151,7 +152,7 @@ class EoCardItem extends ReactNextElement implements EoCardItemProps {
   accessor auxiliaryText: string | undefined;
 
   /**
-   * 图标
+   * 图标或图片，支持图标头像（IconAvatar）和图片头像（ImgAvatar）两种形式
    */
   @property({
     attribute: false,
@@ -185,7 +186,7 @@ class EoCardItem extends ReactNextElement implements EoCardItemProps {
   accessor actions: ActionType[] | undefined;
 
   /**
-   * 展示操作按钮组
+   * 操作按钮组的展示时机，`always` 始终展示，`hover` 悬停时展示
    */
   @property()
   accessor showActions: "always" | "hover" = "always";
@@ -237,7 +238,7 @@ class EoCardItem extends ReactNextElement implements EoCardItemProps {
   accessor coverImageSize: React.CSSProperties["backgroundSize"] | undefined;
 
   /**
-   * 图标是否放置在卡片封面
+   * 头像的放置位置，设为 `cover` 时头像显示在封面区域，否则显示在内容区域
    */
   @property()
   accessor avatarPosition: "content" | "cover";
@@ -248,6 +249,9 @@ class EoCardItem extends ReactNextElement implements EoCardItemProps {
   @property()
   accessor avatarPlacement: "left" | "title-left" = "left";
 
+  /**
+   * 徽标配置，可设置文本、图标、背景色和字体颜色
+   */
   @property({
     attribute: false,
   })

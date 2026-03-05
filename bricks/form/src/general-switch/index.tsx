@@ -95,7 +95,7 @@ class GeneralSwitch extends FormItemElementBase {
   accessor checkedIcon: GeneralIconProps | undefined;
 
   /**
-   * 非选中时的文本
+   * 非选中时的图标
    */
   @property({
     attribute: false,
@@ -108,6 +108,7 @@ class GeneralSwitch extends FormItemElementBase {
 
   /**
    * 开关改变时触发
+   * @detail `boolean` — 开关当前状态，true 表示开启，false 表示关闭
    */
   @event({ type: "switch" }) accessor #switchEvent!: EventEmitter<boolean>;
 

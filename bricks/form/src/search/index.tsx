@@ -113,7 +113,8 @@ class GeneralSearch extends ReactNextElement implements SearchProps {
   accessor themeVariant: "default" | "elevo" | undefined;
 
   /**
-   * 输入的搜索字符，输入变化时触发
+   * @detail 当前输入值
+   * @description 输入的搜索字符，输入变化时触发
    */
   @event({ type: "change" })
   accessor #change!: EventEmitter<string>;
@@ -125,7 +126,8 @@ class GeneralSearch extends ReactNextElement implements SearchProps {
   };
 
   /**
-   * 搜索时触发
+   * @detail 搜索关键词
+   * @description 搜索时触发
    */
   @event({ type: "search" })
   accessor #search!: EventEmitter<string>;

@@ -34,7 +34,7 @@ export interface EoDirectoryTreeInternalNodeEventsMap {
 }
 
 /**
- * 目录树节点节点
+ * 目录树中间节点
  */
 export
 @defineElement("eo-directory-tree-internal-node", {
@@ -73,15 +73,17 @@ class EoDirectoryTreeInternalNode extends ReactNextElement {
   })
   accessor selected: boolean | undefined;
 
+  /** 节点图标 */
   @property({ attribute: false })
   accessor icon: GeneralIconProps | undefined;
 
+  /** 节点是否淡化显示 */
   @property({ type: Boolean, render: false })
   accessor faded: boolean | undefined;
 
   /**
-   * 展开事件
-   * @detail 展开状态
+   * 节点展开/收起时触发
+   * @detail 展开后的状态（true 表示展开，false 表示收起）
    */
   @event({ type: "expand" })
   accessor #expandEvent!: EventEmitter<boolean>;
@@ -90,7 +92,7 @@ class EoDirectoryTreeInternalNode extends ReactNextElement {
   };
 
   /**
-   * 选择事件
+   * 节点被选中时触发
    */
   @event({ type: "select" })
   accessor #selectEvent!: EventEmitter<void>;

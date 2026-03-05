@@ -254,9 +254,8 @@ export interface EoDrawCanvasEventsMapping {
 }
 
 /**
- * 用于手工绘图的画布。
- *
- * 注意：将配套另外一个用于展示的画布构件。
+ * @description 用于手工绘图的画布构件，支持节点拖放、连线绘制、元素移动/缩放/删除等交互操作，配合展示画布（eo-display-canvas）使用。
+ * @category diagram
  */
 export
 @defineElement("eo-draw-canvas", {
@@ -264,23 +263,34 @@ export
 })
 class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
   /**
-   * 仅当初始化时使用，渲染后重新设置 `cells` 将无效。
+   * @description 初始化画布单元格数据，包含节点（node）、边（edge）和装饰器（decorator）。仅当初始化时使用，渲染后重新设置 `cells` 将无效，请使用 `updateCells` 方法代替。
    */
   @property({ attribute: false })
   accessor cells: InitialCell[] | undefined;
 
+  /**
+   * @description 画布布局类型，支持 `manual`（手动定位）、`force`（力导向）、`dagre`（层次有向图）。
+   */
   @property({ type: String })
   accessor layout: LayoutType;
 
+  /**
+   * @description 布局算法选项，根据 layout 类型不同，支持不同参数（如 dagre 的 ranksep/nodesep 等）。
+   */
   @property({ attribute: false })
   accessor layoutOptions: LayoutOptions | undefined;
 
   /**
+   * @description 节点默认尺寸，格式为 `[width, height]`，在节点未指定尺寸时使用。
+   *
    * @default [100,20]
    */
   @property({ attribute: false })
   accessor defaultNodeSize: SizeTuple = [DEFAULT_NODE_SIZE, DEFAULT_NODE_SIZE];
 
+  /**
+   * @description 节点默认砖块配置，指定渲染节点的自定义构件，可按节点类型匹配不同配置。
+   */
   @property({ attribute: false })
   accessor defaultNodeBricks: NodeBrickConf[] | undefined;
 
@@ -315,24 +325,39 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
   @property({ attribute: false })
   accessor defaultEdgeLines: EdgeLineConf[] | undefined;
 
+  /**
+   * @description 当前激活目标，可以是节点、边或装饰器，为 null 表示无激活目标。
+   */
   @property({ attribute: false })
   accessor activeTarget: ActiveTarget | null | undefined;
 
   /**
-   * 当 `activeTarget` 不为 `null` 时，隐藏其他跟该 `activeTarget` 无关的元素。
+   * @description 当 `activeTarget` 不为 `null` 时，隐藏其他跟该 `activeTarget` 无关的元素，高亮相关节点和边。
    */
   @property({ type: Boolean })
   accessor fadeUnrelatedCells: boolean | undefined;
 
+  /**
+   * @description 是否允许通过鼠标滚轮或触控板捏合手势缩放画布，默认为 true。
+   */
   @property({ type: Boolean })
   accessor zoomable: boolean | undefined = true;
 
+  /**
+   * @description 是否允许通过滚轮平移画布（非捏合手势），默认为 true。
+   */
   @property({ type: Boolean })
   accessor scrollable: boolean | undefined = true;
 
+  /**
+   * @description 是否允许通过鼠标拖拽平移画布，默认为 true。
+   */
   @property({ type: Boolean })
   accessor pannable: boolean | undefined = true;
 
+  /**
+   * @description 是否允许将边连接到区域（area）装饰器，默认为 false。
+   */
   @property({ type: Boolean })
   accessor allowEdgeToArea: boolean | undefined = false;
 
@@ -357,12 +382,21 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
   @property()
   accessor ctrlDragBehavior: CtrlDragBehavior | undefined;
 
+  /**
+   * @description 缩放比例范围，格式为 `[min, max]`，默认范围由内部常量决定。
+   */
   @property({ attribute: false })
   accessor scaleRange: RangeTuple | undefined;
 
+  /**
+   * @description 连线设置，包含连线类型、箭头等属性，用于新建连线时的默认样式。
+   */
   @property({ attribute: false })
   accessor lineSettings: LineSettings | undefined;
 
+  /**
+   * @description 连线连接器配置，设置为 `true` 或配置对象以启用智能连线功能，允许从节点边缘拖出连线。
+   */
   @property({ attribute: false })
   accessor lineConnector: LineConnecterConf | boolean | undefined;
 
@@ -378,6 +412,10 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
   @property({ type: Boolean })
   accessor doNotResetActiveTargetOutsideCanvas: boolean | undefined;
 
+  /**
+   * @detail `ActiveTarget | null` — 当前激活目标，节点/边/装饰器对象或 null
+   * @description 激活目标变化时触发，当用户点击节点、边或装饰器使其激活，或点击空白处取消激活时触发。
+   */
   @event({ type: "activeTarget.change" })
   accessor #activeTargetChangeEvent!: EventEmitter<ActiveTarget | null>;
 
@@ -393,10 +431,16 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
 
   /**
    * @deprecated Use `cell.move` instead.
+   * @detail `MoveCellPayload` — 移动的节点信息，包含节点 id 和新位置
+   * @description 节点被拖拽移动后触发（已废弃，请使用 `cell.move`）。
    */
   @event({ type: "node.move" })
   accessor #nodeMoveEvent!: EventEmitter<MoveCellPayload>;
 
+  /**
+   * @detail `MoveCellPayload` — 移动的单元格信息，包含单元格 id、类型和新位置
+   * @description 单个单元格（节点或装饰器）被拖拽移动后触发。
+   */
   @event({ type: "cell.move" })
   accessor #cellMoveEvent!: EventEmitter<MoveCellPayload>;
 
@@ -407,6 +451,10 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     }
   };
 
+  /**
+   * @detail `MoveCellPayload[]` — 移动的多个单元格信息列表
+   * @description 多个单元格（通过框选后拖拽）同时被移动后触发。
+   */
   @event({ type: "cells.move" })
   accessor #cellsMoveEvent!: EventEmitter<MoveCellPayload[]>;
 
@@ -414,6 +462,10 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     this.#cellsMoveEvent.emit(info);
   };
 
+  /**
+   * @detail `ResizeCellPayload` — 调整大小的单元格信息，包含单元格 id 和新尺寸
+   * @description 单元格（节点或装饰器）被手动调整大小后触发。
+   */
   @event({ type: "cell.resize" })
   accessor #cellResizeEvent!: EventEmitter<ResizeCellPayload>;
 
@@ -423,10 +475,16 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
 
   /**
    * @deprecated Use `cell.delete` instead.
+   * @detail `Cell` — 被删除的节点 cell 对象
+   * @description 节点被删除时触发（已废弃，请使用 `cell.delete`）。
    */
   @event({ type: "node.delete" })
   accessor #nodeDelete!: EventEmitter<Cell>;
 
+  /**
+   * @detail `Cell` — 被删除的单元格对象，包含节点、边或装饰器
+   * @description 单个单元格被删除时触发（用户按 Delete 键或通过菜单删除）。
+   */
   @event({ type: "cell.delete" })
   accessor #cellDelete!: EventEmitter<Cell>;
 
@@ -437,6 +495,10 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     }
   };
 
+  /**
+   * @detail `Cell[]` — 被批量删除的单元格对象列表
+   * @description 多个单元格被同时删除时触发（框选后批量删除）。
+   */
   @event({ type: "cells.delete" })
   accessor #cellsDelete!: EventEmitter<Cell[]>;
 
@@ -444,6 +506,10 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     this.#cellsDelete.emit(cells);
   };
 
+  /**
+   * @detail `CellContextMenuDetail` — 右键菜单详情，包含 `{ cell: 对应的单元格, clientX: 鼠标X坐标, clientY: 鼠标Y坐标 }`
+   * @description 用户右键点击节点、边或装饰器时触发，常用于弹出上下文菜单。
+   */
   @event({ type: "cell.contextmenu" })
   accessor #cellContextMenu!: EventEmitter<CellContextMenuDetail>;
 
@@ -452,7 +518,8 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
   };
 
   /**
-   * 通过画布绘图的方式添加边（手动调用 `addEdge` 方法不会触发该事件）。
+   * @detail `ConnectNodesDetail` — 新边详情，包含 `{ source: 起始节点 id, target: 目标节点 id }`
+   * @description 通过画布绘图的方式添加边时触发（手动调用 `addEdge` 方法不会触发该事件）。
    */
   @event({ type: "edge.add" })
   accessor #edgeAdd!: EventEmitter<ConnectNodesDetail>;
@@ -461,6 +528,10 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     this.#edgeAdd.emit(edge);
   };
 
+  /**
+   * @detail `EdgeViewChangePayload` — 边视图变更详情，包含边 id 和新的视图属性
+   * @description 用户通过拖拽手柄修改连线路径或形状时触发。
+   */
   @event({ type: "edge.view.change" })
   accessor #edgeViewChange!: EventEmitter<EdgeViewChangePayload>;
 
@@ -468,6 +539,10 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     this.#edgeViewChange.emit(detail);
   };
 
+  /**
+   * @detail `DecoratorViewChangePayload` — 装饰器视图变更详情，包含装饰器 id 和新的位置/尺寸
+   * @description 装饰器（area、container、text 等）被移动或调整大小时触发。
+   */
   @event({ type: "decorator.view.change" })
   accessor #decoratorViewChange!: EventEmitter<DecoratorViewChangePayload>;
 
@@ -475,6 +550,10 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     this.#decoratorViewChange.emit(detail);
   };
 
+  /**
+   * @detail `DecoratorTextChangeDetail` — 文本变更详情，包含装饰器 id 和新的文本内容
+   * @description 装饰器文本（area/container/text 的文字）被编辑并确认后触发。
+   */
   @event({ type: "decorator.text.change" })
   accessor #decoratorTextChange!: EventEmitter<DecoratorTextChangeDetail>;
 
@@ -483,7 +562,8 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
   };
 
   /**
-   * node节点跟容器组关系改变事件，有containerCell是新增关系，否则删除关系
+   * @detail `MoveCellPayload[]` — 节点与容器关系变更详情列表，有 containerCell 则为新增关系，否则为删除关系
+   * @description 节点与容器组（container 装饰器）的包含关系发生变化时触发，包括拖入、拖出容器。
    */
   @event({ type: "node.container.change" })
   accessor #containerContainerChange!: EventEmitter<MoveCellPayload[]>;
@@ -493,7 +573,8 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
   };
 
   /**
-   * 分组容器点击加号事件，传入的参数为分组容器cell
+   * @detail `DecoratorCell` — 被点击加号按钮的分组容器 cell 对象
+   * @description 分组容器（group 装饰器）的加号按钮被点击时触发，用于触发在组内添加新节点的逻辑。
    */
   @event({ type: "decorator.group.plus.click" })
   accessor #decoratorGroupPlusClick!: EventEmitter<DecoratorCell>;
@@ -503,7 +584,8 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
   };
 
   /**
-   * 缩放变化后，从素材库拖拽元素进画布时，拖拽图像应设置对应的缩放比例。
+   * @detail `number` — 当前缩放比例值（如 1.0 表示 100%）
+   * @description 画布缩放比例变化时触发，从素材库拖拽元素进画布时，拖拽图像应设置对应的缩放比例。
    */
   @event({ type: "scale.change" })
   accessor #scaleChange!: EventEmitter<number>;
@@ -521,6 +603,10 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     };
   }
 
+  /**
+   * @detail `CanvasContextMenuDetail` — 右键菜单详情，包含 `{ clientX: 鼠标X坐标, clientY: 鼠标Y坐标, view: 画布坐标 { x, y } }`
+   * @description 用户在画布空白处右键点击时触发，常用于弹出画布级别的上下文菜单。
+   */
   @event({ type: "canvas.contextmenu" })
   accessor #canvasContextMenu!: EventEmitter<CanvasContextMenuDetail>;
 
@@ -532,6 +618,10 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     });
   };
 
+  /**
+   * @detail `void`
+   * @description 用户触发复制操作（Ctrl+C）时触发，外部需自行处理复制逻辑。
+   */
   @event({ type: "canvas.copy" })
   accessor #canvasCopy!: EventEmitter<void>;
 
@@ -539,6 +629,10 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     this.#canvasCopy.emit();
   };
 
+  /**
+   * @detail `void`
+   * @description 用户触发粘贴操作（Ctrl+V）时触发，外部需自行处理粘贴逻辑。
+   */
   @event({ type: "canvas.paste" })
   accessor #canvasPaste!: EventEmitter<void>;
 
@@ -546,12 +640,21 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     this.#canvasPaste.emit();
   };
 
+  /**
+   * @detail `void`
+   * @description 用户触发分组操作（Ctrl+G）时触发，外部需自行处理分组逻辑。
+   */
   @event({ type: "canvas.group" })
   accessor #canvasGroup!: EventEmitter<void>;
 
   #handleCanvasGroup = () => {
     this.#canvasGroup.emit();
   };
+
+  /**
+   * @detail `void`
+   * @description 用户触发取消分组操作（Ctrl+Shift+G）时触发，外部需自行处理解组逻辑。
+   */
   @event({ type: "canvas.ungroup" })
   accessor #canvasUngroup!: EventEmitter<void>;
 
@@ -559,6 +662,11 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     this.#canvasUngroup.emit();
   };
 
+  /**
+   * @description 将一个节点拖放到画布中指定位置。如果放置位置不在画布内，则返回 null。
+   * @param info 拖放节点信息，包含节点 id、拖放位置（clientX/clientY）、尺寸和数据
+   * @returns 成功时返回创建的 NodeCell，否则返回 null
+   */
   @method()
   async dropNode({
     id,
@@ -591,6 +699,11 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     return null;
   }
 
+  /**
+   * @description 将一个装饰器（area、container、text、line 等）拖放到画布中指定位置。如果放置位置不在画布内，则返回 null。
+   * @param info 拖放装饰器信息，包含装饰器类型、拖放位置、文本和方向等
+   * @returns 成功时返回创建的 DecoratorCell，否则返回 null
+   */
   @method()
   async dropDecorator({
     position,
@@ -645,6 +758,11 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     return null;
   }
 
+  /**
+   * @description 批量添加节点到画布，节点位置由布局算法自动计算。
+   * @param nodes 要添加的节点信息列表，每项包含 id、数据、尺寸等
+   * @returns 创建的 NodeCell 列表
+   */
   @method()
   async addNodes(nodes: AddNodeInfo[]): Promise<NodeCell[]> {
     if (nodes.length === 0) {
@@ -671,6 +789,11 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     });
   }
 
+  /**
+   * @description 以编程方式添加一条边（连线）到画布。注意：此方法不会触发 `edge.add` 事件。
+   * @param info 边信息，包含 source（起始节点 id）、target（目标节点 id）和可选的 data
+   * @returns 创建的 EdgeCell 对象
+   */
   @method()
   async addEdge({ source, target, data }: AddEdgeInfo): Promise<EdgeCell> {
     const newEdge: EdgeCell = {
@@ -684,11 +807,22 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     return newEdge;
   }
 
+  /**
+   * @description 以编程方式启动从指定源节点到目标节点的手动连线流程，等待用户在画布上点击目标节点后返回连线详情。
+   * @param source 起始节点的 id
+   * @returns Promise，解析为 ConnectNodesDetail 包含 source 和 target 节点信息
+   */
   @method()
   manuallyConnectNodes(source: NodeId): Promise<ConnectNodesDetail> {
     return this.#canvasRef.current!.manuallyConnectNodes(source);
   }
 
+  /**
+   * @description 更新画布中的单元格数据，支持增量更新（新增、修改），已渲染的画布使用此方法代替直接设置 `cells` 属性。
+   * @param cells 新的单元格数据列表
+   * @param ctx 可选的更新上下文，用于指定更新原因和位置参考节点
+   * @returns 返回实际被更新的单元格列表
+   */
   @method()
   async updateCells(
     cells: InitialCell[],
@@ -704,6 +838,9 @@ class EoDrawCanvas extends ReactNextElement implements EoDrawCanvasProps {
     return { updated };
   }
 
+  /**
+   * @description 将画布视图重置并居中，使所有单元格重新显示在视口中央。
+   */
   // istanbul ignore next
   @method()
   async reCenter() {

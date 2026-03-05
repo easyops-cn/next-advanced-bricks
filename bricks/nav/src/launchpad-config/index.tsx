@@ -33,14 +33,17 @@ export
   styleTexts: [styleText],
 })
 class LaunchpadConfig extends ReactNextElement implements LaunchpadConfigProps {
+  /** Launchpad 配置菜单分组数据 */
   @property({ attribute: false })
   accessor menuGroups: ConfigMenuGroup[] | undefined;
 
+  /** 菜单操作按钮配置列表 */
   @property({ attribute: false })
   accessor actions: MenuAction[] | undefined;
 
   /**
    * @default "launchpad-config"
+   * @description 显示变体：launchpad-config（Launchpad 配置）、factory-launchpad-config（工厂配置）、menu-config（菜单配置）、blacklist-config（黑名单配置）
    */
   @property()
   accessor variant: ConfigVariant | undefined;
@@ -71,9 +74,17 @@ class LaunchpadConfig extends ReactNextElement implements LaunchpadConfigProps {
   @property({ attribute: false })
   accessor blacklist: string[] | undefined;
 
+  /**
+   * @description 点击菜单项时触发
+   * @detail 被点击的菜单项数据（app 或 custom 类型）
+   */
   @event({ type: "menu-item.click" })
   accessor #menuItemClickEvent!: EventEmitter<ConfigMenuItemNormal>;
 
+  /**
+   * @description 点击菜单操作按钮时触发
+   * @detail { data: 操作关联的菜单项或分组, action: 被点击的操作按钮配置 }
+   */
   @event({ type: "action.click" })
   accessor #actionClickEvent!: EventEmitter<MenuActionEventDetail>;
 
@@ -108,6 +119,11 @@ export interface LaunchpadConfigProps
   > {
   menuGroups?: ConfigMenuGroup[];
   blacklist?: string[];
+}
+
+export interface LaunchpadConfigEventsMapping {
+  onMenuItemClick: "menu-item.click";
+  onActionClick: "action.click";
 }
 
 export interface LaunchpadConfigComponentProps

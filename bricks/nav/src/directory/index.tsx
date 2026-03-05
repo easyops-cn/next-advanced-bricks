@@ -66,14 +66,14 @@ class EoDirectory extends ReactNextElement implements EoDirectoryProps {
   @property({ attribute: false })
   accessor defaultSelectedKeys: string[] | undefined;
   /**
-   * 菜单点击，groupKey 表示对应分组的key，data 表示对应菜单项
-   * @detail { groupKey: string, data: MenuChildrenItem   }
+   * @description 菜单项点击时触发
+   * @detail { groupKey: 对应分组的 key（仅分组子项有值）, data: 被点击的菜单项 }
    */
   @event({ type: "menu.item.click" })
   accessor #menuItemClickEvent!: EventEmitter<MenuItemClickEventDetail>;
   /**
-   * 点击icon，detail为 对应菜单项或者是分组的key
-   * @detail { key: string  }
+   * @description 点击菜单项后缀图标时触发
+   * @detail { key: 对应菜单项或分组的 key }
    */
   @event({ type: "suffix.icon.click" })
   accessor #suffixIconClickEvent!: EventEmitter<{ key: string }>;
@@ -108,6 +108,11 @@ export interface EoDirectoryProps {
   menuItemClick?: (data: MenuItemClickEventDetail) => void;
   suffixIconClick?: (key: string) => void;
   defaultSelectedKeys?: string[] | undefined;
+}
+
+export interface EoDirectoryEventsMapping {
+  onMenuItemClick: "menu.item.click";
+  onSuffixIconClick: "suffix.icon.click";
 }
 interface MenuChildrenItem {
   title: string;

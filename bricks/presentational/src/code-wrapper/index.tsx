@@ -47,7 +47,9 @@ export interface CodeWrapperProps {
 }
 
 /**
- * 构件 `presentational.code-wrapper`
+ * 代码内容包裹容器，提供统一的代码展示结构并支持一键复制功能。
+ *
+ * @description 代码内容包裹容器，提供统一的代码展示结构并支持一键复制功能。
  *
  * @internal
  *
@@ -59,6 +61,9 @@ export
   styleTexts: [styleText],
 })
 class CodeWrapper extends ReactNextElement implements CodeWrapperProps {
+  /**
+   * 传递给 `<pre>` 元素的额外属性，例如 `className`、`style` 等
+   */
   @property({ attribute: false })
   accessor preProps:
     | React.PropsWithChildren<JSX.IntrinsicElements["pre"]>
@@ -72,7 +77,7 @@ class CodeWrapper extends ReactNextElement implements CodeWrapperProps {
   accessor showCopyButton: boolean | undefined;
 
   /**
-   * 主题变体
+   * 主题变体，影响复制按钮等内部元素的样式风格。`elevo` 为 Elevo 风格
    */
   @property()
   accessor themeVariant: "default" | "elevo" | undefined;
