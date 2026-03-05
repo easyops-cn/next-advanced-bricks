@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.6.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form-platform@0.5.0...@next-bricks/form-platform@0.6.0) (2026-03-05)
+
+
+### Features
+
+* add eo-cmdb-instance-select Closes CI-1142 ([b70d3e5](https://github.com/easyops-cn/next-advanced-bricks/commit/b70d3e551b5160ff74f166f5545b59cb2aee6e19))
+
+
+
+
+
 # [0.5.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form-platform@0.4.43...@next-bricks/form-platform@0.5.0) (2026-01-30)
 
 
