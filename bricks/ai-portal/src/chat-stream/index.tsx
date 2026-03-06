@@ -50,7 +50,10 @@ export interface ConversationDetail {
 const ForwardedChatStreamComponent = forwardRef(ChatStreamComponent);
 
 /**
- * 构件 `ai-portal.chat-stream`
+ * AI 对话流视图，以聊天气泡形式展示对话过程，支持文件上传、命令联想、回放及用户反馈等功能。
+ *
+ * @description AI 对话流视图，以聊天气泡形式展示对话过程，支持文件上传、命令联想、回放及用户反馈等功能。
+ * @category ai-portal
  */
 export
 @defineElement("ai-portal.chat-stream", {
@@ -58,6 +61,9 @@ export
   shadowOptions: false,
 })
 class ChatStream extends ReactNextElement implements ChatStreamProps {
+  /**
+   * 对话 ID
+   */
   @property()
   accessor conversationId: string | undefined;
 
@@ -77,48 +83,94 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
   @property({ type: Number })
   accessor replayDelay: number | undefined;
 
+  /**
+   * 功能开关配置，键为功能名，值为是否启用
+   */
   @property({ attribute: false })
   accessor supports: Record<string, boolean> | undefined;
 
+  /**
+   * 是否显示 Human-in-the-loop 操作按钮
+   */
   @property({ type: Boolean })
   accessor showHumanActions: boolean | undefined;
 
+  /**
+   * 是否显示反馈按钮
+   */
   @property({ type: Boolean })
   accessor showFeedback: boolean | undefined;
 
+  /**
+   * 是否在任务失败时也显示反馈按钮
+   */
   @property({ type: Boolean })
   accessor showFeedbackAfterFailed: boolean | undefined;
 
+  /**
+   * 是否在查看生成视图时显示反馈按钮
+   */
   @property({ type: Boolean })
   accessor showFeedbackOnView: boolean | undefined;
 
+  /**
+   * 是否显示切换到画布视图的按钮
+   */
   @property({ type: Boolean })
   accessor showUiSwitch: boolean | undefined;
 
+  /**
+   * 是否隐藏 Mermaid 图表渲染，通过 CSS 属性选择器控制样式
+   */
   @property({ type: Boolean, render: false })
   accessor hideMermaid: boolean | undefined;
 
+  /**
+   * 生成视图预览页的 URL 模板，支持 {viewId} 等字段插值
+   */
   @property()
   accessor previewUrlTemplate: string | undefined;
 
+  /**
+   * 示例场景列表，用于在空对话时展示快速入口
+   */
   @property({ attribute: false })
   accessor showCases: ShowCaseType[] | undefined;
 
+  /**
+   * 示例项目列表，用于展示可参考的已有项目
+   */
   @property({ attribute: false })
   accessor exampleProjects: ExampleProject[] | undefined;
 
+  /**
+   * "试一试"跳转 URL
+   */
   @property()
   accessor tryItOutUrl: string | undefined;
 
+  /**
+   * 可 @ 提及的数字人列表
+   */
   @property({ attribute: false })
   accessor aiEmployees: AIEmployee[] | undefined;
 
+  /**
+   * 命令列表，支持通过 / 或搜索触发联想
+   */
   @property({ attribute: false })
   accessor commands: Command[] | undefined;
 
+  /**
+   * 文件上传配置
+   */
   @property({ attribute: false })
   accessor uploadOptions: UploadOptions | undefined;
 
+  /**
+   * @detail void
+   * @description 用户点击分享时触发
+   */
   @event({ type: "share" })
   accessor #shareEvent!: EventEmitter<void>;
 
@@ -126,6 +178,10 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
     this.#shareEvent.emit();
   };
 
+  /**
+   * @detail void
+   * @description 用户点击终止任务时触发
+   */
   @event({ type: "terminate" })
   accessor #terminateEvent!: EventEmitter<void>;
 
@@ -133,6 +189,10 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
     this.#terminateEvent.emit();
   };
 
+  /**
+   * @detail { plan: 计划步骤列表, result: 结果列表, feedback: 反馈文本 }
+   * @description 用户提交反馈时触发
+   */
   @event({ type: "feedback.submit" })
   accessor #feedbackSubmitEvent!: EventEmitter<FeedbackDetail>;
 
@@ -140,6 +200,10 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
     this.#feedbackSubmitEvent.emit(detail);
   };
 
+  /**
+   * @detail 生成视图的 viewId
+   * @description 用户查看生成视图时的反馈事件触发
+   */
   @event({ type: "feedback.on.view" })
   accessor #feedbackOnViewEvent!: EventEmitter<string>;
 
@@ -147,6 +211,10 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
     this.#feedbackOnViewEvent.emit(viewId);
   };
 
+  /**
+   * @detail 切换目标 UI 模式，值为 "canvas"
+   * @description 用户点击切换到画布视图按钮时触发
+   */
   @event({ type: "ui.switch" })
   accessor #switch!: EventEmitter<"canvas">;
 
@@ -154,6 +222,10 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
     this.#switch.emit("canvas");
   };
 
+  /**
+   * @detail { projectId: 关联的项目 ID }
+   * @description 对话详情信息变化时触发
+   */
   @event({ type: "detail.change" })
   accessor #detailChange!: EventEmitter<ConversationDetail>;
 
@@ -161,6 +233,10 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
     this.#detailChange.emit(detail);
   };
 
+  /**
+   * @detail 是否已切换到分屏模式
+   * @description 分屏状态切换时触发
+   */
   @event({ type: "split.change" })
   accessor #splitChange!: EventEmitter<boolean>;
 
@@ -170,21 +246,34 @@ class ChatStream extends ReactNextElement implements ChatStreamProps {
 
   #ref = createRef<ChatStreamRef>();
 
+  /**
+   * 通知组件任务已恢复，用于继续中断的对话
+   */
   @method()
   resumed() {
     this.#ref.current?.resumed?.();
   }
 
+  /**
+   * 通知组件反馈提交成功
+   */
   @method()
   feedbackSubmitDone() {
     this.#ref.current?.feedbackSubmitDone();
   }
 
+  /**
+   * 通知组件反馈提交失败
+   */
   @method()
   feedbackSubmitFailed() {
     this.#ref.current?.feedbackSubmitFailed();
   }
 
+  /**
+   * 通知组件查看视图的反馈处理完成
+   * @param viewId 对应的视图 ID
+   */
   @method()
   feedbackOnViewDone(viewId: string) {
     this.#ref.current?.feedbackOnViewDone(viewId);

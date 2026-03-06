@@ -103,7 +103,10 @@ export interface ChatInputMapEvents {
 const ChatInputComponent = forwardRef(LegacyChatInputComponent);
 
 /**
- * 小型聊天输入框，用于对话等页面
+ * 小型聊天输入框，用于对话等页面，支持命令联想、@提及数字人、文件上传及终止任务等功能。
+ *
+ * @description 小型聊天输入框，用于对话等页面，支持命令联想、@提及数字人、文件上传及终止任务等功能。
+ * @category ai-portal
  */
 export
 @defineElement("ai-portal.chat-input", {
@@ -113,34 +116,63 @@ export
   },
 })
 class ChatInput extends ReactNextElement implements ChatInputProps {
+  /**
+   * 输入框占位文字
+   */
   @property()
   accessor placeholder: string | undefined;
 
+  /**
+   * 是否自动聚焦
+   */
   @property({ type: Boolean })
   accessor autoFocus: boolean | undefined;
 
+  /**
+   * 是否禁用发送按钮，通常在 AI 正在处理时设为 true
+   */
   @property({ type: Boolean })
   accessor submitDisabled: boolean | undefined;
 
+  /**
+   * 是否显示终止任务按钮，需与 submitDisabled 配合使用
+   */
   @property({ type: Boolean })
   accessor supportsTerminate: boolean | undefined;
 
+  /**
+   * 是否正在终止任务，为 true 时显示加载状态
+   */
   @property({ type: Boolean })
   accessor terminating: boolean | undefined;
 
+  /**
+   * 是否在输入框为空时自动淡出，通过 CSS 属性选择器控制样式
+   */
   @property({ type: Boolean, render: false })
   accessor autoFade: boolean | undefined;
 
+  /**
+   * 文件上传配置
+   */
   @property({ attribute: false })
   accessor uploadOptions: UploadOptions | undefined;
 
+  /**
+   * 可 @ 提及的数字人列表
+   */
   @property({ attribute: false })
   accessor aiEmployees: AIEmployee[] | undefined;
 
+  /**
+   * 命令列表，支持通过 / 或搜索触发联想
+   */
   @property({ attribute: false })
   accessor commands: Command[] | undefined;
 
   /**
+   * 命令/提及联想弹出层的显示位置
+   *
    * @default "bottom"
    */
   @property()
@@ -148,6 +180,8 @@ class ChatInput extends ReactNextElement implements ChatInputProps {
 
   /**
    * @deprecated Use `chat.submit` event instead
+   * @detail 用户输入的消息文本内容
+   * @description 用户提交消息时触发（已废弃，请使用 chat.submit 事件）
    */
   @event({ type: "message.submit" })
   accessor #messageSubmit!: EventEmitter<string>;
@@ -156,6 +190,10 @@ class ChatInput extends ReactNextElement implements ChatInputProps {
     this.#messageSubmit.emit(value);
   };
 
+  /**
+   * @detail { content: 消息内容, files: 上传的文件列表, cmd: 命令载荷, aiEmployeeId: @提及的数字人 ID }
+   * @description 用户提交聊天消息时触发
+   */
   @event({ type: "chat.submit" })
   accessor #chatSubmit!: EventEmitter<ChatPayload>;
 
@@ -163,6 +201,10 @@ class ChatInput extends ReactNextElement implements ChatInputProps {
     this.#chatSubmit.emit(payload);
   };
 
+  /**
+   * @detail void
+   * @description 点击终止按钮时触发
+   */
   @event({ type: "terminate" })
   accessor #terminate!: EventEmitter<void>;
 
@@ -172,6 +214,10 @@ class ChatInput extends ReactNextElement implements ChatInputProps {
 
   #ref = createRef<ChatInputRef>();
 
+  /**
+   * 设置输入框的值并聚焦
+   * @param value 要设置的文本内容
+   */
   @method()
   setValue(value: string) {
     this.#ref.current?.setValue(value);

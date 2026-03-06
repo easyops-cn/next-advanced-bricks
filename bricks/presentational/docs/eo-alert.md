@@ -1,8 +1,38 @@
-告警提示
+---
+tagName: eo-alert
+displayName: WrappedEoAlert
+description: 告警提示
+category: display-component
+source: "@next-bricks/presentational"
+---
+
+# eo-alert
+
+> 告警提示
+
+## Props
+
+| 属性                | 类型                                          | 必填 | 默认值 | 说明                                                                                                            |
+| ------------------- | --------------------------------------------- | ---- | ------ | --------------------------------------------------------------------------------------------------------------- |
+| type                | `"success" \| "info" \| "warning" \| "error"` | 是   | -      | 警告类型                                                                                                        |
+| hasTitle            | `boolean`                                     | 否   | -      | 是否显示标题。开启后，可以使用 `title` 插槽                                                                     |
+| showIcon            | `boolean`                                     | 否   | -      | 是否显示提示图标                                                                                                |
+| closable            | `boolean`                                     | 否   | -      | 是否显示关闭按钮                                                                                                |
+| localStorageKey     | `string`                                      | 否   | -      | 以该值和页面 url 作为命名空间，决定是否显示该警告提示。关闭后将记录到 localStorage，下次访问同一 url 时不再显示 |
+| disableUrlNamespace | `boolean`                                     | 否   | -      | 仅以 `localStorageKey` 作为命名空间（不拼接页面 url），关闭后在所有页面均不再显示                               |
+
+## Slots
+
+| 名称     | 说明                         |
+| -------- | ---------------------------- |
+| （默认） | 内容区                       |
+| title    | 标题，需配合 `hasTitle` 使用 |
 
 ## Examples
 
 ### Basic
+
+展示四种警告类型（`info`、`success`、`warning`、`error`），并启用关闭按钮。
 
 ```yaml preview
 brick: div
@@ -41,6 +71,8 @@ slots:
 ```
 
 ### HasTitle
+
+通过 `hasTitle` 启用标题区域，并使用 `title` 插槽放置标题内容。
 
 ```yaml preview
 brick: div
@@ -109,4 +141,36 @@ slots:
               - brick: div
                 properties:
                   textContent: 出错了
+```
+
+### LocalStorageKey
+
+通过 `localStorageKey` 和 `disableUrlNamespace` 控制关闭后的持久化范围：`disableUrlNamespace` 为 `true` 时，关闭后在所有页面均不再显示；否则仅在当前 url 下不再显示。
+
+```yaml preview
+brick: div
+properties:
+  style:
+    display: flex
+    flex-direction: column
+    gap: 10px
+slots:
+  "":
+    type: bricks
+    bricks:
+      - brick: eo-alert
+        properties:
+          textContent: 关闭后仅在当前页面不再显示（localStorageKey + url 命名空间）。
+          type: info
+          closable: true
+          showIcon: true
+          localStorageKey: demo-alert-url
+      - brick: eo-alert
+        properties:
+          textContent: 关闭后在所有页面均不再显示（仅 localStorageKey 命名空间）。
+          type: warning
+          closable: true
+          showIcon: true
+          localStorageKey: demo-alert-global
+          disableUrlNamespace: true
 ```

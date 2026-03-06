@@ -15,25 +15,20 @@ export interface CabinetAppLayerProps {
 /**
  * cabinet子构件----应用层
  * @author nlicroshan
+ * @category big-screen-content
  */
 @defineElement("data-view.cabinet-app-layer", {
   styleTexts: [variablesStyleText, styleText],
 })
 class CabinetAppLayer extends ReactNextElement implements CabinetAppLayerProps {
   /**
-   * @kind string
-   * @required true
-   * @default
-   * @description 标题
+   * 标题
    */
   @property()
   accessor appTitle: string;
 
   /**
-   * @kind "active" | "faded"
-   * @required false
-   * @default
-   * @description 当前状态
+   * 当前状态
    */
   @property()
   accessor status: "active" | "faded";

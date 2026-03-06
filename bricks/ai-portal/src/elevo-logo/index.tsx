@@ -8,7 +8,9 @@ import styleText from "./styles.shadow.css";
 const { defineElement } = createDecorators();
 
 /**
- * 构件 `ai-portal.elevo-logo`
+ * Elevo 品牌 Logo 图片组件，固定展示 Elevo logo（95×28px）。
+ *
+ * @category display-component
  */
 export
 @defineElement("ai-portal.elevo-logo", {

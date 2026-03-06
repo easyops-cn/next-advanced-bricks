@@ -21,7 +21,9 @@ export interface PdfViewerProps {
 }
 
 /**
- * 构件 `advanced.pdf-viewer`
+ * PDF 文件预览器，支持分页跳转和关键字高亮搜索
+ * @author developer
+ * @category display
  */
 export
 @defineElement("advanced.pdf-viewer", {
@@ -29,17 +31,21 @@ export
   shadowOptions: false,
 })
 class PdfViewer extends ReactNextElement implements PdfViewerProps {
+  /** PDF 文件的访问地址 */
   @property()
   accessor url!: string;
 
+  /** 初始显示的页码（从 1 开始），内部会自动转换为从 0 开始的索引 */
   @property({
     type: Number,
   })
   accessor page: number | undefined;
 
+  /** 文档加载后自动高亮的搜索关键字 */
   @property()
   accessor search: string | undefined;
 
+  /** 查看器容器的内联样式，常用于设置高度（如 { height: "500px" }） */
   @property({
     attribute: false,
   })
@@ -57,6 +63,7 @@ class PdfViewer extends ReactNextElement implements PdfViewerProps {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface PdfViewerComponentProps extends PdfViewerProps {
   // Define event handlers here.
 }

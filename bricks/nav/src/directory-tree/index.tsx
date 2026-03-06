@@ -79,6 +79,11 @@ export interface EoDirectoryTreeProps {
   suffixBrick?: { useBrick: UseBrickConf };
 }
 
+export interface EoDirectoryTreeEventsMapping {
+  onExpand: "expand";
+  onSelect: "select";
+}
+
 export interface SuffixBrickConf {
   /**
    * @default "always"
@@ -190,7 +195,7 @@ class EoDirectoryTree extends ReactNextElement {
 
   /**
    * 展开事件
-   * @detail keys - 展开的 keys
+   * @detail { keys: 展开的 keys 列表, node: 触发展开的节点数据 }
    */
   @event({ type: "expand" })
   accessor #expandEvent!: EventEmitter<{ keys: string[]; node: NodeData }>;
@@ -201,7 +206,7 @@ class EoDirectoryTree extends ReactNextElement {
 
   /**
    * 选择事件
-   * @detail keys - 选择的 keys
+   * @detail { keys: 选中的 keys 列表, node: 触发选择的节点数据 }
    */
   @event({ type: "select" })
   accessor #selectEvent!: EventEmitter<{ keys: string[]; node: NodeData }>;

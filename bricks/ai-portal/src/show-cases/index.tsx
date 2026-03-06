@@ -38,15 +38,19 @@ export interface ShowCasesProps {
 
 /**
  * 构件 `ai-portal.show-cases`
+ *
+ * 案例列表展示构件，支持按场景分组筛选，展示多个优秀案例卡片。
  */
 export
 @defineElement("ai-portal.show-cases", {
   styleTexts: [styleText],
 })
 class ShowCases extends ReactNextElement implements ShowCasesProps {
+  /** 案例数据列表，每项可包含 scenario 字段用于分组筛选 */
   @property({ attribute: false })
   accessor list: ShowCaseType[] | undefined;
 
+  /** 每个场景分组下最多显示的案例数量 */
   @property({ type: Number })
   accessor limit: number | undefined;
 

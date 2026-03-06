@@ -42,7 +42,7 @@ export type PreviewCategory =
   | "value";
 
 /**
- * 构件 `visual-builder.pre-generated-preview`
+ * 预生成编排预览，在 iframe 中渲染属性生成结果的对比表格
  *
  * @internal
  */
@@ -51,21 +51,26 @@ export
   styleTexts: [styleText],
 })
 class PreGeneratedPreview extends ReactNextElement {
+  /** 属性生成数据列表 */
   @property({ attribute: false })
   accessor generations: AttributeGeneration[] | undefined;
 
   /**
+   * 预览分类，影响数据容器的渲染方式
    * @default "value"
    */
   @property()
   accessor category: PreviewCategory | undefined;
 
+  /** 预览主题 */
   @property()
   accessor theme: string | undefined;
 
+  /** UI 版本 */
   @property()
   accessor uiVersion: string | undefined;
 
+  /** 微应用信息 */
   @property()
   accessor app: MicroApp | undefined;
 
@@ -82,6 +87,7 @@ class PreGeneratedPreview extends ReactNextElement {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface PreGeneratedPreviewComponentProps
   extends PreGeneratedPreviewProps {
   //

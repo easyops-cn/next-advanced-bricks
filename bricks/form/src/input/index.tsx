@@ -204,7 +204,8 @@ class Input extends FormItemElementBase {
   accessor themeVariant: "default" | "elevo" | undefined;
 
   /**
-   * 值改变事件
+   * @detail 当前输入值
+   * @description 值改变事件
    */
   @event({ type: "change" })
   accessor #changeEvent!: EventEmitter<string>;
@@ -214,7 +215,7 @@ class Input extends FormItemElementBase {
   };
 
   /**
-   * focus
+   * 使输入框获得焦点
    */
   @method({ bound: true })
   focusInput() {
@@ -222,7 +223,7 @@ class Input extends FormItemElementBase {
   }
 
   /**
-   * blur
+   * 使输入框失去焦点
    */
   @method()
   blurInput() {

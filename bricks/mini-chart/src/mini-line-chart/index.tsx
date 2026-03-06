@@ -36,7 +36,8 @@ export interface MiniLineChartProps {
 export type Point = [x: number, y: number];
 
 /**
- * 构件 `eo-mini-line-chart`
+ * 迷你折线图，支持平滑曲线、面积填充及自适应尺寸。
+ * @category chart
  */
 export
 @defineElement("eo-mini-line-chart", {
@@ -68,17 +69,24 @@ class MiniLineChart extends ReactNextElement implements MiniLineChartProps {
   accessor smooth: boolean | undefined;
 
   /**
+   * Line color, supports CSS color values and CSS variables.
+   *
    * @default "var(--color-brand)"
    */
   @property()
   accessor lineColor: string | undefined;
 
   /**
+   * Line width in pixels.
+   *
    * @default 2
    */
   @property({ type: Number })
   accessor lineWidth: number | undefined;
 
+  /**
+   * Whether to fill the area below the line.
+   */
   @property({ type: Boolean })
   accessor showArea: boolean | undefined;
 
@@ -97,17 +105,24 @@ class MiniLineChart extends ReactNextElement implements MiniLineChartProps {
   accessor max: number | undefined;
 
   /**
+   * The field name used as the x-axis value in data items.
+   *
    * @default "0"
    */
   @property()
   accessor xField: string | undefined;
 
   /**
+   * The field name used as the y-axis value in data items.
+   *
    * @default "1"
    */
   @property()
   accessor yField: string | undefined;
 
+  /**
+   * Chart data array, each item is a record with x and y field values.
+   */
   @property({ attribute: false })
   accessor data: Record<string, number>[] | undefined;
 

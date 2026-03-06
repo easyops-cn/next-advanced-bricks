@@ -33,7 +33,7 @@ export interface PreGeneratedConfigPreviewProps {
 export type ContainerType = "table" | "descriptions";
 
 /**
- * 构件 `visual-builder.pre-generated-config-preview`
+ * AI 预生成配置预览构件，在 iframe 中将属性列表渲染为表格或描述列表，用于直观展示配置结果
  */
 export
 @defineElement("visual-builder.pre-generated-config-preview", {
@@ -43,15 +43,27 @@ class PreGeneratedConfigPreview
   extends ReactNextElement
   implements PreGeneratedConfigPreviewProps
 {
+  /**
+   * 预览 iframe 的地址，默认使用内置预览地址
+   */
   @property()
   accessor previewUrl: string | undefined;
 
+  /**
+   * 容器类型，"table" 渲染为表格，"descriptions" 渲染为描述列表，默认为 "table"
+   */
   @property()
   accessor container: ContainerType | undefined;
 
+  /**
+   * 属性列表，每项包含 id、name，以及可选的可视化配置
+   */
   @property({ attribute: false })
   accessor attrList: ObjectAttr[] | undefined;
 
+  /**
+   * 模拟数据列表，用于填充预览中的真实数据
+   */
   @property({ attribute: false })
   accessor mockList: Record<string, unknown>[] | undefined;
 

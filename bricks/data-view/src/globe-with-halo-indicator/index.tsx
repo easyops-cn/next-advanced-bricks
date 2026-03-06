@@ -41,6 +41,8 @@ interface DataItemWithPosition extends DataItem {
 
 /**
  * 地球加光环的数据展示构件。
+ * @author astrid
+ * @category big-screen-content
  */
 export
 @defineElement("data-view.globe-with-halo-indicator", {

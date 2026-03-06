@@ -21,6 +21,7 @@ export
   styleTexts: [styleText],
 })
 class SpaceLogo extends ReactNextElement implements SpaceLogoProps {
+  /** Logo 容器尺寸（px），图标为容器的 87.5%，圆角为容器的 25%，默认 48 */
   @property({ type: Number })
   accessor size: number | undefined;
 

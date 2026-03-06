@@ -31,21 +31,34 @@ export interface ActionButtonsProps {
 }
 
 /**
- * 构件 `ai-portal.action-buttons`
+ * 动作按钮组，支持选中状态切换，用于聊天框的功能入口。
+ *
+ * @description 动作按钮组，支持选中状态切换，用于聊天框的功能入口。
+ * @category ai-portal
  */
 export
 @defineElement("ai-portal.action-buttons", {
   styleTexts: [styleText],
 })
 class ActionButtons extends ReactNextElement implements ActionButtonsProps {
+  /**
+   * 按钮列表配置，每项包含文本、唯一键值及可选图标
+   */
   @property({
     attribute: false,
   })
   accessor items: ActionItem[] | undefined;
 
+  /**
+   * 当前选中按钮的键值，选中后显示删除图标，再次点击可取消选中
+   */
   @property()
   accessor activeKey: string | null | undefined;
 
+  /**
+   * @detail { key: 按钮键值, text: 按钮文本, icon: 按钮图标 } | null — 选中时为选中的 ActionItem，取消选中时为 null
+   * @description 选中或取消选中动作按钮时触发
+   */
   @event({ type: "change" })
   accessor #change!: EventEmitter<ActionItem | null>;
 

@@ -129,14 +129,14 @@ class NoticeDropdown extends ReactNextElement implements NoticeDropdownProps {
   accessor hideNotifyCenterButton: boolean | undefined;
 
   /**
-   * 消息项点击事件
-   * @detail 消息 ID
+   * @description 消息项点击事件
+   * @detail { id: 消息ID, type: 消息类型, isRead: 是否已读, title: 标题, description: 描述, time: 时间戳, url: 详情链接 }
    */
   @event({ type: "notice.click" })
   accessor #noticeClickEvent!: EventEmitter<NoticeItem>;
 
   /**
-   * 全部已读点击事件
+   * @description 全部已读点击事件
    */
   @event({ type: "mark.all.read" })
   accessor #markAllReadEvent!: EventEmitter<void>;

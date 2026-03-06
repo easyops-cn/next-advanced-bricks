@@ -91,21 +91,30 @@ const StageFlowComponent = forwardRef(LegacyStageFlowComponent);
 
 /**
  * 构件 `ai-portal.stage-flow`
+ *
+ * 阶段流程编辑器构件，支持以泳道方式展示和编辑服务流的阶段与活动。
  */
 export
 @defineElement("ai-portal.stage-flow", {
   styleTexts: [styleText],
 })
 class StageFlow extends ReactNextElement implements StageFlowProps {
+  /** 阶段流程配置数据，每个阶段包含名称和活动列表 */
   @property({ attribute: false })
   accessor spec: Stage[] | undefined;
 
+  /** AI 员工列表，用于在活动中显示分配的员工名称 */
   @property({ attribute: false })
   accessor aiEmployees: AIEmployee[] | undefined;
 
+  /** 是否为只读模式，只读时不显示编辑、添加、删除操作 */
   @property({ type: Boolean })
   accessor readOnly: boolean | undefined;
 
+  /**
+   * @description 流程阶段数据发生变化时触发
+   * @detail 更新后的阶段列表
+   */
   @event({ type: "change" })
   accessor #change!: EventEmitter<Stage[]>;
 
@@ -113,6 +122,10 @@ class StageFlow extends ReactNextElement implements StageFlowProps {
     this.#change.emit(spec);
   };
 
+  /**
+   * @description 点击添加活动按钮时触发
+   * @detail { stage: 所属阶段数据 }
+   */
   @event({ type: "add.activity" })
   accessor #addActivity!: EventEmitter<{ stage: Stage }>;
 
@@ -120,6 +133,10 @@ class StageFlow extends ReactNextElement implements StageFlowProps {
     this.#addActivity.emit({ stage });
   };
 
+  /**
+   * @description 点击活动进行编辑时触发
+   * @detail { stage: 所属阶段, activity: 活动数据, activityIndex: 活动索引 }
+   */
   @event({ type: "edit.activity" })
   accessor #editActivity!: EventEmitter<EditActivityDetail>;
 
@@ -129,16 +146,32 @@ class StageFlow extends ReactNextElement implements StageFlowProps {
 
   #ref = createRef<StageFlowRef>();
 
+  /**
+   * 向指定阶段添加活动
+   * @param stage 目标阶段
+   * @param activity 要添加的活动数据
+   */
   @method()
   addActivity(stage: Stage, activity: FlowActivity) {
     this.#ref.current?.addActivity(stage, activity);
   }
 
+  /**
+   * 编辑指定阶段中的某个活动
+   * @param stage 目标阶段
+   * @param activity 更新后的活动数据
+   * @param activityIndex 活动在阶段中的索引
+   */
   @method()
   editActivity(stage: Stage, activity: FlowActivity, activityIndex: number) {
     this.#ref.current?.editActivity(stage, activity, activityIndex);
   }
 
+  /**
+   * 删除指定阶段中的某个活动
+   * @param stage 目标阶段
+   * @param activityIndex 活动在阶段中的索引
+   */
   @method()
   deleteActivity(stage: Stage, activityIndex: number) {
     this.#ref.current?.deleteActivity(stage, activityIndex);

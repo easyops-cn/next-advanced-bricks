@@ -36,7 +36,9 @@ export interface GanttChartProps {
 }
 
 /**
- * 构件 `ai-portal.gantt-chart`
+ * 甘特图组件，以树状层级结构展示任务节点及其时间条，支持折叠展开和全屏操作。
+ *
+ * @category chart
  */
 export
 @defineElement("ai-portal.gantt-chart", {
@@ -49,6 +51,10 @@ class GanttChart extends ReactNextElement implements GanttChartProps {
   @property({ attribute: false })
   accessor nodes: GanttNode[] | undefined;
 
+  /**
+   * @detail { name: 节点名称, state: 节点状态, startTime: 开始时间戳, endTime: 结束时间戳, children: 子节点列表 }
+   * @description 点击甘特图节点时触发
+   */
   @event({ type: "node.click" })
   accessor #nodeClickEvent!: EventEmitter<GanttNode>;
 
@@ -56,6 +62,10 @@ class GanttChart extends ReactNextElement implements GanttChartProps {
     this.#nodeClickEvent.emit(node);
   };
 
+  /**
+   * @detail void
+   * @description 点击全屏按钮时触发
+   */
   @event({ type: "fullscreen.click" })
   accessor #fullscreenClickEvent!: EventEmitter<void>;
 

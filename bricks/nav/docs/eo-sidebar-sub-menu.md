@@ -1,8 +1,26 @@
-构件 `eo-sidebar-sub-menu`
+---
+tagName: eo-sidebar-sub-menu
+displayName: WrappedEoSidebarSubMenu
+description: 侧边栏子菜单，支持简单菜单项、分组和子菜单的嵌套渲染
+category: navigation
+source: "@next-bricks/nav"
+---
+
+# eo-sidebar-sub-menu
+
+> 侧边栏子菜单，支持简单菜单项、分组和子菜单的嵌套渲染
+
+## Props
+
+| 属性 | 类型          | 必填 | 默认值 | 说明   |
+| ---- | ------------- | ---- | ------ | ------ |
+| menu | `SidebarMenu` | 否   | -      | 菜单项 |
 
 ## Examples
 
 ### Basic
+
+展示侧边栏子菜单的基本用法，支持简单菜单项、分组和子菜单嵌套，根据当前路径自动高亮选中项。
 
 ```yaml preview
 - brick: eo-sidebar-sub-menu

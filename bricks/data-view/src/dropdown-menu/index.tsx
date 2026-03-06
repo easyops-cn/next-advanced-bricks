@@ -72,8 +72,8 @@ class DropdownMenu extends ReactNextElement implements DropdownMenuProps {
   accessor allowClear: boolean;
 
   /**
-   * @detail
-   * @description 值改变
+   * @detail 当前选中的值
+   * @description 值改变时触发
    */
   @event({ type: "value.change" })
   accessor #valueChange!: EventEmitter<string>;

@@ -52,14 +52,16 @@ class EoDirectoryTreeLeaf extends ReactNextElement {
   })
   accessor selected: boolean | undefined;
 
+  /** 节点图标 */
   @property({ attribute: false })
   accessor icon: GeneralIconProps | undefined;
 
+  /** 节点是否淡化显示 */
   @property({ type: Boolean, render: false })
   accessor faded: boolean | undefined;
 
   /**
-   * 选择事件
+   * 节点被选中时触发
    */
   @event({ type: "select" })
   accessor #selectEvent!: EventEmitter<void>;

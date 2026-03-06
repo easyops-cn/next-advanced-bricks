@@ -31,34 +31,57 @@ export interface ChatPreviewProps {
 }
 
 /**
- * 构件 `visual-builder.chat-preview`
+ * Visual Builder 的聊天预览构件，在 iframe 中渲染 Storyboard 并支持元素检查模式
  */
 export
 @defineElement("visual-builder.chat-preview", {
   styleTexts: [styleText],
 })
 class ChatPreview extends ReactNextElement {
+  /**
+   * 要预览的砖块配置，支持单个或列表，更新后自动触发 iframe 重新渲染
+   */
   @property({ attribute: false })
   accessor storyboard: BrickConf | BrickConf[] | undefined;
 
+  /**
+   * 预览的主题，例如 "dark-v2"
+   */
   @property()
   accessor theme: string | undefined;
 
+  /**
+   * 预览的 UI 版本，例如 "8.2"
+   */
   @property()
   accessor uiVersion: string | undefined;
 
+  /**
+   * 预览使用的 MicroApp 配置，影响 app 上下文
+   */
   @property()
   accessor app: MicroApp | undefined;
 
+  /**
+   * 是否开启元素检查模式，开启后鼠标悬停和点击时会显示元素轮廓高亮
+   */
   @property({ type: Boolean })
   accessor inspecting: boolean | undefined;
 
+  /**
+   * @detail `InspectSelector | undefined` — 当前激活的检查目标选择器，未选中时为 undefined
+   * @description 用户在检查模式下点击元素时，激活目标变化时触发
+   */
   @event({ type: "activeTarget.change" })
   accessor #activeTargetChangeEvent!: EventEmitter<InspectSelector | undefined>;
   #handleActiveTargetChange = (target: InspectSelector | undefined) => {
     this.#activeTargetChangeEvent.emit(target);
   };
 
+  /**
+   * 向 iframe 内的预览代理发送选中指令，高亮指定元素
+   * @param payload 要选中的元素选择器
+   */
   @method()
   select(payload: InspectSelector) {
     const iframeWin = this.shadowRoot?.querySelector("iframe")?.contentWindow;

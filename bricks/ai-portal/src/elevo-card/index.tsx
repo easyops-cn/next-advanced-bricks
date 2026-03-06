@@ -29,7 +29,11 @@ export type IconWithColor = GeneralIconProps & {
 };
 
 /**
- * 构件 `ai-portal.elevo-card`
+ * Elevo 风格的卡片组件，支持图标或图片头像、标题、描述、操作按钮及底部插槽。
+ *
+ * @category display-component
+ * @slot actions - 卡片右上角操作区域
+ * @slot footer - 卡片底部操作区域
  */
 export
 @defineElement("ai-portal.elevo-card", {

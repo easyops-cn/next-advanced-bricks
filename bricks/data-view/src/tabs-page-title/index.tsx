@@ -20,7 +20,7 @@ interface TabsPageTitleProps {
 /**
  * 带有tabs的标题构件
  * @author astrid
- * @slot - 标题
+ * @slot - 默认插槽，用于放置标题内容
  * @slot start - 顶部左边插槽
  * @slot end - 顶部右边插槽
  * @slot [key] - 标签对应的key的插槽
@@ -46,8 +46,8 @@ class TabsPageTitle extends ReactNextElement implements TabsPageTitleProps {
   accessor activeKey: string;
 
   /**
-   * 切换 `tab` 栏会触发的事件，`detail` 为目标 `tab` 对应的 `key`
-   * @detail `string`
+   * @detail 切换后激活的 tab 的 key
+   * @description 切换 `tab` 栏会触发的事件，`detail` 为目标 `tab` 对应的 `key`
    */
   @event({ type: "tab.change" })
   accessor #tabChangeEvent!: EventEmitter<string>;

@@ -37,7 +37,8 @@ export const PreviewContainerComponent = forwardRef(
 );
 
 /**
- * 构件 `ui-test.preview-container`
+ * UI 测试预览容器，内嵌 iframe 展示目标页面，支持录制操作步骤和检视构件。
+ * @category ui-test
  */
 export
 @defineElement("ui-test.preview-container", {
@@ -46,48 +47,84 @@ export
 class PreviewContainer extends ReactNextElement {
   private _previewContainerRef = createRef<PreviewContainerRef>();
 
+  /**
+   * iframe 加载的目标页面 URL
+   */
   @property()
   accessor src!: string;
 
+  /**
+   * 是否处于录制模式，开启后将监听并记录用户操作步骤
+   */
   @property({ type: Boolean })
   accessor recording: boolean | undefined;
 
+  /**
+   * 是否处于构件检视模式，开启后可在预览页面中点选构件并高亮对应节点
+   */
   @property({ type: Boolean })
   accessor inspecting: boolean | undefined;
 
+  /**
+   * 悬停高亮关联的命令节点数据
+   */
   @property({ attribute: false })
   accessor hoverRelatedCommands: NodeGraphData[] | undefined;
 
+  /**
+   * 激活高亮关联的命令节点数据
+   */
   @property({ attribute: false })
   accessor activeRelatedCommands: NodeGraphData[] | undefined;
 
+  /**
+   * 控制 iframe 后退
+   */
   @method()
   back(): void {
     this._previewContainerRef.current?.back();
   }
 
+  /**
+   * 控制 iframe 前进
+   */
   @method()
   forward(): void {
     this._previewContainerRef.current?.forward();
   }
 
+  /**
+   * 控制 iframe 刷新
+   */
   @method()
   reload(): void {
     this._previewContainerRef.current?.reload();
   }
 
+  /**
+   * 预览页面 URL 变化时触发
+   * @detail 当前预览页面的 URL
+   */
   @event({ type: "url.change" })
   accessor #urlChangeEvent!: EventEmitter<string>;
   #handleUrlChange = (url: string) => {
     this.#urlChangeEvent.emit(url);
   };
 
+  /**
+   * 在检视模式下点选构件时触发
+   * @detail 选中的构件选择器列表
+   */
   @event({ type: "inspect.select" })
   accessor #inspectSelectEvent!: EventEmitter<InspectSelector[]>;
   #handleInspectSelect = (targets: InspectSelector[]) => {
     this.#inspectSelectEvent.emit(targets);
   };
 
+  /**
+   * 录制完成时触发，返回录制的操作步骤
+   * @detail 录制完成的操作步骤列表
+   */
   @event({ type: "record.complete" })
   accessor #recordCompleteEvent!: EventEmitter<RecordStep[]>;
   #handleRecordComplete = (targets: RecordStep[]) => {

@@ -9,7 +9,7 @@ import { useState } from "react";
 const { defineElement, property } = createDecorators();
 
 /**
- * 构件 `eo-carousel-text`
+ * 文字跑马灯构件，文本内容从右向左循环滚动展示，支持自定义速度、字体大小和字体颜色。
  */
 export
 @defineElement("eo-carousel-text", {

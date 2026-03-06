@@ -1,8 +1,57 @@
-表单构件。
+---
+tagName: eo-form
+displayName: WrappedEoForm
+description: 表单构件
+category: form-input-basic
+source: "@next-bricks/form"
+---
+
+# eo-form
+
+> 表单构件
+
+## Props
+
+| 属性                      | 类型                      | 必填 | 默认值                                                                                          | 说明                                                                   |
+| ------------------------- | ------------------------- | ---- | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| staticValues              | `Record<string, unknown>` | 否   | -                                                                                               | 静态附加值，在表单验证成功时会合并到 validate.success 事件的 detail 中 |
+| layout                    | `Layout`                  | 否   | `"vertical"`                                                                                    | 布局方式，可选值为 `vertical`、`horizontal`、`inline`                  |
+| size                      | `ComponentSize`           | 否   | -                                                                                               | 表单组件尺寸                                                           |
+| labelCol                  | `ColProps`                | 否   | `{ sm: { span: 24 }, md: { span: 24 }, lg: { span: 7 }, xl: { span: 5 }, xxl: { span: 4 } }`    | 标签列布局样式（仅当 layout="horizontal" 时有效）                      |
+| wrapperCol                | `ColProps`                | 否   | `{ sm: { span: 18 }, md: { span: 18 }, lg: { span: 13 }, xl: { span: 16 }, xxl: { span: 18 } }` | 输入控件列布局样式（仅当 layout="horizontal" 时有效）                  |
+| autoScrollToInvalidFields | `boolean`                 | 否   | -                                                                                               | 是否在验证失败时自动滚动到第一个错误字段                               |
+| formStyle                 | `React.CSSProperties`     | 否   | -                                                                                               | 表单自定义样式                                                         |
+
+## Events
+
+| 事件             | detail                                                                                           | 说明                   |
+| ---------------- | ------------------------------------------------------------------------------------------------ | ---------------------- |
+| values.change    | `Record<string, unknown>` — 当前所有表单字段的值                                                 | 表单值变更事件         |
+| validate.success | `Record<string, unknown>` — 表单所有字段的值，包含合并后的 staticValues                          | 表单验证成功时触发事件 |
+| validate.error   | `(MessageBody & { name: string })[]` — 校验失败的字段信息列表，每项包含 name（字段名）及错误消息 | 表单验证报错时触发事件 |
+
+## Methods
+
+| 方法               | 参数                                                                                                                                                                                                                                 | 返回值                               | 说明                                                                               |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------ | ---------------------------------------------------------------------------------- |
+| validate           | -                                                                                                                                                                                                                                    | `boolean \| Record<string, unknown>` | 表单校验方法，校验通过触发 validate.success 事件，校验失败触发 validate.error 事件 |
+| setInitValue       | <ul><li>`values: Record<string, unknown>` - 要设置的表单字段值</li><li>`options?: { runInMacrotask?: boolean; runInMicrotask?: boolean }` - 可选配置，支持 runInMicrotask（微任务中执行）和 runInMacrotask（宏任务中执行）</li></ul> | `void`                               | 表单设置值方法                                                                     |
+| resetFields        | <ul><li>`name?: string` - 要重置的字段名，不传则重置所有字段</li></ul>                                                                                                                                                               | `void`                               | 表单重置值方法                                                                     |
+| getFieldsValue     | <ul><li>`name?: string` - 要获取的字段名，不传则获取所有字段的值</li></ul>                                                                                                                                                           | `Record<string, unknown> \| unknown` | 获取表单值方法                                                                     |
+| validateField      | <ul><li>`name: string` - 要校验的字段名</li></ul>                                                                                                                                                                                    | `void`                               | 校验表单字段方法                                                                   |
+| resetValidateState | -                                                                                                                                                                                                                                    | `void`                               | 重置表单校验状态方法                                                               |
+
+## Slots
+
+| 名称     | 说明     |
+| -------- | -------- |
+| （默认） | 表单内容 |
 
 ## Examples
 
 ### Layout
+
+展示 inline、horizontal、vertical 三种布局方式的表单。
 
 ```yaml preview
 - brick: eo-form
@@ -56,6 +105,8 @@
 ```
 
 ### Values
+
+通过 `values` 属性为表单字段设置初始值。
 
 ```yaml preview
 - brick: eo-form
@@ -129,6 +180,8 @@
 
 ### Events
 
+监听 values.change、validate.success、validate.error 事件响应表单交互。
+
 ```yaml preview
 - brick: eo-form
   events:
@@ -169,12 +222,15 @@
         - brick: eo-submit-buttons
 ```
 
-### Method
+### Methods
+
+通过方法调用实现表单校验、赋值、重置、取值及字段级校验等操作。
 
 ```yaml preview
 - brick: eo-form
   properties:
     id: form
+    autoScrollToInvalidFields: true
   slots:
     "":
       bricks:
@@ -197,7 +253,7 @@
                 value: 1
 - brick: eo-button
   properties:
-    textContent: validateFields
+    textContent: validate
   events:
     click:
       - target: "#form"
@@ -268,7 +324,92 @@
         method: resetValidateState
 ```
 
+### Static Values
+
+通过 staticValues 为验证成功事件附加额外的静态字段。
+
+```yaml preview
+- brick: eo-form
+  properties:
+    id: form2
+    staticValues:
+      source: web
+      version: "1.0"
+  events:
+    validate.success:
+      - action: console.log
+  slots:
+    "":
+      bricks:
+        - brick: eo-input
+          properties:
+            name: username
+            label: 用户名
+            required: true
+        - brick: eo-submit-buttons
+```
+
+### Custom Style
+
+通过 formStyle 自定义表单容器样式。
+
+```yaml preview
+- brick: eo-form
+  properties:
+    layout: vertical
+    formStyle:
+      gap: 16px
+      padding: 16px
+      background: "#f5f5f5"
+      borderRadius: 8px
+  slots:
+    "":
+      bricks:
+        - brick: eo-input
+          properties:
+            name: username
+            label: 用户名
+        - brick: eo-select
+          properties:
+            name: city
+            label: 城市
+            options:
+              - 北京
+              - 上海
+              - 深圳
+        - brick: eo-submit-buttons
+```
+
+### Horizontal Layout with Column Config
+
+使用 horizontal 布局并自定义 labelCol 和 wrapperCol 比例。
+
+```yaml preview
+- brick: eo-form
+  properties:
+    layout: horizontal
+    labelCol:
+      span: 6
+    wrapperCol:
+      span: 18
+    size: large
+  slots:
+    "":
+      bricks:
+        - brick: eo-input
+          properties:
+            name: name
+            label: 姓名
+        - brick: eo-input
+          properties:
+            name: email
+            label: 邮箱
+        - brick: eo-submit-buttons
+```
+
 ### Theme variant Elevo
+
+在 Elevo 主题下展示表单的视觉效果。
 
 ```yaml preview
 # Use this container to emulate background

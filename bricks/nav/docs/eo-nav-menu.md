@@ -1,8 +1,28 @@
-菜单构件
+---
+tagName: eo-nav-menu
+displayName: WrappedEoNavMenu
+description: 菜单构件
+category: navigation
+source: "@next-bricks/nav"
+---
+
+# eo-nav-menu
+
+> 菜单构件
+
+## Props
+
+| 属性               | 类型            | 必填 | 默认值 | 说明                       |
+| ------------------ | --------------- | ---- | ------ | -------------------------- |
+| menu               | `SidebarMenu`   | 否   | -      | 菜单项                     |
+| mainMenuTitleStyle | `CSSProperties` | 否   | -      | 主菜单标题文字的自定义样式 |
+| showTooltip        | `boolean`       | 否   | -      | 是否显示 tooltip           |
 
 ## Examples
 
-### basic
+### Basic
+
+展示导航菜单的基本用法，支持普通菜单项、子菜单和分组，超出宽度时自动折叠到"···"溢出菜单。
 
 ```yaml preview minHeight="300px"
 - brick: eo-nav-menu
@@ -106,13 +126,16 @@
                   type: default
 ```
 
-### overflow
+### 溢出折叠
+
+限制菜单宽度后超出菜单项自动收入"···"溢出子菜单中。
 
 ```yaml preview minHeight="300px"
 brick: eo-nav-menu
 properties:
   style:
     width: 100px
+  showTooltip: true
   menu:
     title: mock data
     menuItems:
@@ -163,6 +186,8 @@ properties:
 
 ### 带网站地图的菜单
 
+分组菜单项设置 `childLayout: siteMap` 后，悬停展示网站地图样式的下拉面板。
+
 ```yaml preview minHeight="500px"
 brick: eo-nav-menu
 properties:
@@ -203,273 +228,29 @@ properties:
             childLayout: default
             title: 计算
             items:
-              - activeExcludes: []
-                activeIncludes:
-                  - "/computing-resource-monitor/local/host/:path+"
-                activeMatchSearch: false
-                childLayout: default
-                defaultExpanded: false
-                exact: false
-                icon:
-                  category: second-menu
-                  icon: host-second-menu
-                  lib: easyops
-                instanceId: 6026b804c1a66
-                sort: 10
-                text: 主机(本地部署)
+              - text: 主机(本地部署)
                 to: /computing-resource-monitor/local/host
                 type: default
-                children: []
                 key: 1.0.0
-              - activeExcludes: []
-                activeIncludes:
-                  - /computing-resource-monitor/kubernetes/guide
-                  - /computing-resource-monitor/kubernetes/activation
-                  - "/computing-resource-monitor/kubernetes/activation/:path+"
-                activeMatchSearch: false
-                childLayout: default
-                defaultExpanded: false
-                exact: false
-                icon:
-                  category: second-menu
-                  icon: cluster-second-menu
-                  lib: easyops
-                instanceId: 6026b804c1aca
-                sort: 20
-                text: 集群
+              - text: 集群
                 to: /computing-resource-monitor/kubernetes/cluster
                 type: default
-                children: []
                 key: 1.0.1
-              - activeExcludes: []
-                activeIncludes: []
-                activeMatchSearch: false
-                defaultExpanded: false
-                exact: false
-                icon:
-                  category: second-menu
-                  icon: pod-second-menu
-                  lib: easyops
-                instanceId: 6026b804c1b2e
-                sort: 30
-                text: Pod
+              - text: Pod
                 to: /computing-resource-monitor/kubernetes/pod
                 type: default
-                children: []
                 key: 1.0.2
-              - activeExcludes: []
-                activeIncludes: []
-                activeMatchSearch: false
-                defaultExpanded: false
-                exact: false
-                icon:
-                  category: second-menu
-                  icon: node-second-menu
-                  lib: easyops
-                instanceId: 6026b804c1b92
-                sort: 40
-                text: 节点
-                to: /computing-resource-monitor/kubernetes/node
-                type: default
-                children: []
-                key: 1.0.3
-              - activeExcludes: []
-                activeIncludes: []
-                activeMatchSearch: false
-                defaultExpanded: false
-                exact: false
-                icon:
-                  category: second-menu
-                  icon: container-second-menu
-                  lib: easyops
-                instanceId: 6026b804c1bf6
-                sort: 50
-                text: 容器
-                to: /computing-resource-monitor/docker/container
-                type: default
-                children: []
-                key: 1.0.4
             key: "1.0"
           - type: group
             title: 存储
             items:
-              - activeExcludes: []
-                activeIncludes:
-                  - "/storage-resource-monitor/cbs/:path+"
-                activeMatchSearch: false
-                defaultExpanded: false
-                exact: false
-                icon:
-                  category: second-menu
-                  icon: tencent-cloud-hard-disk-second-menu
-                  lib: easyops
-                instanceId: 6026b6cf6bb56
-                sort: 0
-                text: 腾讯云・云磁盘CBS
+              - text: 腾讯云・云磁盘CBS
                 to: /storage-resource-monitor/cbs
                 type: default
-                children: []
                 key: 1.1.0
-              - activeExcludes: []
-                activeIncludes: []
-                activeMatchSearch: false
-                defaultExpanded: false
-                exact: false
-                icon:
-                  category: second-menu
-                  icon: container-second-menu
-                  lib: easyops
-                instanceId: 6026b6cf6bbba
-                sort: 0
-                text: 腾讯云对象存储
+              - text: 腾讯云对象存储
                 to: /storage-resource-monitor/cos
                 type: default
-                children: []
                 key: 1.1.1
             key: "1.1"
-          - type: group
-            title: 网络
-            items:
-              - activeExcludes: []
-                activeIncludes: []
-                activeMatchSearch: false
-                defaultExpanded: false
-                exact: false
-                icon:
-                  category: second-menu
-                  icon: loadbalance-second-menu
-                  lib: easyops
-                instanceId: 6026b7c20c8cf
-                sort: 0
-                text: 负载均衡策略
-                to: /network-resource-monitor/loadbalance
-                type: default
-                children: []
-                key: 1.2.0
-              - activeExcludes: []
-                activeIncludes: []
-                activeMatchSearch: false
-                defaultExpanded: false
-                exact: false
-                icon:
-                  category: second-menu
-                  icon: alibaba-cloud-elastic-public-ip-second-menu
-                  lib: easyops
-                instanceId: 6026b7c20c933
-                sort: 0
-                text: 阿里云・弹性公网IP
-                to: /network-resource-monitor/ali-eip
-                type: default
-                children: []
-                key: 1.2.1
-              - activeExcludes: []
-                activeIncludes: []
-                activeMatchSearch: false
-                defaultExpanded: false
-                exact: false
-                icon:
-                  category: second-menu
-                  icon: tencent-cloud-nat-gateway-second-menu
-                  lib: easyops
-                instanceId: 6026b7c20c997
-                sort: 0
-                text: 腾讯云 · NAT网关
-                to: /network-resource-monitor/gateway
-                type: default
-                children: []
-                key: 1.2.2
-            key: "1.2"
-          - type: group
-            title: 网络设备
-            items:
-              - activeExcludes: []
-                activeIncludes: []
-                activeMatchSearch: false
-                defaultExpanded: false
-                exact: false
-                instanceId: 6026b8b05e892
-                sort: 10
-                text: 交换机
-                to: /network-device-resource-monitor/switch
-                type: default
-                children: []
-                key: 1.3.0
-              - activeExcludes: []
-                activeIncludes: []
-                activeMatchSearch: false
-                defaultExpanded: false
-                exact: false
-                instanceId: 6026b8b05e8f6
-                sort: 20
-                text: 路由器
-                to: /network-device-resource-monitor/router
-                type: default
-                children: []
-                key: 1.3.1
-              - activeExcludes: []
-                activeIncludes: []
-                activeMatchSearch: false
-                defaultExpanded: false
-                exact: false
-                instanceId: 6026b8b05e95a
-                sort: 30
-                text: 防火墙
-                to: /network-device-resource-monitor/firewall
-                type: default
-                children: []
-                key: 1.3.2
-            key: "1.3"
-          - type: group
-            title: 自定义监控
-            groupFrom: monitor
-            items:
-              - activeExcludes: []
-                activeIncludes: []
-                activeMatchSearch: false
-                defaultExpanded: false
-                exact: false
-                instanceId: 6026b8b05e892
-                sort: 10
-                text: 主机
-                to: /network-device-resource-monitor/host
-                type: default
-                children: []
-                key: 1.4.0
-              - activeExcludes: []
-                activeIncludes: []
-                activeMatchSearch: false
-                defaultExpanded: false
-                exact: false
-                instanceId: 6026b8b05e8f6
-                sort: 20
-                text: 报文
-                to: /network-device-resource-monitor/message
-                type: default
-                children: []
-                key: 1.4.1
-              - activeExcludes: []
-                activeIncludes: []
-                activeMatchSearch: false
-                defaultExpanded: false
-                exact: false
-                instanceId: 6026b8b05e891
-                sort: 30
-                text: EasyCore
-                to: /network-device-resource-monitor/EasyCore
-                type: default
-                children: []
-                key: 1.4.2
-              - activeExcludes: []
-                activeIncludes: []
-                activeMatchSearch: false
-                defaultExpanded: false
-                exact: false
-                instanceId: 6026b8b05e8f7
-                sort: 40
-                text: 视图
-                to: /network-device-resource-monitor/view
-                type: default
-                children: []
-                key: 1.4.3
-            key: "1.4"
 ```

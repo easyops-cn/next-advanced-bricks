@@ -149,7 +149,7 @@ export interface ContainerConfig {
 }
 
 /**
- * 构件 `visual-builder.pre-generated-config`
+ * AI 预生成配置选择器，以 iframe 预览方式展示属性列表，允许用户勾选、排序和调整可视权重，生成最终砖块配置
  */
 export
 @defineElement("visual-builder.pre-generated-config", {
@@ -159,21 +159,40 @@ class PreGeneratedConfig
   extends ReactNextElement
   implements PreGeneratedConfigProps
 {
+  /**
+   * 预览 iframe 的地址，默认使用内置预览地址
+   */
   @property()
   accessor previewUrl: string | undefined;
 
+  /**
+   * 属性列表，支持对象属性（ObjectAttr）和指标属性（MetricAttr）
+   */
   @property({ attribute: false })
   accessor attrList: ObjectAttr[] | undefined;
 
+  /**
+   * 模拟数据列表，用于在预览列中展示真实渲染效果
+   */
   @property({ attribute: false })
   accessor mockList: Record<string, unknown>[] | undefined;
 
+  /**
+   * 指标分组配置，仅在 containerConfig.type 为 "grouped-chart" 时生效
+   */
   @property({ attribute: false })
   accessor metricGroups: MetricGroup[] | undefined;
 
+  /**
+   * 容器配置，决定生成的砖块布局类型（table/descriptions/cards/chart/grouped-chart）及数据绑定
+   */
   @property({ attribute: false })
   accessor containerConfig: ContainerConfig | undefined;
 
+  /**
+   * @detail `BrickConf | null` — 根据当前选择和权重生成的砖块配置，无选中时为 null
+   * @description 用户选择、排序或调整权重后，生成的砖块配置变化时触发
+   */
   @event({ type: "brick.change" })
   accessor #brickChangeEvent: EventEmitter<BrickConf | null>;
 

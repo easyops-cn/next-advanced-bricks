@@ -22,7 +22,11 @@ export interface Tab {
 type SizeTuple = [width: number, height: number];
 
 /**
- * 构件 `ai-portal.flow-tabs`
+ * 流程标签页组件，提供带背景画布动效的标签导航，支持工具栏插槽和默认内容插槽。
+ *
+ * @category navigate
+ * @slot toolbar - 标签栏右侧工具栏区域
+ * @slot default - 标签页内容区域
  */
 export
 @defineElement("ai-portal.flow-tabs", {
@@ -35,6 +39,10 @@ class FlowTabs extends ReactNextElement implements FlowTabsProps {
   @property({ attribute: false })
   accessor activeTab: string | undefined;
 
+  /**
+   * @detail { id: 标签 ID, label: 标签显示文本 }
+   * @description 点击标签项时触发，同时更新 activeTab 属性
+   */
   @event({ type: "tab.click" })
   accessor #tabClick!: EventEmitter<Tab>;
 

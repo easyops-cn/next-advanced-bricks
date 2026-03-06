@@ -10,7 +10,9 @@ import { useResizeObserver } from "../hooks/index.js";
 const { defineElement, property } = createDecorators();
 
 /**
- * 构件 `data-view.progress-bar-list`
+ * 大屏进度条列表
+ * @author nlicroshan
+ * @category big-screen-content
  */
 export
 @defineElement("data-view.progress-bar-list", {
@@ -18,9 +20,9 @@ export
 })
 class ProgressBarList extends ReactNextElement {
   /**
-   * @default
-   * @required
-   * @description 数据
+   * @default []
+   * @required false
+   * @description 数据列表，每项包含标题、数值及可选的进度条颜色配置
    */
   @property({
     attribute: false,

@@ -44,45 +44,75 @@ export interface SpaceWorkbenchProps {
 
 /**
  * 构件 `ai-portal.space-workbench`
+ *
+ * 协作空间工作台，集成顶部导航、侧边栏（知识库、业务实例）、聊天区域和服务流等核心功能的一体化工作台构件。
  */
 export
 @defineElement("ai-portal.space-workbench", {
   shadowOptions: false,
 })
 class SpaceWorkbench extends ReactNextElement implements SpaceWorkbenchProps {
+  /** 消息通知列表 */
   @property({ attribute: false })
   accessor notices: NoticeItem[] | undefined;
 
+  /** 知识库列表 */
   @property({ attribute: false })
   accessor knowledges: KnowledgeItem[] | undefined;
 
+  /** 空间详情信息，必填 */
   @property({ attribute: false })
   accessor spaceDetail!: SpaceDetail;
 
+  /** 消息中心跳转链接，必填 */
   @property()
   accessor notifyCenterUrl!: string;
 
+  /** 文件上传配置选项 */
   @property({ attribute: false })
   accessor uploadOptions: UploadOptions | undefined;
 
+  /**
+   * @description 点击返回按钮时触发
+   */
   @event({ type: "go.back" })
   accessor #_goBackEvent!: EventEmitter<void>;
 
+  /**
+   * @description 点击成员按钮时触发
+   */
   @event({ type: "members.click" })
   accessor #_membersClickEvent!: EventEmitter<void>;
 
+  /**
+   * @description 点击消息通知项时触发
+   * @detail { id: 消息ID, type: 消息类型, isRead: 是否已读, title: 标题, time: 时间戳 }
+   */
   @event({ type: "notice.click" })
   accessor #_noticeClickEvent!: EventEmitter<NoticeItem>;
 
+  /**
+   * @description 点击全部已读按钮时触发
+   */
   @event({ type: "mark.all.read" })
   accessor #_markAllReadEvent!: EventEmitter<void>;
 
+  /**
+   * @description 点击编辑空间按钮时触发
+   */
   @event({ type: "space.edit" })
   accessor #_spaceEditEvent!: EventEmitter<void>;
 
+  /**
+   * @description 点击知识条目时触发
+   * @detail 知识条目数据
+   */
   @event({ type: "knowledge.click" })
   accessor #_knowledgeClickEvent!: EventEmitter<KnowledgeItem>;
 
+  /**
+   * @description 点击添加知识按钮时触发
+   */
   @event({ type: "knowledge.add" })
   accessor #_knowledgeAddEvent!: EventEmitter<void>;
 

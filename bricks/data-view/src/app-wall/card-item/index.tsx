@@ -16,6 +16,7 @@ export interface AppWallCardItemProps {
 /**
  * 应用墙子构件----卡片项
  * @author nlicroshan
+ * @category big-screen-layout
  */
 @defineElement("data-view.app-wall-card-item", {
   styleTexts: [variablesStyleText, styleText],

@@ -173,14 +173,14 @@ class Textarea extends FormItemElementBase implements TextareaProps {
   accessor themeVariant: "default" | "elevo" | undefined;
 
   /**
-   * @detail
+   * @detail 当前输入值
    * @description 值改变事件
    */
   @event({ type: "change" })
   accessor #InputChangeEvent!: EventEmitter<string>;
 
   /**
-   * focus
+   * 使文本域获得焦点
    */
   @method({ bound: true })
   focusTextarea() {

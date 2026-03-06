@@ -73,6 +73,7 @@ interface NumberedDataItem extends DataItem {
 
 /**
  * 气泡样式的数据展示构件。
+ * @category big-screen-content
  */
 export
 @defineElement("data-view.bubbles-indicator", {

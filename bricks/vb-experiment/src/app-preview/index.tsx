@@ -13,13 +13,16 @@ export interface AppPreviewProps {
 }
 
 /**
- * 构件 `vb-experiment.app-preview`
+ * 在 iframe 中实时预览 Storyboard 的 App 预览构件，通过内置的 AppPreviewer 接口渲染页面
  */
 export
 @defineElement("vb-experiment.app-preview", {
   styleTexts: [styleText],
 })
 class AppPreview extends ReactNextElement {
+  /**
+   * 要预览的 Storyboard 配置，更新后会自动触发 iframe 内容刷新
+   */
   @property({ attribute: false })
   accessor storyboard: Storyboard | undefined;
 

@@ -32,7 +32,9 @@ export interface GoalCardListProps {
 const GoalCardListComponent = forwardRef(LegacyGoalCardListComponent);
 
 /**
- * 构件 `ai-portal.goal-card-list`
+ * 目标卡片列表，以分层卡片形式展示目标项，支持内联编辑标题、状态切换、新建对话及追加子目标。
+ *
+ * @category display-component
  */
 export
 @defineElement("ai-portal.goal-card-list", {
@@ -52,24 +54,40 @@ class GoalCardList extends ReactNextElement implements GoalCardListProps {
   @property()
   accessor activeKey: string | undefined;
 
+  /**
+   * @detail { title: 目标标题, state: 目标状态, id: 序号, instanceId: 实例ID, level: 层级 }
+   * @description 点击目标卡片时触发
+   */
   @event({ type: "item.click" })
   accessor #itemClickEvent!: EventEmitter<GoalItem>;
   #handleItemClick = (item: GoalItem) => {
     this.#itemClickEvent.emit(item);
   };
 
+  /**
+   * @detail { title: 目标标题, state: 更新后的目标状态, id: 序号, instanceId: 实例ID, level: 层级 }
+   * @description 目标状态切换时触发
+   */
   @event({ type: "item.status.change" })
   accessor #itemStatusChangeEvent!: EventEmitter<GoalItem>;
   #handleItemStatusChange = (item: GoalItem) => {
     this.#itemStatusChangeEvent.emit(item);
   };
 
+  /**
+   * @detail { title: 更新后的标题, state: 目标状态, id: 序号, instanceId: 实例ID, level: 层级 }
+   * @description 目标标题内联编辑完成时触发
+   */
   @event({ type: "item.title.change" })
   accessor #itemTitleChangeEvent!: EventEmitter<GoalItem>;
   #handleTitleChange = (item: GoalItem) => {
     this.#itemTitleChangeEvent.emit(item);
   };
 
+  /**
+   * @detail { title: 目标标题, state: 目标状态, id: 序号, instanceId: 实例ID, level: 层级 }
+   * @description 点击目标卡片的新建对话按钮时触发
+   */
   @event({ type: "item.new.chat" })
   accessor #itemNewChatEvent!: EventEmitter<GoalItem>;
   #handleNewChat = (item: GoalItem) => {
@@ -78,6 +96,11 @@ class GoalCardList extends ReactNextElement implements GoalCardListProps {
 
   #ref = createRef<GoalListRef>();
 
+  /**
+   * 将待定子目标提交为正式目标项
+   * @param pendingId 待定子目标的临时 instanceId
+   * @param newItem 创建完成后的真实目标数据
+   */
   @method()
   appendChildDone(pendingId: string, newItem: GoalItem) {
     this.#ref.current?.appendChildDone(pendingId, newItem);

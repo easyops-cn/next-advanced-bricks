@@ -74,15 +74,15 @@ class CabinetContainer
   accessor customTitle: string | undefined;
 
   /**
-   * @detail
+   * @detail { type: 点击对象类型（"node" 或 "container"）, data: 被点击节点的数据（点击容器本身时为 undefined） }
    * @description 节点或者container 点击事件
    */
   @event({ type: "container.click" })
   accessor #onHandleClick!: EventEmitter<ClickEventDataType>;
 
   /**
-   * @detail
-   * @description 节点或者container 双击击事件
+   * @detail { type: 点击对象类型（"node" 或 "container"）, data: 被双击节点的数据（双击容器本身时为 undefined） }
+   * @description 节点或者container 双击事件
    */
   @event({ type: "container.dbclick" })
   accessor #onHandleDbClick!: EventEmitter<ClickEventDataType>;

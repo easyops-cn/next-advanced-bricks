@@ -78,6 +78,7 @@ export
 })
 class EoPagination extends ReactNextElement implements EoPaginationProps {
   /**
+   * 分页模式：`page` 为页码模式，`token` 为令牌（游标）模式
    * @default "page"
    */
   @property()
@@ -124,9 +125,15 @@ class EoPagination extends ReactNextElement implements EoPaginationProps {
   })
   accessor showSizeChanger: boolean | undefined;
 
+  /**
+   * 令牌模式下的下一页令牌（nextToken），有值时"下一页"按钮可点击
+   */
   @property()
   accessor nextToken: string | undefined;
 
+  /**
+   * 令牌模式下的上一页令牌（previousToken），有值时"上一页"按钮可点击
+   */
   @property()
   accessor previousToken: string | undefined;
 

@@ -27,6 +27,7 @@ export interface WorkbenchActionProps {
 }
 
 /**
+ * 工作台侧边栏操作按钮，显示图标链接并在右侧显示 tooltip
  * @insider
  */
 export
@@ -34,22 +35,28 @@ export
   styleTexts: [styleText],
 })
 class WorkbenchAction extends ReactNextElement {
+  /** 按钮图标配置 */
   @property({
     attribute: false,
   })
   accessor icon: GeneralIconProps | undefined;
 
+  /** 路由跳转地址 */
   @property() accessor to: string | undefined;
 
+  /** 是否处于激活状态 */
   @property({
     type: Boolean,
   })
   accessor active: boolean | undefined;
 
+  /** 外部链接地址 */
   @property() accessor href: string | undefined;
 
+  /** 链接打开方式 */
   @property() accessor target: string | undefined;
 
+  /** 鼠标悬停时显示的提示文字 */
   @property() accessor tooltip: string | undefined;
 
   render(): React.ReactNode {

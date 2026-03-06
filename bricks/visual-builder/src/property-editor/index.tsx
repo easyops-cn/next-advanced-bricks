@@ -100,7 +100,7 @@ export type { DataNode };
 let cacheCustomEditor: Function;
 
 /**
- * 构件 `visual-builder.property-editor`
+ * 构件属性编辑器，基于 Formily 渲染指定构件的属性编辑表单
  */
 export
 @defineElement("visual-builder.property-editor", {
@@ -112,42 +112,47 @@ export
 class PropertyEditor extends ReactNextElement {
   #formRef = createRef<any>();
 
-  /** 构件名称 */
+  /** 构件名称，用于加载对应的属性编辑器 */
   @property()
   accessor editorName: string | undefined;
 
-  /** 值 */
+  /** 属性编辑器的当前值 */
   @property({
     attribute: false,
   })
   accessor values: any | undefined;
 
-  /** 高级模式 */
+  /** 是否启用高级模式，高级模式下直接编辑原始属性对象 */
   @property({
     type: Boolean,
   })
   accessor advancedMode: boolean | undefined;
 
+  /** 数据列表，用于编辑器中的数据绑定选项 */
   @property({
     attribute: false,
   })
   accessor dataList: DataItem[];
 
+  /** 构件包信息，用于加载自定义编辑器 */
   @property({
     attribute: false,
   })
   accessor editorPackages: BrickPackage[];
 
+  /** 链接配置，用于编辑器中的跳转链接选项 */
   @property({
     attribute: false,
   })
   accessor links: any;
 
+  /** 额外的代码补全库，用于代码编辑器的类型提示 */
   @property({
     attribute: false,
   })
   accessor extraLibs: SelectOptions;
 
+  /** 子插槽选项，用于编辑器中选择子插槽 */
   @property({
     attribute: false,
   })
@@ -155,15 +160,39 @@ class PropertyEditor extends ReactNextElement {
 
   /**
    * 表单验证成功时触发事件
+   * @detail 表单验证成功后的表单值
    */
   @event({ type: "validate.success" }) accessor #successEvent!: EventEmitter<
     Record<string, unknown>
   >;
   /**
    * 表单验证报错时触发事件
+   * @detail 表单验证错误信息数组
    */
   @event({ type: "validate.error" }) accessor #errorEvent!: EventEmitter<any[]>;
 
+  /**
+   * 表单值发生变化时触发
+   * @detail 当前表单的最新值
+   */
+  @event({ type: "values.change" })
+  accessor #valuesChangeEvent!: EventEmitter<any>;
+
+  /**
+   * 点击代码编辑器中的 token 时触发
+   * @detail 被点击的 token 字符串
+   */
+  @event({ type: "token.click" })
+  accessor #tokenClick!: EventEmitter<string>;
+
+  /**
+   * 编辑器内部触发自定义动作时触发
+   * @detail 触发的动作标识
+   */
+  @event({ type: "trigger.action" })
+  accessor #triggerActionEvent!: EventEmitter<string>;
+
+  /** 触发表单校验，验证成功后触发 validate.success 事件，失败后触发 validate.error 事件 */
   @method()
   validate() {
     const form: Form = this.#formRef.current?.getFormInstance();
@@ -186,15 +215,9 @@ class PropertyEditor extends ReactNextElement {
       });
   }
 
-  @event({ type: "values.change" })
-  accessor #valuesChangeEvent!: EventEmitter<any>;
-
   #handleValuesChange = (value: any) => {
     this.#valuesChangeEvent.emit(value);
   };
-
-  @event({ type: "token.click" })
-  accessor #tokenClick!: EventEmitter<string>;
 
   #handleTokenClick = (value: string): void => {
     this.#tokenClick.emit(value);
@@ -208,9 +231,6 @@ class PropertyEditor extends ReactNextElement {
       this.#submitValue = listener(values, form);
     }
   );
-
-  @event({ type: "trigger.action" })
-  accessor #triggerActionEvent!: EventEmitter<string>;
 
   #handleTriggerAction = (action: string) => {
     this.#triggerActionEvent.emit(action);

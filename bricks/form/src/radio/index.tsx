@@ -51,14 +51,14 @@ export interface RadioProps extends FormItemProps {
 }
 export interface RadioEvents {
   change: CustomEvent<GeneralComplexOption>;
-  optionsChange: CustomEvent<{
+  "options.change": CustomEvent<{
     options: GeneralComplexOption[];
     name: string;
   }>;
 }
 export interface RadioEventsMapping {
   onValueChange: "change";
-  onOptionsChange: "optionsChange";
+  onOptionsChange: "options.change";
 }
 
 export type { GeneralComplexOption };
@@ -77,7 +77,7 @@ const { defineElement, property, event } = createDecorators();
 class Radio extends FormItemElementBase {
   #formatOptions: GeneralComplexOption[] | undefined;
   /**
-   * 下拉框字段名
+   * 字段名称
    */
   @property() accessor name: string | undefined;
 
@@ -94,7 +94,7 @@ class Radio extends FormItemElementBase {
   accessor options: GeneralOption[] | undefined;
 
   /**
-   * 单选框当前选中始值
+   * 单选框当前选中值
    */
   @property({
     attribute: false,
@@ -162,6 +162,7 @@ class Radio extends FormItemElementBase {
 
   /**
    * 值变化事件
+   * @detail `GeneralComplexOption | undefined` — 当前选中项的完整选项对象
    */
   @event({ type: "change" }) accessor #changeEvent!: EventEmitter<
     GeneralComplexOption | undefined
@@ -169,6 +170,7 @@ class Radio extends FormItemElementBase {
 
   /**
    * 选项列表变化事件
+   * @detail `{ options: { label: string; value: any; [key: string]: any }; name: string }` — 最新的选项列表及字段名
    */
   @event({ type: "options.change" }) accessor #optionsChange!: EventEmitter<{
     options: {

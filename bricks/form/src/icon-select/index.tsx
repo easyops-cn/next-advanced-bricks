@@ -53,7 +53,7 @@ const WrappedGeneralRadio = wrapBrick<
   RadioEventsMapping
 >("eo-radio", {
   onValueChange: "change",
-  onOptionsChange: "optionsChange",
+  onOptionsChange: "options.change",
 });
 const WrappedGeneralIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 const WrappedModal = wrapBrick<
@@ -148,7 +148,7 @@ class IconSelect extends FormItemElementBase implements IconSelectProps {
   accessor required: boolean | undefined;
 
   /**
-   * 是否必填
+   * 校验错误提示信息
    */
   @property({
     attribute: false,
@@ -161,6 +161,7 @@ class IconSelect extends FormItemElementBase implements IconSelectProps {
 
   /**
    * 值变化时触发
+   * @detail `Icon | undefined` — { lib: 图标库, icon: 图标名称, category: 图标分类, color: 图标颜色 } | undefined
    */
   @event({ type: "change" })
   accessor #change!: EventEmitter<Icon | undefined>;

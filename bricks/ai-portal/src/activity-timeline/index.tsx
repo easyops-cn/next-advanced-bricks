@@ -33,7 +33,10 @@ export interface ActivityTimelineProps {
 }
 
 /**
- * 构件 `ai-portal.activity-timeline`
+ * 活动时间线，展示目标的操作历史记录，支持多种动作类型的可视化展示。
+ *
+ * @description 活动时间线，展示目标的操作历史记录，支持多种动作类型的可视化展示。
+ * @category ai-portal
  */
 export
 @defineElement("ai-portal.activity-timeline", {
@@ -43,9 +46,15 @@ class ActivityTimeline
   extends ReactNextElement
   implements ActivityTimelineProps
 {
+  /**
+   * 活动记录列表
+   */
   @property({ attribute: false })
   accessor list: Activity[] | undefined;
 
+  /**
+   * 跳转到对话详情页的 URL 模板，支持 {conversation_id} 等活动记录字段插值
+   */
   @property()
   accessor chatUrlTemplate: string | undefined;
 

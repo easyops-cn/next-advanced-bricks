@@ -65,40 +65,64 @@ export interface ChatPanelProps {
 const ChatPanelComponent = forwardRef(LegacyChatPanelComponent);
 
 /**
- * 弹出式对话面板。
+ * 弹出式 AI 对话面板，以模态框形式展示对话界面，支持与 AI 助手进行多轮对话。
+ *
+ * @description 弹出式 AI 对话面板，以模态框形式展示对话界面，支持与 AI 助手进行多轮对话。
+ * @category ai-portal
  */
 export
 @defineElement("ai-portal.chat-panel", {
   shadowOptions: false,
 })
 class ChatPanel extends ReactNextElement implements ChatPanelProps {
+  /**
+   * 面板标题
+   */
   @property()
   accessor panelTitle: string | undefined;
 
+  /**
+   * 预设数字人 ID，对话提交时会携带该 ID
+   */
   @property()
   accessor aiEmployeeId: string | undefined;
 
+  /**
+   * 预设命令载荷，对话提交时会携带该命令
+   */
   @property({ attribute: false })
   accessor cmd: CommandPayload | undefined;
 
+  /**
+   * 面板宽度
+   */
   @property({ attribute: false }) accessor width: string | number | undefined;
 
+  /**
+   * 面板高度
+   */
   @property({ attribute: false }) accessor height: string | number | undefined;
 
+  /**
+   * 输入框占位文字
+   */
   @property()
   accessor placeholder: string | undefined;
 
+  /**
+   * 文件上传配置
+   */
   @property({ attribute: false })
   accessor uploadOptions: UploadOptions | undefined;
 
   /**
-   * Show help messages when no conversation exists.
+   * 无对话时显示的帮助内容配置
    */
   @property({ attribute: false })
   accessor help: { useBrick: UseBrickConf } | undefined;
 
   /**
-   * Whether to close the panel when clicking the mask.
+   * 是否点击遮罩关闭面板
    *
    * @default false
    */
@@ -107,26 +131,44 @@ class ChatPanel extends ReactNextElement implements ChatPanelProps {
 
   #ref = createRef<ChatPanelRef>();
 
+  /**
+   * 打开对话面板
+   */
   @method()
   open() {
     this.#ref.current?.open();
   }
 
+  /**
+   * 关闭对话面板
+   */
   @method()
   close() {
     this.#ref.current?.close();
   }
 
+  /**
+   * 设置输入框的内容
+   * @param content 要设置的文本内容
+   */
   @method()
   setInputValue(content: string) {
     this.#ref.current?.setInputValue(content);
   }
 
+  /**
+   * 直接发送一条消息
+   * @param payload 消息载荷，包含文本内容及可选的文件、命令等
+   */
   @method()
   send(payload: ChatPayload) {
     this.#ref.current?.send(payload);
   }
 
+  /**
+   * 在面板中显示文件预览
+   * @param file 要预览的文件信息
+   */
   @method()
   showFile(file: FileInfo) {
     this.#ref.current?.showFile(file);

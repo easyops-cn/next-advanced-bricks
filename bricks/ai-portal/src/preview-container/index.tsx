@@ -48,6 +48,8 @@ export interface PreviewContainerProps {
 
 /**
  * 构件 `ai-portal.preview-container`
+ *
+ * TSX 源码预览容器，将 TSX 源码字符串解析并渲染为完整的页面视图。
  */
 export
 @defineElement("ai-portal.preview-container", {
@@ -57,9 +59,11 @@ class PreviewContainer
   extends ReactNextElement
   implements PreviewContainerProps
 {
+  /** TSX 源码字符串，将被解析并渲染为页面视图 */
   @property({ attribute: false })
   accessor source: string | undefined;
 
+  /** 渲染上下文中可访问的 URL，传入后可在视图内通过路由相关 API 使用 */
   @property()
   accessor url: string | undefined;
 

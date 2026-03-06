@@ -16,7 +16,7 @@ const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 const { defineElement, property } = createDecorators();
 
 /**
- * 构件 `eo-current-time`
+ * 实时当前时间展示构件，每秒自动刷新，支持自定义时间格式和前置图标。
  */
 export
 @defineElement("eo-current-time", {

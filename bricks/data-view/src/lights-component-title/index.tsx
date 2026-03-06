@@ -10,7 +10,7 @@ interface LightsComponentTitleProps {
   theme: "light" | "dark";
 }
 /**
- * 构件 `data-view.lights-component-title`
+ * 大屏灯光风格组件标题
  * @author astrid
  * @category big-screen-content
  */
@@ -30,9 +30,9 @@ class LightsComponentTitle
   @property()
   accessor componentTitle: string;
   /**
-   * @default
-   * @required
-   * @description
+   * 主题风格，`light` 为浅色光标图标，`dark` 为深色光标图标
+   * @default "light"
+   * @required false
    */
   @property()
   accessor theme: "light" | "dark";

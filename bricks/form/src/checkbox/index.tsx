@@ -117,7 +117,7 @@ class Checkbox extends FormItemElementBase {
   accessor disabled: boolean | undefined;
 
   /**
-   * 是否为自定义
+   * 是否为自定义样式，仅在 type="icon" 时生效，启用后图标尺寸更大（52px）
    * @default false
    */
   @property({ type: Boolean })
@@ -136,7 +136,7 @@ class Checkbox extends FormItemElementBase {
   accessor message: Record<string, string> | undefined;
 
   /**
-   * 是否为复选框，为true时，则可设置分组数据 optionGroups
+   * 是否启用分组模式，为 true 时，则可设置分组数据 optionGroups
    */
   @property({
     type: Boolean,
@@ -156,7 +156,8 @@ class Checkbox extends FormItemElementBase {
   accessor themeVariant: "default" | "elevo" | undefined;
 
   /**
-   * 复选框变化事件
+   * 复选框选中项发生变化时触发
+   * @detail { value: 选中项的值, label: 选中项的标签, disabled: 是否禁用, checkboxColor: 复选框颜色 }[]
    */
   @event({ type: "change" })
   accessor #checkboxChangeEvent!: EventEmitter<CheckboxOptionType[]>;
@@ -179,7 +180,8 @@ class Checkbox extends FormItemElementBase {
   };
 
   /**
-   * 复选框变化事件
+   * 复选框选项数据变化时触发
+   * @detail { options: 最新的选项列表, name: 字段名称 }
    */
   @event({ type: "options.change" })
   accessor #optionsChangeEvent!: EventEmitter<OptionsChangeEventDetail>;

@@ -1,8 +1,36 @@
-构件 `vb-experiment.tsx-playground`
+---
+tagName: vb-experiment.tsx-playground
+displayName: WrappedVbExperimentTsxPlayground
+description: TSX 视图编辑器与实时预览的集成 Playground，支持用 TSX 语法编写视图，并即时渲染到右侧预览区
+category: ""
+source: "@next-bricks/vb-experiment"
+---
+
+# vb-experiment.tsx-playground
+
+> TSX 视图编辑器与实时预览的集成 Playground，支持用 TSX 语法编写视图，并即时渲染到右侧预览区
+
+## Props
+
+| 属性           | 类型           | 必填 | 默认值 | 说明                                                               |
+| -------------- | -------------- | ---- | ------ | ------------------------------------------------------------------ |
+| source         | `string`       | 否   | -      | 初始代码内容，仅在首次渲染时有效，后续更改不会同步到编辑器         |
+| extraLibs      | `ExtraLib[]`   | 否   | -      | 额外注入到编辑器的类型声明库，用于提供代码补全和类型检查           |
+| viewLibs       | `SourceFile[]` | 否   | -      | 额外的视图库源文件，会合并到类型声明中，并在解析视图时作为依赖提供 |
+| withoutWrapper | `boolean`      | 否   | -      | 是否跳过顶层 wrapper 包裹，启用后视图直接渲染为裸砖块列表          |
+| allowAnyBricks | `boolean`      | 否   | -      | 是否允许使用任意砖块，默认仅允许 next-tsx 白名单砖块               |
+
+## Events
+
+| 事件   | detail                              | 说明                 |
+| ------ | ----------------------------------- | -------------------- |
+| change | `string` — 当前编辑器中的代码字符串 | 编辑器内容变化时触发 |
 
 ## Examples
 
 ### Basic
+
+展示 TSX Playground 的基本用法，左侧代码编辑器，右侧实时预览视图。
 
 ```yaml preview minHeight="600px"
 - brick: vb-experiment.tsx-playground
@@ -51,38 +79,6 @@
                   {
                     "path": "/opt/maxkb/maxkb-pro-v2.0.1-x86_64-offline-installer/images/maxkb-pro.tar.gz",
                     "size": "1.00GB"
-                  },
-                  {
-                    "path": "/data/easyops/kafka/data/aggregate.metric.message.json-0/00000000000044787540.log",
-                    "size": "759.00MB"
-                  },
-                  {
-                    "size": "739.00MB",
-                    "path": "/data/easyops/kafka/data/monitor.metric.message.json-0/00000000000741056461.log"
-                  },
-                  {
-                    "path": "/data/easyops/mysql/data/ib_logfile1",
-                    "size": "512.00MB"
-                  },
-                  {
-                    "size": "512.00MB",
-                    "path": "/data/easyops/mysql/data/ib_logfile0"
-                  },
-                  {
-                    "size": "452.00MB",
-                    "path": "/usr/local/easyops/clickhouse/bin/clickhouse"
-                  },
-                  {
-                    "path": "/data/easyops/seaweedfs/data/data/easyops_5.dat",
-                    "size": "371.00MB"
-                  },
-                  {
-                    "size": "369.00MB",
-                    "path": "/data/easyops/seaweedfs/data/data/easyops_6.dat"
-                  },
-                  {
-                    "size": "360.00MB",
-                    "path": "/data/easyops/seaweedfs/data/data/easyops_1.dat"
                   }
                 ],
                 "device": "/dev/mapper/centos-root",
@@ -175,4 +171,43 @@
         border-radius: 0!important;
         border: none!important;
       }
+```
+
+### Without Wrapper
+
+跳过顶层包裹，直接渲染裸砖块列表，适合嵌入到其他布局中使用。
+
+```yaml preview minHeight="300px"
+brick: vb-experiment.tsx-playground
+properties:
+  style:
+    display: block
+    height: 300px
+  withoutWrapper: true
+  source: |
+    export default (
+      <Button type="primary">Hello World</Button>
+    );
+```
+
+### Allow Any Bricks
+
+允许使用任意砖块（不限于 next-tsx 白名单），适合高级使用场景。
+
+```yaml preview minHeight="300px"
+brick: vb-experiment.tsx-playground
+properties:
+  style:
+    display: block
+    height: 300px
+  allowAnyBricks: true
+  source: |
+    export default (
+      <View title="自定义砖块示例">
+        <Plaintext>支持使用任意砖块</Plaintext>
+      </View>
+    );
+events:
+  change:
+    action: console.log
 ```

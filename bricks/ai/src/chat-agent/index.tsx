@@ -55,26 +55,40 @@ export const ChatAgentComponent = forwardRef(LegacyChatAgentComponent);
 
 /**
  * 用于与 AI 机器人进行对话的代理构件，处理通信并整合消息。
+ * @category ai
  */
 export
 @defineElement("ai.chat-agent", {
   styleTexts: [styleText],
 })
 class ChatAgent extends ReactNextElement implements ChatAgentProps {
+  /**
+   * 智能体 ID
+   */
   @property()
   accessor agentId: string | undefined;
 
+  /**
+   * 机器人 ID
+   */
   @property()
   accessor robotId: string | undefined;
 
+  /**
+   * 会话 ID，用于延续历史会话
+   */
   @property()
   accessor conversationId: string | undefined;
 
+  /**
+   * 是否每次请求都使用新会话，设为 true 时每次发消息不会延续历史会话
+   */
   @property()
   accessor alwaysUseNewConversation: boolean | undefined;
 
   /**
    * 发送消息到默认的聊天 API
+   * @param content 要发送的消息内容
    */
   @method()
   postMessage(content: string) {
@@ -83,6 +97,9 @@ class ChatAgent extends ReactNextElement implements ChatAgentProps {
 
   /**
    * 发送聊天请求到指定的 URL
+   * @param leadingMessages 消息内容，可以是字符串或消息对象数组
+   * @param url 请求的目标 URL
+   * @param options SSE 流请求选项
    */
   @method()
   sendRequest(
@@ -95,6 +112,9 @@ class ChatAgent extends ReactNextElement implements ChatAgentProps {
 
   /**
    * 发送底层聊天请求到指定的 URL。接口的请求和响应的数据结构和 OpenAI 聊天接口一致。
+   * @param leadingMessages 消息内容，可以是字符串或消息对象数组
+   * @param url 请求的目标 URL
+   * @param options SSE 流请求选项
    */
   @method()
   lowLevelSendRequest(
@@ -109,6 +129,9 @@ class ChatAgent extends ReactNextElement implements ChatAgentProps {
     );
   }
 
+  /**
+   * 开启新会话，清空当前消息列表并重置会话状态
+   */
   @method()
   newConversation() {
     this.#ref.current?.newConversation();
@@ -121,6 +144,10 @@ class ChatAgent extends ReactNextElement implements ChatAgentProps {
   //   this.#messageChunkPushEvent.emit(msg);
   // };
 
+  /**
+   * 消息列表更新时触发
+   * @detail 当前全部消息列表
+   */
   @event({ type: "messages.update" })
   accessor #messagesUpdate!: EventEmitter<Message[]>;
 
@@ -128,6 +155,10 @@ class ChatAgent extends ReactNextElement implements ChatAgentProps {
     this.#messagesUpdate.emit(messages);
   };
 
+  /**
+   * 忙碌状态变化时触发，true 表示正在等待 AI 响应，false 表示响应完成
+   * @detail 当前忙碌状态
+   */
   @event({ type: "busy.change" })
   accessor #busyChangeEvent!: EventEmitter<boolean>;
 
@@ -135,6 +166,10 @@ class ChatAgent extends ReactNextElement implements ChatAgentProps {
     this.#busyChangeEvent.emit(busy);
   };
 
+  /**
+   * 会话 ID 变化时触发
+   * @detail 新的会话 ID，开启新会话时为 null
+   */
   @event({ type: "conversationId.change" })
   accessor #conversationIdChangeEvent!: EventEmitter<string | null>;
 

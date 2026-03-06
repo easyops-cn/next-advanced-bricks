@@ -20,11 +20,17 @@ export
   styleTexts: [styleText],
 })
 class EoLaunchpadQuickAccess extends ReactNextElement {
+  /**
+   * 是否为只读模式（隐藏收藏切换按钮）
+   */
   @property({
     type: Boolean,
   })
   accessor readonly: boolean | undefined;
 
+  /**
+   * 菜单项链接打开的目标
+   */
   @property()
   accessor target: Target | undefined;
 

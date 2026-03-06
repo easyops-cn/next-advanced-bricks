@@ -104,7 +104,8 @@ export interface EoDiagramEventsMapping {
 }
 
 /**
- * 构件 `eo-diagram`
+ * @description 图表构件，支持 dagre（有向无环图）和 force（力导向图）两种布局，可渲染节点和连线，支持缩放、平移、拖拽节点、连线交互等功能。
+ * @category diagram
  */
 export
 @defineElement("eo-diagram", {
@@ -112,50 +113,94 @@ export
 })
 class EoDiagram extends ReactNextElement implements EoDiagramProps {
   /**
+   * @description 图表布局类型，支持 `dagre`（层次有向图）和 `force`（力导向图）。
    * @required
    */
   @property({ type: String })
   accessor layout: "dagre" | "force" | undefined;
 
+  /**
+   * @description 节点数据列表，每个节点需包含唯一 `id` 字段。
+   */
   @property({ attribute: false })
   accessor nodes: DiagramNode[] | undefined;
 
+  /**
+   * @description 边（连线）数据列表，每条边需包含 `source` 和 `target` 字段，指向节点 id。
+   */
   @property({ attribute: false })
   accessor edges: DiagramEdge[] | undefined;
 
+  /**
+   * @description 节点砖块配置，指定渲染节点使用的自定义构件，可按节点类型匹配不同配置。
+   */
   @property({ attribute: false })
   accessor nodeBricks: NodeBrickConf[] | undefined;
 
+  /**
+   * @description 连线样式配置，支持箭头、颜色、标签、交互等多种选项。
+   */
   @property({ attribute: false })
   accessor lines: LineConf[] | undefined;
 
+  /**
+   * @description 布局算法选项，dagre 布局支持 rankdir、ranksep、nodesep 等，force 布局支持 dummyNodesOnEdges、collide 等。
+   */
   @property({ attribute: false })
   accessor layoutOptions: LayoutOptions | undefined;
 
+  /**
+   * @description 当前激活目标，可以是节点（`{ type: "node", nodeId }`) 或边（`{ type: "edge", edge }`），为 null 表示无激活目标。
+   */
   @property({ attribute: false })
   accessor activeTarget: ActiveTarget | null | undefined;
 
+  /**
+   * @description 是否禁用键盘操作（删除节点/边、切换激活节点），当有标签正在编辑时可临时禁用以避免冲突。
+   */
   @property({ type: Boolean })
   accessor disableKeyboardAction: boolean | undefined;
 
+  /**
+   * @description 连线交互配置，启用后支持从节点拖拽出新的连线，可配置连线样式和源节点过滤条件。
+   */
   @property({ attribute: false })
   accessor connectNodes: ConnectNodesOptions | undefined;
 
+  /**
+   * @description 拖拽节点配置，启用后支持手动拖拽节点调整位置，可配置是否保存用户视图。
+   */
   @property({ attribute: false })
   accessor dragNodes: DragNodesOptions | undefined;
 
+  /**
+   * @description 是否允许通过鼠标滚轮或触控板捏合手势缩放图表，默认为 true。
+   */
   @property({ type: Boolean })
   accessor zoomable: boolean | undefined = true;
 
+  /**
+   * @description 是否允许通过滚轮平移图表（非捏合手势），默认为 true。
+   */
   @property({ type: Boolean })
   accessor scrollable: boolean | undefined = true;
 
+  /**
+   * @description 是否允许通过鼠标拖拽平移图表，默认为 true。
+   */
   @property({ type: Boolean })
   accessor pannable: boolean | undefined = true;
 
+  /**
+   * @description 缩放比例范围，格式为 `[min, max]`，默认范围由内部常量决定。
+   */
   @property({ attribute: false })
   accessor scaleRange: RangeTuple | undefined;
 
+  /**
+   * @detail `ActiveTarget | null` — 当前激活目标，`{ type: "node", nodeId }` 或 `{ type: "edge", edge }` 或 null
+   * @description 激活目标变化时触发，当用户点击节点或边使其激活，或点击空白处取消激活时触发。
+   */
   @event({ type: "activeTarget.change" })
   accessor #activeTargetChangeEvent!: EventEmitter<ActiveTarget | null>;
 
@@ -163,6 +208,10 @@ class EoDiagram extends ReactNextElement implements EoDiagramProps {
     this.#activeTargetChangeEvent.emit(target);
   };
 
+  /**
+   * @detail `DiagramNode` — 被删除的节点对象，包含节点 id 及其他自定义字段
+   * @description 用户按 Delete/Backspace 键且当前激活目标为节点时触发，需外部处理实际删除逻辑。
+   */
   @event({ type: "node.delete" })
   accessor #nodeDelete!: EventEmitter<DiagramNode>;
 
@@ -170,6 +219,10 @@ class EoDiagram extends ReactNextElement implements EoDiagramProps {
     this.#nodeDelete.emit(node);
   };
 
+  /**
+   * @detail `DiagramEdge` — 被删除的边对象，包含 source、target 及其他自定义字段
+   * @description 用户按 Delete/Backspace 键且当前激活目标为边时触发，需外部处理实际删除逻辑。
+   */
   @event({ type: "edge.delete" })
   accessor #edgeDelete!: EventEmitter<DiagramEdge>;
 
@@ -177,6 +230,10 @@ class EoDiagram extends ReactNextElement implements EoDiagramProps {
     this.#edgeDelete.emit(edge);
   };
 
+  /**
+   * @detail `LineTarget` — 被点击的连线信息，包含 `{ id: 连线唯一标识, edge: 对应的边数据 }`
+   * @description 用户点击可交互连线时触发。
+   */
   @event({ type: "line.click" })
   accessor #lineClick!: EventEmitter<LineTarget>;
 
@@ -184,6 +241,10 @@ class EoDiagram extends ReactNextElement implements EoDiagramProps {
     this.#lineClick.emit(line);
   };
 
+  /**
+   * @detail `LineTarget` — 被双击的连线信息，包含 `{ id: 连线唯一标识, edge: 对应的边数据 }`
+   * @description 用户双击可交互连线时触发，常用于触发连线标签编辑。
+   */
   @event({ type: "line.dblclick" })
   accessor #lineDoubleClick!: EventEmitter<LineTarget>;
 
@@ -191,6 +252,10 @@ class EoDiagram extends ReactNextElement implements EoDiagramProps {
     this.#lineDoubleClick.emit(line);
   };
 
+  /**
+   * @detail `ConnectLineDetail` — 连线详情，包含 `{ source: 起始节点, target: 目标节点 }`
+   * @description 用户从一个节点拖拽连线到另一个节点并释放时触发，需外部处理实际建立连接的逻辑。
+   */
   @event({ type: "nodes.connect" })
   accessor #connectNodes!: EventEmitter<ConnectLineDetail>;
 
@@ -206,6 +271,12 @@ class EoDiagram extends ReactNextElement implements EoDiagramProps {
 
   #diagramRef = createRef<DiagramRef>();
 
+  /**
+   * @description 调用指定 id 的连线标签构件上的方法，常用于触发标签编辑（如 `callOnLineLabel(id, "enableEditing")`）。
+   * @param id 连线标签的 id（格式通常为 `${lineId}-${placement}`）
+   * @param method 要调用的方法名
+   * @param args 传递给方法的参数列表
+   */
   @method()
   callOnLineLabel(id: string, method: string, ...args: unknown[]) {
     this.#diagramRef.current?.callOnLineLabel(id, method, ...args);

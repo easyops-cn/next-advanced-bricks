@@ -40,6 +40,8 @@ interface DataItemWithPosition extends DataItem {
 
 /**
  * 地球加轨道的数据展示构件。
+ * @author astrid
+ * @category big-screen-content
  */
 export
 @defineElement("data-view.globe-with-orbit-indicator", {

@@ -96,7 +96,7 @@ class EoNextTable extends ReactNextElement implements NextTableProps {
   accessor columns: Column[] | undefined;
 
   /**
-   * 单元格
+   * 单元格统一配置，可配置 useBrick 自定义渲染所有单元格及表头
    */
   @property({
     attribute: false,
@@ -271,6 +271,7 @@ class EoNextTable extends ReactNextElement implements NextTableProps {
 
   /**
    * 前端搜索
+   * @param params - 搜索参数，q 为搜索关键词
    */
   @method()
   search(params: { q: string }) {

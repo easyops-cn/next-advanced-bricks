@@ -25,7 +25,8 @@ const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 const WrappedTooltip = wrapBrick<EoTooltip, ToolTipProps>("eo-tooltip");
 
 /**
- * 信息卡片
+ * 信息类卡片 —— 横向布局信息卡片
+ * @description 展示带图标、标题、描述和详细列表的横向布局信息卡片，支持链接跳转、插槽图标、标题后缀及操作区。
  * @author dophijing
  * @category card-info
  */
@@ -35,16 +36,16 @@ export
 })
 class EoInfoCardItem extends ReactNextElement implements EoInfoCardItemProps {
   /**
-   * title
+   * 卡片标题
    */
   @property()
   accessor cardTitle: string;
 
   /**
-   * description
+   * 卡片描述信息
    */
   @property()
-  accessor description: string;
+  accessor description: string | undefined;
 
   /**
    * 链接地址
@@ -53,7 +54,7 @@ class EoInfoCardItem extends ReactNextElement implements EoInfoCardItemProps {
   accessor url: string | undefined;
 
   /**
-   * 图标
+   * 图标配置，支持设置图标、颜色、尺寸、形状和背景色
    */
   @property({
     attribute: false,
@@ -61,12 +62,12 @@ class EoInfoCardItem extends ReactNextElement implements EoInfoCardItemProps {
   accessor cardIcon: IconAvatar | undefined;
 
   /**
-   * 详细列表
+   * 详细列表，每项可设置标题、描述文字或自定义构件
    */
   @property({
     attribute: false,
   })
-  accessor detailList: InfoCardDetail[];
+  accessor detailList: InfoCardDetail[] | undefined;
 
   /**
    * 链接跳转目标

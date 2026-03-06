@@ -67,6 +67,8 @@ export interface ActionClickDetail {
 
 /**
  * 构件 `ai-portal.project-knowledges`
+ *
+ * 项目知识库列表构件，展示项目中的知识条目，支持操作菜单和点击跳转。
  */
 export
 @defineElement("ai-portal.project-knowledges", {
@@ -76,18 +78,29 @@ class ProjectKnowledges
   extends ReactNextElement
   implements ProjectKnowledgesProps
 {
+  /** 知识列表数据，为 undefined 时显示加载状态 */
   @property({ attribute: false })
   accessor list: Knowledge[] | undefined;
 
+  /** 知识详情链接模板，支持使用知识字段插值 */
   @property()
   accessor urlTemplate: string | undefined;
 
+  /** 操作菜单配置，每条知识行尾显示可操作的菜单项 */
   @property({ attribute: false })
   accessor actions: ActionType[] | undefined;
 
+  /**
+   * @description 点击操作菜单项时触发
+   * @detail { action: 操作项配置, item: 所属知识数据 }
+   */
   @event({ type: "action.click" })
   accessor #actionClick!: EventEmitter<ActionClickDetail>;
 
+  /**
+   * @description 点击知识条目时触发
+   * @detail { instanceId: 知识ID, name: 知识名称, description: 描述, time: 时间戳, user: 创建人 }
+   */
   @event({ type: "item.click" })
   accessor #itemClick!: EventEmitter<Knowledge>;
 

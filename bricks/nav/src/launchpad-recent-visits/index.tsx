@@ -19,6 +19,9 @@ export
   styleTexts: [styleText],
 })
 class EoLaunchpadRecentVisits extends ReactNextElement {
+  /**
+   * 菜单项链接打开的目标（仅对应用类型的访问项生效，自定义链接类型始终在新标签打开）
+   */
   @property({
     attribute: false,
   })

@@ -28,6 +28,8 @@ export interface TabListMapping {
 /**
  * 构件 `ai-portal.tab-list`
  *
+ * 标签页列表构件，展示可切换的标签页，点击后触发事件并自动更新选中状态。
+ *
  * @part tabs - The tab list container
  * @part tab - The individual tab
  */
@@ -36,12 +38,18 @@ export
   styleTexts: [styleText],
 })
 class TabList extends ReactNextElement implements TabListProps {
+  /** 标签页配置列表，每项包含 id 和 label */
   @property({ attribute: false })
   accessor tabs: Tab[] | undefined;
 
+  /** 当前激活的标签页 id */
   @property({ attribute: false })
   accessor activeTab: string | undefined;
 
+  /**
+   * @description 点击标签页时触发，同时自动更新 activeTab
+   * @detail { id: 标签页ID, label: 标签页标题 }
+   */
   @event({ type: "tab.click" })
   accessor #tabClick!: EventEmitter<Tab>;
 

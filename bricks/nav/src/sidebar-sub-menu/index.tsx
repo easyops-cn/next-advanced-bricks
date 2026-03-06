@@ -55,7 +55,7 @@ interface SidebarSubMenuProps {
 const { defineElement, property } = createDecorators();
 
 /**
- * 构件 `eo-sidebar-sub-menu`
+ * 侧边栏子菜单，支持简单菜单项、分组和子菜单的嵌套渲染
  * @category navigation
  */
 export

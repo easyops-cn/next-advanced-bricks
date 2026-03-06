@@ -1,12 +1,39 @@
-构件 `ai-portal.dropdown-select`
+---
+tagName: ai-portal.dropdown-select
+displayName: WrappedAiPortalDropdownSelect
+description: 下拉选择器，提供选项列表供用户选择，支持搜索过滤功能。
+category: interact-basic
+source: "@next-bricks/ai-portal"
+---
 
-下拉选择器组件，提供选项列表供用户选择，支持搜索过滤功能。
+# ai-portal.dropdown-select
+
+> 下拉选择器，提供选项列表供用户选择，支持搜索过滤功能。
+
+## Props
+
+| 属性                 | 类型                  | 必填 | 默认值    | 说明                     |
+| -------------------- | --------------------- | ---- | --------- | ------------------------ |
+| value                | `string`              | 否   | -         | 当前选中项的值           |
+| options              | `DropdownOptions[]`   | 否   | -         | 可选项数据源             |
+| labelMaxWidth        | `string \| number`    | 否   | -         | 触发器标签的最大宽度     |
+| loading              | `boolean`             | 否   | -         | 是否显示加载状态         |
+| searchPlaceholder    | `string`              | 否   | -         | 搜索框的占位文本         |
+| dropdownContentStyle | `React.CSSProperties` | 否   | -         | 下拉内容区域的自定义样式 |
+| dropdownMaxWidth     | `string \| number`    | 否   | `"500px"` | 下拉框的最大宽度         |
+| showSearch           | `boolean`             | 否   | -         | 是否展示搜索框           |
+
+## Events
+
+| 事件   | detail                                                 | 说明           |
+| ------ | ------------------------------------------------------ | -------------- |
+| change | `DropdownOptions` — { label: 选项标签, value: 选项值 } | 选项选中时触发 |
 
 ## Examples
 
 ### Basic
 
-基础用法，提供选项列表：
+基础用法，提供选项列表供用户选择。
 
 ```yaml preview
 brick: ai-portal.dropdown-select
@@ -26,7 +53,7 @@ events:
 
 ### With Search
 
-启用搜索功能：
+启用搜索功能，允许用户通过关键词过滤选项。
 
 ```yaml preview
 brick: ai-portal.dropdown-select
@@ -51,7 +78,7 @@ events:
 
 ### Loading State
 
-加载状态显示：
+展示加载状态，适用于选项数据异步获取的场景。
 
 ```yaml preview
 brick: ai-portal.dropdown-select
@@ -67,13 +94,15 @@ events:
 
 ### Custom Width
 
-自定义标签和下拉框宽度：
+自定义标签和下拉框宽度，适合长文本选项场景。
 
 ```yaml preview
 brick: ai-portal.dropdown-select
 properties:
   labelMaxWidth: "150px"
   dropdownMaxWidth: "300px"
+  dropdownContentStyle:
+    padding: "8px 0"
   options:
     - label: "这是一个很长的选项标签文本"
       value: "long-option"
@@ -89,7 +118,7 @@ events:
 
 ### With Disabled Options
 
-包含禁用选项：
+包含禁用选项的下拉列表。
 
 ```yaml preview
 brick: ai-portal.dropdown-select
@@ -112,7 +141,7 @@ events:
 
 ### Complex Example
 
-综合示例，包含所有功能：
+综合示例，包含搜索、宽度自定义和禁用选项。
 
 ```yaml preview
 brick: ai-portal.dropdown-select

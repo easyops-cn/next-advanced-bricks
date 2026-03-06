@@ -33,14 +33,17 @@ interface WorkbenchActionListProps {
 }
 
 /**
+ * 工作台侧边栏操作列表，根据菜单配置渲染一组 workbench-action 按钮，并根据当前路由高亮激活项
  * @insider
  */
 @defineElement("visual-builder.workbench-action-list", {
   styleTexts: [styleText],
 })
 class WorkbenchActionList extends ReactNextElement {
+  /** 当前应用 ID，用于在切换应用时重置历史记录 */
   @property() accessor appId: string | undefined;
 
+  /** 侧边栏菜单配置 */
   @property({
     attribute: false,
   })

@@ -1,12 +1,44 @@
-构件 `ai-portal.chat-panel`
+---
+tagName: ai-portal.chat-panel
+displayName: WrappedAiPortalChatPanel
+description: 弹出式 AI 对话面板，以模态框形式展示对话界面，支持与 AI 助手进行多轮对话。
+category: ai-portal
+source: "@next-bricks/ai-portal"
+---
 
-## 介绍
+# ai-portal.chat-panel
 
-弹出式 AI 对话面板，提供一个模态框样式的聊天界面，支持与 AI 助手进行对话交互。
+> 弹出式 AI 对话面板，以模态框形式展示对话界面，支持与 AI 助手进行多轮对话。
+
+## Props
+
+| 属性          | 类型                                      | 必填 | 默认值  | 说明                                 |
+| ------------- | ----------------------------------------- | ---- | ------- | ------------------------------------ |
+| panelTitle    | `string \| undefined`                     | 否   | -       | 面板标题                             |
+| aiEmployeeId  | `string \| undefined`                     | 否   | -       | 预设数字人 ID，对话提交时会携带该 ID |
+| cmd           | `CommandPayload \| undefined`             | 否   | -       | 预设命令载荷，对话提交时会携带该命令 |
+| width         | `string \| number \| undefined`           | 否   | -       | 面板宽度                             |
+| height        | `string \| number \| undefined`           | 否   | -       | 面板高度                             |
+| placeholder   | `string \| undefined`                     | 否   | -       | 输入框占位文字                       |
+| uploadOptions | `UploadOptions \| undefined`              | 否   | -       | 文件上传配置                         |
+| help          | `{ useBrick: UseBrickConf } \| undefined` | 否   | -       | 无对话时显示的帮助内容配置           |
+| maskClosable  | `boolean \| undefined`                    | 否   | `false` | 是否点击遮罩关闭面板                 |
+
+## Methods
+
+| 方法          | 参数                             | 返回值 | 说明                 |
+| ------------- | -------------------------------- | ------ | -------------------- |
+| open          | `() => void`                     | `void` | 打开对话面板         |
+| close         | `() => void`                     | `void` | 关闭对话面板         |
+| setInputValue | `(content: string) => void`      | `void` | 设置输入框的内容     |
+| send          | `(payload: ChatPayload) => void` | `void` | 直接发送一条消息     |
+| showFile      | `(file: FileInfo) => void`       | `void` | 在面板中显示文件预览 |
 
 ## Examples
 
 ### Basic
+
+通过按钮触发打开 AI 对话面板。
 
 ```yaml preview
 - brick: eo-button
@@ -24,4 +56,55 @@
     height: 800
     panelTitle: AI 助手
     placeholder: 请输入您的问题...
+```
+
+### With Upload Options
+
+配置文件上传功能的对话面板。
+
+```yaml preview
+- brick: eo-button
+  properties:
+    themeVariant: elevo
+    textContent: 打开对话面板
+  events:
+    click:
+      target: "#chatPanel"
+      method: open
+- brick: ai-portal.chat-panel
+  properties:
+    id: chatPanel
+    panelTitle: AI 文档助手
+    placeholder: 请上传文件或输入问题
+    maskClosable: true
+    uploadOptions:
+      enabled: true
+      accept: .pdf,.docx
+      maxFiles: 3
+      readableAccept: PDF 或 Word 文档
+```
+
+### Programmatic Send
+
+通过调用 send 方法直接发起对话。
+
+```yaml preview
+- brick: eo-button
+  properties:
+    themeVariant: elevo
+    textContent: 发起分析请求
+  events:
+    click:
+      - target: "#chatPanel"
+        method: open
+      - target: "#chatPanel"
+        method: send
+        args:
+          - content: 请帮我分析当前系统的性能瓶颈
+- brick: ai-portal.chat-panel
+  properties:
+    id: chatPanel
+    panelTitle: AI 分析助手
+    width: 700
+    height: 600
 ```

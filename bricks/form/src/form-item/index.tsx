@@ -21,7 +21,7 @@ export type { FormItemProps };
 const { defineElement, property } = createDecorators();
 
 /**
- * 通用输入框构件
+ * 表单项构件
  * @author sailor
  * @slot - 表单项内容
  * @category form-input-basic
@@ -47,22 +47,40 @@ class FormItem extends FormItemElementBase implements FormItemProps {
    */
   @property() accessor name: string | undefined;
 
+  /**
+   * 标签文字
+   */
   @property() accessor label: string | undefined;
 
+  /**
+   * 正则校验规则
+   */
   @property() accessor pattern: string | undefined;
 
+  /**
+   * 校验失败时的提示信息
+   */
   @property({
     attribute: false,
   })
   accessor message: Record<string, string> | undefined;
 
+  /**
+   * 校验类型
+   */
   @property() accessor type: string | undefined;
 
+  /**
+   * 表单校验最大值（当 type 为 number 时表示最大数值，否则表示最大长度）
+   */
   @property({
     type: Number,
   })
   accessor max: number | undefined;
 
+  /**
+   * 表单校验最小值（当 type 为 number 时表示最小数值，否则表示最小长度）
+   */
   @property({
     type: Number,
   })
@@ -82,10 +100,20 @@ class FormItem extends FormItemElementBase implements FormItemProps {
    */
   @property() accessor value: string | undefined;
 
+  /**
+   * 子构件中对应值的属性名
+   * @default "value"
+   */
   @property() accessor valuePropsName: string | undefined;
 
+  /**
+   * 布局方式
+   */
   @property() accessor layout: Layout | undefined;
 
+  /**
+   * 尺寸
+   */
   @property() accessor size: ComponentSize | undefined;
 
   /**
@@ -100,6 +128,7 @@ class FormItem extends FormItemElementBase implements FormItemProps {
 
   /**
    * 事件触发方法名
+   * @default "onChange"
    */
   @property()
   accessor trigger!: string;
@@ -113,7 +142,7 @@ class FormItem extends FormItemElementBase implements FormItemProps {
   accessor validator: ((value: any) => MessageBody) | undefined;
 
   /**
-   * 值变化时是否主动出发校验
+   * 值变化时是否主动触发校验
    */
   @property({
     type: Boolean,

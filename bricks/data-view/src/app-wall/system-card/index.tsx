@@ -27,69 +27,45 @@ export interface SystemCardProps {
 /**
  * 应用墙系统卡片
  * @author astrid
+ * @category big-screen-layout
  */
 @defineElement("data-view.app-wall-system-card", {
   styleTexts: [variablesStyleText, styleText],
 })
 class SystemCard extends ReactNextElement implements SystemCardProps {
   /**
-   * @kind StatusType
-   * @required true
-   * @default normal
-   * @description 卡片状态
-   * @enums
-   * @group basic
+   * 卡片状态
    */
   @property({ attribute: false })
   accessor status: StatusType = "normal";
 
   /**
-   * @kind string
-   * @required -
-   * @default -
-   * @description 卡片标题
-   * @enums
-   * @group basic
+   * 卡片标题
    */
   @property()
   accessor cardTitle: string | undefined;
 
   /**
-   * @kind DescriptionItem[]
-   * @required false
-   * @default -
-   * @description 卡片信息数据
-   * @enums
-   * @group basic
+   * 卡片信息数据
    */
   @property({ attribute: false })
   accessor itemList: DescriptionItem[];
 
   /**
-   * @kind string
-   * @required -
-   * @default -
-   * @description 按钮名称
-   * @enums
-   * @group basic
+   * 按钮名称
    */
   @property()
   accessor buttonName: string | undefined;
 
   /**
-   * @kind React.CSSProperties
-   * @required -
-   * @default -
-   * @description 外层容器样式
-   * @enums
-   * @group basic
+   * 外层容器样式
    */
   @property({ attribute: false })
   accessor containerStyle: React.CSSProperties;
 
   /**
-   * @detail
-   * @description 按钮点击
+   * @detail `void`
+   * @description 按钮点击事件
    */
   @event({ type: "button-click" })
   accessor #onClickEvent!: EventEmitter<void>;

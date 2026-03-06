@@ -251,6 +251,7 @@ class Select extends FormItemElementBase {
   accessor groupBy: string | undefined;
 
   /**
+   * 后缀内容，使用 useBrick 在选项及选中值旁显示额外信息
    */
   @property({
     attribute: false,
@@ -317,6 +318,7 @@ class Select extends FormItemElementBase {
 
   /**
    * 下拉选择事件
+   * @detail `{ value: string | string[]; options: GeneralComplexOption[] }` — 选中的值及对应选项列表
    */
   @event({ type: "change" })
   accessor #changeEvent!: EventEmitter<ChangeEventDetail>;
@@ -332,6 +334,7 @@ class Select extends FormItemElementBase {
 
   /**
    * 下拉框search事件
+   * @detail `{ value: string }` — 当前输入的搜索词
    */
   @event({ type: "search" })
   accessor #searchEvent!: EventEmitter<SearchEventDetail>;
@@ -345,6 +348,7 @@ class Select extends FormItemElementBase {
 
   /**
    * 选项列表变化事件
+   * @detail `{ options: { label: string; value: any; [key: string]: any }; name: string }` — 最新的选项列表及字段名
    */
   @event({ type: "options.change" })
   accessor #optionsChange!: EventEmitter<OptionsChangeEventDetail>;

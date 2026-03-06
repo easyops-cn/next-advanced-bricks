@@ -126,8 +126,8 @@ class ModernStyleTreemap
   accessor tooltipStyle: CSSProperties;
 
   /**
-   * @detail
-   * @description 点击事件
+   * @detail { name: 节点名称, value: 节点数值, children: 子节点列表 }
+   * @description 点击叶子节点时触发
    */
   @event({ type: "treemap.click" })
   accessor #onClickEvent!: EventEmitter<TreemapData>;

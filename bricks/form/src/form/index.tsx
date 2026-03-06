@@ -80,6 +80,9 @@ class Form extends ReactNextElement implements FormProps, AbstractForm {
     this.formStore.setInitValue(values, this.defaultEmitValuesChange);
   }
 
+  /**
+   * 静态附加值，在表单验证成功时会合并到 validate.success 事件的 detail 中
+   */
   @property({
     attribute: false,
   })
@@ -144,12 +147,15 @@ class Form extends ReactNextElement implements FormProps, AbstractForm {
     },
   };
 
+  /**
+   * 是否在验证失败时自动滚动到第一个错误字段
+   */
   @property({ render: false, type: Boolean })
   accessor autoScrollToInvalidFields: boolean | undefined;
 
   /**
    * 表单值变更事件
-   * @detail
+   * @detail 当前所有表单字段的值
    */
   @event({ type: "values.change" }) accessor #valuesChangeEvent!: EventEmitter<
     Record<string, unknown>
@@ -160,12 +166,14 @@ class Form extends ReactNextElement implements FormProps, AbstractForm {
 
   /**
    * 表单验证成功时触发事件
+   * @detail 表单所有字段的值，包含合并后的 staticValues
    */
   @event({ type: "validate.success" }) accessor #successEvent!: EventEmitter<
     Record<string, unknown>
   >;
   /**
    * 表单验证报错时触发事件
+   * @detail 校验失败的字段信息列表，每项包含 name（字段名）及错误消息
    */
   @event({ type: "validate.error" }) accessor #errorEvent!: EventEmitter<
     (MessageBody & { name: string })[]
@@ -193,12 +201,14 @@ class Form extends ReactNextElement implements FormProps, AbstractForm {
 
   /**
    * 表单设置值方法
+   * @param values - 要设置的表单字段值
+   * @param options - 可选配置，支持 runInMicrotask（微任务中执行）和 runInMacrotask（宏任务中执行）
    */
   @method()
   setInitValue(
     values: Record<string, unknown>,
     options?: { runInMacrotask?: boolean; runInMicrotask?: boolean }
-  ) {
+  ): void {
     if (options) {
       options.runInMicrotask &&
         queueMicrotask(() => {
@@ -215,22 +225,28 @@ class Form extends ReactNextElement implements FormProps, AbstractForm {
 
   /**
    * 表单重置值方法
+   * @param name - 要重置的字段名，不传则重置所有字段
    */
   @method()
-  resetFields(name?: string) {
+  resetFields(name?: string): void {
     this.formStore.resetFields(typeof name === "string" ? name : undefined);
   }
 
   /**
    * 获取表单值方法
+   * @param name - 要获取的字段名，不传则获取所有字段的值
+   * @returns 指定字段的值，或所有字段值的对象
    */
   @method()
-  getFieldsValue(name?: string) {
+  getFieldsValue(name?: string): Record<string, unknown> | unknown {
     return this.formStore.getFieldsValue(
       typeof name === "string" ? name : undefined
     );
   }
 
+  /**
+   * 表单自定义样式
+   */
   @property({
     attribute: false,
   })
@@ -238,9 +254,10 @@ class Form extends ReactNextElement implements FormProps, AbstractForm {
 
   /**
    * 校验表单字段方法
+   * @param name - 要校验的字段名
    */
   @method()
-  validateField(name: string) {
+  validateField(name: string): void {
     this.formStore.validateField(name);
   }
 
@@ -248,7 +265,7 @@ class Form extends ReactNextElement implements FormProps, AbstractForm {
    * 重置表单校验状态方法
    */
   @method()
-  resetValidateState() {
+  resetValidateState(): void {
     this.formStore.resetValidateState();
   }
 

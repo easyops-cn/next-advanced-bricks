@@ -113,7 +113,9 @@ export interface McpServer {
 }
 
 /**
- * 构件 `ai-portal.mcp-tools`
+ * MCP 工具列表组件，按服务分组展示工具信息，支持按平台分类过滤和吸顶标签栏。
+ *
+ * @category display-component
  */
 export
 @defineElement("ai-portal.mcp-tools", {

@@ -1,12 +1,38 @@
-构件 `ai-portal.notice-list`
+---
+tagName: ai-portal.notice-list
+displayName: WrappedAiPortalNoticeList
+description: 消息通知列表构件，用于展示消息列表，支持批量操作
+category: ""
+source: "@next-bricks/ai-portal"
+---
 
-消息通知列表构件，支持批量操作功能。
+# ai-portal.notice-list
+
+> 消息通知列表构件，用于展示消息列表，支持批量操作
+
+## Props
+
+| 属性        | 类型           | 必填 | 默认值 | 说明               |
+| ----------- | -------------- | ---- | ------ | ------------------ |
+| dataSource  | `NoticeItem[]` | 否   | -      | 消息数据列表       |
+| emptyText   | `string`       | 否   | -      | 空状态文案         |
+| urlTemplate | `string`       | 否   | -      | 详情链接           |
+| urlTarget   | `Target`       | 否   | -      | 详情链接目标       |
+| selectedIds | `string[]`     | 否   | -      | 选中的消息 ID 数组 |
+
+## Events
+
+| 事件            | detail                              | 说明               |
+| --------------- | ----------------------------------- | ------------------ |
+| notice.click    | `NoticeItem` — 消息项数据           | 消息项点击事件     |
+| mark.items.read | `NoticeItem[]` — 选中的消息 ID 数组 | 标记消息项已读事件 |
+| mark.all.read   | `void`                              | 全部已读事件       |
 
 ## Examples
 
-### Basic
+### 基础使用
 
-基础用法，展示消息列表。
+展示消息列表，支持批量选择和标记已读操作。
 
 ```yaml preview
 brick: ai-portal.notice-list
@@ -54,7 +80,7 @@ events:
         - "全部已读"
 ```
 
-### Empty State
+### 空状态
 
 空状态展示，可以自定义空状态文案。
 
@@ -63,4 +89,26 @@ brick: ai-portal.notice-list
 properties:
   dataSource: []
   emptyText: "暂无新消息通知"
+```
+
+### 带链接跳转
+
+配置 urlTemplate 使消息项点击后跳转到详情页。
+
+```yaml preview
+brick: ai-portal.notice-list
+properties:
+  urlTemplate: "/notices/{{id}}"
+  urlTarget: "_blank"
+  dataSource:
+    - id: "1"
+      type: "project"
+      isRead: false
+      title: "协作流【研发设计】已完成"
+      time: 1761207261887
+    - id: "2"
+      type: "account"
+      isRead: false
+      title: "您的账户资源配额即将达到限制"
+      time: 1761812267887
 ```

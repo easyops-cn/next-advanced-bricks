@@ -8,7 +8,7 @@ import "@next-core/theme";
 const { defineElement, property } = createDecorators();
 
 /**
- * 构件 `visual-builder.pre-generated-container`
+ * 预生成编排容器，使用 useBrick 渲染指定的构件配置，并将 dataSource 作为数据传入
  *
  * @internal
  */
@@ -17,9 +17,11 @@ export
   shadowOptions: false,
 })
 class PreGeneratedContainer extends ReactNextElement {
+  /** 要渲染的构件配置 */
   @property({ attribute: false })
   accessor useBrick: UseBrickConf | undefined;
 
+  /** 传入构件的数据 */
   @property({ attribute: false })
   accessor dataSource: unknown | undefined;
 

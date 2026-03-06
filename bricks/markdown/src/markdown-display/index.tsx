@@ -61,6 +61,9 @@ export
   styleTexts: [styleText],
 })
 class MarkdownDisplay extends ReactNextElement implements MarkdownDisplayProps {
+  /**
+   * Markdown 文本内容
+   */
   @property()
   accessor content: string | undefined;
 

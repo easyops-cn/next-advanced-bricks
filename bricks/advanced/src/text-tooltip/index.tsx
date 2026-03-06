@@ -19,8 +19,9 @@ import {
 const { defineElement, property } = createDecorators();
 
 /**
- * 超出宽度鼠标悬浮显示tooltip
- * 构件 `eo-text-tooltip`
+ * 文本超出显示区域时，鼠标悬浮显示完整内容的 Tooltip
+ * @author developer
+ * @category display
  */
 export
 @defineElement("eo-text-tooltip", {
@@ -28,14 +29,14 @@ export
 })
 class EoTextTooltip extends ReactNextElement implements EoTextTooltipProps {
   /**
-   * 文案
+   * 显示的文本内容，超出时以省略号截断
    * @default
    */
   @property({ type: String })
   accessor label: string | undefined;
 
   /**
-   * 省略行数
+   * 省略的行数，超过该行数后显示省略号，设为 0 表示不省略
    * @default 1
    */
   @property({ type: Number })
