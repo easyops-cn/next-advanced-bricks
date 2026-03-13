@@ -3140,14 +3140,7 @@
   dependencies:
     "@next-core/http" "^1.0.6"
 
-"@next-api-sdk/llm-sdk@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@next-api-sdk/llm-sdk/-/llm-sdk-1.6.0.tgz#afb2c60e2bddcd113d2ee01ee1318253c9fcaba2"
-  integrity sha512-kRyFxNj8TnDn8dkULieB4eVuPtK6v+k25o6oizz1KsrzP1dSlzv+fmRE0JBMsz3RevCYzEpzo1X+uyP065sRZQ==
-  dependencies:
-    "@next-core/http" "^1.0.0"
-
-"@next-api-sdk/llm-sdk@^1.6.2":
+"@next-api-sdk/llm-sdk@^1.6.0", "@next-api-sdk/llm-sdk@^1.6.2":
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/@next-api-sdk/llm-sdk/-/llm-sdk-1.6.2.tgz#a36b4cad25282a4d0fa437c9a486bdd9b52c79a8"
   integrity sha512-DDuTXnyqWUU1ARu1twKooS41gg831s86vhk9NbPpzOs50eD5XzVtQBEQ6Yzf76wqeLsyTfEnZfweGCbgRuAKSQ==
@@ -3252,10 +3245,10 @@
     mockdate "^3.0.5"
     ws "^8.18.2"
 
-"@next-core/brick-dll-v3@^0.8.26":
-  version "0.8.26"
-  resolved "https://registry.yarnpkg.com/@next-core/brick-dll-v3/-/brick-dll-v3-0.8.26.tgz#83e1e0cec47925c08c7542e57da8664274ae2fcc"
-  integrity sha512-7aei7KnJAd2bzcm2S3Jx0F/D9ln5fv2wT3ut70HQASTEnPPnyIq8SUxXGgyOz6YEFJrSJh3Mb1ousU6PwfBvZQ==
+"@next-core/brick-dll-v3@^0.8.33":
+  version "0.8.33"
+  resolved "https://registry.yarnpkg.com/@next-core/brick-dll-v3/-/brick-dll-v3-0.8.33.tgz#c153d28ce32af87fad6f475a51012e9c31a082f2"
+  integrity sha512-GjNeSyPkPMzFHRirFuZrjvF1NXuivTQAa2vIfJLecczMmvCGDKzR1E0qRNPnIXwY7U+rz0sT9fTdjZqrYhsjkA==
 
 "@next-core/brick-manifest@^0.7.2":
   version "0.7.2"
@@ -3547,30 +3540,30 @@
     minimist "^1.2.8"
     plop "^4.0.1"
 
-"@next-dll/ace@^2.0.791":
-  version "2.0.791"
-  resolved "https://registry.yarnpkg.com/@next-dll/ace/-/ace-2.0.791.tgz#c0070a66041bff55bb5b3c134a0db5ac96eccf02"
-  integrity sha512-+g2ioKoL2iWBQJ12PwrH6BHybmpnD0GnGbfU4RNLhTzQ51xoibOjuVnkWRpFu5aSNLaylaEJaBALPZl0lGr27A==
+"@next-dll/ace@^2.0.817":
+  version "2.0.817"
+  resolved "https://registry.yarnpkg.com/@next-dll/ace/-/ace-2.0.817.tgz#2964102760901a86e350d25b27d7b237ac803cfa"
+  integrity sha512-oc/MmRURcm5m/aNS5VtvJwEdHbRxE7mver0u13F3U2ErxKPP4sgH6tQCOqMXHYLI9XJHOhTWrI1COezsMrvsvQ==
 
-"@next-dll/d3@^2.0.83":
-  version "2.0.83"
-  resolved "https://registry.yarnpkg.com/@next-dll/d3/-/d3-2.0.83.tgz#673a9e4f5f9d414f14fb654e7c7fb06f0d806b17"
-  integrity sha512-G3ZXRWzXFGZy4wsq1AjzMXyN/kGx9XfW2oRJaM/u+mCe4mJvz4IQvEzt9+/wPnRAUEr7p/BsbkXxCSTEockvqQ==
-
-"@next-dll/echarts@^2.0.84":
+"@next-dll/d3@^2.0.84":
   version "2.0.84"
-  resolved "https://registry.yarnpkg.com/@next-dll/echarts/-/echarts-2.0.84.tgz#fbc6ec7854be65906b6a358a780d5bd775dba09c"
-  integrity sha512-oFBQE3FCZWvw1IoY86tX8Lazqz96+0TwalF0e7TdAY+8oX/1dEHiY0IVYoQO3ONdrb+33bEBANb/b296v8WaEg==
+  resolved "https://registry.yarnpkg.com/@next-dll/d3/-/d3-2.0.84.tgz#780ca9d018685ef82000623ba5a3088716593608"
+  integrity sha512-pNxBPiVZYdDmkYPBfYBaMHov5QyeFG2Uk5SjSBSUf50L/dd0AraKj7aeRf32fWjohgy9irJx/lyzHjRP8En/Ug==
 
-"@next-dll/editor-bricks-helper@^0.40.6":
-  version "0.40.6"
-  resolved "https://registry.yarnpkg.com/@next-dll/editor-bricks-helper/-/editor-bricks-helper-0.40.6.tgz#8e8a29b4408991b11ba80c7d19201d860578a8f6"
-  integrity sha512-oCALnElEAw2UykjH5lKCDlHW5EAek7PTlDeNR3fh0GnWH/ihNebcYxY0lWekJOKrGafR3BIOvw/HxPj+7g0AXQ==
+"@next-dll/echarts@^2.0.85":
+  version "2.0.85"
+  resolved "https://registry.yarnpkg.com/@next-dll/echarts/-/echarts-2.0.85.tgz#027e588352c8e5d8ef3444a8cb58af31ce20e70f"
+  integrity sha512-sUnrOScLw3CoFwpmcMN9qtuQ44EhSgGiiyf5QlIGIuqA03hu6n1YDQNTc3DbvXRHCK6w/4+O2ELCcgg3Q9J2Kw==
 
-"@next-dll/react-dnd@^0.1.729":
-  version "0.1.729"
-  resolved "https://registry.yarnpkg.com/@next-dll/react-dnd/-/react-dnd-0.1.729.tgz#39c8e2400eb72b24109cd386c28ef3c945e88460"
-  integrity sha512-rgY9XcrK1KsBq4N1j5EMa50lUxAws2kuVUORn6t3sXLQv1dE1bbFnQXrqSIlZO5JKzBfp+pIzzdDdJiKSrFUdA==
+"@next-dll/editor-bricks-helper@^0.41.16":
+  version "0.41.16"
+  resolved "https://registry.yarnpkg.com/@next-dll/editor-bricks-helper/-/editor-bricks-helper-0.41.16.tgz#da0a5b928583feb358e1d36caeedf7163c1ea5ad"
+  integrity sha512-Z+Jh1/8oe7A1Z36YtaIeu3oDEqaVIL5iHfasaxgok2dcQfisdL1EqjELBiSX8bKzv5tuLzu84h21pear5D6Biw==
+
+"@next-dll/react-dnd@^0.1.755":
+  version "0.1.755"
+  resolved "https://registry.yarnpkg.com/@next-dll/react-dnd/-/react-dnd-0.1.755.tgz#c8647ad7c9a7fcecad663efcb16f521c3ea27941"
+  integrity sha512-L+qfiqyZ926HEXso8W589uug2HSbTzokd990AV2MGAukxuAXF7dXfQ7tF3Rck/xEKD2U484r/gKJ27cAaoukMQ==
 
 "@next-shared/common-bricks@^0.58.1":
   version "0.58.1"
@@ -8348,12 +8341,7 @@ dateformat@^3.0.3:
   resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-3.0.3.tgz#a6e37499a4d9a9cf85ef5872044d62901c9889ae"
   integrity sha512-jyCETtSl3VMZMWeRo7iY1FL19ges1t55hMo5yaam4Jrsm5EPL89UQkoQRyiI+Yf4k8r2ZpdngkV8hr1lIdjb3Q==
 
-dayjs@^1.10.4, dayjs@^1.11.10, dayjs@^1.11.11, dayjs@^1.11.13:
-  version "1.11.13"
-  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.13.tgz#92430b0139055c3ebb60150aa13e860a4b5a366c"
-  integrity sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==
-
-dayjs@^1.11.4:
+dayjs@^1.10.4, dayjs@^1.11.10, dayjs@^1.11.11, dayjs@^1.11.13, dayjs@^1.11.4:
   version "1.11.19"
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.19.tgz#15dc98e854bb43917f12021806af897c58ae2938"
   integrity sha512-t5EcLVS6QPBNqM2z8fakk/NKel+Xzshgt8FFKAn+qwlD1pzZWxh0nVCrvFK7ZDb6XucZeF9z8C7CBWTRIVApAw==
@@ -16870,15 +16858,7 @@ rc-util@^4.15.3:
     react-lifecycles-compat "^3.0.4"
     shallowequal "^1.1.0"
 
-rc-util@^5.0.1, rc-util@^5.16.1, rc-util@^5.17.0, rc-util@^5.18.1, rc-util@^5.2.0, rc-util@^5.20.1, rc-util@^5.21.0, rc-util@^5.24.4, rc-util@^5.25.2, rc-util@^5.27.0, rc-util@^5.30.0, rc-util@^5.31.1, rc-util@^5.32.2, rc-util@^5.34.1, rc-util@^5.35.0, rc-util@^5.36.0, rc-util@^5.37.0, rc-util@^5.38.0, rc-util@^5.38.1, rc-util@^5.40.1, rc-util@^5.43.0, rc-util@^5.44.0, rc-util@^5.44.1, rc-util@^5.44.3:
-  version "5.44.3"
-  resolved "https://registry.yarnpkg.com/rc-util/-/rc-util-5.44.3.tgz#9eca5039906446113c4032859f88c15234547961"
-  integrity sha512-q6KCcOFk3rv/zD3MckhJteZxb0VjAIFuf622B7ElK4vfrZdAzs16XR5p3VTdy3+U5jfJU5ACz4QnhLSuAGe5dA==
-  dependencies:
-    "@babel/runtime" "^7.18.3"
-    react-is "^18.2.0"
-
-rc-util@^5.24.5:
+rc-util@^5.0.1, rc-util@^5.16.1, rc-util@^5.17.0, rc-util@^5.18.1, rc-util@^5.2.0, rc-util@^5.20.1, rc-util@^5.21.0, rc-util@^5.24.4, rc-util@^5.24.5, rc-util@^5.25.2, rc-util@^5.27.0, rc-util@^5.30.0, rc-util@^5.31.1, rc-util@^5.32.2, rc-util@^5.34.1, rc-util@^5.35.0, rc-util@^5.36.0, rc-util@^5.37.0, rc-util@^5.38.0, rc-util@^5.38.1, rc-util@^5.40.1, rc-util@^5.43.0, rc-util@^5.44.0, rc-util@^5.44.1, rc-util@^5.44.3:
   version "5.44.4"
   resolved "https://registry.yarnpkg.com/rc-util/-/rc-util-5.44.4.tgz#89ee9037683cca01cd60f1a6bbda761457dd6ba5"
   integrity sha512-resueRJzmHG9Q6rI/DfK6Kdv9/Lfls05vzMs1Sk3M2P+3cJa+MakaZyWY8IPfehVuhPJFKrIY1IK4GqbiaiY5w==
