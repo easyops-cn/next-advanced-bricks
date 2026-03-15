@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.26.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.26.3...@next-bricks/nav@1.26.4) (2026-03-15)
+
+
+### Bug Fixes
+
+* export EoDatePickerProps and SidebarSubMenuProps interfaces ([dfab98f](https://github.com/easyops-cn/next-advanced-bricks/commit/dfab98fcb3d94a515275f57ba6508976b93dd55e))
+
+
+
+
+
 ## [1.26.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.26.2...@next-bricks/nav@1.26.3) (2026-03-11)
 
 **Note:** Version bump only for package @next-bricks/nav
