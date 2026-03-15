@@ -55,7 +55,7 @@ interface InternalStateDatePickerProps {
   onOk?: (date: Dayjs) => void;
 }
 
-interface EoDatePickerProps
+export interface EoDatePickerProps
   extends Omit<InternalStateDatePickerProps, "value" | "onChange" | "onOk">,
     FormItemProps {
   shadowRoot: ShadowRoot | null;
