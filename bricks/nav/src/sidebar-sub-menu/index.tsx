@@ -47,7 +47,7 @@ const WrappedMenuItem = wrapBrick<MenuItem, MenuComponentProps>("eo-menu-item");
 
 const WrappedLinkItem = wrapBrick<Link, LinkProps>("eo-link");
 
-interface SidebarSubMenuProps {
+export interface SidebarSubMenuProps {
   menu?: SidebarMenu;
   showTooltip?: boolean;
 }
