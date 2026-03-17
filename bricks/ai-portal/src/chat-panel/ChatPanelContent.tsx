@@ -8,7 +8,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import type { UseBrickConf } from "@next-core/types";
+import type { UseBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import { ReactUseMultipleBricks } from "@next-core/react-runtime";
 import styles from "./styles.module.css";
 import type { ChatInput } from "../chat-input";
@@ -41,7 +41,7 @@ export interface ChatPanelContentProps {
   initialRequest: RequestStore | null;
   placeholder?: string;
   uploadOptions?: UploadOptions;
-  help?: { useBrick: UseBrickConf };
+  help?: { useBrick: UseBrickConfOrRenderFunction };
   fromModal?: boolean;
   submitDisabled?: boolean;
   onChatSubmit: (payload: ChatPayload) => void;

@@ -1,4 +1,4 @@
-import type { UseSingleBrickConf } from "@next-core/react-runtime";
+import type { UseSingleBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import type { SimulationLinkDatum, SimulationNodeDatum } from "d3-force";
 import type { CSSProperties, FunctionComponent } from "react";
 import type { ResizeCellPayload } from "./reducers/interfaces";
@@ -42,7 +42,7 @@ export type NodeComponent = FunctionComponent<{
 export type NodeId = string /* | number */;
 
 export interface BaseBrickCell extends BaseCell {
-  useBrick?: UseSingleBrickConf;
+  useBrick?: UseSingleBrickConfOrRenderFunction;
 }
 
 export interface BaseNodeCell extends BaseCell {
@@ -137,7 +137,7 @@ export type InitialNodeCell = Omit<NodeCell, "view"> & {
 export type InitialCell = InitialNodeCell | EdgeCell | DecoratorCell;
 
 export interface NodeBrickConf {
-  useBrick?: UseSingleBrickConf;
+  useBrick?: UseSingleBrickConfOrRenderFunction;
   component?: NodeComponent;
   if?: string | boolean | null;
 }

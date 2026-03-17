@@ -4,7 +4,7 @@ import type {
   ExpandableConfig as TableExpandableConfig,
   TableRowSelection,
 } from "antd/es/table/interface.js";
-import type { UseBrickConf } from "@next-core/types";
+import type { UseBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import { CSSProperties } from "react";
 import type { TableProps } from "antd/es/table";
 
@@ -60,7 +60,7 @@ export interface ColumnProp {
   /** 表头自定义展示构件 */
   headerBrick?: WithUseBrick;
   /** 内容自定义展示构件 */
-  useBrick?: UseBrickConf;
+  useBrick?: UseBrickConfOrRenderFunction;
   /** 记录表格列合并的值的 key */
   cellColSpanKey?: string;
   /** 记录表格行合并的值的 key */
@@ -93,7 +93,7 @@ export interface CellConfig extends WithUseBrick {
 }
 
 export interface WithUseBrick {
-  useBrick?: UseBrickConf;
+  useBrick?: UseBrickConfOrRenderFunction;
 }
 
 export interface DataSource {
@@ -148,10 +148,10 @@ interface ExpandableConfig
     | "showExpandColumn"
   > {
   expandIconBrick?: {
-    useBrick: UseBrickConf;
+    useBrick: UseBrickConfOrRenderFunction;
   };
   expandedRowBrick?: {
-    useBrick: UseBrickConf;
+    useBrick: UseBrickConfOrRenderFunction;
   };
   rowExpandable?: string | boolean;
 }

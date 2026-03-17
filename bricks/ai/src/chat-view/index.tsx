@@ -19,12 +19,12 @@ import "@next-core/theme";
 import "./host-context.css";
 import "./index.css";
 import { commandBrickConf } from "./ChatViewContext";
-import { UseBrickConf } from "@next-core/types";
+import { UseBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import { ChatBody } from "./ChatService.js";
 
 const { defineElement, property, method, event } = createDecorators();
 
-type InputToolbarBrick = { useBrick: UseBrickConf };
+type InputToolbarBrick = { useBrick: UseBrickConfOrRenderFunction };
 
 export interface ChatViewRef extends SearchInputRef {
   setConfig(config: Record<string, unknown> | undefined): void;

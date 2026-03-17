@@ -7,7 +7,7 @@ import type {
   GridProps,
 } from "@next-bricks/containers/grid-layout";
 import "@next-core/theme";
-import type { UseBrickConf } from "@next-core/types";
+import type { UseBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import classnames from "classnames";
 import { ReactUseMultipleBricks } from "@next-core/react-runtime";
 import { get } from "lodash";
@@ -23,7 +23,7 @@ export interface DescriptionItem {
   field?: string;
   group?: string;
   text?: string | number;
-  useBrick?: UseBrickConf;
+  useBrick?: UseBrickConfOrRenderFunction;
   gridColumn?: string;
 }
 

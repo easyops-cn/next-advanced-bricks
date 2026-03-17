@@ -2,7 +2,7 @@ import React from "react";
 import { createDecorators } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
 import { ReactUseMultipleBricks } from "@next-core/react-runtime";
-import type { UseBrickConf } from "@next-core/types";
+import type { UseBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import "@next-core/theme";
 
 const { defineElement, property } = createDecorators();
@@ -19,7 +19,7 @@ export
 class PreGeneratedContainer extends ReactNextElement {
   /** 要渲染的构件配置 */
   @property({ attribute: false })
-  accessor useBrick: UseBrickConf | undefined;
+  accessor useBrick: UseBrickConfOrRenderFunction | undefined;
 
   /** 传入构件的数据 */
   @property({ attribute: false })
@@ -36,7 +36,7 @@ class PreGeneratedContainer extends ReactNextElement {
 }
 
 export interface PreGeneratedContainerProps {
-  useBrick?: UseBrickConf;
+  useBrick?: UseBrickConfOrRenderFunction;
   dataSource?: unknown;
 }
 

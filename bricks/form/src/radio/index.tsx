@@ -15,7 +15,7 @@ import styleText from "./index.shadow.css";
 import classNames from "classnames";
 import "@next-core/theme";
 import type { FormItem, FormItemProps } from "../form-item/index.js";
-import { UseSingleBrickConf } from "@next-core/types";
+import { UseSingleBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import type {
   GeneralIcon,
   GeneralIconProps,
@@ -45,7 +45,7 @@ export interface RadioProps extends FormItemProps {
   buttonStyle?: RadioGroupButtonStyle;
   size?: ComponentSize;
   ui?: UIType;
-  useBrick?: UseSingleBrickConf;
+  useBrick?: UseSingleBrickConfOrRenderFunction;
   customStyle?: React.CSSProperties;
   themeVariant?: "default" | "elevo";
 }
@@ -154,7 +154,7 @@ class Radio extends FormItemElementBase {
   @property({
     attribute: false,
   })
-  accessor useBrick: UseSingleBrickConf | undefined;
+  accessor useBrick: UseSingleBrickConfOrRenderFunction | undefined;
 
   /** 主题变体 */
   @property({ render: false })

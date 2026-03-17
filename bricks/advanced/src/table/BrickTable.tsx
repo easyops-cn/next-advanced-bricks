@@ -8,7 +8,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import update from "immutability-helper";
 import { CustomColumn } from "./index.js";
 import { ReactUseMultipleBricks } from "@next-core/react-runtime";
-import type { UseSingleBrickConf } from "@next-core/types";
+import type { UseSingleBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import { wrapBrick } from "@next-core/react-element";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
 import { NS, locales } from "./i18n.js";
@@ -53,7 +53,7 @@ export interface BrickTableProps {
   showCard?: boolean;
   // 展开行相关属性
   expandedRowBrick?: {
-    useBrick?: UseSingleBrickConf;
+    useBrick?: UseSingleBrickConfOrRenderFunction;
   };
   expandIcon?: {
     collapsedIcon: GeneralIconProps;
@@ -125,7 +125,7 @@ const DraggableBodyRow = ({
 };
 
 const getCustomHeader = (
-  useBrick: UseSingleBrickConf,
+  useBrick: UseSingleBrickConfOrRenderFunction,
   data?: { title: unknown }
 ): (() => React.ReactElement) => {
   return function CustomHeader() {
@@ -141,7 +141,7 @@ type BrickData = {
 };
 
 const getCustomComp = (
-  useBrick: UseSingleBrickConf,
+  useBrick: UseSingleBrickConfOrRenderFunction,
   itemBrickDataMap?: ItemBrickDataMap
 ) => {
   return function CustomComp(
@@ -204,7 +204,7 @@ export function BrickTable(props: BrickTableProps): React.ReactElement {
     Map<CustomColumn, { title: unknown }>
   >(new Map());
   const useBrickItemBrickDataMapRef = useRef<
-    Map<UseSingleBrickConf, ItemBrickDataMap>
+    Map<UseSingleBrickConfOrRenderFunction, ItemBrickDataMap>
   >(new Map());
   const itemExpandedRowBrickDataMapRef = useRef<Map<unknown, unknown>>(
     new Map()
@@ -247,7 +247,7 @@ export function BrickTable(props: BrickTableProps): React.ReactElement {
           }
 
           columnConf.title = getCustomHeader(
-            useBrick as UseSingleBrickConf,
+            useBrick as UseSingleBrickConfOrRenderFunction,
             data
           );
         }
@@ -367,7 +367,9 @@ export function BrickTable(props: BrickTableProps): React.ReactElement {
 
     return (
       <ReactUseMultipleBricks
-        useBrick={props.expandedRowBrick?.useBrick as UseSingleBrickConf}
+        useBrick={
+          props.expandedRowBrick?.useBrick as UseSingleBrickConfOrRenderFunction
+        }
         data={data}
       />
     );

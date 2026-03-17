@@ -17,7 +17,7 @@ import {
   searchTree,
 } from "./utils";
 import { DirectoryTreeContext } from "./DirectoryTreeContext";
-import { UseBrickConf } from "@next-core/types";
+import { UseBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import type { GeneralIconProps } from "@next-bricks/icons/general-icon";
 
 const { defineElement, property, method, event } = createDecorators();
@@ -76,7 +76,7 @@ export interface EoDirectoryTreeProps {
   selectedKeys?: string[];
   expandedKeys?: string[];
   searchFields?: (string | string[])[];
-  suffixBrick?: { useBrick: UseBrickConf };
+  suffixBrick?: { useBrick: UseBrickConfOrRenderFunction };
 }
 
 export interface EoDirectoryTreeEventsMapping {
@@ -89,7 +89,7 @@ export interface SuffixBrickConf {
    * @default "always"
    */
   when?: "always" | "hover";
-  useBrick: UseBrickConf;
+  useBrick: UseBrickConfOrRenderFunction;
 }
 
 /**

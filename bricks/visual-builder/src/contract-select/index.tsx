@@ -1,7 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createDecorators, EventEmitter } from "@next-core/element";
 import { wrapBrick } from "@next-core/react-element";
-import { ReactUseMultipleBricks } from "@next-core/react-runtime";
+import {
+  ReactUseMultipleBricks,
+  UseBrickConfOrRenderFunction,
+} from "@next-core/react-runtime";
 import "@next-core/theme";
 import styleText from "./styles.shadow.css";
 import type {
@@ -18,7 +21,6 @@ import { K, NS, locales } from "./i18n.js";
 import { initializeReactI18n } from "@next-core/i18n/react";
 import { i18n } from "@next-core/i18n";
 import { MoreOption } from "./more-option/MoreOption";
-import { UseSingleBrickConf } from "@next-core/types";
 
 initializeReactI18n(NS, locales);
 
@@ -78,7 +80,9 @@ class EoContractSelect extends FormItemElementBase {
     attribute: false,
   })
   accessor suffix:
-    | { useBrick: UseSingleBrickConf | UseSingleBrickConf[] }
+    | {
+        useBrick: UseBrickConfOrRenderFunction;
+      }
     | undefined;
 
   /**
@@ -123,7 +127,9 @@ export interface EoContractSelectProps {
   validateState?: string;
   placeholder?: string;
   inputStyle?: React.CSSProperties;
-  suffix?: { useBrick: UseSingleBrickConf | UseSingleBrickConf[] };
+  suffix?: {
+    useBrick: UseBrickConfOrRenderFunction;
+  };
   onChange?(value: string): void;
 }
 

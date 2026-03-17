@@ -61,7 +61,7 @@ export function smartDisplayForMenuTitle(
           case "I18N":
             globals[key] = i18n.getFixedT(
               null,
-              [i18nNamespace].filter(Boolean)
+              [i18nNamespace].filter(Boolean) as string[]
             );
             break;
           case "APP":

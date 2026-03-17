@@ -11,7 +11,7 @@ import React, {
 import { EventEmitter, createDecorators } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import { unwrapProvider } from "@next-core/utils/general";
-import { UseSingleBrickConf } from "@next-core/types";
+import { UseSingleBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import { ReactUseBrick } from "@next-core/react-runtime";
 import { auth } from "@next-core/easyops-runtime";
 import "@next-core/theme";
@@ -48,7 +48,7 @@ type Item = {
   key: string;
   title: string;
   style?: React.CSSProperties;
-  useBrick: UseSingleBrickConf;
+  useBrick: UseSingleBrickConfOrRenderFunction;
 };
 
 interface CheckboxEvents {

@@ -3,7 +3,8 @@ import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
 import styleText from "./table.shadow.css";
 import { ColumnProps, TablePaginationConfig, TableProps } from "antd/es/table";
-import { BrickEventsMap, UseSingleBrickConf } from "@next-core/types";
+import { BrickEventsMap } from "@next-core/types";
+import { UseSingleBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import {
   get,
   map,
@@ -88,7 +89,7 @@ export interface CustomColumn extends ColumnProps<Record<string, any>> {
   /**
    * 支持为某列自定义展示构件
    */
-  useBrick?: UseSingleBrickConf;
+  useBrick?: UseSingleBrickConfOrRenderFunction;
   /**
    * 字段的值展示时的后缀
    */
@@ -97,7 +98,7 @@ export interface CustomColumn extends ColumnProps<Record<string, any>> {
    * 支持为某列的表头自定义展示构件，可通过 DATA.title 获取标题文本
    */
   headerBrick?: {
-    useBrick: UseSingleBrickConf;
+    useBrick: UseSingleBrickConfOrRenderFunction;
   };
   /**
    * 在渲染自定义构件的场景下额外设置单元格的状态样式， `dataIndex` 表示取哪一列的字段值作为判断数据，不填的话默认取当前列的字段，`mapping` 表示判断的条件，条件被成功匹配时用当前的样式。目前仅支持单元格 `leftBorderColor` 属性的设置
@@ -123,7 +124,7 @@ export interface CustomColumn extends ColumnProps<Record<string, any>> {
    * 自定义筛选菜单
    */
   filterDropdownBrick?: {
-    useBrick: UseSingleBrickConf;
+    useBrick: UseSingleBrickConfOrRenderFunction;
   };
 }
 
@@ -368,7 +369,7 @@ class TableComponent extends ReactNextElement {
   })
   accessor expandedRowBrick:
     | {
-        useBrick?: UseSingleBrickConf;
+        useBrick?: UseSingleBrickConfOrRenderFunction;
       }
     | undefined;
 

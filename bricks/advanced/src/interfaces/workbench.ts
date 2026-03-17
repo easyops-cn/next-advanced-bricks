@@ -1,4 +1,4 @@
-import { UseSingleBrickConf } from "@next-core/types";
+import { UseSingleBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import { Layout } from "react-grid-layout";
 
 export type WorkbenchComponent = {
@@ -7,7 +7,7 @@ export type WorkbenchComponent = {
   title: string;
   thumbnail: string;
   style?: React.CSSProperties;
-  useBrick: UseSingleBrickConf;
+  useBrick: UseSingleBrickConfOrRenderFunction;
 };
 
 /**

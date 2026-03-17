@@ -15,7 +15,7 @@ import {
 
 import { handleHttpError } from "@next-core/runtime";
 import { ReactUseMultipleBricks, useProvider } from "@next-core/react-runtime";
-import { UseBrickConf } from "@next-core/types";
+import { UseBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import { InstanceApi_postSearchV3 } from "@next-api-sdk/cmdb-sdk";
 import classNames from "classnames";
 
@@ -108,7 +108,7 @@ export interface CmdbInstanceSelectProps {
   sort?: Array<Record<string, number | string>>;
   /** 后缀自定义构件配置，用于在选择器后面添加自定义元素 */
   suffix?: {
-    useBrick: UseBrickConf;
+    useBrick: UseBrickConfOrRenderFunction;
   };
   /** 是否使用构件可见性控制 */
   useBrickVisible?: boolean;
