@@ -17,7 +17,7 @@ import type {
   ModalMapEvents,
 } from "@next-bricks/containers/modal";
 import { http } from "@next-core/http";
-import type { UseBrickConf } from "@next-core/types";
+import type { UseBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import type {
   ChatPayload,
   CommandPayload,
@@ -58,7 +58,7 @@ export interface ChatPanelProps {
   height?: string | number;
   placeholder?: string;
   uploadOptions?: UploadOptions;
-  help?: { useBrick: UseBrickConf };
+  help?: { useBrick: UseBrickConfOrRenderFunction };
   maskClosable?: boolean;
 }
 
@@ -119,7 +119,7 @@ class ChatPanel extends ReactNextElement implements ChatPanelProps {
    * 无对话时显示的帮助内容配置
    */
   @property({ attribute: false })
-  accessor help: { useBrick: UseBrickConf } | undefined;
+  accessor help: { useBrick: UseBrickConfOrRenderFunction } | undefined;
 
   /**
    * 是否点击遮罩关闭面板

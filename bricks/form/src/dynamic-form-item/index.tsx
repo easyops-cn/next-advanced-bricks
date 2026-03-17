@@ -20,7 +20,10 @@ import type {
 } from "../form/index.js";
 import type { FormItem, FormItemProps } from "../form-item/index.js";
 import { ReactUseMultipleBricks } from "@next-core/react-runtime";
-import { UseBrickConf, UseSingleBrickConf } from "@next-core/types";
+import {
+  UseBrickConfOrRenderFunction,
+  UseSingleBrickConfOrRenderFunction,
+} from "@next-core/react-runtime";
 import styleText from "./dynamic-form-item.shadow.css";
 import "@next-core/theme";
 import { isEqual, flatten, omit, isEmpty } from "lodash";
@@ -71,7 +74,7 @@ export type DynamicFormValuesItem = Record<string, any>;
 
 export interface DynamicFormItemProps extends FormItemProps {
   form?: Form;
-  useBrick?: UseBrickConf;
+  useBrick?: UseBrickConfOrRenderFunction;
   value?: DynamicFormValuesItem[];
   validateState?: string;
   needValidate?: boolean;
@@ -205,7 +208,7 @@ class DynamicFormItem extends FormItemElementBase {
   @property({
     attribute: false,
   })
-  accessor useBrick: UseBrickConf | undefined;
+  accessor useBrick: UseBrickConfOrRenderFunction | undefined;
 
   /**
    * 表单值改变时触发
@@ -284,7 +287,9 @@ export function DynamicFormItemComponent(props: DynamicFormItemProps) {
   const formWrapperRef = useRef<HTMLDivElement>(null);
   const [values, setValues] = useState<DynamicFormValuesItem[]>(value ?? []);
 
-  const [bricks, setBricks] = useState<UseSingleBrickConf[]>([]);
+  const [bricks, setBricks] = useState<UseSingleBrickConfOrRenderFunction[]>(
+    []
+  );
 
   const bricksOfNoLabel = useMemo(
     () => bricks.map((brick: any) => omit(brick, "properties.label")),
@@ -304,12 +309,15 @@ export function DynamicFormItemComponent(props: DynamicFormItemProps) {
 
   useEffect(() => {
     if (props.useBrick) {
-      const parsedUseBrick: UseSingleBrickConf[] = flatten(
+      const parsedUseBrick: UseSingleBrickConfOrRenderFunction[] = flatten(
         new Array(props.useBrick)
       );
 
       setBricks(
         parsedUseBrick.map((brick) => {
+          if (typeof brick === "function") {
+            return brick;
+          }
           const { properties = {} } = brick;
           if (properties.unique) {
             let parsedValidator: any = [
@@ -419,7 +427,7 @@ export function DynamicFormItemComponent(props: DynamicFormItemProps) {
                     useBrick={
                       (index === 0
                         ? bricks
-                        : bricksOfNoLabel) as UseSingleBrickConf[]
+                        : bricksOfNoLabel) as UseBrickConfOrRenderFunction
                     }
                     // NOTE: Passing changed `data={value}` will cause useBrick to re-render and lose state
                     data={value}

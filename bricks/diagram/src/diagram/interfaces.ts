@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import type { UseSingleBrickConf } from "@next-core/react-runtime";
+import type { UseSingleBrickConfOrRenderFunction } from "@next-core/react-runtime";
 
 export interface DiagramNode {
   id: DiagramNodeId;
@@ -115,7 +115,7 @@ export type DiagramNodeId = string /* | number */;
 export type RefRepository = Map<DiagramNodeId, HTMLElement>;
 
 export interface NodeBrickConf {
-  useBrick: UseSingleBrickConf;
+  useBrick: UseSingleBrickConfOrRenderFunction;
   nodeType?: string | string[];
   if?: string | boolean | null;
 }
@@ -160,7 +160,7 @@ export interface LineConfOverridable {
 
 export interface LineLabelConf extends LabelOrTextBaseOptions {
   if?: string | boolean | null;
-  useBrick: UseSingleBrickConf;
+  useBrick: UseSingleBrickConfOrRenderFunction;
 }
 
 export interface TextOptions extends LabelOrTextBaseOptions {

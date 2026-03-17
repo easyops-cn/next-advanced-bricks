@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { ReactUseMultipleBricks } from "@next-core/react-runtime";
-import { UseSingleBrickConf } from "@next-core/types";
+import { UseBrickConfOrRenderFunction } from "@next-core/react-runtime";
 
 export function CacheUseBrickItem(props: {
-  useBrick: UseSingleBrickConf | UseSingleBrickConf[];
+  useBrick: UseBrickConfOrRenderFunction;
   data: any;
 }): React.ReactNode {
   const [cacheData, setCacheData] = useState<any>(props.data);

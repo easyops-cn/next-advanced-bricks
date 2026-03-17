@@ -2,7 +2,7 @@ import React, { Ref } from "react";
 import { createDecorators } from "@next-core/element";
 import { ReactUseBrick } from "@next-core/react-runtime";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
-import { UseSingleBrickConf } from "@next-core/types";
+import { UseSingleBrickConfOrRenderFunction } from "@next-core/react-runtime";
 
 import "@next-core/theme";
 import styleText from "./styles.shadow.css";
@@ -137,7 +137,7 @@ export interface IconAvatar {
 export interface InfoCardDetail {
   title?: string;
   desc?: string;
-  useBrick?: UseSingleBrickConf;
+  useBrick?: UseSingleBrickConfOrRenderFunction;
 }
 
 export interface EoInfoCardItemProps {

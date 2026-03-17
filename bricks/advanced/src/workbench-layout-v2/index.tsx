@@ -12,7 +12,7 @@ import classNames from "classnames";
 import { EventEmitter, createDecorators } from "@next-core/element";
 import { ReactNextElement, wrapBrick } from "@next-core/react-element";
 import { unwrapProvider } from "@next-core/utils/general";
-import { UseSingleBrickConf } from "@next-core/types";
+import { UseBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import { ReactUseMultipleBricks } from "@next-core/react-runtime";
 import { auth } from "@next-core/easyops-runtime";
 import { Layout, Responsive, WidthProvider } from "react-grid-layout";
@@ -64,7 +64,7 @@ const URl_PREFIX = `${window.location.origin}${getBasePath()}api/gateway/object_
 export interface EoWorkbenchLayoutV2Props {
   cardTitle?: string;
   layouts?: ExtraLayout[];
-  toolbarBricks?: { useBrick: UseSingleBrickConf[] };
+  toolbarBricks?: { useBrick: UseBrickConfOrRenderFunction };
   componentList?: WorkbenchComponent[];
   isEdit?: boolean;
   showSettingButton?: boolean;
@@ -524,7 +524,9 @@ class EoWorkbenchLayoutV2 extends ReactNextElement {
 
   /** 编辑模式下工具栏区域的自定义构件 */
   @property({ attribute: false })
-  accessor toolbarBricks: { useBrick: UseSingleBrickConf[] } | undefined;
+  accessor toolbarBricks:
+    | { useBrick: UseBrickConfOrRenderFunction }
+    | undefined;
 
   /** 组件列表，每项包含 key、title、useBrick 和 position 信息 */
   @property({ attribute: false })

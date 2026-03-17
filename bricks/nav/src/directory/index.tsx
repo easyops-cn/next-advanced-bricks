@@ -10,7 +10,7 @@ import type {
 } from "@next-bricks/icons/general-icon";
 import classNames from "classnames";
 import type { EoTooltip, ToolTipProps } from "@next-bricks/basic/tooltip";
-import { UseBrickConf } from "@next-core/types";
+import { UseBrickConfOrRenderFunction } from "@next-core/react-runtime";
 
 const { defineElement, property, event } = createDecorators();
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
@@ -58,7 +58,7 @@ class EoDirectory extends ReactNextElement implements EoDirectoryProps {
   @property({
     attribute: false,
   })
-  accessor suffixBrick: { useBrick: UseBrickConf } | undefined;
+  accessor suffixBrick: { useBrick: UseBrickConfOrRenderFunction } | undefined;
 
   /**
    * 默认选中高亮的菜单项
@@ -101,7 +101,7 @@ class EoDirectory extends ReactNextElement implements EoDirectoryProps {
 }
 export interface EoDirectoryProps {
   position?: "static" | "fixed";
-  suffixBrick?: { useBrick: UseBrickConf };
+  suffixBrick?: { useBrick: UseBrickConfOrRenderFunction };
   directoryTitle: string | undefined;
   menuItems: MenuItem[];
   hideRightBorder?: boolean;

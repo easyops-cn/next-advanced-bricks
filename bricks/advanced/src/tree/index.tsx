@@ -11,7 +11,7 @@ import {
   useCurrentTheme,
   ReactUseMultipleBricks,
 } from "@next-core/react-runtime";
-import { UseBrickConf } from "@next-core/types";
+import { UseBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import styleText from "./styles.shadow.css";
 
 const { defineElement, property, event } = createDecorators();
@@ -27,7 +27,7 @@ export interface EoTreeProps {
   nodeDraggable?: boolean | { icon?: false };
   switcherIcon?: "auto" | "chevron" | false;
   allowDrop?: (info: AllowDropInfo) => boolean;
-  titleSuffixBrick?: { useBrick: UseBrickConf };
+  titleSuffixBrick?: { useBrick: UseBrickConfOrRenderFunction };
 }
 
 export interface TreeNode extends BasicDataNode {
@@ -122,7 +122,9 @@ class EoTree extends ReactNextElement implements EoTreeProps {
   accessor allowDrop: ((info: AllowDropInfo) => boolean) | undefined;
 
   @property({ attribute: false })
-  accessor titleSuffixBrick: { useBrick: UseBrickConf } | undefined;
+  accessor titleSuffixBrick:
+    | { useBrick: UseBrickConfOrRenderFunction }
+    | undefined;
 
   @event({ type: "check" })
   accessor #checkEvent!: EventEmitter<TreeNodeKey[]>;

@@ -2,12 +2,11 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { orderBy, uniqueId, upperFirst } from "lodash";
 import { unstable_createRoot } from "@next-core/runtime";
 import {
-  // UseBrickConf,
   type BrickConf,
   type BrickEventHandler,
   type ContextConf,
-  type UseSingleBrickConf,
 } from "@next-core/types";
+import type { UseSingleBrickConf } from "@next-core/types";
 import { hasOwnProperty, isObject } from "@next-core/utils/general";
 import type { DescriptionItem } from "@next-bricks/presentational/descriptions";
 import type { CmdbInstanceDetailData } from "../interfaces";

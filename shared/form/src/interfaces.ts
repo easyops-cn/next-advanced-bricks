@@ -1,4 +1,4 @@
-import { UseSingleBrickConf } from "@next-core/types";
+import { UseBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import type { AbstractForm, ColProps } from "./Form";
 import type { MessageBody } from "./FormStore";
 
@@ -32,10 +32,12 @@ export interface FormItemProps {
   valuePropsName?: string;
   notRender?: boolean;
   helpBrick?: {
-    useBrick: UseSingleBrickConf | UseSingleBrickConf[];
+    useBrick: UseBrickConfOrRenderFunction;
     placement?: "right" | "bottom";
   };
-  labelBrick?: { useBrick: UseSingleBrickConf | UseSingleBrickConf[] };
+  labelBrick?: {
+    useBrick: UseBrickConfOrRenderFunction;
+  };
   needValidate?: boolean;
   validator?: (value: any) => MessageBody | string;
 }

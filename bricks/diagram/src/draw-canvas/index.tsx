@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import { createDecorators, type EventEmitter } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
-import type { UseSingleBrickConf } from "@next-core/react-runtime";
+import type { UseSingleBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import { unwrapProvider } from "@next-core/utils/general";
 import "@next-core/theme";
 import { get, uniqueId } from "lodash";
@@ -165,7 +165,7 @@ export interface DropDecoratorInfo {
 
 export interface AddNodeInfo {
   id: NodeId;
-  useBrick?: UseSingleBrickConf;
+  useBrick?: UseSingleBrickConfOrRenderFunction;
   data?: unknown;
   size?: SizeTuple;
   containerId?: NodeId;

@@ -1,7 +1,7 @@
 import React, { MouseEvent, CSSProperties, useMemo, useState } from "react";
 import { createDecorators, EventEmitter } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
-import type { UseBrickConf } from "@next-core/types";
+import type { UseBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import { ReactUseMultipleBricks } from "@next-core/react-runtime";
 import {
   treemap,
@@ -40,9 +40,9 @@ type TreemapData = {
 interface ModernStyleTreemapProps {
   data: TreemapData;
   tail?: TailTypes;
-  leafUseBrick?: { useBrick: UseBrickConf };
+  leafUseBrick?: { useBrick: UseBrickConfOrRenderFunction };
   leafContainerStyle?: CSSProperties;
-  tooltipUseBrick?: { useBrick: UseBrickConf };
+  tooltipUseBrick?: { useBrick: UseBrickConfOrRenderFunction };
   tooltipStyle?: CSSProperties;
   handleClick?: (value: TreemapData) => void;
 }
@@ -82,7 +82,7 @@ class ModernStyleTreemap
   accessor tail: TailTypes = TailTypes["treemapSquarify"];
 
   /**
-   * @kind { useBrick: UseBrickConf }
+   * @kind { useBrick: UseBrickConfOrRenderFunction }
    * @required false
    * @default -
    * @description 叶子节点useBrick
@@ -90,7 +90,7 @@ class ModernStyleTreemap
   @property({
     attribute: false,
   })
-  accessor leafUseBrick: { useBrick: UseBrickConf };
+  accessor leafUseBrick: { useBrick: UseBrickConfOrRenderFunction };
 
   /**
    * @kind CSSProperties
@@ -104,7 +104,7 @@ class ModernStyleTreemap
   accessor leafContainerStyle: CSSProperties;
 
   /**
-   * @kind { useBrick: UseBrickConf }
+   * @kind { useBrick: UseBrickConfOrRenderFunction }
    * @required false
    * @default -
    * @description tooltip useBrick
@@ -112,7 +112,7 @@ class ModernStyleTreemap
   @property({
     attribute: false,
   })
-  accessor tooltipUseBrick: { useBrick: UseBrickConf };
+  accessor tooltipUseBrick: { useBrick: UseBrickConfOrRenderFunction };
 
   /**
    * @kind CSSProperties

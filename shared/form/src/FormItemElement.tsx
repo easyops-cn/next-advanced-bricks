@@ -1,7 +1,7 @@
 import { createDecorators } from "@next-core/element";
 import { ReactNextElement } from "@next-core/react-element";
 import type { AbstractForm, ColProps } from "./Form.js";
-import { UseSingleBrickConf } from "@next-core/types";
+import { UseBrickConfOrRenderFunction } from "@next-core/react-runtime";
 
 const { method, property } = createDecorators();
 
@@ -48,14 +48,18 @@ export abstract class FormItemElementBase extends ReactNextElement {
     attribute: false,
   })
   accessor helpBrick:
-    | { useBrick: UseSingleBrickConf | UseSingleBrickConf[] }
+    | {
+        useBrick: UseBrickConfOrRenderFunction;
+      }
     | undefined;
 
   @property({
     attribute: false,
   })
   accessor labelBrick:
-    | { useBrick: UseSingleBrickConf | UseSingleBrickConf[] }
+    | {
+        useBrick: UseBrickConfOrRenderFunction;
+      }
     | undefined;
 
   @property({

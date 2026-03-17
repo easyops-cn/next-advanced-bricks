@@ -26,7 +26,7 @@ import type {
   GeneralIconProps,
 } from "@next-bricks/icons/general-icon";
 import { isEmpty, groupBy, isNil, debounce } from "lodash";
-import { UseSingleBrickConf } from "@next-core/types";
+import { UseSingleBrickConfOrRenderFunction } from "@next-core/react-runtime";
 import { ReactUseBrick } from "@next-core/react-runtime";
 import { handleHttpError, fetchByProvider } from "@next-core/runtime";
 import Empty from "./empty.svg";
@@ -109,7 +109,7 @@ export interface SelectProps extends FormItemProps {
   tokenSeparators?: string[];
   maxTagCount?: number;
   groupBy?: string;
-  suffix?: { useBrick: UseSingleBrickConf };
+  suffix?: { useBrick: UseSingleBrickConfOrRenderFunction };
   fields?: { label?: string; value?: string };
   useBackend?: UseBackendConf & {
     onValueChangeArgs?: any[] | ((...args: any[]) => any[]);
@@ -256,7 +256,7 @@ class Select extends FormItemElementBase {
   @property({
     attribute: false,
   })
-  accessor suffix: { useBrick: UseSingleBrickConf } | undefined;
+  accessor suffix: { useBrick: UseSingleBrickConfOrRenderFunction } | undefined;
 
   /**
    * 是否支持清除
