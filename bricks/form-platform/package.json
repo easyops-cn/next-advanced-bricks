@@ -1,6 +1,6 @@
 {
   "name": "@next-bricks/form-platform",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "homepage": "https://github.com/easyops-cn/next-advanced-bricks/tree/master/bricks/form-platform",
   "repository": {
     "type": "git",
@@ -42,7 +42,7 @@
     "@next-core/i18n": "^1.0.87",
     "@next-core/react-element": "^1.0.38",
     "@next-core/theme": "^1.6.1",
-    "@next-shared/form": "^0.12.0",
+    "@next-shared/form": "^0.12.1",
     "@next-shared/story": "^0.0.4",
     "react": "0.0.0-experimental-ee8509801-20230117",
     "react-i18next": "^12.3.1"
