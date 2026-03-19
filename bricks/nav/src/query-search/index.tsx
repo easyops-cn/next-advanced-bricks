@@ -66,11 +66,13 @@ export
 @defineElement("nav.query-search", {
   styleTexts: [styleText],
 })
-class QuerySearch extends ReactNextElement {
+class QuerySearch extends ReactNextElement implements QuerySearchProps {
   render() {
     return <QuerySearchComponent shadowRoot={this.shadowRoot} />;
   }
 }
+
+export type QuerySearchProps = Omit<QuerySearchComponentProps, "shadowRoot">;
 
 export interface QuerySearchComponentProps {
   shadowRoot: ShadowRoot | null;

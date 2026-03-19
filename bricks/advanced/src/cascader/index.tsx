@@ -22,6 +22,8 @@ const { defineElement, property, event } = createDecorators();
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
 
+export type CascaderBrickProps = Omit<CascaderProps, "shadowRoot" | "onChange">;
+
 export interface CascaderProps
   extends Pick<
     AntdCascaderProps,
@@ -67,7 +69,7 @@ export
   alias: ["advanced.general-cascader"],
   styleTexts: [styleText],
 })
-class CascaderBrick extends FormItemElementBase implements CascaderProps {
+class CascaderBrick extends FormItemElementBase implements CascaderBrickProps {
   /** 表单字段名 */
   @property()
   accessor name: string | undefined;
