@@ -15,6 +15,8 @@ import classNames from "classnames";
 const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
 const WrappedGeneralIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
+export type GeneralSwitchProps = Omit<SwitchProps, "curElement" | "onSwitch">;
+
 export interface SwitchProps extends FormItemProps {
   curElement: HTMLElement;
   onSwitch: (value: boolean) => void;
@@ -48,7 +50,7 @@ export
   styleTexts: [styleText],
   alias: ["form.general-switch"],
 })
-class GeneralSwitch extends FormItemElementBase {
+class GeneralSwitch extends FormItemElementBase implements GeneralSwitchProps {
   /**
    * 字段名称
    */

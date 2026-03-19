@@ -15,7 +15,12 @@ const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
 const { defineElement, property, event } = createDecorators();
 
-interface DropdownMenuProps {
+export type DropdownMenuProps = Omit<
+  DropdownMenuElementProps,
+  "curElement" | "onChange"
+>;
+
+interface DropdownMenuElementProps {
   curElement?: HTMLElement;
   options?: { label: string; value: string }[];
   value?: string;
@@ -96,7 +101,9 @@ class DropdownMenu extends ReactNextElement implements DropdownMenuProps {
   }
 }
 
-function DropdownMenuElement(props: DropdownMenuProps): React.ReactElement {
+function DropdownMenuElement(
+  props: DropdownMenuElementProps
+): React.ReactElement {
   const { curElement, options, placeholder, onChange, allowClear } = props;
 
   const [isDropHidden, setIsDropHidden] = React.useState(true);

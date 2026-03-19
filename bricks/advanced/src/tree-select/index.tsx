@@ -20,6 +20,11 @@ const { defineElement, property, event } = createDecorators();
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
 
+export type TreeSelectBrickProps = Omit<
+  TreeSelectProps,
+  "shadowRoot" | "onChange" | "onSearch" | "onSelect" | "onTreeExpand"
+>;
+
 export interface TreeSelectProps
   extends Pick<
     AntdTreeSelectProps,
@@ -75,7 +80,10 @@ export
 @defineElement("eo-tree-select", {
   styleTexts: [styleText],
 })
-class TreeSelectBrick extends FormItemElementBase implements TreeSelectProps {
+class TreeSelectBrick
+  extends FormItemElementBase
+  implements TreeSelectBrickProps
+{
   /** 表单字段名 */
   @property()
   accessor name: string | undefined;
