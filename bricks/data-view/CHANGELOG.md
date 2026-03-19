@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.12.14](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/data-view@1.12.13...@next-bricks/data-view@1.12.14) (2026-03-19)
+
+
+### Bug Fixes
+
+* 导出消费者侧 Props 类型，省略内部属性（curElement/shadowRoot/onChange 等） ([09eaedb](https://github.com/easyops-cn/next-advanced-bricks/commit/09eaedbe89a118588671a3db423208f5401cb998))
+
+
+
+
+
 ## [1.12.13](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/data-view@1.12.12...@next-bricks/data-view@1.12.13) (2026-03-17)
 
 **Note:** Version bump only for package @next-bricks/data-view
