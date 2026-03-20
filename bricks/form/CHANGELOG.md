@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.16](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.21.15...@next-bricks/form@1.21.16) (2026-03-20)
+
+
+### Bug Fixes
+
+* 补充 EoColorPicker/EoDatePicker/EoTimePicker/EoCmdbInstanceSelect 的消费者侧 Props 类型 ([2f290d3](https://github.com/easyops-cn/next-advanced-bricks/commit/2f290d340c03447f146d84c29b07237fd31a66ca))
+
+
+
+
+
 ## [1.21.15](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.21.14...@next-bricks/form@1.21.15) (2026-03-19)
 
 
