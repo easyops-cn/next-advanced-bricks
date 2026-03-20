@@ -55,7 +55,12 @@ interface InternalStateDatePickerProps {
   onOk?: (date: Dayjs) => void;
 }
 
-export interface EoDatePickerProps
+export type EoDatePickerProps = Omit<
+  EoDatePickerComponentProps,
+  "shadowRoot" | "onChange" | "onOk"
+>;
+
+interface EoDatePickerComponentProps
   extends Omit<InternalStateDatePickerProps, "value" | "onChange" | "onOk">,
     FormItemProps {
   shadowRoot: ShadowRoot | null;
@@ -95,7 +100,7 @@ export
 @defineElement("eo-date-picker", {
   styleTexts: [styleText],
 })
-class EoDatePicker extends FormItemElementBase {
+class EoDatePicker extends FormItemElementBase implements EoDatePickerProps {
   /**
    * 日期选择器字段名
    */
@@ -632,7 +637,7 @@ export function InternalStateDatePicker(
 }
 
 export function EoDatePickerComponent(
-  props: EoDatePickerProps
+  props: EoDatePickerComponentProps
 ): React.ReactElement {
   const { picker = "date", ...restProps } = props;
 

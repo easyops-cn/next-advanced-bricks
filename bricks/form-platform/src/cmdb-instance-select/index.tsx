@@ -22,7 +22,12 @@ initializeI18n(NS, locales);
 const { defineElement, property, event } = createDecorators();
 const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
 
-export interface EoCmdbInstanceSelectProps extends FormItemProps {
+export type EoCmdbInstanceSelectProps = Omit<
+  EoCmdbInstanceSelectComponentProps,
+  "shadowRoot" | "onChange" | "onOptionsChange"
+>;
+
+interface EoCmdbInstanceSelectComponentProps extends FormItemProps {
   shadowRoot: ShadowRoot | null;
   objectId: string;
   mode?: string;
@@ -79,7 +84,10 @@ export
 @defineElement("eo-cmdb-instance-select", {
   styleTexts: [styleText],
 })
-class EoCmdbInstanceSelect extends FormItemElementBase {
+class EoCmdbInstanceSelect
+  extends FormItemElementBase
+  implements EoCmdbInstanceSelectProps
+{
   /**
    * 字段名称
    */
@@ -379,7 +387,7 @@ class EoCmdbInstanceSelect extends FormItemElementBase {
 }
 
 export function EoCmdbInstanceSelectComponent(
-  props: EoCmdbInstanceSelectProps
+  props: EoCmdbInstanceSelectComponentProps
 ) {
   const selectRef = useRef<any>();
   const currentTheme = useCurrentTheme();
