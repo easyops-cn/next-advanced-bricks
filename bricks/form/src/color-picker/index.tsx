@@ -12,7 +12,12 @@ import styleText from "./styles.shadow.css";
 const { defineElement, property, event } = createDecorators();
 const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
 
-export interface EoColorPickerProps
+export type EoColorPickerProps = Omit<
+  EoColorPickerComponentProps,
+  "shadowRoot" | "onChange"
+>;
+
+interface EoColorPickerComponentProps
   extends Pick<
     ColorPickerProps,
     "allowClear" | "disabled" | "showText" | "format" | "size" | "defaultValue"
@@ -146,7 +151,7 @@ class EoColorPicker extends FormItemElementBase implements EoColorPickerProps {
 }
 
 export function EoColorPickerComponent(
-  props: EoColorPickerProps
+  props: EoColorPickerComponentProps
 ): React.ReactElement {
   const currentTheme = useCurrentTheme();
   const [format, setFormat] = useState<ColorPickerProps["format"]>(

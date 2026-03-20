@@ -23,7 +23,12 @@ dayjs.extend(customParseFormat);
 const { defineElement, property, event } = createDecorators();
 const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
 
-export interface EoTimePickerProps extends FormItemProps {
+export type EoTimePickerProps = Omit<
+  EoTimePickerComponentProps,
+  "shadowRoot" | "onChange" | "onOpenChange"
+>;
+
+interface EoTimePickerComponentProps extends FormItemProps {
   shadowRoot: ShadowRoot | null;
   configProps?: Partial<TimePickerProps>;
   placeholder?: string;
@@ -54,7 +59,7 @@ export
 @defineElement("eo-time-picker", {
   styleTexts: [styleText, fixStyleText],
 })
-class EoTimePicker extends FormItemElementBase {
+class EoTimePicker extends FormItemElementBase implements EoTimePickerProps {
   /**
    * 时间选择器字段名
    */
@@ -156,7 +161,7 @@ class EoTimePicker extends FormItemElementBase {
   }
 }
 
-export function EoTimePickerComponent(props: EoTimePickerProps) {
+export function EoTimePickerComponent(props: EoTimePickerComponentProps) {
   const {
     configProps = {},
     onChange,

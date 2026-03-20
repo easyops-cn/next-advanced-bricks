@@ -11,7 +11,6 @@ const WrappedFormItem = wrapBrick<FormItem, FormItemProps>("eo-form-item");
 const WrappedButton = wrapBrick<Button, ButtonProps>("eo-button");
 
 export interface SubmitButtonsProps extends FormItemProps {
-  curElement: HTMLElement;
   submitText?: string;
   submitType?: ButtonType;
   submitDisabled?: boolean;
@@ -41,7 +40,7 @@ const { defineElement, property, event } = createDecorators();
   styleTexts: [styleText],
   alias: ["form.submit-buttons"],
 })
-class SubmitButtons extends FormItemElementBase {
+class SubmitButtons extends FormItemElementBase implements SubmitButtonsProps {
   /**
    * 提交按钮的文字
    * @default "提交"
@@ -126,6 +125,7 @@ class SubmitButtons extends FormItemElementBase {
 }
 
 interface SubmitButtonComponentProps extends SubmitButtonsProps {
+  curElement: HTMLElement;
   onSubmitClick?: (event: React.MouseEvent) => void;
   onCancelClick?: (event: React.MouseEvent) => void;
 }
