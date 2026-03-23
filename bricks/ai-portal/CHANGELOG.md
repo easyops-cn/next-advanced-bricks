@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.70.4](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.70.3...@next-bricks/ai-portal@0.70.4) (2026-03-23)
+
+
+### Bug Fixes
+
+* 补充 EoNextTable/GanttChart/CruiseCanvas/GoalCardList/ElevoSidebar 的消费者侧类型导出 ([162eca9](https://github.com/easyops-cn/next-advanced-bricks/commit/162eca9c700245a2abe25d095c4ad9ce9e4cb3ff))
+
+
+
+
+
 ## [0.70.3](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/ai-portal@0.70.2...@next-bricks/ai-portal@0.70.3) (2026-03-17)
 
 **Note:** Version bump only for package @next-bricks/ai-portal
