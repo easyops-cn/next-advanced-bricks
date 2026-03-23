@@ -26,6 +26,8 @@ initializeI18n(NS, locales);
 
 const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 
+export type * from "./interfaces.js";
+
 const TimelineContext = createContext<TimelineContextValue | null>(null);
 
 const { defineElement, property, event } = createDecorators();
