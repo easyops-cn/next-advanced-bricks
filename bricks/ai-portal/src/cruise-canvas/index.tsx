@@ -18,6 +18,8 @@ import type {
   Command,
 } from "../shared/ChatCompletions/useChatCompletions.js";
 
+export type * from "./interfaces.js";
+
 initializeI18n(NS, locales);
 
 const { defineElement, property, event, method } = createDecorators();

@@ -72,7 +72,12 @@ export interface ElevoSidebarProps {
   spaceNav?: SpaceNavProps;
 }
 
-export type { ActionClickDetail, Project, ProjectActionClickDetail };
+export type {
+  ActionClickDetail,
+  PersonalActionClickDetail,
+  Project,
+  ProjectActionClickDetail,
+};
 
 const ElevoSidebarComponent = forwardRef(LegacyElevoSidebarComponent);
 

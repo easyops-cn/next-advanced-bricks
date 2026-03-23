@@ -17,6 +17,8 @@ import { GoalCardItem, GoalItem, GoalState } from "./CardItem/CardItem.js";
 import { GeneralIcon, GeneralIconProps } from "@next-bricks/icons/general-icon";
 import { uniqueId } from "lodash";
 
+export type { GoalItem };
+
 initializeI18n(NS, locales);
 
 const { defineElement, property, event, method } = createDecorators();

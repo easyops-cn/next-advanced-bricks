@@ -417,3 +417,4 @@ class EoNextTable extends ReactNextElement implements NextTableProps {
 }
 
 export { NextTableProps };
+export type * from "./interface.js";
