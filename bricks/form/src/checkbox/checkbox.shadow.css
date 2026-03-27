@@ -108,9 +108,7 @@
   opacity: 1;
   transition: all 0.2s cubic-bezier(0.12, 0.4, 0.29, 1.46) 0.1s;
 }
-.checkboxLabelCheck {
-  background: var(--checkbox-bg-active);
-}
+
 .checkboxLabel .checkboxInputPartCheck .checkboxInner::after {
   height: 2px;
   background-color: #fff;
@@ -122,10 +120,6 @@
 }
 .checkboxLabel .checkboxInputDisabled {
   cursor: not-allowed;
-}
-
-.checkboxLabel:hover {
-  background: var(--checkbox-bg-hover);
 }
 
 .checkboxLabel .checkboxText {
