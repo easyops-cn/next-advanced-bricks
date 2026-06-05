@@ -1,31 +1,54 @@
-// istanbul ignore file: nothing logical except calling html2canvas.
+// istanbul ignore file: nothing logical except calling modern-screenshot.
 import { http } from "@next-core/http";
-import html2canvas from "html2canvas";
+import { domToCanvas } from "modern-screenshot";
 import { getBasePath } from "@next-core/runtime";
 
 export type UploadStatus = "uploading" | "done" | "error";
+
+function deepQuerySelector(
+  selector: string,
+  root: Document | ShadowRoot = document
+): HTMLElement | null {
+  const result = root.querySelector<HTMLElement>(selector);
+  if (result) return result;
+
+  const hosts = root.querySelectorAll("*");
+  for (const host of hosts) {
+    if (host.shadowRoot) {
+      const found = deepQuerySelector(selector, host.shadowRoot);
+      if (found) return found;
+    }
+  }
+  return null;
+}
 
 export function capture(
   selector?: string,
   backgroundColor?: string
 ): Promise<HTMLCanvasElement> {
   const target: HTMLElement | null = selector
-    ? document.querySelector(`${selector}`)
+    ? deepQuerySelector(selector)
     : document.body;
   if (!target) {
     throw new Error(`target not found: ${selector}`);
   }
-  return new Promise(function (resolve, reject) {
-    html2canvas(target, {
-      backgroundColor: backgroundColor || null,
-      useCORS: true,
-      allowTaint: true,
-      scale: window.devicePixelRatio < 3 ? window.devicePixelRatio : 2,
-    })
-      .then(function (canvas: HTMLCanvasElement) {
-        resolve(canvas);
-      })
-      .catch(reject);
+
+  const scale = window.devicePixelRatio < 3 ? window.devicePixelRatio : 2;
+
+  return domToCanvas(target, {
+    backgroundColor: backgroundColor || undefined,
+    scale,
+    filter: (node: Node) => {
+      if (node instanceof Element && node.tagName?.toLowerCase() === "use") {
+        const href =
+          node.getAttribute("href") ?? node.getAttribute("xlink:href");
+        if (href) {
+          const id = href.split("#")[1];
+          if (id && /^\d/.test(id)) return false;
+        }
+      }
+      return true;
+    },
   });
 }
 

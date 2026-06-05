@@ -104,7 +104,7 @@
     "shared/*"
   ],
   "resolutions": {
-    "@babel/parser": "^7.24.4",
+    "@babel/parser": "~7.27.0",
     "@babel/runtime": "^7.24.4",
     "@types/hast": "^3.0.4",
     "@types/react": "^18.2.79",
