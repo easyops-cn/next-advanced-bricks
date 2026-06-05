@@ -1,9 +1,11 @@
 import { describe, test } from "@jest/globals";
 import { captureSnapshot } from "./capture-snapshot.js";
-jest.mock("html2canvas", () => ({
-  __esModule: true,
-  default: jest.fn().mockResolvedValue({
-    toDataURL: jest.fn(),
+jest.mock("modern-screenshot", () => ({
+  domToCanvas: jest.fn().mockResolvedValue({
+    toDataURL: jest.fn().mockReturnValue("data:image/png;base64,"),
+    toBlob: jest.fn((cb: (blob: Blob) => void) => cb(new Blob())),
+    width: 100,
+    height: 100,
   }),
 }));
 describe("captureSnapshot", () => {

@@ -190,7 +190,8 @@ describe("lintYaml", () => {
         {
           start: 19,
           end: 20,
-          message: "Unexpected token (1:13)",
+          message:
+            "Unexpected parseExpression() input: The input should contain exactly one expression, but the first expression is followed by the unexpected character `)`. (1:13)",
           severity: "Error",
         },
       ],
