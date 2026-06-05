@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.52.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.51.7...@next-bricks/advanced@0.52.0) (2026-06-05)
+
+
+### Features
+
+* **advanced:** 替换 html2canvas 为 modern-screenshot 解决 Shadow DOM 截图空白问题 ([e62ad2b](https://github.com/easyops-cn/next-advanced-bricks/commit/e62ad2b0d7fa120c98e1a73e556edbb8c113730b))
+
+
+
+
+
 ## [0.51.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/advanced@0.51.6...@next-bricks/advanced@0.51.7) (2026-03-23)
 
 
