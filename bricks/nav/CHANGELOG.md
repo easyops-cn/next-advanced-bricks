@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.26.7](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.26.6...@next-bricks/nav@1.26.7) (2026-07-14)
+
+
+### Bug Fixes
+
+* **topo_center:** 问题修复 ([78fb156](https://github.com/easyops-cn/next-advanced-bricks/commit/78fb156853f14b8203524b6882256a4eadd638e5))
+
+
+
+
+
 ## [1.26.6](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.26.5...@next-bricks/nav@1.26.6) (2026-03-19)
 
 
