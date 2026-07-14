@@ -176,7 +176,7 @@ export async function favorite(
 ): Promise<{ instanceId?: string }> {
   return LaunchpadApi_createCollectionV2(
     {
-      type: item.type === "app" ? "microApp" : "customItem",
+      type: item.type === "app" ? "microApp" : "customItem", //修改备注重新打包
       relatedInstanceId: item.instanceId,
     },
     {
