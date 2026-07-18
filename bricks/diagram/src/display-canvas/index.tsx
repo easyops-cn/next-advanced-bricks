@@ -38,7 +38,10 @@ import {
 import { useZoom } from "../shared/canvas/useZoom";
 import { useActiveTarget } from "../shared/canvas/useActiveTarget";
 import { rootReducer } from "../draw-canvas/reducers";
-import { getUnrelatedCells } from "../draw-canvas/processors/getUnrelatedCells";
+import {
+  getUnrelatedCells,
+  type RelatedCellsScope,
+} from "../draw-canvas/processors/getUnrelatedCells";
 import { isEdgeCell, isNodeCell } from "../draw-canvas/processors/asserts";
 import { ZoomBarComponent } from "../shared/canvas/ZoomBarComponent";
 import { useLayout } from "../shared/canvas/useLayout";
@@ -48,6 +51,7 @@ import { updateCells } from "../draw-canvas/processors/updateCells";
 import styleText from "../shared/canvas/styles.shadow.css";
 import zoomBarStyleText from "../shared/canvas/ZoomBarComponent.shadow.css";
 import { useEditableLineMap } from "../shared/canvas/useEditableLineMap";
+import type { CenterTarget } from "../shared/canvas/processors/getCellsRect";
 
 const { defineElement, property, event, method } = createDecorators();
 
@@ -69,6 +73,8 @@ export interface EoDisplayCanvasProps {
   scaleRange?: RangeTuple;
   hideZoomBar?: boolean;
   autoCenterWhenCellsChange?: boolean;
+  centerTarget?: CenterTarget;
+  relatedCellsScope?: RelatedCellsScope;
   doNotResetActiveTargetForSelector?: string;
   doNotResetActiveTargetOutsideCanvas?: boolean;
   extraStyleTexts?: string[];
@@ -213,6 +219,18 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
   accessor autoCenterWhenCellsChange: boolean | undefined;
 
   /**
+   * @description 自动居中时使用的目标范围。默认按所有非边元素居中，设置为 `nodes` 时只按节点居中。
+   */
+  @property({ type: String })
+  accessor centerTarget: CenterTarget | undefined;
+
+  /**
+   * @description 淡化无关元素时使用的关联范围。默认只高亮直接相邻的节点和边，设置为 `chain` 时高亮当前节点的有向上游链路和下游链路。
+   */
+  @property({ type: String })
+  accessor relatedCellsScope: RelatedCellsScope | undefined;
+
+  /**
    * 选择器，点击该选择器对应的元素时不重置 `activeTarget`。
    */
   @property()
@@ -303,6 +321,8 @@ class EoDisplayCanvas extends ReactNextElement implements EoDisplayCanvasProps {
           this.doNotResetActiveTargetOutsideCanvas
         }
         autoCenterWhenCellsChange={this.autoCenterWhenCellsChange}
+        centerTarget={this.centerTarget}
+        relatedCellsScope={this.relatedCellsScope}
         extraStyleTexts={this.extraStyleTexts}
         onActiveTargetChange={this.#handleActiveTargetChange}
         onSwitchActiveTarget={this.#handleSwitchActiveTarget}
@@ -346,6 +366,8 @@ function LegacyEoDisplayCanvasComponent(
     scaleRange: _scaleRange,
     hideZoomBar,
     autoCenterWhenCellsChange,
+    centerTarget,
+    relatedCellsScope,
     doNotResetActiveTargetForSelector,
     doNotResetActiveTargetOutsideCanvas,
     extraStyleTexts,
@@ -397,6 +419,7 @@ function LegacyEoDisplayCanvasComponent(
     scaleRange,
     layoutKey,
     autoCenterWhenCellsChange,
+    centerTarget,
     dispatch,
   });
 
@@ -472,13 +495,19 @@ function LegacyEoDisplayCanvasComponent(
   const [unrelatedCells, setUnrelatedCells] = useState<Cell[]>([]);
   useEffect(() => {
     const nextUnrelated = fadeUnrelatedCells
-      ? getUnrelatedCells(cells, null, hoverCell || activeTarget)
+      ? getUnrelatedCells(
+          cells,
+          null,
+          hoverCell || activeTarget,
+          undefined,
+          relatedCellsScope
+        )
       : [];
     // Do not update the state when prev and next are both empty.
     setUnrelatedCells((prev) =>
       prev.length === 0 && nextUnrelated.length === 0 ? prev : nextUnrelated
     );
-  }, [cells, fadeUnrelatedCells, hoverCell, activeTarget]);
+  }, [cells, fadeUnrelatedCells, hoverCell, activeTarget, relatedCellsScope]);
 
   const handleZoomSlide = useCallback(
     (value: number) => {

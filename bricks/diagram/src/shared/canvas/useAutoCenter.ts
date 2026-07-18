@@ -11,7 +11,7 @@ import {
   isDecoratorCell,
   isNodeCell,
 } from "../../draw-canvas/processors/asserts";
-import { getCellsRect } from "./processors/getCellsRect";
+import { getCellsRect, type CenterTarget } from "./processors/getCellsRect";
 import { extractPartialRectTuple } from "../../diagram/processors/extractPartialRectTuple";
 import { getTransformToCenter } from "./processors/getTransformToCenter";
 
@@ -23,6 +23,7 @@ export interface UseAutoCenterOptions {
   zoomer: ZoomBehavior<SVGSVGElement, unknown>;
   scaleRange: RangeTuple;
   autoCenterWhenCellsChange?: boolean;
+  centerTarget?: CenterTarget;
   autoSize?: AutoSize;
   padding?: PartialRectTuple;
 }
@@ -40,6 +41,7 @@ export function useAutoCenter({
   zoomer,
   scaleRange,
   autoCenterWhenCellsChange,
+  centerTarget,
   autoSize,
   padding,
 }: UseAutoCenterOptions): UseAutoCenterResult {
@@ -70,7 +72,7 @@ export function useAutoCenter({
       return;
     }
 
-    const rect = getCellsRect(cells);
+    const rect = getCellsRect(cells, centerTarget);
     let width = root.clientWidth;
     let height = root.clientHeight;
     const fitWidth = !!autoSize?.width;
@@ -123,6 +125,7 @@ export function useAutoCenter({
     zoomable,
     zoomer,
     autoSize,
+    centerTarget,
     padding,
   ]);
 

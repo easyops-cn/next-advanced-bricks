@@ -12,28 +12,30 @@ source: "@next-bricks/diagram"
 
 ## Props
 
-| 属性                                | 类型                                | 必填 | 默认值                                   | 说明                                                                                                         |
-| ----------------------------------- | ----------------------------------- | ---- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| cells                               | `InitialCell[] \| undefined`        | -    | -                                        | 画布中的单元格数据，包含节点（node）、边（edge）和装饰器（decorator）。                                      |
-| layout                              | `LayoutType`                        | 是   | -                                        | 画布布局类型，支持 `manual`（手动定位）、`force`（力导向）、`dagre`（层次有向图）。                          |
-| layoutOptions                       | `LayoutOptions \| undefined`        | -    | -                                        | 布局算法选项，根据 layout 类型不同，支持不同参数（如 dagre 的 ranksep/nodesep，force 的碰撞参数等）。        |
-| autoSize                            | `AutoSize \| undefined`             | -    | -                                        | 是否自动计算节点尺寸，启用后画布会根据节点内容自动调整节点大小。                                             |
-| defaultNodeSize                     | `SizeTuple`                         | 是   | `[DEFAULT_NODE_SIZE, DEFAULT_NODE_SIZE]` | 节点默认尺寸，格式为 `[width, height]`，在节点未指定尺寸时使用。                                             |
-| defaultNodeBricks                   | `NodeBrickConf[] \| undefined`      | -    | -                                        | 节点默认砖块配置，指定渲染节点的自定义构件，可按节点类型匹配不同配置。                                       |
-| degradedThreshold                   | `number \| undefined`               | -    | `500`                                    | 当节点数量达到或超过 `degradedThreshold` 时，节点将被降级展示。                                              |
-| degradedNodeLabel                   | `string \| undefined`               | -    | `"<% DATA.node.id %>"`                   | 设置节点将降级展示时显示的名称。                                                                             |
-| defaultEdgeLines                    | `EdgeLineConf[] \| undefined`       | -    | -                                        | 使用条件判断设置默认的边对应的连线。在 `if` 表达式中 `DATA` 为 `{ edge }`。                                  |
-| activeTarget                        | `ActiveTarget \| null \| undefined` | -    | -                                        | 当前激活目标，可以是节点（`{ type: "node", id }`）或边（`{ type: "edge", id }`）等，为 null 表示无激活目标。 |
-| fadeUnrelatedCells                  | `boolean \| undefined`              | -    | -                                        | 当鼠标悬浮到某节点上时，隐藏其他跟该节点无关的元素，高亮相关节点和边。                                       |
-| zoomable                            | `boolean \| undefined`              | -    | `true`                                   | 是否允许通过鼠标滚轮或触控板捏合手势缩放画布，默认为 true。                                                  |
-| scrollable                          | `boolean \| undefined`              | -    | `true`                                   | 是否允许通过滚轮平移画布（非捏合手势），默认为 true。                                                        |
-| pannable                            | `boolean \| undefined`              | -    | `true`                                   | 是否允许通过鼠标拖拽平移画布，默认为 true。                                                                  |
-| scaleRange                          | `RangeTuple \| undefined`           | -    | -                                        | 缩放比例范围，格式为 `[min, max]`，默认范围由内部常量决定。                                                  |
-| hideZoomBar                         | `boolean \| undefined`              | -    | -                                        | 隐藏右下角放大缩小的控制栏。                                                                                 |
-| autoCenterWhenCellsChange           | `boolean \| undefined`              | -    | -                                        | 每当 cells 改变时，重新自动居中。                                                                            |
-| doNotResetActiveTargetForSelector   | `string \| undefined`               | -    | -                                        | 选择器，点击该选择器对应的元素时不重置 `activeTarget`。                                                      |
-| doNotResetActiveTargetOutsideCanvas | `boolean \| undefined`              | -    | -                                        | 在画布外点击时不重置 `activeTarget`。                                                                        |
-| extraStyleTexts                     | `string[] \| undefined`             | -    | -                                        | 注入到 Shadow DOM 的额外 CSS 样式文本列表。                                                                  |
+| 属性                                | 类型                                 | 必填 | 默认值                                   | 说明                                                                                                                |
+| ----------------------------------- | ------------------------------------ | ---- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| cells                               | `InitialCell[] \| undefined`         | -    | -                                        | 画布中的单元格数据，包含节点（node）、边（edge）和装饰器（decorator）。                                             |
+| layout                              | `LayoutType`                         | 是   | -                                        | 画布布局类型，支持 `manual`（手动定位）、`force`（力导向）、`dagre`（层次有向图）。                                 |
+| layoutOptions                       | `LayoutOptions \| undefined`         | -    | -                                        | 布局算法选项，根据 layout 类型不同，支持不同参数（如 dagre 的 ranksep/nodesep，force 的碰撞参数等）。               |
+| autoSize                            | `AutoSize \| undefined`              | -    | -                                        | 是否自动计算节点尺寸，启用后画布会根据节点内容自动调整节点大小。                                                    |
+| defaultNodeSize                     | `SizeTuple`                          | 是   | `[DEFAULT_NODE_SIZE, DEFAULT_NODE_SIZE]` | 节点默认尺寸，格式为 `[width, height]`，在节点未指定尺寸时使用。                                                    |
+| defaultNodeBricks                   | `NodeBrickConf[] \| undefined`       | -    | -                                        | 节点默认砖块配置，指定渲染节点的自定义构件，可按节点类型匹配不同配置。                                              |
+| degradedThreshold                   | `number \| undefined`                | -    | `500`                                    | 当节点数量达到或超过 `degradedThreshold` 时，节点将被降级展示。                                                     |
+| degradedNodeLabel                   | `string \| undefined`                | -    | `"<% DATA.node.id %>"`                   | 设置节点将降级展示时显示的名称。                                                                                    |
+| defaultEdgeLines                    | `EdgeLineConf[] \| undefined`        | -    | -                                        | 使用条件判断设置默认的边对应的连线。在 `if` 表达式中 `DATA` 为 `{ edge }`。                                         |
+| activeTarget                        | `ActiveTarget \| null \| undefined`  | -    | -                                        | 当前激活目标，可以是节点（`{ type: "node", id }`）或边（`{ type: "edge", id }`）等，为 null 表示无激活目标。        |
+| fadeUnrelatedCells                  | `boolean \| undefined`               | -    | -                                        | 当鼠标悬浮到某节点上时，隐藏其他跟该节点无关的元素，高亮相关节点和边。                                              |
+| zoomable                            | `boolean \| undefined`               | -    | `true`                                   | 是否允许通过鼠标滚轮或触控板捏合手势缩放画布，默认为 true。                                                         |
+| scrollable                          | `boolean \| undefined`               | -    | `true`                                   | 是否允许通过滚轮平移画布（非捏合手势），默认为 true。                                                               |
+| pannable                            | `boolean \| undefined`               | -    | `true`                                   | 是否允许通过鼠标拖拽平移画布，默认为 true。                                                                         |
+| scaleRange                          | `RangeTuple \| undefined`            | -    | -                                        | 缩放比例范围，格式为 `[min, max]`，默认范围由内部常量决定。                                                         |
+| hideZoomBar                         | `boolean \| undefined`               | -    | -                                        | 隐藏右下角放大缩小的控制栏。                                                                                        |
+| autoCenterWhenCellsChange           | `boolean \| undefined`               | -    | -                                        | 每当 cells 改变时，重新自动居中。                                                                                   |
+| centerTarget                        | `"all" \| "nodes" \| undefined`      | -    | `"all"`                                  | 自动居中时使用的目标范围。默认按所有非边元素居中，设置为 `nodes` 时只按节点居中。                                   |
+| relatedCellsScope                   | `"adjacent" \| "chain" \| undefined` | -    | `"adjacent"`                             | 淡化无关元素时使用的关联范围。默认只高亮直接相邻的节点和边，设置为 `chain` 时高亮当前节点的有向上游链路和下游链路。 |
+| doNotResetActiveTargetForSelector   | `string \| undefined`                | -    | -                                        | 选择器，点击该选择器对应的元素时不重置 `activeTarget`。                                                             |
+| doNotResetActiveTargetOutsideCanvas | `boolean \| undefined`               | -    | -                                        | 在画布外点击时不重置 `activeTarget`。                                                                               |
+| extraStyleTexts                     | `string[] \| undefined`              | -    | -                                        | 注入到 Shadow DOM 的额外 CSS 样式文本列表。                                                                         |
 
 ## Events
 
