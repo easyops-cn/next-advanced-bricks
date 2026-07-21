@@ -12,6 +12,7 @@ import type {
 } from "../../draw-canvas/interfaces";
 import type { FullRectTuple, RangeTuple } from "../../diagram/interfaces";
 import { useAutoCenter } from "./useAutoCenter";
+import type { CenterTarget } from "./processors/getCellsRect";
 import {
   isNodeCell,
   isNodeOrAreaDecoratorCell,
@@ -38,6 +39,7 @@ export interface UseLayoutOptions {
   layoutKey: number;
   allowEdgeToArea?: boolean;
   autoCenterWhenCellsChange?: boolean;
+  centerTarget?: CenterTarget;
   dispatch: (value: DrawCanvasAction) => void;
 }
 
@@ -53,6 +55,7 @@ export function useLayout({
   layoutKey,
   allowEdgeToArea,
   autoCenterWhenCellsChange,
+  centerTarget,
   dispatch,
 }: UseLayoutOptions) {
   const [layoutInitialized, setLayoutInitialized] = useState(
@@ -73,6 +76,7 @@ export function useLayout({
     zoomer,
     scaleRange,
     autoCenterWhenCellsChange,
+    centerTarget,
     autoSize,
     padding: layoutOptions?.padding,
   });

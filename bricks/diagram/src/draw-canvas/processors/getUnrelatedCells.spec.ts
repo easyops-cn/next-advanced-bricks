@@ -28,6 +28,75 @@ describe("getUnrelatedCells", () => {
     ]);
   });
 
+  test("active target is node with chain scope", () => {
+    const activeTarget = { type: "node", id: "center" } as ActiveTarget;
+    const unrelated = getUnrelatedCells(
+      [
+        { id: "up-2", type: "node" },
+        { id: "up-1", type: "node" },
+        { id: "center", type: "node" },
+        { id: "down-1", type: "node" },
+        { id: "down-2", type: "node" },
+        { id: "up-side", type: "node" },
+        { id: "down-side", type: "node" },
+        { id: "isolated-1", type: "node" },
+        { id: "isolated-2", type: "node" },
+        { id: "edge-up-2", type: "edge", source: "up-2", target: "up-1" },
+        { id: "edge-up-1", type: "edge", source: "up-1", target: "center" },
+        {
+          id: "edge-down-1",
+          type: "edge",
+          source: "center",
+          target: "down-1",
+        },
+        {
+          id: "edge-down-2",
+          type: "edge",
+          source: "down-1",
+          target: "down-2",
+        },
+        { id: "edge-up-side", type: "edge", source: "up-1", target: "up-side" },
+        {
+          id: "edge-down-side",
+          type: "edge",
+          source: "down-side",
+          target: "down-1",
+        },
+        {
+          id: "edge-isolated",
+          type: "edge",
+          source: "isolated-1",
+          target: "isolated-2",
+        },
+        { id: "decorator-1", type: "decorator" },
+      ] as Cell[],
+      null,
+      activeTarget,
+      undefined,
+      "chain"
+    );
+    expect(unrelated).toEqual([
+      { id: "edge-up-side", type: "edge", source: "up-1", target: "up-side" },
+      {
+        id: "edge-down-side",
+        type: "edge",
+        source: "down-side",
+        target: "down-1",
+      },
+      {
+        id: "edge-isolated",
+        type: "edge",
+        source: "isolated-1",
+        target: "isolated-2",
+      },
+      { id: "decorator-1", type: "decorator" },
+      { id: "up-side", type: "node" },
+      { id: "down-side", type: "node" },
+      { id: "isolated-1", type: "node" },
+      { id: "isolated-2", type: "node" },
+    ]);
+  });
+
   test("active target is edge", () => {
     const activeTarget = {
       type: "edge",
@@ -95,6 +164,124 @@ describe("getUnrelatedCells", () => {
       { id: "6", type: "edge", source: "3", target: "4" },
       { id: "9", type: "decorator" },
       { id: "3", type: "node" },
+    ]);
+  });
+
+  test("multiple active targets with chain scope", () => {
+    const graph = [
+      { id: "up-2", type: "node" },
+      { id: "up-1", type: "node" },
+      { id: "center", type: "node" },
+      { id: "down-1", type: "node" },
+      { id: "down-2", type: "node" },
+      { id: "up-side", type: "node" },
+      { id: "down-side", type: "node" },
+      { id: "edge-up-2", type: "edge", source: "up-2", target: "up-1" },
+      { id: "edge-up-1", type: "edge", source: "up-1", target: "center" },
+      {
+        id: "edge-down-1",
+        type: "edge",
+        source: "center",
+        target: "down-1",
+      },
+      {
+        id: "edge-down-2",
+        type: "edge",
+        source: "down-1",
+        target: "down-2",
+      },
+      { id: "edge-up-side", type: "edge", source: "up-1", target: "up-side" },
+      {
+        id: "edge-down-side",
+        type: "edge",
+        source: "down-side",
+        target: "down-1",
+      },
+    ] as Cell[];
+    const unrelated = getUnrelatedCells(
+      graph,
+      null,
+      {
+        type: "multi",
+        targets: [{ type: "node", id: "center" }],
+      },
+      undefined,
+      "chain"
+    );
+    expect(unrelated).toEqual([
+      { id: "edge-up-side", type: "edge", source: "up-1", target: "up-side" },
+      {
+        id: "edge-down-side",
+        type: "edge",
+        source: "down-side",
+        target: "down-1",
+      },
+      { id: "up-side", type: "node" },
+      { id: "down-side", type: "node" },
+    ]);
+  });
+
+  test("multiple precomputed chain targets should not expand to side branches", () => {
+    const graph = [
+      { id: "up-2", type: "node" },
+      { id: "up-1", type: "node" },
+      { id: "center", type: "node" },
+      { id: "down-1", type: "node" },
+      { id: "down-2", type: "node" },
+      { id: "up-side", type: "node" },
+      { id: "down-side", type: "node" },
+      { id: "edge-up-2", type: "edge", source: "up-2", target: "up-1" },
+      { id: "edge-up-1", type: "edge", source: "up-1", target: "center" },
+      {
+        id: "edge-down-1",
+        type: "edge",
+        source: "center",
+        target: "down-1",
+      },
+      {
+        id: "edge-down-2",
+        type: "edge",
+        source: "down-1",
+        target: "down-2",
+      },
+      { id: "edge-up-side", type: "edge", source: "up-1", target: "up-side" },
+      {
+        id: "edge-down-side",
+        type: "edge",
+        source: "down-side",
+        target: "down-1",
+      },
+    ] as Cell[];
+    const unrelated = getUnrelatedCells(
+      graph,
+      null,
+      {
+        type: "multi",
+        targets: [
+          { type: "node", id: "up-2" },
+          { type: "node", id: "up-1" },
+          { type: "node", id: "center" },
+          { type: "node", id: "down-1" },
+          { type: "node", id: "down-2" },
+          { type: "edge", source: "up-2", target: "up-1" },
+          { type: "edge", source: "up-1", target: "center" },
+          { type: "edge", source: "center", target: "down-1" },
+          { type: "edge", source: "down-1", target: "down-2" },
+        ],
+      },
+      undefined,
+      "chain"
+    );
+    expect(unrelated).toEqual([
+      { id: "up-side", type: "node" },
+      { id: "down-side", type: "node" },
+      { id: "edge-up-side", type: "edge", source: "up-1", target: "up-side" },
+      {
+        id: "edge-down-side",
+        type: "edge",
+        source: "down-side",
+        target: "down-1",
+      },
     ]);
   });
 });
