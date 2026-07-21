@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.69.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.68.10...@next-bricks/diagram@0.69.0) (2026-07-21)
+
+
+### Features
+
+* **diagram:** support topology chain highlight ([789bec6](https://github.com/easyops-cn/next-advanced-bricks/commit/789bec6541bbb60e5fdd7d3ea0c72117688742b8))
+
+
+
+
+
 ## [0.68.10](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.68.9...@next-bricks/diagram@0.68.10) (2026-03-17)
 
 **Note:** Version bump only for package @next-bricks/diagram
