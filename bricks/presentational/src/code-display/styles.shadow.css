@@ -26,7 +26,6 @@ eo-icon {
   font-size: 12px;
   line-height: 16px;
   overflow: auto;
-  white-space: pre-wrap;
   border-radius: var(--medius-border-radius);
   min-height: calc(var(--min-lines) * 16px);
   max-height: calc(var(--max-lines) * 16px);

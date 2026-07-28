@@ -79,6 +79,9 @@
     "@next-bricks/basic": "*",
     "@next-bricks/containers": "*",
     "@next-bricks/form": "*",
+    "@next-bricks/form-platform": "*",
+    "@next-bricks/icons": "*",
+    "@next-bricks/markdown": "*",
     "@next-bricks/mini-chart": "*",
     "@next-bricks/presentational": "*",
     "@next-bricks/vs": "*"
