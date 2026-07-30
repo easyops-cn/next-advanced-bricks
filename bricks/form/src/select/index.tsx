@@ -12,6 +12,8 @@ import { FormItemElementBase, pickFormItemProps } from "@next-shared/form";
 import type { GeneralComplexOption, GeneralOption } from "../interface.js";
 import styleText from "./index.shadow.css";
 import classNames from "classnames";
+import { Tooltip, ConfigProvider } from "antd";
+import { StyleProvider, createCache } from "@ant-design/cssinjs";
 import "@next-core/theme";
 import type { FormItem, FormItemProps } from "../form-item/index.js";
 import { formatOptions } from "../utils/formatOptions.js";
@@ -464,6 +466,7 @@ export function SelectComponent(props: SelectProps) {
     [mode]
   );
   const selectRef = useRef<HTMLDivElement>(null);
+  const antdStyleCache = useMemo(() => createCache(), []);
   const inputSpanRef = useRef<HTMLSpanElement>(null);
   const shouldTriggerOnValueChangeArgs = useRef(true);
   const [inputValue, setInputValue] = useState<string>("");
@@ -910,7 +913,7 @@ export function SelectComponent(props: SelectProps) {
         <div className="select-item-option-content">
           <div className="option">
             <div className="text-container">
-              <span className="label">{item.label}</span>
+              <OptionLabel label={item.label} />
               {item.caption && <span className="caption">{item.caption}</span>}
             </div>
             {suffix?.useBrick && (
@@ -973,7 +976,6 @@ export function SelectComponent(props: SelectProps) {
     multiple,
     handleChange,
   ]);
-
   return (
     <WrappedFormItem exportparts="message" {...pickFormItemProps(props)}>
       <div
@@ -1064,12 +1066,47 @@ export function SelectComponent(props: SelectProps) {
                 />
               </div>
             ) : (
-              <div className="dropdown-inner">{Options}</div>
+              <div className="dropdown-inner">
+                <ConfigProvider prefixCls="antdV5">
+                  <StyleProvider cache={antdStyleCache} hashPriority="high">
+                    {Options}
+                  </StyleProvider>
+                </ConfigProvider>
+              </div>
             )}
           </div>
         </WrappedSlPopup>
       </div>
     </WrappedFormItem>
+  );
+}
+
+function OptionLabel({ label }: { label?: React.ReactNode }) {
+  const labelRef = useRef<HTMLSpanElement>(null);
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Tooltip
+      open={open}
+      onOpenChange={(o) => {
+        if (!o) {
+          setOpen(false);
+          return;
+        }
+        const el = labelRef.current;
+        // 仅在文本溢出（出现省略号）时才显示 tooltip
+        setOpen(!!el && el.offsetWidth < el.scrollWidth);
+      }}
+      title={label}
+      placement="top"
+      mouseEnterDelay={0.1}
+      mouseLeaveDelay={0.1}
+      zIndex={1070}
+    >
+      <span ref={labelRef} className="label">
+        {label}
+      </span>
+    </Tooltip>
   );
 }
 

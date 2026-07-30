@@ -1,5 +1,5 @@
 import { describe, test, expect } from "@jest/globals";
-import { act, fireEvent, getByTestId } from "@testing-library/react";
+import { act, fireEvent, getByTestId, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/jest-globals";
 
 import "./";
@@ -618,6 +618,101 @@ describe("eo-select", () => {
       })
     );
     expect(element.value).toBe("a");
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
+});
+
+describe("eo-select option label tooltip", () => {
+  test("label 文本溢出时,hover 显示 antd tooltip 完整内容", async () => {
+    const element = document.createElement("eo-select") as Select;
+    element.options = [{ label: "a-very-long-option-label", value: "a" }];
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    // 打开下拉框
+    act(() => {
+      (
+        element.shadowRoot?.querySelector(".select-selector") as HTMLElement
+      ).click();
+    });
+
+    const label = element.shadowRoot?.querySelector(
+      ".select-item .label"
+    ) as HTMLSpanElement;
+
+    // jsdom 不做布局,手动模拟文本溢出(offsetWidth < scrollWidth)
+    Object.defineProperty(label, "offsetWidth", {
+      value: 50,
+      configurable: true,
+    });
+    Object.defineProperty(label, "scrollWidth", {
+      value: 300,
+      configurable: true,
+    });
+
+    await act(async () => {
+      fireEvent.mouseEnter(label);
+    });
+
+    // tooltip 浮层 portal 到 body,前缀为 antdV5
+    await waitFor(() => {
+      expect(document.querySelector(".antdV5-tooltip-inner")?.textContent).toBe(
+        "a-very-long-option-label"
+      );
+    });
+
+    // 离开后触发关闭分支(覆盖 onOpenChange 中 !o 的 setOpen(false));
+    // antd Tooltip 关闭受 mouseLeaveDelay 控制用 setTimeout,需等待定时器触发
+    await act(async () => {
+      fireEvent.mouseLeave(label);
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    });
+
+    act(() => {
+      document.body.removeChild(element);
+    });
+  });
+
+  test("label 文本未溢出时,hover 不显示 tooltip", async () => {
+    const element = document.createElement("eo-select") as Select;
+    element.options = [{ label: "short", value: "a" }];
+    act(() => {
+      document.body.appendChild(element);
+    });
+
+    act(() => {
+      (
+        element.shadowRoot?.querySelector(".select-selector") as HTMLElement
+      ).click();
+    });
+
+    const label = element.shadowRoot?.querySelector(
+      ".select-item .label"
+    ) as HTMLSpanElement;
+
+    // 模拟未溢出(offsetWidth >= scrollWidth)
+    Object.defineProperty(label, "offsetWidth", {
+      value: 300,
+      configurable: true,
+    });
+    Object.defineProperty(label, "scrollWidth", {
+      value: 50,
+      configurable: true,
+    });
+
+    await act(async () => {
+      fireEvent.mouseEnter(label);
+    });
+    // 等待超过 mouseEnterDelay(0.1s),确认 tooltip 未出现
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    });
+
+    expect(document.querySelector(".antdV5-tooltip")).toBeNull();
 
     act(() => {
       document.body.removeChild(element);
