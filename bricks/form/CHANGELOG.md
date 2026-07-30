@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.22.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.21.16...@next-bricks/form@1.22.0) (2026-07-30)
+
+
+### Features
+
+* **select:** 下拉选项 label 溢出时用 antd Tooltip 展示完整内容 ([10367d7](https://github.com/easyops-cn/next-advanced-bricks/commit/10367d78ec64d41a8eb3e015c9012bf0eb619385))
+
+
+
+
+
 ## [1.21.16](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.21.15...@next-bricks/form@1.21.16) (2026-03-20)
 
 
