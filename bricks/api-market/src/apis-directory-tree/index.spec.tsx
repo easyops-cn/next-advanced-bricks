@@ -3,10 +3,33 @@ import { fireEvent } from "@testing-library/react";
 import { act } from "react-dom/test-utils";
 import "./";
 import type { ApisDirectoryTree } from "./index.js";
+import { i18n } from "@next-core/i18n";
+import { K, NS } from "./i18n.js";
 
 jest.mock("@next-core/theme", () => ({}));
 
 describe("api-market.apis-directory-tree", () => {
+  test("translates directory actions", async () => {
+    const originalLanguage = i18n.language;
+    await i18n.changeLanguage("en");
+    expect(
+      [
+        K.CREATE_API,
+        K.IMPORT_API,
+        K.CREATE_SUB_DIRECTORY,
+        K.RENAME_DIRECTORY,
+        K.DELETE_DIRECTORY,
+      ].map((key) => i18n.t(`${NS}:${key}`))
+    ).toEqual([
+      "Create API",
+      "Import API",
+      "Create Subdirectory",
+      "Rename Directory",
+      "Delete Directory",
+    ]);
+    await i18n.changeLanguage(originalLanguage);
+  });
+
   test("basic usage", async () => {
     const onExpand = jest.fn();
     const onSelect = jest.fn();

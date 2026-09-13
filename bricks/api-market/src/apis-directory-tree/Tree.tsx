@@ -1,12 +1,16 @@
 import React, { useMemo } from "react";
+import { i18n } from "@next-core/i18n";
 import { useDirectoryTreeContext } from "./DirectoryTreeContext";
 import { TreeData } from "./";
+import { K, NS } from "./i18n.js";
 import {
   WrappedMiniActions,
   WrappedTag,
   WrappedTreeInternalNode,
   WrappedTreeLeaf,
 } from "./wrapped-bricks";
+
+const t = (key: K) => i18n.t(`${NS}:${key}`);
 
 interface SuffixActionsProps {
   treeData: TreeData;
@@ -25,20 +29,20 @@ function SuffixActions(props: SuffixActionsProps) {
           icon: "plus-circle",
           theme: "outlined",
         },
-        text: "新建接口",
+        text: t(K.CREATE_API),
         disabled: treeData.data.isPublic,
         hidden:
           treeData.data.key.split("-").length >= 3 &&
           treeData.data.type === "group",
         event: "create-api",
-        tooltip: "新建接口",
+        tooltip: t(K.CREATE_API),
       },
       {
         icon: {
           lib: "antd",
           icon: "upload",
         },
-        text: "导入接口",
+        text: t(K.IMPORT_API),
         hidden:
           treeData.data.key.split("-").length >= 3 &&
           treeData.data.type === "group",
@@ -56,7 +60,7 @@ function SuffixActions(props: SuffixActionsProps) {
           icon: "plus",
           theme: "outlined",
         },
-        text: "新建子目录",
+        text: t(K.CREATE_SUB_DIRECTORY),
         disabled: treeData.data.isPublic,
         hidden:
           treeData.data.key.split("-").length >= 2 &&
@@ -72,7 +76,7 @@ function SuffixActions(props: SuffixActionsProps) {
         },
         disabled: treeData.data.isPublic,
         isDropdown: true,
-        text: "目录重命名",
+        text: t(K.RENAME_DIRECTORY),
         event: "rename-directory",
       },
       {
@@ -81,7 +85,7 @@ function SuffixActions(props: SuffixActionsProps) {
           icon: "delete",
           theme: "outlined",
         },
-        text: "删除目录",
+        text: t(K.DELETE_DIRECTORY),
         disabled: treeData.data.isPublic,
         isDropdown: true,
         danger: true,
