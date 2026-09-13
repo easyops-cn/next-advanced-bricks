@@ -13,6 +13,10 @@ import {
 import { DirectoryTreeContext } from "./DirectoryTreeContext";
 import { WrappedSearch } from "./wrapped-bricks";
 import type { SimpleActionType } from "@next-bricks/basic/mini-actions";
+import { initializeReactI18n } from "@next-core/i18n/react";
+import { NS, locales } from "./i18n.js";
+
+initializeReactI18n(NS, locales);
 
 const { defineElement, property, method, event } = createDecorators();
 
