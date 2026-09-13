@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.62](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/api-market@0.1.61...@next-bricks/api-market@0.1.62) (2026-09-13)
+
+
+### Bug Fixes
+
+* **api-market:** internationalize apis-directory-tree actions ([6a5a222](https://github.com/easyops-cn/next-advanced-bricks/commit/6a5a222c7ef075ae371ed8eeda69b921a3b08708))
+
+
+
+
+
 ## [0.1.61](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/api-market@0.1.60...@next-bricks/api-market@0.1.61) (2026-03-11)
 
 **Note:** Version bump only for package @next-bricks/api-market
