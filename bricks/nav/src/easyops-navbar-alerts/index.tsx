@@ -7,17 +7,21 @@ import { auth } from "@next-core/easyops-runtime";
 import "@next-core/theme";
 import { JsonStorage } from "@next-shared/general/JsonStorage";
 import moment from "moment";
+import { i18n, initializeI18n } from "@next-core/i18n";
 import type {
   GeneralIcon,
   GeneralIconProps,
 } from "@next-bricks/icons/general-icon";
 import type { Link, LinkProps } from "@next-bricks/basic/link";
 import styleText from "./styles.shadow.css";
+import { K, NS, locales } from "./i18n.js";
 
 export const WrappedIcon = wrapBrick<GeneralIcon, GeneralIconProps>("eo-icon");
 export const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
 
 const { defineElement } = createDecorators();
+
+initializeI18n(NS, locales);
 
 /**
  * 导航栏告警提示组件，用于显示 License 到期提醒和页面性能问题警告。
@@ -42,6 +46,7 @@ interface SlowRenderInfo {
 const storage = new JsonStorage(localStorage);
 
 export function EasyopsNavbarAlertsComponent() {
+  const translate = i18n.getFixedT(i18n.language, NS);
   const [licenseHide, setLienceseHide] = useState<boolean>(false);
   const [slowRender, setSlowRender] = useState<SlowRenderInfo | null>(null);
   const currentApp = useCurrentApp();
@@ -101,12 +106,15 @@ export function EasyopsNavbarAlertsComponent() {
     <>
       {slowRender && (
         <Alert
-          text={`您的页面存在性能问题, 当前页面渲染时间 ${slowRender.renderTime} 秒, 规定阈值为: ${slowRender.suggestTime} 秒, 您已超过。请您针对该页面进行性能优化！`}
+          text={translate(K.PAGE_RENDER_SLOW_TIP, {
+            renderTime: slowRender.renderTime,
+            suggestTime: slowRender.suggestTime,
+          })}
           type="warning"
           link={
             slowRender.suggestUrl
               ? {
-                  label: "建议解决思路",
+                  label: translate(K.VIEW_SUGGESTION),
                   url: slowRender.suggestUrl,
                 }
               : undefined
@@ -115,7 +123,7 @@ export function EasyopsNavbarAlertsComponent() {
       )}
       {licenseDaysLeft !== null && (
         <Alert
-          text={`离 License 过期还有 ${licenseDaysLeft} 天`}
+          text={translate(K.LICENSE_EXPIRES_IN_DAY, { count: licenseDaysLeft })}
           type="info"
           closable
           onClose={handleLicenseAlertDismiss}
