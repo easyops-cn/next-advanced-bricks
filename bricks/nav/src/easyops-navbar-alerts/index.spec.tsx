@@ -7,6 +7,9 @@ import type { EasyopsNavbarAlerts } from "./index.js";
 import { i18n, initializeI18n } from "@next-core/i18n";
 import { NS, locales } from "./i18n.js";
 
+// 本测试需验证真实文案及语言切换后的重渲染，恢复真实 react-i18next，
+// 不使用 jest/__mocks__/react-i18next.js 中 `t: (key) => key` 的桩实现。
+jest.unmock("react-i18next");
 jest.mock("@next-core/theme", () => ({}));
 jest.mock("@next-core/runtime", () => ({
   getRuntime() {
@@ -173,5 +176,45 @@ describe("nav.easyops-navbar-alerts", () => {
     );
     act(() => document.body.removeChild(plural));
     await i18n.changeLanguage("zh");
+  });
+
+  test("license alert follows language switching after mount", async () => {
+    mockGetAuth.mockReturnValue({
+      org: "lang-switch-org",
+      license: { validDaysLeft: 7 },
+      isAdmin: true,
+    });
+    await i18n.changeLanguage("zh");
+
+    const element = document.createElement(
+      "nav.easyops-navbar-alerts"
+    ) as EasyopsNavbarAlerts;
+
+    act(() => {
+      document.body.appendChild(element);
+    });
+    expect(element.shadowRoot?.querySelector(".text")?.textContent).toBe(
+      "离 License 过期还有 7 天"
+    );
+
+    // 切换到英文后，已挂载的吊顶应重新渲染为英文。
+    await act(async () => {
+      await i18n.changeLanguage("en");
+    });
+    expect(element.shadowRoot?.querySelector(".text")?.textContent).toBe(
+      "License expires in 7 days"
+    );
+
+    // 再切回中文，确认事件订阅无残留、往返切换均正常。
+    await act(async () => {
+      await i18n.changeLanguage("zh");
+    });
+    expect(element.shadowRoot?.querySelector(".text")?.textContent).toBe(
+      "离 License 过期还有 7 天"
+    );
+
+    act(() => {
+      document.body.removeChild(element);
+    });
   });
 });
