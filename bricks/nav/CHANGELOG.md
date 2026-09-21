@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.27.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.27.0...@next-bricks/nav@1.27.1) (2026-09-21)
+
+
+### Bug Fixes
+
+* **nav:** make license alerts follow language switching ([87fb9cd](https://github.com/easyops-cn/next-advanced-bricks/commit/87fb9cd9e90b385d32a39805b703ac8701553242))
+
+
+
+
+
 # [1.27.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/nav@1.26.7...@next-bricks/nav@1.27.0) (2026-09-20)
 
 
