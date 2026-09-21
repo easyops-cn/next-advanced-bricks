@@ -7,7 +7,7 @@ import { auth } from "@next-core/easyops-runtime";
 import "@next-core/theme";
 import { JsonStorage } from "@next-shared/general/JsonStorage";
 import moment from "moment";
-import { i18n, initializeI18n } from "@next-core/i18n";
+import { initializeReactI18n, useTranslation } from "@next-core/i18n/react";
 import type {
   GeneralIcon,
   GeneralIconProps,
@@ -21,7 +21,7 @@ export const WrappedLink = wrapBrick<Link, LinkProps>("eo-link");
 
 const { defineElement } = createDecorators();
 
-initializeI18n(NS, locales);
+initializeReactI18n(NS, locales);
 
 /**
  * 导航栏告警提示组件，用于显示 License 到期提醒和页面性能问题警告。
@@ -46,7 +46,7 @@ interface SlowRenderInfo {
 const storage = new JsonStorage(localStorage);
 
 export function EasyopsNavbarAlertsComponent() {
-  const translate = i18n.getFixedT(i18n.language, NS);
+  const { t: translate } = useTranslation(NS);
   const [licenseHide, setLienceseHide] = useState<boolean>(false);
   const [slowRender, setSlowRender] = useState<SlowRenderInfo | null>(null);
   const currentApp = useCurrentApp();
