@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.22.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.22.0...@next-bricks/form@1.22.1) (2026-11-20)
+
+
+### Performance Improvements
+
+* **form:** memoize upload-image validator with useCallback ([cf21855](https://github.com/easyops-cn/next-advanced-bricks/commit/cf21855f1a96a7f1f150f44da127ca20e1e40d49))
+
+
+
+
+
 # [1.22.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/form@1.21.16...@next-bricks/form@1.22.0) (2026-07-30)
 
 
