@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { EventEmitter, createDecorators } from "@next-core/element";
 import { wrapBrick } from "@next-core/react-element";
 import { getBasePath } from "@next-core/runtime";
@@ -284,12 +284,12 @@ export function UploadImageComponent(props: UploadImageComponentProps) {
     );
   };
 
-  const validator = (curValue: ImageData[]) => {
+  const validator = useCallback((curValue: ImageData[]) => {
     if (curValue?.some((file) => file.status === "uploading")) {
       return t(K.FILE_UPLOADING);
     }
     return "";
-  };
+  }, []);
 
   return (
     <WrappedFormItem
