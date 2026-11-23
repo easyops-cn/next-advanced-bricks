@@ -284,6 +284,7 @@ export function UploadImageComponent(props: UploadImageComponentProps) {
     );
   };
 
+  // useCallback 缓存 validator（依赖为空），避免每次渲染都重建校验函数传给表单
   const validator = useCallback((curValue: ImageData[]) => {
     if (curValue?.some((file) => file.status === "uploading")) {
       return t(K.FILE_UPLOADING);
