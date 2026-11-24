@@ -233,25 +233,64 @@ function layoutRelatedNodes({
 
   // 构建父->子[]
   const adjacency = new Map<string, string[]>();
-  const queue: { id: string; parentId: string }[] = [];
+  const edges: { id: NodeId; parentId: NodeId }[] = [];
 
   for (const c of newCells) {
     if (isEdgeCell(c) && c.source && c.target) {
       if (!adjacency.has(c.source)) adjacency.set(c.source, []);
       adjacency.get(c.source)!.push(c.target);
-      queue.push({ id: c.target, parentId: c.source });
+      edges.push({ id: c.target, parentId: c.source });
     }
   }
 
-  while (queue.length > 0) {
+  // 从锚点出发按层摆放子节点，并用 visited 保证每个节点只处理一次。
+  // 拓扑里存在反向边（如 metricSet -> job 与 job -> metricSet 同时存在），
+  // 全部边入队且不去重会让队列无限增长、主线程被占满（画布一直显示刷新中）；
+  // 而不从锚点起步则父节点可能尚未定位就处理子节点，算出 NaN 让新节点重叠。
+  // 锚点可达的部分处理完后，再按原边序兜底处理其余分支，避免漏摆节点。
+  const queue: { id: NodeId; parentId: NodeId }[] = (
+    adjacency.get(parentNodeCell.id) || []
+  ).map((id) => ({ id, parentId: parentNodeCell.id }));
+  const visited = new Set<NodeId>([parentNodeCell.id]);
+  let cursor = 0;
+  // 兜底分支的起点可能与锚点完全不连通，父节点自身也没有位置。
+  // 先把这类起点依次摆到锚点下方，否则父节点未定位会算出 NaN 坐标。
+  let fallbackY =
+    parentNodeCell.view.y + parentNodeCell.view.height + DEFAULT_NODE_GAP_V;
+
+  while (true) {
+    if (queue.length === 0) {
+      while (cursor < edges.length && visited.has(edges[cursor].id)) {
+        cursor++;
+      }
+      if (cursor >= edges.length) break;
+
+      const next = edges[cursor++];
+      const fallbackParent = nodesMap.get(next.parentId);
+      if (fallbackParent && isNoPoint(fallbackParent.view)) {
+        fallbackParent.view.x =
+          parentNodeCell.view.x +
+          parentNodeCell.view.width / 2 -
+          fallbackParent.view.width / 2;
+        fallbackParent.view.y = fallbackY;
+        fallbackY += fallbackParent.view.height + DEFAULT_NODE_GAP_V;
+        updateCandidates.push(fallbackParent);
+        visited.add(next.parentId);
+      }
+      queue.push(next);
+    }
+
     const { id, parentId } = queue.shift()!;
+    if (visited.has(id)) continue;
+    visited.add(id);
+
     const node = nodesMap.get(id);
     const parent = nodesMap.get(parentId);
     if (!node || !parent) continue;
 
     if (isNoPoint(node.view)) {
       if (isManualLayout) {
-        const siblings = adjacency.get(parentId)!;
+        const siblings = adjacency.get(parentId) || [];
         const index = siblings.indexOf(id);
         const baseX =
           parent.view.x + parent.view.width / 2 - node.view.width / 2;

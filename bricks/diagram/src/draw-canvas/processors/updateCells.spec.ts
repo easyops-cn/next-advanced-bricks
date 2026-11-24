@@ -2,6 +2,7 @@ import { describe, test, expect } from "@jest/globals";
 import { updateCells } from "./updateCells";
 import { SYMBOL_FOR_SIZE_INITIALIZED } from "../constants";
 import { Cell, DecoratorView } from "../interfaces";
+import { isNodeCell } from "./asserts";
 
 describe("updateCells", () => {
   test("add related nodes on right side of siblings", () => {
@@ -901,6 +902,74 @@ describe("updateCells", () => {
     });
     const views = result.updated.map((n) => n?.view?.x);
     expect(new Set(views).size).toBe(4);
+  });
+
+  test("bidirectional edges do not loop forever", () => {
+    // 真实拓扑里 metricSet <-> collectorJob 会同时存在正向与反向两条边，
+    // 增量布局若不记录已访问节点，队列会无限增长（页面一直刷新中）。
+    const result = updateCells({
+      cells: [
+        { type: "edge", source: "1", target: "2" },
+        { type: "edge", source: "2", target: "1" },
+        { type: "edge", source: "2", target: "3" },
+        { type: "edge", source: "3", target: "2" },
+        { id: "1", type: "node", view: { x: 200, y: 50 } },
+        { id: "2", type: "node" },
+        { id: "3", type: "node" },
+      ],
+      previousCells: [
+        { id: "1", type: "node", view: { x: 200, y: 50 } } as Cell,
+      ],
+      defaultNodeSize: [120, 80],
+      canvasWidth: 800,
+      canvasHeight: 600,
+      scaleRange: [0.5, 2],
+      transform: { k: 1, x: 0, y: 0 },
+      reason: "add-related-nodes",
+      parent: "1",
+    });
+
+    const updatedNodes = result.updated.filter(isNodeCell);
+    expect(updatedNodes.length).toBe(2);
+    for (const cell of updatedNodes) {
+      expect(Number.isNaN(cell.view.x)).toBe(false);
+      expect(Number.isNaN(cell.view.y)).toBe(false);
+    }
+    // 兄弟节点横向错开，不重叠
+    const xs = updatedNodes.map((cell) => cell.view.x);
+    expect(new Set(xs).size).toBe(2);
+  });
+
+  test("nodes unreachable from the anchor are still placed", () => {
+    // 锚点只连到 2；3 -> 4 是与锚点不连通的分支，不能被漏掉。
+    const result = updateCells({
+      cells: [
+        { type: "edge", source: "1", target: "2" },
+        { type: "edge", source: "3", target: "4" },
+        { id: "1", type: "node", view: { x: 200, y: 50 } },
+        { id: "2", type: "node" },
+        { id: "3", type: "node" },
+        { id: "4", type: "node" },
+      ],
+      previousCells: [
+        { id: "1", type: "node", view: { x: 200, y: 50 } } as Cell,
+      ],
+      defaultNodeSize: [120, 80],
+      canvasWidth: 800,
+      canvasHeight: 600,
+      scaleRange: [0.5, 2],
+      transform: { k: 1, x: 0, y: 0 },
+      reason: "add-related-nodes",
+      parent: "1",
+    });
+
+    const updatedNodes = result.updated.filter(isNodeCell);
+    const ids = updatedNodes.map((cell) => cell.id);
+    expect(ids).toContain("4");
+    for (const cell of updatedNodes) {
+      expect(Number.isNaN(cell.view.x)).toBe(false);
+      expect(Number.isNaN(cell.view.y)).toBe(false);
+    }
   });
 
   test("missing parent falls back to default layout", () => {
