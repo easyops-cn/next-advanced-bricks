@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.69.1](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.69.0...@next-bricks/diagram@0.69.1) (2026-11-25)
+
+
+### Bug Fixes
+
+* **diagram:** 修复添加关联节点增量布局死循环 ([707f05a](https://github.com/easyops-cn/next-advanced-bricks/commit/707f05a965367f42d28a1493d42e54b5f8b4bab5))
+
+
+
+
+
 # [0.69.0](https://github.com/easyops-cn/next-advanced-bricks/compare/@next-bricks/diagram@0.68.10...@next-bricks/diagram@0.69.0) (2026-07-21)
 
 
